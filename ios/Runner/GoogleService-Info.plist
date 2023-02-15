@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>723381873229-ls11tqmjdo6ifl647u8uvk6qkel1per5.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.723381873229-ls11tqmjdo6ifl647u8uvk6qkel1per5</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBc9nZwC4SDh7zRh7k0YNRDf263H_I_Tow</string>
+	<key>GCM_SENDER_ID</key>
+	<string>723381873229</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.bns.stagging</string>
+	<key>PROJECT_ID</key>
+	<string>bns-stagging</string>
+	<key>STORAGE_BUCKET</key>
+	<string>bns-stagging.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:723381873229:ios:0edf051ad9110c08fbca04</string>
+	<key>DATABASE_URL</key>
+	<string>https://bns-stagging-default-rtdb.firebaseio.com</string>
+</dict>
+</plist>
