@@ -1,12 +1,14 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, constant_identifier_names
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:rive/rive.dart' as rive;
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/widgets/bank_card_widget.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
+import 'package:vierqr/services/providers/add_bank_provider.dart';
 import 'package:vierqr/services/providers/bank_card_position_provider.dart';
 
 class BankCardGeneratedView extends StatefulWidget {
@@ -99,6 +101,8 @@ class _BankCardGeneratedView extends State<BankCardGeneratedView> {
                   bgColor: DefaultTheme.GREEN,
                   function: () {
                     _doEndAnimation();
+                    Provider.of<AddBankProvider>(context, listen: false)
+                        .reset();
                     Future.delayed(const Duration(milliseconds: 800), () {
                       if (Navigator.canPop(context)) {
                         Navigator.of(context).pop();

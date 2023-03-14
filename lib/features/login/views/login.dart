@@ -104,11 +104,15 @@ class _Login extends State<Login> {
           onDone: (pin) {
             Navigator.of(context).pop();
             AccountLoginDTO dto = AccountLoginDTO(
-                phoneNo: phoneNoController.text,
-                password: EncryptUtils.instance.encrypted(
-                  phoneNoController.text,
-                  pin,
-                ));
+              phoneNo: phoneNoController.text,
+              password: EncryptUtils.instance.encrypted(
+                phoneNoController.text,
+                pin,
+              ),
+              device: '',
+              fcmToken: '',
+              platform: '',
+            );
             _loginBloc.add(
               LoginEventByPhone(dto: dto),
             );

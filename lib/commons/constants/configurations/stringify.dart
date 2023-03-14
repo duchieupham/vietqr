@@ -2,9 +2,8 @@
 
 class Stringify {
   //ROLE CARD MEMBER
-  static const int ROLE_CARD_MEMBER_MANAGER = 2;
-  static const int ROLE_CARD_MEMBER_ADMIN = 1;
-  static const int ROLE_CARD_MEMBER_MEMBER = 0;
+  static const int CARD_TYPE_BUSINESS = 1;
+  static const int CARD_TYPE_PERSONAL = 0;
 
   //NOTIFICATION TYPE
   static const String NOTIFICATION_TYPE_TRANSACTION = 'TRANSACTION';

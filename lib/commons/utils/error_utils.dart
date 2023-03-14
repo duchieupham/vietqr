@@ -49,6 +49,16 @@ class ErrorUtils {
       case ErrorType.E11:
         result = 'Không thể xoá mẫu nội dung chuyển khoản';
         break;
+      case ErrorType.E12:
+        result =
+            'Không thể liên kết. Tài khoản thanh toán này đã được thêm trước đó';
+        break;
+      case ErrorType.E13:
+        result = 'Thêm tài khoản thanh toán thất bại';
+        break;
+      case ErrorType.E14:
+        result = 'Không thể tạo doanh nghiệp';
+        break;
       default:
         result = message;
     }

@@ -1,5 +1,6 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:vierqr/commons/utils/log.dart';
 
 class TimeUtils {
   const TimeUtils._privateConsrtructor();
@@ -205,6 +206,23 @@ class TimeUtils {
       }
     } catch (e) {
       print('Error at checkValidTimeRange: $e');
+    }
+    return result;
+  }
+
+  String formatDateFromInt(int time, bool isMultipleRow) {
+    String result = '';
+    try {
+      if (time != 0) {
+        DateTime timeConverted =
+            DateTime.fromMillisecondsSinceEpoch(time * 1000);
+        DateFormat format = (isMultipleRow)
+            ? DateFormat('dd/MM/yyyy\nHH:mm')
+            : DateFormat('dd/MM/yyyy HH:mm');
+        result = format.format(timeConverted).toString();
+      }
+    } catch (e) {
+      LOG.error(e.toString());
     }
     return result;
   }

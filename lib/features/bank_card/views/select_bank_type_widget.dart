@@ -105,6 +105,7 @@ class SelectBankTypeWidget extends StatelessWidget {
                     hintText: 'Tìm theo tên',
                     controller: searchController,
                     keyboardAction: TextInputAction.done,
+                    autoFocus: false,
                     onChange: (value) {
                       if (searchController.text.isNotEmpty) {
                         _searchClearProvider.updateClearSearch(true);
@@ -162,7 +163,7 @@ class SelectBankTypeWidget extends StatelessWidget {
         Provider.of<AddBankProvider>(context, listen: false)
             .updateSelectBankType(dto);
         searchController.clear();
-        _animatedToPage(1);
+        _animatedToPage(2);
       },
       child: BoxLayout(
         width: width,

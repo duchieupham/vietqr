@@ -3,7 +3,7 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/logo_utils.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 
-class SliverHeader extends StatelessWidget {
+class SliverHeaderOld extends StatelessWidget {
   final double maxHeight;
   final double minHeight;
   final String title;
@@ -11,7 +11,7 @@ class SliverHeader extends StatelessWidget {
   final BankAccountDTO bankAccountDTO;
   final String accountBalance;
 
-  const SliverHeader({
+  const SliverHeaderOld({
     Key? key,
     required this.maxHeight,
     required this.minHeight,

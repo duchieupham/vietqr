@@ -9,24 +9,25 @@ class CreateQRProvider with ChangeNotifier {
 
   //errors
   bool _isAmountErr = false;
+  bool _isContentErr = false;
 
   final NumberFormat numberFormat = NumberFormat("##,#0", "en_US");
   static const _locale = 'en';
   String _formatNumber(String s) =>
       NumberFormat.decimalPattern(_locale).format(int.tryParse(s) ?? '0');
-  String get _currency =>
-      NumberFormat.compactSimpleCurrency(locale: _locale).currencySymbol;
 
   get transactionAmount => _transactionAmount;
   get currencyFormatted => _currencyFormatted;
   get amountErr => _isAmountErr;
   get qrGenerated => _isQRGenerated;
+  bool get contentErr => _isContentErr;
 
   void reset() {
     _transactionAmount = '0';
     _currencyFormatted = '0';
     _isQRGenerated = false;
     _isAmountErr = false;
+    _isContentErr = false;
     notifyListeners();
   }
 

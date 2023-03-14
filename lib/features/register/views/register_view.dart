@@ -351,8 +351,13 @@ class RegisterView extends StatelessWidget {
               .isValidValidation()) {
             AccountLoginDTO dto = AccountLoginDTO(
               phoneNo: _phoneNoController.text,
-              password: EncryptUtils.instance
-                  .encrypted(_phoneNoController.text, _passwordController.text),
+              password: EncryptUtils.instance.encrypted(
+                _phoneNoController.text,
+                _passwordController.text,
+              ),
+              device: '',
+              fcmToken: '',
+              platform: '',
             );
             _registerBloc.add(RegisterEventSubmit(dto: dto));
           }

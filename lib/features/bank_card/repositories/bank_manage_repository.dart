@@ -8,7 +8,6 @@ import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/models/account_balance_dto.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/transaction_bank_dto.dart';
-import 'package:vierqr/services/firestore/bank_member_db.dart';
 import 'package:vierqr/services/shared_references/account_helper.dart';
 
 class BankManageRepository {
@@ -98,94 +97,4 @@ class BankManageRepository {
     }
     return result;
   }
-
-  Future<List<String>> getBankIdsByUserId(String userId) async {
-    List<String> result = [];
-    try {
-      result = await BankMemberDB.instance.getBankIdsByUserId(userId);
-    } catch (e) {
-      print('Error at getBankIdsByUserId - BankManageRepository: $e');
-    }
-    return result;
-  }
-
-  Future<List<BankAccountDTO>> getListOtherBankAccount(String userId) async {
-    List<BankAccountDTO> result = [];
-    try {
-      List<String> bankIds =
-          await BankMemberDB.instance.getListBankIdByUserId(userId);
-      if (bankIds.isNotEmpty) {
-        // result =
-        //     await BankAccountDB.instance.getListBankAccountByBankIds(bankIds);
-      }
-    } catch (e) {
-      print('Error at getListOtherBankAccount - BankManageRepository: $e');
-    }
-    return result;
-  }
-
-  Future<String> getBankIdByBankAccount(String userId, String bankId) async {
-    String result = '';
-    try {
-      // result =
-      //     await BankAccountDB.instance.getBankIdByAccount(userId, bankAccount);
-    } catch (e) {
-      print('Error at getBankIdByBankAccount - BankManageRepository: $e');
-    }
-    return result;
-  }
-
-  Future<bool> addBankAccount(
-      String userId, BankAccountDTO dto, String phoneNo) async {
-    bool result = false;
-    try {
-      // bool checkAddBank =
-      //     await BankAccountDB.instance.addBankAccount(userId, dto);
-      // bool checkAddRelation = await BankMemberDB.instance
-      //     .addUserToBankCard(dto.id, userId, 'MANAGER', phoneNo);
-      // if (checkAddBank && checkAddRelation) {
-      //   result = true;
-      // }
-    } catch (e) {
-      print('Error at addBankAccount - BankManageRepository: $e');
-    }
-    return result;
-  }
-
-  Future<bool> removeBankAccount(
-      String userId, String bankAccount, String bankId) async {
-    bool result = false;
-    try {
-      // bool checkRemoveBank =
-      //     await BankAccountDB.instance.removeBankAccount(userId, bankAccount);
-      // bool checkRemoveRelation =
-      //     await BankMemberDB.instance.removeAllUsers(bankId);
-      // if (checkRemoveBank && checkRemoveRelation) {
-      //   result = true;
-      // }
-    } catch (e) {
-      print('Error at removeBankAccount - BankManageRepository: $e');
-    }
-    return result;
-  }
-
-  // Future<BankAccountDTO> getBankAccountByUserIdAndBankAccount(
-  //     String userId, String bankAccount) async {
-  //   BankAccountDTO result = const BankAccountDTO(
-  //     id: '',
-  //     bankAccount: '',
-  //     bankAccountName: '',
-  //     bankName: '',
-  //     bankCode: '',
-  //     userId: '',
-  //   );
-  //   try {
-  //     result = await BankAccountDB.instance
-  //         .getBankAccountByUserIdAndBankAccount(userId, bankAccount);
-  //   } catch (e) {
-  //     print(
-  //         'Error at getBankAccountByUserIdAndBankAccount - BankManageRepository: $e');
-  //   }
-  //   return result;
-  // }
 }

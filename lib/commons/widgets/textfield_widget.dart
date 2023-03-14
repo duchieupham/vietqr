@@ -21,6 +21,7 @@ class TextFieldWidget extends StatelessWidget {
   final FocusNode? focusNode;
   final int? maxLines;
   final int? maxLength;
+  final TextAlign? textAlign;
 
   const TextFieldWidget({
     Key? key,
@@ -41,6 +42,7 @@ class TextFieldWidget extends StatelessWidget {
     this.onEdittingComplete,
     this.onSubmitted,
     this.maxLength,
+    this.textAlign,
   }) : super(key: key);
 
   @override
@@ -66,6 +68,8 @@ class TextFieldWidget extends StatelessWidget {
                     obscureText: isObscureText,
                     controller: controller,
                     onChanged: onChange,
+                    textAlign:
+                        (textAlign != null) ? textAlign! : TextAlign.left,
                     onEditingComplete: onEdittingComplete,
                     onSubmitted: onSubmitted,
                     maxLength: maxLength,
@@ -104,6 +108,7 @@ class TextFieldWidget extends StatelessWidget {
             child: TextField(
               obscureText: isObscureText,
               controller: controller,
+              textAlign: (textAlign != null) ? textAlign! : TextAlign.left,
               onChanged: onChange,
               onSubmitted: onSubmitted,
               onEditingComplete: onEdittingComplete,

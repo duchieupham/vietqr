@@ -17,6 +17,7 @@ class BankCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('----dto.type: ${dto.type}');
     return UnconstrainedBox(
       child: Container(
         width: width,
@@ -34,7 +35,7 @@ class BankCardWidget extends StatelessWidget {
           ],
           image: DecorationImage(
             image: AssetImage(
-              (dto.role == Stringify.ROLE_CARD_MEMBER_ADMIN)
+              (dto.type == Stringify.CARD_TYPE_BUSINESS)
                   ? 'assets/images/bg-admin-card.png'
                   : 'assets/images/bg-member-card.png',
             ),

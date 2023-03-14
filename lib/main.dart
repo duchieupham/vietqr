@@ -1,7 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -9,23 +11,30 @@ import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/utils/log.dart';
+import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_card/views/bank_card_generated_view.dart';
 import 'package:vierqr/features/bank_member/blocs/bank_member_bloc.dart';
 import 'package:vierqr/features/bank_member/views/bank_member_view.dart';
 import 'package:vierqr/features/bank_type/blocs/bank_type_bloc.dart';
+import 'package:vierqr/features/branch/blocs/branch_bloc.dart';
+import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
+import 'package:vierqr/features/business/blocs/business_member_bloc.dart';
+import 'package:vierqr/features/business/views/add_business_view.dart';
+import 'package:vierqr/features/business/views/business_information_view.dart';
 import 'package:vierqr/features/generate_qr/blocs/qr_blocs.dart';
+import 'package:vierqr/features/generate_qr/views/qr_generated.dart';
 import 'package:vierqr/features/generate_qr/views/qr_share_view.dart';
 import 'package:vierqr/features/home/home.dart';
 import 'package:vierqr/features/home/theme_setting.dart';
-import 'package:vierqr/features/log_sms/blocs/sms_bloc.dart';
+// import 'package:vierqr/features/log_sms/blocs/sms_bloc.dart';
 import 'package:vierqr/features/log_sms/blocs/transaction_bloc.dart';
+import 'package:vierqr/features/logout/blocs/log_out_bloc.dart';
 import 'package:vierqr/features/notification/blocs/notification_bloc.dart';
 import 'package:vierqr/features/login/blocs/login_bloc.dart';
 import 'package:vierqr/features/login/views/login.dart';
 import 'package:vierqr/features/permission/blocs/permission_bloc.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_manage_bloc.dart';
-import 'package:vierqr/features/personal/blocs/member_manage_bloc.dart';
 import 'package:vierqr/features/personal/blocs/user_edit_bloc.dart';
 import 'package:vierqr/features/bank_card/views/add_bank_card_view.dart';
 import 'package:vierqr/features/bank_card/views/bank_manage_view.dart';
@@ -35,7 +44,9 @@ import 'package:vierqr/features/personal/views/user_edit_view.dart';
 import 'package:vierqr/features/personal/views/user_update_password_view.dart';
 import 'package:vierqr/features/register/blocs/register_bloc.dart';
 import 'package:vierqr/features/token/blocs/token_bloc.dart';
+import 'package:vierqr/services/local_notification/notification_service.dart';
 import 'package:vierqr/services/providers/add_bank_provider.dart';
+import 'package:vierqr/services/providers/add_business_provider.dart';
 import 'package:vierqr/services/providers/bank_account_provider.dart';
 import 'package:vierqr/services/providers/bank_select_provider.dart';
 import 'package:vierqr/services/providers/create_qr_page_select_provider.dart';
@@ -98,10 +109,64 @@ class NavigationService {
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 }
 
-class VietQRApp extends StatelessWidget {
-  const VietQRApp({Key? key}) : super(key: key);
+class VietQRApp extends StatefulWidget {
+  const VietQRApp({super.key});
 
+  @override
+  State<StatefulWidget> createState() => _VietQRApp();
+}
+
+class _VietQRApp extends State<VietQRApp> {
   static Widget _homeScreen = const Login();
+
+  _VietQRApp();
+
+  @override
+  void initState() {
+    super.initState();
+    if (PlatformUtils.instance.isAndroidApp(context)) {
+      // Đăng ký callback onMessage
+      onFcmMessage();
+      // Đăng ký callback onMessageOpenedApp
+      onFcmMessageOpenedApp();
+      //
+      requestNotificationPermission();
+    }
+  }
+
+  void requestNotificationPermission() async {
+    await Permission.notification.request();
+  }
+
+  void onFcmMessage() async {
+    await NotificationService().initialNotification();
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      // Xử lý push notification nếu ứng dụng đang chạy
+      if (message.notification != null) {
+        LOG.info(
+            "Push notification received: ${message.notification?.title} - ${message.notification?.body}");
+        NotificationService().showNotification(
+          title: message.notification?.title,
+          body: message.notification?.body,
+        );
+      }
+    });
+  }
+
+  void onFcmMessageOpenedApp() {
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      // Xử lý push notification nếu ứng dụng không đang chạy
+      if (message.notification != null) {
+        LOG.info(
+            "Push notification clicked: ${message.notification?.title.toString()} - ${message.notification?.body}");
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -126,12 +191,12 @@ class VietQRApp extends StatelessWidget {
           BlocProvider<UserEditBloc>(
             create: (BuildContext context) => UserEditBloc(),
           ),
-          BlocProvider<MemberManageBloc>(
-            create: (BuildContext context) => MemberManageBloc(),
-          ),
-          BlocProvider<SMSBloc>(
-            create: (BuildContext context) => SMSBloc(),
-          ),
+          // BlocProvider<MemberManageBloc>(
+          //   create: (BuildContext context) => MemberManageBloc(),
+          // ),
+          // BlocProvider<SMSBloc>(
+          //   create: (BuildContext context) => SMSBloc(),
+          // ),
           BlocProvider<TransactionBloc>(
             create: (BuildContext context) => TransactionBloc(),
           ),
@@ -156,6 +221,18 @@ class VietQRApp extends StatelessWidget {
           BlocProvider<QRBloc>(
             create: (BuildContext context) => QRBloc(),
           ),
+          BlocProvider<LogoutBloc>(
+            create: (BuildContext context) => LogoutBloc(),
+          ),
+          BlocProvider<BusinessMemberBloc>(
+            create: (BuildContext context) => BusinessMemberBloc(),
+          ),
+          BlocProvider<BusinessInformationBloc>(
+            create: (BuildContext context) => BusinessInformationBloc(),
+          ),
+          BlocProvider<BranchBloc>(
+            create: (BuildContext context) => BranchBloc(),
+          ),
         ],
         child: MultiProvider(
           providers: [
@@ -176,6 +253,7 @@ class VietQRApp extends StatelessWidget {
             ChangeNotifierProvider(
                 create: (context) => MemeberManageProvider()),
             ChangeNotifierProvider(create: (context) => AddBankProvider()),
+            ChangeNotifierProvider(create: (context) => AddBusinessProvider()),
           ],
           child: Consumer<ThemeProvider>(
             builder: (context, themeSelect, child) {
@@ -209,6 +287,20 @@ class VietQRApp extends StatelessWidget {
                       const BankCardGeneratedView(),
                   Routes.BANK_MEMBER_VIEW: (context) => const BankMemberView(),
                   Routes.QR_SHARE_VIEW: (context) => const QRShareView(),
+                  Routes.QR_GENERATED: (context) => const QRGenerated(),
+                  Routes.BUSINESS_INFORMATION_VIEW: (context) =>
+                      const BusinessInformationView(),
+                  Routes.ADD_BUSINESS_VIEW: (context) =>
+                      const AddBusinessView(),
+                },
+                onGenerateRoute: (settings) {
+                  if (settings.name == Routes.BUSINESS_INFORMATION_VIEW) {
+                    return PageRouteBuilder(
+                      pageBuilder: (context, animation1, animation2) =>
+                          const BusinessInformationView(),
+                      transitionDuration: const Duration(milliseconds: 300),
+                    );
+                  }
                 },
                 themeMode:
                     (themeSelect.themeSystem == DefaultTheme.THEME_SYSTEM)

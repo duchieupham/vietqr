@@ -18,4 +18,6 @@ class Routes {
   static const String BANK_CARD_GENERATED_VIEW = '/bankCardGenerated';
   static const String BANK_MEMBER_VIEW = '/bankMember';
   static const String QR_SHARE_VIEW = '/qrShare';
+  static const String ADD_BUSINESS_VIEW = '/addBusiness';
+  static const String BUSINESS_INFORMATION_VIEW = '/businessInformation';
 }

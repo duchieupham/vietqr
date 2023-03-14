@@ -1,152 +1,293 @@
-import 'dart:ui';
+import 'package:clipboard/clipboard.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
-import 'package:vierqr/commons/widgets/sub_header_widget.dart';
+import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
 import 'package:vierqr/commons/widgets/viet_qr_widget.dart';
-import 'package:vierqr/features/generate_qr/views/create_qr.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
-import 'package:vierqr/models/viet_qr_generate_dto.dart';
 import 'package:vierqr/services/providers/create_qr_page_select_provider.dart';
 import 'package:vierqr/services/providers/create_qr_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class QRGenerated extends StatelessWidget {
-  final VietQRGenerateDTO vietQRGenerateDTO;
-  final BankAccountDTO bankAccountDTO;
-  final String content;
-
+  static final GlobalKey globalKey = GlobalKey();
   const QRGenerated({
     Key? key,
-    required this.bankAccountDTO,
-    required this.vietQRGenerateDTO,
-    required this.content,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
     final double height = MediaQuery.of(context).size.height;
-    final GlobalKey key = GlobalKey();
+
+    final args = ModalRoute.of(context)!.settings.arguments as Map;
+    QRGeneratedDTO qrGeneratedDTO = args['qrGeneratedDTO'];
+    BankAccountDTO bankAccountDTO = args['bankAccountDTO'];
     return Scaffold(
-      appBar: AppBar(toolbarHeight: 0),
-      body: Container(
-        width: width,
-        height: height,
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/bg-qr.png'),
-            fit: BoxFit.fitHeight,
+      body: Stack(
+        children: [
+          _buildComponent(
+            context: context,
+            dto: qrGeneratedDTO,
+            globalKey: globalKey,
+            width: width,
+            height: height,
           ),
-        ),
-        child: Column(children: [
-          SizedBox(
-            width: MediaQuery.of(context).size.width,
-            height: 65,
-            child: ClipRRect(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(
-                  sigmaX: 25,
-                  sigmaY: 25,
-                ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).canvasColor.withOpacity(0.6),
-                  ),
-                  child: SubHeader(
-                    title: 'QR giao dịch',
-                    function: () {
-                      backToHome(context);
+          // Positioned(
+          //   top: 0,
+          //   child: Container(
+          //     width: width,
+          //     padding: const EdgeInsets.symmetric(horizontal: 10),
+          //     height: 65,
+          //     alignment: Alignment.bottomLeft,
+          //     child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+          //       InkWell(
+          //         onTap: () {
+          //           Navigator.pop(context);
+          //         },
+          //         child: const SizedBox(
+          //           width: 40,
+          //           height: 20,
+          //           child: Icon(
+          //             Icons.arrow_back_ios_rounded,
+          //             size: 20,
+          //             color: DefaultTheme.WHITE,
+          //           ),
+          //         ),
+          //       ),
+          //       const Spacer(),
+          //       const Text(
+          //         'Chia sẻ mã QR',
+          //         style: TextStyle(
+          //           fontSize: 20,
+          //           color: DefaultTheme.WHITE,
+          //           fontWeight: FontWeight.w500,
+          //         ),
+          //       ),
+          //       const Spacer(),
+          //       const SizedBox(
+          //         width: 40,
+          //         height: 20,
+          //       ),
+          //     ]),
+          //   ),
+          // ),
+          Positioned(
+            bottom: 70,
+            child: SizedBox(
+              width: width,
+              height: 40,
+              child: Row(
+                children: [
+                  const Padding(padding: EdgeInsets.only(left: 20)),
+                  ButtonIconWidget(
+                    width: width / 2 - 25,
+                    height: 40,
+                    icon: Icons.copy_rounded,
+                    title: 'Sao chép nội dung',
+                    function: () async {
+                      await FlutterClipboard.copy(ShareUtils.instance
+                              .getTextSharing(qrGeneratedDTO))
+                          .then(
+                        (value) => Fluttertoast.showToast(
+                          msg: 'Đã sao chép',
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.CENTER,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: Theme.of(context).primaryColor,
+                          textColor: Theme.of(context).hintColor,
+                          fontSize: 15,
+                          webBgColor: 'rgba(255, 255, 255)',
+                          webPosition: 'center',
+                        ),
+                      );
                     },
+                    bgColor: Theme.of(context).cardColor,
+                    textColor: DefaultTheme.BLUE_TEXT,
                   ),
-                ),
+                  const Padding(padding: EdgeInsets.only(left: 10)),
+                  ButtonIconWidget(
+                    width: width / 2 - 25,
+                    height: 40,
+                    icon: Icons.share_rounded,
+                    title: 'Chia sẻ mã QR',
+                    function: () async {
+                      await share(dto: qrGeneratedDTO);
+                    },
+                    bgColor: Theme.of(context).cardColor,
+                    textColor: DefaultTheme.GREEN,
+                  ),
+                  const Padding(padding: EdgeInsets.only(left: 20)),
+                ],
               ),
             ),
           ),
-          const Padding(padding: EdgeInsets.only(top: 50)),
-          Expanded(
-            child: VietQRWidget(
-              width: width - 50,
-              qrGeneratedDTO: const QRGeneratedDTO(
-                bankCode: '',
-                bankName: '',
-                bankAccount: '',
-                userBankName: '',
-                amount: '',
-                content: '',
-                qrCode: '',
-                imgId: '',
-              ),
-              content: content,
-              isCopy: true,
-              qrSize: width * 0.6,
+          Positioned(
+            bottom: 20,
+            left: 20,
+            child: ButtonIconWidget(
+              width: width - 40,
+              height: 40,
+              icon: Icons.home_rounded,
+              title: 'Trang chủ',
+              function: () {
+                Navigator.pop(context);
+              },
+              bgColor: DefaultTheme.GREEN,
+              textColor: DefaultTheme.WHITE,
             ),
           ),
-          const Padding(padding: EdgeInsets.only(bottom: 50)),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ButtonIconWidget(
-                width: width * 0.4,
-                height: 50,
-                borderRadius: 15,
-                icon: Icons.home_rounded,
-                alignment: Alignment.center,
-                title: 'Trang chủ',
-                function: () {
-                  backToHome(context);
-                },
-                bgColor: DefaultTheme.GREEN,
-                textColor: DefaultTheme.WHITE,
-              ),
-              const Padding(padding: EdgeInsets.only(left: 10)),
-              ButtonIconWidget(
-                width: width * 0.4,
-                height: 50,
-                borderRadius: 15,
-                icon: Icons.share_rounded,
-                alignment: Alignment.center,
-                title: 'Chia sẻ',
-                function: () async {
-                  await ShareUtils.instance.shareImage(
-                    key: key,
-                    textSharing: getTextSharing(),
-                  );
-                },
-                bgColor: DefaultTheme.GREEN,
-                textColor: DefaultTheme.WHITE,
-              ),
-            ],
-          ),
-          const Padding(padding: EdgeInsets.only(top: 10)),
-          ButtonIconWidget(
-            width: width * 0.8 + 10,
-            height: 50,
-            borderRadius: 15,
-            icon: Icons.refresh_rounded,
-            alignment: Alignment.center,
-            title: 'Tạo lại mã QR',
-            function: () {
-              Provider.of<CreateQRProvider>(context, listen: false).reset();
-              Provider.of<CreateQRPageSelectProvider>(context, listen: false)
-                  .updateIndex(0);
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                  builder: (context) => CreateQR(
-                    bankAccountDTO: bankAccountDTO,
-                  ),
-                ),
-              );
-            },
-            bgColor: Theme.of(context).canvasColor,
-            textColor: DefaultTheme.GREEN,
-          ),
-          const Padding(padding: EdgeInsets.only(bottom: 20)),
-        ]),
+        ],
       ),
+      // Container(
+      //   width: width,
+      //   height: height,
+      //   decoration: const BoxDecoration(
+      //     image: DecorationImage(
+      //       image: AssetImage('assets/images/bg-qr.png'),
+      //       fit: BoxFit.fitHeight,
+      //     ),
+      //   ),
+      //   child: Column(children: [
+      //     // SizedBox(
+      //     //   width: MediaQuery.of(context).size.width,
+      //     //   height: 65,
+      //     //   child: ClipRRect(
+      //     //     child: BackdropFilter(
+      //     //       filter: ImageFilter.blur(
+      //     //         sigmaX: 25,
+      //     //         sigmaY: 25,
+      //     //       ),
+      //     //       child: Container(
+      //     //         decoration: BoxDecoration(
+      //     //           color: Theme.of(context).canvasColor.withOpacity(0.6),
+      //     //         ),
+      //     //         child: SubHeader(
+      //     //           title: 'QR giao dịch',
+      //     //           function: () {
+      //     //             backToHome(context);
+      //     //           },
+      //     //         ),
+      //     //       ),
+      //     //     ),
+      //     //   ),
+      //     // ),
+      //     const Padding(padding: EdgeInsets.only(top: 50)),
+      //     Expanded(
+      //       child: VietQRWidget(
+      //         width: width - 10,
+      //         qrGeneratedDTO: qrGeneratedDTO,
+      //         content: '',
+      //         isCopy: true,
+      //         isStatistic: true,
+      //       ),
+      //     ),
+      //     const Padding(padding: EdgeInsets.only(bottom: 30)),
+      //     Row(
+      //       mainAxisAlignment: MainAxisAlignment.center,
+      //       children: [
+      //         ButtonIconWidget(
+      //           width: width * 0.4,
+      //           height: 50,
+      //           borderRadius: 15,
+      //           icon: Icons.home_rounded,
+      //           alignment: Alignment.center,
+      //           title: 'Trang chủ',
+      //           function: () {
+      //             backToHome(context);
+      //           },
+      //           bgColor: DefaultTheme.GREEN,
+      //           textColor: DefaultTheme.WHITE,
+      //         ),
+      //         const Padding(padding: EdgeInsets.only(left: 10)),
+      //         ButtonIconWidget(
+      //           width: width * 0.4,
+      //           height: 50,
+      //           borderRadius: 15,
+      //           icon: Icons.share_rounded,
+      //           alignment: Alignment.center,
+      //           title: 'Chia sẻ',
+      //           function: () async {
+      //             await ShareUtils.instance.shareImage(
+      //               key: key,
+      //               textSharing:
+      //                   ShareUtils.instance.getTextSharing(qrGeneratedDTO),
+      //             );
+      //           },
+      //           bgColor: DefaultTheme.GREEN,
+      //           textColor: DefaultTheme.WHITE,
+      //         ),
+      //       ],
+      //     ),
+      //     const Padding(padding: EdgeInsets.only(top: 10)),
+      //     ButtonIconWidget(
+      //       width: width * 0.8 + 10,
+      //       height: 50,
+      //       borderRadius: 15,
+      //       icon: Icons.refresh_rounded,
+      //       alignment: Alignment.center,
+      //       title: 'Tạo lại mã QR',
+      //       function: () {
+      //         Provider.of<CreateQRProvider>(context, listen: false).reset();
+      //         Provider.of<CreateQRPageSelectProvider>(context, listen: false)
+      //             .updateIndex(0);
+      //         Navigator.of(context).pushReplacement(
+      //           MaterialPageRoute(
+      //             builder: (context) => CreateQR(
+      //               bankAccountDTO: bankAccountDTO,
+      //             ),
+      //           ),
+      //         );
+      //       },
+      //       bgColor: Theme.of(context).canvasColor,
+      //       textColor: DefaultTheme.GREEN,
+      //     ),
+      //     const Padding(padding: EdgeInsets.only(bottom: 20)),
+      //   ]),
+      // ),
     );
+  }
+
+  Future<void> share({required QRGeneratedDTO dto}) async {
+    await ShareUtils.instance.shareImage(
+        key: globalKey,
+        textSharing: '${dto.bankAccount} - ${dto.bankName}'.trim());
+  }
+
+  Widget _buildComponent({
+    required BuildContext context,
+    required GlobalKey globalKey,
+    required QRGeneratedDTO dto,
+    required double width,
+    required double height,
+  }) {
+    return RepaintBoundaryWidget(
+        globalKey: globalKey,
+        builder: (key) {
+          return Container(
+            width: width,
+            height: height,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                  fit: BoxFit.fitHeight,
+                  image: Image.asset('assets/images/bg-qr.png').image),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Padding(padding: EdgeInsets.only(top: 70)),
+                VietQRWidget(
+                  width: width,
+                  qrGeneratedDTO: dto,
+                  content: dto.content,
+                ),
+              ],
+            ),
+          );
+        });
   }
 
   void backToHome(BuildContext context) {
@@ -154,27 +295,5 @@ class QRGenerated extends StatelessWidget {
     Provider.of<CreateQRPageSelectProvider>(context, listen: false)
         .updateIndex(0);
     Navigator.pop(context);
-  }
-
-  String getTextSharing() {
-    String result = '';
-    if (vietQRGenerateDTO.transactionAmountValue != '' &&
-        vietQRGenerateDTO.transactionAmountValue != '0') {
-      if (content != '') {
-        result =
-            '${bankAccountDTO.bankAccount} - ${bankAccountDTO.bankName}\nSố tiền: ${vietQRGenerateDTO.transactionAmountValue}\nNội dung: $content';
-      } else {
-        result =
-            '${bankAccountDTO.bankAccount} - ${bankAccountDTO.bankName}\nSố tiền: ${vietQRGenerateDTO.transactionAmountValue}';
-      }
-    } else {
-      if (content != '') {
-        result =
-            '${bankAccountDTO.bankAccount} - ${bankAccountDTO.bankName}\nNội dung: $content';
-      } else {
-        result = '${bankAccountDTO.bankAccount} - ${bankAccountDTO.bankName}';
-      }
-    }
-    return result.trim();
   }
 }

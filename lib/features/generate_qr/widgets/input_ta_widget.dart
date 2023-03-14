@@ -53,7 +53,7 @@ class InputTAWidget extends StatelessWidget {
         ),
         const Padding(padding: EdgeInsets.only(bottom: 50)),
         const Text(
-          'Bước 1: Nhập số tiền cần thanh toán',
+          'Nhập số tiền cần thanh toán',
           style: TextStyle(
             fontSize: 15,
             color: DefaultTheme.GREY_TEXT,
