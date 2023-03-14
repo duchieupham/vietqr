@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
-import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
@@ -16,9 +15,9 @@ import 'package:vierqr/features/bank_card/events/bank_card_event.dart';
 import 'package:vierqr/features/bank_card/states/bank_card_state.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
-import 'package:vierqr/models/bank_card_generated_dto.dart';
 import 'package:vierqr/models/bank_card_insert_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
+import 'package:vierqr/models/branch_choice_dto.dart';
 import 'package:vierqr/services/providers/add_bank_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
@@ -53,10 +52,14 @@ class InputInformationBankWidget extends StatelessWidget {
             bankName: bankTypeDTO.bankName,
             bankAccount: bankAccountController.text,
             userBankName: nameController.text,
-            role: Stringify.ROLE_CARD_MEMBER_ADMIN,
-            bankStatus: 0,
             id: '',
-            userId: '',
+            type: Provider.of<AddBankProvider>(context, listen: false).type,
+            branchCode: '',
+            branchId: '',
+            branchName: '',
+            businessCode: '',
+            businessId: '',
+            businessName: '',
           );
           Navigator.of(context).pushReplacementNamed(
             Routes.BANK_CARD_GENERATED_VIEW,
@@ -74,6 +77,16 @@ class InputInformationBankWidget extends StatelessWidget {
             child: ListView(
               shrinkWrap: true,
               children: [
+                const Padding(padding: EdgeInsets.only(top: 30)),
+                Consumer<AddBankProvider>(
+                  builder: (context, provider, child) {
+                    return (provider.type == 1)
+                        ? _buildSelectedBranch(
+                            context, provider.branchChoiceInsertDTO)
+                        : const SizedBox();
+                  },
+                ),
+                const Padding(padding: EdgeInsets.only(top: 10)),
                 Consumer<AddBankProvider>(
                   builder: (context, provider, child) {
                     return _buildSelectedBankType(
@@ -101,9 +114,10 @@ class InputInformationBankWidget extends StatelessWidget {
                             titleWidth: 130,
                             width: width,
                             isObscureText: false,
-                            title: 'Số thẻ/tài khoản*',
+                            title: 'Số tài khoản \u002A',
                             hintText: '',
                             fontSize: 13,
+                            autoFocus: false,
                             controller: bankAccountController,
                             inputType: TextInputType.number,
                             keyboardAction: TextInputAction.next,
@@ -121,8 +135,9 @@ class InputInformationBankWidget extends StatelessWidget {
                             titleWidth: 130,
                             width: width,
                             isObscureText: false,
-                            title: 'Chủ thẻ/tài khoản*',
+                            title: 'Chủ tài khoản \u002A',
                             hintText: '',
+                            autoFocus: false,
                             fontSize: 13,
                             controller: nameController,
                             inputType: TextInputType.text,
@@ -195,7 +210,12 @@ class InputInformationBankWidget extends StatelessWidget {
                       userId: userId,
                       userBankName: nameController.text,
                       bankAccount: bankAccountController.text,
-                      role: Stringify.ROLE_CARD_MEMBER_ADMIN,
+                      type: Provider.of<AddBankProvider>(context, listen: false)
+                          .type,
+                      branchId:
+                          Provider.of<AddBankProvider>(context, listen: false)
+                              .branchChoiceInsertDTO
+                              .branchId,
                     );
                     _bankCardBloc.add(BankCardEventInsert(dto: dto));
                   }
@@ -206,6 +226,90 @@ class InputInformationBankWidget extends StatelessWidget {
                 }
               },
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSelectedBranch(BuildContext context, BranchChoiceInsertDTO dto) {
+    final double width = MediaQuery.of(context).size.width;
+    return Container(
+      width: width,
+      height: 135,
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      child: Stack(
+        children: [
+          Container(
+            width: width,
+            margin: const EdgeInsets.only(top: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 70),
+                  child: Text(
+                    dto.companyName,
+                    maxLines: 1,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 70),
+                  child: Text(dto.branchName, maxLines: 1),
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(top: 20),
+                ),
+                Text(
+                  'Địa chỉ: ${dto.branchAddress}',
+                  maxLines: 1,
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(top: 5),
+                ),
+                const Text(
+                  'Phương thức: Liên kết TK ngân hàng doanh nghiệp',
+                  maxLines: 1,
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            top: 0,
+            left: 0,
+            child: (dto.image.isNotEmpty)
+                ? _buildLogo(
+                    context,
+                    70,
+                    dto.image,
+                    BoxFit.cover,
+                  )
+                : Container(
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: Image.asset(
+                          'assets/images/ic-avatar-business.png',
+                          fit: BoxFit.cover,
+                          width: 60,
+                          height: 60,
+                        ).image,
+                      ),
+                    ),
+                  ),
           ),
         ],
       ),
@@ -258,14 +362,15 @@ class InputInformationBankWidget extends StatelessWidget {
           Positioned(
             top: 0,
             left: 0,
-            child: _buildLogo(context, 70, dto.imageId),
+            child: _buildLogo(context, 70, dto.imageId, BoxFit.contain),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildLogo(BuildContext context, double size, String imageId) {
+  Widget _buildLogo(
+      BuildContext context, double size, String imageId, BoxFit fit) {
     return Container(
       width: size,
       height: size,
@@ -289,7 +394,7 @@ class InputInformationBankWidget extends StatelessWidget {
               ),
             ],
             image: DecorationImage(
-                image: ImageUtils.instance.getImageNetWork(imageId)),
+                fit: fit, image: ImageUtils.instance.getImageNetWork(imageId)),
           ),
         ),
       ),

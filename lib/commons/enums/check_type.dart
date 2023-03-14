@@ -1,6 +1,6 @@
 // ignore_for_file: constant_identifier_names
 
-enum RequestBodyType {
-  OBJECT,
-  LIST,
+enum CheckType {
+  C01,
+  C02,
 }

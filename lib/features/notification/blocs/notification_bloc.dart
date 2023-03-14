@@ -23,7 +23,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   }
 }
 
-const MemberManageRepository memberManageRepository = MemberManageRepository();
+// const MemberManageRepository memberManageRepository = MemberManageRepository();
 const TransactionRepository transactionRepository = TransactionRepository();
 NotificationRepository notificationRepository = NotificationRepository();
 
@@ -48,8 +48,8 @@ void _initial(NotificationEvent event, Emitter emit) {
 void _insertNotifications(NotificationEvent event, Emitter emit) async {
   try {
     if (event is NotificationEventInsert) {
-      List<String> userIds =
-          await memberManageRepository.getUserIdsByBankId(event.bankId);
+      List<String> userIds = [];
+      // await memberManageRepository.getUserIdsByBankId(event.bankId);
       const Uuid uuid = Uuid();
       if (userIds.isNotEmpty) {
         for (String userId in userIds) {

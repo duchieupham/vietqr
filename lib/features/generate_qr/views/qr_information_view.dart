@@ -3,6 +3,7 @@ import 'package:clipboard/clipboard.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
@@ -10,6 +11,8 @@ import 'package:vierqr/commons/widgets/viet_qr_widget.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_card/events/bank_card_event.dart';
 import 'package:vierqr/features/bank_card/states/bank_card_state.dart';
+import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
+import 'package:vierqr/features/business/events/business_information_event.dart';
 import 'package:vierqr/features/generate_qr/blocs/qr_blocs.dart';
 import 'package:vierqr/features/generate_qr/events/qr_event.dart';
 import 'package:vierqr/features/generate_qr/states/qr_state.dart';
@@ -25,10 +28,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
 class QRInformationView extends StatelessWidget {
-  const QRInformationView({Key? key}) : super(key: key);
+  final BusinessInformationBloc businessInformationBloc;
+
+  const QRInformationView({
+    Key? key,
+    required this.businessInformationBloc,
+  }) : super(key: key);
+
   //blocs
   static late BankCardBloc _bankCardBloc;
   static late QRBloc _qrBloc;
+
   //list
   static final List<BankAccountDTO> _bankAccounts = [];
   static final List<QRGeneratedDTO> _qrGenerateds = [];
@@ -45,6 +55,7 @@ class QRInformationView extends StatelessWidget {
     _qrGenerateds.clear();
     _bankCardBloc = BlocProvider.of(context);
     _qrBloc = BlocProvider.of(context);
+
     getListBank(context);
   }
 
@@ -77,7 +88,12 @@ class QRInformationView extends StatelessWidget {
                     if (_bankAccounts.isNotEmpty) {
                       for (BankAccountDTO bankAccountDTO in _bankAccounts) {
                         QRCreateDTO qrCreateDTO = QRCreateDTO(
-                            bankId: bankAccountDTO.id, amount: '', content: '');
+                          bankId: bankAccountDTO.id,
+                          amount: '',
+                          content: '',
+                          branchId: '',
+                          businessId: '',
+                        );
                         qrCreateDTOs.add(qrCreateDTO);
                       }
                       getListQR(context, qrCreateDTOs);
@@ -156,11 +172,12 @@ class QRInformationView extends StatelessWidget {
                                                 context,
                                                 Routes.ADD_BANK_CARD,
                                               ).then(
-                                                (value) => Provider.of<
-                                                            BankAccountProvider>(
-                                                        context,
-                                                        listen: false)
-                                                    .reset(),
+                                                (value) {
+                                                  Provider.of<BankAccountProvider>(
+                                                          context,
+                                                          listen: false)
+                                                      .reset();
+                                                },
                                               );
                                             },
                                             bgColor: DefaultTheme.PURPLE_NEON,
@@ -194,18 +211,6 @@ class QRInformationView extends StatelessWidget {
                                         }),
                                       ),
                                     ),
-                                    //  PageView(
-                                    //   key: const PageStorageKey(
-                                    //       'QR_STATIC_PAGE_VIEW'),
-                                    //   controller: _pageController,
-                                    //   onPageChanged: (index) {
-                                    //     Provider.of<BankAccountProvider>(
-                                    //             context,
-                                    //             listen: false)
-                                    //         .updateIndex(index);
-                                    //   },
-                                    //   children: _cardWidgets,
-                                    // ),
                                   ),
                           ),
                           (_qrGenerateds.isEmpty)
@@ -314,7 +319,8 @@ class QRInformationView extends StatelessWidget {
             title: 'Tạo QR giao dịch',
             function: () {
               if (_bankAccounts.isNotEmpty && _qrGenerateds.isNotEmpty) {
-                Navigator.of(context).push(
+                Navigator.of(context)
+                    .push(
                   MaterialPageRoute(
                     builder: (context) => CreateQR(
                       bankAccountDTO: _bankAccounts[
@@ -323,7 +329,13 @@ class QRInformationView extends StatelessWidget {
                               .indexSelected],
                     ),
                   ),
-                );
+                )
+                    .then((value) {
+                  String userId = UserInformationHelper.instance.getUserId();
+                  businessInformationBloc.add(
+                    BusinessInformationEventGetList(userId: userId),
+                  );
+                });
               } else {
                 DialogWidget.instance.openMsgDialog(
                     title: 'Không thể tạo mã QR thanh toán',
@@ -333,8 +345,10 @@ class QRInformationView extends StatelessWidget {
             textColor: DefaultTheme.WHITE,
             bgColor: DefaultTheme.GREEN,
           ),
-          const Padding(
-            padding: EdgeInsets.only(bottom: 90),
+          Padding(
+            padding: EdgeInsets.only(
+              bottom: (PlatformUtils.instance.isAndroidApp(context)) ? 90 : 110,
+            ),
           ),
         ],
       ),

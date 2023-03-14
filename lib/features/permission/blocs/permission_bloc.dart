@@ -17,19 +17,19 @@ class PermissionBloc extends Bloc<PermissionEvent, PermissionState> {
       if (event is PermissionEventGetStatus) {
         Map<String, PermissionStatus> permissions =
             await permissionRepository.checkPermissions();
-        if (!permissions['sms']!.isGranted) {
-          emit(PermissionSmsDeniedState());
-        } else {
-          emit(PermissionSMSAllowedState());
-        }
+        // if (!permissions['sms']!.isGranted) {
+        //   emit(PermissionSmsDeniedState());
+        // } else {
+        //   emit(PermissionSMSAllowedState());
+        // }
         if (!permissions['camera']!.isGranted) {
           emit(PermissionCameraDeniedState());
         } else {
           emit(PermissionCameraAllowsedState());
         }
-        if (permissions['sms']!.isGranted && permissions['camera']!.isGranted) {
-          emit(PermissionAllowedState());
-        }
+        // if (permissions['sms']!.isGranted && permissions['camera']!.isGranted) {
+        //   emit(PermissionAllowedState());
+        //}
       }
     } catch (e) {
       print('Error at _getPermissionStatus - PermissionBloc: $e');

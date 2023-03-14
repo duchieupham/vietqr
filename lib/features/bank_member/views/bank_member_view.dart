@@ -110,7 +110,7 @@ class BankMemberView extends StatelessWidget {
                             dto: bankMembers[index],
                             type: 0,
                             bankId: dto.id,
-                            userRole: dto.role,
+                            userRole: dto.type,
                           );
                         },
                         separatorBuilder: (context, index) {
@@ -193,7 +193,7 @@ class BankMemberView extends StatelessWidget {
                         dto: memberSearchDTO,
                         type: 2,
                         bankId: dto.id,
-                        userRole: dto.role,
+                        userRole: dto.type,
                       ),
                     if (state is BankMemberCheckFailedState)
                       BoxLayout(
@@ -216,7 +216,7 @@ class BankMemberView extends StatelessWidget {
                         dto: state.dto,
                         type: 1,
                         bankId: dto.id,
-                        userRole: dto.role,
+                        userRole: dto.type,
                       ),
                   ],
                 ),
@@ -257,7 +257,7 @@ class BankMemberView extends StatelessWidget {
                             userId: '',
                             phoneNo: phoneController.text,
                             role: UserInformationUtils.instance
-                                .getRoleForInsert(dto.role),
+                                .getRoleForInsert(dto.type),
                           );
                           bankMemberBloc
                               .add(BankMemberEventCheck(dto: insertDTO));
@@ -381,8 +381,8 @@ class BankMemberView extends StatelessWidget {
             ),
           ),
           if (type == 0 &&
-              dto.role != Stringify.ROLE_CARD_MEMBER_ADMIN &&
-              userRole == Stringify.ROLE_CARD_MEMBER_ADMIN)
+              dto.role != Stringify.CARD_TYPE_BUSINESS &&
+              userRole == Stringify.CARD_TYPE_BUSINESS)
             InkWell(
               onTap: () {
                 bankMemberBloc.add(BankMemberRemoveEvent(id: dto.id));

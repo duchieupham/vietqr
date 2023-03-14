@@ -23,7 +23,6 @@ void _login(LoginEvent event, Emitter emit) async {
     if (event is LoginEventByPhone) {
       emit(LoginLoadingState());
       bool check = await loginRepository.login(event.dto);
-      await loginRepository.login(event.dto);
       if (check) {
         emit(LoginSuccessfulState());
       } else {

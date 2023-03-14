@@ -19,6 +19,8 @@ class QRGeneratedListSuccessfulState extends QRState {
   List<Object?> get props => [list];
 }
 
+class QRGenerateLoadingState extends QRState {}
+
 class QRGeneratedSuccessfulState extends QRState {
   final QRGeneratedDTO dto;
 

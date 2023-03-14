@@ -6,19 +6,19 @@ class PermissionRepository {
   Future<bool> requestPermissions() async {
     bool result = false;
     try {
-      PermissionStatus smsPermission = await Permission.sms.status;
+      // PermissionStatus smsPermission = await Permission.sms.status;
       PermissionStatus cameraPermission = await Permission.camera.status;
-      if (!smsPermission.isGranted) {
-        await Permission.sms.request();
-      }
+      // if (!smsPermission.isGranted) {
+      //   await Permission.sms.request();
+      // }
       if (!cameraPermission.isGranted) {
         await Permission.camera.request();
       }
-      smsPermission = await Permission.sms.status;
+      // smsPermission = await Permission.sms.status;
       cameraPermission = await Permission.camera.status;
-      if (smsPermission.isGranted && cameraPermission.isGranted) {
-        result = true;
-      }
+      // if (smsPermission.isGranted && cameraPermission.isGranted) {
+      //   result = true;
+      // }
     } catch (e) {
       print('Error at requestPermissions - PermissionRepository: $e');
     }
@@ -29,9 +29,9 @@ class PermissionRepository {
   Future<Map<String, PermissionStatus>> checkPermissions() async {
     Map<String, PermissionStatus> result = {};
     try {
-      PermissionStatus smsPermission = await Permission.sms.status;
+      // PermissionStatus smsPermission = await Permission.sms.status;
       PermissionStatus cameraPermission = await Permission.camera.status;
-      result['sms'] = smsPermission;
+      // result['sms'] = smsPermission;
       result['camera'] = cameraPermission;
     } catch (e) {
       print('Error at checkPermissions - PermissionRepository: $e');

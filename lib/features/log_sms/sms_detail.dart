@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/commons/widgets/slider_header.dart';
+import 'package:vierqr/commons/widgets/slider_header_old.dart';
 import 'package:vierqr/features/log_sms/widgets/sms_detail_item.dart';
 import 'package:flutter/material.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_manage_bloc.dart';
@@ -25,11 +25,15 @@ class SmsDetailScreen extends StatelessWidget {
     bankAccount: '',
     bankName: '',
     bankCode: '',
-    userId: '',
-    bankStatus: 0,
-    role: 0,
+    type: 0,
     userBankName: '',
     imgId: '',
+    branchCode: '',
+    branchId: '',
+    branchName: '',
+    businessCode: '',
+    businessId: '',
+    businessName: '',
   );
 
   SmsDetailScreen({
@@ -75,7 +79,7 @@ class SmsDetailScreen extends StatelessWidget {
                   collapsedHeight: MediaQuery.of(context).size.width * 0.3,
                   floating: false,
                   expandedHeight: MediaQuery.of(context).size.width * 0.7,
-                  flexibleSpace: SliverHeader(
+                  flexibleSpace: SliverHeaderOld(
                     minHeight: MediaQuery.of(context).size.width * 0.3,
                     maxHeight: MediaQuery.of(context).size.width * 0.7,
                     title: 'Chi tiết giao dịch',

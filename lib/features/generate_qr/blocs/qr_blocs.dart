@@ -30,6 +30,7 @@ void _generateQRList(QREvent event, Emitter emit) async {
 void _generateQR(QREvent event, Emitter emit) async {
   try {
     if (event is QREventGenerate) {
+      emit(QRGenerateLoadingState());
       final QRGeneratedDTO dto = await qrRepository.generateQR(event.dto);
       emit(QRGeneratedSuccessfulState(dto: dto));
     }

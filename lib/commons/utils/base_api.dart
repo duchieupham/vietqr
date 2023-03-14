@@ -100,6 +100,30 @@ class BaseAPIClient {
     return result;
   }
 
+  static Future<http.Response> postMultipartAPI({
+    required String url,
+    required Map<String, dynamic> fields,
+    required List<http.MultipartFile> files,
+  }) async {
+    final Uri uri = Uri.parse(url);
+    final request = http.MultipartRequest('POST', uri);
+    request.headers['Authorization'] = 'Bearer $_token';
+    if (fields.isNotEmpty) {
+      for (String key in fields.keys) {
+        request.fields[key] = fields[key];
+      }
+    }
+    if (files.isNotEmpty) {
+      for (http.MultipartFile multipartFile in files) {
+        request.files.add(multipartFile);
+      }
+    }
+    final http.Response result =
+        await http.Response.fromStream(await request.send());
+    logAPI(url: url, statusCode: result.statusCode, body: result.body);
+    return result;
+  }
+
   static Map<String, String>? _getHeader(
       {AuthenticationType? type,
       Map<String, String>? header,

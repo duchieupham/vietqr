@@ -128,6 +128,7 @@ class VietQRWidget extends StatelessWidget {
             _buildSection(
               title: 'Nội dung: ',
               description: qrGeneratedDTO.content,
+              isUnbold: true,
             ),
             const Padding(padding: EdgeInsets.only(bottom: 10)),
           ],
@@ -182,6 +183,7 @@ class VietQRWidget extends StatelessWidget {
     required String title,
     required String description,
     Color? descColor,
+    bool? isUnbold,
   }) {
     return Align(
       alignment: Alignment.centerLeft,
@@ -203,7 +205,9 @@ class VietQRWidget extends StatelessWidget {
                 description,
                 style: TextStyle(
                   fontSize: 15,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: (isUnbold != null && isUnbold)
+                      ? FontWeight.normal
+                      : FontWeight.w500,
                   color: descColor,
                 ),
               ),
