@@ -9,16 +9,16 @@ class ProdEnv implements Env {
 
   @override
   String getBaseUrl() {
-    return '';
+    return 'http://112.78.1.209:8084/vqr/api/';
   }
 
   @override
   FirebaseOptions getFirebaseCongig() {
     return const FirebaseOptions(
-      apiKey: 'AIzaSyCns_zmKTZ2O66TK-loHlvbWPvoAA3Ffu0',
-      appId: '1:723381873229:web:5fb20affd823d725fbca04',
-      messagingSenderId: '723381873229',
-      projectId: 'bns-stagging',
+      apiKey: 'AIzaSyAjPP6Mc3baFUgEsO8o0-J-qmSVegmw2TQ',
+      appId: '1:84188087131:web:cd322a3f4796be944ed07e',
+      messagingSenderId: '84188087131',
+      projectId: 'vietqr-product',
     );
   }
 }
