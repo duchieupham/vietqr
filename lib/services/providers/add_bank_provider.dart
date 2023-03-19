@@ -5,6 +5,7 @@ import 'package:vierqr/models/branch_choice_dto.dart';
 class AddBankProvider with ChangeNotifier {
   bool _isGetBankTypes = false;
   int _index = 0;
+  bool _isShowModalBottomSheet = false;
   //type = 0 => personal bank card
   //type = 1 => business bank card
   int _type = 0;
@@ -24,6 +25,11 @@ class AddBankProvider with ChangeNotifier {
   bool _isInvalidBankAccount = false;
   bool _isInvalidUserBankName = false;
 
+  bool _isAgreeWithPolicy = false;
+
+  String _bankAccount = '';
+  String _name = '';
+
   get getBankTypes => _isGetBankTypes;
   get index => _index;
   get type => _type;
@@ -32,6 +38,26 @@ class AddBankProvider with ChangeNotifier {
   get validUserBankName => _isInvalidUserBankName;
   get branchId => _branchId;
   get branchChoiceInsertDTO => _branchChoiceInsertDTO;
+  get isAgreeWithPolicy => _isAgreeWithPolicy;
+  get bankAccount => _bankAccount;
+  get name => _name;
+  get isShowModalBottomSheet => _isShowModalBottomSheet;
+
+  void updateShowModalBottomSheet(bool value) {
+    _isShowModalBottomSheet = value;
+    notifyListeners();
+  }
+
+  void updateInformation(String bankAccount, String name) {
+    _bankAccount = bankAccount;
+    _name = name;
+    notifyListeners();
+  }
+
+  void updateAgreeWithPolicy(bool value) {
+    _isAgreeWithPolicy = value;
+    notifyListeners();
+  }
 
   void updateBranchChoice(BranchChoiceInsertDTO dto) {
     _branchChoiceInsertDTO = dto;
@@ -74,12 +100,16 @@ class AddBankProvider with ChangeNotifier {
   }
 
   void reset() {
+    _isShowModalBottomSheet = false;
     _isGetBankTypes = false;
     _branchId = '';
     _index = 0;
     _type = 0;
     _isInvalidBankAccount = false;
     _isInvalidUserBankName = false;
+    _isAgreeWithPolicy = false;
+    _bankAccount = '';
+    _name = '';
     _bankTypeDTO = const BankTypeDTO(
         id: '', bankCode: '', bankName: '', imageId: '', status: 0);
     _branchChoiceInsertDTO = const BranchChoiceInsertDTO(

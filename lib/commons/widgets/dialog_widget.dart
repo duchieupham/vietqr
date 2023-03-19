@@ -309,59 +309,27 @@ class DialogWidget {
     VoidCallback? onClose,
     Widget child,
   ) {
+    BuildContext context = NavigationService.navigatorKey.currentContext!;
+    final double width = MediaQuery.of(context).size.width;
     return showDialog(
         barrierDismissible: false,
-        context: NavigationService.navigatorKey.currentContext!,
+        context: context,
         builder: (BuildContext context) {
           return Material(
             color: DefaultTheme.TRANSPARENT,
             child: Center(
               child: Container(
-                width: 500,
-                height: 500,
+                width: width,
+                height: 400,
                 alignment: Alignment.center,
+                margin: const EdgeInsets.symmetric(horizontal: 20),
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                 decoration: BoxDecoration(
                   color: Theme.of(context).cardColor,
-                  borderRadius: BorderRadius.circular(5),
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Align(
-                      alignment: Alignment.topRight,
-                      child: Tooltip(
-                        message: 'Đóng',
-                        child: InkWell(
-                          onTap: (onClose != null)
-                              ? onClose
-                              : () {
-                                  Navigator.pop(context);
-                                },
-                          child: Container(
-                            width: 25,
-                            height: 25,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(25),
-                              color: Theme.of(context).canvasColor,
-                            ),
-                            child: const Icon(
-                              Icons.close_rounded,
-                              color: DefaultTheme.GREY_TEXT,
-                              size: 15,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: child,
-                    ),
-                  ],
-                ),
+                child: child,
               ),
             ),
           );
@@ -369,10 +337,14 @@ class DialogWidget {
   }
 
   Future showModalBottomContent(
-      {required Widget widget, required double height}) async {
+      {BuildContext? context,
+      required Widget widget,
+      required double height}) async {
+    context ??= NavigationService.navigatorKey.currentContext!;
     return await showModalBottomSheet(
         isScrollControlled: true,
-        context: NavigationService.navigatorKey.currentContext!,
+        enableDrag: false, // Ngăn người dùng kéo ModalBottomSheet
+        context: context,
         backgroundColor: DefaultTheme.TRANSPARENT,
         builder: (context) {
           final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;

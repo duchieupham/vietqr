@@ -13,6 +13,11 @@ class StgEnv implements Env {
   }
 
   @override
+  String getUrl() {
+    return 'http://112.78.1.220:8084/vqr/';
+  }
+
+  @override
   FirebaseOptions getFirebaseCongig() {
     return const FirebaseOptions(
       apiKey: 'AIzaSyCns_zmKTZ2O66TK-loHlvbWPvoAA3Ffu0',
