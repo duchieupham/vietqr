@@ -127,8 +127,9 @@ class QRShareView extends StatelessWidget {
 
   Future<void> share({required QRGeneratedDTO dto}) async {
     await ShareUtils.instance.shareImage(
-        key: globalKey,
-        textSharing: '${dto.bankAccount} - ${dto.bankName}'.trim());
+      key: globalKey,
+      textSharing: ShareUtils.instance.getTextSharing(dto),
+    );
   }
 
   Widget _buildComponent({

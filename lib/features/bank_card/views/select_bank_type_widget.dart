@@ -57,13 +57,20 @@ class SelectBankTypeWidget extends StatelessWidget {
               }
               if (state is BankTypeGetListSuccessfulState) {
                 if (state.list.isNotEmpty && bankTypes.isEmpty) {
-                  bankTypes.addAll(state.list);
+                  BankTypeDTO mbType = state.list
+                      .where((element) => element.bankCode == 'MB')
+                      .first;
+                  bankTypes.add(mbType);
+                  // bankTypes.addAll(state.list);
                   bankTypesResult.addAll(bankTypes);
                 }
               }
               if (state is BankTypeSearchState) {
                 bankTypesResult.clear();
-                bankTypesResult.addAll(state.list);
+                // BankTypeDTO mbType = state.list
+                //     .where((element) => element.bankCode == 'MB')
+                //     .first;
+                // bankTypesResult.add(mbType);
               }
               return Visibility(
                 visible: bankTypesResult.isNotEmpty,
@@ -84,74 +91,75 @@ class SelectBankTypeWidget extends StatelessWidget {
           ),
         ),
         const Padding(padding: EdgeInsets.only(bottom: 20)),
-        BoxLayout(
-          width: width,
-          borderRadius: 50,
-          alignment: Alignment.center,
-          margin: const EdgeInsets.symmetric(horizontal: 20),
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-          child: Row(
-            children: [
-              Icon(
-                Icons.search_rounded,
-                size: 15,
-                color: Theme.of(context).hintColor,
-              ),
-              Expanded(
-                child: Form(
-                  key: _formKey,
-                  child: TextFieldWidget(
-                    width: width,
-                    hintText: 'Tìm theo tên',
-                    controller: searchController,
-                    keyboardAction: TextInputAction.done,
-                    autoFocus: false,
-                    onChange: (value) {
-                      if (searchController.text.isNotEmpty) {
-                        _searchClearProvider.updateClearSearch(true);
-                        bankTypeBloc.add(
-                          BankTypeEventSearch(
-                            textSearch: searchController.text,
-                            list: bankTypes,
-                          ),
-                        );
-                      } else {
-                        _searchClearProvider.updateClearSearch(false);
-                      }
-                    },
-                    inputType: TextInputType.text,
-                    isObscureText: false,
-                  ),
-                ),
-              ),
-              ValueListenableBuilder(
-                valueListenable: _searchClearProvider,
-                builder: (_, provider, child) {
-                  return Visibility(
-                    visible: provider == true,
-                    child: InkWell(
-                      onTap: () {
-                        searchController.clear();
-                        _searchClearProvider.updateClearSearch(false);
-                        bankTypeBloc.add(
-                          BankTypeEventSearch(
-                            textSearch: searchController.text,
-                            list: bankTypes,
-                          ),
-                        );
-                      },
-                      child: Icon(
-                        Icons.close_rounded,
-                        size: 15,
-                        color: Theme.of(context).hintColor,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
-        ),
+
+        // BoxLayout(
+        //   width: width,
+        //   borderRadius: 50,
+        //   alignment: Alignment.center,
+        //   margin: const EdgeInsets.symmetric(horizontal: 20),
+        //   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+        //   child: Row(
+        //     children: [
+        //       Icon(
+        //         Icons.search_rounded,
+        //         size: 15,
+        //         color: Theme.of(context).hintColor,
+        //       ),
+        //       Expanded(
+        //         child: Form(
+        //           key: _formKey,
+        //           child: TextFieldWidget(
+        //             width: width,
+        //             hintText: 'Tìm theo tên',
+        //             controller: searchController,
+        //             keyboardAction: TextInputAction.done,
+        //             autoFocus: false,
+        //             onChange: (value) {
+        //               if (searchController.text.isNotEmpty) {
+        //                 _searchClearProvider.updateClearSearch(true);
+        //                 bankTypeBloc.add(
+        //                   BankTypeEventSearch(
+        //                     textSearch: searchController.text,
+        //                     list: bankTypes,
+        //                   ),
+        //                 );
+        //               } else {
+        //                 _searchClearProvider.updateClearSearch(false);
+        //               }
+        //             },
+        //             inputType: TextInputType.text,
+        //             isObscureText: false,
+        //           ),
+        //         ),
+        //       ),
+        //       ValueListenableBuilder(
+        //         valueListenable: _searchClearProvider,
+        //         builder: (_, provider, child) {
+        //           return Visibility(
+        //             visible: provider == true,
+        //             child: InkWell(
+        //               onTap: () {
+        //                 searchController.clear();
+        //                 _searchClearProvider.updateClearSearch(false);
+        //                 bankTypeBloc.add(
+        //                   BankTypeEventSearch(
+        //                     textSearch: searchController.text,
+        //                     list: bankTypes,
+        //                   ),
+        //                 );
+        //               },
+        //               child: Icon(
+        //                 Icons.close_rounded,
+        //                 size: 15,
+        //                 color: Theme.of(context).hintColor,
+        //               ),
+        //             ),
+        //           );
+        //         },
+        //       ),
+        //     ],
+        //   ),
+        // ),
       ],
     );
   }

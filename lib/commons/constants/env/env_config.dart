@@ -15,11 +15,16 @@ class EnvConfig {
     return _env.getBaseUrl();
   }
 
+  static String getUrl() {
+    return _env.getUrl();
+  }
+
   static FirebaseOptions getFirebaseConfig() {
     return _env.getFirebaseCongig();
   }
 
   static EnvType getEnv() {
+    // const EnvType env = EnvType.STG;
     const EnvType env = EnvType.PROD;
     return env;
   }

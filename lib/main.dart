@@ -124,14 +124,13 @@ class _VietQRApp extends State<VietQRApp> {
   @override
   void initState() {
     super.initState();
-    if (PlatformUtils.instance.isAndroidApp(context)) {
-      // Đăng ký callback onMessage
-      onFcmMessage();
-      // Đăng ký callback onMessageOpenedApp
-      onFcmMessageOpenedApp();
-      //
-      requestNotificationPermission();
-    }
+
+    // Đăng ký callback onMessage
+    onFcmMessage();
+    // Đăng ký callback onMessageOpenedApp
+    onFcmMessageOpenedApp();
+    //
+    requestNotificationPermission();
   }
 
   void requestNotificationPermission() async {

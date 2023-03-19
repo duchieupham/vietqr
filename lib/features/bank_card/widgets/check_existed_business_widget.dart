@@ -51,7 +51,7 @@ class CheckExistedBusinessWidget extends StatelessWidget {
                   child: Container(
                     alignment: Alignment.center,
                     child: const Text(
-                      'Chọn doanh nghiệp',
+                      'Chọn chi nhánh liên kết',
                       style: TextStyle(
                         fontWeight: FontWeight.w500,
                         fontSize: 15,

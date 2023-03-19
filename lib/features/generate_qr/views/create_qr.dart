@@ -1,3 +1,4 @@
+import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/sub_header_widget.dart';
 import 'package:vierqr/features/generate_qr/widgets/input_content_widget.dart';
 import 'package:vierqr/features/generate_qr/widgets/input_ta_widget.dart';
@@ -108,6 +109,18 @@ class _CreateQR extends State<CreateQR> {
       Provider.of<CreateQRProvider>(context, listen: false)
           .updateTransactionAmount('0');
     }
-    _animatedToPage(1);
+    if (Provider.of<CreateQRProvider>(context, listen: false)
+            .transactionAmount
+            .isEmpty ||
+        Provider.of<CreateQRProvider>(context, listen: false)
+                .transactionAmount ==
+            '0') {
+      DialogWidget.instance.openMsgDialog(
+        title: 'Số tiền không hợp lệ',
+        msg: 'Số tiền phải lớn hơn 0 VND.',
+      );
+    } else {
+      _animatedToPage(1);
+    }
   }
 }
