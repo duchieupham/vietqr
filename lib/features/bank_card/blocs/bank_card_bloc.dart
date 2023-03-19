@@ -13,6 +13,7 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
     on<BankCardEventInsert>(_insertBankCard);
     on<BankCardEventGetList>(_getBankAccounts);
     on<BankCardEventRemove>(_removeBankAccount);
+    on<BankCardEventRequestOTP>(_requestOTP);
   }
 }
 
@@ -70,5 +71,23 @@ void _removeBankAccount(BankCardEvent event, Emitter emit) async {
     LOG.error(e.toString());
     emit(const BankCardRemoveFailedState(
         message: 'Không thể huỷ liên kết. Vui lòng kiểm tra lại kết nối'));
+  }
+}
+
+void _requestOTP(BankCardEvent event, Emitter emit) async {
+  try {
+    if (event is BankCardEventRequestOTP) {
+      final ResponseMessageDTO responseMessageDTO =
+          await bankCardRepository.requestOTP(event.dto);
+      if (responseMessageDTO.status == Stringify.RESPONSE_STATUS_SUCCESS) {
+        emit(BankCardRequestOTPSuccessState(
+            requestId: responseMessageDTO.message));
+      } else {
+        emit(
+            BankCardRequestOTPFailedState(message: responseMessageDTO.message));
+      }
+    }
+  } catch (e) {
+    LOG.error(e.toString());
   }
 }

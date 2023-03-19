@@ -3,8 +3,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
+import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
 import 'package:vierqr/commons/widgets/viet_qr_widget.dart';
+import 'package:vierqr/features/generate_qr/widgets/popup_transaction_content.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/services/providers/create_qr_page_select_provider.dart';
@@ -12,20 +14,45 @@ import 'package:vierqr/services/providers/create_qr_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class QRGenerated extends StatelessWidget {
-  static final GlobalKey globalKey = GlobalKey();
+class QRGenerated extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _QRGenerated();
+
   const QRGenerated({
     Key? key,
   }) : super(key: key);
+}
+
+class _QRGenerated extends State<QRGenerated> {
+  static final GlobalKey globalKey = GlobalKey();
+  static late QRGeneratedDTO qrGeneratedDTO;
+  static late BankAccountDTO bankAccountDTO;
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(
+      const Duration(milliseconds: 1000),
+      () {
+        DialogWidget.instance.openContentDialog(
+          () {
+            Navigator.pop(context);
+          },
+          PopupTransactionContent(
+              qrGeneratedDTO: qrGeneratedDTO,
+              bankAccountDTO: bankAccountDTO,
+              status: 0),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
     final double height = MediaQuery.of(context).size.height;
-
     final args = ModalRoute.of(context)!.settings.arguments as Map;
-    QRGeneratedDTO qrGeneratedDTO = args['qrGeneratedDTO'];
-    BankAccountDTO bankAccountDTO = args['bankAccountDTO'];
+    qrGeneratedDTO = args['qrGeneratedDTO'];
+    bankAccountDTO = args['bankAccountDTO'];
     return Scaffold(
       body: Stack(
         children: [
@@ -36,45 +63,6 @@ class QRGenerated extends StatelessWidget {
             width: width,
             height: height,
           ),
-          // Positioned(
-          //   top: 0,
-          //   child: Container(
-          //     width: width,
-          //     padding: const EdgeInsets.symmetric(horizontal: 10),
-          //     height: 65,
-          //     alignment: Alignment.bottomLeft,
-          //     child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-          //       InkWell(
-          //         onTap: () {
-          //           Navigator.pop(context);
-          //         },
-          //         child: const SizedBox(
-          //           width: 40,
-          //           height: 20,
-          //           child: Icon(
-          //             Icons.arrow_back_ios_rounded,
-          //             size: 20,
-          //             color: DefaultTheme.WHITE,
-          //           ),
-          //         ),
-          //       ),
-          //       const Spacer(),
-          //       const Text(
-          //         'Chia sẻ mã QR',
-          //         style: TextStyle(
-          //           fontSize: 20,
-          //           color: DefaultTheme.WHITE,
-          //           fontWeight: FontWeight.w500,
-          //         ),
-          //       ),
-          //       const Spacer(),
-          //       const SizedBox(
-          //         width: 40,
-          //         height: 20,
-          //       ),
-          //     ]),
-          //   ),
-          // ),
           Positioned(
             bottom: 70,
             child: SizedBox(

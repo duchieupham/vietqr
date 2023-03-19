@@ -9,7 +9,12 @@ class ProdEnv implements Env {
 
   @override
   String getBaseUrl() {
-    return '';
+    return 'http://112.78.1.209:8084/vqr/api/';
+  }
+
+  @override
+  String getUrl() {
+    return 'http://112.78.1.209:8084/vqr/';
   }
 
   @override

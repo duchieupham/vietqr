@@ -51,3 +51,22 @@ class BankCardRemoveFailedState extends BankCardState {
   @override
   List<Object?> get props => [message];
 }
+
+//for request OTP
+class BankCardRequestOTPSuccessState extends BankCardState {
+  final String requestId;
+
+  const BankCardRequestOTPSuccessState({required this.requestId});
+
+  @override
+  List<Object?> get props => [requestId];
+}
+
+class BankCardRequestOTPFailedState extends BankCardState {
+  final String message;
+
+  const BankCardRequestOTPFailedState({required this.message});
+
+  @override
+  List<Object?> get props => [message];
+}

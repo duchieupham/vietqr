@@ -5,6 +5,7 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
+import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_widget.dart';
@@ -159,7 +160,6 @@ class InputContentWidget extends StatelessWidget {
             ),
             child: Column(
               children: [
-                const Padding(padding: EdgeInsets.only(bottom: 10)),
                 SizedBox(
                   width: width - 30,
                   child: Row(
@@ -192,7 +192,7 @@ class InputContentWidget extends StatelessWidget {
                     ],
                   ),
                 ),
-                const Padding(padding: EdgeInsets.only(bottom: 10)),
+                const Padding(padding: EdgeInsets.only(bottom: 15)),
                 SizedBox(
                   width: width - 30,
                   child: Wrap(
@@ -237,7 +237,7 @@ class InputContentWidget extends StatelessWidget {
                   children: [
                     const Padding(padding: EdgeInsets.only(left: 10)),
                     Container(
-                      width: width - 80,
+                      width: width - 20,
                       height: 50,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
@@ -280,7 +280,12 @@ class InputContentWidget extends StatelessWidget {
                             ),
                           ),
                           InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              DialogWidget.instance.openMsgDialog(
+                                title: 'Đang phát triển',
+                                msg: 'Tính năng đang được phát triển',
+                              );
+                            },
                             child: const Icon(
                               Icons.document_scanner_outlined,
                               color: DefaultTheme.GREEN,
@@ -318,46 +323,40 @@ class InputContentWidget extends StatelessWidget {
                       ),
                     ),
                     const Padding(padding: EdgeInsets.only(left: 10)),
-                    InkWell(
-                      onTap: () {
-                        if (StringUtils.instance
-                            .isValidTransactionContent(msgController.text)) {
-                          QRCreateDTO dto = QRCreateDTO(
-                            bankId: bankAccountDTO.id,
-                            amount: Provider.of<CreateQRProvider>(context,
-                                    listen: false)
-                                .transactionAmount,
-                            content:
-                                '${bankAccountDTO.businessCode}${bankAccountDTO.branchCode} ${StringUtils.instance.removeDiacritic(msgController.text)}'
-                                    .trim(),
-                            branchId: bankAccountDTO.branchId,
-                            businessId: bankAccountDTO.businessId,
-                          );
-                          qrBloc.add(QREventGenerate(dto: dto));
-                        } else {
-                          DialogWidget.instance.openMsgDialog(
-                            title: 'Nội dung không hợp lệ',
-                            msg:
-                                'Nội dung thanh toán chứa ký tự không hợp lệ. Vui lòng không nhập các ký tự đặc biệt',
-                          );
-                        }
-                      },
-                      child: Container(
-                        width: 50,
-                        height: 50,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: DefaultTheme.GREEN,
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                        child: const Icon(
-                          Icons.navigate_next_rounded,
-                          color: DefaultTheme.WHITE,
-                        ),
-                      ),
-                    ),
-                    const Padding(padding: EdgeInsets.only(left: 10)),
                   ],
+                ),
+                const Padding(padding: EdgeInsets.only(top: 10)),
+                ButtonIconWidget(
+                  width: width - 20,
+                  height: 40,
+                  icon: Icons.add_rounded,
+                  borderRadius: 10,
+                  title: 'Tạo QR giao dịch',
+                  function: () {
+                    if (StringUtils.instance
+                        .isValidTransactionContent(msgController.text)) {
+                      QRCreateDTO dto = QRCreateDTO(
+                        bankId: bankAccountDTO.id,
+                        amount: Provider.of<CreateQRProvider>(context,
+                                listen: false)
+                            .transactionAmount,
+                        content: StringUtils.instance
+                            .removeDiacritic(msgController.text)
+                            .trim(),
+                        branchId: bankAccountDTO.branchId,
+                        businessId: bankAccountDTO.businessId,
+                      );
+                      qrBloc.add(QREventGenerate(dto: dto));
+                    } else {
+                      DialogWidget.instance.openMsgDialog(
+                        title: 'Nội dung không hợp lệ',
+                        msg:
+                            'Nội dung thanh toán chứa ký tự không hợp lệ. Vui lòng không nhập các ký tự đặc biệt',
+                      );
+                    }
+                  },
+                  bgColor: DefaultTheme.GREEN,
+                  textColor: DefaultTheme.WHITE,
                 ),
               ],
             ),
