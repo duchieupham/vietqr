@@ -13,6 +13,11 @@ class ProdEnv implements Env {
   }
 
   @override
+  String getUrl() {
+    return 'http://112.78.1.209:8084/vqr/';
+  }
+
+  @override
   FirebaseOptions getFirebaseCongig() {
     return const FirebaseOptions(
       apiKey: 'AIzaSyAjPP6Mc3baFUgEsO8o0-J-qmSVegmw2TQ',

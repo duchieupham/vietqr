@@ -74,10 +74,7 @@ class TextFieldWidget extends StatelessWidget {
                     onSubmitted: onSubmitted,
                     maxLength: maxLength,
                     autofocus: (autoFocus != null) ? autoFocus! : false,
-                    focusNode:
-                        (PlatformUtils.instance.isMobileFlatform(context))
-                            ? null
-                            : focusNode,
+                    focusNode: null,
                     keyboardType: inputType,
                     maxLines: (maxLines == null) ? 1 : maxLines,
                     textInputAction: keyboardAction,
@@ -116,10 +113,8 @@ class TextFieldWidget extends StatelessWidget {
               maxLines: 1,
               maxLength: maxLength,
               textInputAction: keyboardAction,
-              autofocus: (autoFocus != null) ? autoFocus! : false,
-              focusNode: (PlatformUtils.instance.isMobileFlatform(context))
-                  ? null
-                  : focusNode,
+              autofocus: false,
+              focusNode: null,
               decoration: InputDecoration(
                 hintText: hintText,
                 counterText: '',

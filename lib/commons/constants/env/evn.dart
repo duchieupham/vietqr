@@ -6,5 +6,6 @@ import 'package:firebase_core/firebase_core.dart';
 abstract class Env {
   String getBaseUrl();
   String getBankUrl();
+  String getUrl();
   FirebaseOptions getFirebaseCongig();
 }

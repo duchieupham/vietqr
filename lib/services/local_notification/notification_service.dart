@@ -1,23 +1,30 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:vierqr/commons/utils/log.dart';
+import 'package:vierqr/commons/utils/platform_utils.dart';
 
 class NotificationService {
   final FlutterLocalNotificationsPlugin notificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
   Future<void> initialNotification() async {
-    notificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()!
-        .requestPermission();
+    if (notificationsPlugin.resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>() !=
+        null) {
+      notificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()!
+          .requestPermission();
+    }
 
     AndroidInitializationSettings androidInitializationSettingsAndroid =
         const AndroidInitializationSettings('icon');
-
     var initializationSettingIOS = DarwinInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
       requestSoundPermission: true,
-      onDidReceiveLocalNotification: (id, title, body, payload) async {},
+      onDidReceiveLocalNotification: (id, title, body, payload) async {
+        LOG.info('onDidReceiveLocalNotification iOS: $title - $body');
+      },
     );
 
     var initializationSetting = InitializationSettings(
@@ -27,7 +34,13 @@ class NotificationService {
 
     await notificationsPlugin.initialize(
       initializationSetting,
-      onDidReceiveNotificationResponse: (details) async {},
+      onDidReceiveNotificationResponse: (details) async {
+        LOG.info('onDidReceiveNotificationResponse: ${details.payload}');
+      },
+      // onDidReceiveBackgroundNotificationResponse: (details) {
+      //   LOG.info(
+      //       'onDidReceiveBackgroundNotificationResponse: ${details.payload}');
+      // },
     );
   }
 

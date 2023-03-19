@@ -48,7 +48,7 @@ class ShareUtils {
   String getTextSharing(QRGeneratedDTO dto) {
     String result = '';
     String prefix =
-        '${dto.bankCode} - ${dto.bankName}\n${dto.bankAccount}\n${dto.userBankName}';
+        '${dto.bankAccount}\n${dto.userBankName}\n${dto.bankCode} - ${dto.bankName}';
     String suffix = '';
     if (dto.amount.isNotEmpty && dto.amount != '0') {
       suffix =

@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:vierqr/models/bank_account_remove_dto.dart';
 import 'package:vierqr/models/bank_card_insert_dto.dart';
+import 'package:vierqr/models/bank_card_request_otp.dart';
 
 class BankCardEvent extends Equatable {
   const BankCardEvent();
@@ -31,6 +32,15 @@ class BankCardEventRemove extends BankCardEvent {
   final BankAccountRemoveDTO dto;
 
   const BankCardEventRemove({required this.dto});
+
+  @override
+  List<Object?> get props => [dto];
+}
+
+class BankCardEventRequestOTP extends BankCardEvent {
+  final BankCardRequestOTP dto;
+
+  const BankCardEventRequestOTP({required this.dto});
 
   @override
   List<Object?> get props => [dto];
