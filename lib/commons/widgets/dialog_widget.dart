@@ -336,6 +336,31 @@ class DialogWidget {
         });
   }
 
+  Future showFullModalBottomContent({
+    BuildContext? context,
+    required Widget widget,
+  }) async {
+    context ??= NavigationService.navigatorKey.currentContext!;
+    final double width = MediaQuery.of(context).size.width;
+    final double height = MediaQuery.of(context).size.height;
+    return await showModalBottomSheet(
+        isScrollControlled: true,
+        enableDrag: false, // Ngăn người dùng kéo ModalBottomSheet
+        context: context,
+        backgroundColor: DefaultTheme.TRANSPARENT,
+        builder: (context) {
+          return Container(
+            width: width,
+            height: height,
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
+            ),
+            child: widget,
+          );
+        });
+  }
+
   Future showModalBottomContent(
       {BuildContext? context,
       required Widget widget,
@@ -605,6 +630,32 @@ class DialogWidget {
                 //     ),
                 //   ),
                 ),
+          );
+        });
+  }
+
+  openWidgetDialog({required Widget child}) {
+    final BuildContext context = NavigationService.navigatorKey.currentContext!;
+    final double width = MediaQuery.of(context).size.width;
+    final double height = MediaQuery.of(context).size.height;
+    return showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return Material(
+            color: DefaultTheme.TRANSPARENT,
+            child: Center(
+                child: Container(
+              width: width - 20,
+              height: height * 0.8,
+              alignment: Alignment.center,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: child,
+            )),
           );
         });
   }

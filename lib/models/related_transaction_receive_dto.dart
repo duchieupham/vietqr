@@ -5,6 +5,8 @@ class RelatedTransactionReceiveDTO {
   final int time;
   final String content;
   final String transactionId;
+  final int type;
+  final String transType;
 
   const RelatedTransactionReceiveDTO({
     required this.bankAccount,
@@ -13,16 +15,20 @@ class RelatedTransactionReceiveDTO {
     required this.time,
     required this.content,
     required this.transactionId,
+    required this.type,
+    required this.transType,
   });
 
   factory RelatedTransactionReceiveDTO.fromJson(Map<String, dynamic> json) {
     return RelatedTransactionReceiveDTO(
-      bankAccount: json['bankAccount'],
-      amount: json['amount'],
-      status: json['status'],
-      time: json['time'],
-      content: json['content'],
-      transactionId: json['transactionId'],
+      bankAccount: json['bankAccount'] ?? '',
+      amount: json['amount'] ?? '',
+      status: json['status'] ?? 0,
+      time: json['time'] ?? 0,
+      content: json['content'] ?? '',
+      transactionId: json['transactionId'] ?? '',
+      type: json['type'] ?? 0,
+      transType: json['tranStype'] ?? '',
     );
   }
 
@@ -34,6 +40,7 @@ class RelatedTransactionReceiveDTO {
     data['time'] = time;
     data['content'] = content;
     data['transactionId'] = transactionId;
+    data['transType'] = transType;
     return data;
   }
 }

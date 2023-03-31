@@ -7,6 +7,7 @@ import 'package:vierqr/features/token/states/token_state.dart';
 class TokenBloc extends Bloc<TokenEvent, TokenState> {
   TokenBloc() : super(TokenInitialState()) {
     on<TokenEventCheckValid>(_checkValidToken);
+    on<TokenFcmUpdateEvent>(_updateFcmToken);
   }
 }
 
@@ -25,5 +26,21 @@ void _checkValidToken(TokenEvent event, Emitter emit) async {
   } catch (e) {
     LOG.error(e.toString());
     emit(TokenInvalidState());
+  }
+}
+
+void _updateFcmToken(TokenEvent event, Emitter emit) async {
+  try {
+    if (event is TokenFcmUpdateEvent) {
+      bool check = await tokenRepository.updateFcmToken();
+      if (check) {
+        emit(TokenFcmUpdateSuccessState());
+      } else {
+        emit(TokenFcmUpdateFailedState());
+      }
+    }
+  } catch (e) {
+    LOG.error(e.toString());
+    emit(TokenFcmUpdateFailedState());
   }
 }

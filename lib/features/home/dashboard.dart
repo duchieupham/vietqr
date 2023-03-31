@@ -13,8 +13,10 @@ import 'package:flutter/material.dart';
 import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
 import 'package:vierqr/features/business/events/business_information_event.dart';
 import 'package:vierqr/features/business/states/business_information_state.dart';
+import 'package:vierqr/features/transaction/widgets/transaction_sucess_widget.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/models/business_item_dto.dart';
+import 'package:vierqr/models/notification_transaction_success_dto.dart';
 import 'package:vierqr/models/related_transaction_receive_dto.dart';
 import 'package:vierqr/services/providers/shortcut_provider.dart';
 import 'package:vierqr/services/providers/suggestion_widget_provider.dart';
@@ -22,38 +24,7 @@ import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class DashboardView extends StatelessWidget {
   final BusinessInformationBloc businessInformationBloc;
-  // static final List<TransactionReceiveDashBoardDTO> listSample = [
-  //   const TransactionReceiveDashBoardDTO(
-  //     amount: '100000',
-  //     bankAccount: '1000006789',
-  //     time: 1678356976051,
-  //     status: 0,
-  //   ),
-  //   const TransactionReceiveDashBoardDTO(
-  //     amount: '30000',
-  //     bankAccount: '1000006789',
-  //     time: 1678356976051,
-  //     status: 1,
-  //   ),
-  //   const TransactionReceiveDashBoardDTO(
-  //     amount: '5000000',
-  //     bankAccount: '1000006789',
-  //     time: 1678356976051,
-  //     status: 1,
-  //   ),
-  //   const TransactionReceiveDashBoardDTO(
-  //     amount: '2500000',
-  //     bankAccount: '1000006789',
-  //     time: 1678356976051,
-  //     status: 0,
-  //   ),
-  //   const TransactionReceiveDashBoardDTO(
-  //     amount: '999000',
-  //     bankAccount: '1000006789',
-  //     time: 1678356976051,
-  //     status: 1,
-  //   ),
-  // ];
+
   const DashboardView({
     Key? key,
     required this.businessInformationBloc,
@@ -65,25 +36,35 @@ class DashboardView extends StatelessWidget {
         .add(BusinessInformationEventGetList(userId: userId));
   }
 
+  Future<void> _refresh() async {
+    String userId = UserInformationHelper.instance.getUserId();
+
+    businessInformationBloc
+        .add(BusinessInformationEventGetList(userId: userId));
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     initialServices(context);
-    return SizedBox(
-      width: width,
-      height: height,
-      child: Padding(
-        padding: const EdgeInsets.only(top: 70),
-        child: ListView(
-          shrinkWrap: true,
-          physics: const AlwaysScrollableScrollPhysics(),
-          children: [
-            _buildSuggestion(context),
-            _buildShortcut(context),
-            _buildBusinessWidget(context),
-            const Padding(padding: EdgeInsets.only(bottom: 100)),
-          ],
+    return RefreshIndicator(
+      onRefresh: _refresh,
+      child: SizedBox(
+        width: width,
+        height: height,
+        child: Padding(
+          padding: const EdgeInsets.only(top: 70),
+          child: ListView(
+            shrinkWrap: true,
+            physics: const AlwaysScrollableScrollPhysics(),
+            children: [
+              _buildSuggestion(context),
+              _buildShortcut(context),
+              _buildBusinessWidget(context),
+              const Padding(padding: EdgeInsets.only(bottom: 100)),
+            ],
+          ),
         ),
       ),
     );
@@ -160,7 +141,8 @@ class DashboardView extends StatelessWidget {
                   tag: heroId,
                   child: Container(
                     width: width,
-                    height: width * 9 / 16,
+                    // height: width * 9 / 16,
+                    height: 150,
                     decoration: BoxDecoration(
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(15),
@@ -179,7 +161,8 @@ class DashboardView extends StatelessWidget {
                 ),
                 Container(
                   width: width,
-                  height: width * 9 / 16,
+                  // height: width * 9 / 16,
+                  height: 150,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
@@ -210,6 +193,10 @@ class DashboardView extends StatelessWidget {
                         },
                       ).then((value) {
                         heroId = value.toString();
+                        String userId =
+                            UserInformationHelper.instance.getUserId();
+                        businessInformationBloc.add(
+                            BusinessInformationEventGetList(userId: userId));
                       });
                     },
                     child: const BoxLayout(
@@ -326,7 +313,7 @@ class DashboardView extends StatelessWidget {
                 color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(15),
               ),
-              child: ListView.builder(
+              child: ListView.separated(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: dto.transactions.length,
@@ -335,6 +322,9 @@ class DashboardView extends StatelessWidget {
                     context: context,
                     dto: dto.transactions[index],
                   );
+                },
+                separatorBuilder: (context, index) {
+                  return DividerWidget(width: width);
                 },
               ),
             ),
@@ -369,25 +359,44 @@ class DashboardView extends StatelessWidget {
     final double width = MediaQuery.of(context).size.width;
     return Container(
       width: width,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          SizedBox(
+            width: 25,
+            height: 25,
+            child: Icon(
+              TransactionUtils.instance
+                  .getIconStatus(dto.status, dto.transType),
+              color: TransactionUtils.instance
+                  .getColorStatus(dto.status, dto.type, dto.transType),
+            ),
+          ),
+          const Padding(padding: EdgeInsets.only(left: 5)),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '+ ${CurrencyUtils.instance.getCurrencyFormatted(dto.amount)}',
+                  '${TransactionUtils.instance.getTransType(dto.transType)} ${CurrencyUtils.instance.getCurrencyFormatted(dto.amount)}',
                   style: TextStyle(
                     fontSize: 18,
-                    color: TransactionUtils.instance.getColorStatus(dto.status),
+                    color: TransactionUtils.instance
+                        .getColorStatus(dto.status, dto.type, dto.transType),
                   ),
                 ),
                 const Padding(padding: EdgeInsets.only(top: 3)),
                 Text(
-                  'Đến: ${dto.bankAccount}',
+                  'Đến TK: ${dto.bankAccount}',
+                  style: const TextStyle(),
+                ),
+                const Padding(padding: EdgeInsets.only(top: 3)),
+                Text(
+                  dto.content.trim(),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     color: DefaultTheme.GREY_TEXT,
                   ),
@@ -395,19 +404,23 @@ class DashboardView extends StatelessWidget {
               ],
             ),
           ),
-          Text(
-            TimeUtils.instance.formatDateFromInt(dto.time, true),
-            textAlign: TextAlign.right,
-            style: const TextStyle(
-              fontSize: 13,
+          Align(
+            alignment: Alignment.topRight,
+            child: Text(
+              TimeUtils.instance.formatDateFromInt(dto.time, true),
+              textAlign: TextAlign.right,
+              style: const TextStyle(
+                fontSize: 13,
+              ),
             ),
           ),
-          const Padding(padding: EdgeInsets.only(left: 5)),
-          Icon(
-            TransactionUtils.instance.getIconStatus(dto.status),
-            size: 15,
-            color: TransactionUtils.instance.getColorStatus(dto.status),
-          ),
+
+          // const Padding(padding: EdgeInsets.only(left: 5)),
+          // Icon(
+          //   TransactionUtils.instance.getIconStatus(dto.status),
+          //   size: 15,
+          //   color: TransactionUtils.instance.getColorStatus(dto.status),
+          // ),
         ],
       ),
     );
@@ -551,7 +564,7 @@ class DashboardView extends StatelessWidget {
                         ),
                         _buildShorcutIcon(
                           widgetWidth: width,
-                          title: 'Thêm TK\nngân hàng',
+                          title: 'Liên kết\nTK ngân hàng',
                           icon: Icons.credit_card_rounded,
                           color: DefaultTheme.PURPLE_NEON,
                           function: () {
@@ -586,14 +599,6 @@ class DashboardView extends StatelessWidget {
                     ),
                     const Padding(padding: EdgeInsets.only(top: 10)),
                   ],
-                  // Padding(
-                  //   padding: EdgeInsets.only(
-                  //     left: 20,
-                  //     right: 20,
-                  //     top: (provider.expanded) ? 20 : 0,
-                  //   ),
-                  //   child: DividerWidget(width: width),
-                  // ),
                 ],
               )
             : const SizedBox();
@@ -742,7 +747,7 @@ class DashboardView extends StatelessWidget {
       result = 'Admin';
     } else if (role == 1) {
       result = 'Quản lý';
-    } else if (role == 2) {
+    } else if (role == 3) {
       result = 'Quản lý chi nhánh';
     } else {
       result = 'Thành viên';

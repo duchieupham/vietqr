@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/commons/widgets/button_widget.dart';
+import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/bank_card/widgets/check_existed_business_widget.dart';
 import 'package:vierqr/features/bank_card/widgets/choose_bank_type_widget.dart';
@@ -35,7 +35,7 @@ class ChooseBankPlanView extends StatelessWidget {
           padding: EdgeInsets.only(top: 10),
         ),
         const Text(
-          '-   Nội dung miêu tả ',
+          '-   Tạo mã VietQR',
           style: TextStyle(
             fontSize: 15,
           ),
@@ -43,14 +43,46 @@ class ChooseBankPlanView extends StatelessWidget {
         const Padding(
           padding: EdgeInsets.only(top: 10),
         ),
-        ButtonWidget(
+        ButtonIconWidget(
           width: width,
           height: 40,
           borderRadius: 5,
-          // text: 'Liên kết TK ngân hàng doanh nghiệp',
-          text: 'Thêm TK ngân hàng',
+          icon: Icons.credit_card_rounded,
+          title: 'Thêm TK ngân hàng',
           textColor: DefaultTheme.WHITE,
           bgColor: DefaultTheme.GREEN,
+          function: () {
+            Provider.of<AddBankProvider>(context, listen: false)
+                .updateSelect(1);
+            Provider.of<AddBankProvider>(context, listen: false)
+                .updateRegisterAuthentication(false);
+            _animatedToPage(1);
+          },
+        ),
+        const Padding(
+          padding: EdgeInsets.only(top: 30),
+        ),
+        _buildTitle('Liên kết tài khoản ngân hàng'),
+        const Padding(
+          padding: EdgeInsets.only(top: 10),
+        ),
+        const Text(
+          '-   Quản lý đối soát thanh toán\n(Hiện tại hệ thống chỉ hỗ trợ ngân hàng MB Bank).',
+          style: TextStyle(
+            fontSize: 15,
+          ),
+        ),
+        const Padding(
+          padding: EdgeInsets.only(top: 10),
+        ),
+        ButtonIconWidget(
+          width: width,
+          height: 40,
+          borderRadius: 5,
+          icon: Icons.link_rounded,
+          bgColor: DefaultTheme.PURPLE_NEON,
+          title: 'Liên kết TK ngân hàng',
+          textColor: DefaultTheme.WHITE,
           function: () async {
             await DialogWidget.instance
                 .showModalBottomContent(
@@ -74,7 +106,7 @@ class ChooseBankPlanView extends StatelessWidget {
                       (value) {
                         if (value != null) {
                           if (value == true) {
-                            _animatedToPage(1);
+                            _animatedToPage(2);
                           }
                         }
                       },
@@ -85,47 +117,15 @@ class ChooseBankPlanView extends StatelessWidget {
             );
           },
         ),
-        // const Padding(
-        //   padding: EdgeInsets.only(top: 30),
-        // ),
-        // _buildTitle('Liên kết tài khoản ngân hàng'),
-        // const Padding(
-        //   padding: EdgeInsets.only(top: 10),
-        // ),
-        // const Text(
-        //   '-   Nội dung miêu tả ',
-        //   style: TextStyle(
-        //     fontSize: 15,
-        //   ),
-        // ),
-        // const Padding(
-        //   padding: EdgeInsets.only(top: 10),
-        // ),
-        // ButtonWidget(
-        //   width: width,
-        //   height: 40,
-        //   borderRadius: 5,
-        //   text: 'Liên kết TK ngân hàng',
-        //   textColor: DefaultTheme.WHITE,
-        //   bgColor: DefaultTheme.GREEN,
-        //   function: () {
-        //     // Provider.of<AddBankProvider>(context, listen: false).updateType(0);
-        //     // _animatedToPage(1);
-        //     DialogWidget.instance.openMsgDialog(
-        //       title: 'Đang phát triển',
-        //       msg: 'Tính năng đang được phát triển',
-        //     );
-        //   },
-        // ),
         const Padding(
           padding: EdgeInsets.only(top: 30),
         ),
-        _buildTitle('Mở TK ngân hàng MBBank'),
+        _buildTitle('Mở tài khoản ngân hàng MB Bank'),
         const Padding(
           padding: EdgeInsets.only(top: 10),
         ),
         const Text(
-          '-   Nội dung miêu tả ',
+          '-   Hệ thống hỗ trợ mở tài khoản MB Bank trực tiếp.',
           style: TextStyle(
             fontSize: 15,
           ),
@@ -133,13 +133,14 @@ class ChooseBankPlanView extends StatelessWidget {
         const Padding(
           padding: EdgeInsets.only(top: 10),
         ),
-        ButtonWidget(
+        ButtonIconWidget(
           width: width,
           height: 40,
           borderRadius: 5,
-          text: 'Mở TK MBBank',
+          icon: Icons.account_balance_rounded,
+          title: 'Mở TK MB Bank',
           textColor: DefaultTheme.WHITE,
-          bgColor: DefaultTheme.GREEN,
+          bgColor: DefaultTheme.BLUE_DARK,
           function: () {
             // Provider.of<AddBankProvider>(context, listen: false).updateType(0);
             // _animatedToPage(1);

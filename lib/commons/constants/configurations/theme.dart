@@ -47,7 +47,7 @@ class DefaultTheme {
   static const Color GREEN_NOTI = Color(0xFF91F2D9);
   static const Color BANNER_DAY1 = Color(0xFF26B0FD);
   static const Color BLUE_DARK = Color(0xFF014C8B);
-  static const Color BANNER_NIGHT1 = Color(0xFF3D2BFF);
+  static const Color PURPLE_MIDNIGHT = Color(0xFF3D2BFF);
   static const Color BANNER_NIGHT2 = Color(0xFF0D0132);
   static const Color DARK_NIGHT = Color(0xFF6361C5);
   static const Color LIGHT_DAY = Color(0xFF42D8F2);

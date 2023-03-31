@@ -36,7 +36,8 @@ class QRScanner extends StatelessWidget {
                           if (code != '') {
                             Navigator.of(context).pop(code);
                           }
-                        });
+                        },
+                      );
               },
             ),
           ),

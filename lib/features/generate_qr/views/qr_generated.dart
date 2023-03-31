@@ -26,24 +26,10 @@ class QRGenerated extends StatefulWidget {
 class _QRGenerated extends State<QRGenerated> {
   static final GlobalKey globalKey = GlobalKey();
   static late QRGeneratedDTO qrGeneratedDTO;
-  static late BankAccountDTO bankAccountDTO;
+
   @override
   void initState() {
     super.initState();
-    Future.delayed(
-      const Duration(milliseconds: 1000),
-      () {
-        DialogWidget.instance.openContentDialog(
-          () {
-            Navigator.pop(context);
-          },
-          PopupTransactionContent(
-              qrGeneratedDTO: qrGeneratedDTO,
-              bankAccountDTO: bankAccountDTO,
-              status: 0),
-        );
-      },
-    );
   }
 
   @override
@@ -52,7 +38,6 @@ class _QRGenerated extends State<QRGenerated> {
     final double height = MediaQuery.of(context).size.height;
     final args = ModalRoute.of(context)!.settings.arguments as Map;
     qrGeneratedDTO = args['qrGeneratedDTO'];
-    bankAccountDTO = args['bankAccountDTO'];
     return Scaffold(
       body: Stack(
         children: [

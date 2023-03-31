@@ -48,9 +48,9 @@ class AddBusinessView extends StatelessWidget {
       String phoneNo = UserInformationHelper.instance.getPhoneNo();
       String imgId =
           UserInformationHelper.instance.getAccountInformation().imgId;
-      //role = 0: admin
+      //role = 5: admin
       //role = 1: manager
-      int role = 0;
+      int role = 5;
       BusinessMemberDTO memberDTO = BusinessMemberDTO(
         userId: userId,
         name: name,

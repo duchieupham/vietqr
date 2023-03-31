@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:vierqr/models/business_detail_dto.dart';
 import 'package:vierqr/models/business_item_dto.dart';
 
 class BusinessInformationState extends Equatable {
@@ -36,3 +37,16 @@ class BusinessGetListSuccessfulState extends BusinessInformationState {
 }
 
 class BusinessGetListFailedState extends BusinessInformationState {}
+
+class BusinessGetDetailLoadingState extends BusinessInformationState {}
+
+class BusinessGetDetailSuccessState extends BusinessInformationState {
+  final BusinessDetailDTO dto;
+
+  const BusinessGetDetailSuccessState({required this.dto});
+
+  @override
+  List<Object?> get props => [dto];
+}
+
+class BusinessGetDetailFailedState extends BusinessInformationState {}

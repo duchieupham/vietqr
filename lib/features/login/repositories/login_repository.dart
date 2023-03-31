@@ -63,6 +63,7 @@ class LoginRepository {
         Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
         AccountInformationDTO accountInformationDTO =
             AccountInformationDTO.fromJson(decodedToken);
+        await AccountHelper.instance.setFcmToken(fcmToken);
         await AccountHelper.instance.setToken(token);
         await UserInformationHelper.instance.setPhoneNo(dto.phoneNo);
         await UserInformationHelper.instance

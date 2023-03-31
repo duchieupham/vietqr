@@ -33,7 +33,8 @@ class SubHeader extends StatelessWidget {
               ),
             ),
           ),
-          Spacer(),
+          const Padding(padding: EdgeInsets.only(right: 10)),
+          const Spacer(),
           Text(
             title,
             style: const TextStyle(
@@ -42,11 +43,22 @@ class SubHeader extends StatelessWidget {
             ),
             textAlign: TextAlign.center,
           ),
-          Spacer(),
+          const Spacer(),
           Container(
             width: 30,
             height: 30,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(30),
+              color: Theme.of(context).cardColor,
+            ),
+            padding: const EdgeInsets.all(5),
+            child: Image.asset(
+              'assets/images/ic-viet-qr-small-trans.png',
+              width: 20,
+              height: 20,
+            ),
           ),
+          const Padding(padding: EdgeInsets.only(right: 10)),
         ],
       ),
     );

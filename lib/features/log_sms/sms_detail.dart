@@ -28,12 +28,13 @@ class SmsDetailScreen extends StatelessWidget {
     type: 0,
     userBankName: '',
     imgId: '',
-    branchCode: '',
+    // branchCode: '',
     branchId: '',
     branchName: '',
-    businessCode: '',
+    // businessCode: '',
     businessId: '',
     businessName: '',
+    isAuthenticated: false,
   );
 
   SmsDetailScreen({

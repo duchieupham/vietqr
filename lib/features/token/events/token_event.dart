@@ -13,3 +13,10 @@ class TokenEventCheckValid extends TokenEvent {
   @override
   List<Object?> get props => [];
 }
+
+class TokenFcmUpdateEvent extends TokenEvent {
+  const TokenFcmUpdateEvent();
+
+  @override
+  List<Object?> get props => [];
+}

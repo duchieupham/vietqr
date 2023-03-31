@@ -25,3 +25,16 @@ class BusinessInformationEventGetList extends BusinessInformationEvent {
   @override
   List<Object?> get props => [userId];
 }
+
+class BusinessGetDetailEvent extends BusinessInformationEvent {
+  final String businessId;
+  final String userId;
+
+  const BusinessGetDetailEvent({
+    required this.businessId,
+    required this.userId,
+  });
+
+  @override
+  List<Object?> get props => [businessId, userId];
+}

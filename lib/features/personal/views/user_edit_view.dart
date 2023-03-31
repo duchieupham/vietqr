@@ -85,33 +85,11 @@ class UserEditView extends StatelessWidget {
       appBar: AppBar(toolbarHeight: 0),
       body: Column(
         children: [
-          (PlatformUtils.instance.resizeWhen(width, 800))
-              ? HeaderWebWidgetOld(
-                  title: 'Thông tin cá nhân',
-                  isSubHeader: true,
-                  functionBack: () {
-                    backToPreviousPage(context);
-                  },
-                  functionHome: () {
-                    backToHome(context);
-                  },
-                )
-              : (PlatformUtils.instance.isWeb())
-                  ? HeaderMwebWidgetOld(
-                      title: 'Thông tin cá nhân',
-                      isSubHeader: true,
-                      functionBack: () {
-                        backToPreviousPage(context);
-                      },
-                      functionHome: () {
-                        backToHome(context);
-                      },
-                    )
-                  : SubHeader(
-                      title: 'Thông tin cá nhân',
-                      function: () {
-                        backToPreviousPage(context);
-                      }),
+          SubHeader(
+              title: 'Thông tin cá nhân',
+              function: () {
+                backToPreviousPage(context);
+              }),
           Expanded(
             child: BlocListener<UserEditBloc, UserEditState>(
               listener: ((context, state) {

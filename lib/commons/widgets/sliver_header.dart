@@ -72,7 +72,7 @@ class SliverHeader extends StatelessWidget {
       padding: EdgeInsets.only(
         left: 20,
         right: 20,
-        bottom: Tween<double>(begin: 0, end: 30).evaluate(animation),
+        bottom: Tween<double>(begin: 10, end: 30).evaluate(animation),
       ),
       child: Wrap(
         crossAxisAlignment: WrapCrossAlignment.center,
@@ -129,7 +129,7 @@ class SliverHeader extends StatelessWidget {
         width: width,
         height: (width - 20) / 1.2,
         decoration: BoxDecoration(
-          color: DefaultTheme.GREY_TOP_TAB_BAR.withOpacity(0.3),
+          color: DefaultTheme.GREY_TEXT,
           image: (coverImgId.isNotEmpty)
               ? DecorationImage(
                   image: ImageUtils.instance.getImageNetWork(coverImgId),

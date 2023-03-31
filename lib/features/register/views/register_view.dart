@@ -61,19 +61,11 @@ class RegisterView extends StatelessWidget {
       appBar: AppBar(toolbarHeight: 0),
       body: Column(
         children: [
-          (PlatformUtils.instance.isWeb())
-              ? HeaderWebWidgetOld(
-                  title: 'Đăng ký',
-                  isAuthenticate: false,
-                  functionBack: () {
-                    backToPreviousPage(context);
-                  },
-                )
-              : SubHeader(
-                  title: 'Đăng ký',
-                  function: () {
-                    backToPreviousPage(context);
-                  }),
+          SubHeader(
+              title: 'Đăng ký',
+              function: () {
+                backToPreviousPage(context);
+              }),
           (PlatformUtils.instance.isWeb())
               ? const Padding(padding: EdgeInsets.only(top: 10))
               : const SizedBox(),
