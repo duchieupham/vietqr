@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:vierqr/models/branch_filter_insert_dto.dart';
 
 class BranchEvent extends Equatable {
   const BranchEvent();
@@ -14,4 +15,15 @@ class BranchEventGetChoice extends BranchEvent {
 
   @override
   List<Object?> get props => [userId];
+}
+
+class BranchEventGetFilter extends BranchEvent {
+  final BranchFilterInsertDTO dto;
+
+  const BranchEventGetFilter({
+    required this.dto,
+  });
+
+  @override
+  List<Object?> get props => [dto];
 }

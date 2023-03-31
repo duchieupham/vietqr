@@ -9,7 +9,9 @@ import 'package:vierqr/commons/widgets/viet_qr_widget.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 
 class QRShareView extends StatelessWidget {
+  static bool isShowShareSheet = false;
   static final GlobalKey globalKey = GlobalKey();
+
   const QRShareView({super.key});
 
   @override
@@ -18,9 +20,11 @@ class QRShareView extends StatelessWidget {
     final double height = MediaQuery.of(context).size.height;
     final arg = ModalRoute.of(context)!.settings.arguments as Map;
     final QRGeneratedDTO dto = arg['qrGeneratedDTO'];
-    Future.delayed(const Duration(milliseconds: 300), () async {
-      await share(dto: dto);
-    });
+    if (!isShowShareSheet) {
+      Future.delayed(const Duration(milliseconds: 300), () async {
+        await share(dto: dto).then((value) => isShowShareSheet = false);
+      });
+    }
     return Scaffold(
       body: Stack(
         children: [

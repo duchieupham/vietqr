@@ -10,8 +10,9 @@ class BankAccountDTO {
   final String businessId;
   final String branchName;
   final String businessName;
-  final String branchCode;
-  final String businessCode;
+  final bool isAuthenticated;
+  // final String branchCode;
+  // final String businessCode;
 
   const BankAccountDTO({
     required this.id,
@@ -25,25 +26,27 @@ class BankAccountDTO {
     required this.businessId,
     required this.branchName,
     required this.businessName,
-    required this.branchCode,
-    required this.businessCode,
+    required this.isAuthenticated,
+    // required this.branchCode,
+    // required this.businessCode,
   });
 
   factory BankAccountDTO.fromJson(Map<String, dynamic> json) {
     return BankAccountDTO(
-      id: json['id'],
-      bankAccount: json['bankAccount'],
-      userBankName: json['userBankName'],
-      bankCode: json['bankCode'],
-      bankName: json['bankName'],
-      imgId: json['imgId'],
-      type: json['type'],
-      branchId: json['branchId'],
-      businessId: json['businessId'],
-      branchName: json['branchName'],
-      businessName: json['businessName'],
-      branchCode: json['branchCode'],
-      businessCode: json['businessCode'],
+      id: json['id'] ?? '',
+      bankAccount: json['bankAccount'] ?? '',
+      userBankName: json['userBankName'] ?? '',
+      bankCode: json['bankCode'] ?? '',
+      bankName: json['bankName'] ?? '',
+      imgId: json['imgId'] ?? '',
+      type: json['type'] ?? 0,
+      branchId: json['branchId'] ?? '',
+      businessId: json['businessId'] ?? '',
+      branchName: json['branchName'] ?? '',
+      businessName: json['businessName'] ?? '',
+      isAuthenticated: json['authenticated'] ?? false,
+      // branchCode: json['branchCode'],
+      // businessCode: json['businessCode'],
     );
   }
 
@@ -60,8 +63,7 @@ class BankAccountDTO {
     data['businessId'] = businessId;
     data['branchName'] = branchName;
     data['businessName'] = businessName;
-    data['branchCode'] = branchCode;
-    data['businessCode'] = businessCode;
+    data['authenticated'] = isAuthenticated;
     return data;
   }
 }

@@ -65,7 +65,8 @@ class _Login extends State<Login> {
             Navigator.of(context).pop();
             //navigate to home screen
             Navigator.of(context).popUntil((route) => route.isFirst);
-            Navigator.of(context).pushReplacementNamed(Routes.HOME);
+            Navigator.of(context).pushReplacementNamed(Routes.HOME,
+                arguments: {'isFromLogin': true});
           }
           if (state is LoginFailedState) {
             FocusManager.instance.primaryFocus?.unfocus();

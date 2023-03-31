@@ -6,7 +6,6 @@ import 'package:vierqr/commons/widgets/ambient_avatar_widget.dart';
 import 'package:vierqr/commons/widgets/button_text_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/login/blocs/login_bloc.dart';
-import 'package:vierqr/features/login/events/login_event.dart';
 import 'package:vierqr/features/logout/blocs/log_out_bloc.dart';
 import 'package:vierqr/features/logout/events/log_out_event.dart';
 import 'package:vierqr/features/logout/states/log_out_state.dart';
@@ -92,25 +91,30 @@ class _UserSetting extends State<UserSetting> {
                     color: DefaultTheme.GREY_LIGHT,
                     height: 1,
                   ),
-                  ButtonTextWidget(
-                    width: width,
-                    alignment: buttonTextAlignment,
-                    text: 'Quản lý tài khoản ngân hàng',
-                    textColor: DefaultTheme.GREEN,
-                    function: () {
-                      // Navigator.of(context).pushNamed(Routes.BANK_MANAGE);
-                    },
-                  ),
-                  const Divider(
-                    color: DefaultTheme.GREY_LIGHT,
-                    height: 1,
-                  ),
+                  // ButtonTextWidget(
+                  //   width: width,
+                  //   alignment: buttonTextAlignment,
+                  //   text: 'Quản lý tài khoản ngân hàng',
+                  //   textColor: DefaultTheme.GREEN,
+                  //   function: () {
+                  //     // Navigator.of(context).pushNamed(Routes.BANK_MANAGE);
+                  //   },
+                  // ),
+                  // const Divider(
+                  //   color: DefaultTheme.GREY_LIGHT,
+                  //   height: 1,
+                  // ),
                   ButtonTextWidget(
                     width: width,
                     alignment: buttonTextAlignment,
                     text: 'Đăng nhập bằng mã QR',
                     textColor: DefaultTheme.GREEN,
                     function: () {
+                      DialogWidget.instance.openMsgDialog(
+                        title: 'Tính năng bảo trì',
+                        msg:
+                            'Tính năng hiện đang bảo trì, vui lòng thử lại sau.',
+                      );
                       // Navigator.of(context)
                       //     .pushNamed(Routes.QR_SCAN)
                       //     .then((code) {

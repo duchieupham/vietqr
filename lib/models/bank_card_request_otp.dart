@@ -3,12 +3,14 @@ class BankCardRequestOTP {
   final String accountNumber;
   final String accountName;
   final String applicationType;
+  final String phoneNumber;
 
   const BankCardRequestOTP({
     required this.nationalId,
     required this.accountNumber,
     required this.accountName,
     required this.applicationType,
+    required this.phoneNumber,
   });
 
   factory BankCardRequestOTP.fromJson(Map<String, dynamic> json) {
@@ -17,6 +19,7 @@ class BankCardRequestOTP {
       accountNumber: json['accountNumber'] ?? '',
       accountName: json['accountName'] ?? '',
       applicationType: json['applicationType'] ?? '',
+      phoneNumber: json['phoneNumber'] ?? '',
     );
   }
 
@@ -26,6 +29,7 @@ class BankCardRequestOTP {
     data['accountNumber'] = accountNumber;
     data['accountName'] = accountName;
     data['applicationType'] = applicationType;
+    data['phoneNumber'] = phoneNumber;
     return data;
   }
 }

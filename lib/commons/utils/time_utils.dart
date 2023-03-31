@@ -210,6 +210,22 @@ class TimeUtils {
     return result;
   }
 
+  String formatBankDateFromInt(int time, bool isMultipleRow) {
+    String result = '';
+    try {
+      if (time != 0) {
+        DateTime timeConverted = DateTime.fromMillisecondsSinceEpoch(time);
+        DateFormat format = (isMultipleRow)
+            ? DateFormat('dd/MM/yyyy\nHH:mm')
+            : DateFormat('dd/MM/yyyy HH:mm');
+        result = format.format(timeConverted).toString();
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return result;
+  }
+
   String formatDateFromInt(int time, bool isMultipleRow) {
     String result = '';
     try {

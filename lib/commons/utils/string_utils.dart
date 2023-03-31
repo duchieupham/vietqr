@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:vierqr/commons/enums/text_data.dart';
 
 class StringUtils {
@@ -9,6 +10,7 @@ class StringUtils {
   final String _transactionContentWithoutVietnamesePattern =
       r'^[a-zA-Z0-9.,!@#$&*/? ]+$';
   final String _transactionContentPattern = r'^[a-zA-ZÀ-ỹẠ-ỵ0-9.,!@#$&*/? ]+$';
+  final String _fullNamePattern = r'^[a-zA-ZÀ-ỹẠ-ỵ0-9 ]+$';
 
   bool isNumeric(String text) {
     return int.tryParse(text) != null;
@@ -28,13 +30,26 @@ class StringUtils {
     return text.trim() == confirmText.trim();
   }
 
+  bool isValidFullName(String text) {
+    bool result = false;
+    final RegExp regExp = RegExp(_fullNamePattern);
+    if (text.isNotEmpty) {
+      if (regExp.hasMatch(text)) {
+        result = true;
+      }
+    }
+    return result;
+  }
+
   bool isValidTransactionContent(String text) {
     bool result = false;
     final RegExp regExp = RegExp(_transactionContentPattern);
-    if (regExp.hasMatch(text)) {
-      result = true;
+    if (text.isNotEmpty) {
+      if (regExp.hasMatch(text)) {
+        result = true;
+      }
     } else {
-      result = false;
+      result = true;
     }
     return result;
   }
@@ -57,6 +72,17 @@ class StringUtils {
       final replacedChar = diacriticsMap[char] ?? char;
       result += replacedChar;
     }
+    return result;
+  }
+
+  String capitalFirstCharacter(String paragraph) {
+    String result = '';
+    result = paragraph
+        .toLowerCase()
+        .trim()
+        .split(" ")
+        .map((str) => toBeginningOfSentenceCase(str))
+        .join(" ");
     return result;
   }
 }

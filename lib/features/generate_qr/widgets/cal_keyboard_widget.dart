@@ -150,19 +150,19 @@ class CalKeyboardWidget extends StatelessWidget {
                           children: [
                             CalButtonWidget(
                               size: btnCalWidth,
-                              value: '000',
+                              value: 0.toString(),
                               function: () {
-                                setValue(
-                                    '000', value.transactionAmount, context);
+                                setValue('0', value.transactionAmount, context);
                               },
                               textColor: DefaultTheme.GREEN,
                             ),
                             const Padding(padding: EdgeInsets.only(left: 10)),
                             CalButtonWidget(
                               size: btnCalWidth,
-                              value: 0.toString(),
+                              value: '000',
                               function: () {
-                                setValue('0', value.transactionAmount, context);
+                                setValue(
+                                    '000', value.transactionAmount, context);
                               },
                               textColor: DefaultTheme.GREEN,
                             ),

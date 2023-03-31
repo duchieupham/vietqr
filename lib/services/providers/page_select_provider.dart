@@ -5,6 +5,7 @@ class PageSelectProvider with ChangeNotifier {
   int _notificationCount = 0;
   get indexSelected => _indexSelected;
   get notificationCount => _notificationCount;
+
   void updateIndex(int index) {
     _indexSelected = index;
     notifyListeners();

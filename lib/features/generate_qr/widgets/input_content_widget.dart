@@ -17,6 +17,7 @@ import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/qr_create_dto.dart';
 import 'package:vierqr/services/providers/create_qr_provider.dart';
 import 'package:vierqr/services/providers/search_clear_provider.dart';
+import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class InputContentWidget extends StatelessWidget {
   final BankAccountDTO bankAccountDTO;
@@ -66,7 +67,6 @@ class InputContentWidget extends StatelessWidget {
             Routes.QR_GENERATED,
             arguments: {
               'qrGeneratedDTO': state.dto,
-              'bankAccountDTO': bankAccountDTO,
             },
           );
         }
@@ -345,6 +345,7 @@ class InputContentWidget extends StatelessWidget {
                             .trim(),
                         branchId: bankAccountDTO.branchId,
                         businessId: bankAccountDTO.businessId,
+                        userId: UserInformationHelper.instance.getUserId(),
                       );
                       qrBloc.add(QREventGenerate(dto: dto));
                     } else {

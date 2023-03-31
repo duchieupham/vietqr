@@ -8,16 +8,19 @@ import 'package:vierqr/models/bank_account_dto.dart';
 class BankCardWidget extends StatelessWidget {
   final BankAccountDTO dto;
   final double width;
+  final bool? isEnableColorBg;
+  final Color? colorBg;
 
   const BankCardWidget({
     super.key,
     required this.dto,
     required this.width,
+    this.isEnableColorBg,
+    this.colorBg,
   });
 
   @override
   Widget build(BuildContext context) {
-    print('----dto.type: ${dto.type}');
     return UnconstrainedBox(
       child: Container(
         width: width,
@@ -33,13 +36,18 @@ class BankCardWidget extends StatelessWidget {
               offset: Offset(2, 2),
             ),
           ],
-          image: DecorationImage(
-            image: AssetImage(
-              (dto.type == Stringify.CARD_TYPE_BUSINESS)
-                  ? 'assets/images/bg-admin-card.png'
-                  : 'assets/images/bg-member-card.png',
-            ),
-          ),
+          image: (isEnableColorBg != null && isEnableColorBg!)
+              ? null
+              : DecorationImage(
+                  image: AssetImage(
+                    (dto.type == Stringify.CARD_TYPE_BUSINESS)
+                        ? 'assets/images/bg-admin-card.png'
+                        : 'assets/images/bg-member-card.png',
+                  ),
+                ),
+          color: (isEnableColorBg != null && isEnableColorBg!)
+              ? colorBg
+              : DefaultTheme.WHITE,
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -88,7 +96,7 @@ class BankCardWidget extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        dto.userBankName,
+                        dto.userBankName.toUpperCase(),
                         style: const TextStyle(
                           color: DefaultTheme.GREY_TEXT,
                         ),

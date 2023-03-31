@@ -11,12 +11,14 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_widget.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_card_bloc.dart';
+import 'package:vierqr/features/bank_card/events/bank_card_event.dart';
 import 'package:vierqr/features/bank_card/states/bank_card_state.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
+import 'package:vierqr/models/bank_card_insert_unauthenticated.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
-import 'package:vierqr/models/branch_choice_dto.dart';
 import 'package:vierqr/services/providers/add_bank_provider.dart';
+import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class InputInformationBankWidget extends StatelessWidget {
   final TextEditingController bankAccountController;
@@ -24,6 +26,7 @@ class InputInformationBankWidget extends StatelessWidget {
   final TextEditingController nationalController;
   final TextEditingController phoneAuthenController;
   final PageController pageController;
+  static late BankCardBloc bankCardBloc;
 
   const InputInformationBankWidget({
     super.key,
@@ -34,14 +37,57 @@ class InputInformationBankWidget extends StatelessWidget {
     required this.phoneAuthenController,
   });
 
+  void initialServices(BuildContext context) {
+    bankCardBloc = BlocProvider.of(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
+    initialServices(context);
     return BlocListener<BankCardBloc, BankCardState>(
       listener: (context, state) {
-        if (state is BankCardInsertSuccessfulState) {
+        if (state is BankCardLoadingState) {
+          DialogWidget.instance.openLoadingDialog();
+        }
+        if (state is BankCardCheckNotExistedState) {
+          if (Provider.of<AddBankProvider>(context, listen: false)
+              .registerAuthentication) {
+            Navigator.pop(context);
+            _animatedToPage(3);
+          } else {
+            String bankTypeId =
+                Provider.of<AddBankProvider>(context, listen: false)
+                    .bankTypeDTO
+                    .id;
+            String userId = UserInformationHelper.instance.getUserId();
+            String formattedName = StringUtils.instance.removeDiacritic(
+                StringUtils.instance
+                    .capitalFirstCharacter(nameController.text));
+            BankCardInsertUnauthenticatedDTO dto =
+                BankCardInsertUnauthenticatedDTO(
+              bankTypeId: bankTypeId,
+              userId: userId,
+              userBankName: formattedName,
+              bankAccount: bankAccountController.text,
+            );
+            bankCardBloc.add(BankCardEventInsertUnauthenticated(dto: dto));
+          }
+        }
+        if (state is BankCardCheckFailedState) {
+          Navigator.pop(context);
+          DialogWidget.instance
+              .openMsgDialog(title: 'Lỗi', msg: 'Vui lòng thử lại sau');
+        }
+        if (state is BankCardCheckExistedState) {
+          Navigator.pop(context);
+          DialogWidget.instance
+              .openMsgDialog(title: 'Không thể thêm TK', msg: state.msg);
+        }
+        if (state is BankCardInsertUnauthenticatedSuccessState) {
           BankTypeDTO bankTypeDTO =
               Provider.of<AddBankProvider>(context, listen: false).bankTypeDTO;
+          Navigator.pop(context);
           BankAccountDTO dto = BankAccountDTO(
             imgId: bankTypeDTO.imageId,
             bankCode: bankTypeDTO.bankCode,
@@ -50,21 +96,25 @@ class InputInformationBankWidget extends StatelessWidget {
             userBankName: nameController.text,
             id: '',
             type: Provider.of<AddBankProvider>(context, listen: false).type,
-            branchCode: '',
             branchId: '',
             branchName: '',
-            businessCode: '',
             businessId: '',
             businessName: '',
+            isAuthenticated: false,
           );
+          phoneAuthenController.clear();
+          nameController.clear();
+          nationalController.clear();
+          bankAccountController.clear();
           Navigator.of(context).pushReplacementNamed(
             Routes.BANK_CARD_GENERATED_VIEW,
             arguments: {'bankAccountDTO': dto},
           );
         }
-        if (state is BankCardInsertFailedState) {
-          DialogWidget.instance.openMsgDialog(
-              title: 'Không thể thêm tài khoản', msg: state.message);
+        if (state is BankCardInsertUnauthenticatedFailedState) {
+          Navigator.pop(context);
+          DialogWidget.instance
+              .openMsgDialog(title: 'Không thể thêm TK', msg: state.msg);
         }
       },
       child: Column(
@@ -73,16 +123,6 @@ class InputInformationBankWidget extends StatelessWidget {
             child: ListView(
               shrinkWrap: true,
               children: [
-                const Padding(padding: EdgeInsets.only(top: 10)),
-                // Consumer<AddBankProvider>(
-                //   builder: (context, provider, child) {
-                //     return (provider.type == 1)
-                //         ? _buildSelectedBranch(
-                //             context, provider.branchChoiceInsertDTO)
-                //         : const SizedBox();
-                //   },
-                // ),
-                // const Padding(padding: EdgeInsets.only(top: 10)),
                 Consumer<AddBankProvider>(
                   builder: (context, provider, child) {
                     return _buildSelectedBankType(
@@ -107,12 +147,12 @@ class InputInformationBankWidget extends StatelessWidget {
                         children: [
                           TextFieldWidget(
                             textfieldType: TextfieldType.LABEL,
-                            titleWidth: 130,
+                            titleWidth: 100,
                             width: width,
                             isObscureText: false,
-                            title: 'Số tài khoản \u002A',
-                            hintText: '',
-                            fontSize: 13,
+                            title: 'Số TK \u002A',
+                            hintText: 'Nhập số tài khoản',
+                            fontSize: 15,
                             autoFocus: false,
                             controller: bankAccountController,
                             inputType: TextInputType.number,
@@ -128,55 +168,20 @@ class InputInformationBankWidget extends StatelessWidget {
                           DividerWidget(width: width),
                           TextFieldWidget(
                             textfieldType: TextfieldType.LABEL,
-                            titleWidth: 130,
+                            titleWidth: 100,
                             width: width,
                             isObscureText: false,
-                            title: 'Chủ tài khoản \u002A',
-                            hintText: '',
+                            title: 'Chủ TK \u002A',
+                            hintText: 'Chủ TK/Tên doanh nghiệp',
                             autoFocus: false,
-                            fontSize: 13,
+                            fontSize: 15,
                             controller: nameController,
                             inputType: TextInputType.text,
                             keyboardAction: TextInputAction.done,
                             onChange: (text) {
-                              provider.updateValidUserBankName(
-                                  nameController.text.isEmpty);
-                            },
-                          ),
-                          DividerWidget(width: width),
-                          TextFieldWidget(
-                            textfieldType: TextfieldType.LABEL,
-                            titleWidth: 130,
-                            width: width,
-                            isObscureText: false,
-                            title: 'CCCD/CMT \u002A',
-                            hintText: '',
-                            autoFocus: false,
-                            fontSize: 13,
-                            controller: nationalController,
-                            inputType: TextInputType.text,
-                            keyboardAction: TextInputAction.done,
-                            onChange: (text) {
-                              provider.updateValidUserBankName(
-                                  nameController.text.isEmpty);
-                            },
-                          ),
-                          DividerWidget(width: width),
-                          TextFieldWidget(
-                            textfieldType: TextfieldType.LABEL,
-                            titleWidth: 130,
-                            width: width,
-                            isObscureText: false,
-                            title: 'SĐT Xác thực \u002A',
-                            hintText: '',
-                            autoFocus: false,
-                            fontSize: 13,
-                            controller: phoneAuthenController,
-                            inputType: TextInputType.number,
-                            keyboardAction: TextInputAction.done,
-                            onChange: (text) {
-                              provider.updateValidUserBankName(
-                                  nameController.text.isEmpty);
+                              provider.updateValidUserBankName(!StringUtils
+                                  .instance
+                                  .isValidFullName(nameController.text));
                             },
                           ),
                         ],
@@ -221,75 +226,59 @@ class InputInformationBankWidget extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child:
-                // Consumer<AddBankProvider>(
-                //   builder: (context, provider, child) {
-                //     return (provider.isAgreeWithPolicy)
-                //         ?
-                ButtonWidget(
-              width: width,
-              text: 'Tiếp theo',
-              textColor: DefaultTheme.WHITE,
-              bgColor: DefaultTheme.GREEN,
-              function: () {
-                if (nameController.text.isNotEmpty &&
-                    bankAccountController.text.isNotEmpty) {
-                  Provider.of<AddBankProvider>(context, listen: false)
-                      .updateInformation(
-                          bankAccountController.text, nameController.text);
-                  _animatedToPage(3);
-                } else {
-                  DialogWidget.instance.openMsgDialog(
-                      title: 'Thông tin không hợp lệ',
-                      msg: 'Vui lòng nhập thông tin.');
-                }
-                //   if (!Provider.of<AddBankProvider>(context,
-                //               listen: false)
-                //           .validBankAccount &&
-                //       !Provider.of<AddBankProvider>(context,
-                //               listen: false)
-                //           .validUserBankName) {
-                //     BankTypeDTO bankTypeDTO =
-                //         Provider.of<AddBankProvider>(context,
-                //                 listen: false)
-                //             .bankTypeDTO;
-                //     String userId =
-                //         UserInformationHelper.instance.getUserId();
-                //     BankCardInsertDTO dto = BankCardInsertDTO(
-                //       bankTypeId: bankTypeDTO.id,
-                //       userId: userId,
-                //       userBankName: nameController.text,
-                //       bankAccount: bankAccountController.text,
-                //       type: Provider.of<AddBankProvider>(context,
-                //               listen: false)
-                //           .type,
-                //       branchId: Provider.of<AddBankProvider>(context,
-                //               listen: false)
-                //           .branchChoiceInsertDTO
-                //           .branchId,
-                //     );
-                //     _bankCardBloc.add(BankCardEventInsert(dto: dto));
-                //   }
-                // } else {
-                //   DialogWidget.instance.openMsgDialog(
-                //       title: 'Thông tin không hợp lệ',
-                //       msg: 'Vui lòng nhập thông tin.');
-                // }
+            child: Consumer<AddBankProvider>(
+              builder: (context, provider, child) {
+                return (provider.registerAuthentication)
+                    ? ButtonWidget(
+                        width: width,
+                        text: 'Tiếp theo',
+                        textColor: DefaultTheme.WHITE,
+                        bgColor: DefaultTheme.GREEN,
+                        function: () {
+                          if (provider.isValidFormUnauthentication()) {
+                            String bankTypeId = Provider.of<AddBankProvider>(
+                                    context,
+                                    listen: false)
+                                .bankTypeDTO
+                                .id;
+                            bankCardBloc.add(BankCardCheckExistedEvent(
+                                bankAccount: bankAccountController.text,
+                                bankTypeId: bankTypeId));
+                          } else {
+                            DialogWidget.instance.openMsgDialog(
+                                title: 'Thông tin không hợp lệ',
+                                msg:
+                                    'Thông tin không hợp lệ. Vui lòng nhập đúng các dữ liệu.');
+                          }
+                        },
+                      )
+                    : ButtonWidget(
+                        width: width,
+                        text: 'Thêm',
+                        textColor: DefaultTheme.WHITE,
+                        bgColor: DefaultTheme.GREEN,
+                        function: () {
+                          if (provider.isValidFormUnauthentication()) {
+                            String bankTypeId = Provider.of<AddBankProvider>(
+                                    context,
+                                    listen: false)
+                                .bankTypeDTO
+                                .id;
+                            bankCardBloc.add(BankCardCheckExistedEvent(
+                                bankAccount: bankAccountController.text,
+                                bankTypeId: bankTypeId));
+                          } else {
+                            DialogWidget.instance.openMsgDialog(
+                                title: 'Thông tin không hợp lệ',
+                                msg:
+                                    'Thông tin không hợp lệ. Vui lòng nhập đúng các dữ liệu.');
+                          }
+                        },
+                      );
               },
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildSelectedBranch(BuildContext context, BranchChoiceInsertDTO dto) {
-    final double width = MediaQuery.of(context).size.width;
-    return BoxLayout(
-      width: width,
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        children: [],
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vierqr/commons/utils/log.dart';
 
 class SuggestionWidgetProvider with ChangeNotifier {
   bool _isShowUserUpdate = false;
@@ -14,6 +15,7 @@ class SuggestionWidgetProvider with ChangeNotifier {
 
   void updateCameraSuggestion(bool value) {
     _isShowCameraPermission = value;
+    LOG.info('=====updateCameraSuggestion: $value');
     notifyListeners();
   }
 

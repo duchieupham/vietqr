@@ -5,6 +5,7 @@ import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
+import 'package:vierqr/models/business_detail_dto.dart';
 import 'package:vierqr/models/business_information_insert_dto.dart';
 import 'package:vierqr/models/business_item_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
@@ -60,6 +61,39 @@ class BusinessInformationRepository {
         result = data
             .map<BusinessItemDTO>((json) => BusinessItemDTO.fromJson(json))
             .toList();
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return result;
+  }
+
+  Future<BusinessDetailDTO> getBusinessDetail(
+      String businessId, String userId) async {
+    BusinessDetailDTO result = const BusinessDetailDTO(
+      id: '',
+      name: '',
+      address: '',
+      code: '',
+      imgId: '',
+      coverImgId: '',
+      taxCode: '',
+      userRole: 0,
+      managers: [],
+      branchs: [],
+      transactions: [],
+      active: false,
+    );
+    try {
+      final String url =
+          '${EnvConfig.getBaseUrl()}business-information/detail/$businessId/$userId';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        result = BusinessDetailDTO.fromJson(data);
       }
     } catch (e) {
       LOG.error(e.toString());

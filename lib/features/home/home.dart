@@ -1,37 +1,27 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vierqr/commons/constants/configurations/route.dart';
+import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
-import 'package:vierqr/commons/widgets/dialog_widget.dart';
+import 'package:vierqr/features/bank_card/blocs/bank_card_bloc.dart';
+import 'package:vierqr/features/bank_card/events/bank_card_event.dart';
+import 'package:vierqr/features/bank_card/views/bank_card_select_view.dart';
 import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
 import 'package:vierqr/features/generate_qr/views/qr_information_view.dart';
 import 'package:vierqr/features/home/dashboard.dart';
-import 'package:vierqr/features/log_sms/blocs/transaction_bloc.dart';
-import 'package:vierqr/features/log_sms/events/transaction_event.dart';
-import 'package:vierqr/features/notification/blocs/notification_bloc.dart';
-import 'package:vierqr/features/notification/events/notification_event.dart';
-import 'package:vierqr/features/notification/states/notification_state.dart';
-import 'package:vierqr/features/notification/views/notification_view.dart';
 import 'package:vierqr/features/permission/blocs/permission_bloc.dart';
 import 'package:vierqr/features/permission/events/permission_event.dart';
 import 'package:vierqr/features/permission/states/permission_state.dart';
-import 'package:vierqr/features/bank_card/blocs/bank_manage_bloc.dart';
-import 'package:vierqr/features/personal/events/bank_manage_event.dart';
 import 'package:vierqr/features/personal/views/user_setting.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/features/token/blocs/token_bloc.dart';
 import 'package:vierqr/features/token/events/token_event.dart';
 import 'package:vierqr/features/token/states/token_state.dart';
-import 'package:vierqr/models/bank_account_dto.dart';
-import 'package:vierqr/models/notification_dto.dart';
-import 'package:vierqr/models/transaction_dto.dart';
 import 'package:vierqr/services/providers/account_balance_home_provider.dart';
 import 'package:vierqr/services/providers/bank_account_provider.dart';
 import 'package:vierqr/services/providers/create_qr_page_select_provider.dart';
 import 'package:vierqr/services/providers/create_qr_provider.dart';
-import 'package:vierqr/services/providers/home_tab_provider.dart';
 import 'package:vierqr/services/providers/page_select_provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
@@ -54,26 +44,19 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreen extends State<HomeScreen> with WidgetsBindingObserver {
   //page controller
   static late PageController _pageController;
-  static int _notificationCount = 0;
 
   //list page
   final List<Widget> _homeScreens = [];
-  static final List<Widget> _cardWidgets = [];
-  static final List<BankAccountDTO> _bankAccounts = [];
-  static final Map<String, List<TransactionDTO>> _transactionsByAddr = {};
-  static final List<TransactionDTO> _transactions = [];
-  static final List<NotificationDTO> _notifications = [];
 
   //focus node
   final FocusNode focusNode = FocusNode();
 
   //blocs
-  late BankManageBloc _bankManageBloc;
-  late NotificationBloc _notificationBloc;
-  late TransactionBloc _transactionBloc;
+
   late PermissionBloc _permissionBloc;
   late TokenBloc _tokenBloc;
   late BusinessInformationBloc _businessInformationBloc;
+  late BankCardBloc _bankCardBloc;
 
   //providers
   final AccountBalanceHomeProvider accountBalanceHomeProvider =
@@ -83,19 +66,13 @@ class _HomeScreen extends State<HomeScreen> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _bankManageBloc = BlocProvider.of(context);
-    _notificationBloc = BlocProvider.of(context);
-    _transactionBloc = BlocProvider.of(context);
+
     _permissionBloc = BlocProvider.of(context);
     _tokenBloc = BlocProvider.of(context);
-    _tokenBloc.add(const TokenEventCheckValid());
     _businessInformationBloc = BlocProvider.of(context);
+    _bankCardBloc = BlocProvider.of(context);
     String userId = UserInformationHelper.instance.getUserId();
-    if (PlatformUtils.instance.isWeb()) {
-      initialWebServices(context, userId);
-    } else {
-      initialMobileServices(context, userId);
-    }
+    initialServices(context, userId);
     _pageController = PageController(
       initialPage:
           Provider.of<PageSelectProvider>(context, listen: false).indexSelected,
@@ -103,31 +80,25 @@ class _HomeScreen extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
-  void initialWebServices(BuildContext context, String userId) {
-    _cardWidgets.clear();
-    _bankAccounts.clear();
-    Provider.of<HomeTabProvider>(context, listen: false).updateTabSelect(0);
-    accountBalanceHomeProvider.updateAccountBalance('');
-    _bankManageBloc.add(BankManageEventGetList(userId: userId));
-    _transactionBloc.add(TransactionEventGetList(userId: userId));
-    _notificationBloc.add(NotificationEventListen(
-        userId: userId, notificationBloc: _notificationBloc));
-  }
-
-  void initialMobileServices(BuildContext context, String userId) {
+  void initialServices(BuildContext context, String userId) {
     checkUserInformation();
     _permissionBloc.add(const PermissionEventRequest());
-    _notificationBloc.add(NotificationEventGetList(userId: userId));
+    _bankCardBloc.add(BankCardEventGetList(userId: userId));
     _homeScreens.addAll([
+      BankCardSelectView(
+        key: const PageStorageKey('QR_GENERATOR_PAGE'),
+        bankCardBloc: _bankCardBloc,
+      ),
       QRInformationView(
         key: const PageStorageKey('QR_GENERATOR_PAGE'),
         businessInformationBloc: _businessInformationBloc,
+        bankCardBloc: _bankCardBloc,
       ),
-      if (!PlatformUtils.instance.isWeb())
-        DashboardView(
-          key: const PageStorageKey('SMS_LIST_PAGE'),
-          businessInformationBloc: _businessInformationBloc,
-        ),
+      const SizedBox(),
+      DashboardView(
+        key: const PageStorageKey('SMS_LIST_PAGE'),
+        businessInformationBloc: _businessInformationBloc,
+      ),
       const UserSetting(
         key: PageStorageKey('USER_SETTING_PAGE'),
       ),
@@ -169,32 +140,43 @@ class _HomeScreen extends State<HomeScreen> with WidgetsBindingObserver {
     }
   }
 
+  void _updateFcmToken(bool isFromLogin) {
+    // LOG.info('FROM LOGIN: $isFromLogin');
+    if (!isFromLogin) {
+      _tokenBloc.add(const TokenFcmUpdateEvent());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
-    if (!PlatformUtils.instance.isMobileFlatform(context)) {
-      focusNode.requestFocus();
+    bool isFromLogin = false;
+    if (ModalRoute.of(context)!.settings.arguments != null) {
+      final arg = ModalRoute.of(context)!.settings.arguments as Map;
+      isFromLogin = arg['isFromLogin'] ?? false;
     }
+    _updateFcmToken(isFromLogin);
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 0,
       ),
       body: BlocListener<TokenBloc, TokenState>(
         listener: (context, state) {
-          if (state is TokenInvalidState) {
-            DialogWidget.instance.openMsgDialog(
-              title: 'Phiên đã hết hạn',
-              msg: 'Phiên đăng nhập hết hạn\nVui lòng đăng nhập lại.',
-              function: () async {
-                Navigator.pop(context);
-                await _resetAll(context).then(
-                  (value) =>
-                      Navigator.of(context).pushReplacementNamed(Routes.LOGIN),
-                );
-              },
-            );
+          if (state is TokenFcmUpdateSuccessState) {
+            LOG.info('Update FCM Token success');
           }
+          // if (state is TokenInvalidState) {
+          //   DialogWidget.instance.openMsgDialog(
+          //     title: 'Phiên đã hết hạn',
+          //     msg: 'Phiên đăng nhập hết hạn\nVui lòng đăng nhập lại.',
+          //     function: () async {
+          //       Navigator.pop(context);
+          //       await _resetAll(context).then(
+          //         (value) =>
+          //             Navigator.of(context).pushReplacementNamed(Routes.LOGIN),
+          //       );
+          //     },
+          //   );
+          // }
         },
         child: BlocListener<PermissionBloc, PermissionState>(
           listener: (context, state) {
@@ -256,109 +238,75 @@ class _HomeScreen extends State<HomeScreen> with WidgetsBindingObserver {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
+                          // const Padding(padding: EdgeInsets.only(left: 10)),
                           Consumer<PageSelectProvider>(
                               builder: (context, page, child) {
                             return _getTitlePaqe(context, page.indexSelected);
                           }),
                           const Spacer(),
-                          BlocConsumer<NotificationBloc, NotificationState>(
-                              listener: (context, state) {
-                            if (state is NotificationListSuccessfulState) {
-                              _notifications.clear();
-                              if (_notifications.isEmpty &&
-                                  state.list.isNotEmpty) {
-                                _notifications.addAll(state.list);
-                                _notificationCount = 0;
-                                for (NotificationDTO dto in _notifications) {
-                                  if (!dto.isRead) {
-                                    _notificationCount += 1;
-                                  }
-                                }
-                              }
-                            }
-                          }, builder: (context, state) {
-                            if (state is NotificationListSuccessfulState) {
-                              if (state.list.isEmpty) {
-                                _notifications.clear();
-                              }
-                            }
-                            if (state is NotificationsUpdateSuccessState) {
-                              _notificationCount = 0;
-                            }
-                            return InkWell(
-                              onTap: () {
-                                List<String> notificationIds = [];
-                                for (NotificationDTO dto in _notifications) {
-                                  if (!dto.isRead) {
-                                    notificationIds.add(dto.id);
-                                  }
-                                }
-                                if (notificationIds.isNotEmpty) {
-                                  _notificationBloc.add(
-                                      NotificationEventUpdateAllStatus(
-                                          notificationIds: notificationIds));
-                                }
-                                if (_notifications.isNotEmpty) {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) => NotificationScreen(
-                                        list: _notifications,
-                                        notificationCount: _notificationCount,
-                                      ),
-                                    ),
-                                  );
-                                }
-                              },
-                              child: SizedBox(
-                                height: 60,
-                                width: 40,
-                                child: Stack(
-                                  children: [
-                                    Center(
-                                        child: Container(
-                                      width: 40,
-                                      height: 40,
-                                      alignment: Alignment.center,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(20),
-                                        color: Theme.of(context).cardColor,
-                                      ),
-                                      child: const Icon(
-                                        Icons.notifications_rounded,
-                                        color: DefaultTheme.GREY_TEXT,
-                                        size: 20,
-                                      ),
-                                    )),
-                                    (_notificationCount != 0)
-                                        ? Positioned(
-                                            bottom: 5,
-                                            right: 0,
-                                            child: Container(
-                                              width: 20,
-                                              height: 20,
-                                              alignment: Alignment.center,
-                                              decoration: BoxDecoration(
-                                                color:
-                                                    DefaultTheme.RED_CALENDAR,
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                              ),
-                                              child: Text(
-                                                _notificationCount.toString(),
-                                                textAlign: TextAlign.center,
-                                                style: const TextStyle(
-                                                  color: DefaultTheme.WHITE,
-                                                  fontSize: 8,
-                                                ),
-                                              ),
-                                            ),
-                                          )
-                                        : const SizedBox(),
-                                  ],
-                                ),
-                              ),
-                            );
-                          }),
+                          Container(
+                            width: 80,
+                            height: 40,
+                            padding: const EdgeInsets.symmetric(horizontal: 5),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).cardColor,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Image.asset(
+                              'assets/images/ic-viet-qr.png',
+                              width: 50,
+                            ),
+                          ),
+                          // InkWell(
+                          //   onTap: () {},
+                          //   child: SizedBox(
+                          //     height: 60,
+                          //     width: 40,
+                          //     child: Stack(
+                          //       children: [
+                          //         Center(
+                          //             child: Container(
+                          //           width: 40,
+                          //           height: 40,
+                          //           alignment: Alignment.center,
+                          //           decoration: BoxDecoration(
+                          //             borderRadius: BorderRadius.circular(20),
+                          //             color: Theme.of(context).cardColor,
+                          //           ),
+                          //           child: const Icon(
+                          //             Icons.notifications_rounded,
+                          //             color: DefaultTheme.GREY_TEXT,
+                          //             size: 20,
+                          //           ),
+                          //         )),
+                          //         // (_notificationCount != 0)
+                          //         //     ? Positioned(
+                          //         //         bottom: 5,
+                          //         //         right: 0,
+                          //         //         child: Container(
+                          //         //           width: 20,
+                          //         //           height: 20,
+                          //         //           alignment: Alignment.center,
+                          //         //           decoration: BoxDecoration(
+                          //         //             color: DefaultTheme.RED_CALENDAR,
+                          //         //             borderRadius:
+                          //         //                 BorderRadius.circular(20),
+                          //         //           ),
+                          //         //           child: Text(
+                          //         //             _notificationCount.toString(),
+                          //         //             textAlign: TextAlign.center,
+                          //         //             style: const TextStyle(
+                          //         //               color: DefaultTheme.WHITE,
+                          //         //               fontSize: 8,
+                          //         //             ),
+                          //         //           ),
+                          //         //         ),
+                          //         //       )
+                          //         //     : const SizedBox(),
+                          //       ],
+                          //     ),
+                          //   ),
+                          // ),
                         ],
                       ),
                     ),
@@ -369,70 +317,74 @@ class _HomeScreen extends State<HomeScreen> with WidgetsBindingObserver {
           ),
         ),
       ),
-      floatingActionButtonLocation: (PlatformUtils.instance.isWeb())
-          ? null
-          : FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: (PlatformUtils.instance.isWeb())
-          ? null
-          : Container(
-              margin: (PlatformUtils.instance.isAndroidApp(context))
-                  ? const EdgeInsets.only(bottom: 5)
-                  : null,
-              child: ClipRRect(
-                borderRadius: const BorderRadius.all(Radius.circular(25)),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                  child: Container(
-                    alignment: Alignment.center,
-                    height: 70,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context)
-                          .scaffoldBackgroundColor
-                          .withOpacity(0.6),
-                      boxShadow: [
-                        BoxShadow(
-                          color: DefaultTheme.GREY_TOP_TAB_BAR.withOpacity(0.5),
-                          spreadRadius: 2,
-                          blurRadius: 3,
-                          offset: Offset(2, 2),
-                        ),
-                      ],
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    width: MediaQuery.of(context).size.width * 0.6,
-                    child: Stack(
-                      children: [
-                        Consumer<PageSelectProvider>(
-                          builder: (context, page, child) {
-                            return Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                _buildShortcut(
-                                  0,
-                                  page.indexSelected,
-                                  context,
-                                ),
-                                _buildShortcut(
-                                  1,
-                                  page.indexSelected,
-                                  context,
-                                ),
-                                _buildShortcut(
-                                  2,
-                                  page.indexSelected,
-                                  context,
-                                ),
-                              ],
-                            );
-                          },
-                        ),
-                      ],
-                    ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: Container(
+        margin: (PlatformUtils.instance.isAndroidApp(context))
+            ? const EdgeInsets.only(bottom: 5)
+            : null,
+        child: ClipRRect(
+          borderRadius: const BorderRadius.all(Radius.circular(20)),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+            child: Container(
+              alignment: Alignment.center,
+              height: 60,
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor.withOpacity(0.5),
+                boxShadow: [
+                  BoxShadow(
+                    color: DefaultTheme.GREY_VIEW.withOpacity(0.5),
+                    spreadRadius: 2,
+                    blurRadius: 3,
+                    offset: const Offset(2, 2),
                   ),
-                ),
+                ],
+                // borderRadius: BorderRadius.circular(0),
+              ),
+              width: MediaQuery.of(context).size.width * 0.7,
+              child: Stack(
+                children: [
+                  Consumer<PageSelectProvider>(
+                    builder: (context, page, child) {
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          _buildShortcut(
+                            0,
+                            page.indexSelected,
+                            context,
+                          ),
+                          _buildShortcut(
+                            1,
+                            page.indexSelected,
+                            context,
+                          ),
+                          _buildShortcut(
+                            2,
+                            page.indexSelected,
+                            context,
+                          ),
+                          _buildShortcut(
+                            3,
+                            page.indexSelected,
+                            context,
+                          ),
+                          _buildShortcut(
+                            4,
+                            page.indexSelected,
+                            context,
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ],
               ),
             ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -444,14 +396,14 @@ class _HomeScreen extends State<HomeScreen> with WidgetsBindingObserver {
         _animatedToPage(index);
       },
       child: Container(
-        padding: EdgeInsets.all(5),
-        width: 50,
-        height: 50,
+        padding: const EdgeInsets.all(5),
+        width: 45,
+        height: 45,
         decoration: BoxDecoration(
           color: (isSelected)
               ? Theme.of(context).toggleableActiveColor
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(16),
+              : DefaultTheme.TRANSPARENT,
+          borderRadius: BorderRadius.circular(15),
         ),
         child: Image.asset(
           _getAssetIcon(index, isSelected),
@@ -484,16 +436,24 @@ class _HomeScreen extends State<HomeScreen> with WidgetsBindingObserver {
   String _getAssetIcon(int index, bool isSelected) {
     const String prefix = 'assets/images/';
     String assetImage = (index == 0 && isSelected)
-        ? 'ic-qr.png'
+        ? 'ic-card-selected.png'
         : (index == 0 && !isSelected)
-            ? 'ic-qr-unselect.png'
+            ? 'ic-card-unselect.png'
             : (index == 1 && isSelected)
-                ? 'ic-dashboard.png'
+                ? 'ic-qr.png'
                 : (index == 1 && !isSelected)
-                    ? 'ic-dashboard-unselect.png'
+                    ? 'ic-qr-unselect.png'
                     : (index == 2 && isSelected)
-                        ? 'ic-user.png'
-                        : 'ic-user-unselect.png';
+                        ? 'ic-qr-payment-selected.png'
+                        : (index == 2 && !isSelected)
+                            ? 'ic-qr-payment-unselect.png'
+                            : (index == 3 && isSelected)
+                                ? 'ic-dashboard.png'
+                                : (index == 3 && !isSelected)
+                                    ? 'ic-dashboard-unselect.png'
+                                    : (index == 4 && isSelected)
+                                        ? 'ic-user.png'
+                                        : 'ic-user-unselect.png';
     return '$prefix$assetImage';
   }
 
@@ -501,6 +461,17 @@ class _HomeScreen extends State<HomeScreen> with WidgetsBindingObserver {
   Widget _getTitlePaqe(BuildContext context, int indexSelected) {
     Widget titleWidget = const SizedBox();
     if (indexSelected == 0) {
+      titleWidget = const Text(
+        'TK ngân hàng',
+        style: TextStyle(
+          fontFamily: 'NewYork',
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.2,
+        ),
+      );
+    }
+    if (indexSelected == 1) {
       titleWidget = RichText(
         textAlign: TextAlign.left,
         text: TextSpan(
@@ -525,7 +496,32 @@ class _HomeScreen extends State<HomeScreen> with WidgetsBindingObserver {
         ),
       );
     }
-    if (indexSelected == 1) {
+    if (indexSelected == 2) {
+      titleWidget = RichText(
+        textAlign: TextAlign.left,
+        text: TextSpan(
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: Theme.of(context).hintColor,
+            letterSpacing: 0.2,
+          ),
+          children: const [
+            TextSpan(
+              text: 'Thanh toán VietQR',
+            ),
+            // TextSpan(
+            //   text: 'QR không chứa số tiền và nội dung.',
+            //   style: TextStyle(
+            //     fontSize: 15,
+            //     fontWeight: FontWeight.normal,
+            //   ),
+            // ),
+          ],
+        ),
+      );
+    }
+    if (indexSelected == 3) {
       /* title =
           '${TimeUtils.instance.getCurrentDateInWeek()}\n${TimeUtils.instance.getCurentDate()}';*/
       titleWidget = RichText(
@@ -554,7 +550,7 @@ class _HomeScreen extends State<HomeScreen> with WidgetsBindingObserver {
         ),
       );
     }
-    if (indexSelected == 2) {
+    if (indexSelected == 4) {
       titleWidget = const Text(
         'Cá nhân',
         style: TextStyle(

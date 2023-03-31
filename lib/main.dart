@@ -8,11 +8,14 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:vierqr/commons/constants/configurations/route.dart';
+import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/utils/log.dart';
-import 'package:vierqr/commons/utils/platform_utils.dart';
+import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
+import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_card_bloc.dart';
+import 'package:vierqr/features/bank_card/views/bank_card_detail_view.dart';
 import 'package:vierqr/features/bank_card/views/bank_card_generated_view.dart';
 import 'package:vierqr/features/bank_member/blocs/bank_member_bloc.dart';
 import 'package:vierqr/features/bank_member/views/bank_member_view.dart';
@@ -27,8 +30,7 @@ import 'package:vierqr/features/generate_qr/views/qr_generated.dart';
 import 'package:vierqr/features/generate_qr/views/qr_share_view.dart';
 import 'package:vierqr/features/home/home.dart';
 import 'package:vierqr/features/home/theme_setting.dart';
-// import 'package:vierqr/features/log_sms/blocs/sms_bloc.dart';
-import 'package:vierqr/features/log_sms/blocs/transaction_bloc.dart';
+import 'package:vierqr/features/transaction/blocs/transaction_bloc.dart';
 import 'package:vierqr/features/logout/blocs/log_out_bloc.dart';
 import 'package:vierqr/features/notification/blocs/notification_bloc.dart';
 import 'package:vierqr/features/login/blocs/login_bloc.dart';
@@ -37,18 +39,23 @@ import 'package:vierqr/features/permission/blocs/permission_bloc.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_manage_bloc.dart';
 import 'package:vierqr/features/personal/blocs/user_edit_bloc.dart';
 import 'package:vierqr/features/bank_card/views/add_bank_card_view.dart';
-import 'package:vierqr/features/bank_card/views/bank_manage_view.dart';
 import 'package:vierqr/features/personal/views/qr_scanner.dart';
-import 'package:vierqr/features/personal/views/transaction_history.dart';
 import 'package:vierqr/features/personal/views/user_edit_view.dart';
 import 'package:vierqr/features/personal/views/user_update_password_view.dart';
 import 'package:vierqr/features/register/blocs/register_bloc.dart';
+import 'package:vierqr/features/scan_qr/blocs/scan_qr_bloc.dart';
+import 'package:vierqr/features/scan_qr/views/qr_scan_view.dart';
 import 'package:vierqr/features/token/blocs/token_bloc.dart';
+import 'package:vierqr/features/transaction/views/transaction_history_view.dart';
+import 'package:vierqr/features/transaction/widgets/transaction_sucess_widget.dart';
+import 'package:vierqr/models/notification_transaction_success_dto.dart';
+import 'package:vierqr/models/viet_qr_scanned_dto.dart';
 import 'package:vierqr/services/local_notification/notification_service.dart';
 import 'package:vierqr/services/providers/add_bank_provider.dart';
 import 'package:vierqr/services/providers/add_business_provider.dart';
 import 'package:vierqr/services/providers/bank_account_provider.dart';
 import 'package:vierqr/services/providers/bank_select_provider.dart';
+import 'package:vierqr/services/providers/business_inforamtion_provider.dart';
 import 'package:vierqr/services/providers/create_qr_page_select_provider.dart';
 import 'package:vierqr/services/providers/create_qr_provider.dart';
 import 'package:vierqr/services/providers/home_tab_provider.dart';
@@ -119,12 +126,9 @@ class VietQRApp extends StatefulWidget {
 class _VietQRApp extends State<VietQRApp> {
   static Widget _homeScreen = const Login();
 
-  _VietQRApp();
-
   @override
   void initState() {
     super.initState();
-
     // Đăng ký callback onMessage
     onFcmMessage();
     // Đăng ký callback onMessageOpenedApp
@@ -141,13 +145,26 @@ class _VietQRApp extends State<VietQRApp> {
     await NotificationService().initialNotification();
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       // Xử lý push notification nếu ứng dụng đang chạy
-      if (message.notification != null) {
-        LOG.info(
-            "Push notification received: ${message.notification?.title} - ${message.notification?.body}");
-        NotificationService().showNotification(
-          title: message.notification?.title,
-          body: message.notification?.body,
-        );
+      LOG.info(
+          "Push notification received: ${message.notification?.title} - ${message.notification?.body}");
+      LOG.info("receive data: ${message.data}");
+      NotificationService().showNotification(
+        title: message.notification?.title,
+        body: message.notification?.body,
+      );
+
+      //process when receive data
+      if (message.data.isNotEmpty) {
+        //process success transcation
+        if (message.data['notificationType'] != null &&
+            message.data['notificationType'] ==
+                Stringify.NOTI_TYPE_UPDATE_TRANSACTION) {
+          DialogWidget.instance.openWidgetDialog(
+            child: TransactionSuccessWidget(
+              dto: NotificationTransactionSuccessDTO.fromJson(message.data),
+            ),
+          );
+        }
       }
     });
   }
@@ -163,13 +180,8 @@ class _VietQRApp extends State<VietQRApp> {
   }
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    _homeScreen = (UserInformationHelper.instance.getUserId() != '')
+    _homeScreen = (UserInformationHelper.instance.getUserId().trim().isNotEmpty)
         ? const HomeScreen()
         : const Login();
     return GestureDetector(
@@ -232,6 +244,9 @@ class _VietQRApp extends State<VietQRApp> {
           BlocProvider<BranchBloc>(
             create: (BuildContext context) => BranchBloc(),
           ),
+          BlocProvider<ScanQrBloc>(
+            create: (BuildContext context) => ScanQrBloc(),
+          ),
         ],
         child: MultiProvider(
           providers: [
@@ -253,6 +268,8 @@ class _VietQRApp extends State<VietQRApp> {
                 create: (context) => MemeberManageProvider()),
             ChangeNotifierProvider(create: (context) => AddBankProvider()),
             ChangeNotifierProvider(create: (context) => AddBusinessProvider()),
+            ChangeNotifierProvider(
+                create: (context) => BusinessInformationProvider()),
           ],
           child: Consumer<ThemeProvider>(
             builder: (context, themeSelect, child) {
@@ -277,10 +294,10 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.UPDATE_PASSWORD: (context) =>
                       const UserUpdatePassword(),
                   Routes.QR_SCAN: (context) => const QRScanner(),
-                  Routes.BANK_MANAGE: (context) => const BankManageView(),
+                  // Routes.BANK_MANAGE: (context) => const BankManageView(),
                   Routes.UI_SETTING: (context) => const ThemeSettingView(),
-                  Routes.TRANSACTION_HISTORY: (context) =>
-                      const TransactionHistory(),
+                  // Routes.TRANSACTION_HISTORY: (context) =>
+                  //     const TransactionHistory(),
                   Routes.ADD_BANK_CARD: (context) => const AddBankCardView(),
                   Routes.BANK_CARD_GENERATED_VIEW: (context) =>
                       const BankCardGeneratedView(),
@@ -291,6 +308,11 @@ class _VietQRApp extends State<VietQRApp> {
                       const BusinessInformationView(),
                   Routes.ADD_BUSINESS_VIEW: (context) =>
                       const AddBusinessView(),
+                  Routes.BANK_CARD_DETAIL_VEW: (context) =>
+                      const BankCardDetailView(),
+                  Routes.TRANSACTION_HISTORY_VIEW: (context) =>
+                      const TransactionHistoryView(),
+                  Routes.SCAN_QR_VIEW: (context) => QRScanView(),
                 },
                 onGenerateRoute: (settings) {
                   if (settings.name == Routes.BUSINESS_INFORMATION_VIEW) {

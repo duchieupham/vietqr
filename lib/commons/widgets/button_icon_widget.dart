@@ -47,7 +47,9 @@ class ButtonIconWidget extends StatelessWidget {
               BorderRadius.circular((borderRadius != null) ? borderRadius! : 5),
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: (alignment == Alignment.centerLeft)
+              ? MainAxisAlignment.start
+              : MainAxisAlignment.center,
           children: [
             Icon(
               icon,

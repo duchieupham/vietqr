@@ -51,43 +51,37 @@ class _CreateQR extends State<CreateQR> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(toolbarHeight: 0),
-      body: Column(
-        children: [
-          Consumer<CreateQRPageSelectProvider>(
-            builder: (context, page, child) {
-              return SubHeader(
-                title: 'Tạo QR giao dịch',
-                function: () {
-                  if (page.indexSelected == 0) {
-                    Provider.of<CreateQRProvider>(context, listen: false)
-                        .reset();
-                    Provider.of<CreateQRPageSelectProvider>(context,
-                            listen: false)
-                        .reset();
-                    Navigator.pop(context);
-                  } else {
-                    _animatedToPage(page.indexSelected - 1);
-                  }
-                },
-              );
-            },
-          ),
-          Expanded(
-            child: PageView(
-              key: const PageStorageKey('PAGE_CREATE_QR_VIEW'),
-              allowImplicitScrolling: true,
-              physics: const NeverScrollableScrollPhysics(),
-              controller: _pageController,
-              onPageChanged: (index) {
-                Provider.of<CreateQRPageSelectProvider>(context, listen: false)
-                    .updateIndex(index);
+    return WillPopScope(
+      onWillPop: () async {
+        _navigateBack(context);
+        return false;
+      },
+      child: Scaffold(
+        appBar: AppBar(toolbarHeight: 0),
+        body: Column(
+          children: [
+            SubHeader(
+              title: 'Tạo QR giao dịch',
+              function: () {
+                _navigateBack(context);
               },
-              children: _pages,
             ),
-          ),
-        ],
+            Expanded(
+              child: PageView(
+                key: const PageStorageKey('PAGE_CREATE_QR_VIEW'),
+                allowImplicitScrolling: true,
+                physics: const NeverScrollableScrollPhysics(),
+                controller: _pageController,
+                onPageChanged: (index) {
+                  Provider.of<CreateQRPageSelectProvider>(context,
+                          listen: false)
+                      .updateIndex(index);
+                },
+                children: _pages,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -99,6 +93,21 @@ class _CreateQR extends State<CreateQR> {
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeInOutQuart,
     );
+  }
+
+  void _navigateBack(BuildContext context) {
+    if (Provider.of<CreateQRPageSelectProvider>(context, listen: false)
+            .indexSelected ==
+        0) {
+      Provider.of<CreateQRProvider>(context, listen: false).reset();
+      Provider.of<CreateQRPageSelectProvider>(context, listen: false).reset();
+      Navigator.pop(context);
+    } else {
+      _animatedToPage(
+          Provider.of<CreateQRPageSelectProvider>(context, listen: false)
+                  .indexSelected -
+              1);
+    }
   }
 
   void onNext(BuildContext context) {

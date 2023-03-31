@@ -12,6 +12,7 @@ import 'package:vierqr/features/branch/blocs/branch_bloc.dart';
 import 'package:vierqr/features/branch/events/branch_event.dart';
 import 'package:vierqr/features/branch/states/branch_state.dart';
 import 'package:vierqr/layouts/box_layout.dart';
+import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/branch_choice_dto.dart';
 import 'package:vierqr/models/business_branch_choice_dto.dart';
 import 'package:vierqr/services/providers/add_bank_provider.dart';
@@ -321,6 +322,16 @@ class CheckExistedBusinessWidget extends StatelessWidget {
                               .updateBranchChoice(insertDTO);
                           Provider.of<AddBankProvider>(context, listen: false)
                               .updateType(1);
+                          BankTypeDTO bankTypeDTO = const BankTypeDTO(
+                              id: 'aa4e489b-254e-4351-9cd4-f62e09c63ebc',
+                              bankCode: 'MB',
+                              bankName: 'Ngân hàng TMCP Quân đội',
+                              imageId: '58b7190b-a294-4b14-968f-cd365593893e',
+                              status: 1);
+                          Provider.of<AddBankProvider>(context, listen: false)
+                              .updateSelectBankType(bankTypeDTO);
+                          Provider.of<AddBankProvider>(context, listen: false)
+                              .updateRegisterAuthentication(true);
                           Navigator.pop(context, true);
                         },
                         child: const BoxLayout(

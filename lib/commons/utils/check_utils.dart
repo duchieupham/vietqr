@@ -20,6 +20,9 @@ class CheckUtils {
       case CheckType.C02:
         result = 'Lỗi không xác định. Vui lòng thử lại sau';
         break;
+      case CheckType.C03:
+        result = 'TK ngân hàng này đã được liên kết trước đó';
+        break;
       default:
         result = message;
     }

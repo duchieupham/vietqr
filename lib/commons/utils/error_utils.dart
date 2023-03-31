@@ -28,7 +28,7 @@ class ErrorUtils {
         result = 'Không thể thực hiện thao tác này. Vui lòng thử lại sau';
         break;
       case ErrorType.E05:
-        result = 'Phiên đăng nhập hết hạn';
+        result = 'Đã có lỗi xảy ra, vui lòng thử lại sau';
         break;
       case ErrorType.E06:
         result =
@@ -58,6 +58,33 @@ class ErrorUtils {
         break;
       case ErrorType.E14:
         result = 'Không thể tạo doanh nghiệp';
+        break;
+      case ErrorType.E15:
+        result = 'CMND/CCCD không hợp lệ';
+        break;
+      case ErrorType.E16:
+        result = 'Trạng thái TK ngân hàng không hợp lệ';
+        break;
+      case ErrorType.E17:
+        result = 'TK ngân hàng không hợp lệ';
+        break;
+      case ErrorType.E18:
+        result = 'Tên chủ TK không hợp lệ';
+        break;
+      case ErrorType.E19:
+        result = 'Số điện thoại không hợp lệ';
+        break;
+      case ErrorType.E20:
+        result = 'TK ngân hàng không tồn tại';
+        break;
+      case ErrorType.E21:
+        result = 'Có vấn đề xảy ra khi gửi OTP. Vui lòng thử lại sau';
+        break;
+      case ErrorType.E22:
+        result = 'Không thể đăng ký nhận BĐSD. Vui lòng thử lại sau';
+        break;
+      case ErrorType.E23:
+        result = 'TK đã đăng ký nhận BĐSD';
         break;
       default:
         result = message;

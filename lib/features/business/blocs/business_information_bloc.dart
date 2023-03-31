@@ -5,6 +5,7 @@ import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/business/events/business_information_event.dart';
 import 'package:vierqr/features/business/repositories/business_information_repository.dart';
 import 'package:vierqr/features/business/states/business_information_state.dart';
+import 'package:vierqr/models/business_detail_dto.dart';
 import 'package:vierqr/models/business_item_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 
@@ -13,11 +14,26 @@ class BusinessInformationBloc
   BusinessInformationBloc() : super(BusinessInformationInitialState()) {
     on<BusinessInformationEventInsert>(_insertBusinessInformation);
     on<BusinessInformationEventGetList>(_getBusinessItems);
+    on<BusinessGetDetailEvent>(_getDetail);
   }
 }
 
 const BusinessInformationRepository businessInformationRepository =
     BusinessInformationRepository();
+
+void _getDetail(BusinessInformationEvent event, Emitter emit) async {
+  try {
+    if (event is BusinessGetDetailEvent) {
+      emit(BusinessGetDetailLoadingState());
+      BusinessDetailDTO result = await businessInformationRepository
+          .getBusinessDetail(event.businessId, event.userId);
+      emit(BusinessGetDetailSuccessState(dto: result));
+    }
+  } catch (e) {
+    LOG.error(e.toString());
+    emit(BusinessGetDetailFailedState());
+  }
+}
 
 void _insertBusinessInformation(
     BusinessInformationEvent event, Emitter emit) async {

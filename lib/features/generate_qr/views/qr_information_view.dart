@@ -21,6 +21,7 @@ import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/qr_create_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
+import 'package:vierqr/services/providers/add_bank_provider.dart';
 import 'package:vierqr/services/providers/bank_account_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 import 'package:flutter/material.dart';
@@ -30,20 +31,20 @@ import 'package:provider/provider.dart';
 class QRInformationView extends StatelessWidget {
   final BusinessInformationBloc businessInformationBloc;
 
+  //blocs
+  final BankCardBloc bankCardBloc;
+  static late QRBloc _qrBloc;
+
   const QRInformationView({
     Key? key,
     required this.businessInformationBloc,
+    required this.bankCardBloc,
   }) : super(key: key);
-
-  //blocs
-  static late BankCardBloc _bankCardBloc;
-  static late QRBloc _qrBloc;
 
   //list
   static final List<BankAccountDTO> _bankAccounts = [];
   static final List<QRGeneratedDTO> _qrGenerateds = [];
   static final List<Widget> _cardWidgets = [];
-  static final List<GlobalKey> _keys = [];
   //controller
   static final PageController _pageController =
       PageController(initialPage: 0, keepPage: false, viewportFraction: 1);
@@ -53,14 +54,14 @@ class QRInformationView extends StatelessWidget {
     _bankAccounts.clear();
     _cardWidgets.clear();
     _qrGenerateds.clear();
-    _bankCardBloc = BlocProvider.of(context);
     _qrBloc = BlocProvider.of(context);
-
-    getListBank(context);
   }
 
   @override
   Widget build(BuildContext context) {
+    _bankAccounts.clear();
+    _cardWidgets.clear();
+    _qrGenerateds.clear();
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     initialServices(context);
@@ -93,6 +94,7 @@ class QRInformationView extends StatelessWidget {
                           content: '',
                           branchId: '',
                           businessId: '',
+                          userId: '',
                         );
                         qrCreateDTOs.add(qrCreateDTO);
                       }
@@ -156,7 +158,7 @@ class QRInformationView extends StatelessWidget {
                                             width: width * 0.4,
                                           ),
                                           const Text(
-                                            'Chưa có tài khoản ngân hàng được liên kết.',
+                                            'Chưa có tài khoản ngân hàng được thêm.',
                                             textAlign: TextAlign.center,
                                             style: TextStyle(fontSize: 15),
                                           ),
@@ -165,13 +167,18 @@ class QRInformationView extends StatelessWidget {
                                                   EdgeInsets.only(top: 10)),
                                           ButtonIconWidget(
                                             width: width,
-                                            icon: Icons.credit_card_rounded,
-                                            title: 'Liên kết ngay',
+                                            icon: Icons.add_rounded,
+                                            title: 'Thêm TK ngân hàng',
                                             function: () {
+                                              Provider.of<AddBankProvider>(
+                                                      context,
+                                                      listen: false)
+                                                  .updateSelect(1);
                                               Navigator.pushNamed(
-                                                context,
-                                                Routes.ADD_BANK_CARD,
-                                              ).then(
+                                                  context, Routes.ADD_BANK_CARD,
+                                                  arguments: {
+                                                    'pageIndex': 1
+                                                  }).then(
                                                 (value) {
                                                   Provider.of<BankAccountProvider>(
                                                           context,
@@ -180,7 +187,7 @@ class QRInformationView extends StatelessWidget {
                                                 },
                                               );
                                             },
-                                            bgColor: DefaultTheme.PURPLE_NEON,
+                                            bgColor: DefaultTheme.GREEN,
                                             textColor: DefaultTheme.WHITE,
                                           ),
                                           const Padding(
@@ -197,11 +204,11 @@ class QRInformationView extends StatelessWidget {
                                       items: _cardWidgets,
                                       options: CarouselOptions(
                                         aspectRatio: 1,
-                                        autoPlay: true,
+                                        // autoPlay: true,
                                         enlargeCenterPage: true,
                                         viewportFraction: 1,
-                                        autoPlayInterval:
-                                            const Duration(seconds: 5),
+                                        // autoPlayInterval:
+                                        //     const Duration(seconds: 5),
                                         disableCenter: true,
                                         onPageChanged: ((index, reason) {
                                           Provider.of<BankAccountProvider>(
@@ -374,7 +381,7 @@ class QRInformationView extends StatelessWidget {
     _bankAccounts.clear();
     _cardWidgets.clear();
     String userId = UserInformationHelper.instance.getUserId();
-    _bankCardBloc.add(BankCardEventGetList(userId: userId));
+    bankCardBloc.add(BankCardEventGetList(userId: userId));
   }
 
   void getListQR(BuildContext context, List<QRCreateDTO> list) {

@@ -1,4 +1,5 @@
 import 'package:permission_handler/permission_handler.dart';
+import 'package:vierqr/commons/utils/log.dart';
 
 class PermissionRepository {
   const PermissionRepository();
@@ -11,6 +12,8 @@ class PermissionRepository {
       // if (!smsPermission.isGranted) {
       //   await Permission.sms.request();
       // }
+
+      LOG.info('CAMERA PERMISSION: $cameraPermission');
       if (!cameraPermission.isGranted) {
         await Permission.camera.request();
       }

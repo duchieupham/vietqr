@@ -44,10 +44,12 @@ class VietQRWidget extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5),
                   color: DefaultTheme.WHITE,
-                  image: DecorationImage(
-                    image: ImageUtils.instance
-                        .getImageNetWork(qrGeneratedDTO.imgId),
-                  ),
+                  image: (qrGeneratedDTO.imgId.isEmpty)
+                      ? null
+                      : DecorationImage(
+                          image: ImageUtils.instance
+                              .getImageNetWork(qrGeneratedDTO.imgId),
+                        ),
                 ),
               ),
               const Padding(padding: EdgeInsets.only(left: 10)),
@@ -110,7 +112,8 @@ class VietQRWidget extends StatelessWidget {
               title: 'Tài khoản: ', description: qrGeneratedDTO.bankAccount),
           const Padding(padding: EdgeInsets.only(bottom: 5)),
           _buildSection(
-              title: 'Chủ thẻ: ', description: qrGeneratedDTO.userBankName),
+              title: 'Chủ thẻ: ',
+              description: qrGeneratedDTO.userBankName.toUpperCase()),
           const Padding(padding: EdgeInsets.only(bottom: 10)),
           if (qrGeneratedDTO.amount.isNotEmpty &&
               qrGeneratedDTO.amount != '0') ...[

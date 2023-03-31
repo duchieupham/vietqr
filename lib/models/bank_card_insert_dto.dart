@@ -5,6 +5,8 @@ class BankCardInsertDTO {
   final String bankAccount;
   final int type;
   final String branchId;
+  final String nationalId;
+  final String phoneAuthenticated;
 
   const BankCardInsertDTO({
     required this.bankTypeId,
@@ -13,6 +15,8 @@ class BankCardInsertDTO {
     required this.bankAccount,
     required this.type,
     required this.branchId,
+    required this.nationalId,
+    required this.phoneAuthenticated,
   });
 
   factory BankCardInsertDTO.fromJson(Map<String, dynamic> json) {
@@ -23,6 +27,8 @@ class BankCardInsertDTO {
       bankAccount: json['bankAccount'] ?? '',
       type: json['type'] ?? 0,
       branchId: json['branchId'] ?? '',
+      nationalId: json['nationalId'] ?? '',
+      phoneAuthenticated: json['phoneAuthenticated'] ?? '',
     );
   }
 
@@ -34,6 +40,8 @@ class BankCardInsertDTO {
     data['bankAccount'] = bankAccount;
     data['type'] = type;
     data['branchId'] = branchId;
+    data['nationalId'] = nationalId;
+    data['phoneAuthenticated'] = phoneAuthenticated;
     return data;
   }
 }

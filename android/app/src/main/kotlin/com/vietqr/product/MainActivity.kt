@@ -1,4 +1,4 @@
-package com.bns.vietqr
+package com.vietqr.product
 
 import io.flutter.embedding.android.FlutterActivity
 

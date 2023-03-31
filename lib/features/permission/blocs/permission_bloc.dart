@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/permission/events/permission_event.dart';
 import 'package:vierqr/features/permission/repositories/permission_repository.dart';
 import 'package:vierqr/features/permission/states/permission_state.dart';
@@ -32,7 +33,7 @@ class PermissionBloc extends Bloc<PermissionEvent, PermissionState> {
         //}
       }
     } catch (e) {
-      print('Error at _getPermissionStatus - PermissionBloc: $e');
+      LOG.error('Error at _getPermissionStatus - PermissionBloc: $e');
       emit(PermissionErrorState());
     }
   }
