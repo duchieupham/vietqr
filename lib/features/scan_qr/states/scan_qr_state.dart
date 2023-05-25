@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
+import 'package:vierqr/models/national_scanner_dto.dart';
 
 class ScanQrState extends Equatable {
   const ScanQrState();
@@ -28,3 +29,14 @@ class ScanQrGetBankTypeSuccessState extends ScanQrState {
 }
 
 class ScanQrGetBankTypeFailedState extends ScanQrState {}
+
+class QRScanGetNationalInformationSuccessState extends ScanQrState {
+  final NationalScannerDTO dto;
+
+  const QRScanGetNationalInformationSuccessState({
+    required this.dto,
+  });
+
+  @override
+  List<Object?> get props => [dto];
+}

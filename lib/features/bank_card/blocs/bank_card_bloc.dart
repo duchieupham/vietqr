@@ -14,6 +14,7 @@ import 'package:vierqr/features/bank_card/states/bank_card_state.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
+import 'package:vierqr/models/bank_name_information_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 
 class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
@@ -26,10 +27,30 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
     on<BankCardGetDetailEvent>(_getDetail);
     on<BankCardCheckExistedEvent>(_checkExistedBank);
     on<BankCardEventInsertUnauthenticated>(_insertBankCardUnauthenticated);
+    on<BankCardEventRegisterAuthentication>(_registerAuthentication);
+    on<BankCardEventSearchName>(_searchBankName);
   }
 }
 
 const BankCardRepository bankCardRepository = BankCardRepository();
+
+void _registerAuthentication(BankCardEvent event, Emitter emit) async {
+  try {
+    if (event is BankCardEventRegisterAuthentication) {
+      emit(BankCardLoadingState());
+      final ResponseMessageDTO result =
+          await bankCardRepository.updateRegisterAuthenticationBank(event.dto);
+      if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
+        emit(BankCardUpdateAuthenticateSuccessState());
+      } else {
+        emit(BankCardUpdateAuthenticateFailedState(
+            msg: ErrorUtils.instance.getErrorMessage(result.message)));
+      }
+    }
+  } catch (e) {
+    LOG.error(e.toString());
+  }
+}
 
 void _insertBankCardUnauthenticated(BankCardEvent event, Emitter emit) async {
   try {
@@ -38,7 +59,20 @@ void _insertBankCardUnauthenticated(BankCardEvent event, Emitter emit) async {
       final ResponseMessageDTO result =
           await bankCardRepository.insertBankCardUnauthenticated(event.dto);
       if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
-        emit(BankCardInsertUnauthenticatedSuccessState());
+        String bankId = '';
+        String qr = '';
+        if (result.message.isNotEmpty) {
+          if (result.message.contains('*')) {
+            bankId = result.message.split('*')[0];
+            qr = result.message.split('*')[1];
+          }
+        }
+        emit(
+          BankCardInsertUnauthenticatedSuccessState(
+            bankId: bankId,
+            qr: qr,
+          ),
+        );
       } else {
         emit(BankCardInsertUnauthenticatedFailedState(
             msg: ErrorUtils.instance.getErrorMessage(result.message)));
@@ -59,7 +93,17 @@ void _insertBankCard(BankCardEvent event, Emitter emit) async {
       final ResponseMessageDTO responseMessageDTO =
           await bankCardRepository.insertBankCard(event.dto);
       if (responseMessageDTO.status == Stringify.RESPONSE_STATUS_SUCCESS) {
-        emit(BankCardInsertSuccessfulState());
+        String bankId = '';
+        String qr = '';
+        if (responseMessageDTO.message.isNotEmpty) {
+          if (responseMessageDTO.message.contains('*')) {
+            bankId = responseMessageDTO.message.split('*')[0];
+            qr = responseMessageDTO.message.split('*')[1];
+          }
+        }
+        emit(
+          BankCardInsertSuccessfulState(bankId: bankId, qr: qr),
+        );
       } else {
         String message =
             ErrorUtils.instance.getErrorMessage(responseMessageDTO.message);
@@ -76,7 +120,7 @@ void _insertBankCard(BankCardEvent event, Emitter emit) async {
 void _getBankAccounts(BankCardEvent event, Emitter emit) async {
   try {
     if (event is BankCardEventGetList) {
-      emit(BankCardLoadingState());
+      emit(BankCardLoadingListState());
       final List<BankAccountDTO> list =
           await bankCardRepository.getListBankAccount(event.userId);
       final List<Color> colors = [];
@@ -105,10 +149,15 @@ void _getBankAccounts(BankCardEvent event, Emitter emit) async {
 void _removeBankAccount(BankCardEvent event, Emitter emit) async {
   try {
     if (event is BankCardEventRemove) {
+      emit(BankCardRemoveLoadingState());
       final ResponseMessageDTO responseMessageDTO =
           await bankCardRepository.removeBankAccount(event.dto);
       if (responseMessageDTO.status == Stringify.RESPONSE_STATUS_SUCCESS) {
         emit(BankCardRemoveSuccessState());
+      } else if (responseMessageDTO.status == Stringify.RESPONSE_STATUS_CHECK) {
+        String message =
+            CheckUtils.instance.getCheckMessage(responseMessageDTO.message);
+        emit(BankCardRemoveFailedState(message: message));
       } else {
         String message =
             ErrorUtils.instance.getErrorMessage(responseMessageDTO.message);
@@ -213,5 +262,23 @@ void _checkExistedBank(BankCardEvent event, Emitter emit) async {
   } catch (e) {
     LOG.error(e.toString());
     emit(BankCardCheckFailedState());
+  }
+}
+
+void _searchBankName(BankCardEvent event, Emitter emit) async {
+  try {
+    if (event is BankCardEventSearchName) {
+      emit(BankCardSearchingNameState());
+      BankNameInformationDTO dto =
+          await bankCardRepository.searchBankName(event.dto);
+      if (dto.accountName.trim().isNotEmpty) {
+        emit(BankCardSearchNameSuccessState(dto: dto));
+      } else {
+        emit(BankCardSearchNameFailedState());
+      }
+    }
+  } catch (e) {
+    LOG.error(e.toString());
+    emit(BankCardSearchNameFailedState());
   }
 }

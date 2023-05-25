@@ -33,3 +33,20 @@ class QRGeneratedSuccessfulState extends QRState {
 class QRGeneratedListFailedState extends QRState {}
 
 class QRGeneratedFailedState extends QRState {}
+
+class QRRegenerateLoadingState extends QRState {}
+
+class QRRegeneratedSuccessState extends QRState {
+  final bool newTransaction;
+  final QRGeneratedDTO dto;
+
+  const QRRegeneratedSuccessState({
+    required this.newTransaction,
+    required this.dto,
+  });
+
+  @override
+  List<Object?> get props => [newTransaction, dto];
+}
+
+class QRRegeneratedFailedState extends QRState {}

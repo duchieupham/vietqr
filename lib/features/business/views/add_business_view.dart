@@ -59,6 +59,7 @@ class AddBusinessView extends StatelessWidget {
         imgId: imgId,
         //for checking user found or not
         status: '',
+        existed: 0,
       );
       Future.delayed(const Duration(milliseconds: 0), () {
         Provider.of<AddBusinessProvider>(context, listen: false)
@@ -86,9 +87,9 @@ class AddBusinessView extends StatelessWidget {
             Fluttertoast.showToast(
               msg: 'Tạo thông tin doanh nghiệp thành công',
               toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.TOP,
-              backgroundColor: DefaultTheme.GREEN,
-              textColor: DefaultTheme.WHITE,
+              gravity: ToastGravity.CENTER,
+              backgroundColor: Theme.of(context).cardColor,
+              textColor: Theme.of(context).hintColor,
               fontSize: 15,
             );
             Navigator.pop(context);
@@ -192,51 +193,51 @@ class AddBusinessView extends StatelessWidget {
               child: ListView(
                 padding: const EdgeInsets.all(0),
                 children: [
-                  UnconstrainedBox(
-                    child: SizedBox(
-                      width: width * 0.8,
-                      height: 40,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          const SizedBox(
-                            width: 15,
-                            height: 15,
-                          ),
-                          Expanded(
-                            child: TextFieldWidget(
-                              autoFocus: false,
-                              width: width,
-                              hintText: 'Tên doanh nghiệp \u002A',
-                              controller: businessNameContorller,
-                              keyboardAction: TextInputAction.next,
-                              onChange: (value) {},
-                              inputType: TextInputType.text,
-                              isObscureText: false,
-                              textAlign: TextAlign.center,
-                              maxLength: 100,
-                              fontSize: 18,
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 15,
-                            height: 40,
-                            child: Icon(
-                              Icons.edit_rounded,
-                              size: 15,
-                              color: DefaultTheme.GREY_TEXT,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  UnconstrainedBox(
-                    child: DividerWidget(
-                      width: width * 0.6,
-                    ),
-                  ),
-                  const Padding(padding: EdgeInsets.only(top: 30)),
+                  // UnconstrainedBox(
+                  //   child: SizedBox(
+                  //     width: width * 0.8,
+                  //     height: 40,
+                  //     child: Row(
+                  //       crossAxisAlignment: CrossAxisAlignment.center,
+                  //       children: [
+                  //         const SizedBox(
+                  //           width: 15,
+                  //           height: 15,
+                  //         ),
+                  //         Expanded(
+                  //           child: TextFieldWidget(
+                  //             autoFocus: false,
+                  //             width: width,
+                  //             hintText: 'Tên doanh nghiệp \u002A',
+                  //             controller: businessNameContorller,
+                  //             keyboardAction: TextInputAction.next,
+                  //             onChange: (value) {},
+                  //             inputType: TextInputType.text,
+                  //             isObscureText: false,
+                  //             textAlign: TextAlign.center,
+                  //             maxLength: 100,
+                  //             fontSize: 18,
+                  //           ),
+                  //         ),
+                  //         const SizedBox(
+                  //           width: 15,
+                  //           height: 40,
+                  //           child: Icon(
+                  //             Icons.edit_rounded,
+                  //             size: 15,
+                  //             color: DefaultTheme.GREY_TEXT,
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
+                  // UnconstrainedBox(
+                  //   child: DividerWidget(
+                  //     width: width * 0.6,
+                  //   ),
+                  // ),
+                  // const Padding(padding: EdgeInsets.only(top: 30)),
                   UnconstrainedBox(
                     child: ButtonWidget(
                       width: width - 40,
@@ -322,11 +323,26 @@ class AddBusinessView extends StatelessWidget {
                         TextFieldWidget(
                           autoFocus: false,
                           textfieldType: TextfieldType.LABEL,
-                          titleWidth: 80,
+                          titleWidth: 120,
+                          width: width,
+                          isObscureText: false,
+                          title: 'Tên doanh nghiệp \u002A',
+                          hintText: 'Nhập tên doanh nghiệp',
+                          fontSize: 13,
+                          controller: businessNameContorller,
+                          inputType: TextInputType.text,
+                          keyboardAction: TextInputAction.next,
+                          onChange: (text) {},
+                        ),
+                        DividerWidget(width: width),
+                        TextFieldWidget(
+                          autoFocus: false,
+                          textfieldType: TextfieldType.LABEL,
+                          titleWidth: 120,
                           width: width,
                           isObscureText: false,
                           title: 'Địa chỉ \u002A',
-                          hintText: '',
+                          hintText: 'Địa chỉ doanh nghiệp',
                           fontSize: 13,
                           controller: addressController,
                           inputType: TextInputType.text,
@@ -337,11 +353,11 @@ class AddBusinessView extends StatelessWidget {
                         TextFieldWidget(
                           autoFocus: false,
                           textfieldType: TextfieldType.LABEL,
-                          titleWidth: 80,
+                          titleWidth: 120,
                           width: width,
                           isObscureText: false,
                           title: 'Mã số thuế',
-                          hintText: '',
+                          hintText: 'Mã số thuế của doanh nghiệp',
                           fontSize: 13,
                           controller: taxCodeController,
                           inputType: TextInputType.text,

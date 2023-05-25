@@ -5,6 +5,7 @@ import 'package:vierqr/features/scan_qr/events/scan_qr_event.dart';
 import 'package:vierqr/features/scan_qr/repositories/scan_qr_repository.dart';
 import 'package:vierqr/features/scan_qr/states/scan_qr_state.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
+import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/models/viet_qr_scanned_dto.dart';
 
 class ScanQrBloc extends Bloc<ScanQrEvent, ScanQrState> {
@@ -36,7 +37,14 @@ void _getBankType(ScanQrEvent event, Emitter emit) async {
           emit(ScanQrGetBankTypeFailedState());
         }
       } else {
-        emit(ScanQrNotFoundInformation());
+        NationalScannerDTO nationalScannerDTO =
+            scanQrRepository.getNationalInformation(event.code);
+        if (nationalScannerDTO.nationalId.trim().isNotEmpty) {
+          emit(QRScanGetNationalInformationSuccessState(
+              dto: nationalScannerDTO));
+        } else {
+          emit(ScanQrNotFoundInformation());
+        }
       }
     }
   } catch (e) {

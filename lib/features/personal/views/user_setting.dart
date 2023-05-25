@@ -1,7 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/widgets/ambient_avatar_widget.dart';
 import 'package:vierqr/commons/widgets/button_text_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
@@ -9,6 +12,7 @@ import 'package:vierqr/features/login/blocs/login_bloc.dart';
 import 'package:vierqr/features/logout/blocs/log_out_bloc.dart';
 import 'package:vierqr/features/logout/events/log_out_event.dart';
 import 'package:vierqr/features/logout/states/log_out_state.dart';
+import 'package:vierqr/services/providers/avatar_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 import 'package:flutter/material.dart';
 
@@ -42,7 +46,9 @@ class _UserSetting extends State<UserSetting> {
             DialogWidget.instance.openLoadingDialog();
           }
           if (state is LogoutSuccessfulState) {
-            Navigator.pop(context);
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
             Navigator.of(context).pushReplacementNamed(Routes.LOGIN);
           }
           if (state is LogoutFailedState) {
@@ -53,143 +59,128 @@ class _UserSetting extends State<UserSetting> {
             );
           }
         },
-        child: Column(
-          children: [
-            const Padding(padding: EdgeInsets.only(top: 20)),
-            _buildAvatarWidget(context),
-            Padding(
-              padding: const EdgeInsets.only(
-                top: 20,
-                bottom: 30,
-              ),
-              child: Text(
-                UserInformationHelper.instance.getUserFullname(),
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
+        child: ClipRRect(
+          child: Column(
+            children: [
+              const Padding(padding: EdgeInsets.only(top: 50)),
+              _buildAvatarWidget(context),
+              Padding(
+                padding: const EdgeInsets.only(
+                  top: 20,
+                  bottom: 30,
+                ),
+                child: Text(
+                  UserInformationHelper.instance.getUserFullname(),
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
-            ),
-            Container(
-              width: width - 40,
-              decoration: BoxDecoration(
-                color: Theme.of(context).cardColor,
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Column(
-                children: [
-                  ButtonTextWidget(
-                    width: width,
-                    alignment: buttonTextAlignment,
-                    text: 'Chỉnh sửa thông tin cá nhân',
-                    textColor: DefaultTheme.GREEN,
-                    function: () {
-                      Navigator.of(context).pushNamed(Routes.USER_EDIT);
-                    },
-                  ),
-                  const Divider(
-                    color: DefaultTheme.GREY_LIGHT,
-                    height: 1,
-                  ),
-                  // ButtonTextWidget(
-                  //   width: width,
-                  //   alignment: buttonTextAlignment,
-                  //   text: 'Quản lý tài khoản ngân hàng',
-                  //   textColor: DefaultTheme.GREEN,
-                  //   function: () {
-                  //     // Navigator.of(context).pushNamed(Routes.BANK_MANAGE);
-                  //   },
-                  // ),
-                  // const Divider(
-                  //   color: DefaultTheme.GREY_LIGHT,
-                  //   height: 1,
-                  // ),
-                  ButtonTextWidget(
-                    width: width,
-                    alignment: buttonTextAlignment,
-                    text: 'Đăng nhập bằng mã QR',
-                    textColor: DefaultTheme.GREEN,
-                    function: () {
-                      DialogWidget.instance.openMsgDialog(
-                        title: 'Tính năng bảo trì',
-                        msg:
-                            'Tính năng hiện đang bảo trì, vui lòng thử lại sau.',
-                      );
-                      // Navigator.of(context)
-                      //     .pushNamed(Routes.QR_SCAN)
-                      //     .then((code) {
-                      //   if (code != null) {
-                      //     if (code.toString().isNotEmpty) {
-                      //       _loginBloc.add(
-                      //         LoginEventUpdateCode(
-                      //           code: code.toString(),
-                      //           userId:
-                      //               UserInformationHelper.instance.getUserId(),
-                      //         ),
-                      //       );
-                      //     }
-                      //   }
-                      // });
-                    },
-                  ),
-                  const Divider(
-                    color: DefaultTheme.GREY_LIGHT,
-                    height: 1,
-                  ),
-                  // ButtonTextWidget(
-                  //   width: width,
-                  //   alignment: buttonTextAlignment,
-                  //   text: 'Kết nối với Telegram',
-                  //   textColor: DefaultTheme.GREEN,
-                  //   function: () {},
-                  // ),
-                  // const Divider(
-                  //   color: DefaultTheme.GREY_LIGHT,
-                  //   height: 1,
-                  // ),
-                  ButtonTextWidget(
-                    width: width,
-                    alignment: buttonTextAlignment,
-                    text: 'Thay đổi giao diện',
-                    textColor: DefaultTheme.GREEN,
-                    function: () {
-                      Navigator.of(context).pushNamed(Routes.UI_SETTING);
-                    },
-                  ),
-                  const Divider(
-                    color: DefaultTheme.GREY_LIGHT,
-                    height: 1,
-                  ),
-                  ButtonTextWidget(
-                    width: width,
-                    alignment: buttonTextAlignment,
-                    text: 'Đăng xuất',
-                    textColor: DefaultTheme.RED_TEXT,
-                    function: () async {
-                      Navigator.of(context).popUntil((route) => route.isFirst);
-                      _logoutBloc.add(const LogoutEventSubmit());
-                    },
-                  ),
-                ],
-              ),
-            )
-          ],
+              Container(
+                width: width - 40,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).cardColor,
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Column(
+                  children: [
+                    ButtonTextWidget(
+                      width: width,
+                      alignment: buttonTextAlignment,
+                      text: 'Cập nhật thông tin cá nhân',
+                      textColor: DefaultTheme.GREEN,
+                      function: () {
+                        Navigator.of(context).pushNamed(Routes.USER_EDIT);
+                      },
+                    ),
+                    const Divider(
+                      color: DefaultTheme.GREY_LIGHT,
+                      height: 1,
+                    ),
+                    ButtonTextWidget(
+                      width: width,
+                      alignment: buttonTextAlignment,
+                      text: 'Cài đặt máy in',
+                      textColor: DefaultTheme.GREEN,
+                      function: () async {
+                        if (PlatformUtils.instance.isPhysicalDevice()) {
+                          if (PlatformUtils.instance.isAndroidApp()) {
+                            await Permission.bluetooth.request();
+                            await Permission.bluetoothScan.request();
+                            await Permission.bluetoothConnect.request();
+                          }
+                          await Permission.bluetooth.request().then((value) =>
+                              Navigator.pushNamed(
+                                  context, Routes.PRINTER_SETTING));
+                        } else {
+                          Navigator.pushNamed(context, Routes.PRINTER_SETTING);
+                        }
+                      },
+                    ),
+                    const Divider(
+                      color: DefaultTheme.GREY_LIGHT,
+                      height: 1,
+                    ),
+                    // ButtonTextWidget(
+                    //   width: width,
+                    //   alignment: buttonTextAlignment,
+                    //   text: 'Kết nối với Telegram',
+                    //   textColor: DefaultTheme.GREEN,
+                    //   function: () {},
+                    // ),
+                    // const Divider(
+                    //   color: DefaultTheme.GREY_LIGHT,
+                    //   height: 1,
+                    // ),
+                    ButtonTextWidget(
+                      width: width,
+                      alignment: buttonTextAlignment,
+                      text: 'Thay đổi giao diện',
+                      textColor: DefaultTheme.GREEN,
+                      function: () {
+                        Navigator.of(context).pushNamed(Routes.UI_SETTING);
+                      },
+                    ),
+                    const Divider(
+                      color: DefaultTheme.GREY_LIGHT,
+                      height: 1,
+                    ),
+                    ButtonTextWidget(
+                      width: width,
+                      alignment: buttonTextAlignment,
+                      text: 'Đăng xuất',
+                      textColor: DefaultTheme.RED_TEXT,
+                      function: () async {
+                        Navigator.of(context)
+                            .popUntil((route) => route.isFirst);
+                        _logoutBloc.add(const LogoutEventSubmit());
+                      },
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget _buildAvatarWidget(BuildContext context) {
+    print('build avatar');
     double size = 100;
     String imgId = UserInformationHelper.instance.getAccountInformation().imgId;
-    return (imgId.isEmpty)
-        ? ClipOval(
-            child: SizedBox(
-              width: size,
-              height: size,
-              child: Image.asset('assets/images/ic-avatar.png'),
-            ),
-          )
-        : AmbientAvatarWidget(imgId: imgId, size: size);
+    return Consumer<AvatarProvider>(
+      builder: (context, provider, child) => (imgId.isEmpty)
+          ? ClipOval(
+              child: SizedBox(
+                width: size,
+                height: size,
+                child: Image.asset('assets/images/ic-avatar.png'),
+              ),
+            )
+          : AmbientAvatarWidget(imgId: imgId, size: size),
+    );
   }
 }

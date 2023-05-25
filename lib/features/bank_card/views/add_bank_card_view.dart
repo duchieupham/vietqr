@@ -27,11 +27,19 @@ class AddBankCardView extends StatelessWidget {
 
   const AddBankCardView({super.key});
 
-  void initialServices(
-      BuildContext context, int initialPage, String bankAccount) {
+  void initialServices(BuildContext context, int initialPage,
+      String bankAccount, String userBankName) {
+    searchController.clear();
+    bankAccountController.clear();
+    nationalController.clear();
+    phoneAuthenController.clear();
+    nameController.clear();
     if (bankAccount.isNotEmpty) {
       bankAccountController.value =
           bankAccountController.value.copyWith(text: bankAccount);
+    }
+    if (userBankName.isNotEmpty) {
+      nameController.value = nameController.value.copyWith(text: userBankName);
     }
     if (!Provider.of<AddBankProvider>(context, listen: false).getBankTypes) {
       _pageController = PageController(
@@ -89,12 +97,14 @@ class AddBankCardView extends StatelessWidget {
     // final double width = MediaQuery.of(context).size.width;
     int initialPage = 0;
     String bankAccount = '';
+    String userBankName = '';
     if (ModalRoute.of(context)!.settings.arguments != null) {
       final args = ModalRoute.of(context)!.settings.arguments as Map;
       initialPage = args['pageIndex'] ?? 0;
       bankAccount = args['bankAccount'] ?? '';
+      userBankName = args['name'] ?? '';
     }
-    initialServices(context, initialPage, bankAccount);
+    initialServices(context, initialPage, bankAccount, userBankName);
     return WillPopScope(
       onWillPop: () async {
         _navigateBack(context);

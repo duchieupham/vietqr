@@ -6,6 +6,7 @@ class BusinessMemberDTO {
   final String imgId;
   //for check status reponse found member or not
   final String status;
+  final int existed;
 
   const BusinessMemberDTO({
     required this.userId,
@@ -14,6 +15,7 @@ class BusinessMemberDTO {
     required this.phoneNo,
     required this.imgId,
     required this.status,
+    required this.existed,
   });
 
   factory BusinessMemberDTO.fromJson(Map<String, dynamic> json) {
@@ -26,10 +28,11 @@ class BusinessMemberDTO {
               ' ' +
               json['firstName']
           : '',
-      role: 0,
+      role: json['role'] ?? 0,
       phoneNo: json['phoneNo'] ?? '',
       imgId: json['imgId'] ?? '',
       status: json['status'] ?? '',
+      existed: json['existed'] ?? 0,
     );
   }
 

@@ -16,6 +16,7 @@ import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_card_insert_dto.dart';
 import 'package:vierqr/models/bank_card_request_otp.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
+import 'package:vierqr/models/register_authentication_dto.dart';
 import 'package:vierqr/services/providers/add_bank_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
@@ -44,6 +45,10 @@ class PolicyBankView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('--${bankAccountController.text}');
+    print('--${nameController.text}');
+    print('--${nationalController.text}');
+    print('--${phoneAuthenController.text}');
     final double width = MediaQuery.of(context).size.width;
     final double height = MediaQuery.of(context).size.height;
     initialServices(context);
@@ -72,7 +77,7 @@ class PolicyBankView extends StatelessWidget {
         if (state is BankCardRequestOTPFailedState) {
           Navigator.pop(context);
           DialogWidget.instance.openMsgDialog(
-            title: 'Lỗi',
+            title: 'Xác thực thất bại',
             msg: state.message,
             function: () {
               _animatedToPage(2);
@@ -85,30 +90,58 @@ class PolicyBankView extends StatelessWidget {
         }
         if (state is BankCardConfirmOTPSuccessState) {
           Navigator.pop(context);
-          BankTypeDTO bankTypeDTO =
-              Provider.of<AddBankProvider>(context, listen: false).bankTypeDTO;
-          String userId = UserInformationHelper.instance.getUserId();
-          String formattedName = StringUtils.instance.removeDiacritic(
-              StringUtils.instance.capitalFirstCharacter(nameController.text));
-          BankCardInsertDTO dto = BankCardInsertDTO(
-            bankTypeId: bankTypeDTO.id,
-            userId: userId,
-            userBankName: formattedName,
-            bankAccount: bankAccountController.text,
-            type: Provider.of<AddBankProvider>(context, listen: false).type,
-            branchId: Provider.of<AddBankProvider>(context, listen: false)
-                .branchChoiceInsertDTO
-                .branchId,
-            nationalId: nationalController.text,
-            phoneAuthenticated: phoneAuthenController.text,
-          );
-          bankCardBloc.add(BankCardEventInsert(dto: dto));
+          String bankId =
+              Provider.of<AddBankProvider>(context, listen: false).bankId;
+          if (bankId.trim().isEmpty) {
+            BankTypeDTO bankTypeDTO =
+                Provider.of<AddBankProvider>(context, listen: false)
+                    .bankTypeDTO;
+            String userId = UserInformationHelper.instance.getUserId();
+            String formattedName = StringUtils.instance.removeDiacritic(
+                StringUtils.instance
+                    .capitalFirstCharacter(nameController.text));
+            BankCardInsertDTO dto = BankCardInsertDTO(
+              bankTypeId: bankTypeDTO.id,
+              userId: userId,
+              userBankName: formattedName,
+              bankAccount: bankAccountController.text,
+              type: Provider.of<AddBankProvider>(context, listen: false).type,
+              branchId: Provider.of<AddBankProvider>(context, listen: false)
+                  .branchChoiceInsertDTO
+                  .branchId,
+              nationalId: nationalController.text,
+              phoneAuthenticated: phoneAuthenController.text,
+            );
+            bankCardBloc.add(BankCardEventInsert(dto: dto));
+          } else {
+            RegisterAuthenticationDTO dto = RegisterAuthenticationDTO(
+              bankId: bankId,
+              nationalId: nationalController.text,
+              phoneAuthenticated: phoneAuthenController.text,
+              bankAccountName: nameController.text,
+              bankAccount: bankAccountController.text,
+            );
+            bankCardBloc.add(BankCardEventRegisterAuthentication(dto: dto));
+          }
         }
         if (state is BankCardConfirmOTPFailedState) {
           Navigator.pop(context);
           DialogWidget.instance.openMsgDialog(
             title: 'Lỗi',
             msg: state.message,
+          );
+        }
+        if (state is BankCardUpdateAuthenticateSuccessState) {
+          phoneAuthenController.clear();
+          nameController.clear();
+          nationalController.clear();
+          bankAccountController.clear();
+          Navigator.pop(context);
+        }
+        if (state is BankCardUpdateAuthenticateFailedState) {
+          DialogWidget.instance.openMsgDialog(
+            title: 'Không thể liên kết',
+            msg: state.msg,
           );
         }
         if (state is BankCardInsertSuccessfulState) {
@@ -129,6 +162,10 @@ class PolicyBankView extends StatelessWidget {
             isAuthenticated: false,
           );
           Navigator.pop(context);
+          phoneAuthenController.clear();
+          nameController.clear();
+          nationalController.clear();
+          bankAccountController.clear();
           Navigator.of(context).pushReplacementNamed(
             Routes.BANK_CARD_GENERATED_VIEW,
             arguments: {'bankAccountDTO': dto},

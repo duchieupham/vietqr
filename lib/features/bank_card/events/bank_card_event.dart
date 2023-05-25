@@ -3,7 +3,9 @@ import 'package:vierqr/models/bank_account_remove_dto.dart';
 import 'package:vierqr/models/bank_card_insert_dto.dart';
 import 'package:vierqr/models/bank_card_insert_unauthenticated.dart';
 import 'package:vierqr/models/bank_card_request_otp.dart';
+import 'package:vierqr/models/bank_name_search_dto.dart';
 import 'package:vierqr/models/confirm_otp_bank_dto.dart';
+import 'package:vierqr/models/register_authentication_dto.dart';
 
 class BankCardEvent extends Equatable {
   const BankCardEvent();
@@ -83,6 +85,26 @@ class BankCardEventInsertUnauthenticated extends BankCardEvent {
   final BankCardInsertUnauthenticatedDTO dto;
 
   const BankCardEventInsertUnauthenticated({required this.dto});
+
+  @override
+  List<Object?> get props => [dto];
+}
+
+class BankCardEventRegisterAuthentication extends BankCardEvent {
+  final RegisterAuthenticationDTO dto;
+
+  const BankCardEventRegisterAuthentication({
+    required this.dto,
+  });
+
+  @override
+  List<Object?> get props => [dto];
+}
+
+class BankCardEventSearchName extends BankCardEvent {
+  final BankNameSearchDTO dto;
+
+  const BankCardEventSearchName({required this.dto});
 
   @override
   List<Object?> get props => [dto];

@@ -1,34 +1,40 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
+import 'package:vierqr/commons/utils/file_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/commons/widgets/ambient_avatar_widget.dart';
+import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/checkbox_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/commons/widgets/sub_header_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_widget.dart';
-import 'package:vierqr/commons/widgets/web_widgets/header_mweb_widget_old.dart';
-import 'package:vierqr/commons/widgets/web_widgets/header_web_widget_old.dart';
 import 'package:vierqr/features/home/home.dart';
 import 'package:vierqr/features/personal/blocs/user_edit_bloc.dart';
 import 'package:vierqr/features/personal/events/user_edit_event.dart';
 import 'package:vierqr/features/personal/frames/user_edit_frame.dart';
 import 'package:vierqr/features/personal/states/user_edit_state.dart';
-import 'package:vierqr/features/personal/views/qr_scanner.dart';
+import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
 import 'package:vierqr/layouts/border_layout.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/account_information_dto.dart';
-import 'package:vierqr/models/user_information_dto.dart';
+import 'package:vierqr/services/providers/add_business_provider.dart';
+import 'package:vierqr/services/providers/avatar_provider.dart';
 import 'package:vierqr/services/providers/suggestion_widget_provider.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
+import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class UserEditView extends StatelessWidget {
@@ -44,7 +50,7 @@ class UserEditView extends StatelessWidget {
   static String _birthDate = '';
   static late UserEditBloc _userEditBloc;
   static final _formKey = GlobalKey<FormState>();
-
+  static final ImagePicker imagePicker = ImagePicker();
   const UserEditView({super.key});
 
   void initialServices(BuildContext context) {
@@ -95,6 +101,40 @@ class UserEditView extends StatelessWidget {
               listener: ((context, state) {
                 if (state is UserEditLoadingState) {
                   DialogWidget.instance.openLoadingDialog();
+                }
+                if (state is UserDeactiveSuccessState) {
+                  Navigator.pop(context);
+                  if (Navigator.canPop(context)) {
+                    Navigator.of(context).popUntil((route) => route.isFirst);
+                  }
+                  Navigator.of(context).pushReplacementNamed(Routes.LOGIN);
+                }
+                if (state is UserDeactiveFailedState) {
+                  //pop loading dialog
+                  Navigator.pop(context);
+                  //
+                  DialogWidget.instance.openMsgDialog(
+                    title: 'Không thể xoá tài khoản',
+                    msg: state.message,
+                  );
+                }
+                if (state is UserEditAvatarSuccessState) {
+                  //pop loading dialog
+                  Navigator.pop(context);
+                  Provider.of<AvatarProvider>(context, listen: false)
+                      .rebuildAvatar();
+                  Provider.of<SuggestionWidgetProvider>(context, listen: false)
+                      .updateUserUpdating(false);
+                  Navigator.pop(context);
+                }
+                if (state is UserEditAvatarFailedState) {
+                  //pop loading dialog
+                  Navigator.pop(context);
+                  //
+                  DialogWidget.instance.openMsgDialog(
+                    title: 'Không thể cập nhật ảnh đại diện',
+                    msg: state.message,
+                  );
                 }
                 if (state is UserEditFailedState) {
                   //pop loading dialog
@@ -201,7 +241,39 @@ class UserEditView extends StatelessWidget {
                             text: 'Cập nhật ảnh đại diện',
                             textColor: DefaultTheme.GREEN,
                             bgColor: Theme.of(context).cardColor,
-                            function: () {},
+                            function: () async {
+                              await Permission.mediaLibrary.request();
+                              await imagePicker
+                                  .pickImage(source: ImageSource.gallery)
+                                  .then(
+                                (pickedFile) async {
+                                  if (pickedFile != null) {
+                                    File? file = File(pickedFile.path);
+                                    File? compressedFile =
+                                        FileUtils.instance.compressImage(file);
+                                    Provider.of<AddBusinessProvider>(context,
+                                            listen: false)
+                                        .setImage(compressedFile);
+                                    await Future.delayed(
+                                        const Duration(milliseconds: 200), () {
+                                      String userId = UserInformationHelper
+                                          .instance
+                                          .getUserId();
+                                      String imgId = UserInformationHelper
+                                          .instance
+                                          .getAccountInformation()
+                                          .imgId;
+                                      _userEditBloc.add(
+                                        UserEditAvatarEvent(
+                                            userId: userId,
+                                            imgId: imgId,
+                                            image: compressedFile),
+                                      );
+                                    });
+                                  }
+                                },
+                              );
+                            },
                           ),
                           const Padding(padding: EdgeInsets.only(top: 10)),
                           ButtonWidget(
@@ -221,59 +293,17 @@ class UserEditView extends StatelessWidget {
                             textColor: DefaultTheme.GREEN,
                             bgColor: Theme.of(context).cardColor,
                             function: () {
-                              Navigator.of(context)
-                                  .pushNamed(Routes.QR_SCAN)
-                                  .then((code) {
-                                if (code != '' &&
-                                    code.toString().split('|').length == 7) {
-                                  List<String> informations =
-                                      code.toString().split('|');
-                                  String fullName = informations[2];
-                                  String firstName = fullName.split(' ').last;
-                                  String lastName = fullName.split(' ').first;
-                                  String middleName = '';
-                                  for (int i = 0;
-                                      i < fullName.split(' ').length;
-                                      i++) {
-                                    if (i != 0 &&
-                                        i != fullName.split(' ').length - 1) {
-                                      middleName +=
-                                          ' ${fullName.split(' ')[i]}'.trim();
-                                    }
-                                  }
-                                  String birthdate = informations[3];
-                                  String bdDay = birthdate.substring(0, 2);
-                                  String bdMonth = birthdate.substring(2, 4);
-                                  String bdYear = birthdate.substring(4, 8);
-                                  int gender =
-                                      (informations[4] == 'Nam') ? 1 : 0;
-                                  String address = informations[5];
-                                  //
-                                  _lastNameController.value =
-                                      _lastNameController.value
-                                          .copyWith(text: lastName);
-                                  _middleNameController.value =
-                                      _middleNameController.value
-                                          .copyWith(text: middleName);
-                                  _firstNameController.value =
-                                      _firstNameController.value
-                                          .copyWith(text: firstName);
-                                  _birthDate = '$bdDay/$bdMonth/$bdYear';
-
-                                  _addressController.value = _addressController
-                                      .value
-                                      .copyWith(text: address);
-                                  provider.updateGender(gender);
-                                  provider.setAvailableUpdate(true);
-                                } else {
-                                  // DialogWidget.instance.openMsgDialog(
-                                  //
-                                  //   title: 'Không thể cập nhật',
-                                  //   msg:
-                                  //       'Mã QR không đúng định dạng, vui lòng thử lại.',
-                                  // );
-                                }
-                              });
+                              Navigator.pop(context);
+                              if (QRScannerHelper.instance.getQrIntro()) {
+                                Navigator.pushNamed(
+                                    context, Routes.SCAN_QR_VIEW);
+                              } else {
+                                DialogWidget.instance
+                                    .showFullModalBottomContent(
+                                  widget: const QRScanWidget(),
+                                  color: DefaultTheme.BLACK,
+                                );
+                              }
                             },
                           ),
                           // const Padding(padding: EdgeInsets.only(top: 10)),
@@ -454,7 +484,7 @@ class UserEditView extends StatelessWidget {
                               textfieldType: TextfieldType.LABEL,
                               isObscureText: false,
                               title: 'Email',
-                              hintText: '',
+                              hintText: 'user@gmail.com',
                               controller: _emailController,
                               inputType: TextInputType.text,
                               keyboardAction: TextInputAction.next,
@@ -472,7 +502,7 @@ class UserEditView extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const SizedBox(
-                                  width: 120,
+                                  width: 90,
                                   child: Text(
                                     'Địa chỉ',
                                     style: TextStyle(
@@ -490,10 +520,10 @@ class UserEditView extends StatelessWidget {
                                       maxLength: 1000,
                                       decoration:
                                           const InputDecoration.collapsed(
-                                        hintText: 'Địa chỉ tối đa 1000 ký tự.',
+                                        hintText: 'Nhập địa chỉ thường trú',
                                         hintStyle: TextStyle(
                                           fontSize: 16,
-                                          fontStyle: FontStyle.italic,
+                                          color: DefaultTheme.GREY_TEXT,
                                         ),
                                       ),
                                       onChanged: (value) {
@@ -506,347 +536,34 @@ class UserEditView extends StatelessWidget {
                             ),
                           ),
                           const Padding(padding: EdgeInsets.only(top: 30)),
-                        ],
-                      ),
-                    ),
-                    widget1: SizedBox(
-                      width: 200,
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            width: 80,
-                            height: 80,
-                            child: Image.asset(
-                              'assets/images/ic-avatar.png',
-                              width: 80,
-                              height: 80,
-                            ),
-                          ),
-                          SizedBox(
-                            width: 200,
-                            child: Text(
-                              UserInformationHelper.instance.getUserFullname(),
-                              textAlign: TextAlign.center,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 200,
-                            child: Text(
-                              UserInformationHelper.instance.getPhoneNo(),
-                              textAlign: TextAlign.center,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                color: DefaultTheme.GREY_TEXT,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                letterSpacing: 0.2,
-                              ),
-                            ),
-                          ),
-                          const Padding(padding: EdgeInsets.only(top: 10)),
-                          ButtonWidget(
-                            width: 200,
-                            height: 30,
-                            borderRadius: 5,
-                            text: 'Cập nhật ảnh đại diện',
-                            textColor: DefaultTheme.GREEN,
-                            bgColor: Theme.of(context).cardColor,
-                            function: () {},
-                          ),
-                          const Padding(padding: EdgeInsets.only(top: 10)),
-                          ButtonWidget(
-                            width: 200,
-                            height: 30,
-                            borderRadius: 5,
-                            text: 'Đổi mật khẩu',
-                            textColor: DefaultTheme.GREEN,
-                            bgColor: Theme.of(context).cardColor,
+                          DividerWidget(width: width),
+                          ButtonIconWidget(
+                            width: width,
+                            height: 40,
+                            icon: Icons.remove_circle_outline_rounded,
+                            title: 'Xoá tài khoản',
                             function: () {
-                              _openChangePIN(context);
-                            },
-                          ),
-                          const Padding(padding: EdgeInsets.only(top: 10)),
-                          ButtonWidget(
-                            width: 200,
-                            height: 30,
-                            borderRadius: 5,
-                            text: 'Cập nhật thông tin qua CCCD',
-                            textColor: DefaultTheme.GREEN,
-                            bgColor: Theme.of(context).cardColor,
-                            function: () {
-                              Navigator.of(context)
-                                  .push(
-                                MaterialPageRoute(
-                                  builder: (context) => QRScanner(),
-                                ),
-                              )
-                                  .then((code) {
-                                if (code != '' &&
-                                    code.toString().split('|').length == 7) {
-                                  List<String> informations =
-                                      code.toString().split('|');
-                                  String fullName = informations[2];
-                                  String firstName = fullName.split(' ').last;
-                                  String lastName = fullName.split(' ').first;
-                                  String middleName = '';
-                                  for (int i = 0;
-                                      i < fullName.split(' ').length;
-                                      i++) {
-                                    if (i != 0 &&
-                                        i != fullName.split(' ').length - 1) {
-                                      middleName +=
-                                          ' ${fullName.split(' ')[i]}'.trim();
-                                    }
-                                  }
-                                  String birthdate = informations[3];
-                                  String bdDay = birthdate.substring(0, 2);
-                                  String bdMonth = birthdate.substring(2, 4);
-                                  String bdYear = birthdate.substring(4, 8);
-                                  int gender =
-                                      (informations[4] == 'Nam') ? 1 : 0;
-                                  String address = informations[5];
-                                  //
-                                  _lastNameController.value =
-                                      _lastNameController.value
-                                          .copyWith(text: lastName);
-                                  _middleNameController.value =
-                                      _middleNameController.value
-                                          .copyWith(text: middleName);
-                                  _firstNameController.value =
-                                      _firstNameController.value
-                                          .copyWith(text: firstName);
-                                  _birthDate = '$bdDay/$bdMonth/$bdYear';
-
-                                  _addressController.value = _addressController
-                                      .value
-                                      .copyWith(text: address);
-                                  provider.updateGender(gender);
-                                  provider.setAvailableUpdate(true);
-                                }
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                    widget2: BoxLayout(
-                      width: 500,
-                      borderRadius: 0,
-                      child: Column(
-                        children: [
-                          _buildTitle('Họ'),
-                          BorderLayout(
-                            width: 500,
-                            isError: false,
-                            child: TextFieldWidget(
-                              width: width,
-                              isObscureText: false,
-                              title: 'Họ',
-                              hintText: '',
-                              controller: _lastNameController,
-                              inputType: TextInputType.text,
-                              keyboardAction: TextInputAction.next,
-                              onChange: (vavlue) {
-                                provider.setAvailableUpdate(true);
-                              },
-                            ),
-                          ),
-                          const Padding(padding: EdgeInsets.only(top: 10)),
-                          _buildTitle('Tên đệm'),
-                          BorderLayout(
-                            width: 500,
-                            isError: false,
-                            child: TextFieldWidget(
-                              width: width,
-                              isObscureText: false,
-                              title: 'Tên đệm',
-                              hintText: '',
-                              controller: _middleNameController,
-                              inputType: TextInputType.text,
-                              keyboardAction: TextInputAction.next,
-                              onChange: (vavlue) {
-                                provider.setAvailableUpdate(true);
-                              },
-                            ),
-                          ),
-                          const Padding(padding: EdgeInsets.only(top: 10)),
-                          _buildTitle('Tên'),
-                          BorderLayout(
-                            width: 500,
-                            isError: false,
-                            child: TextFieldWidget(
-                              width: width,
-                              isObscureText: false,
-                              title: 'Tên',
-                              hintText: '',
-                              controller: _firstNameController,
-                              inputType: TextInputType.text,
-                              keyboardAction: TextInputAction.next,
-                              onChange: (vavlue) {
-                                provider.setAvailableUpdate(true);
-                              },
-                            ),
-                          ),
-                          Visibility(
-                            visible: provider.firstNameErr,
-                            child: const Align(
-                              alignment: Alignment.centerLeft,
-                              child: Padding(
-                                padding: EdgeInsets.only(top: 5, left: 5),
-                                child: Text(
-                                  'Tên không được bỏ trống.',
-                                  style: TextStyle(
-                                    color: DefaultTheme.RED_TEXT,
-                                    fontSize: 13,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const Padding(padding: EdgeInsets.only(top: 10)),
-                          _buildTitle('Giới tính'),
-                          BorderLayout(
-                            width: 500,
-                            height: 60,
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            isError: false,
-                            child: Row(
-                              children: [
-                                const Text(
-                                  'Nam',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                  ),
-                                ),
-                                const Padding(
-                                    padding: EdgeInsets.only(left: 5)),
-                                CheckBoxWidget(
-                                  check: (provider.gender == 0),
-                                  size: 20,
-                                  function: () {
-                                    provider.setAvailableUpdate(true);
-                                    provider.updateGender(0);
-                                  },
-                                ),
-                                const Padding(
-                                    padding: EdgeInsets.only(left: 10)),
-                                const Text(
-                                  'Nữ',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                  ),
-                                ),
-                                const Padding(
-                                    padding: EdgeInsets.only(left: 5)),
-                                CheckBoxWidget(
-                                  check: (provider.gender != 0),
-                                  size: 20,
-                                  function: () {
-                                    provider.setAvailableUpdate(true);
-                                    provider.updateGender(1);
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                          const Padding(padding: EdgeInsets.only(top: 10)),
-                          _buildTitle('Ngày sinh'),
-                          BorderLayout(
-                            width: 500,
-                            height: 60,
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            isError: false,
-                            child: InkWell(
-                              onTap: () async {
-                                await _openDatePicker();
-                              },
-                              child: Row(
-                                children: [
-                                  Text(
-                                    _birthDate,
-                                    style: const TextStyle(fontSize: 15),
-                                  ),
-                                  const Spacer(),
-                                  const Icon(
-                                    Icons.calendar_month_rounded,
-                                    size: 15,
-                                    color: DefaultTheme.GREY_TOP_TAB_BAR,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          const Padding(padding: EdgeInsets.only(top: 10)),
-                          _buildTitle('Địa chỉ'),
-                          BorderLayout(
-                            width: 500,
-                            height: 150,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 20),
-                            isError: false,
-                            child: TextField(
-                              maxLines: 10,
-                              controller: _addressController,
-                              textInputAction: TextInputAction.done,
-                              maxLength: 1000,
-                              decoration: const InputDecoration.collapsed(
-                                hintText: 'Địa chỉ tối đa 1000 ký tự.',
-                                hintStyle: TextStyle(
-                                  fontSize: 16,
-                                  fontStyle: FontStyle.italic,
-                                ),
-                              ),
-                              onChanged: (value) {
-                                provider.setAvailableUpdate(true);
-                              },
-                            ),
-                          ),
-                          const Padding(padding: EdgeInsets.only(top: 10)),
-                          Consumer<UserEditProvider>(
-                            builder: (context, provider, child) {
-                              return Visibility(
-                                visible: provider.availableUpdate,
-                                child: ButtonWidget(
-                                  width: 500,
-                                  text: 'Cập nhật',
-                                  textColor: DefaultTheme.WHITE,
-                                  bgColor: DefaultTheme.GREEN,
-                                  function: () {
-                                    provider.updateErrors(
-                                        _firstNameController.text.isEmpty);
-                                    if (provider.isValidUpdate()) {
-                                      AccountInformationDTO
-                                          accountInformationDTO =
-                                          AccountInformationDTO(
-                                        userId: UserInformationHelper.instance
-                                            .getUserId(),
-                                        firstName: _firstNameController.text,
-                                        middleName: _middleNameController.text,
-                                        lastName: _lastNameController.text,
-                                        birthDate: _birthDate,
-                                        gender: provider.gender,
-                                        address: _addressController.text,
-                                        email: _emailController.text,
-                                        imgId: UserInformationHelper.instance
-                                            .getAccountInformation()
-                                            .imgId,
-                                      );
-                                      _userEditBloc.add(
-                                          UserEditInformationEvent(
-                                              dto: accountInformationDTO));
-                                    }
-                                  },
-                                ),
+                              DialogWidget.instance.openBoxWebConfirm(
+                                title: 'Xác nhận xoá tài khoản',
+                                confirmText: 'Đồng ý',
+                                imageAsset: 'assets/images/ic-warning.png',
+                                description:
+                                    'Tài khoản của bạn sẽ bị vô hiệu hoá và không thể đăng nhập lại vào hệ thống',
+                                confirmFunction: () {
+                                  Navigator.pop(context);
+                                  String userId = UserInformationHelper.instance
+                                      .getUserId();
+                                  _userEditBloc
+                                      .add(UserDeactiveEvent(userId: userId));
+                                },
+                                confirmColor: DefaultTheme.RED_TEXT,
                               );
                             },
+                            bgColor: DefaultTheme.TRANSPARENT,
+                            textColor: DefaultTheme.RED_TEXT,
                           ),
+                          DividerWidget(width: width),
+                          const Padding(padding: EdgeInsets.only(top: 30)),
                         ],
                       ),
                     ),
@@ -915,213 +632,46 @@ class UserEditView extends StatelessWidget {
   Widget _buildAvatarWidget(BuildContext context) {
     double size = 60;
     String imgId = UserInformationHelper.instance.getAccountInformation().imgId;
-    return (imgId.isEmpty)
-        ? ClipOval(
-            child: SizedBox(
-              width: size,
-              height: size,
-              child: Image.asset('assets/images/ic-avatar.png'),
-            ),
-          )
-        : AmbientAvatarWidget(imgId: imgId, size: size);
-  }
-
-  Future<void> _openDatePicker() async {
-    await showDatePicker(
-      context: NavigationService.navigatorKey.currentContext!,
-      initialDate: TimeUtils.instance.getDateFromString(_birthDate),
-      firstDate: TimeUtils.instance.getDateFromString('01/01/1900'),
-      lastDate: DateTime.now(),
-      helpText: 'Ngày sinh',
-      cancelText: 'Đóng',
-      confirmText: 'Chọn',
-    ).then((pickedDate) {
-      if (pickedDate != null) {
-        Provider.of<UserEditProvider>(
-                NavigationService.navigatorKey.currentContext!,
-                listen: false)
-            .setAvailableUpdate(true);
-        _birthDate = TimeUtils.instance.formatDate(pickedDate.toString());
-      }
-    });
-  }
-
-  _openChangePIN(BuildContext context) {
-    final TextEditingController _oldPasswordController =
-        TextEditingController();
-    final TextEditingController _newPasswordController =
-        TextEditingController();
-    final TextEditingController _confirmPassController =
-        TextEditingController();
-    double width = 500;
-    return DialogWidget.instance.openContentDialog(
-      () {
-        Provider.of<UserEditProvider>(context, listen: false)
-            .resetPasswordErr();
-        Navigator.pop(context);
+    return Consumer<UserEditProvider>(
+      builder: (context, provider, child) {
+        return (provider.imageFile != null)
+            ? AmbientAvatarWidget(
+                imgId: imgId,
+                size: size,
+                imageFile: provider.imageFile,
+              )
+            : (imgId.isEmpty)
+                ? ClipOval(
+                    child: SizedBox(
+                      width: size,
+                      height: size,
+                      child: Image.asset('assets/images/ic-avatar.png'),
+                    ),
+                  )
+                : AmbientAvatarWidget(imgId: imgId, size: size);
       },
-      Consumer<UserEditProvider>(
-        builder: (context, provider, child) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('Đổi mật khẩu',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              const Padding(padding: EdgeInsets.only(top: 30)),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      _buildTitle('Mật khẩu cũ'),
-                      BorderLayout(
-                        width: width,
-                        isError: provider.oldPassErr,
-                        child: TextFieldWidget(
-                          width: width,
-                          isObscureText: true,
-                          title: 'Mật khẩu cũ',
-                          titleWidth: 120,
-                          hintText: 'Mật khẩu hiện tại',
-                          controller: _oldPasswordController,
-                          inputType: TextInputType.number,
-                          keyboardAction: TextInputAction.next,
-                          onChange: (vavlue) {},
-                        ),
-                      ),
-                      Visibility(
-                        visible: provider.oldPassErr,
-                        child: const Align(
-                          alignment: Alignment.centerLeft,
-                          child: Padding(
-                            padding:
-                                EdgeInsets.only(left: 10, top: 5, right: 30),
-                            child: Text(
-                              'Mật khẩu cũ không đúng định dạng.',
-                              style: TextStyle(
-                                  color: DefaultTheme.RED_TEXT, fontSize: 13),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const Padding(padding: EdgeInsets.only(top: 10)),
-                      _buildTitle('Mật khẩu mới'),
-                      BorderLayout(
-                        width: width,
-                        isError: provider.newPassErr,
-                        child: TextFieldWidget(
-                          width: width,
-                          isObscureText: true,
-                          title: 'Mật khẩu mới',
-                          titleWidth: 120,
-                          hintText: 'Bao gồm 6 số',
-                          controller: _newPasswordController,
-                          inputType: TextInputType.number,
-                          keyboardAction: TextInputAction.next,
-                          onChange: (vavlue) {},
-                        ),
-                      ),
-                      Visibility(
-                        visible: provider.newPassErr,
-                        child: const Align(
-                          alignment: Alignment.centerLeft,
-                          child: Padding(
-                            padding:
-                                EdgeInsets.only(left: 10, top: 5, right: 30),
-                            child: Text(
-                              'Mật khẩu mới bao gồm 6 số.',
-                              style: TextStyle(
-                                  color: DefaultTheme.RED_TEXT, fontSize: 13),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const Padding(padding: EdgeInsets.only(top: 10)),
-                      _buildTitle('Xác nhận lại'),
-                      BorderLayout(
-                        width: width,
-                        isError: provider.confirmPassErr,
-                        child: TextFieldWidget(
-                          width: width,
-                          isObscureText: true,
-                          title: 'Xác nhận lại',
-                          titleWidth: 120,
-                          hintText: 'Xác nhận lại Mật khẩu mới',
-                          controller: _confirmPassController,
-                          inputType: TextInputType.number,
-                          keyboardAction: TextInputAction.next,
-                          onChange: (vavlue) {},
-                        ),
-                      ),
-                      Visibility(
-                        visible: provider.confirmPassErr,
-                        child: const Align(
-                          alignment: Alignment.centerLeft,
-                          child: Padding(
-                            padding:
-                                EdgeInsets.only(left: 10, top: 5, right: 30),
-                            child: Text(
-                              'Xác nhận Mật khẩu không trùng khớp.',
-                              style: TextStyle(
-                                  color: DefaultTheme.RED_TEXT, fontSize: 13),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const Padding(padding: EdgeInsets.only(top: 10)),
-                    ],
-                  ),
-                ),
-              ),
-              ButtonWidget(
-                width: width - 40,
-                text: 'Cập nhật',
-                textColor: DefaultTheme.WHITE,
-                bgColor: DefaultTheme.GREEN,
-                function: () {
-                  Provider.of<UserEditProvider>(context, listen: false)
-                      .updatePasswordErrs(
-                    (_oldPasswordController.text.isEmpty ||
-                        _oldPasswordController.text.length != 6),
-                    (_newPasswordController.text.isEmpty ||
-                        _newPasswordController.text.length != 6),
-                    (_confirmPassController.text !=
-                        _newPasswordController.text),
-                  );
-                  if (Provider.of<UserEditProvider>(context, listen: false)
-                      .isValidUpdatePassword()) {
-                    _userEditBloc.add(
-                      UserEditPasswordEvent(
-                        userId: UserInformationHelper.instance.getUserId(),
-                        phoneNo: UserInformationHelper.instance.getPhoneNo(),
-                        oldPassword: _oldPasswordController.text,
-                        newPassword: _newPasswordController.text,
-                      ),
-                    );
-                  }
-                },
-              ),
-            ],
-          );
-        },
-      ),
     );
   }
 
-  Widget _buildTitle(String title) {
-    return Container(
-      width: 500,
-      padding: const EdgeInsets.only(bottom: 5),
-      child: Text(
-        title,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: const TextStyle(
-          fontSize: 15,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
+  // Future<void> _openDatePicker() async {
+  //   await showDatePicker(
+  //     context: NavigationService.navigatorKey.currentContext!,
+  //     initialDate: TimeUtils.instance.getDateFromString(_birthDate),
+  //     firstDate: TimeUtils.instance.getDateFromString('01/01/1900'),
+  //     lastDate: DateTime.now(),
+  //     helpText: 'Ngày sinh',
+  //     cancelText: 'Đóng',
+  //     confirmText: 'Chọn',
+  //   ).then((pickedDate) {
+  //     if (pickedDate != null) {
+  //       Provider.of<UserEditProvider>(
+  //               NavigationService.navigatorKey.currentContext!,
+  //               listen: false)
+  //           .setAvailableUpdate(true);
+  //       _birthDate = TimeUtils.instance.formatDate(pickedDate.toString());
+  //     }
+  //   });
+  // }
 
   void backToPreviousPage(BuildContext context) {
     _lastNameController.clear();

@@ -28,7 +28,6 @@ class CreateQRProvider with ChangeNotifier {
     _isQRGenerated = false;
     _isAmountErr = false;
     _isContentErr = false;
-    notifyListeners();
   }
 
   void updateErr(bool amountErr) {

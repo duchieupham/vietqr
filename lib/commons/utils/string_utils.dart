@@ -85,4 +85,16 @@ class StringUtils {
         .join(" ");
     return result;
   }
+
+  List<String> splitFullName(String fullName) {
+    List<String> nameParts = fullName.trim().split(' ');
+    String lastName = nameParts[0];
+    String firstName = nameParts.last;
+    String middleName = '';
+    if (nameParts.length > 2) {
+      List<String> middleNames = nameParts.sublist(1, nameParts.length - 1);
+      middleName = middleNames.join(' ');
+    }
+    return [firstName, middleName, lastName];
+  }
 }

@@ -1,4 +1,3 @@
-import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:flutter/material.dart';
 
 class CreateQRPageSelectProvider with ChangeNotifier {
@@ -32,6 +31,6 @@ class CreateQRPageSelectProvider with ChangeNotifier {
     //   bankName: 'Chọn ngân hàng để tạo mã QR',
     //   bankCode: '',
     // );
-    notifyListeners();
+    _indexSelected = 0;
   }
 }

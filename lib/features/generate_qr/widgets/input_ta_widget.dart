@@ -20,52 +20,44 @@ class InputTAWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        const Padding(padding: EdgeInsets.only(bottom: 50)),
+        // const Padding(padding: EdgeInsets.only(bottom: 50)),
         Expanded(
           flex: 1,
-          child: Consumer<CreateQRProvider>(
-            builder: (context, value, child) {
-              return RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(
-                  style: const TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    color: DefaultTheme.GREEN,
-                  ),
-                  children: [
-                    TextSpan(
-                      text: value.currencyFormatted,
+          child: Center(
+            child: Consumer<CreateQRProvider>(
+              builder: (context, value, child) {
+                return RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    style: const TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      color: DefaultTheme.GREEN,
                     ),
-                    TextSpan(
-                      text: ' VND',
-                      style: TextStyle(
-                        color: Theme.of(context).hintColor,
-                        fontSize: 18,
-                        fontWeight: FontWeight.normal,
+                    children: [
+                      TextSpan(
+                        text: value.currencyFormatted,
                       ),
-                    ),
-                  ],
-                ),
-              );
-            },
+                      TextSpan(
+                        text: ' VND',
+                        style: TextStyle(
+                          color: Theme.of(context).hintColor,
+                          fontSize: 18,
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
           ),
         ),
-        const Padding(padding: EdgeInsets.only(bottom: 50)),
-        const Text(
-          'Nhập số tiền cần thanh toán',
-          style: TextStyle(
-            fontSize: 15,
-            color: DefaultTheme.GREY_TEXT,
-          ),
-        ),
-        Expanded(
-          flex: 3,
-          child: CalKeyboardWidget(
-            width: width,
-            height: height * 0.5,
-            onNext: onNext,
-          ),
+        // const Padding(padding: EdgeInsets.only(bottom: 50)),
+        CalKeyboardWidget(
+          width: width,
+          height: height * 0.65,
+          onNext: onNext,
         ),
         const Padding(padding: EdgeInsets.only(bottom: 20))
       ],

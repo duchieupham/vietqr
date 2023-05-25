@@ -27,18 +27,44 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string></string>
+	<string>Using for Scan QR Code</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string></string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string></string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>mbbank</string>
+	</array>
+	<key>UIUserNotificationSettings</key>
+	<dict>
+		<key>types</key>
+		<integer>7</integer>
+		<key>minimumSystemVersion</key>
+		<string>8.0</string>
+	</dict>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
 		<string>remote-notification</string>
+		<string>bluetooth-central</string>
 	</array>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Need BLE permission</string>
+	<key>LSApplicationCategoryType</key>
+	<array>
+		<string></string>
+	</array>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Need BLE permission</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Need Location permission</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Need Location permission</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Need Location permission</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

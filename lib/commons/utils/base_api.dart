@@ -7,8 +7,6 @@ import 'package:vierqr/services/shared_references/account_helper.dart';
 import 'package:http/http.dart' as http;
 
 class BaseAPIClient {
-  static final String _bankToken = AccountHelper.instance.getBankToken();
-  static final String _token = AccountHelper.instance.getToken();
   static const Duration _timeout =
       Duration(seconds: Numeral.DEFAULT_TIMEOUT_API);
 
@@ -106,8 +104,9 @@ class BaseAPIClient {
     required List<http.MultipartFile> files,
   }) async {
     final Uri uri = Uri.parse(url);
+    final String token = AccountHelper.instance.getToken();
     final request = http.MultipartRequest('POST', uri);
-    request.headers['Authorization'] = 'Bearer $_token';
+    request.headers['Authorization'] = 'Bearer $token';
     if (fields.isNotEmpty) {
       for (String key in fields.keys) {
         request.fields[key] = fields[key];
@@ -130,15 +129,10 @@ class BaseAPIClient {
       String? clientMessageId}) {
     Map<String, String>? result = {};
     type ??= AuthenticationType.NONE;
+    final String token = AccountHelper.instance.getToken();
     switch (type) {
-      case AuthenticationType.BANK:
-        result['Authorization'] = 'Bearer $_bankToken';
-        result['Content-Type'] = 'application/json';
-        result['ClientMessageId'] = clientMessageId!;
-        result['Accept'] = '*/*';
-        break;
       case AuthenticationType.SYSTEM:
-        result['Authorization'] = 'Bearer $_token';
+        result['Authorization'] = 'Bearer $token';
         result['Content-Type'] = 'application/json';
         result['Accept'] = '*/*';
         break;

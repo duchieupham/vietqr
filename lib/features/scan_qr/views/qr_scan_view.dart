@@ -19,18 +19,17 @@ class QRScanView extends StatefulWidget {
   State<StatefulWidget> createState() => _QRScanView();
 }
 
-class _QRScanView extends State<QRScanView> {
+class _QRScanView extends State<QRScanView>
+    with SingleTickerProviderStateMixin {
   static late ScanQrBloc scanQrBloc;
   final MobileScannerController cameraController = MobileScannerController();
   bool isDetected = false;
-  // final String sampleData = '00020101021238560010A0000007270126000697';
-  // final String sampleData2 =
-  //     '00020101021238560010A0000007270126000697041501121150000672750208QRIBFTTA530370454061200005802VN62070803abc6304D101';
 
   @override
   void initState() {
     super.initState();
     scanQrBloc = BlocProvider.of(context);
+    // startCameraIOS();
   }
 
   @override
@@ -54,7 +53,7 @@ class _QRScanView extends State<QRScanView> {
           if (state is ScanQrNotFoundInformation) {
             Navigator.pop(context);
             DialogWidget.instance.openMsgDialog(
-              title: 'Mã QR không đúng định dạng',
+              title: 'Không thể xác nhận mã QR',
               msg:
                   'Không tìm thấy thông tin trong đoạn mã QR. Vui lòng kiểm tra lại thông tin.',
               function: () {
@@ -64,6 +63,15 @@ class _QRScanView extends State<QRScanView> {
                   Navigator.pop(context);
                 }
               },
+            );
+          }
+          if (state is QRScanGetNationalInformationSuccessState) {
+            Navigator.pop(context);
+            isDetected = false;
+            Navigator.pushReplacementNamed(
+              context,
+              Routes.NATIONAL_INFORMATION,
+              arguments: {'dto': state.dto},
             );
           }
           if (state is ScanQrGetBankTypeFailedState) {
@@ -97,15 +105,19 @@ class _QRScanView extends State<QRScanView> {
             Provider.of<AddBankProvider>(context, listen: false)
                 .updateSelectBankType(state.dto);
             isDetected = false;
-            Navigator.pushNamed(context, Routes.ADD_BANK_CARD, arguments: {
-              'pageIndex': 2,
-              'bankAccount': state.bankAccount,
-            });
+            Navigator.pushReplacementNamed(
+              context,
+              Routes.ADD_BANK_CARD,
+              arguments: {
+                'pageIndex': 2,
+                'bankAccount': state.bankAccount,
+              },
+            );
           }
         },
         child: Column(
           children: [
-            const Padding(padding: EdgeInsets.only(top: 70)),
+            const Padding(padding: EdgeInsets.only(top: 50)),
             SizedBox(
               width: width,
               child: Row(
@@ -175,11 +187,21 @@ class _QRScanView extends State<QRScanView> {
                 ],
               ),
             ),
-            const Padding(padding: EdgeInsets.only(top: 30)),
+            const Padding(padding: EdgeInsets.only(top: 20)),
             const Text(
               'Đặt mã QR vào khung để thực hiện việc quét mã',
               style: TextStyle(color: DefaultTheme.WHITE),
             ),
+            // const Padding(padding: EdgeInsets.only(top: 20)),
+            // ButtonIconWidget(
+            //   width: 120,
+            //   height: 40,
+            //   icon: Icons.image_rounded,
+            //   title: 'Tải ảnh QR',
+            //   function: () {},
+            //   bgColor: DefaultTheme.GREY_VIEW.withOpacity(0.6),
+            //   textColor: DefaultTheme.WHITE,
+            // ),
             const Spacer(),
             SizedBox(
               width: width,

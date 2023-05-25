@@ -32,3 +32,27 @@ class UserEditPasswordFailedState extends UserEditState {
   @override
   List<Object?> get props => [msg];
 }
+
+class UserEditAvatarSuccessState extends UserEditState {}
+
+class UserEditAvatarFailedState extends UserEditState {
+  final String message;
+
+  const UserEditAvatarFailedState({required this.message});
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class UserDeactiveSuccessState extends UserEditState {}
+
+class UserDeactiveFailedState extends UserEditState {
+  final String message;
+
+  const UserDeactiveFailedState({
+    required this.message,
+  });
+
+  @override
+  List<Object?> get props => [message];
+}

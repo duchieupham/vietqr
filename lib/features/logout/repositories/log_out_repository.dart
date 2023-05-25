@@ -27,7 +27,7 @@ class LogoutRepository {
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: {'fcmToken': fcmToken},
-        type: AuthenticationType.SYSTEM,
+        type: AuthenticationType.NONE,
       );
       if (response.statusCode == 200) {
         await _resetServices().then((value) => result = true);

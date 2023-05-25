@@ -45,6 +45,23 @@ class UserInformationHelper {
         'ACCOUNT_INFORMATION', dto.toSPJson().toString());
   }
 
+  Future<void> setImageId(String imgId) async {
+    AccountInformationDTO dto = AccountInformationDTO.fromJson(
+        json.decode(sharedPrefs.getString('ACCOUNT_INFORMATION')!));
+    AccountInformationDTO newDto = AccountInformationDTO(
+        address: dto.address,
+        birthDate: dto.birthDate,
+        email: dto.email,
+        firstName: dto.firstName,
+        gender: dto.gender,
+        imgId: imgId,
+        lastName: dto.lastName,
+        middleName: dto.middleName,
+        userId: dto.userId);
+    await sharedPrefs.setString(
+        'ACCOUNT_INFORMATION', newDto.toSPJson().toString());
+  }
+
   AccountInformationDTO getAccountInformation() {
     return AccountInformationDTO.fromJson(
         json.decode(sharedPrefs.getString('ACCOUNT_INFORMATION')!));

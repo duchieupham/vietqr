@@ -71,10 +71,7 @@ class InputAuthInformationView extends StatelessWidget {
               userBankName: formattedName,
               bankAccount: bankAccountController.text,
             );
-            phoneAuthenController.clear();
-            nameController.clear();
-            nationalController.clear();
-            bankAccountController.clear();
+
             bankCardBloc.add(BankCardEventInsertUnauthenticated(dto: dto));
           }
         }
@@ -106,9 +103,17 @@ class InputAuthInformationView extends StatelessWidget {
             businessName: '',
             isAuthenticated: false,
           );
+          phoneAuthenController.clear();
+          nameController.clear();
+          nationalController.clear();
+          bankAccountController.clear();
           Navigator.of(context).pushReplacementNamed(
             Routes.BANK_CARD_GENERATED_VIEW,
-            arguments: {'bankAccountDTO': dto},
+            arguments: {
+              'bankAccountDTO': dto,
+              'bankId': state.bankId,
+              'qr': state.qr,
+            },
           );
         }
         if (state is BankCardInsertUnauthenticatedFailedState) {
@@ -130,10 +135,20 @@ class InputAuthInformationView extends StatelessWidget {
                   },
                 ),
                 const Padding(
-                  padding: EdgeInsets.only(left: 20, top: 30, bottom: 10),
+                  padding: EdgeInsets.only(left: 20, top: 30, bottom: 5),
                   child: Text(
                     'Thông tin xác thực',
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                  child: Text(
+                    'Lưu ý: Đối với loại tài khoản ngân hàng doanh nghiệp, "CCCD/CMT" tương ứng với mã số giấy phép kinh doanh; "SĐT" là số điện thoại người đại diện cho doanh nghiệp',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: DefaultTheme.GREY_TEXT,
+                    ),
                   ),
                 ),
                 Consumer<AddBankProvider>(
@@ -151,7 +166,7 @@ class InputAuthInformationView extends StatelessWidget {
                             width: width,
                             isObscureText: false,
                             title: 'CCCD/CMT \u002A',
-                            hintText: '9-12 chữ số',
+                            hintText: 'CCCD hoặc GPKD',
                             autoFocus: false,
                             fontSize: 15,
                             controller: nationalController,
@@ -159,8 +174,7 @@ class InputAuthInformationView extends StatelessWidget {
                             keyboardAction: TextInputAction.done,
                             onChange: (text) {
                               provider.updateValidNationalId(
-                                  !(nationalController.text.length >= 9 &&
-                                      nationalController.text.length <= 12));
+                                  nationalController.text.isEmpty);
                             },
                           ),
                           DividerWidget(width: width),

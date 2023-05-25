@@ -61,6 +61,16 @@ class TimeUtils {
     return result;
   }
 
+  String formatDateContent(String date) {
+    String result = '';
+    DateFormat format = DateFormat('ddMMyyyy');
+    bool isValidDate = DateTime.tryParse(date.toString()) != null;
+    if (date != '' && isValidDate) {
+      result = format.format(DateTime.parse(date)).toString();
+    }
+    return result;
+  }
+
   String formatHour(String date) {
     String formattedTime = '';
     DateFormat format = DateFormat('HH:mm');
@@ -243,6 +253,29 @@ class TimeUtils {
     return result;
   }
 
+  String formatTimeNotification(int timeInMillis) {
+    final now = DateTime.now();
+    final time = DateTime.fromMillisecondsSinceEpoch(timeInMillis * 1000);
+
+    final difference = now.difference(time);
+
+    if (difference.inSeconds < 60) {
+      return 'vài giây trước';
+    } else if (difference.inMinutes < 60) {
+      final minutes = difference.inMinutes;
+      return '$minutes phút trước';
+    } else if (difference.inHours < 24) {
+      final hours = difference.inHours;
+      return '$hours giờ trước';
+    } else if (difference.inDays <= 7) {
+      return '${difference.inDays} ngày trước';
+    } else {
+      final formatter = DateFormat('HH:mm dd/MM/yyyy');
+      final formattedTime = formatter.format(time);
+      return formattedTime;
+    }
+  }
+
   String formatDateFromTimeStamp(dynamic timestamp, bool isMultipleRow) {
     String result = '';
     try {
@@ -275,5 +308,12 @@ class TimeUtils {
       print('Error at formatDateFromTimeStamp: $e');
     }
     return result;
+  }
+
+  String convertDateString(String dateString) {
+    String day = dateString.substring(0, 2);
+    String month = dateString.substring(2, 4);
+    String year = dateString.substring(4, 8);
+    return '$day/$month/$year';
   }
 }

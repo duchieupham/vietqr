@@ -59,10 +59,6 @@ class SelectBankTypeWidget extends StatelessWidget {
               }
               if (state is BankTypeGetListSuccessfulState) {
                 if (state.list.isNotEmpty && bankTypes.isEmpty) {
-                  // BankTypeDTO mbType = state.list
-                  //     .where((element) => element.bankCode == 'MB')
-                  //     .first;
-                  // bankTypes.add(mbType);
                   bankTypes.addAll(state.list);
                   bankTypesResult.addAll(bankTypes);
                 }

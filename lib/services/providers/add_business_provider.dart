@@ -6,8 +6,8 @@ import 'package:vierqr/models/business_member_dto.dart';
 
 class AddBusinessProvider with ChangeNotifier {
   bool _isInitial = false;
-  List<BusinessMemberDTO> _memberList = [];
-  List<BranchTextController> _branchTextControllers = [];
+  final List<BusinessMemberDTO> _memberList = [];
+  final List<BranchTextController> _branchTextControllers = [];
   File? _imageFile;
   File? _coverImageFile;
 

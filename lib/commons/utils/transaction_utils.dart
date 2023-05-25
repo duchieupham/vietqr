@@ -24,9 +24,9 @@ class TransactionUtils {
   String getPrefixBankAccount(String transType) {
     String result = '';
     if (transType.trim() == 'C') {
-      result = 'Đến TK';
+      result = 'Đến tài khoản';
     } else {
-      result = 'Từ TK';
+      result = 'Từ tài khoản';
     }
     return result;
   }
@@ -66,6 +66,18 @@ class TransactionUtils {
       }
     }
 
+    return result;
+  }
+
+  String getStatusString(int status) {
+    String result = '';
+    if (status == 0) {
+      result = 'Chờ thanh toán';
+    } else if (status == 1) {
+      result = 'Thành công';
+    } else {
+      result = 'Đã huỷ';
+    }
     return result;
   }
 }

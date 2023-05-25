@@ -1,6 +1,5 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:vierqr/commons/utils/log.dart';
-import 'package:vierqr/commons/utils/platform_utils.dart';
 
 class NotificationService {
   final FlutterLocalNotificationsPlugin notificationsPlugin =
@@ -18,10 +17,12 @@ class NotificationService {
 
     AndroidInitializationSettings androidInitializationSettingsAndroid =
         const AndroidInitializationSettings('icon');
+
     var initializationSettingIOS = DarwinInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
       requestSoundPermission: true,
+      defaultPresentSound: false,
       onDidReceiveLocalNotification: (id, title, body, payload) async {
         LOG.info('onDidReceiveLocalNotification iOS: $title - $body');
       },
@@ -50,8 +51,14 @@ class NotificationService {
         'channelId',
         'channelName',
         importance: Importance.max,
+        sound: RawResourceAndroidNotificationSound('notification_sound'),
+        playSound: true,
+        priority: Priority.high,
       ),
-      iOS: DarwinNotificationDetails(),
+      iOS: DarwinNotificationDetails(
+        sound: 'notification_sound.aiff',
+        presentSound: true,
+      ),
     );
   }
 

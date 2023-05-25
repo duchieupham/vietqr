@@ -9,6 +9,7 @@ class QRBloc extends Bloc<QREvent, QRState> {
   QRBloc() : super(QRInitialState()) {
     on<QREventGenerate>(_generateQR);
     on<QREventGenerateList>(_generateQRList);
+    on<QREventRegenerate>(_regenerateQR);
   }
 }
 
@@ -37,5 +38,23 @@ void _generateQR(QREvent event, Emitter emit) async {
   } catch (e) {
     LOG.error(e.toString());
     emit(QRGeneratedFailedState());
+  }
+}
+
+void _regenerateQR(QREvent event, Emitter emit) async {
+  try {
+    if (event is QREventRegenerate) {
+      emit(QRRegenerateLoadingState());
+      final QRGeneratedDTO dto = await qrRepository.regenerateQR(event.dto);
+      emit(
+        QRRegeneratedSuccessState(
+          dto: dto,
+          newTransaction: event.dto.newTransaction,
+        ),
+      );
+    }
+  } catch (e) {
+    LOG.error(e.toString());
+    emit(QRRegeneratedFailedState());
   }
 }

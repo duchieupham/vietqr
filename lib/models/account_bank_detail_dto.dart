@@ -6,6 +6,10 @@ class AccountBankDetailDTO {
   final String bankName;
   final String imgId;
   final int type;
+  final String caiValue;
+  final String userId;
+  final String bankTypeId;
+  final int bankTypeStatus;
   final String nationalId;
   final String qrCode;
   final String phoneAuthenticated;
@@ -21,6 +25,10 @@ class AccountBankDetailDTO {
       required this.bankName,
       required this.imgId,
       required this.type,
+      required this.caiValue,
+      required this.userId,
+      required this.bankTypeId,
+      required this.bankTypeStatus,
       required this.nationalId,
       required this.qrCode,
       required this.phoneAuthenticated,
@@ -42,19 +50,23 @@ class AccountBankDetailDTO {
       });
     }
     return AccountBankDetailDTO(
-      id: json['id'],
-      bankAccount: json['bankAccount'],
-      userBankName: json['userBankName'],
-      bankCode: json['bankCode'],
-      bankName: json['bankName'],
-      imgId: json['imgId'],
-      type: json['type'],
-      nationalId: json['nationalId'],
-      qrCode: json['qrCode'],
-      phoneAuthenticated: json['phoneAuthenticated'],
+      id: json['id'] ?? '',
+      bankAccount: json['bankAccount'] ?? '',
+      userBankName: json['userBankName'] ?? '',
+      bankCode: json['bankCode'] ?? '',
+      bankName: json['bankName'] ?? '',
+      imgId: json['imgId'] ?? '',
+      type: json['type'] ?? 0,
+      caiValue: json['caiValue'] ?? '',
+      userId: json['userId'] ?? '',
+      bankTypeId: json['bankTypeId'] ?? '',
+      bankTypeStatus: json['bankTypeStatus'] ?? 0,
+      nationalId: json['nationalId'] ?? '',
+      qrCode: json['qrCode'] ?? '',
+      phoneAuthenticated: json['phoneAuthenticated'] ?? '',
       businessDetails: businessDetails,
       transactions: transactions,
-      authenticated: json['authenticated'],
+      authenticated: json['authenticated'] ?? false,
     );
   }
 

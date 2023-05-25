@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_card_request_otp.dart';
+import 'package:vierqr/models/bank_name_information_dto.dart';
 
 class BankCardState extends Equatable {
   const BankCardState();
@@ -15,7 +16,19 @@ class BankCardInitialState extends BankCardState {}
 
 class BankCardLoadingState extends BankCardState {}
 
-class BankCardInsertSuccessfulState extends BankCardState {}
+class BankCardRemoveLoadingState extends BankCardState {}
+
+class BankCardLoadingListState extends BankCardState {}
+
+class BankCardInsertSuccessfulState extends BankCardState {
+  final String bankId;
+  final String qr;
+
+  const BankCardInsertSuccessfulState({required this.bankId, required this.qr});
+
+  @override
+  List<Object?> get props => [bankId, qr];
+}
 
 class BankCardInsertFailedState extends BankCardState {
   final String message;
@@ -115,7 +128,18 @@ class BankCardGetDetailSuccessState extends BankCardState {
 class BankCardGetDetailFailedState extends BankCardState {}
 
 //
-class BankCardInsertUnauthenticatedSuccessState extends BankCardState {}
+class BankCardInsertUnauthenticatedSuccessState extends BankCardState {
+  final String bankId;
+  final String qr;
+
+  const BankCardInsertUnauthenticatedSuccessState({
+    required this.bankId,
+    required this.qr,
+  });
+
+  @override
+  List<Object?> get props => [bankId, qr];
+}
 
 class BankCardInsertUnauthenticatedFailedState extends BankCardState {
   final String msg;
@@ -140,3 +164,29 @@ class BankCardCheckExistedState extends BankCardState {
 class BankCardCheckNotExistedState extends BankCardState {}
 
 class BankCardCheckFailedState extends BankCardState {}
+
+class BankCardUpdateAuthenticateSuccessState extends BankCardState {}
+
+class BankCardUpdateAuthenticateFailedState extends BankCardState {
+  final String msg;
+
+  const BankCardUpdateAuthenticateFailedState({required this.msg});
+
+  @override
+  List<Object?> get props => [msg];
+}
+
+class BankCardSearchingNameState extends BankCardState {}
+
+class BankCardSearchNameSuccessState extends BankCardState {
+  final BankNameInformationDTO dto;
+
+  const BankCardSearchNameSuccessState({
+    required this.dto,
+  });
+
+  @override
+  List<Object?> get props => [dto];
+}
+
+class BankCardSearchNameFailedState extends BankCardState {}

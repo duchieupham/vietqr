@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:vierqr/main.dart';
 
 class PlatformUtils {
   const PlatformUtils._privateConsrtructor();
@@ -45,14 +48,29 @@ class PlatformUtils {
   }
 
   //check iOS Platform
-  bool isIOsApp(BuildContext context) {
+  bool isIOsApp() {
+    BuildContext context = NavigationService.navigatorKey.currentContext!;
     final platform = Theme.of(context).platform;
     return (!isWeb() && platform == TargetPlatform.iOS);
   }
 
   //check android Platform
-  bool isAndroidApp(BuildContext context) {
+  bool isAndroidApp() {
+    BuildContext context = NavigationService.navigatorKey.currentContext!;
     final platform = Theme.of(context).platform;
     return (!isWeb() && platform == TargetPlatform.android);
+  }
+
+  bool isPhysicalDevice() {
+    final BuildContext context = NavigationService.navigatorKey.currentContext!;
+    final platform = Theme.of(context).platform;
+    bool result = false;
+    if (platform == TargetPlatform.android) {
+      result = (Platform.environment['ANDROID_EMULATOR_SNAPSHOT'] != null ||
+          Platform.environment['ANDROID_EMULATOR_DEVICE'] != null);
+    } else if (platform == TargetPlatform.iOS) {
+      result = (Platform.environment['SIMULATOR_DEVICE_NAME'] != null);
+    }
+    return result;
   }
 }

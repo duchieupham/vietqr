@@ -237,7 +237,7 @@ class DialogWidget {
                 height: 350,
                 alignment: Alignment.center,
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
                 decoration: BoxDecoration(
                   color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(10),
@@ -246,6 +246,7 @@ class DialogWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    const Spacer(),
                     Image.asset(
                       imageAsset,
                       width: 80,
@@ -271,22 +272,23 @@ class DialogWidget {
                         ),
                       ),
                     ),
-                    const Padding(padding: EdgeInsets.only(top: 30)),
+                    // const Padding(padding: EdgeInsets.only(top: 30)),
+                    const Spacer(),
                     ButtonWidget(
                       width: 250,
-                      height: 30,
+                      height: 40,
                       text: confirmText,
                       textColor: DefaultTheme.WHITE,
                       bgColor: (confirmColor != null)
                           ? confirmColor
-                          : DefaultTheme.BLUE_TEXT,
+                          : DefaultTheme.GREEN,
                       borderRadius: 5,
                       function: confirmFunction,
                     ),
                     const Padding(padding: EdgeInsets.only(top: 10)),
                     ButtonWidget(
                       width: 250,
-                      height: 30,
+                      height: 40,
                       text: 'Đóng',
                       textColor: Theme.of(context).hintColor,
                       bgColor: Theme.of(context).canvasColor,
@@ -339,24 +341,35 @@ class DialogWidget {
   Future showFullModalBottomContent({
     BuildContext? context,
     required Widget widget,
+    bool? isDissmiss,
+    Color? color,
   }) async {
     context ??= NavigationService.navigatorKey.currentContext!;
     final double width = MediaQuery.of(context).size.width;
     final double height = MediaQuery.of(context).size.height;
     return await showModalBottomSheet(
+        isDismissible: (isDissmiss != null && !isDissmiss) ? isDissmiss : true,
         isScrollControlled: true,
         enableDrag: false, // Ngăn người dùng kéo ModalBottomSheet
         context: context,
-        backgroundColor: DefaultTheme.TRANSPARENT,
+        backgroundColor: (color != null) ? color : DefaultTheme.TRANSPARENT,
         builder: (context) {
-          return Container(
-            width: width,
-            height: height,
-            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-            decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
+          return WillPopScope(
+            onWillPop: () async {
+              if (isDissmiss == null || isDissmiss) {
+                Navigator.pop(context);
+              }
+              return false;
+            },
+            child: Container(
+              width: width,
+              height: height,
+              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+              decoration: BoxDecoration(
+                color: (color != null) ? color : Theme.of(context).cardColor,
+              ),
+              child: widget,
             ),
-            child: widget,
           );
         });
   }
@@ -977,135 +990,6 @@ class DialogWidget {
           ),
         );
       },
-    );
-  }
-
-  openRemoveBankCard({required BankAccountDTO bankAccountDTO}) {
-    final BankCardBloc bankCardBloc =
-        BlocProvider.of(NavigationService.navigatorKey.currentContext!);
-    final BankCardPositionProvider bankCardPositionProvider =
-        BankCardPositionProvider(false);
-    final double width =
-        MediaQuery.of(NavigationService.navigatorKey.currentContext!)
-            .size
-            .width;
-    Future.delayed(const Duration(milliseconds: 200), () {
-      bankCardPositionProvider.transform();
-    });
-    return showDialog(
-      barrierDismissible: true,
-      context: NavigationService.navigatorKey.currentContext!,
-      builder: (BuildContext context) {
-        return Material(
-          // color: Theme.of(context).cardColor.withOpacity(0.3),
-          color: DefaultTheme.TRANSPARENT,
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-            child: ClipRRect(
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  ValueListenableBuilder(
-                    valueListenable: bankCardPositionProvider,
-                    builder: (_, provider, child) {
-                      return AnimatedPositioned(
-                        top: (provider == true) ? 200 : 100,
-                        duration: const Duration(milliseconds: 200),
-                        child: BankCardWidget(
-                          dto: bankAccountDTO,
-                          width: width - 40,
-                        ),
-                      );
-                    },
-                  ),
-                  Positioned(
-                    bottom: 50,
-                    child: SizedBox(
-                      width: width,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          _buildCircleButton(
-                            context: context,
-                            icon: Icons.delete_rounded,
-                            color: DefaultTheme.RED_TEXT,
-                            text: 'Huỷ liên kết',
-                            function: () async {
-                              String userId =
-                                  UserInformationHelper.instance.getUserId();
-                              BankAccountRemoveDTO dto = BankAccountRemoveDTO(
-                                  bankId: bankAccountDTO.id,
-                                  userId: userId,
-                                  role: bankAccountDTO.type);
-                              bankCardBloc.add(BankCardEventRemove(dto: dto));
-                              bankCardPositionProvider.reset();
-                              await Future.delayed(
-                                  const Duration(milliseconds: 200), () {
-                                Navigator.of(context).pop();
-                              });
-                            },
-                          ),
-                          _buildCircleButton(
-                            context: context,
-                            icon: Icons.close_rounded,
-                            color: DefaultTheme.GREY_TEXT,
-                            text: 'Đóng',
-                            function: () async {
-                              bankCardPositionProvider.reset();
-                              await Future.delayed(
-                                  const Duration(milliseconds: 200), () {
-                                Navigator.of(context).pop();
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildCircleButton(
-      {required BuildContext context,
-      required IconData icon,
-      required Color color,
-      required String text,
-      required VoidCallback function}) {
-    const double size = 50;
-    return InkWell(
-      onTap: function,
-      child: Column(
-        children: [
-          Container(
-            width: size,
-            height: size,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
-              borderRadius: BorderRadius.circular(size / 2),
-            ),
-            child: Icon(
-              icon,
-              color: color,
-              size: 20,
-            ),
-          ),
-          const Padding(padding: EdgeInsets.only(top: 10)),
-          Text(
-            text,
-            style: const TextStyle(
-              fontSize: 18,
-              color: DefaultTheme.WHITE,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

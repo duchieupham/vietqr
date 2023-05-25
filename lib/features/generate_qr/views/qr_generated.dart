@@ -1,18 +1,31 @@
+import 'dart:math';
+
 import 'package:clipboard/clipboard.dart';
+import 'package:esc_pos_bluetooth/esc_pos_bluetooth.dart';
+import 'package:esc_pos_utils/esc_pos_utils.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/utils/currency_utils.dart';
+import 'package:vierqr/commons/utils/log.dart';
+import 'package:vierqr/commons/utils/printer_utils.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
+import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
 import 'package:vierqr/commons/widgets/viet_qr_widget.dart';
-import 'package:vierqr/features/generate_qr/widgets/popup_transaction_content.dart';
-import 'package:vierqr/models/bank_account_dto.dart';
+import 'package:vierqr/features/printer/views/printing_view.dart';
+import 'package:vierqr/models/bluetooth_printer_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/services/providers/create_qr_page_select_provider.dart';
 import 'package:vierqr/services/providers/create_qr_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:vierqr/services/providers/water_mark_provider.dart';
+import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'dart:ui' as ui;
+
+import 'package:vierqr/services/sqflite/local_database.dart';
 
 class QRGenerated extends StatefulWidget {
   @override
@@ -26,6 +39,7 @@ class QRGenerated extends StatefulWidget {
 class _QRGenerated extends State<QRGenerated> {
   static final GlobalKey globalKey = GlobalKey();
   static late QRGeneratedDTO qrGeneratedDTO;
+  final WaterMarkProvider _waterMarkProvider = WaterMarkProvider(false);
 
   @override
   void initState() {
@@ -54,13 +68,78 @@ class _QRGenerated extends State<QRGenerated> {
               width: width,
               height: 40,
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Padding(padding: EdgeInsets.only(left: 20)),
                   ButtonIconWidget(
-                    width: width / 2 - 25,
+                    width: width * 0.2,
+                    height: 40,
+                    icon: Icons.print_rounded,
+                    title: '',
+                    function: () async {
+                      String userId =
+                          UserInformationHelper.instance.getUserId();
+                      BluetoothPrinterDTO bluetoothPrinterDTO =
+                          await LocalDatabase.instance
+                              .getBluetoothPrinter(userId);
+                      if (bluetoothPrinterDTO.id.isNotEmpty) {
+                        bool isPrinting = false;
+                        if (!isPrinting) {
+                          isPrinting = true;
+                          DialogWidget.instance.showFullModalBottomContent(
+                              widget: const PrintingView());
+                          await PrinterUtils.instance
+                              .print(qrGeneratedDTO)
+                              .then((value) {
+                            Navigator.pop(context);
+                            isPrinting = false;
+                          });
+                        }
+                      } else {
+                        DialogWidget.instance.openMsgDialog(
+                            title: 'Không thể in',
+                            msg:
+                                'Vui lòng kết nối với máy in để thực hiện việc in.');
+                      }
+                    },
+                    bgColor: Theme.of(context).cardColor,
+                    textColor: DefaultTheme.ORANGE,
+                  ),
+                  const Padding(padding: EdgeInsets.only(left: 10)),
+                  ButtonIconWidget(
+                    width: width * 0.2,
+                    height: 40,
+                    icon: Icons.photo_rounded,
+                    title: '',
+                    function: () async {
+                      _waterMarkProvider.updateWaterMark(true);
+                      DialogWidget.instance.openLoadingDialog();
+                      await Future.delayed(const Duration(milliseconds: 200),
+                          () async {
+                        await ShareUtils.instance
+                            .saveImageToGallery(globalKey)
+                            .then((value) {
+                          _waterMarkProvider.updateWaterMark(false);
+                          Navigator.pop(context);
+                          Fluttertoast.showToast(
+                            msg: 'Đã lưu ảnh',
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.CENTER,
+                            backgroundColor: Theme.of(context).cardColor,
+                            textColor: Theme.of(context).cardColor,
+                            fontSize: 15,
+                          );
+                        });
+                      });
+                    },
+                    bgColor: Theme.of(context).cardColor,
+                    textColor: DefaultTheme.RED_CALENDAR,
+                  ),
+                  const Padding(padding: EdgeInsets.only(left: 10)),
+                  ButtonIconWidget(
+                    width: width * 0.2,
                     height: 40,
                     icon: Icons.copy_rounded,
-                    title: 'Sao chép nội dung',
+                    title: '',
                     function: () async {
                       await FlutterClipboard.copy(ShareUtils.instance
                               .getTextSharing(qrGeneratedDTO))
@@ -70,8 +149,8 @@ class _QRGenerated extends State<QRGenerated> {
                           toastLength: Toast.LENGTH_SHORT,
                           gravity: ToastGravity.CENTER,
                           timeInSecForIosWeb: 1,
-                          backgroundColor: Theme.of(context).primaryColor,
-                          textColor: Theme.of(context).hintColor,
+                          backgroundColor: Theme.of(context).cardColor,
+                          textColor: Theme.of(context).cardColor,
                           fontSize: 15,
                           webBgColor: 'rgba(255, 255, 255)',
                           webPosition: 'center',
@@ -83,151 +162,65 @@ class _QRGenerated extends State<QRGenerated> {
                   ),
                   const Padding(padding: EdgeInsets.only(left: 10)),
                   ButtonIconWidget(
-                    width: width / 2 - 25,
+                    width: width * 0.2,
                     height: 40,
                     icon: Icons.share_rounded,
-                    title: 'Chia sẻ mã QR',
+                    title: '',
                     function: () async {
                       await share(dto: qrGeneratedDTO);
                     },
                     bgColor: Theme.of(context).cardColor,
                     textColor: DefaultTheme.GREEN,
                   ),
-                  const Padding(padding: EdgeInsets.only(left: 20)),
                 ],
               ),
             ),
           ),
           Positioned(
             bottom: 20,
-            left: 20,
-            child: ButtonIconWidget(
-              width: width - 40,
-              height: 40,
-              icon: Icons.home_rounded,
-              title: 'Trang chủ',
-              function: () {
-                Navigator.pop(context);
-              },
-              bgColor: DefaultTheme.GREEN,
-              textColor: DefaultTheme.WHITE,
+            child: Container(
+              width: width,
+              alignment: Alignment.center,
+              child: ButtonIconWidget(
+                width: width * 0.8 + 30,
+                height: 40,
+                icon: Icons.home_rounded,
+                title: 'Trang chủ',
+                function: () {
+                  Navigator.pop(context);
+                },
+                bgColor: DefaultTheme.GREEN,
+                textColor: DefaultTheme.WHITE,
+              ),
             ),
           ),
         ],
       ),
-      // Container(
-      //   width: width,
-      //   height: height,
-      //   decoration: const BoxDecoration(
-      //     image: DecorationImage(
-      //       image: AssetImage('assets/images/bg-qr.png'),
-      //       fit: BoxFit.fitHeight,
-      //     ),
-      //   ),
-      //   child: Column(children: [
-      //     // SizedBox(
-      //     //   width: MediaQuery.of(context).size.width,
-      //     //   height: 65,
-      //     //   child: ClipRRect(
-      //     //     child: BackdropFilter(
-      //     //       filter: ImageFilter.blur(
-      //     //         sigmaX: 25,
-      //     //         sigmaY: 25,
-      //     //       ),
-      //     //       child: Container(
-      //     //         decoration: BoxDecoration(
-      //     //           color: Theme.of(context).canvasColor.withOpacity(0.6),
-      //     //         ),
-      //     //         child: SubHeader(
-      //     //           title: 'QR giao dịch',
-      //     //           function: () {
-      //     //             backToHome(context);
-      //     //           },
-      //     //         ),
-      //     //       ),
-      //     //     ),
-      //     //   ),
-      //     // ),
-      //     const Padding(padding: EdgeInsets.only(top: 50)),
-      //     Expanded(
-      //       child: VietQRWidget(
-      //         width: width - 10,
-      //         qrGeneratedDTO: qrGeneratedDTO,
-      //         content: '',
-      //         isCopy: true,
-      //         isStatistic: true,
-      //       ),
-      //     ),
-      //     const Padding(padding: EdgeInsets.only(bottom: 30)),
-      //     Row(
-      //       mainAxisAlignment: MainAxisAlignment.center,
-      //       children: [
-      //         ButtonIconWidget(
-      //           width: width * 0.4,
-      //           height: 50,
-      //           borderRadius: 15,
-      //           icon: Icons.home_rounded,
-      //           alignment: Alignment.center,
-      //           title: 'Trang chủ',
-      //           function: () {
-      //             backToHome(context);
-      //           },
-      //           bgColor: DefaultTheme.GREEN,
-      //           textColor: DefaultTheme.WHITE,
-      //         ),
-      //         const Padding(padding: EdgeInsets.only(left: 10)),
-      //         ButtonIconWidget(
-      //           width: width * 0.4,
-      //           height: 50,
-      //           borderRadius: 15,
-      //           icon: Icons.share_rounded,
-      //           alignment: Alignment.center,
-      //           title: 'Chia sẻ',
-      //           function: () async {
-      //             await ShareUtils.instance.shareImage(
-      //               key: key,
-      //               textSharing:
-      //                   ShareUtils.instance.getTextSharing(qrGeneratedDTO),
-      //             );
-      //           },
-      //           bgColor: DefaultTheme.GREEN,
-      //           textColor: DefaultTheme.WHITE,
-      //         ),
-      //       ],
-      //     ),
-      //     const Padding(padding: EdgeInsets.only(top: 10)),
-      //     ButtonIconWidget(
-      //       width: width * 0.8 + 10,
-      //       height: 50,
-      //       borderRadius: 15,
-      //       icon: Icons.refresh_rounded,
-      //       alignment: Alignment.center,
-      //       title: 'Tạo lại mã QR',
-      //       function: () {
-      //         Provider.of<CreateQRProvider>(context, listen: false).reset();
-      //         Provider.of<CreateQRPageSelectProvider>(context, listen: false)
-      //             .updateIndex(0);
-      //         Navigator.of(context).pushReplacement(
-      //           MaterialPageRoute(
-      //             builder: (context) => CreateQR(
-      //               bankAccountDTO: bankAccountDTO,
-      //             ),
-      //           ),
-      //         );
-      //       },
-      //       bgColor: Theme.of(context).canvasColor,
-      //       textColor: DefaultTheme.GREEN,
-      //     ),
-      //     const Padding(padding: EdgeInsets.only(bottom: 20)),
-      //   ]),
-      // ),
     );
   }
 
+  Future<List<int>> printImage(
+      PaperSize paper, CapabilityProfile profile) async {
+    final Generator generator = Generator(paper, profile);
+    List<int> bytes = [];
+
+    bytes += generator.feed(2);
+    bytes += generator.cut();
+    return bytes;
+  }
+
   Future<void> share({required QRGeneratedDTO dto}) async {
-    await ShareUtils.instance.shareImage(
-        key: globalKey,
-        textSharing: '${dto.bankAccount} - ${dto.bankName}'.trim());
+    _waterMarkProvider.updateWaterMark(true);
+    await Future.delayed(const Duration(milliseconds: 200), () async {
+      await ShareUtils.instance
+          .shareImage(
+            key: globalKey,
+            textSharing:
+                '${dto.bankAccount} - ${dto.bankName}\nĐược tạo bởi vietqr.vn - Hotline 19006234'
+                    .trim(),
+          )
+          .then((value) => _waterMarkProvider.updateWaterMark(false));
+    });
   }
 
   Widget _buildComponent({
@@ -251,11 +244,53 @@ class _QRGenerated extends State<QRGenerated> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                const Padding(padding: EdgeInsets.only(top: 70)),
+                if (height > 700)
+                  const Padding(padding: EdgeInsets.only(top: 20)),
+                const Padding(padding: EdgeInsets.only(top: 30)),
                 VietQRWidget(
                   width: width,
                   qrGeneratedDTO: dto,
                   content: dto.content,
+                  isSmallWidget: height <= 800,
+                ),
+                ValueListenableBuilder(
+                  valueListenable: _waterMarkProvider,
+                  builder: (_, provider, child) {
+                    return Visibility(
+                      visible: provider == true,
+                      child: Container(
+                        width: width,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 10,
+                        ),
+                        child: RichText(
+                          textAlign: TextAlign.right,
+                          text: const TextSpan(
+                            style: TextStyle(
+                              color: DefaultTheme.WHITE,
+                              fontSize: 12,
+                            ),
+                            children: [
+                              TextSpan(text: 'Được tạo bởi '),
+                              TextSpan(
+                                text: 'vietqr.vn',
+                                style: TextStyle(
+                                    decoration: TextDecoration.underline),
+                              ),
+                              TextSpan(text: ' - '),
+                              TextSpan(text: 'Hotline '),
+                              TextSpan(
+                                text: '19006234',
+                                style: TextStyle(
+                                    decoration: TextDecoration.underline),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),

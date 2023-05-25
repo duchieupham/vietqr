@@ -38,7 +38,6 @@ class _Login extends State<Login> {
     super.initState();
     code = uuid.v1();
     _loginBloc = BlocProvider.of(context);
-    _loginBloc.add(LoginEventInsertCode(code: code, loginBloc: _loginBloc));
   }
 
   @override

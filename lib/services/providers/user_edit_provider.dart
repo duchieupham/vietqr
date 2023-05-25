@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
@@ -8,6 +10,7 @@ class UserEditProvider with ChangeNotifier {
   bool _isOldPassErr = false;
   bool _isNewPassErr = false;
   bool _isConfirmPassErr = false;
+  File? _imageFile;
 
   get availableUpdate => _isAvailableUpdate;
   int get gender => _gender;
@@ -15,6 +18,12 @@ class UserEditProvider with ChangeNotifier {
   get oldPassErr => _isOldPassErr;
   get newPassErr => _isNewPassErr;
   get confirmPassErr => _isConfirmPassErr;
+  File? get imageFile => _imageFile;
+
+  void setImage(File? file) {
+    _imageFile = file;
+    notifyListeners();
+  }
 
   void setAvailableUpdate(bool value) {
     _isAvailableUpdate = value;
@@ -55,6 +64,7 @@ class UserEditProvider with ChangeNotifier {
   }
 
   void reset() {
+    _imageFile = null;
     _isAvailableUpdate = false;
     _isFirstNameErr = false;
     _gender = UserInformationHelper.instance.getAccountInformation().gender;
