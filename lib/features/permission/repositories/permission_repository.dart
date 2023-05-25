@@ -14,11 +14,14 @@ class PermissionRepository {
       // }
 
       LOG.info('CAMERA PERMISSION: $cameraPermission');
+      print('CAMERA PERMISSION: $cameraPermission');
       if (!cameraPermission.isGranted) {
-        await Permission.camera.request();
+        await Permission.camera.request().then((value) async {
+          cameraPermission = await Permission.camera.status;
+          print('CAMERA PERMISSION after access: $cameraPermission');
+        });
       }
-      // smsPermission = await Permission.sms.status;
-      cameraPermission = await Permission.camera.status;
+
       // if (smsPermission.isGranted && cameraPermission.isGranted) {
       //   result = true;
       // }

@@ -28,7 +28,7 @@ class RelatedTransactionReceiveDTO {
       content: json['content'] ?? '',
       transactionId: json['transactionId'] ?? '',
       type: json['type'] ?? 0,
-      transType: json['tranStype'] ?? '',
+      transType: json['transType'] ?? '',
     );
   }
 

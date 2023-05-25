@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:vierqr/commons/constants/configurations/route.dart';
@@ -12,24 +13,30 @@ import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/utils/log.dart';
-import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_card/views/bank_card_detail_view.dart';
 import 'package:vierqr/features/bank_card/views/bank_card_generated_view.dart';
+import 'package:vierqr/features/bank_card/views/search_bank_view.dart';
 import 'package:vierqr/features/bank_member/blocs/bank_member_bloc.dart';
 import 'package:vierqr/features/bank_member/views/bank_member_view.dart';
 import 'package:vierqr/features/bank_type/blocs/bank_type_bloc.dart';
 import 'package:vierqr/features/branch/blocs/branch_bloc.dart';
+import 'package:vierqr/features/branch/views/branch_detail_view.dart';
 import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
 import 'package:vierqr/features/business/blocs/business_member_bloc.dart';
 import 'package:vierqr/features/business/views/add_business_view.dart';
 import 'package:vierqr/features/business/views/business_information_view.dart';
+import 'package:vierqr/features/business/views/business_transaction_view.dart';
 import 'package:vierqr/features/generate_qr/blocs/qr_blocs.dart';
 import 'package:vierqr/features/generate_qr/views/qr_generated.dart';
 import 'package:vierqr/features/generate_qr/views/qr_share_view.dart';
 import 'package:vierqr/features/home/home.dart';
 import 'package:vierqr/features/home/theme_setting.dart';
+import 'package:vierqr/features/notification/views/notification_view.dart';
+import 'package:vierqr/features/personal/views/national_information_view.dart';
+import 'package:vierqr/features/printer/blocs/printer_bloc.dart';
+import 'package:vierqr/features/printer/views/printer_setting_view.dart';
 import 'package:vierqr/features/transaction/blocs/transaction_bloc.dart';
 import 'package:vierqr/features/logout/blocs/log_out_bloc.dart';
 import 'package:vierqr/features/notification/blocs/notification_bloc.dart';
@@ -39,21 +46,24 @@ import 'package:vierqr/features/permission/blocs/permission_bloc.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_manage_bloc.dart';
 import 'package:vierqr/features/personal/blocs/user_edit_bloc.dart';
 import 'package:vierqr/features/bank_card/views/add_bank_card_view.dart';
-import 'package:vierqr/features/personal/views/qr_scanner.dart';
 import 'package:vierqr/features/personal/views/user_edit_view.dart';
 import 'package:vierqr/features/personal/views/user_update_password_view.dart';
 import 'package:vierqr/features/register/blocs/register_bloc.dart';
 import 'package:vierqr/features/scan_qr/blocs/scan_qr_bloc.dart';
 import 'package:vierqr/features/scan_qr/views/qr_scan_view.dart';
 import 'package:vierqr/features/token/blocs/token_bloc.dart';
+import 'package:vierqr/features/transaction/views/transaction_detail_view.dart';
 import 'package:vierqr/features/transaction/views/transaction_history_view.dart';
 import 'package:vierqr/features/transaction/widgets/transaction_sucess_widget.dart';
 import 'package:vierqr/models/notification_transaction_success_dto.dart';
-import 'package:vierqr/models/viet_qr_scanned_dto.dart';
 import 'package:vierqr/services/local_notification/notification_service.dart';
+import 'package:vierqr/services/providers/action_share_provider.dart';
 import 'package:vierqr/services/providers/add_bank_provider.dart';
 import 'package:vierqr/services/providers/add_business_provider.dart';
+import 'package:vierqr/services/providers/avatar_provider.dart';
+import 'package:vierqr/services/providers/bank_%20arrangement_provider.dart';
 import 'package:vierqr/services/providers/bank_account_provider.dart';
+import 'package:vierqr/services/providers/bank_card_select_provider.dart';
 import 'package:vierqr/services/providers/bank_select_provider.dart';
 import 'package:vierqr/services/providers/business_inforamtion_provider.dart';
 import 'package:vierqr/services/providers/create_qr_page_select_provider.dart';
@@ -68,8 +78,10 @@ import 'package:vierqr/services/providers/suggestion_widget_provider.dart';
 import 'package:vierqr/services/providers/theme_provider.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
 import 'package:vierqr/services/shared_references/account_helper.dart';
+import 'package:vierqr/services/shared_references/bank_arrangement_helper.dart';
 import 'package:vierqr/services/shared_references/create_qr_helper.dart';
 import 'package:vierqr/services/shared_references/event_bloc_helper.dart';
+import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
 import 'package:vierqr/services/shared_references/theme_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
@@ -109,8 +121,20 @@ Future<void> _initialServiceHelper() async {
       sharedPrefs.getString('USER_ID') == null) {
     await UserInformationHelper.instance.initialUserInformationHelper();
   }
+  if (!sharedPrefs.containsKey('BANK_ARRANGEMENT') ||
+      sharedPrefs.getInt('BANK_ARRANGEMENT') == null) {
+    await BankArrangementHelper.instance.initialBankArr();
+  }
+  if (!sharedPrefs.containsKey('QR_INTRO') ||
+      sharedPrefs.getBool('QR_INTRO') == null) {
+    await QRScannerHelper.instance.initialQrScanner();
+  }
   await EventBlocHelper.instance.initialEventBlocHelper();
 }
+
+//true => new transaction
+//false => initial
+var notificationController = BehaviorSubject<bool>();
 
 class NavigationService {
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -129,6 +153,10 @@ class _VietQRApp extends State<VietQRApp> {
   @override
   void initState() {
     super.initState();
+    if (notificationController.isClosed) {
+      notificationController = BehaviorSubject<bool>();
+    }
+    notificationController.sink.add(false);
     // Đăng ký callback onMessage
     onFcmMessage();
     // Đăng ký callback onMessageOpenedApp
@@ -166,6 +194,7 @@ class _VietQRApp extends State<VietQRApp> {
           );
         }
       }
+      notificationController.sink.add(true);
     });
   }
 
@@ -247,6 +276,9 @@ class _VietQRApp extends State<VietQRApp> {
           BlocProvider<ScanQrBloc>(
             create: (BuildContext context) => ScanQrBloc(),
           ),
+          BlocProvider<PrinterBloc>(
+            create: (BuildContext context) => PrinterBloc(),
+          ),
         ],
         child: MultiProvider(
           providers: [
@@ -270,6 +302,12 @@ class _VietQRApp extends State<VietQRApp> {
             ChangeNotifierProvider(create: (context) => AddBusinessProvider()),
             ChangeNotifierProvider(
                 create: (context) => BusinessInformationProvider()),
+            ChangeNotifierProvider(
+                create: (context) => BankCardSelectProvider()),
+            ChangeNotifierProvider(
+                create: (context) => BankArrangementProvider()),
+            ChangeNotifierProvider(create: (context) => ActionShareProvider()),
+            ChangeNotifierProvider(create: (context) => AvatarProvider()),
           ],
           child: Consumer<ThemeProvider>(
             builder: (context, themeSelect, child) {
@@ -293,7 +331,6 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.USER_EDIT: (context) => const UserEditView(),
                   Routes.UPDATE_PASSWORD: (context) =>
                       const UserUpdatePassword(),
-                  Routes.QR_SCAN: (context) => const QRScanner(),
                   // Routes.BANK_MANAGE: (context) => const BankManageView(),
                   Routes.UI_SETTING: (context) => const ThemeSettingView(),
                   // Routes.TRANSACTION_HISTORY: (context) =>
@@ -302,7 +339,7 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.BANK_CARD_GENERATED_VIEW: (context) =>
                       const BankCardGeneratedView(),
                   Routes.BANK_MEMBER_VIEW: (context) => const BankMemberView(),
-                  Routes.QR_SHARE_VIEW: (context) => const QRShareView(),
+                  Routes.QR_SHARE_VIEW: (context) => QRShareView(),
                   Routes.QR_GENERATED: (context) => const QRGenerated(),
                   Routes.BUSINESS_INFORMATION_VIEW: (context) =>
                       const BusinessInformationView(),
@@ -312,7 +349,18 @@ class _VietQRApp extends State<VietQRApp> {
                       const BankCardDetailView(),
                   Routes.TRANSACTION_HISTORY_VIEW: (context) =>
                       const TransactionHistoryView(),
-                  Routes.SCAN_QR_VIEW: (context) => QRScanView(),
+                  Routes.SCAN_QR_VIEW: (context) => const QRScanView(),
+                  Routes.PRINTER_SETTING: (context) => PrinterSettingView(),
+                  Routes.SEARCH_BANK: (context) => const SearchBankView(),
+                  Routes.NOTIFICATION_VIEW: (context) =>
+                      const NotificationView(),
+                  Routes.TRANSACTION_DETAIL: (context) =>
+                      TransactionDetailView(),
+                  Routes.NATIONAL_INFORMATION: (context) =>
+                      const NationalInformationView(),
+                  Routes.BUSINESS_TRANSACTION: (context) =>
+                      BusinessTransactionView(),
+                  Routes.BRANCH_DETAIL: (context) => const BranchDetailView(),
                 },
                 onGenerateRoute: (settings) {
                   if (settings.name == Routes.BUSINESS_INFORMATION_VIEW) {

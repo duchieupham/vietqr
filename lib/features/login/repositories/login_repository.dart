@@ -6,11 +6,9 @@ import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
-import 'package:vierqr/main.dart';
 import 'package:vierqr/models/account_information_dto.dart';
 import 'package:vierqr/models/account_login_dto.dart';
 import 'package:vierqr/models/code_login_dto.dart';
-import 'package:vierqr/services/firestore/code_login_db.dart';
 import 'package:vierqr/services/shared_references/account_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -29,14 +27,12 @@ class LoginRepository {
       String platform = '';
       String device = '';
       if (!PlatformUtils.instance.isWeb()) {
-        if (PlatformUtils.instance
-            .isIOsApp(NavigationService.navigatorKey.currentContext!)) {
+        if (PlatformUtils.instance.isIOsApp()) {
           platform = 'IOS';
           IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
           device =
               '${iosInfo.name.toString()} ${iosInfo.systemVersion.toString()}';
-        } else if (PlatformUtils.instance
-            .isAndroidApp(NavigationService.navigatorKey.currentContext!)) {
+        } else if (PlatformUtils.instance.isAndroidApp()) {
           platform = 'ANDROID';
           AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
           device = androidInfo.model.toString();
@@ -74,55 +70,6 @@ class LoginRepository {
       }
     } catch (e) {
       LOG.error(e.toString());
-    }
-    return result;
-  }
-
-  //listen login code
-  void listenLoginCode(String code) {
-    try {
-      CodeLoginDB.instance.listenLoginCode(code).listen((querySnapshot) {
-        if (querySnapshot.docs.isNotEmpty) {
-          Map<String, dynamic> data =
-              querySnapshot.docs.first.data() as Map<String, dynamic>;
-          CodeLoginDTO codeLoginDTO = CodeLoginDTO.fromJson(data);
-          if (codeLoginDTO.userId.isNotEmpty) {
-            codeLoginController.sink.add(codeLoginDTO);
-          }
-        }
-      });
-    } catch (e) {
-      print('Error at listenLoginCode - LoginRepository: $e');
-    }
-  }
-
-  //insert login code
-  Future<bool> insertCodeLogin(CodeLoginDTO dto) async {
-    bool result = false;
-    try {
-      result = await CodeLoginDB.instance.insertCodeLogin(dto);
-    } catch (e) {
-      print('Error at insertCodeLogin - LoginRepository: $e');
-    }
-    return result;
-  }
-
-  //update login code
-  Future<void> updateCodeLogin(CodeLoginDTO dto) async {
-    try {
-      await CodeLoginDB.instance.updateCodeLogin(dto);
-    } catch (e) {
-      print('Error at updateCodeLogin - LoginRepository: $e');
-    }
-  }
-
-  //delete login code
-  Future<bool> deleteCodeLogin(String code) async {
-    bool result = false;
-    try {
-      result = await CodeLoginDB.instance.deleteCodeLogin(code);
-    } catch (e) {
-      print('Error at deleteCodeLogin - LoginRepository: $e');
     }
     return result;
   }

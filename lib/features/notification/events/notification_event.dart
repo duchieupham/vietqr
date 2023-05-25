@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:vierqr/models/notification_input_dto.dart';
 
 class NotificationEvent extends Equatable {
   const NotificationEvent();
@@ -8,22 +8,46 @@ class NotificationEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class NotificationInitialEvent extends NotificationEvent {}
+class NotificationGetListEvent extends NotificationEvent {
+  final NotificationInputDTO dto;
 
-class NotificationOnMessageEvent extends NotificationEvent {
-  final RemoteMessage message;
-
-  const NotificationOnMessageEvent({required this.message});
+  const NotificationGetListEvent({
+    required this.dto,
+  });
 
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [dto];
 }
 
-class NotificationTransactionSuccessEvent extends NotificationEvent {
-  final Map<String, dynamic> data;
+class NotificationFetchEvent extends NotificationEvent {
+  final NotificationInputDTO dto;
 
-  const NotificationTransactionSuccessEvent({required this.data});
+  const NotificationFetchEvent({
+    required this.dto,
+  });
 
   @override
-  List<Object?> get props => [data];
+  List<Object?> get props => [dto];
+}
+
+class NotificationUpdateStatusEvent extends NotificationEvent {
+  final String userId;
+
+  const NotificationUpdateStatusEvent({
+    required this.userId,
+  });
+
+  @override
+  List<Object?> get props => [userId];
+}
+
+class NotificationGetCounterEvent extends NotificationEvent {
+  final String userId;
+
+  const NotificationGetCounterEvent({
+    required this.userId,
+  });
+
+  @override
+  List<Object?> get props => [userId];
 }

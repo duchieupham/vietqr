@@ -1,16 +1,29 @@
+import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/utils/currency_utils.dart';
+import 'package:vierqr/commons/utils/image_utils.dart';
+import 'package:vierqr/commons/utils/time_utils.dart';
+import 'package:vierqr/commons/utils/transaction_utils.dart';
+import 'package:vierqr/commons/widgets/button_icon_widget.dart';
+import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/commons/widgets/sliver_header.dart';
 import 'package:vierqr/features/branch/blocs/branch_bloc.dart';
-import 'package:vierqr/features/business/views/business_overview.dart';
-import 'package:vierqr/features/business/views/business_transaction_view.dart';
-import 'package:vierqr/features/transaction/blocs/transaction_bloc.dart';
-import 'package:vierqr/features/transaction/events/transaction_event.dart';
+import 'package:vierqr/features/branch/events/branch_event.dart';
+import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
+import 'package:vierqr/features/business/events/business_information_event.dart';
+import 'package:vierqr/features/business/states/business_information_state.dart';
+import 'package:vierqr/layouts/box_layout.dart';
+import 'package:vierqr/models/branch_filter_insert_dto.dart';
+import 'package:vierqr/models/business_detail_dto.dart';
 import 'package:vierqr/models/business_item_dto.dart';
 import 'package:vierqr/models/transaction_branch_input_dto.dart';
 import 'package:vierqr/services/providers/business_inforamtion_provider.dart';
+import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class BusinessInformationView extends StatefulWidget {
   const BusinessInformationView({super.key});
@@ -21,91 +34,42 @@ class BusinessInformationView extends StatefulWidget {
 
 class _BusinessInformationView extends State<BusinessInformationView>
     with TickerProviderStateMixin {
-  final ScrollController _scrollController = ScrollController();
-  static late PageController _pageController;
-  final List<Widget> _businessScreens = [];
-  static late BranchBloc _branchBloc;
-  static late TransactionBloc _transactionBloc;
-
+  BusinessDetailDTO businessDetailDTO = const BusinessDetailDTO(
+    id: '',
+    name: '',
+    address: '',
+    code: '',
+    imgId: '',
+    coverImgId: '',
+    taxCode: '',
+    userRole: 0,
+    managers: [],
+    branchs: [],
+    transactions: [],
+    active: false,
+  );
+  late BranchBloc _branchBloc;
+  late BusinessInformationBloc _businessInformationBloc;
   @override
   void initState() {
     super.initState();
-
     _branchBloc = BlocProvider.of(context);
-    _transactionBloc = BlocProvider.of(context);
-    _pageController = PageController(
-      initialPage:
-          Provider.of<BusinessInformationProvider>(context, listen: false)
-              .indexSelected,
-      keepPage: true,
-    );
-    _scrollController.addListener(() {
-      _scrollListener(context);
-    });
+    _businessInformationBloc = BlocProvider.of(context);
   }
 
   @override
   void dispose() {
-    _scrollController.dispose();
     super.dispose();
   }
 
   void initialServices(BuildContext context, String businessId) {
-    _businessScreens.addAll(
-      [
-        BusinessOverView(
-          key: const PageStorageKey('BUSINESS_OVERVIEW'),
-          branchBloc: _branchBloc,
-          transactionBloc: _transactionBloc,
-          businessId: businessId,
-          onTransactionNext: () {
-            _animatedToPage(1);
-          },
-        ),
-        BusinessTransactionView(
-          key: const PageStorageKey('BUSINESS_TRANSACTION'),
-          branchBloc: _branchBloc,
-          transactionBloc: _transactionBloc,
-          scrollController: _scrollController,
-        ),
-        Container(
-          width: 400,
-          height: 1000,
-          color: Colors.blue,
-        ),
-      ],
-    );
-  }
-
-  void _scrollListener(BuildContext context) {
-    if (_scrollController.offset >=
-            _scrollController.position.maxScrollExtent &&
-        !_scrollController.position.outOfRange) {
-      // Đã cuộn tới cuối danh sách
-      // Thực hiện công việc của bạn ở đây
-      if (Provider.of<BusinessInformationProvider>(context, listen: false)
-              .indexSelected ==
-          1) {
-        String businessId =
-            Provider.of<BusinessInformationProvider>(context, listen: false)
-                .input
-                .businessId;
-        String branchId =
-            Provider.of<BusinessInformationProvider>(context, listen: false)
-                .filterSelected
-                .branchId;
-        int offset =
-            Provider.of<BusinessInformationProvider>(context, listen: false)
-                    .input
-                    .offset +
-                20;
-        TransactionBranchInputDTO inputDTO = TransactionBranchInputDTO(
-            businessId: businessId, branchId: branchId, offset: offset);
-        Provider.of<BusinessInformationProvider>(context, listen: false)
-            .updateInput(inputDTO);
-        _transactionBloc.add(TransactionEventFetchBranch(dto: inputDTO));
-      }
-    }
+    String userId = UserInformationHelper.instance.getUserId();
+    _businessInformationBloc
+        .add(BusinessGetDetailEvent(businessId: businessId, userId: userId));
+    Future.delayed(const Duration(milliseconds: 0), () {
+      Provider.of<BusinessInformationProvider>(context, listen: false)
+          .updateBusinessId(businessId);
+    });
   }
 
   @override
@@ -128,9 +92,6 @@ class _BusinessInformationView extends State<BusinessInformationView>
             LayoutBuilder(builder: (context, constraints) {
               return NestedScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                controller: _scrollController,
-
-                // slivers: [
                 headerSliverBuilder:
                     (BuildContext context, bool innerBoxIsScrolled) {
                   return [
@@ -150,89 +111,313 @@ class _BusinessInformationView extends State<BusinessInformationView>
                       ),
                     ),
                     // Widget được pin
-                    SliverPersistentHeader(
-                      pinned: true, // pin widget này
-                      delegate: MyPersistentHeaderDelegate(
-                        // widget của bạn
-                        child: Container(
-                          width: width,
-                          height: 60,
-                          alignment: Alignment.center,
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          child: Consumer<BusinessInformationProvider>(
-                            builder: (context, provider, child) {
-                              return ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: _businessScreens.length,
-                                physics: const NeverScrollableScrollPhysics(),
-                                scrollDirection: Axis.horizontal,
-                                itemBuilder: (context, index) {
-                                  return InkWell(
-                                    onTap: () {
-                                      _animatedToPage(index);
-                                    },
-                                    child: Container(
-                                      width: width / 3,
-                                      height: 60,
-                                      alignment: Alignment.center,
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 10,
-                                          vertical: 10,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          border: (provider.indexSelected ==
-                                                  index)
-                                              ? const Border(
-                                                  bottom: BorderSide(
-                                                      color:
-                                                          DefaultTheme.GREEN),
-                                                )
-                                              : null,
-                                          // borderRadius: BorderRadius.circular(6),
-                                          // color: (provider.indexSelected == index)
-                                          //     ? DefaultTheme.GREEN
-                                          //         .withOpacity(0.3)
-                                          //     : DefaultTheme.TRANSPARENT,
-                                        ),
-                                        child: Text(
-                                          _getTitle(index),
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight:
-                                                (provider.indexSelected ==
-                                                        index)
-                                                    ? FontWeight.w500
-                                                    : FontWeight.normal,
-                                            color: (provider.indexSelected ==
-                                                    index)
-                                                ? DefaultTheme.GREEN
-                                                : Theme.of(context).hintColor,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
+                  ];
+                },
+                body: BlocConsumer<BusinessInformationBloc,
+                    BusinessInformationState>(
+                  listener: (context, state) {
+                    if (state is BusinessGetDetailSuccessState) {
+                      businessDetailDTO = state.dto;
+                      String userId =
+                          UserInformationHelper.instance.getUserId();
+                      String businessId = businessDetailDTO.id;
+                      int role = businessDetailDTO.userRole;
+                      BranchFilterInsertDTO branchFilter =
+                          BranchFilterInsertDTO(
+                              userId: userId,
+                              role: role,
+                              businessId: businessId);
+                      _branchBloc.add(BranchEventGetFilter(dto: branchFilter));
+
+                      Future.delayed(const Duration(milliseconds: 0), () {
+                        //update user role
+                        int userRole = 0;
+                        if (businessDetailDTO.managers
+                            .where((element) =>
+                                element.userId ==
+                                UserInformationHelper.instance.getUserId())
+                            .isNotEmpty) {
+                          userRole = businessDetailDTO.managers
+                              .where((element) =>
+                                  element.userId ==
+                                  UserInformationHelper.instance.getUserId())
+                              .first
+                              .role;
+                          Provider.of<BusinessInformationProvider>(context,
+                                  listen: false)
+                              .updateUserRole(userRole);
+                        }
+                        //update for select box transaction
+                        Provider.of<BusinessInformationProvider>(context,
+                                listen: false)
+                            .updateInput(
+                          TransactionBranchInputDTO(
+                              businessId: businessId,
+                              branchId: 'all',
+                              offset: 0),
+                        );
+                      });
+                    }
+                  },
+                  builder: (context, state) {
+                    return ListView(
+                      shrinkWrap: false,
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      children: [
+                        const Padding(padding: EdgeInsets.only(top: 30)),
+                        _buildTitle(
+                          context: context,
+                          title: 'Thông tin doanh nghiệp',
+                          // functionName: 'Cập nhật',
+                          // function: () {},
+                        ),
+                        BoxLayout(
+                          width: width - 40,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 0, vertical: 10),
+                          child: BoxLayout(
+                            width: width,
+                            child: Column(
+                              children: [
+                                _buildElementInformation(
+                                  context: context,
+                                  title: 'Code',
+                                  description: businessDetailDTO.code,
+                                  isCopy: true,
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 15),
+                                  child: DividerWidget(width: width),
+                                ),
+                                _buildElementInformation(
+                                  context: context,
+                                  title: 'Địa chỉ',
+                                  description: businessDetailDTO.address,
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 15),
+                                  child: DividerWidget(width: width),
+                                ),
+                                _buildElementInformation(
+                                  context: context,
+                                  title: 'Mã số thuế',
+                                  descriptionColor:
+                                      (businessDetailDTO.taxCode.isEmpty)
+                                          ? DefaultTheme.GREY_TEXT
+                                          : null,
+                                  description:
+                                      (businessDetailDTO.taxCode.isEmpty)
+                                          ? 'Chưa cập nhật'
+                                          : businessDetailDTO.taxCode,
+                                  isCopy: true,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        // const Padding(padding: EdgeInsets.only(top: 10)),
+                        // InkWell(
+                        //   onTap: () {},
+                        //   child: Container(
+                        //     height: 40,
+                        //     alignment: Alignment.centerLeft,
+                        //     padding: const EdgeInsets.only(left: 10),
+                        //     child: const Text(
+                        //       'Cập nhật ảnh bìa',
+                        //       style: TextStyle(
+                        //         fontSize: 15,
+                        //         color: DefaultTheme.GREEN,
+                        //         decoration: TextDecoration.underline,
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
+                        // InkWell(
+                        //   onTap: () {},
+                        //   child: Container(
+                        //     height: 40,
+                        //     alignment: Alignment.centerLeft,
+                        //     padding: const EdgeInsets.only(left: 10),
+                        //     child: const Text(
+                        //       'Cập nhật ảnh đại diện',
+                        //       style: TextStyle(
+                        //         fontSize: 15,
+                        //         color: DefaultTheme.GREEN,
+                        //         decoration: TextDecoration.underline,
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
+                        const Padding(padding: EdgeInsets.only(top: 30)),
+                        _buildTitle(
+                          context: context,
+                          title: 'Quản trị viên',
+                          label:
+                              '${businessDetailDTO.managers.length} quản trị viên',
+                          color: DefaultTheme.BLUE_TEXT,
+                          icon: Icons.people_alt_rounded,
+                          // function: () {},
+                          // functionName: 'Cập nhật',
+                        ),
+                        BoxLayout(
+                          width: width - 40,
+                          child: ListView.separated(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            padding: const EdgeInsetsDirectional.all(0),
+                            itemCount: businessDetailDTO.managers.length,
+                            itemBuilder: (context, index) {
+                              return _buildMemberList(
+                                  context: context,
+                                  index: index,
+                                  dto: businessDetailDTO.managers[index]);
+                            },
+                            separatorBuilder: (context, index) {
+                              return Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 10),
+                                child: DividerWidget(width: width),
                               );
                             },
                           ),
                         ),
-                      ),
-                    ),
-                  ];
-                },
-                body: PageView(
-                  key: const PageStorageKey('BUSINESS_PAGE_VIEW'),
-                  allowImplicitScrolling: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  controller: _pageController,
-                  onPageChanged: (index) {
-                    Provider.of<BusinessInformationProvider>(context,
-                            listen: false)
-                        .updateIndex(index);
+                        // const Padding(padding: EdgeInsets.only(top: 10)),
+                        // InkWell(
+                        //   onTap: () {},
+                        //   child: Container(
+                        //     height: 40,
+                        //     alignment: Alignment.centerLeft,
+                        //     padding: const EdgeInsets.only(left: 10),
+                        //     child: const Text(
+                        //       'Thêm mới',
+                        //       style: TextStyle(
+                        //         fontSize: 15,
+                        //         color: DefaultTheme.GREEN,
+                        //         decoration: TextDecoration.underline,
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
+                        const Padding(padding: EdgeInsets.only(top: 30)),
+                        _buildTitle(
+                          context: context,
+                          title: 'Chi nhánh',
+                          label:
+                              '${businessDetailDTO.branchs.length} chi nhánh',
+                          color: DefaultTheme.GREEN,
+                          icon: Icons.business_rounded,
+                        ),
+                        SizedBox(
+                          width: width,
+                          child: ListView.builder(
+                            itemCount: businessDetailDTO.branchs.length,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            padding: const EdgeInsetsDirectional.all(0),
+                            itemBuilder: (context, index) {
+                              return _buildBranchList(
+                                context: context,
+                                dto: businessDetailDTO.branchs[index],
+                                index: index,
+                              );
+                            },
+                            // separatorBuilder: (context, index) {
+                            //   return Padding(
+                            //     padding:
+                            //         const EdgeInsets.symmetric(vertical: 10),
+                            //     child: DividerWidget(width: width),
+                            //   );
+                            // },
+                          ),
+                        ),
+                        // const Padding(padding: EdgeInsets.only(top: 10)),
+                        // InkWell(
+                        //   onTap: () {},
+                        //   child: Container(
+                        //     height: 40,
+                        //     alignment: Alignment.centerLeft,
+                        //     padding: const EdgeInsets.only(left: 10),
+                        //     child: const Text(
+                        //       'Thêm mới',
+                        //       style: TextStyle(
+                        //         fontSize: 15,
+                        //         color: DefaultTheme.GREEN,
+                        //         decoration: TextDecoration.underline,
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
+                        const Padding(padding: EdgeInsets.only(top: 30)),
+                        _buildTitle(
+                          context: context,
+                          title: 'Giao dịch gần đây',
+                          // functionName: 'Xem thêm',
+                          // function: () {
+                          //   Navigator.pushNamed(
+                          //     context,
+                          //     Routes.BUSINESS_TRANSACTION,
+                          //   );
+                          // },
+                        ),
+                        BoxLayout(
+                          width: width - 40,
+                          padding: const EdgeInsets.symmetric(horizontal: 0),
+                          child: BoxLayout(
+                            width: width,
+                            child: (businessDetailDTO.transactions.isEmpty)
+                                ? const Center(
+                                    child: Text('Không có giao dịch nào'),
+                                  )
+                                : ListView.separated(
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    padding: const EdgeInsets.all(0),
+                                    itemCount:
+                                        businessDetailDTO.transactions.length +
+                                            1,
+                                    itemBuilder: (context, index) {
+                                      return (index ==
+                                              businessDetailDTO
+                                                  .transactions.length)
+                                          ? Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 10),
+                                              child: ButtonIconWidget(
+                                                width: width,
+                                                icon: Icons.more_horiz_rounded,
+                                                title: 'Xem thêm',
+                                                function: () {
+                                                  Navigator.pushNamed(
+                                                    context,
+                                                    Routes.BUSINESS_TRANSACTION,
+                                                  );
+                                                },
+                                                bgColor:
+                                                    DefaultTheme.TRANSPARENT,
+                                                textColor: DefaultTheme.GREEN,
+                                              ),
+                                            )
+                                          : _buildTransactionItem(
+                                              context: context,
+                                              dto: businessDetailDTO
+                                                  .transactions[index],
+                                              businessId: dto.businessId,
+                                            );
+                                    },
+                                    separatorBuilder: (context, index) {
+                                      return DividerWidget(width: width);
+                                    },
+                                  ),
+                          ),
+                        ),
+                        const Padding(padding: EdgeInsets.only(bottom: 50)),
+                      ],
+                    );
                   },
-                  children: _businessScreens,
                 ),
 
                 // ],
@@ -271,40 +456,456 @@ class _BusinessInformationView extends State<BusinessInformationView>
     );
   }
 
-  String _getTitle(int index) {
-    String result = '';
-    if (index == 0) {
-      result = 'Tổng quan';
-    } else if (index == 1) {
-      result = 'Giao dịch';
-    } else if (index == 2) {
-      result = 'Thành viên';
-    }
-    return result;
+  Widget _buildTransactionItem({
+    required BuildContext context,
+    required BusinessTransactionDTO dto,
+    required String businessId,
+  }) {
+    final double width = MediaQuery.of(context).size.width;
+    return InkWell(
+      onTap: () {
+        String userId = UserInformationHelper.instance.getUserId();
+        Navigator.pushNamed(
+          context,
+          Routes.TRANSACTION_DETAIL,
+          arguments: {
+            'transactionId': dto.transactionId,
+            'businessInformationBlocDetail': _businessInformationBloc,
+            'userId': userId,
+            'businessId': businessId,
+          },
+        );
+      },
+      child: Container(
+        width: width,
+        padding: const EdgeInsets.symmetric(vertical: 15),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: 25,
+              height: 25,
+              child: Icon(
+                TransactionUtils.instance
+                    .getIconStatus(dto.status, dto.tranStype),
+                color: TransactionUtils.instance
+                    .getColorStatus(dto.status, dto.type, dto.tranStype),
+              ),
+            ),
+            const Padding(padding: EdgeInsets.only(left: 5)),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${TransactionUtils.instance.getTransType(dto.tranStype)} ${CurrencyUtils.instance.getCurrencyFormatted(dto.amount)}',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: TransactionUtils.instance
+                          .getColorStatus(dto.status, dto.type, dto.tranStype),
+                    ),
+                  ),
+                  const Padding(padding: EdgeInsets.only(top: 3)),
+                  Text(
+                    'Đến TK: ${dto.bankAccount}',
+                    style: const TextStyle(),
+                  ),
+                  const Padding(padding: EdgeInsets.only(top: 3)),
+                  Text(
+                    dto.content.trim(),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: DefaultTheme.GREY_TEXT,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Align(
+              alignment: Alignment.topRight,
+              child: Text(
+                TimeUtils.instance.formatDateFromInt(dto.time, true),
+                textAlign: TextAlign.right,
+                style: const TextStyle(
+                  fontSize: 13,
+                ),
+              ),
+            ),
+
+            // const Padding(padding: EdgeInsets.only(left: 5)),
+            // Icon(
+            //   TransactionUtils.instance.getIconStatus(dto.status),
+            //   size: 15,
+            //   color: TransactionUtils.instance.getColorStatus(dto.status),
+            // ),
+          ],
+        ),
+      ),
+    );
   }
 
-  //navigate to page
-  void _animatedToPage(int index) {
-    try {
-      _scrollController.animateTo(
-        0, // Giá trị offset
-        duration: const Duration(milliseconds: 200), // Thời gian di chuyển
-        curve: Curves.easeInOut, // Độ cong của đường di chuyển
-      );
-      _pageController.animateToPage(
-        index,
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeInOutQuart,
-      );
-    } catch (e) {
-      _pageController = PageController(
-        initialPage:
-            Provider.of<BusinessInformationProvider>(context, listen: false)
-                .indexSelected,
-        keepPage: true,
-      );
-      _animatedToPage(index);
-    }
+  Widget _buildElementInformation({
+    required BuildContext context,
+    required String title,
+    required String description,
+    bool? isCopy,
+    bool? isDescriptionBold,
+    Color? descriptionColor,
+  }) {
+    final double width = MediaQuery.of(context).size.width;
+    return SizedBox(
+      width: width,
+      child: Row(
+        children: [
+          SizedBox(
+            width: 100,
+            child: Text(
+              title,
+            ),
+          ),
+          Expanded(
+            child: Text(
+              description,
+              style: TextStyle(
+                fontWeight: (isDescriptionBold != null && isDescriptionBold)
+                    ? FontWeight.bold
+                    : FontWeight.normal,
+                color: (descriptionColor != null)
+                    ? descriptionColor
+                    : Theme.of(context).hintColor,
+              ),
+            ),
+          ),
+          if (isCopy != null && isCopy)
+            InkWell(
+              onTap: () async {
+                await FlutterClipboard.copy(description).then(
+                  (value) => Fluttertoast.showToast(
+                    msg: 'Đã sao chép',
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.CENTER,
+                    timeInSecForIosWeb: 1,
+                    backgroundColor: Theme.of(context).primaryColor,
+                    textColor: Theme.of(context).hintColor,
+                    fontSize: 15,
+                    webBgColor: 'rgba(255, 255, 255)',
+                    webPosition: 'center',
+                  ),
+                );
+              },
+              child: const Icon(
+                Icons.copy_rounded,
+                color: DefaultTheme.GREY_TEXT,
+                size: 15,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTitle({
+    required BuildContext context,
+    required String title,
+    String? label,
+    IconData? icon,
+    Color? color,
+  }) {
+    final double width = MediaQuery.of(context).size.width;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: SizedBox(
+        width: width,
+        child: Row(
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            if (label != null) ...[
+              const Spacer(),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  color: color!.withOpacity(0.2),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      icon,
+                      color: color,
+                      size: 15,
+                    ),
+                    const Padding(padding: EdgeInsets.only(left: 5)),
+                    Text(
+                      label,
+                      style: TextStyle(
+                        color: color,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBranchList({
+    required BuildContext context,
+    required BusinessBranchDTO dto,
+    required int index,
+  }) {
+    final double width = MediaQuery.of(context).size.width;
+    return BoxLayout(
+      width: width,
+      margin: const EdgeInsets.symmetric(vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        children: [
+          const Padding(padding: EdgeInsets.only(top: 20)),
+          _buildElementInformation(
+            context: context,
+            title: 'Chi nhánh',
+            description: dto.name,
+            isDescriptionBold: true,
+          ),
+          const Padding(padding: EdgeInsets.only(top: 10)),
+          _buildElementInformation(
+            context: context,
+            title: 'Code',
+            description: dto.code,
+            isCopy: true,
+          ),
+          const Padding(padding: EdgeInsets.only(top: 10)),
+          _buildElementInformation(
+            context: context,
+            title: 'Địa chỉ',
+            description: dto.address,
+          ),
+          const Padding(padding: EdgeInsets.only(top: 10)),
+          _buildElementInformation(
+            context: context,
+            title: 'Thành viên',
+            descriptionColor: (dto.totalMember == 0)
+                ? DefaultTheme.GREY_TEXT
+                : DefaultTheme.BLUE_TEXT,
+            description: (dto.totalMember == 0)
+                ? 'Chưa có thành viên'
+                : '${dto.totalMember} thành viên',
+          ),
+          // const Padding(padding: EdgeInsets.only(top: 10)),
+          // _buildElementInformation(
+          //   context: context,
+          //   title: 'Quản lý',
+          //   descriptionColor:
+          //       (dto.manager.id.isEmpty) ? DefaultTheme.GREY_TEXT : null,
+          //   description: (dto.manager.id.isEmpty)
+          //       ? 'Chưa có quản lý'
+          //       : '${dto.manager.lastName} ${dto.manager.middleName} ${dto.manager.firstName}'
+          //           .trim(),
+          // ),
+          const Padding(padding: EdgeInsets.only(top: 10)),
+          (dto.banks.isNotEmpty)
+              ? SizedBox(
+                  width: width,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(
+                        width: 100,
+                        child: Text('TK đối soát'),
+                      ),
+                      Expanded(
+                        child: ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          padding: const EdgeInsets.all(0),
+                          itemCount: dto.banks.length,
+                          itemBuilder: (context, index) {
+                            return SizedBox(
+                              width: width - 100,
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    width: 30,
+                                    height: 30,
+                                    decoration: BoxDecoration(
+                                      color: DefaultTheme.WHITE,
+                                      borderRadius: BorderRadius.circular(30),
+                                      border: Border.all(
+                                        color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                        width: 0.5,
+                                      ),
+                                      image: DecorationImage(
+                                        fit: BoxFit.contain,
+                                        image: ImageUtils.instance
+                                            .getImageNetWork(
+                                                dto.banks[index].imgId),
+                                      ),
+                                    ),
+                                  ),
+                                  const Padding(
+                                      padding: EdgeInsets.only(left: 5)),
+                                  Text(
+                                    '${dto.banks[index].bankCode} - ${dto.banks[index].bankAccount}',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const Spacer(),
+                                  InkWell(
+                                    onTap: () async {
+                                      await FlutterClipboard.copy(
+                                              '${dto.banks[index].bankCode} - ${dto.banks[index].bankAccount}')
+                                          .then(
+                                        (value) => Fluttertoast.showToast(
+                                          msg: 'Đã sao chép',
+                                          toastLength: Toast.LENGTH_SHORT,
+                                          gravity: ToastGravity.CENTER,
+                                          timeInSecForIosWeb: 1,
+                                          backgroundColor:
+                                              Theme.of(context).primaryColor,
+                                          textColor:
+                                              Theme.of(context).hintColor,
+                                          fontSize: 15,
+                                          webBgColor: 'rgba(255, 255, 255)',
+                                          webPosition: 'center',
+                                        ),
+                                      );
+                                    },
+                                    child: const Icon(
+                                      Icons.copy_rounded,
+                                      color: DefaultTheme.GREY_TEXT,
+                                      size: 15,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                          separatorBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: DividerWidget(width: width),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : _buildElementInformation(
+                  context: context,
+                  title: 'TK đối soát',
+                  descriptionColor: DefaultTheme.GREY_TEXT,
+                  description: 'Chưa liên kết',
+                ),
+          const Padding(padding: EdgeInsets.only(top: 10)),
+          DividerWidget(width: width),
+          ButtonIconWidget(
+            width: width,
+            height: 40,
+            icon: Icons.info_rounded,
+            title: 'Chi tiết',
+            function: () {
+              Navigator.pushNamed(
+                context,
+                Routes.BRANCH_DETAIL,
+                arguments: {
+                  'branchId': dto.id,
+                  'businessId': businessDetailDTO.id,
+                  'businessName': businessDetailDTO.name,
+                },
+              );
+            },
+            bgColor: DefaultTheme.TRANSPARENT,
+            textColor: DefaultTheme.GREEN,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMemberList(
+      {required BuildContext context,
+      required BusinessManagerDTO dto,
+      required int index}) {
+    final double width = MediaQuery.of(context).size.width;
+    final bool isAdmin = (dto.role == 0);
+    return Container(
+      width: width,
+      margin: const EdgeInsets.symmetric(vertical: 5),
+      child: Row(
+        children: [
+          (dto.imgId.isNotEmpty)
+              ? Container(
+                  width: 35,
+                  height: 35,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: ImageUtils.instance.getImageNetWork(dto.imgId),
+                    ),
+                  ),
+                )
+              : ClipOval(
+                  child: SizedBox(
+                    width: 35,
+                    height: 35,
+                    child: Image.asset('assets/images/ic-avatar.png'),
+                  ),
+                ),
+          const Padding(padding: EdgeInsets.only(left: 10)),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${dto.lastName} ${dto.middleName} ${dto.firstName}'.trim(),
+                  style: const TextStyle(
+                    fontSize: 15,
+                  ),
+                ),
+                Text(
+                  dto.phoneNo,
+                  style: const TextStyle(
+                    fontSize: 15,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+            // decoration: BoxDecoration(
+            //   borderRadius: BorderRadius.circular(5),
+            //   color: (isAdmin) ? DefaultTheme.BLUE_TEXT : DefaultTheme.ORANGE,
+            // ),
+            child: Text(
+              (isAdmin) ? 'Admin' : 'Quản lý',
+              style: const TextStyle(
+                fontSize: 12,
+              ),
+            ),
+          ),
+          const Padding(
+            padding: EdgeInsets.only(left: 5),
+          ),
+        ],
+      ),
+    );
   }
 }
 

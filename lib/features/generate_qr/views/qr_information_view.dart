@@ -4,6 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
+import 'package:vierqr/commons/utils/printer_utils.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
@@ -17,16 +18,20 @@ import 'package:vierqr/features/generate_qr/blocs/qr_blocs.dart';
 import 'package:vierqr/features/generate_qr/events/qr_event.dart';
 import 'package:vierqr/features/generate_qr/states/qr_state.dart';
 import 'package:vierqr/features/generate_qr/views/create_qr.dart';
+import 'package:vierqr/features/printer/views/printing_view.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
+import 'package:vierqr/models/bluetooth_printer_dto.dart';
 import 'package:vierqr/models/qr_create_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
+import 'package:vierqr/services/providers/action_share_provider.dart';
 import 'package:vierqr/services/providers/add_bank_provider.dart';
 import 'package:vierqr/services/providers/bank_account_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:vierqr/services/sqflite/local_database.dart';
 
 class QRInformationView extends StatelessWidget {
   final BusinessInformationBloc businessInformationBloc;
@@ -75,9 +80,9 @@ class QRInformationView extends StatelessWidget {
         ),
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          const Padding(padding: EdgeInsets.only(top: 0)),
+          const Padding(padding: EdgeInsets.only(top: 35)),
           Expanded(
             child: BlocConsumer<BankCardBloc, BankCardState>(
               listener: ((context, state) {
@@ -102,7 +107,8 @@ class QRInformationView extends StatelessWidget {
                     }
                   }
                 }
-                if (state is BankCardRemoveSuccessState ||
+                if (state is BankCardInsertUnauthenticatedSuccessState ||
+                    state is BankCardRemoveSuccessState ||
                     state is BankCardInsertSuccessfulState) {
                   getListBank(context);
                 }
@@ -128,6 +134,7 @@ class QRInformationView extends StatelessWidget {
                                     content: '',
                                     isCopy: true,
                                     isStatistic: true,
+                                    isSmallWidget: (height <= 800),
                                   ),
                                 );
                                 _cardWidgets.add(qrWidget);
@@ -145,7 +152,6 @@ class QRInformationView extends StatelessWidget {
                                 ? UnconstrainedBox(
                                     child: BoxLayout(
                                       width: width - 60,
-                                      // height: (width - 40) / Numeral.BANK_CARD_RATIO,
                                       borderRadius: 15,
                                       alignment: Alignment.center,
                                       bgColor: Theme.of(context).cardColor,
@@ -252,109 +258,220 @@ class QRInformationView extends StatelessWidget {
             width: width,
             height: 40,
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Padding(padding: EdgeInsets.only(left: 20)),
                 ButtonIconWidget(
-                  width: width / 2 - 25,
+                  width: width * 0.2,
                   height: 40,
-                  icon: Icons.copy_rounded,
-                  title: 'Sao chép nội dung',
+                  icon: Icons.print_rounded,
+                  title: '',
                   function: () async {
-                    if (_bankAccounts.isNotEmpty && _qrGenerateds.isNotEmpty) {
-                      int index = Provider.of<BankAccountProvider>(context,
-                              listen: false)
-                          .indexSelected;
-                      await FlutterClipboard.copy(ShareUtils.instance
-                              .getTextSharing(_qrGenerateds[index]))
-                          .then(
-                        (value) => Fluttertoast.showToast(
-                          msg: 'Đã sao chép',
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.CENTER,
-                          timeInSecForIosWeb: 1,
-                          backgroundColor: Theme.of(context).primaryColor,
-                          textColor: Theme.of(context).hintColor,
-                          fontSize: 15,
-                          webBgColor: 'rgba(255, 255, 255)',
-                          webPosition: 'center',
-                        ),
-                      );
+                    int indexSelected =
+                        Provider.of<BankAccountProvider>(context, listen: false)
+                            .indexSelected;
+
+                    String userId = UserInformationHelper.instance.getUserId();
+                    BluetoothPrinterDTO bluetoothPrinterDTO =
+                        await LocalDatabase.instance
+                            .getBluetoothPrinter(userId);
+                    if (bluetoothPrinterDTO.id.isNotEmpty) {
+                      bool isPrinting = false;
+                      if (!isPrinting) {
+                        isPrinting = true;
+                        DialogWidget.instance.showFullModalBottomContent(
+                            widget: const PrintingView());
+                        await PrinterUtils.instance
+                            .print(_qrGenerateds[indexSelected])
+                            .then((value) {
+                          Navigator.pop(context);
+                          isPrinting = false;
+                        });
+                      }
                     } else {
                       DialogWidget.instance.openMsgDialog(
-                          title: 'Không thể chia sẻ',
+                          title: 'Không thể in',
                           msg:
-                              'Thêm tài khoản ngân hàng để sử dụng chức năng này.');
+                              'Vui lòng kết nối với máy in để thực hiện việc in.');
                     }
+                  },
+                  bgColor: Theme.of(context).cardColor,
+                  textColor: DefaultTheme.ORANGE,
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(left: 10),
+                ),
+                ButtonIconWidget(
+                  width: width * 0.2,
+                  height: 40,
+                  icon: Icons.photo_rounded,
+                  title: '',
+                  function: () {
+                    int indexSelected =
+                        Provider.of<BankAccountProvider>(context, listen: false)
+                            .indexSelected;
+                    Provider.of<ActionShareProvider>(context, listen: false)
+                        .updateAction(false);
+                    Navigator.pushNamed(
+                      context,
+                      Routes.QR_SHARE_VIEW,
+                      arguments: {
+                        'qrGeneratedDTO': _qrGenerateds[indexSelected],
+                        'action': 'SAVE'
+                      },
+                    );
+                  },
+                  bgColor: Theme.of(context).cardColor,
+                  textColor: DefaultTheme.RED_CALENDAR,
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(left: 10),
+                ),
+                ButtonIconWidget(
+                  width: width * 0.2,
+                  height: 40,
+                  icon: Icons.copy_rounded,
+                  title: '',
+                  function: () async {
+                    int indexSelected =
+                        Provider.of<BankAccountProvider>(context, listen: false)
+                            .indexSelected;
+                    await FlutterClipboard.copy(ShareUtils.instance
+                            .getTextSharing(_qrGenerateds[indexSelected]))
+                        .then(
+                      (value) => Fluttertoast.showToast(
+                        msg: 'Đã sao chép',
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.CENTER,
+                        timeInSecForIosWeb: 1,
+                        backgroundColor: Theme.of(context).primaryColor,
+                        textColor: Theme.of(context).hintColor,
+                        fontSize: 15,
+                        webBgColor: 'rgba(255, 255, 255)',
+                        webPosition: 'center',
+                      ),
+                    );
                   },
                   bgColor: Theme.of(context).cardColor,
                   textColor: DefaultTheme.BLUE_TEXT,
                 ),
-                const Padding(padding: EdgeInsets.only(left: 10)),
+                const Padding(
+                  padding: EdgeInsets.only(left: 10),
+                ),
                 ButtonIconWidget(
-                  width: width / 2 - 25,
+                  width: width * 0.2,
                   height: 40,
                   icon: Icons.share_rounded,
-                  title: 'Chia sẻ mã QR',
+                  title: '',
                   function: () {
-                    if (_bankAccounts.isNotEmpty && _qrGenerateds.isNotEmpty) {
-                      int index = Provider.of<BankAccountProvider>(context,
-                              listen: false)
-                          .indexSelected;
-                      Navigator.pushNamed(context, Routes.QR_SHARE_VIEW,
-                          arguments: {'qrGeneratedDTO': _qrGenerateds[index]});
-                    } else {
-                      DialogWidget.instance.openMsgDialog(
-                          title: 'Không thể chia sẻ',
-                          msg:
-                              'Thêm tài khoản ngân hàng để sử dụng chức năng này.');
-                    }
+                    int indexSelected =
+                        Provider.of<BankAccountProvider>(context, listen: false)
+                            .indexSelected;
+                    Provider.of<ActionShareProvider>(context, listen: false)
+                        .updateAction(false);
+                    Navigator.pushNamed(
+                      context,
+                      Routes.QR_SHARE_VIEW,
+                      arguments: {
+                        'qrGeneratedDTO': _qrGenerateds[indexSelected],
+                      },
+                    );
                   },
                   bgColor: Theme.of(context).cardColor,
                   textColor: DefaultTheme.GREEN,
                 ),
-                const Padding(padding: EdgeInsets.only(left: 20)),
               ],
             ),
           ),
           const Padding(
             padding: EdgeInsets.only(top: 10),
           ),
-          ButtonIconWidget(
-            width: width - 40,
+          SizedBox(
+            width: width,
             height: 40,
-            icon: Icons.add_rounded,
-            title: 'Tạo QR giao dịch',
-            function: () {
-              if (_bankAccounts.isNotEmpty && _qrGenerateds.isNotEmpty) {
-                Navigator.of(context)
-                    .push(
-                  MaterialPageRoute(
-                    builder: (context) => CreateQR(
-                      bankAccountDTO: _bankAccounts[
-                          Provider.of<BankAccountProvider>(context,
-                                  listen: false)
-                              .indexSelected],
-                    ),
-                  ),
-                )
-                    .then((value) {
-                  String userId = UserInformationHelper.instance.getUserId();
-                  businessInformationBloc.add(
-                    BusinessInformationEventGetList(userId: userId),
-                  );
-                });
-              } else {
-                DialogWidget.instance.openMsgDialog(
-                    title: 'Không thể tạo mã QR thanh toán',
-                    msg: 'Thêm tài khoản ngân hàng để sử dụng chức năng này.');
-              }
-            },
-            textColor: DefaultTheme.WHITE,
-            bgColor: DefaultTheme.GREEN,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ButtonIconWidget(
+                  width: width * 0.4 + 10,
+                  height: 40,
+                  icon: Icons.add_rounded,
+                  title: 'QR giao dịch',
+                  function: () {
+                    if (_bankAccounts.isNotEmpty && _qrGenerateds.isNotEmpty) {
+                      Navigator.of(context)
+                          .push(
+                        MaterialPageRoute(
+                          builder: (context) => CreateQR(
+                            bankAccountDTO: _bankAccounts[
+                                Provider.of<BankAccountProvider>(context,
+                                        listen: false)
+                                    .indexSelected],
+                          ),
+                        ),
+                      )
+                          .then((value) {
+                        String userId =
+                            UserInformationHelper.instance.getUserId();
+                        businessInformationBloc.add(
+                          BusinessInformationEventGetList(userId: userId),
+                        );
+                      });
+                    } else {
+                      DialogWidget.instance.openMsgDialog(
+                          title: 'Không thể tạo mã QR thanh toán',
+                          msg:
+                              'Thêm tài khoản ngân hàng để sử dụng chức năng này.');
+                    }
+                  },
+                  textColor: DefaultTheme.WHITE,
+                  bgColor: DefaultTheme.GREEN,
+                ),
+                const Padding(padding: EdgeInsets.only(left: 10)),
+                ButtonIconWidget(
+                  width: width * 0.4 + 10,
+                  height: 40,
+                  icon: Icons.add_rounded,
+                  title: 'TK ngân hàng',
+                  function: () {
+                    if (_bankAccounts.isNotEmpty && _qrGenerateds.isNotEmpty) {
+                      Navigator.of(context)
+                          .push(
+                        MaterialPageRoute(
+                          builder: (context) => CreateQR(
+                            bankAccountDTO: _bankAccounts[
+                                Provider.of<BankAccountProvider>(context,
+                                        listen: false)
+                                    .indexSelected],
+                          ),
+                        ),
+                      )
+                          .then((value) {
+                        String userId =
+                            UserInformationHelper.instance.getUserId();
+                        businessInformationBloc.add(
+                          BusinessInformationEventGetList(userId: userId),
+                        );
+                      });
+                    } else {
+                      DialogWidget.instance.openMsgDialog(
+                          title: 'Không thể tạo mã QR thanh toán',
+                          msg:
+                              'Thêm tài khoản ngân hàng để sử dụng chức năng này.');
+                    }
+                  },
+                  textColor: DefaultTheme.WHITE,
+                  bgColor: DefaultTheme.GREEN,
+                ),
+              ],
+            ),
           ),
           Padding(
             padding: EdgeInsets.only(
-              bottom: (PlatformUtils.instance.isAndroidApp(context)) ? 90 : 110,
+              bottom: (PlatformUtils.instance.isAndroidApp())
+                  ? 90
+                  : (PlatformUtils.instance.isIOsApp() && height <= 800)
+                      ? 70
+                      : 110,
             ),
           ),
         ],

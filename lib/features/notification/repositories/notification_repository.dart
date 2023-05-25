@@ -1,95 +1,70 @@
-import 'package:rxdart/rxdart.dart';
-import 'package:vierqr/commons/utils/time_utils.dart';
+import 'dart:convert';
+
+import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/enums/authentication_type.dart';
+import 'package:vierqr/commons/utils/base_api.dart';
+import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/models/notification_dto.dart';
-import 'package:vierqr/services/firestore/notification_db.dart';
+import 'package:vierqr/models/notification_input_dto.dart';
 
 class NotificationRepository {
-  static BehaviorSubject<NotificationDTO> notificationController =
-      BehaviorSubject<NotificationDTO>();
+  const NotificationRepository();
 
-  NotificationRepository();
-
-  //step 3
-  Future<void> insertNotification(NotificationDTO notificationDTO) async {
+  Future<int> getCounter(String userId) async {
+    int result = 0;
     try {
-      await NotificationDB.instance.insertNotification(notificationDTO);
-    } catch (e) {
-      print('Error at insertNotification - NotificationRepository: $e');
-    }
-  }
-
-  //step 4
-  void listenNewNotification(String userId) {
-    try {
-      NotificationDB.instance
-          .listenNotification(userId)
-          .listen((querySnapshot) {
-        if (querySnapshot.docs.isNotEmpty) {
-          for (var doc in querySnapshot.docs) {
-            Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-            if (data['userId'] == userId) {
-              if (!data['isRead']) {
-                if (TimeUtils.instance
-                    .checkValidTimeRange(data['timeCreated'], 30)) {
-                  NotificationDTO notificationDTO = NotificationDTO(
-                    id: data['id'],
-                    transactionId: data['transactionId'],
-                    userId: data['userId'],
-                    message: data['message'],
-                    type: data['type'],
-                    timeInserted: data['timeCreated'],
-                    isRead: data['isRead'],
-                  );
-                  notificationController.sink.add(notificationDTO);
-                }
-              }
-            }
-          }
-        }
-      });
-    } catch (e) {
-      print('Error at listenNewNotification - NotificationRepository: $e');
-    }
-  }
-
-  //step 4
-  Future<void> updateStatusNotification(String id) async {
-    try {
-      await NotificationDB.instance.updateNotification(id);
-    } catch (e) {
-      print('Error at updateStatusNotification - NotificationRepository: $e');
-    }
-  }
-
-  //step 4 - update when click into icon notification
-  Future<void> updateStatusNotifications(List<String> ids) async {
-    try {
-      for (String id in ids) {
-        await NotificationDB.instance.updateNotification(id);
+      final String url = '${EnvConfig.getBaseUrl()}notification/count/$userId';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        result = data['count'] ?? 0;
       }
     } catch (e) {
-      print('Error at updateStatusNotifications - NotificationRepository: $e');
-    }
-  }
-
-  //step 4
-  Future<List<NotificationDTO>> getNotifications(String userId) async {
-    List<NotificationDTO> result = [];
-    try {
-      result = await NotificationDB.instance.getNotificationByUserId(userId);
-    } catch (e) {
-      print('Error at getNotifications - NotificationRepository: $e');
+      LOG.error(e.toString());
     }
     return result;
   }
 
-  //step 5
-  Future<List<String>> getTransactionIdsByUserId(String userId) async {
-    List<String> result = [];
+  Future<List<NotificationDTO>> getNotificationsByUserId(
+      NotificationInputDTO dto) async {
+    List<NotificationDTO> result = [];
     try {
-      result = await NotificationDB.instance.getTransactionIdsByUserId(userId);
+      final String url = '${EnvConfig.getBaseUrl()}notifications';
+      final response = await BaseAPIClient.postAPI(
+        url: url,
+        body: dto.toJson(),
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        result = data
+            .map<NotificationDTO>((json) => NotificationDTO.fromJson(json))
+            .toList();
+      }
     } catch (e) {
-      print('Error at getTransactionIdsByUserId - NotificationRepository: $e');
+      LOG.error(e.toString());
+    }
+    return result;
+  }
+
+  Future<bool> updateNotificationStatus(String userId) async {
+    bool result = false;
+    try {
+      Map<String, dynamic> data = {'userId': userId};
+      final String url = '${EnvConfig.getBaseUrl()}notification/status';
+      final response = await BaseAPIClient.postAPI(
+        url: url,
+        body: data,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        result = true;
+      }
+    } catch (e) {
+      LOG.error(e.toString());
     }
     return result;
   }

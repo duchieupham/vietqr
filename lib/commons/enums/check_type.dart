@@ -4,4 +4,5 @@ enum CheckType {
   C01,
   C02,
   C03,
+  C04,
 }

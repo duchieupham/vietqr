@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:equatable/equatable.dart';
 import 'package:vierqr/models/account_information_dto.dart';
 
@@ -31,4 +33,30 @@ class UserEditPasswordEvent extends UserEditEvent {
 
   @override
   List<Object?> get props => [userId, phoneNo, oldPassword, newPassword];
+}
+
+class UserEditAvatarEvent extends UserEditEvent {
+  final String userId;
+  final String imgId;
+  final File? image;
+
+  const UserEditAvatarEvent({
+    required this.userId,
+    required this.imgId,
+    required this.image,
+  });
+
+  @override
+  List<Object?> get props => [userId, imgId, image];
+}
+
+class UserDeactiveEvent extends UserEditEvent {
+  final String userId;
+
+  const UserDeactiveEvent({
+    required this.userId,
+  });
+
+  @override
+  List<Object?> get props => [userId];
 }

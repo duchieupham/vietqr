@@ -1,5 +1,6 @@
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/sub_header_widget.dart';
+import 'package:vierqr/features/bank_card/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/generate_qr/widgets/input_content_widget.dart';
 import 'package:vierqr/features/generate_qr/widgets/input_ta_widget.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
@@ -10,10 +11,12 @@ import 'package:provider/provider.dart';
 
 class CreateQR extends StatefulWidget {
   final BankAccountDTO bankAccountDTO;
+  BankCardBloc? bankCardBloc;
 
-  const CreateQR({
+  CreateQR({
     Key? key,
     required this.bankAccountDTO,
+    this.bankCardBloc,
   }) : super(key: key);
 
   @override
@@ -34,6 +37,8 @@ class _CreateQR extends State<CreateQR> {
   @override
   void initState() {
     super.initState();
+    Provider.of<CreateQRProvider>(context, listen: false).reset();
+    Provider.of<CreateQRPageSelectProvider>(context, listen: false).reset();
     _pages.addAll([
       InputTAWidget(
         key: const PageStorageKey('INPUT_TA_PAGE'),
@@ -45,6 +50,7 @@ class _CreateQR extends State<CreateQR> {
         key: const PageStorageKey('INPUT_CONTENT_PAGE'),
         bankAccountDTO: widget.bankAccountDTO,
         msgController: msgController,
+        bankCardBloc: widget.bankCardBloc,
       ),
     ]);
   }
@@ -96,17 +102,14 @@ class _CreateQR extends State<CreateQR> {
   }
 
   void _navigateBack(BuildContext context) {
-    if (Provider.of<CreateQRPageSelectProvider>(context, listen: false)
-            .indexSelected ==
-        0) {
+    int index = Provider.of<CreateQRPageSelectProvider>(context, listen: false)
+        .indexSelected;
+    if (index == 0) {
       Provider.of<CreateQRProvider>(context, listen: false).reset();
       Provider.of<CreateQRPageSelectProvider>(context, listen: false).reset();
       Navigator.pop(context);
     } else {
-      _animatedToPage(
-          Provider.of<CreateQRPageSelectProvider>(context, listen: false)
-                  .indexSelected -
-              1);
+      _animatedToPage(index - 1);
     }
   }
 

@@ -56,14 +56,16 @@ class ButtonIconWidget extends StatelessWidget {
               color: textColor,
               size: (textSize != null) ? textSize : 15,
             ),
-            const Padding(padding: EdgeInsets.only(left: 5)),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: (textSize != null) ? textSize : 15,
-                color: textColor,
+            if (title.isNotEmpty) ...[
+              const Padding(padding: EdgeInsets.only(left: 5)),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: (textSize != null) ? textSize : 15,
+                  color: textColor,
+                ),
               ),
-            )
+            ],
           ],
         ),
       ),

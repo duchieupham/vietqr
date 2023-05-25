@@ -3,11 +3,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rive/rive.dart' as rive;
+import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/widgets/bank_card_widget.dart';
+import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
+import 'package:vierqr/commons/widgets/viet_qr_widget.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
+import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/services/providers/add_bank_provider.dart';
 import 'package:vierqr/services/providers/bank_card_position_provider.dart';
 
@@ -43,8 +47,20 @@ class _BankCardGeneratedView extends State<BankCardGeneratedView> {
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
     final double height = MediaQuery.of(context).size.height;
-    final arg = ModalRoute.of(context)!.settings.arguments as Map;
-    final BankAccountDTO dto = arg['bankAccountDTO'];
+    final args = ModalRoute.of(context)!.settings.arguments as Map;
+    final BankAccountDTO dto = args['bankAccountDTO'];
+    final String qr = args['qr'] ?? '';
+    final String bankId = args['bankId'] ?? '';
+    QRGeneratedDTO qrGeneratedDTO = QRGeneratedDTO(
+      bankCode: dto.bankCode,
+      bankName: dto.bankName,
+      bankAccount: dto.bankAccount,
+      userBankName: dto.userBankName,
+      amount: '',
+      content: '',
+      qrCode: qr,
+      imgId: dto.imgId,
+    );
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 0,
@@ -58,8 +74,8 @@ class _BankCardGeneratedView extends State<BankCardGeneratedView> {
             Positioned(
               top: 0,
               child: SizedBox(
-                width: width * 0.8,
-                height: 200,
+                width: width * 0.6,
+                height: 150,
                 child: rive.RiveAnimation.asset(
                   'assets/rives/success_ani.riv',
                   fit: BoxFit.fitWidth,
@@ -73,44 +89,88 @@ class _BankCardGeneratedView extends State<BankCardGeneratedView> {
                 valueListenable: _bankCardPositionProvider,
                 builder: (_, provider, child) {
                   return AnimatedPositioned(
-                    top: (provider == true) ? 50 : 200,
+                    top: (provider == true) ? 50 : 150,
                     curve: Curves.easeInOut,
                     duration: const Duration(
                       milliseconds: 800,
                     ),
-                    child: BankCardWidget(dto: dto, width: width * 0.9),
+                    child: VietQRWidget(
+                      width: width,
+                      qrGeneratedDTO: qrGeneratedDTO,
+                      content: '',
+                      isSmallWidget: (height <= 800),
+                    ),
+                    //  BankCardWidget(dto: dto, width: width * 0.9),
                   );
                 }),
-            const Positioned(
-              bottom: 90,
-              child: Text(
-                'Thêm tài khoản thành công',
-                style: TextStyle(
-                  fontSize: 22,
+            Visibility(
+              visible: height > 700,
+              child: const Positioned(
+                bottom: 80,
+                child: Text(
+                  'Thêm tài khoản thành công',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
             ),
             Positioned(
               bottom: 20,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: ButtonWidget(
-                  width: width * 0.9,
-                  text: 'Trở về',
-                  textColor: DefaultTheme.WHITE,
-                  bgColor: DefaultTheme.GREEN,
-                  function: () {
-                    _doEndAnimation();
-                    Provider.of<AddBankProvider>(context, listen: false)
-                        .reset();
-                    Future.delayed(const Duration(milliseconds: 800), () {
-                      if (Navigator.canPop(context)) {
-                        Navigator.of(context).pop();
-                      }
-                    });
-                  },
-                ),
-              ),
+                  padding: const EdgeInsets.symmetric(horizontal: 40),
+                  child: SizedBox(
+                      width: width,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ButtonIconWidget(
+                            width: width * 0.5 - 35,
+                            height: 40,
+                            icon: Icons.home_rounded,
+                            title: 'Trang chủ',
+                            textColor: DefaultTheme.GREEN,
+                            bgColor: DefaultTheme.WHITE,
+                            function: () {
+                              _doEndAnimation();
+                              Provider.of<AddBankProvider>(context,
+                                      listen: false)
+                                  .reset();
+                              Future.delayed(const Duration(milliseconds: 800),
+                                  () {
+                                Navigator.popUntil(
+                                    context, (route) => route.isFirst);
+                              });
+                            },
+                          ),
+                          const Padding(padding: EdgeInsets.only(left: 10)),
+                          ButtonIconWidget(
+                            width: width * 0.5 - 35,
+                            height: 40,
+                            icon: Icons.info_outline_rounded,
+                            title: 'Chi tiết',
+                            textColor: DefaultTheme.WHITE,
+                            bgColor: DefaultTheme.GREEN,
+                            function: () {
+                              _doEndAnimation();
+                              Provider.of<AddBankProvider>(context,
+                                      listen: false)
+                                  .reset();
+                              Future.delayed(const Duration(milliseconds: 800),
+                                  () {
+                                Navigator.pushReplacementNamed(
+                                  context,
+                                  Routes.BANK_CARD_DETAIL_VEW,
+                                  arguments: {
+                                    'bankId': bankId,
+                                  },
+                                );
+                              });
+                            },
+                          ),
+                        ],
+                      ))),
             ),
             //   const Padding(padding: EdgeInsets.only(bottom: 20)),
           ],

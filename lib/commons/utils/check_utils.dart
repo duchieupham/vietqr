@@ -23,6 +23,10 @@ class CheckUtils {
       case CheckType.C03:
         result = 'TK ngân hàng này đã được liên kết trước đó';
         break;
+      case CheckType.C04:
+        result =
+            'Không thể xoá TK. Tính năng đang bảo trì cho TK ngân hàng đã liên kết.';
+        break;
       default:
         result = message;
     }

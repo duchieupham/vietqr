@@ -2,7 +2,6 @@
 
 //to get token type
 enum AuthenticationType {
-  BANK,
   SYSTEM,
   CUSTOM,
   NONE,

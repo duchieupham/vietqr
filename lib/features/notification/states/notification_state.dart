@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:vierqr/models/notification_transaction_success_dto.dart';
+import 'package:vierqr/models/notification_dto.dart';
 
 class NotificationState extends Equatable {
   const NotificationState();
@@ -9,29 +8,49 @@ class NotificationState extends Equatable {
   List<Object?> get props => [];
 }
 
-class NotificationInitialState extends NotificationState {
-  const NotificationInitialState();
+class NotificationInitialState extends NotificationState {}
+
+class NotificationCountingState extends NotificationState {}
+
+class NotificationCountSuccessState extends NotificationState {
+  final int count;
+
+  const NotificationCountSuccessState({
+    required this.count,
+  });
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [count];
 }
 
-class NotificationOnMessageState extends NotificationState {
-  final RemoteMessage message;
+class NotificationCountFailedState extends NotificationState {}
 
-  const NotificationOnMessageState({required this.message});
+class NotificationGetListSuccessState extends NotificationState {
+  final List<NotificationDTO> list;
+
+  const NotificationGetListSuccessState({
+    required this.list,
+  });
 
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [list];
 }
 
-class NotificationTransactionSuccessState extends NotificationState {
-  final NotificationTransactionSuccessDTO dto;
+class NotificationFetchSuccessState extends NotificationState {
+  final List<NotificationDTO> list;
 
-  const NotificationTransactionSuccessState({required this.dto});
+  const NotificationFetchSuccessState({
+    required this.list,
+  });
 
   @override
-  List<Object?> get props => [dto];
+  List<Object?> get props => [list];
 }
 
-class NotificationFailedState extends NotificationState {}
+class NotificationFetchFailedState extends NotificationState {}
+
+class NotificationGetListFailedState extends NotificationState {}
+
+class NotificationUpdateStatusSuccessState extends NotificationState {}
+
+class NotificationUpdateFailedState extends NotificationState {}

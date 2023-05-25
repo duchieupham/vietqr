@@ -3,6 +3,7 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/widgets/checkbox_widget.dart';
 import 'package:vierqr/commons/widgets/sub_header_widget.dart';
 import 'package:vierqr/layouts/box_layout.dart';
+import 'package:vierqr/services/providers/bank_%20arrangement_provider.dart';
 import 'package:vierqr/services/providers/shortcut_provider.dart';
 import 'package:vierqr/services/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
@@ -112,44 +113,119 @@ class ThemeSettingView extends StatelessWidget {
                 ),
                 const Padding(padding: EdgeInsets.only(top: 30)),
                 BoxLayout(
-                    width: width,
-                    margin: const EdgeInsets.symmetric(horizontal: 20),
-                    padding: const EdgeInsets.only(
-                        left: 20, right: 10, top: 5, bottom: 5),
-                    child: Row(
-                      children: [
-                        const Text('Phím tắt:'),
-                        const Padding(padding: EdgeInsets.only(left: 10)),
-                        Consumer<ShortcutProvider>(
-                            builder: (context, provider, child) {
-                          return Text(
-                            (provider.enableShortcut) ? 'Hiện' : 'Ẩn',
-                            style:
-                                const TextStyle(color: DefaultTheme.GREY_TEXT),
-                          );
-                        }),
-                        const Spacer(),
-                        Consumer<ShortcutProvider>(
+                  width: width,
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.only(
+                      left: 20, right: 10, top: 5, bottom: 5),
+                  child: Row(
+                    children: [
+                      const Text('Phím tắt:'),
+                      const Padding(padding: EdgeInsets.only(left: 10)),
+                      Consumer<ShortcutProvider>(
                           builder: (context, provider, child) {
-                            return Transform.scale(
-                              scale: 0.8,
-                              child: CupertinoSwitch(
-                                value: provider.enableShortcut,
-                                activeColor: DefaultTheme.GREEN,
-                                onChanged: ((_) {
-                                  provider.updateEnableShortcut(
-                                      !provider.enableShortcut);
-                                }),
+                        return Text(
+                          (provider.enableShortcut) ? 'Hiện' : 'Ẩn',
+                          style: const TextStyle(color: DefaultTheme.GREY_TEXT),
+                        );
+                      }),
+                      const Spacer(),
+                      Consumer<ShortcutProvider>(
+                        builder: (context, provider, child) {
+                          return Transform.scale(
+                            scale: 0.8,
+                            child: CupertinoSwitch(
+                              value: provider.enableShortcut,
+                              activeColor: DefaultTheme.GREEN,
+                              onChanged: ((_) {
+                                provider.updateEnableShortcut(
+                                    !provider.enableShortcut);
+                              }),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                const Padding(padding: EdgeInsets.only(top: 30)),
+                BoxLayout(
+                  width: width,
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Hiển thị TK ngân hàng:'),
+                      const Padding(padding: EdgeInsets.only(bottom: 30)),
+                      Consumer<BankArrangementProvider>(
+                        builder: (context, provider, child) {
+                          return Row(
+                            children: [
+                              _buildElementBankArr(
+                                context: context,
+                                width: width / 2 - 50,
+                                text: 'Ngăn xếp',
+                                imageAsset: 'assets/images/ic-bank-stack.png',
+                                isSelected: provider.type == 0,
+                                function: () {
+                                  provider.updateBankArr(0);
+                                },
                               ),
-                            );
-                          },
-                        ),
-                      ],
-                    ))
+                              const Padding(padding: EdgeInsets.only(left: 10)),
+                              _buildElementBankArr(
+                                context: context,
+                                width: width / 2 - 50,
+                                text: 'Trượt',
+                                imageAsset: 'assets/images/ic-bank-slide.png',
+                                isSelected: provider.type == 1,
+                                function: () {
+                                  provider.updateBankArr(1);
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                const Padding(padding: EdgeInsets.only(top: 30)),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildElementBankArr({
+    required BuildContext context,
+    required double width,
+    required String text,
+    required String imageAsset,
+    required bool isSelected,
+    required VoidCallback function,
+  }) {
+    return InkWell(
+      onTap: function,
+      child: BoxLayout(
+        width: width,
+        bgColor: (isSelected)
+            ? Theme.of(context).canvasColor.withOpacity(0.6)
+            : DefaultTheme.TRANSPARENT,
+        child: Column(
+          children: [
+            Image.asset(
+              imageAsset,
+              width: width,
+            ),
+            Text(
+              text,
+              style: const TextStyle(color: DefaultTheme.GREY_TEXT),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -4,6 +4,7 @@ class BankTypeDTO {
   final String bankName;
   final String imageId;
   final int status;
+  final String caiValue;
 
   const BankTypeDTO({
     required this.id,
@@ -11,6 +12,7 @@ class BankTypeDTO {
     required this.bankName,
     required this.imageId,
     required this.status,
+    required this.caiValue,
   });
 
   factory BankTypeDTO.fromJson(Map<String, dynamic> json) {
@@ -20,6 +22,7 @@ class BankTypeDTO {
       bankName: json['bankName'] ?? '',
       imageId: json['imageId'] ?? '',
       status: json['status'] ?? 0,
+      caiValue: json['caiValue'] ?? '',
     );
   }
 
@@ -30,6 +33,7 @@ class BankTypeDTO {
     data['bankName'] = bankName;
     data['imageId'] = imageId;
     data['status'] = status;
+    data['caiValue'] = caiValue;
     return data;
   }
 }

@@ -9,6 +9,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 
 class ShareUtils {
   const ShareUtils._privateConsrtructor();
@@ -45,6 +46,23 @@ class ShareUtils {
     return result;
   }
 
+  Future<void> saveImageToGallery(GlobalKey globalKey) async {
+    try {
+      RenderRepaintBoundary boundary =
+          globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+      ui.Image image = await boundary.toImage();
+      ByteData? byteData =
+          await image.toByteData(format: ui.ImageByteFormat.png);
+      Uint8List pngBytes = byteData!.buffer.asUint8List();
+      await ImageGallerySaver.saveImage(
+        pngBytes,
+        quality: 100,
+      );
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+  }
+
   String getTextSharing(QRGeneratedDTO dto) {
     String result = '';
     String prefix =
@@ -57,7 +75,7 @@ class ShareUtils {
         suffix += dto.content;
       }
     }
-    result = prefix + suffix;
+    result = '$prefix$suffix\nĐược tạo bởi vietqr.vn - Hotline 19006234';
     return result;
   }
 }

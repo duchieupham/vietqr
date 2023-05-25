@@ -23,4 +23,10 @@ class Routes {
   static const String BANK_CARD_DETAIL_VEW = '/bankCardDetail';
   static const String TRANSACTION_HISTORY_VIEW = '/transactionHistoryView';
   static const String SCAN_QR_VIEW = '/scanQRView';
+  static const String PRINTER_SETTING = '/printerSetting';
+  static const String SEARCH_BANK = '/searchBank';
+  static const String NOTIFICATION_VIEW = '/notification';
+  static const String NATIONAL_INFORMATION = '/nationalInformation';
+  static const String BUSINESS_TRANSACTION = '/businessTransaction';
+  static const String BRANCH_DETAIL = '/branchDetail';
 }

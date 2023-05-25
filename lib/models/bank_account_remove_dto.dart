@@ -1,24 +1,26 @@
 class BankAccountRemoveDTO {
   final String bankId;
-  final String userId;
-  final int role;
+  final int type;
+  final bool isAuthenticated;
 
   const BankAccountRemoveDTO(
-      {required this.bankId, required this.userId, required this.role});
+      {required this.bankId,
+      required this.type,
+      required this.isAuthenticated});
 
   factory BankAccountRemoveDTO.fromJson(Map<String, dynamic> json) {
     return BankAccountRemoveDTO(
       bankId: json['bankId'],
-      userId: json['userId'],
-      role: json['role'],
+      type: json['type'],
+      isAuthenticated: json['authenticated'],
     );
   }
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> data = {};
     data['bankId'] = bankId;
-    data['userId'] = userId;
-    data['role'] = role;
+    data['type'] = type;
+    data['authenticated'] = isAuthenticated;
     return data;
   }
 }

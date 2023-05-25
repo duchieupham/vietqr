@@ -269,6 +269,7 @@ class AddBusinessMemberWidget extends StatelessWidget {
                       phoneNo: dto.phoneNo,
                       imgId: dto.imgId,
                       status: dto.status,
+                      existed: 0,
                     );
                     Provider.of<AddBusinessProvider>(context, listen: false)
                         .addMemberList(result);

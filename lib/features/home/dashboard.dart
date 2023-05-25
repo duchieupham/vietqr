@@ -7,17 +7,17 @@ import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/commons/utils/transaction_utils.dart';
-import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
 import 'package:vierqr/features/business/events/business_information_event.dart';
 import 'package:vierqr/features/business/states/business_information_state.dart';
-import 'package:vierqr/features/transaction/widgets/transaction_sucess_widget.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/models/business_item_dto.dart';
-import 'package:vierqr/models/notification_transaction_success_dto.dart';
 import 'package:vierqr/models/related_transaction_receive_dto.dart';
+import 'package:vierqr/services/providers/add_bank_provider.dart';
+import 'package:vierqr/services/providers/bank_account_provider.dart';
+import 'package:vierqr/services/providers/business_inforamtion_provider.dart';
 import 'package:vierqr/services/providers/shortcut_provider.dart';
 import 'package:vierqr/services/providers/suggestion_widget_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
@@ -38,7 +38,6 @@ class DashboardView extends StatelessWidget {
 
   Future<void> _refresh() async {
     String userId = UserInformationHelper.instance.getUserId();
-
     businessInformationBloc
         .add(BusinessInformationEventGetList(userId: userId));
   }
@@ -330,7 +329,17 @@ class DashboardView extends StatelessWidget {
             ),
             const Padding(padding: EdgeInsets.only(top: 10)),
             InkWell(
-              onTap: () {},
+              onTap: () {
+                Future.delayed(const Duration(milliseconds: 0), () {
+                  Provider.of<BusinessInformationProvider>(context,
+                          listen: false)
+                      .updateBusinessId(dto.businessId);
+                });
+                Navigator.pushNamed(
+                  context,
+                  Routes.BUSINESS_TRANSACTION,
+                );
+              },
               child: BoxLayout(
                 width: width,
                 height: 40,
@@ -357,71 +366,78 @@ class DashboardView extends StatelessWidget {
     required RelatedTransactionReceiveDTO dto,
   }) {
     final double width = MediaQuery.of(context).size.width;
-    return Container(
-      width: width,
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 25,
-            height: 25,
-            child: Icon(
-              TransactionUtils.instance
-                  .getIconStatus(dto.status, dto.transType),
-              color: TransactionUtils.instance
-                  .getColorStatus(dto.status, dto.type, dto.transType),
-            ),
-          ),
-          const Padding(padding: EdgeInsets.only(left: 5)),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '${TransactionUtils.instance.getTransType(dto.transType)} ${CurrencyUtils.instance.getCurrencyFormatted(dto.amount)}',
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: TransactionUtils.instance
-                        .getColorStatus(dto.status, dto.type, dto.transType),
-                  ),
-                ),
-                const Padding(padding: EdgeInsets.only(top: 3)),
-                Text(
-                  'Đến TK: ${dto.bankAccount}',
-                  style: const TextStyle(),
-                ),
-                const Padding(padding: EdgeInsets.only(top: 3)),
-                Text(
-                  dto.content.trim(),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: DefaultTheme.GREY_TEXT,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Align(
-            alignment: Alignment.topRight,
-            child: Text(
-              TimeUtils.instance.formatDateFromInt(dto.time, true),
-              textAlign: TextAlign.right,
-              style: const TextStyle(
-                fontSize: 13,
+    return InkWell(
+      onTap: () {
+        String userId = UserInformationHelper.instance.getUserId();
+        Navigator.pushNamed(
+          context,
+          Routes.TRANSACTION_DETAIL,
+          arguments: {
+            'transactionId': dto.transactionId,
+            'businessInformationBloc': businessInformationBloc,
+            'userId': userId
+          },
+        );
+      },
+      child: Container(
+        width: width,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: 25,
+              height: 25,
+              child: Icon(
+                TransactionUtils.instance
+                    .getIconStatus(dto.status, dto.transType),
+                color: TransactionUtils.instance
+                    .getColorStatus(dto.status, dto.type, dto.transType),
               ),
             ),
-          ),
-
-          // const Padding(padding: EdgeInsets.only(left: 5)),
-          // Icon(
-          //   TransactionUtils.instance.getIconStatus(dto.status),
-          //   size: 15,
-          //   color: TransactionUtils.instance.getColorStatus(dto.status),
-          // ),
-        ],
+            const Padding(padding: EdgeInsets.only(left: 5)),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${TransactionUtils.instance.getTransType(dto.transType)} ${CurrencyUtils.instance.getCurrencyFormatted(dto.amount)}',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: TransactionUtils.instance
+                          .getColorStatus(dto.status, dto.type, dto.transType),
+                    ),
+                  ),
+                  const Padding(padding: EdgeInsets.only(top: 3)),
+                  Text(
+                    'Đến TK: ${dto.bankAccount}',
+                    style: const TextStyle(),
+                  ),
+                  const Padding(padding: EdgeInsets.only(top: 3)),
+                  Text(
+                    dto.content.trim(),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: DefaultTheme.GREY_TEXT,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Align(
+              alignment: Alignment.topRight,
+              child: Text(
+                TimeUtils.instance.formatDateFromInt(dto.time, true),
+                textAlign: TextAlign.right,
+                style: const TextStyle(
+                  fontSize: 13,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -494,14 +510,6 @@ class DashboardView extends StatelessWidget {
                           },
                         )
                       : const SizedBox(),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      left: 20,
-                      right: 20,
-                      top: (provider.getSuggestion()) ? 20 : 0,
-                    ),
-                    child: DividerWidget(width: width),
-                  ),
                 ],
               )
             : const SizedBox();
@@ -553,8 +561,10 @@ class DashboardView extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         _buildShorcutIcon(
+                          context: context,
                           widgetWidth: width,
                           title: 'Tạo doanh nghiệp',
+                          description: 'Quản lý doanh nghiệp trên hệ thống',
                           icon: Icons.business_rounded,
                           color: DefaultTheme.GREEN,
                           function: () {
@@ -563,38 +573,87 @@ class DashboardView extends StatelessWidget {
                           },
                         ),
                         _buildShorcutIcon(
+                          context: context,
                           widgetWidth: width,
-                          title: 'Liên kết\nTK ngân hàng',
+                          title: 'Tài khoản ngân hàng',
+                          description: 'Thêm và Liên kết tài khoản ngân hàng',
                           icon: Icons.credit_card_rounded,
                           color: DefaultTheme.PURPLE_NEON,
                           function: () {
-                            Navigator.pushNamed(context, Routes.ADD_BANK_CARD);
-                          },
-                        ),
-                        _buildShorcutIcon(
-                          widgetWidth: width,
-                          title: 'Mở TK\nMB Bank',
-                          icon: Icons.account_balance_rounded,
-                          color: DefaultTheme.BLUE_DARK,
-                          function: () {
-                            DialogWidget.instance.openMsgDialog(
-                              title: 'Đang phát triển',
-                              msg: 'Tính năng đang được phát triển',
+                            Provider.of<AddBankProvider>(context, listen: false)
+                                .updateSelect(1);
+                            Navigator.pushNamed(context, Routes.ADD_BANK_CARD,
+                                arguments: {'pageIndex': 1}).then(
+                              (value) {
+                                Provider.of<BankAccountProvider>(context,
+                                        listen: false)
+                                    .reset();
+                              },
                             );
                           },
                         ),
-                        _buildShorcutIcon(
-                          widgetWidth: width,
-                          title: 'Nạp tiền\nđiện thoại',
-                          icon: Icons.phone_iphone_rounded,
-                          color: DefaultTheme.RED_CALENDAR,
-                          function: () {
-                            DialogWidget.instance.openMsgDialog(
-                              title: 'Đang phát triển',
-                              msg: 'Tính năng đang được phát triển',
-                            );
-                          },
-                        ),
+                        // _buildShorcutIcon(
+                        //   widgetWidth: width,
+                        //   title: 'Mở TK\nMB Bank',
+                        //   icon: Icons.account_balance_rounded,
+                        //   color: DefaultTheme.BLUE_DARK,
+                        //   function: () async {
+                        //     Navigator.pushNamed(
+                        //       context,
+                        //       Routes.NATIONAL_INFORMATION,
+                        //     );
+                        //     // String url = '';
+                        //     // try {
+                        //     //   if (PlatformUtils.instance.isIOsApp()) {
+                        //     //     url = 'mbbank://';
+                        //     //   } else if (PlatformUtils.instance
+                        //     //       .isAndroidApp()) {
+                        //     //     url = 'mbmobile://';
+                        //     //   }
+                        //     //   if (url.trim().isNotEmpty) {
+                        //     //     final Uri uri = Uri.parse(url);
+                        //     //     if (await canLaunchUrl(uri)) {
+                        //     //       await launchUrl(
+                        //     //         uri,
+                        //     //         mode: LaunchMode.externalApplication,
+                        //     //       );
+                        //     //     } else {
+                        //     //       if (PlatformUtils.instance.isIOsApp()) {
+                        //     //         url =
+                        //     //             'https://apps.apple.com/vn/app/mb-bank/id1205807363?l=vi';
+                        //     //       } else if (PlatformUtils.instance
+                        //     //           .isAndroidApp()) {
+                        //     //         url =
+                        //     //             'https://play.google.com/store/apps/details?id=com.mbmobile';
+                        //     //       }
+                        //     //       if (url.trim().isNotEmpty) {
+                        //     //         final Uri uri = Uri.parse(url);
+                        //     //         if (await canLaunchUrl(uri)) {
+                        //     //           await launchUrl(
+                        //     //             uri,
+                        //     //             mode: LaunchMode.externalApplication,
+                        //     //           );
+                        //     //         }
+                        //     //       }
+                        //     //     }
+                        //     //   }
+                        //     // } catch (e) {
+                        //     //   LOG.error(e.toString());
+                        //     // }
+                        //   },
+                        // ),
+                        // _buildShorcutIcon(
+                        //   widgetWidth: width,
+                        //   title: 'Nạp tiền\nđiện thoại',
+                        //   icon: Icons.phone_iphone_rounded,
+                        //   color: DefaultTheme.RED_CALENDAR,
+                        //   function: () {
+                        //     DialogWidget.instance.openMsgDialog(
+                        //       title: 'Đang phát triển',
+                        //       msg: 'Tính năng đang được phát triển',
+                        //     );
+                        //   },
+                        // ),
                       ],
                     ),
                     const Padding(padding: EdgeInsets.only(top: 10)),
@@ -606,36 +665,54 @@ class DashboardView extends StatelessWidget {
     );
   }
 
-  Widget _buildShorcutIcon(
-      {required double widgetWidth,
-      required String title,
-      required IconData icon,
-      required Color color,
-      required VoidCallback function}) {
+  Widget _buildShorcutIcon({
+    required BuildContext context,
+    required double widgetWidth,
+    required String title,
+    required IconData icon,
+    required Color color,
+    required VoidCallback function,
+    required String description,
+  }) {
     return InkWell(
       onTap: function,
       child: BoxLayout(
-        width: widgetWidth * 0.2,
-        height: widgetWidth * 0.2,
-        padding: const EdgeInsets.all(0),
-        bgColor: DefaultTheme.TRANSPARENT,
-        // enableShadow: true,
-        child: Column(
+        width: widgetWidth * 0.45,
+        height: 80,
+        padding: const EdgeInsets.all(10),
+        bgColor: Theme.of(context).cardColor,
+        borderRadius: 5,
+        enableShadow: true,
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Icon(
               icon,
               color: color,
               size: widgetWidth * 0.05,
             ),
-            const Padding(padding: EdgeInsets.only(top: 5)),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 12,
-                color: color,
+            const Padding(padding: EdgeInsets.only(left: 10)),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: color,
+                    ),
+                  ),
+                  const Padding(padding: EdgeInsets.only(top: 3)),
+                  Text(
+                    description,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: DefaultTheme.GREY_TEXT,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -743,7 +820,7 @@ class DashboardView extends StatelessWidget {
 
   String getRoleName(int role) {
     String result = '';
-    if (role == 0) {
+    if (role == 5) {
       result = 'Admin';
     } else if (role == 1) {
       result = 'Quản lý';

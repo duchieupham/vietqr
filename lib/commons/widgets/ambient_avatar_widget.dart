@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
@@ -5,6 +6,7 @@ import 'package:vierqr/commons/utils/image_utils.dart';
 
 class AmbientAvatarWidget extends StatelessWidget {
   final String imgId;
+  final File? imageFile;
   final double size;
   static const double blurRadius = 25.0;
   static const double blurSigma = 20.0;
@@ -13,6 +15,7 @@ class AmbientAvatarWidget extends StatelessWidget {
     super.key,
     required this.imgId,
     required this.size,
+    this.imageFile,
   });
 
   @override
@@ -32,7 +35,9 @@ class AmbientAvatarWidget extends StatelessWidget {
                     shape: BoxShape.circle,
                     image: DecorationImage(
                       fit: BoxFit.cover,
-                      image: ImageUtils.instance.getImageNetWork(imgId),
+                      image: (imageFile != null)
+                          ? Image.file(imageFile!).image
+                          : ImageUtils.instance.getImageNetworkCache(imgId),
                     ),
                   ),
                 ),
@@ -57,7 +62,9 @@ class AmbientAvatarWidget extends StatelessWidget {
                 shape: BoxShape.circle,
                 image: DecorationImage(
                   fit: BoxFit.cover,
-                  image: ImageUtils.instance.getImageNetWork(imgId),
+                  image: (imageFile != null)
+                      ? Image.file(imageFile!).image
+                      : ImageUtils.instance.getImageNetworkCache(imgId),
                 ),
               ),
             ),

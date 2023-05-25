@@ -3,6 +3,7 @@ import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/branch_choice_dto.dart';
 
 class AddBankProvider with ChangeNotifier {
+  String _bankId = '';
   bool _isGetBankTypes = false;
   int _index = 0;
   //type = 0 => personal bank card
@@ -13,7 +14,13 @@ class AddBankProvider with ChangeNotifier {
 
   String _branchId = '';
   BankTypeDTO _bankTypeDTO = const BankTypeDTO(
-      id: '', bankCode: '', bankName: '', imageId: '', status: 0);
+    id: '',
+    bankCode: '',
+    bankName: '',
+    imageId: '',
+    status: 0,
+    caiValue: '',
+  );
 
   BranchChoiceInsertDTO _branchChoiceInsertDTO = const BranchChoiceInsertDTO(
     companyName: '',
@@ -34,7 +41,7 @@ class AddBankProvider with ChangeNotifier {
   get getBankTypes => _isGetBankTypes;
   get index => _index;
   get type => _type;
-  get bankTypeDTO => _bankTypeDTO;
+  BankTypeDTO get bankTypeDTO => _bankTypeDTO;
   get validBankAccount => _isInvalidBankAccount;
   get validUserBankName => _isInvalidUserBankName;
   get validNationalId => _isInValidNationalId;
@@ -44,6 +51,12 @@ class AddBankProvider with ChangeNotifier {
   get isAgreeWithPolicy => _isAgreeWithPolicy;
   get registerAuthentication => _isRegisterAuthentication;
   get select => _select;
+  get bankId => _bankId;
+
+  void updateBankId(String value) {
+    _bankId = value;
+    notifyListeners();
+  }
 
   void updateSelect(int value) {
     _select = value;
@@ -130,6 +143,7 @@ class AddBankProvider with ChangeNotifier {
   }
 
   void reset() {
+    _bankId = '';
     _select = 0;
     _isGetBankTypes = false;
     _branchId = '';
@@ -142,7 +156,13 @@ class AddBankProvider with ChangeNotifier {
     _isRegisterAuthentication = false;
     _isAgreeWithPolicy = false;
     _bankTypeDTO = const BankTypeDTO(
-        id: '', bankCode: '', bankName: '', imageId: '', status: 0);
+      id: '',
+      bankCode: '',
+      bankName: '',
+      imageId: '',
+      status: 0,
+      caiValue: '',
+    );
     _branchChoiceInsertDTO = const BranchChoiceInsertDTO(
       companyName: '',
       image: '',
