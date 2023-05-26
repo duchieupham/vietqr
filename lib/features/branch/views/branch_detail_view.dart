@@ -145,10 +145,9 @@ class BranchDetailView extends StatelessWidget {
                   }
                 },
                 builder: (context, state) {
-                  print('banks length: ${banks.length}');
                   return ListView(
                     shrinkWrap: true,
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
                     children: [
                       _buildTitle(
                         context: context,
@@ -285,7 +284,61 @@ class BranchDetailView extends StatelessWidget {
                         icon: Icons.people_alt_rounded,
                       ),
                       (members.isEmpty)
-                          ? const SizedBox()
+                          ? BoxLayout(
+                              width: width,
+                              alignment: Alignment.center,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Padding(
+                                      padding: EdgeInsets.only(top: 30)),
+                                  Icon(
+                                    Icons.people_outline_rounded,
+                                    size: width * 0.2,
+                                    color: DefaultTheme.BLUE_TEXT,
+                                  ),
+                                  const Padding(
+                                      padding: EdgeInsets.only(top: 30)),
+                                  const Text(
+                                    'Chưa có tài khoản ngân hàng được kết nối.',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 15),
+                                  ),
+                                  const Padding(
+                                      padding: EdgeInsets.only(top: 10)),
+                                  Consumer<BusinessInformationProvider>(
+                                    builder: (context, provider, child) {
+                                      return (provider.userRole == 5)
+                                          ? ButtonIconWidget(
+                                              width: width,
+                                              icon: Icons.add_rounded,
+                                              title: 'Thêm thành viên',
+                                              function: () async {
+                                                await DialogWidget.instance
+                                                    .showModalBottomContent(
+                                                  widget: Form(
+                                                    key: _formModalKey,
+                                                    child:
+                                                        AddBranchMemberWidget(
+                                                      branchBloc: _branchBloc,
+                                                      branchId: branchId,
+                                                      businessId: businessId,
+                                                    ),
+                                                  ),
+                                                  height: height * 0.4,
+                                                );
+                                              },
+                                              bgColor: DefaultTheme.GREEN,
+                                              textColor: DefaultTheme.WHITE,
+                                            )
+                                          : const SizedBox();
+                                    },
+                                  ),
+                                  const Padding(
+                                      padding: EdgeInsets.only(top: 10)),
+                                ],
+                              ),
+                            )
                           : ListView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
