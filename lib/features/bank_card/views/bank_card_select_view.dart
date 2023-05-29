@@ -980,6 +980,20 @@ class _StackedList extends State<StackedList> {
                               ),
                             ),
                           ),
+                          if (dto.isAuthenticated)
+                            Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: const BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(25)),
+                                color: DefaultTheme.GREEN,
+                              ),
+                              child: const Icon(
+                                Icons.check,
+                                color: DefaultTheme.WHITE,
+                                size: 14,
+                              ),
+                            )
                         ],
                       ),
                     ),
