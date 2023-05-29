@@ -121,19 +121,12 @@ void _getBankAccounts(BankCardEvent event, Emitter emit) async {
   try {
     if (event is BankCardEventGetList) {
       emit(BankCardLoadingListState());
-      List<BankAccountDTO> list =
+      final List<BankAccountDTO> list =
           await bankCardRepository.getListBankAccount(event.userId);
       final List<Color> colors = [];
       PaletteGenerator? paletteGenerator;
       BuildContext context = NavigationService.navigatorKey.currentContext!;
       if (list.isNotEmpty) {
-        List<BankAccountDTO> listLinked =
-            list.where((e) => e.isAuthenticated).toList();
-        List<BankAccountDTO> listNotLinked =
-            list.where((e) => !e.isAuthenticated).toList();
-
-        list = [...listLinked, ...listNotLinked];
-
         for (BankAccountDTO dto in list) {
           NetworkImage image = ImageUtils.instance.getImageNetWork(dto.imgId);
           paletteGenerator = await PaletteGenerator.fromImageProvider(image);
