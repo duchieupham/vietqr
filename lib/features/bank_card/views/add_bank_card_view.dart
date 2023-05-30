@@ -125,6 +125,9 @@ class AddBankCardView extends StatelessWidget {
                   function: () {
                     _navigateBack(context);
                   },
+                  callBackHome: () {
+                    _navigateBack(context);
+                  },
                 );
               },
             ),

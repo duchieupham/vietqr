@@ -107,6 +107,9 @@ class _HomeScreen extends State<HomeScreen>
         DashboardView(
           key: const PageStorageKey('SMS_LIST_PAGE'),
           businessInformationBloc: _businessInformationBloc,
+          voidCallback: () async {
+            _animatedToPage(0);
+          },
         ),
         UserSetting(
           key: const PageStorageKey('USER_SETTING_PAGE'),

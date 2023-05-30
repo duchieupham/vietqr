@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -51,7 +52,9 @@ class UserEditView extends StatelessWidget {
   static late UserEditBloc _userEditBloc;
   static final _formKey = GlobalKey<FormState>();
   static final ImagePicker imagePicker = ImagePicker();
-  const UserEditView({super.key});
+  final AsyncCallback? voidCallback;
+
+  const UserEditView({super.key, this.voidCallback});
 
   void initialServices(BuildContext context) {
     _userEditBloc = BlocProvider.of(context);
@@ -92,10 +95,14 @@ class UserEditView extends StatelessWidget {
       body: Column(
         children: [
           SubHeader(
-              title: 'Thông tin cá nhân',
-              function: () {
-                backToPreviousPage(context);
-              }),
+            title: 'Thông tin cá nhân',
+            function: () {
+              backToPreviousPage(context);
+            },
+            callBackHome: () async {
+              await voidCallback!();
+            },
+          ),
           Expanded(
             child: BlocListener<UserEditBloc, UserEditState>(
               listener: ((context, state) {
@@ -673,7 +680,7 @@ class UserEditView extends StatelessWidget {
   //   });
   // }
 
-  void backToPreviousPage(BuildContext context) {
+  backToPreviousPage(BuildContext context) async {
     _lastNameController.clear();
     _middleNameController.clear();
     _firstNameController.clear();

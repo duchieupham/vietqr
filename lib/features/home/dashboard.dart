@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
 import 'package:vierqr/features/business/events/business_information_event.dart';
 import 'package:vierqr/features/business/states/business_information_state.dart';
+import 'package:vierqr/features/personal/views/user_edit_view.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/models/business_item_dto.dart';
 import 'package:vierqr/models/related_transaction_receive_dto.dart';
@@ -24,10 +26,12 @@ import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class DashboardView extends StatelessWidget {
   final BusinessInformationBloc businessInformationBloc;
+  final AsyncCallback? voidCallback;
 
   const DashboardView({
     Key? key,
     required this.businessInformationBloc,
+    this.voidCallback,
   }) : super(key: key);
 
   initialServices(BuildContext context) {
@@ -471,7 +475,6 @@ class DashboardView extends StatelessWidget {
   }
 
   Widget _buildSuggestion(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
     return Consumer<SuggestionWidgetProvider>(
       builder: (context, provider, child) {
         return (provider.getSuggestion())
@@ -505,8 +508,17 @@ class DashboardView extends StatelessWidget {
                           icon: Icons.person,
                           buttonIcon: Icons.navigate_next_rounded,
                           color: DefaultTheme.RED_CALENDAR,
-                          function: () {
-                            Navigator.of(context).pushNamed(Routes.USER_EDIT);
+                          function: () async {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => UserEditView(
+                                          voidCallback: voidCallback,
+                                        ),
+                                    settings: const RouteSettings(
+                                        name: Routes.USER_EDIT)));
+                            // final data = await Navigator.of(context)
+                            //     .pushNamed(Routes.USER_EDIT);
                           },
                         )
                       : const SizedBox(),

@@ -71,6 +71,9 @@ class _CreateQR extends State<CreateQR> {
               function: () {
                 _navigateBack(context);
               },
+              callBackHome: () {
+                _navigateBack(context);
+              },
             ),
             Expanded(
               child: PageView(
