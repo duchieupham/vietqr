@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 class SubHeader extends StatelessWidget {
   final String title;
   VoidCallback? function;
+  VoidCallback? callBackHome;
 
-  SubHeader({Key? key, required this.title, this.function}) : super(key: key);
+  SubHeader({Key? key, required this.title, this.function, this.callBackHome})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -42,9 +44,11 @@ class SubHeader extends StatelessWidget {
           ),
           const Spacer(),
           GestureDetector(
-            onTap: () {
-              Navigator.of(context).pop('isBackHome');
-            },
+            onTap: (callBackHome == null)
+                ? () {
+                    Navigator.of(context).pop('isBackHome');
+                  }
+                : callBackHome,
             child: Container(
               width: 30,
               height: 30,

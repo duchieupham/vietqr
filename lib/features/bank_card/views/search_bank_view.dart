@@ -73,7 +73,17 @@ class SearchBankView extends StatelessWidget {
           //   ),
           // ),
           // DividerWidget(width: width),
-          SubHeader(title: 'Tìm kiếm TK ngân hàng'),
+          SubHeader(
+            title: 'Tìm kiếm TK ngân hàng',
+            function: () {
+              reset(context: context);
+              Navigator.of(context).pop();
+            },
+            callBackHome: () {
+              reset(context: context);
+              Navigator.of(context).pop();
+            },
+          ),
           Expanded(
             child: Consumer<BankCardSelectProvider>(
               builder: (context, provider, child) {
