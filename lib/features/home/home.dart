@@ -44,7 +44,8 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreen();
 }
 
-class _HomeScreen extends State<HomeScreen> with WidgetsBindingObserver {
+class _HomeScreen extends State<HomeScreen>
+    with WidgetsBindingObserver, AutomaticKeepAliveClientMixin {
   //page controller
   static late PageController _pageController;
 
@@ -107,8 +108,11 @@ class _HomeScreen extends State<HomeScreen> with WidgetsBindingObserver {
           key: const PageStorageKey('SMS_LIST_PAGE'),
           businessInformationBloc: _businessInformationBloc,
         ),
-        const UserSetting(
-          key: PageStorageKey('USER_SETTING_PAGE'),
+        UserSetting(
+          key: const PageStorageKey('USER_SETTING_PAGE'),
+          voidCallback: () {
+            _animatedToPage(0);
+          },
         ),
       ],
     );
@@ -169,6 +173,7 @@ class _HomeScreen extends State<HomeScreen> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final double height = MediaQuery.of(context).size.height;
     bool isFromLogin = false;
     if (ModalRoute.of(context)!.settings.arguments != null) {
@@ -348,17 +353,16 @@ class _HomeScreen extends State<HomeScreen> with WidgetsBindingObserver {
                                                   'notificationBloc':
                                                       _notificationBloc,
                                                 },
-                                              ).then(
-                                                (value) =>
-                                                    _notificationBloc.add(
+                                              ).then((value) {
+                                                _notificationBloc.add(
                                                   NotificationUpdateStatusEvent(
                                                     userId:
                                                         UserInformationHelper
                                                             .instance
                                                             .getUserId(),
                                                   ),
-                                                ),
-                                              );
+                                                );
+                                              });
                                             },
                                             bgColor: Theme.of(context)
                                                 .cardColor
@@ -699,4 +703,7 @@ class _HomeScreen extends State<HomeScreen> with WidgetsBindingObserver {
     }
     return titleWidget;
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

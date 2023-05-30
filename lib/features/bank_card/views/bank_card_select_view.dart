@@ -36,9 +36,22 @@ import 'package:vierqr/services/shared_references/user_information_helper.dart';
 const double _minHeight = 60;
 const double _maxHeight = 150;
 
-class BankCardSelectView extends StatelessWidget {
+class BankCardSelectView extends StatefulWidget {
   final BusinessInformationBloc businessInformationBloc;
   final BankCardBloc bankCardBloc;
+
+  const BankCardSelectView({
+    super.key,
+    required this.businessInformationBloc,
+    required this.bankCardBloc,
+  });
+
+  @override
+  State<BankCardSelectView> createState() => _BankCardSelectViewState();
+}
+
+class _BankCardSelectViewState extends State<BankCardSelectView>
+    with AutomaticKeepAliveClientMixin {
   static final List<BankAccountDTO> bankAccounts = [];
   static final List<Color> cardColors = [];
   static final List<QRGeneratedDTO> qrGenerateds = [];
@@ -47,18 +60,12 @@ class BankCardSelectView extends StatelessWidget {
   static late QRBloc qrBloc;
   static final CarouselController carouselController = CarouselController();
 
-  const BankCardSelectView({
-    super.key,
-    required this.businessInformationBloc,
-    required this.bankCardBloc,
-  });
-
   initialServices(BuildContext context) {
     Provider.of<BankCardSelectProvider>(context, listen: false).reset();
     bankAccounts.clear();
     cardColors.clear();
     String userId = UserInformationHelper.instance.getUserId();
-    bankCardBloc.add(BankCardEventGetList(userId: userId));
+    widget.bankCardBloc.add(BankCardEventGetList(userId: userId));
     qrBloc = BlocProvider.of(context);
   }
 
@@ -600,7 +607,7 @@ class BankCardSelectView extends StatelessWidget {
     bankAccounts.clear();
     cardColors.clear();
     String userId = UserInformationHelper.instance.getUserId();
-    bankCardBloc.add(
+    widget.bankCardBloc.add(
       BankCardEventGetList(
         userId: userId,
       ),
@@ -624,7 +631,7 @@ class BankCardSelectView extends StatelessWidget {
                   widget: FunctionBankWidget(
                     bankAccountDTO: bankAccounts[i],
                     qrGeneratedDTO: qrGenerateds[i],
-                    businessInformationBloc: businessInformationBloc,
+                    businessInformationBloc: widget.businessInformationBloc,
                   ),
                   height: height * 0.35,
                 );
@@ -665,6 +672,9 @@ class BankCardSelectView extends StatelessWidget {
     cardColors.clear();
     Provider.of<BankCardSelectProvider>(context, listen: false).reset();
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class StackedList extends StatefulWidget {
@@ -847,7 +857,7 @@ class _StackedList extends State<StackedList> {
                       ),
                       Padding(padding: EdgeInsets.only(left: 5)),
                       Text(
-                        'TK ngân hàng',
+                        'ngân hàng',
                         style: TextStyle(
                           color: DefaultTheme.GREEN,
                         ),
