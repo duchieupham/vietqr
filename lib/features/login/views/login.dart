@@ -21,6 +21,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() => _Login();
 }
@@ -51,6 +52,12 @@ class _Login extends State<Login> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
+    bool isLogoutEnterHome = false;
+    if (ModalRoute.of(context)!.settings.arguments != null) {
+      final arg = ModalRoute.of(context)!.settings.arguments as Map;
+      isLogoutEnterHome = arg['isLogout'] ?? false;
+    }
+
     return Scaffold(
       appBar: AppBar(toolbarHeight: 0),
       body: BlocListener<LoginBloc, LoginState>(
@@ -64,8 +71,10 @@ class _Login extends State<Login> {
             Navigator.of(context).pop();
             //navigate to home screen
             Navigator.of(context).popUntil((route) => route.isFirst);
-            Navigator.of(context).pushReplacementNamed(Routes.HOME,
-                arguments: {'isFromLogin': true});
+            Navigator.of(context).pushReplacementNamed(Routes.HOME, arguments: {
+              'isFromLogin': true,
+              'isLogoutEnterHome': isLogoutEnterHome
+            });
           }
           if (state is LoginFailedState) {
             FocusManager.instance.primaryFocus?.unfocus();
