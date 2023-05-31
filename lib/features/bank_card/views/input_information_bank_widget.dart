@@ -24,17 +24,16 @@ import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class InputInformationBankWidget extends StatelessWidget {
   final TextEditingController bankAccountController;
-  final TextEditingController nameController;
+  final TextEditingController nameController = TextEditingController();
   final TextEditingController nationalController;
   final TextEditingController phoneAuthenController;
   final PageController pageController;
-  static late BankCardBloc bankCardBloc;
-  static final FocusNode _focusNode = FocusNode();
+  late BankCardBloc bankCardBloc;
+  final _focusNode = FocusNode();
 
-  const InputInformationBankWidget({
+  InputInformationBankWidget({
     super.key,
     required this.bankAccountController,
-    required this.nameController,
     required this.pageController,
     required this.nationalController,
     required this.phoneAuthenController,
@@ -42,34 +41,41 @@ class InputInformationBankWidget extends StatelessWidget {
 
   void initialServices(BuildContext context) {
     bankCardBloc = BlocProvider.of(context);
-    if (bankAccountController.text.isNotEmpty &&
-        bankAccountController.text.length > 5) {
-      String transferType = '';
-      String bankCode = Provider.of<AddBankProvider>(context, listen: false)
-          .bankTypeDTO
-          .caiValue;
-      if (Provider.of<AddBankProvider>(context, listen: false)
-              .bankTypeDTO
-              .bankCode ==
-          'MB') {
-        transferType = 'INHOUSE';
-      } else {
-        transferType = 'NAPAS';
-      }
-      BankNameSearchDTO bankNameSearchDTO = BankNameSearchDTO(
-        accountNumber: bankAccountController.text,
-        accountType: 'ACCOUNT',
-        transferType: transferType,
-        bankCode: bankCode,
-      );
-      bankCardBloc.add(BankCardEventSearchName(dto: bankNameSearchDTO));
-    }
+    bankAccountController.clear();
+    nameController.value = nameController.value.copyWith(text: '');
+    nationalController.clear();
+    phoneAuthenController.clear();
+    _focusNode.requestFocus();
+
+    // if (bankAccountController.text.isNotEmpty &&
+    //     bankAccountController.text.length > 5) {
+    //   String transferType = '';
+    //   String bankCode = Provider.of<AddBankProvider>(context, listen: false)
+    //       .bankTypeDTO
+    //       .caiValue;
+    //   if (Provider.of<AddBankProvider>(context, listen: false)
+    //           .bankTypeDTO
+    //           .bankCode ==
+    //       'MB') {
+    //     transferType = 'INHOUSE';
+    //   } else {
+    //     transferType = 'NAPAS';
+    //   }
+    //   BankNameSearchDTO bankNameSearchDTO = BankNameSearchDTO(
+    //     accountNumber: bankAccountController.text,
+    //     accountType: 'ACCOUNT',
+    //     transferType: transferType,
+    //     bankCode: bankCode,
+    //   );
+    //   bankCardBloc.add(BankCardEventSearchName(dto: bankNameSearchDTO));
+    // }
   }
 
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
     initialServices(context);
+
     return BlocConsumer<BankCardBloc, BankCardState>(
       listener: (context, state) {
         if (state is BankCardSearchingNameState) {
@@ -83,6 +89,16 @@ class InputInformationBankWidget extends StatelessWidget {
         }
         if (state is BankCardLoadingState) {
           DialogWidget.instance.openLoadingDialog();
+        }
+
+        if (state is BankCardSearchNameFailedState) {
+          DialogWidget.instance.openMsgDialog(
+            title: '',
+            msg: state.msg,
+          );
+
+          Provider.of<AddBankProvider>(context, listen: false)
+              .setEnableNameTK(true);
         }
         if (state is BankCardCheckNotExistedState) {
           if (Provider.of<AddBankProvider>(context, listen: false)
@@ -216,44 +232,9 @@ class InputInformationBankWidget extends StatelessWidget {
                               keyboardAction: TextInputAction.done,
                               focusNode: _focusNode,
                               onSubmitted: (txt) {
-                                print(
-                                    'focusNode.hasFocus: ${_focusNode.hasFocus}');
-                                if (_focusNode.hasFocus) {
-                                  _focusNode.unfocus();
-                                  SystemChannels.textInput
-                                      .invokeMethod('TextInput.hide');
-                                  if (bankAccountController.text.isNotEmpty &&
-                                      bankAccountController.text.length > 5) {
-                                    String transferType = '';
-                                    String bankCode =
-                                        Provider.of<AddBankProvider>(context,
-                                                listen: false)
-                                            .bankTypeDTO
-                                            .caiValue;
-                                    if (Provider.of<AddBankProvider>(context,
-                                                listen: false)
-                                            .bankTypeDTO
-                                            .bankCode ==
-                                        'MB') {
-                                      transferType = 'INHOUSE';
-                                    } else {
-                                      transferType = 'NAPAS';
-                                    }
-                                    BankNameSearchDTO bankNameSearchDTO =
-                                        BankNameSearchDTO(
-                                      accountNumber: bankAccountController.text,
-                                      accountType: 'ACCOUNT',
-                                      transferType: transferType,
-                                      bankCode: bankCode,
-                                    );
-                                    bankCardBloc.add(BankCardEventSearchName(
-                                        dto: bankNameSearchDTO));
-                                  }
-                                }
+                                _onSubmitted(txt, context);
                               },
                               onTapOutside: (event) {
-                                print(
-                                    'focusNode.hasFocus: ${_focusNode.hasFocus}');
                                 if (_focusNode.hasFocus) {
                                   _focusNode.unfocus();
                                   _focusNode.unfocus();
@@ -305,6 +286,7 @@ class InputInformationBankWidget extends StatelessWidget {
                               title: 'Chủ TK \u002A',
                               hintText: 'Chủ TK/Tên doanh nghiệp',
                               fontSize: 15,
+                              enable: provider.enableNameTK,
                               controller: nameController,
                               inputType: TextInputType.text,
                               keyboardAction: TextInputAction.done,
@@ -507,4 +489,35 @@ class InputInformationBankWidget extends StatelessWidget {
       curve: Curves.easeInOutQuart,
     );
   }
+
+  void _onSubmitted(Object value, BuildContext context) {
+    if (_focusNode.hasFocus) {
+      _focusNode.unfocus();
+      SystemChannels.textInput.invokeMethod('TextInput.hide');
+      if (bankAccountController.text.isNotEmpty &&
+          bankAccountController.text.length > 5) {
+        String transferType = '';
+        String bankCode = Provider.of<AddBankProvider>(context, listen: false)
+            .bankTypeDTO
+            .caiValue;
+        if (Provider.of<AddBankProvider>(context, listen: false)
+                .bankTypeDTO
+                .bankCode ==
+            'MB') {
+          transferType = 'INHOUSE';
+        } else {
+          transferType = 'NAPAS';
+        }
+        BankNameSearchDTO bankNameSearchDTO = BankNameSearchDTO(
+          accountNumber: bankAccountController.text,
+          accountType: 'ACCOUNT',
+          transferType: transferType,
+          bankCode: bankCode,
+        );
+        bankCardBloc.add(BankCardEventSearchName(dto: bankNameSearchDTO));
+      }
+    }
+  }
+
+  reset() {}
 }

@@ -107,7 +107,10 @@ class _HomeScreen extends State<HomeScreen>
         DashboardView(
           key: const PageStorageKey('SMS_LIST_PAGE'),
           businessInformationBloc: _businessInformationBloc,
-          voidCallback: () async {
+        ),
+        UserSetting(
+          key: const PageStorageKey('USER_SETTING_PAGE'),
+          voidCallback: () {
             _animatedToPage(0);
           },
         ),
@@ -483,6 +486,11 @@ class _HomeScreen extends State<HomeScreen>
                                     page.indexSelected,
                                     context,
                                   ),
+                                  _buildShortcut(
+                                    4,
+                                    page.indexSelected,
+                                    context,
+                                  ),
                                 ],
                               );
                             },
@@ -573,7 +581,11 @@ class _HomeScreen extends State<HomeScreen>
                         ? 'ic-dashboard-unselect.png'
                         : (index == 3 && isSelected)
                             ? 'ic-user.png'
-                            : 'ic-user-unselect.png';
+                            : (index == 3 && isSelected)
+                                ? 'ic-user-unselect.png'
+                                : (index == 4 && isSelected)
+                                    ? 'ic-user.png'
+                                    : 'ic-user-unselect.png';
     return '$prefix$assetImage';
   }
 
@@ -696,6 +708,17 @@ class _HomeScreen extends State<HomeScreen>
     if (indexSelected == 3) {
       titleWidget = const Text(
         'Cá nhân',
+        style: TextStyle(
+          fontFamily: 'NewYork',
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.2,
+        ),
+      );
+    }
+    if (indexSelected == 4) {
+      titleWidget = const Text(
+        'Giới thiệu',
         style: TextStyle(
           fontFamily: 'NewYork',
           fontSize: 18,

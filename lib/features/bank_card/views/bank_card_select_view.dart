@@ -726,19 +726,24 @@ class _StackedList extends State<StackedList> {
                 ),
                 child: Container(
                   width: width,
-                  height: _maxHeight,
                   color: Theme.of(context).cardColor,
                   alignment: Alignment.center,
-                  child: Column(children: [
-                    SizedBox(
-                      width: 150,
-                      height: 100,
-                      child: Image.asset(
-                        'assets/images/ic-card.png',
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        width: 150,
+                        height: 100,
+                        child: Image.asset(
+                          'assets/images/ic-card.png',
+                        ),
                       ),
-                    ),
-                    const Text('Chưa có tài khoản ngân hàng được thêm.'),
-                  ]),
+                      const Text('Chưa có tài khoản ngân hàng được thêm.'),
+                      const SizedBox(height: 16),
+                      ClipRRect(
+                          borderRadius: BorderRadius.circular(15.0),
+                          child: Image.asset('assets/images/banner_app.png'))
+                    ],
+                  ),
                 ),
               )
             : (widget.sizeBox <= widget.height)

@@ -92,6 +92,7 @@ class _Login extends State<Login> {
         child: LoginFrame(
           width: width,
           height: height,
+          padding: EdgeInsets.zero,
           widget1: _buildWidget1(
             width: width,
             isResized: PlatformUtils.instance.resizeWhen(width, 750),
@@ -131,112 +132,122 @@ class _Login extends State<Login> {
 
   Widget _buildWidget1({required bool isResized, required double width}) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Align(
-          alignment: Alignment.center,
-          child: Image.asset(
-            'assets/images/ic-viet-qr.png',
-            width: 100,
-            height: 100,
-          ),
-        ),
-        BorderLayout(
-          width: width,
-          isError: false,
-          child: TextFieldWidget(
-            width: width,
-            isObscureText: false,
-            autoFocus: true,
-            hintText: 'Số điện thoại',
-            controller: phoneNoController,
-            inputType: TextInputType.number,
-            keyboardAction: TextInputAction.next,
-            onChange: (vavlue) {},
-          ),
-        ),
-        // const Padding(padding: EdgeInsets.only(top: 15)),
-        // const Text(
-        //   'Quên mật khẩu?',
-        //   style: TextStyle(
-        //     color: DefaultTheme.GREEN,
-        //     fontSize: 15,
-        //   ),
-        // ),
-        const Padding(padding: EdgeInsets.only(top: 30)),
-        ButtonWidget(
-          width: width,
-          height: 40,
-          text: 'Đăng nhập',
-          borderRadius: 5,
-          textColor: DefaultTheme.WHITE,
-          bgColor: DefaultTheme.GREEN,
-          function: () {
-            openPinDialog(context);
-          },
-        ),
-        (!isResized && PlatformUtils.instance.isWeb())
-            ? const Padding(
-                padding: EdgeInsets.only(top: 10),
-              )
-            : const SizedBox(),
-        (!isResized && PlatformUtils.instance.isWeb())
-            ? ButtonWidget(
-                width: width,
-                height: 40,
-                text: 'Đăng nhập bằng QR Code',
-                borderRadius: 5,
-                textColor: Theme.of(context).hintColor,
-                bgColor: Theme.of(context).canvasColor,
-                function: () {
-                  DialogWidget.instance
-                      .openContentDialog(null, _buildWidget2(context: context));
-                },
-              )
-            : const SizedBox(),
-        const Padding(padding: EdgeInsets.only(top: 20)),
-        SizedBox(
-          width: width,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: DividerWidget(width: width),
-              ),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 5),
-                child: Text(
-                  'hoặc',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: DefaultTheme.GREY_TEXT,
-                  ),
+              Align(
+                alignment: Alignment.center,
+                child: Image.asset(
+                  'assets/images/ic-viet-qr.png',
+                  width: 100,
+                  height: 100,
                 ),
               ),
-              Expanded(
-                child: DividerWidget(width: width),
+              BorderLayout(
+                width: width,
+                isError: false,
+                child: TextFieldWidget(
+                  width: width,
+                  isObscureText: false,
+                  autoFocus: true,
+                  hintText: 'Số điện thoại',
+                  controller: phoneNoController,
+                  inputType: TextInputType.number,
+                  keyboardAction: TextInputAction.next,
+                  onChange: (vavlue) {},
+                ),
+              ),
+              // const Padding(padding: EdgeInsets.only(top: 15)),
+              // const Text(
+              //   'Quên mật khẩu?',
+              //   style: TextStyle(
+              //     color: DefaultTheme.GREEN,
+              //     fontSize: 15,
+              //   ),
+              // ),
+              const Padding(padding: EdgeInsets.only(top: 30)),
+              ButtonWidget(
+                width: width,
+                height: 40,
+                text: 'Đăng nhập',
+                borderRadius: 5,
+                textColor: DefaultTheme.WHITE,
+                bgColor: DefaultTheme.GREEN,
+                function: () {
+                  openPinDialog(context);
+                },
+              ),
+              (!isResized && PlatformUtils.instance.isWeb())
+                  ? const Padding(
+                      padding: EdgeInsets.only(top: 10),
+                    )
+                  : const SizedBox(),
+              (!isResized && PlatformUtils.instance.isWeb())
+                  ? ButtonWidget(
+                      width: width,
+                      height: 40,
+                      text: 'Đăng nhập bằng QR Code',
+                      borderRadius: 5,
+                      textColor: Theme.of(context).hintColor,
+                      bgColor: Theme.of(context).canvasColor,
+                      function: () {
+                        DialogWidget.instance.openContentDialog(
+                            null, _buildWidget2(context: context));
+                      },
+                    )
+                  : const SizedBox(),
+              const Padding(padding: EdgeInsets.only(top: 20)),
+              SizedBox(
+                width: width,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: DividerWidget(width: width),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 5),
+                      child: Text(
+                        'hoặc',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: DefaultTheme.GREY_TEXT,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: DividerWidget(width: width),
+                    ),
+                  ],
+                ),
+              ),
+              const Padding(padding: EdgeInsets.only(top: 20)),
+              ButtonWidget(
+                width: width,
+                height: 40,
+                text: 'Đăng ký',
+                borderRadius: 5,
+                textColor: DefaultTheme.WHITE,
+                bgColor: DefaultTheme.BLUE_TEXT,
+                function: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => RegisterView(
+                        phoneNo: phoneNoController.text,
+                      ),
+                    ),
+                  );
+                },
               ),
             ],
           ),
         ),
-        const Padding(padding: EdgeInsets.only(top: 20)),
-        ButtonWidget(
-          width: width,
-          height: 40,
-          text: 'Đăng ký',
-          borderRadius: 5,
-          textColor: DefaultTheme.WHITE,
-          bgColor: DefaultTheme.BLUE_TEXT,
-          function: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => RegisterView(
-                  phoneNo: phoneNoController.text,
-                ),
-              ),
-            );
-          },
-        )
+        ClipRRect(
+            borderRadius: BorderRadius.circular(15.0),
+            child: Image.asset('assets/images/banner_app.png'))
       ],
     );
   }

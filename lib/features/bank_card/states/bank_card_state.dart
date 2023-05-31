@@ -189,4 +189,11 @@ class BankCardSearchNameSuccessState extends BankCardState {
   List<Object?> get props => [dto];
 }
 
-class BankCardSearchNameFailedState extends BankCardState {}
+class BankCardSearchNameFailedState extends BankCardState {
+  final String msg;
+
+  const BankCardSearchNameFailedState({required this.msg});
+
+  @override
+  List<Object?> get props => [msg];
+}
