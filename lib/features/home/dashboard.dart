@@ -509,16 +509,8 @@ class DashboardView extends StatelessWidget {
                           buttonIcon: Icons.navigate_next_rounded,
                           color: DefaultTheme.RED_CALENDAR,
                           function: () async {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => UserEditView(
-                                          voidCallback: voidCallback,
-                                        ),
-                                    settings: const RouteSettings(
-                                        name: Routes.USER_EDIT)));
-                            // final data = await Navigator.of(context)
-                            //     .pushNamed(Routes.USER_EDIT);
+                            final data = await Navigator.of(context)
+                                .pushNamed(Routes.USER_EDIT);
                           },
                         )
                       : const SizedBox(),

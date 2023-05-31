@@ -52,9 +52,8 @@ class UserEditView extends StatelessWidget {
   static late UserEditBloc _userEditBloc;
   static final _formKey = GlobalKey<FormState>();
   static final ImagePicker imagePicker = ImagePicker();
-  final AsyncCallback? voidCallback;
 
-  const UserEditView({super.key, this.voidCallback});
+  const UserEditView({super.key});
 
   void initialServices(BuildContext context) {
     _userEditBloc = BlocProvider.of(context);
@@ -99,8 +98,8 @@ class UserEditView extends StatelessWidget {
             function: () {
               backToPreviousPage(context);
             },
-            callBackHome: () async {
-              await voidCallback!();
+            callBackHome: () {
+              backToPreviousPage(context);
             },
           ),
           Expanded(

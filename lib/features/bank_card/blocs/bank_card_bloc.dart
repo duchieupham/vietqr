@@ -281,11 +281,12 @@ void _searchBankName(BankCardEvent event, Emitter emit) async {
       if (dto.accountName.trim().isNotEmpty) {
         emit(BankCardSearchNameSuccessState(dto: dto));
       } else {
-        emit(BankCardSearchNameFailedState());
+        emit(const BankCardSearchNameFailedState(
+            msg: 'Không tìm thấy tên chủ TK'));
       }
     }
   } catch (e) {
     LOG.error(e.toString());
-    emit(BankCardSearchNameFailedState());
+    emit(const BankCardSearchNameFailedState(msg: 'Không tìm thấy tên chủ TK'));
   }
 }
