@@ -42,7 +42,6 @@ class AddBankCardView extends StatelessWidget {
     if (!Provider.of<AddBankProvider>(context, listen: false).getBankTypes) {
       _pageController = PageController(
         initialPage: initialPage,
-        keepPage: true,
       );
       _pages.clear();
       _pages.addAll(
@@ -60,7 +59,7 @@ class AddBankCardView extends StatelessWidget {
           InputInformationBankWidget(
             key: const PageStorageKey('INPUT_INFORMATION_BANK'),
             bankAccountController: bankAccountController,
-            // nameController: nameController,
+            nameController: nameController,
             pageController: _pageController,
             nationalController: nationalController,
             phoneAuthenController: phoneAuthenController,
@@ -164,6 +163,8 @@ class AddBankCardView extends StatelessWidget {
     } else {
       if (index == 1) {
         Provider.of<AddBankProvider>(context, listen: false).updateSelect(0);
+        Provider.of<AddBankProvider>(context, listen: false).reset();
+        Navigator.of(context).pop();
       }
       Provider.of<AddBankProvider>(context, listen: false).updateIndex(0);
       _animatedToPage(index - 1);
@@ -174,7 +175,7 @@ class AddBankCardView extends StatelessWidget {
     double bottom = WidgetsBinding.instance.window.viewInsets.bottom;
     if (bottom > 0.0) {
       FocusManager.instance.primaryFocus?.unfocus();
-      Future.delayed(const Duration(milliseconds: 300), () {
+      Future.delayed(const Duration(milliseconds: 200), () {
         _navigateBack(context);
       });
     } else {
