@@ -36,9 +36,15 @@ import 'package:vierqr/services/shared_references/user_information_helper.dart';
 const double _minHeight = 60;
 const double _maxHeight = 150;
 
-class BankCardSelectView extends StatelessWidget {
-  final BusinessInformationBloc businessInformationBloc;
-  final BankCardBloc bankCardBloc;
+class BankCardSelectView extends StatefulWidget {
+  const BankCardSelectView({super.key});
+
+  @override
+  State<BankCardSelectView> createState() => _BankCardSelectViewState();
+}
+
+class _BankCardSelectViewState extends State<BankCardSelectView>
+    with AutomaticKeepAliveClientMixin {
   static final List<BankAccountDTO> bankAccounts = [];
   static final List<Color> cardColors = [];
   static final List<QRGeneratedDTO> qrGenerateds = [];
@@ -47,13 +53,13 @@ class BankCardSelectView extends StatelessWidget {
   static late QRBloc qrBloc;
   static final CarouselController carouselController = CarouselController();
 
-  const BankCardSelectView({
-    super.key,
-    required this.businessInformationBloc,
-    required this.bankCardBloc,
-  });
+  late BusinessInformationBloc businessInformationBloc;
+  late BankCardBloc bankCardBloc;
 
   initialServices(BuildContext context) {
+    businessInformationBloc = BlocProvider.of(context);
+    bankCardBloc = BlocProvider.of(context);
+
     Provider.of<BankCardSelectProvider>(context, listen: false).reset();
     bankAccounts.clear();
     cardColors.clear();
@@ -124,7 +130,7 @@ class BankCardSelectView extends StatelessWidget {
                           if (scrollController.hasClients) {
                             scrollController.jumpTo(0);
                           }
-                          sizedBox = (bankAccounts.length * _maxHeight) * 0.75;
+                          sizedBox = (bankAccounts.length * _maxHeight) * 0.7;
                           listHeight = (sizedBox < _maxHeight)
                               ? _maxHeight
                               : (sizedBox > maxListHeight)
@@ -151,15 +157,12 @@ class BankCardSelectView extends StatelessWidget {
                               );
                       },
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                        bottom: (PlatformUtils.instance.isAndroidApp())
-                            ? 90
-                            : (PlatformUtils.instance.isIOsApp() &&
-                                    height <= 800)
-                                ? 90
-                                : 110,
-                      ),
+                    Container(
+                      height: (PlatformUtils.instance.isAndroidApp())
+                          ? 56
+                          : (PlatformUtils.instance.isIOsApp() && height <= 800)
+                              ? 90
+                              : 110,
                     ),
                   ],
                 )
@@ -665,6 +668,9 @@ class BankCardSelectView extends StatelessWidget {
     cardColors.clear();
     Provider.of<BankCardSelectProvider>(context, listen: false).reset();
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class StackedList extends StatefulWidget {
@@ -716,19 +722,24 @@ class _StackedList extends State<StackedList> {
                 ),
                 child: Container(
                   width: width,
-                  height: _maxHeight,
                   color: Theme.of(context).cardColor,
                   alignment: Alignment.center,
-                  child: Column(children: [
-                    SizedBox(
-                      width: 150,
-                      height: 100,
-                      child: Image.asset(
-                        'assets/images/ic-card.png',
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        width: 150,
+                        height: 100,
+                        child: Image.asset(
+                          'assets/images/ic-card.png',
+                        ),
                       ),
-                    ),
-                    const Text('Chưa có tài khoản ngân hàng được thêm.'),
-                  ]),
+                      const Text('Chưa có tài khoản ngân hàng được thêm.'),
+                      const SizedBox(height: 16),
+                      ClipRRect(
+                          borderRadius: BorderRadius.circular(15.0),
+                          child: Image.asset('assets/images/banner_app.png'))
+                    ],
+                  ),
                 ),
               )
             : (widget.sizeBox <= widget.height)
@@ -847,7 +858,7 @@ class _StackedList extends State<StackedList> {
                       ),
                       Padding(padding: EdgeInsets.only(left: 5)),
                       Text(
-                        'TK ngân hàng',
+                        'ngân hàng',
                         style: TextStyle(
                           color: DefaultTheme.GREEN,
                         ),

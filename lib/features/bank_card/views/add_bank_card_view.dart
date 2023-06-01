@@ -15,17 +15,14 @@ class AddBankCardView extends StatelessWidget {
   static late BankTypeBloc bankTypeBloc;
   static late PageController _pageController;
 
-  static final TextEditingController searchController = TextEditingController();
-  static final TextEditingController bankAccountController =
-      TextEditingController();
-  static final TextEditingController nationalController =
-      TextEditingController();
-  static final TextEditingController phoneAuthenController =
-      TextEditingController();
-  static final TextEditingController nameController = TextEditingController();
-  static final List<Widget> _pages = [];
+  final TextEditingController searchController = TextEditingController();
+  final TextEditingController bankAccountController = TextEditingController();
+  final TextEditingController nationalController = TextEditingController();
+  final TextEditingController phoneAuthenController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
+  final List<Widget> _pages = [];
 
-  const AddBankCardView({super.key});
+  AddBankCardView({super.key});
 
   void initialServices(BuildContext context, int initialPage,
       String bankAccount, String userBankName) {
@@ -41,10 +38,10 @@ class AddBankCardView extends StatelessWidget {
     if (userBankName.isNotEmpty) {
       nameController.value = nameController.value.copyWith(text: userBankName);
     }
+
     if (!Provider.of<AddBankProvider>(context, listen: false).getBankTypes) {
       _pageController = PageController(
         initialPage: initialPage,
-        keepPage: true,
       );
       _pages.clear();
       _pages.addAll(
@@ -55,8 +52,9 @@ class AddBankCardView extends StatelessWidget {
           ),
           SelectBankTypeWidget(
             key: const PageStorageKey('SELECT_BANK_TYPE'),
-            pageController: _pageController,
-            searchController: searchController,
+            callBack: (index) {
+              _animatedToPage(index);
+            },
           ),
           InputInformationBankWidget(
             key: const PageStorageKey('INPUT_INFORMATION_BANK'),
@@ -107,7 +105,7 @@ class AddBankCardView extends StatelessWidget {
     initialServices(context, initialPage, bankAccount, userBankName);
     return WillPopScope(
       onWillPop: () async {
-        _navigateBack(context);
+        _hideKeyboardBack(context);
         return false;
       },
       child: Scaffold(
@@ -123,7 +121,10 @@ class AddBankCardView extends StatelessWidget {
                           ? 'Thêm TK ngân hàng'
                           : 'Mở TK MB Bank',
                   function: () {
-                    _navigateBack(context);
+                    _hideKeyboardBack(context);
+                  },
+                  callBackHome: () {
+                    _hideKeyboardBack(context);
                   },
                 );
               },
@@ -162,9 +163,23 @@ class AddBankCardView extends StatelessWidget {
     } else {
       if (index == 1) {
         Provider.of<AddBankProvider>(context, listen: false).updateSelect(0);
+        Provider.of<AddBankProvider>(context, listen: false).reset();
+        Navigator.of(context).pop();
       }
       Provider.of<AddBankProvider>(context, listen: false).updateIndex(0);
       _animatedToPage(index - 1);
+    }
+  }
+
+  void _hideKeyboardBack(BuildContext context) {
+    double bottom = WidgetsBinding.instance.window.viewInsets.bottom;
+    if (bottom > 0.0) {
+      FocusManager.instance.primaryFocus?.unfocus();
+      Future.delayed(const Duration(milliseconds: 200), () {
+        _navigateBack(context);
+      });
+    } else {
+      _navigateBack(context);
     }
   }
 

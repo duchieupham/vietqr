@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
 import 'package:vierqr/features/business/events/business_information_event.dart';
 import 'package:vierqr/features/business/states/business_information_state.dart';
+import 'package:vierqr/features/personal/views/user_edit_view.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/models/business_item_dto.dart';
 import 'package:vierqr/models/related_transaction_receive_dto.dart';
@@ -22,15 +24,25 @@ import 'package:vierqr/services/providers/shortcut_provider.dart';
 import 'package:vierqr/services/providers/suggestion_widget_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
-class DashboardView extends StatelessWidget {
-  final BusinessInformationBloc businessInformationBloc;
+class DashboardView extends StatefulWidget {
+  final AsyncCallback? voidCallback;
 
   const DashboardView({
     Key? key,
-    required this.businessInformationBloc,
+    this.voidCallback,
   }) : super(key: key);
 
+  @override
+  State<DashboardView> createState() => _DashboardViewState();
+}
+
+class _DashboardViewState extends State<DashboardView>
+    with AutomaticKeepAliveClientMixin {
+  late BusinessInformationBloc businessInformationBloc;
+
   initialServices(BuildContext context) {
+    businessInformationBloc = BlocProvider.of(context);
+
     String userId = UserInformationHelper.instance.getUserId();
     businessInformationBloc
         .add(BusinessInformationEventGetList(userId: userId));
@@ -471,7 +483,6 @@ class DashboardView extends StatelessWidget {
   }
 
   Widget _buildSuggestion(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
     return Consumer<SuggestionWidgetProvider>(
       builder: (context, provider, child) {
         return (provider.getSuggestion())
@@ -505,8 +516,9 @@ class DashboardView extends StatelessWidget {
                           icon: Icons.person,
                           buttonIcon: Icons.navigate_next_rounded,
                           color: DefaultTheme.RED_CALENDAR,
-                          function: () {
-                            Navigator.of(context).pushNamed(Routes.USER_EDIT);
+                          function: () async {
+                            final data = await Navigator.of(context)
+                                .pushNamed(Routes.USER_EDIT);
                           },
                         )
                       : const SizedBox(),
@@ -831,4 +843,7 @@ class DashboardView extends StatelessWidget {
     }
     return result;
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

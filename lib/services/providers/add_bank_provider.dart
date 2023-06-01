@@ -6,11 +6,15 @@ class AddBankProvider with ChangeNotifier {
   String _bankId = '';
   bool _isGetBankTypes = false;
   int _index = 0;
+
   //type = 0 => personal bank card
   //type = 1 => business bank card
   int _type = 0;
+
   //
   int _select = 0;
+
+  bool _enableNameTK = false;
 
   String _branchId = '';
   BankTypeDTO _bankTypeDTO = const BankTypeDTO(
@@ -39,19 +43,34 @@ class AddBankProvider with ChangeNotifier {
   bool _isRegisterAuthentication = false;
 
   get getBankTypes => _isGetBankTypes;
+
   get index => _index;
+
   get type => _type;
+
   BankTypeDTO get bankTypeDTO => _bankTypeDTO;
+
   get validBankAccount => _isInvalidBankAccount;
+
   get validUserBankName => _isInvalidUserBankName;
+
   get validNationalId => _isInValidNationalId;
+
   get validPhoneAuthenticated => _isInValidPhoneAuthenticated;
+
   get branchId => _branchId;
+
   get branchChoiceInsertDTO => _branchChoiceInsertDTO;
+
   get isAgreeWithPolicy => _isAgreeWithPolicy;
+
   get registerAuthentication => _isRegisterAuthentication;
+
   get select => _select;
+
   get bankId => _bankId;
+
+  get enableNameTK => _enableNameTK;
 
   void updateBankId(String value) {
     _bankId = value;
@@ -142,6 +161,10 @@ class AddBankProvider with ChangeNotifier {
     return result;
   }
 
+  setEnableNameTK(bool value) {
+    _enableNameTK = value;
+  }
+
   void reset() {
     _bankId = '';
     _select = 0;
@@ -149,20 +172,14 @@ class AddBankProvider with ChangeNotifier {
     _branchId = '';
     _index = 0;
     _type = 0;
+    _enableNameTK = false;
     _isInvalidBankAccount = false;
     _isInvalidUserBankName = false;
     _isInValidNationalId = false;
     _isInValidPhoneAuthenticated = false;
     _isRegisterAuthentication = false;
     _isAgreeWithPolicy = false;
-    _bankTypeDTO = const BankTypeDTO(
-      id: '',
-      bankCode: '',
-      bankName: '',
-      imageId: '',
-      status: 0,
-      caiValue: '',
-    );
+
     _branchChoiceInsertDTO = const BranchChoiceInsertDTO(
       companyName: '',
       image: '',

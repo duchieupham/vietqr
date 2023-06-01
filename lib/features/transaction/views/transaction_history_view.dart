@@ -59,7 +59,12 @@ class TransactionHistoryView extends StatelessWidget {
       appBar: AppBar(toolbarHeight: 0),
       body: Column(
         children: [
-          SubHeader(title: 'Lịch sử giao dịch'),
+          SubHeader(
+            title: 'Lịch sử giao dịch',
+            callBackHome: () {
+              Navigator.of(context).popUntil((route) => route.isFirst);
+            },
+          ),
           Expanded(
             child: BlocConsumer<TransactionBloc, TransactionState>(
               listener: (context, state) {
