@@ -24,17 +24,25 @@ import 'package:vierqr/services/providers/shortcut_provider.dart';
 import 'package:vierqr/services/providers/suggestion_widget_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
-class DashboardView extends StatelessWidget {
-  final BusinessInformationBloc businessInformationBloc;
+class DashboardView extends StatefulWidget {
   final AsyncCallback? voidCallback;
 
   const DashboardView({
     Key? key,
-    required this.businessInformationBloc,
     this.voidCallback,
   }) : super(key: key);
 
+  @override
+  State<DashboardView> createState() => _DashboardViewState();
+}
+
+class _DashboardViewState extends State<DashboardView>
+    with AutomaticKeepAliveClientMixin {
+  late BusinessInformationBloc businessInformationBloc;
+
   initialServices(BuildContext context) {
+    businessInformationBloc = BlocProvider.of(context);
+
     String userId = UserInformationHelper.instance.getUserId();
     businessInformationBloc
         .add(BusinessInformationEventGetList(userId: userId));
@@ -835,4 +843,7 @@ class DashboardView extends StatelessWidget {
     }
     return result;
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

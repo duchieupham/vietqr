@@ -8,7 +8,6 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_card/states/bank_card_state.dart';
 import 'package:vierqr/features/bank_card/views/bank_card_select_view.dart';
-import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
 import 'package:vierqr/features/home/dashboard.dart';
 import 'package:vierqr/features/home/widgets/disconnect_widget.dart';
 import 'package:vierqr/features/home/widgets/maintain_widget.dart';
@@ -37,6 +36,8 @@ import 'dart:ui';
 
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
+import 'widgets/bottom_navigation.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -59,8 +60,6 @@ class _HomeScreen extends State<HomeScreen>
 
   late PermissionBloc _permissionBloc;
   late TokenBloc _tokenBloc;
-  late BusinessInformationBloc _businessInformationBloc;
-  late BankCardBloc _bankCardBloc;
   late NotificationBloc _notificationBloc;
 
   //notification count
@@ -77,8 +76,6 @@ class _HomeScreen extends State<HomeScreen>
 
     _permissionBloc = BlocProvider.of(context);
     _tokenBloc = BlocProvider.of(context);
-    _businessInformationBloc = BlocProvider.of(context);
-    _bankCardBloc = BlocProvider.of(context);
     _notificationBloc = BlocProvider.of(context);
     String userId = UserInformationHelper.instance.getUserId();
     initialServices(context, userId);
@@ -95,25 +92,11 @@ class _HomeScreen extends State<HomeScreen>
     _tokenBloc.add(const TokenEventCheckValid());
     _permissionBloc.add(const PermissionEventRequest());
     _notificationBloc.add(NotificationGetCounterEvent(userId: userId));
-    // _bankCardBloc.add(BankCardEventGetList(userId: userId));
     _homeScreens.addAll(
       [
-        BankCardSelectView(
-          key: const PageStorageKey('QR_GENERATOR_PAGE'),
-          businessInformationBloc: _businessInformationBloc,
-          bankCardBloc: _bankCardBloc,
-        ),
+        const BankCardSelectView(key: PageStorageKey('QR_GENERATOR_PAGE')),
         const SizedBox(),
-        DashboardView(
-          key: const PageStorageKey('SMS_LIST_PAGE'),
-          businessInformationBloc: _businessInformationBloc,
-        ),
-        UserSetting(
-          key: const PageStorageKey('USER_SETTING_PAGE'),
-          voidCallback: () {
-            _animatedToPage(0);
-          },
-        ),
+        const DashboardView(key: PageStorageKey('SMS_LIST_PAGE')),
         UserSetting(
           key: const PageStorageKey('USER_SETTING_PAGE'),
           voidCallback: () {
@@ -146,9 +129,6 @@ class _HomeScreen extends State<HomeScreen>
 
   @override
   void dispose() {
-    // _notificationBloc.close();
-    // _bankManageBloc.close();
-    // _transactionBloc.close();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -171,7 +151,6 @@ class _HomeScreen extends State<HomeScreen>
   }
 
   void _updateFcmToken(bool isFromLogin) {
-    // LOG.info('FROM LOGIN: $isFromLogin');
     if (!isFromLogin) {
       _tokenBloc.add(const TokenFcmUpdateEvent());
     }
@@ -302,7 +281,6 @@ class _HomeScreen extends State<HomeScreen>
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              // const Padding(padding: EdgeInsets.only(left: 10)),
                               Consumer<PageSelectProvider>(
                                   builder: (context, page, child) {
                                 return _getTitlePaqe(
@@ -437,68 +415,54 @@ class _HomeScreen extends State<HomeScreen>
                 margin: (PlatformUtils.instance.isAndroidApp())
                     ? const EdgeInsets.only(bottom: 5)
                     : null,
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.all(Radius.circular(20)),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                    child: Container(
-                      alignment: Alignment.center,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).cardColor.withOpacity(0.5),
-                        boxShadow: [
-                          BoxShadow(
-                            color: DefaultTheme.GREY_VIEW.withOpacity(0.5),
-                            spreadRadius: 2,
-                            blurRadius: 3,
-                            offset: const Offset(2, 2),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ClipRRect(
+                      borderRadius: const BorderRadius.all(Radius.circular(20)),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                        child: Container(
+                          alignment: Alignment.center,
+                          height: 60,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).cardColor.withOpacity(0.5),
+                            boxShadow: [
+                              BoxShadow(
+                                color: DefaultTheme.GREY_VIEW.withOpacity(0.5),
+                                spreadRadius: 2,
+                                blurRadius: 3,
+                                offset: const Offset(2, 2),
+                              ),
+                            ],
                           ),
-                        ],
-                        // borderRadius: BorderRadius.circular(0),
-                      ),
-                      width: MediaQuery.of(context).size.width * 0.7,
-                      child: Stack(
-                        children: [
-                          Consumer<PageSelectProvider>(
-                            builder: (context, page, child) {
-                              return Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  _buildShortcut(
-                                    0,
-                                    page.indexSelected,
-                                    context,
-                                  ),
-                                  _buildShortcut(
-                                    1,
-                                    page.indexSelected,
-                                    context,
-                                  ),
-                                  _buildShortcut(
-                                    2,
-                                    page.indexSelected,
-                                    context,
-                                  ),
-                                  _buildShortcut(
-                                    3,
-                                    page.indexSelected,
-                                    context,
-                                  ),
-                                  _buildShortcut(
-                                    4,
-                                    page.indexSelected,
-                                    context,
-                                  ),
-                                ],
-                              );
-                            },
+                          child: Stack(
+                            children: [
+                              Consumer<PageSelectProvider>(
+                                builder: (context, provider, child) {
+                                  return Row(
+                                    children: List.generate(
+                                        provider.listItem.length, (index) {
+                                      var item =
+                                          provider.listItem.elementAt(index);
+
+                                      String url =
+                                          (index == provider.indexSelected)
+                                              ? item.assetsActive
+                                              : item.assetsUnActive;
+
+                                      return _buildShortcut(
+                                          index, url, context);
+                                    }).toList(),
+                                  );
+                                },
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
               ),
             );
@@ -508,10 +472,10 @@ class _HomeScreen extends State<HomeScreen>
     );
   }
 
+
   //build shorcuts in bottom bar
-  _buildShortcut(int index, int indexSelected, BuildContext context) {
-    bool isSelected = (index == indexSelected);
-    return InkWell(
+  Widget _buildShortcut(int index, String url, BuildContext context) {
+    return GestureDetector(
       onTap: () {
         if (index != 1) {
           _animatedToPage(index);
@@ -528,19 +492,17 @@ class _HomeScreen extends State<HomeScreen>
       },
       child: Container(
         padding: const EdgeInsets.all(5),
+        margin: const EdgeInsets.symmetric(horizontal: 8),
         width: 45,
         height: 45,
         decoration: BoxDecoration(
           color: (index == 1)
               ? DefaultTheme.PURPLE_NEON.withOpacity(0.5)
               : DefaultTheme.TRANSPARENT,
-          // color: (isSelected)
-          //     ? Theme.of(context).toggleableActiveColor
-          //     : DefaultTheme.TRANSPARENT,
           borderRadius: BorderRadius.circular(15),
         ),
         child: Image.asset(
-          _getAssetIcon(index, isSelected),
+          url,
           width: 35,
           height: 35,
         ),

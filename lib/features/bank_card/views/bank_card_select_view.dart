@@ -37,14 +37,7 @@ const double _minHeight = 60;
 const double _maxHeight = 150;
 
 class BankCardSelectView extends StatefulWidget {
-  final BusinessInformationBloc businessInformationBloc;
-  final BankCardBloc bankCardBloc;
-
-  const BankCardSelectView({
-    super.key,
-    required this.businessInformationBloc,
-    required this.bankCardBloc,
-  });
+  const BankCardSelectView({super.key});
 
   @override
   State<BankCardSelectView> createState() => _BankCardSelectViewState();
@@ -60,12 +53,18 @@ class _BankCardSelectViewState extends State<BankCardSelectView>
   static late QRBloc qrBloc;
   static final CarouselController carouselController = CarouselController();
 
+  late BusinessInformationBloc businessInformationBloc;
+  late BankCardBloc bankCardBloc;
+
   initialServices(BuildContext context) {
+    businessInformationBloc = BlocProvider.of(context);
+    bankCardBloc = BlocProvider.of(context);
+
     Provider.of<BankCardSelectProvider>(context, listen: false).reset();
     bankAccounts.clear();
     cardColors.clear();
     String userId = UserInformationHelper.instance.getUserId();
-    widget.bankCardBloc.add(BankCardEventGetList(userId: userId));
+    bankCardBloc.add(BankCardEventGetList(userId: userId));
     qrBloc = BlocProvider.of(context);
   }
 
@@ -131,7 +130,7 @@ class _BankCardSelectViewState extends State<BankCardSelectView>
                           if (scrollController.hasClients) {
                             scrollController.jumpTo(0);
                           }
-                          sizedBox = (bankAccounts.length * _maxHeight) * 0.75;
+                          sizedBox = (bankAccounts.length * _maxHeight) * 0.7;
                           listHeight = (sizedBox < _maxHeight)
                               ? _maxHeight
                               : (sizedBox > maxListHeight)
@@ -158,15 +157,12 @@ class _BankCardSelectViewState extends State<BankCardSelectView>
                               );
                       },
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                        bottom: (PlatformUtils.instance.isAndroidApp())
-                            ? 90
-                            : (PlatformUtils.instance.isIOsApp() &&
-                                    height <= 800)
-                                ? 90
-                                : 110,
-                      ),
+                    Container(
+                      height: (PlatformUtils.instance.isAndroidApp())
+                          ? 56
+                          : (PlatformUtils.instance.isIOsApp() && height <= 800)
+                              ? 90
+                              : 110,
                     ),
                   ],
                 )
@@ -607,7 +603,7 @@ class _BankCardSelectViewState extends State<BankCardSelectView>
     bankAccounts.clear();
     cardColors.clear();
     String userId = UserInformationHelper.instance.getUserId();
-    widget.bankCardBloc.add(
+    bankCardBloc.add(
       BankCardEventGetList(
         userId: userId,
       ),
@@ -631,7 +627,7 @@ class _BankCardSelectViewState extends State<BankCardSelectView>
                   widget: FunctionBankWidget(
                     bankAccountDTO: bankAccounts[i],
                     qrGeneratedDTO: qrGenerateds[i],
-                    businessInformationBloc: widget.businessInformationBloc,
+                    businessInformationBloc: businessInformationBloc,
                   ),
                   height: height * 0.35,
                 );
