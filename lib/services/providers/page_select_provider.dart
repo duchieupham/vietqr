@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vierqr/features/bank_card/views/bank_card_select_view.dart';
+import 'package:vierqr/features/introduce/views/introduce_screen.dart';
 import 'package:vierqr/features/personal/views/user_setting.dart';
 import 'package:vierqr/models/bottom_nav_dto.dart';
 
@@ -21,6 +22,12 @@ class PageSelectProvider with ChangeNotifier {
       page: BankCardSelectView(
         key: PageStorageKey('QR_GENERATOR_PAGE'),
       ),
+    ),
+    NavigationDTO(
+      name: 'Mở tài khoản MB',
+      assetsActive: 'assets/images/ic-linked.png',
+      assetsUnActive: 'assets/images/ic-linked-unselect.png',
+      page: IntroduceScreen(),
     ),
     const NavigationDTO(
       name: '',
