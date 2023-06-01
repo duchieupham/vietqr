@@ -10,7 +10,8 @@ class BankTypeRepository {
   const BankTypeRepository();
 
   Future<List<BankTypeDTO>> getBankTypes() async {
-    List<BankTypeDTO> result = [];
+    List<BankTypeDTO> listBanks = [];
+
     try {
       String url = '${EnvConfig.getBaseUrl()}bank-type';
       final response = await BaseAPIClient.getAPI(
@@ -20,7 +21,7 @@ class BankTypeRepository {
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         if (data != null) {
-          result = data
+          listBanks = data
               .map<BankTypeDTO>((json) => BankTypeDTO.fromJson(json))
               .toList();
         }
@@ -28,6 +29,6 @@ class BankTypeRepository {
     } catch (e) {
       LOG.error(e.toString());
     }
-    return result;
+    return listBanks;
   }
 }

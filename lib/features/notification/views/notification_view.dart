@@ -19,9 +19,7 @@ class NotificationView extends StatelessWidget {
   static bool isEnded = false;
   static final List<NotificationDTO> notifications = [];
 
-  const NotificationView({
-    super.key,
-  });
+  const NotificationView({super.key});
 
   void initialServices(
       BuildContext context, NotificationBloc notificationBloc) {

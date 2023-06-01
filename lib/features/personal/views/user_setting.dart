@@ -17,13 +17,16 @@ import 'package:vierqr/services/shared_references/user_information_helper.dart';
 import 'package:flutter/material.dart';
 
 class UserSetting extends StatefulWidget {
-  const UserSetting({Key? key}) : super(key: key);
+  const UserSetting({Key? key, this.voidCallback}) : super(key: key);
+
+  final VoidCallback? voidCallback;
 
   @override
   State<StatefulWidget> createState() => _UserSetting();
 }
 
-class _UserSetting extends State<UserSetting> {
+class _UserSetting extends State<UserSetting>
+    with AutomaticKeepAliveClientMixin {
   static late LoginBloc _loginBloc;
   static late LogoutBloc _logoutBloc;
 
@@ -49,9 +52,13 @@ class _UserSetting extends State<UserSetting> {
             if (Navigator.canPop(context)) {
               Navigator.pop(context);
             }
-            Navigator.of(context).pushReplacementNamed(Routes.LOGIN);
+            Navigator.of(context).pushReplacementNamed(
+              Routes.LOGIN,
+            );
+            widget.voidCallback!();
           }
           if (state is LogoutFailedState) {
+            if (!mounted) return;
             Navigator.pop(context);
             DialogWidget.instance.openMsgDialog(
               title: 'Không thể đăng xuất',
@@ -168,7 +175,6 @@ class _UserSetting extends State<UserSetting> {
   }
 
   Widget _buildAvatarWidget(BuildContext context) {
-    print('build avatar');
     double size = 100;
     String imgId = UserInformationHelper.instance.getAccountInformation().imgId;
     return Consumer<AvatarProvider>(
@@ -183,4 +189,12 @@ class _UserSetting extends State<UserSetting> {
           : AmbientAvatarWidget(imgId: imgId, size: size),
     );
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
+  bool get wantKeepAlive => true;
 }

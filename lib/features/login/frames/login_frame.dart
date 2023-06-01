@@ -5,8 +5,10 @@ import 'package:vierqr/layouts/box_layout.dart';
 class LoginFrame extends StatelessWidget {
   final double width;
   final double height;
+  final double? heightBox;
   final Widget widget1;
   final Widget widget2;
+  final EdgeInsets? padding;
 
   const LoginFrame({
     super.key,
@@ -14,6 +16,8 @@ class LoginFrame extends StatelessWidget {
     required this.height,
     required this.widget1,
     required this.widget2,
+    this.padding,
+    this.heightBox,
   });
 
   @override
@@ -32,9 +36,10 @@ class LoginFrame extends StatelessWidget {
         child: (PlatformUtils.instance.resizeWhen(width, 750))
             ? BoxLayout(
                 width: 700,
-                height: 400,
+                height: heightBox ?? 400,
                 borderRadius: 5,
                 enableShadow: true,
+                padding: padding,
                 child: Row(
                   children: [
                     Expanded(
@@ -49,9 +54,10 @@ class LoginFrame extends StatelessWidget {
               )
             : BoxLayout(
                 width: width * 0.8,
-                height: 400,
+                height: heightBox,
                 borderRadius: 5,
                 enableShadow: true,
+                padding: padding,
                 child: widget1,
               ),
       ),

@@ -16,21 +16,22 @@ import 'package:vierqr/services/providers/search_clear_provider.dart';
 
 class SelectBankTypeWidget extends StatelessWidget {
   //
-  final PageController pageController;
-  final TextEditingController searchController;
+  final TextEditingController searchController = TextEditingController();
+
+  final Function(int)? callBack;
+
   //
-  static final List<BankTypeDTO> bankTypesResult = [];
-  static final List<BankTypeDTO> bankTypes = [];
+  final List<BankTypeDTO> bankTypesResult = [];
+  final List<BankTypeDTO> bankTypes = [];
   static late BankTypeBloc bankTypeBloc;
   static final _formKey = GlobalKey<FormState>();
 
   static final SearchClearProvider _searchClearProvider =
       SearchClearProvider(false);
 
-  const SelectBankTypeWidget({
+  SelectBankTypeWidget({
     super.key,
-    required this.pageController,
-    required this.searchController,
+    this.callBack,
   });
 
   void initialServices(BuildContext context) {
@@ -107,7 +108,7 @@ class SelectBankTypeWidget extends StatelessWidget {
                     hintText: 'Tìm theo tên',
                     controller: searchController,
                     keyboardAction: TextInputAction.done,
-                    autoFocus: false,
+                    autoFocus: true,
                     onChange: (value) {
                       if (searchController.text.isNotEmpty) {
                         _searchClearProvider.updateClearSearch(true);
@@ -171,8 +172,7 @@ class SelectBankTypeWidget extends StatelessWidget {
           Provider.of<AddBankProvider>(context, listen: false)
               .updateRegisterAuthentication(false);
         }
-        searchController.clear();
-        _animatedToPage(2);
+        callBack!(2);
       },
       child: BoxLayout(
         width: width,
@@ -206,15 +206,6 @@ class SelectBankTypeWidget extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-
-  //navigate to page
-  void _animatedToPage(int index) {
-    pageController.animateToPage(
-      index,
-      duration: const Duration(milliseconds: 200),
-      curve: Curves.easeInOutQuart,
     );
   }
 }

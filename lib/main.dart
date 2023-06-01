@@ -13,6 +13,7 @@ import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/utils/log.dart';
+import 'package:vierqr/commons/utils/pref_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_card/views/bank_card_detail_view.dart';
@@ -92,6 +93,7 @@ late SharedPreferences sharedPrefs;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   sharedPrefs = await SharedPreferences.getInstance();
+  await SharedPrefs.instance.init();
   await _initialServiceHelper();
   if (kIsWeb) {
     await Firebase.initializeApp(
@@ -335,7 +337,7 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.UI_SETTING: (context) => const ThemeSettingView(),
                   // Routes.TRANSACTION_HISTORY: (context) =>
                   //     const TransactionHistory(),
-                  Routes.ADD_BANK_CARD: (context) => const AddBankCardView(),
+                  Routes.ADD_BANK_CARD: (context) => AddBankCardView(),
                   Routes.BANK_CARD_GENERATED_VIEW: (context) =>
                       const BankCardGeneratedView(),
                   Routes.BANK_MEMBER_VIEW: (context) => const BankMemberView(),
