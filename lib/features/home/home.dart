@@ -11,6 +11,7 @@ import 'package:vierqr/features/bank_card/views/bank_card_select_view.dart';
 import 'package:vierqr/features/home/dashboard.dart';
 import 'package:vierqr/features/home/widgets/disconnect_widget.dart';
 import 'package:vierqr/features/home/widgets/maintain_widget.dart';
+import 'package:vierqr/features/introduce/views/introduce_screen.dart';
 import 'package:vierqr/features/notification/blocs/notification_bloc.dart';
 import 'package:vierqr/features/notification/events/notification_event.dart';
 import 'package:vierqr/features/notification/states/notification_state.dart';
@@ -35,8 +36,6 @@ import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
 import 'dart:ui';
 
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
-
-import 'widgets/bottom_navigation.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -95,6 +94,7 @@ class _HomeScreen extends State<HomeScreen>
     _homeScreens.addAll(
       [
         const BankCardSelectView(key: PageStorageKey('QR_GENERATOR_PAGE')),
+        IntroduceScreen(),
         const SizedBox(),
         const DashboardView(key: PageStorageKey('SMS_LIST_PAGE')),
         UserSetting(
@@ -472,12 +472,11 @@ class _HomeScreen extends State<HomeScreen>
     );
   }
 
-
   //build shorcuts in bottom bar
   Widget _buildShortcut(int index, String url, BuildContext context) {
     return GestureDetector(
       onTap: () {
-        if (index != 1) {
+        if (index != 2) {
           _animatedToPage(index);
         } else {
           if (QRScannerHelper.instance.getQrIntro()) {
@@ -496,7 +495,7 @@ class _HomeScreen extends State<HomeScreen>
         width: 45,
         height: 45,
         decoration: BoxDecoration(
-          color: (index == 1)
+          color: (index == 2)
               ? DefaultTheme.PURPLE_NEON.withOpacity(0.5)
               : DefaultTheme.TRANSPARENT,
           borderRadius: BorderRadius.circular(15),
@@ -526,29 +525,6 @@ class _HomeScreen extends State<HomeScreen>
       );
       _animatedToPage(index);
     }
-  }
-
-  //get image assets
-  String _getAssetIcon(int index, bool isSelected) {
-    const String prefix = 'assets/images/';
-    String assetImage = (index == 0 && isSelected)
-        ? 'ic-card-selected.png'
-        : (index == 0 && !isSelected)
-            ? 'ic-card-unselect.png'
-            : (index == 1)
-                ? 'ic-qr-scanning.png'
-                : (index == 2 && isSelected)
-                    ? 'ic-dashboard.png'
-                    : (index == 2 && !isSelected)
-                        ? 'ic-dashboard-unselect.png'
-                        : (index == 3 && isSelected)
-                            ? 'ic-user.png'
-                            : (index == 3 && isSelected)
-                                ? 'ic-user-unselect.png'
-                                : (index == 4 && isSelected)
-                                    ? 'ic-user.png'
-                                    : 'ic-user-unselect.png';
-    return '$prefix$assetImage';
   }
 
   //get title page
@@ -614,6 +590,17 @@ class _HomeScreen extends State<HomeScreen>
     }
 
     if (indexSelected == 1) {
+      titleWidget = const Text(
+        'Mở tài khoản MB',
+        style: TextStyle(
+          fontFamily: 'NewYork',
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.2,
+        ),
+      );
+    }
+    if (indexSelected == 2) {
       titleWidget = RichText(
         textAlign: TextAlign.left,
         text: TextSpan(
@@ -637,10 +624,10 @@ class _HomeScreen extends State<HomeScreen>
           ],
         ),
       );
-    }
-    if (indexSelected == 2) {
       /* title =
           '${TimeUtils.instance.getCurrentDateInWeek()}\n${TimeUtils.instance.getCurentDate()}';*/
+    }
+    if (indexSelected == 3) {
       titleWidget = RichText(
         textAlign: TextAlign.left,
         text: TextSpan(
@@ -667,20 +654,9 @@ class _HomeScreen extends State<HomeScreen>
         ),
       );
     }
-    if (indexSelected == 3) {
-      titleWidget = const Text(
-        'Cá nhân',
-        style: TextStyle(
-          fontFamily: 'NewYork',
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.2,
-        ),
-      );
-    }
     if (indexSelected == 4) {
       titleWidget = const Text(
-        'Giới thiệu',
+        'Cá nhân',
         style: TextStyle(
           fontFamily: 'NewYork',
           fontSize: 18,

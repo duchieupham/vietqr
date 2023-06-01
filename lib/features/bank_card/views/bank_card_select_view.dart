@@ -858,7 +858,7 @@ class _StackedList extends State<StackedList> {
                       ),
                       Padding(padding: EdgeInsets.only(left: 5)),
                       Text(
-                        'ngân hàng',
+                        'TK ngân hàng',
                         style: TextStyle(
                           color: DefaultTheme.GREEN,
                         ),
