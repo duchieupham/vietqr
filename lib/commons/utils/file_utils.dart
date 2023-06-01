@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:image/image.dart' as img;
 import 'package:vierqr/commons/utils/log.dart';
 
@@ -6,21 +7,23 @@ class FileUtils {
   const FileUtils._privateConsrtructor();
 
   static const FileUtils _instance = FileUtils._privateConsrtructor();
+
   static FileUtils get instance => _instance;
+  static const int kb = 1024;
+  static const int second = 2;
 
   File? compressImage(File file) {
     File? result;
     try {
-      int size = file.lengthSync();
-      print('----sized:$size');
+      double sizeMB = (file.lengthSync()) / pow(kb, 2);
       int quality = 100;
-      if (size > 1048576) {
-        if (size > 1048576 && size < 2097152) {
+      if (sizeMB > 1) {
+        if (sizeMB > 1 && sizeMB < second) {
           quality = 70;
-        } else if (size >= 2097152 && size < 4194304) {
-          quality = 60;
-        } else if (size >= 4194304 && size < 4194304 * 2) {
-          quality = 40;
+        } else if (sizeMB >= second && sizeMB < (second * 2)) {
+          quality = 50;
+        } else if (sizeMB >= (second * 2) && sizeMB < (second * 4)) {
+          quality = 20;
         } else {
           quality = 40;
         }
