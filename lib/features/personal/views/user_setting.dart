@@ -25,7 +25,8 @@ class UserSetting extends StatefulWidget {
   State<StatefulWidget> createState() => _UserSetting();
 }
 
-class _UserSetting extends State<UserSetting> {
+class _UserSetting extends State<UserSetting>
+    with AutomaticKeepAliveClientMixin {
   static late LoginBloc _loginBloc;
   static late LogoutBloc _logoutBloc;
 
@@ -174,7 +175,6 @@ class _UserSetting extends State<UserSetting> {
   }
 
   Widget _buildAvatarWidget(BuildContext context) {
-    print('build avatar');
     double size = 100;
     String imgId = UserInformationHelper.instance.getAccountInformation().imgId;
     return Consumer<AvatarProvider>(
@@ -194,4 +194,7 @@ class _UserSetting extends State<UserSetting> {
   void dispose() {
     super.dispose();
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
