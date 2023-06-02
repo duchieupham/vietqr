@@ -93,7 +93,7 @@ late SharedPreferences sharedPrefs;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   sharedPrefs = await SharedPreferences.getInstance();
-  await SharedPrefs.instance.init();
+  // await SharedPrefs.instance.init();
   await _initialServiceHelper();
   if (kIsWeb) {
     await Firebase.initializeApp(
