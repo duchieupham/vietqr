@@ -45,13 +45,13 @@ class BankCardSelectView extends StatefulWidget {
 
 class _BankCardSelectViewState extends State<BankCardSelectView>
     with AutomaticKeepAliveClientMixin {
-  static final List<BankAccountDTO> bankAccounts = [];
-  static final List<Color> cardColors = [];
-  static final List<QRGeneratedDTO> qrGenerateds = [];
-  static final List<Widget> cardWidgets = [];
-  static final ScrollController scrollController = ScrollController();
-  static late QRBloc qrBloc;
-  static final CarouselController carouselController = CarouselController();
+  final List<BankAccountDTO> bankAccounts = [];
+  final List<Color> cardColors = [];
+  final List<QRGeneratedDTO> qrGenerateds = [];
+  final List<Widget> cardWidgets = [];
+  final ScrollController scrollController = ScrollController();
+  late QRBloc qrBloc;
+  final CarouselController carouselController = CarouselController();
 
   late BusinessInformationBloc businessInformationBloc;
   late BankCardBloc bankCardBloc;
@@ -59,23 +59,34 @@ class _BankCardSelectViewState extends State<BankCardSelectView>
   initialServices(BuildContext context) {
     businessInformationBloc = BlocProvider.of(context);
     bankCardBloc = BlocProvider.of(context);
-
+    qrBloc = BlocProvider.of(context);
     Provider.of<BankCardSelectProvider>(context, listen: false).reset();
     bankAccounts.clear();
     cardColors.clear();
+  }
+
+  initData() {
     String userId = UserInformationHelper.instance.getUserId();
     bankCardBloc.add(BankCardEventGetList(userId: userId));
-    qrBloc = BlocProvider.of(context);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initialServices(context);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      initData();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final double width = MediaQuery.of(context).size.width;
     final double maxListHeight = MediaQuery.of(context).size.height - 200;
     final double height = MediaQuery.of(context).size.height;
     double sizedBox = 0;
     double listHeight = 0;
-    initialServices(context);
     return Consumer<BankArrangementProvider>(
       builder: (context, provider, child) {
         return Container(
@@ -92,7 +103,6 @@ class _BankCardSelectViewState extends State<BankCardSelectView>
           child: (provider.type == 0)
               ? Column(
                   children: [
-                    const Padding(padding: EdgeInsets.only(top: 100)),
                     BlocConsumer<BankCardBloc, BankCardState>(
                       listener: (context, state) {
                         if (state is BankCardGetListSuccessState) {
@@ -831,8 +841,13 @@ class _StackedList extends State<StackedList> {
                           ),
                   ),
         const Padding(padding: EdgeInsets.only(top: 10)),
-        SizedBox(
-          width: width,
+        InkWell(
+          onTap: () {
+            Provider.of<AddBankProvider>(context, listen: false)
+                .updateSelect(1);
+            Navigator.pushNamed(context, Routes.ADD_BANK_CARD,
+                arguments: {'pageIndex': 1});
+          },
           child: Row(
             children: [
               BoxLayout(
@@ -841,30 +856,22 @@ class _StackedList extends State<StackedList> {
                 bgColor: Theme.of(context).buttonColor,
                 borderRadius: 5,
                 enableShadow: true,
-                child: InkWell(
-                  onTap: () {
-                    Provider.of<AddBankProvider>(context, listen: false)
-                        .updateSelect(1);
-                    Navigator.pushNamed(context, Routes.ADD_BANK_CARD,
-                        arguments: {'pageIndex': 1});
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(
-                        Icons.add_rounded,
-                        size: 15,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(
+                      Icons.add_rounded,
+                      size: 15,
+                      color: DefaultTheme.GREEN,
+                    ),
+                    Padding(padding: EdgeInsets.only(left: 5)),
+                    Text(
+                      'TK ngân hàng',
+                      style: TextStyle(
                         color: DefaultTheme.GREEN,
                       ),
-                      Padding(padding: EdgeInsets.only(left: 5)),
-                      Text(
-                        'TK ngân hàng',
-                        style: TextStyle(
-                          color: DefaultTheme.GREEN,
-                        ),
-                      )
-                    ],
-                  ),
+                    )
+                  ],
                 ),
               ),
               const Spacer(),

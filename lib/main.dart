@@ -249,7 +249,7 @@ class _VietQRApp extends State<VietQRApp> {
             create: (BuildContext context) => PermissionBloc(),
           ),
           BlocProvider<BankTypeBloc>(
-            create: (BuildContext context) => BankTypeBloc(),
+            create: (BuildContext context) => BankTypeBloc(context),
           ),
           BlocProvider<TokenBloc>(
             create: (BuildContext context) => TokenBloc(),
@@ -337,7 +337,7 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.UI_SETTING: (context) => const ThemeSettingView(),
                   // Routes.TRANSACTION_HISTORY: (context) =>
                   //     const TransactionHistory(),
-                  Routes.ADD_BANK_CARD: (context) => AddBankCardView(),
+                  Routes.ADD_BANK_CARD: (context) => const AddBankCardView(),
                   Routes.BANK_CARD_GENERATED_VIEW: (context) =>
                       const BankCardGeneratedView(),
                   Routes.BANK_MEMBER_VIEW: (context) => const BankMemberView(),

@@ -22,39 +22,51 @@ import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/services/providers/add_bank_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
-class InputInformationBankWidget extends StatelessWidget {
-  final TextEditingController bankAccountController;
-  final TextEditingController nameController;
-  final TextEditingController nationalController;
-  final TextEditingController phoneAuthenController;
-  final PageController pageController;
+class InputInformationBankWidget extends StatefulWidget {
+  final Function(int)? callBack;
+
+  const InputInformationBankWidget({
+    super.key,
+    required this.callBack,
+  });
+
+  @override
+  State<InputInformationBankWidget> createState() =>
+      _InputInformationBankWidgetState();
+}
+
+class _InputInformationBankWidgetState
+    extends State<InputInformationBankWidget> {
+  final bankAccountController = TextEditingController();
+
+  final nameController = TextEditingController();
+
+  final nationalController = TextEditingController();
+
+  final phoneAuthController = TextEditingController();
+
   late BankCardBloc bankCardBloc;
+
   final _focusNode = FocusNode();
+
   final _focusNodeName = FocusNode();
 
-  InputInformationBankWidget({
-    super.key,
-    required this.bankAccountController,
-    required this.pageController,
-    required this.nationalController,
-    required this.phoneAuthenController,
-    required this.nameController,
-  });
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      initialServices(context);
+    });
+  }
 
   void initialServices(BuildContext context) {
     bankCardBloc = BlocProvider.of(context);
-    bankAccountController.clear();
-    nameController.clear();
-    nationalController.clear();
-    phoneAuthenController.clear();
-    Provider.of<AddBankProvider>(context, listen: false).reset();
     _focusNode.requestFocus();
   }
 
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
-    initialServices(context);
 
     return BlocConsumer<BankCardBloc, BankCardState>(
       listener: (context, state) {
@@ -93,7 +105,7 @@ class InputInformationBankWidget extends StatelessWidget {
           if (Provider.of<AddBankProvider>(context, listen: false)
               .registerAuthentication) {
             Navigator.pop(context);
-            _animatedToPage(3);
+            widget.callBack!(3);
           } else {
             String bankTypeId =
                 Provider.of<AddBankProvider>(context, listen: false)
@@ -141,7 +153,7 @@ class InputInformationBankWidget extends StatelessWidget {
             businessName: '',
             isAuthenticated: false,
           );
-          phoneAuthenController.clear();
+          phoneAuthController.clear();
           nameController.clear();
           nationalController.clear();
           bankAccountController.clear();
@@ -464,14 +476,6 @@ class InputInformationBankWidget extends StatelessWidget {
     );
   }
 
-  void _animatedToPage(int index) {
-    pageController.animateToPage(
-      index,
-      duration: const Duration(milliseconds: 200),
-      curve: Curves.easeInOutQuart,
-    );
-  }
-
   void _onSubmitted(Object value, BuildContext context) {
     if (_focusNode.hasFocus) {
       _focusNode.unfocus();
@@ -499,5 +503,14 @@ class InputInformationBankWidget extends StatelessWidget {
         bankCardBloc.add(BankCardEventSearchName(dto: bankNameSearchDTO));
       }
     }
+  }
+
+  @override
+  void dispose() {
+    bankAccountController.clear();
+    nameController.clear();
+    nationalController.clear();
+    phoneAuthController.clear();
+    super.dispose();
   }
 }

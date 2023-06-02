@@ -77,8 +77,9 @@ dependencies:
   esc_pos_utils: ^1.1.0
   sqflite: ^2.2.6
   cached_network_image: ^3.2.3
-  # hive: ^2.2.3
-  # hive_flutter: ^1.1.0
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  dudv_base: ^1.2.1+1
 
 
 
