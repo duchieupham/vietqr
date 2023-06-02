@@ -22,6 +22,7 @@ import 'package:vierqr/features/bank_card/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_card/events/bank_card_event.dart';
 import 'package:vierqr/features/bank_card/states/bank_card_state.dart';
 import 'package:vierqr/features/generate_qr/views/create_qr.dart';
+import 'package:vierqr/features/home/widgets/custom_app_bar_widget.dart';
 import 'package:vierqr/features/printer/views/printing_view.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/main.dart';
@@ -90,10 +91,11 @@ class BankCardDetailView extends StatelessWidget {
     bankId = arg['bankId'] ?? '';
     initialServives(context, bankId);
     return Scaffold(
-      appBar: AppBar(toolbarHeight: 0),
+      appBar: CustomAppBarWidget(
+        child: SubHeader(title: 'Chi tiết TK ngân hàng'),
+      ),
       body: Column(
         children: [
-          SubHeader(title: 'Chi tiết TK ngân hàng'),
           Expanded(
             child: RefreshIndicator(
               onRefresh: _refresh,

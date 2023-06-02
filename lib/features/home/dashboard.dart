@@ -64,18 +64,15 @@ class _DashboardViewState extends State<DashboardView>
       child: SizedBox(
         width: width,
         height: height,
-        child: Padding(
-          padding: const EdgeInsets.only(top: 70),
-          child: ListView(
-            shrinkWrap: true,
-            physics: const AlwaysScrollableScrollPhysics(),
-            children: [
-              _buildSuggestion(context),
-              _buildShortcut(context),
-              _buildBusinessWidget(context),
-              const Padding(padding: EdgeInsets.only(bottom: 100)),
-            ],
-          ),
+        child: ListView(
+          shrinkWrap: true,
+          physics: const AlwaysScrollableScrollPhysics(),
+          children: [
+            _buildSuggestion(context),
+            _buildShortcut(context),
+            _buildBusinessWidget(context),
+            const Padding(padding: EdgeInsets.only(bottom: 100)),
+          ],
         ),
       ),
     );

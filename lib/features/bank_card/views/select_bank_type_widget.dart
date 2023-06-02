@@ -14,34 +14,42 @@ import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/services/providers/add_bank_provider.dart';
 import 'package:vierqr/services/providers/search_clear_provider.dart';
 
-class SelectBankTypeWidget extends StatelessWidget {
-  //
-  final TextEditingController searchController = TextEditingController();
-
+class SelectBankTypeWidget extends StatefulWidget {
   final Function(int)? callBack;
 
-  //
+  const SelectBankTypeWidget({super.key, this.callBack});
+
+  @override
+  State<SelectBankTypeWidget> createState() => _SelectBankTypeWidgetState();
+}
+
+class _SelectBankTypeWidgetState extends State<SelectBankTypeWidget> {
+  final TextEditingController searchController = TextEditingController();
+
+  final _searchFocus = FocusNode();
+
   final List<BankTypeDTO> bankTypesResult = [];
+
   final List<BankTypeDTO> bankTypes = [];
-  static late BankTypeBloc bankTypeBloc;
-  static final _formKey = GlobalKey<FormState>();
 
-  static final SearchClearProvider _searchClearProvider =
-      SearchClearProvider(false);
+  late BankTypeBloc bankTypeBloc;
 
-  SelectBankTypeWidget({
-    super.key,
-    this.callBack,
-  });
+  final _formKey = GlobalKey<FormState>();
 
-  void initialServices(BuildContext context) {
+  final SearchClearProvider _searchClearProvider = SearchClearProvider(false);
+
+  @override
+  void initState() {
+    super.initState();
     bankTypeBloc = BlocProvider.of(context);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      bankTypeBloc.add(const BankTypeEventGetList());
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
-    initialServices(context);
     return Column(
       children: [
         Expanded(
@@ -62,6 +70,9 @@ class SelectBankTypeWidget extends StatelessWidget {
                 if (state.list.isNotEmpty && bankTypes.isEmpty) {
                   bankTypes.addAll(state.list);
                   bankTypesResult.addAll(bankTypes);
+                  Future.delayed(const Duration(microseconds: 500), () {
+                    _searchFocus.requestFocus();
+                  });
                 }
               }
               if (state is BankTypeSearchState) {
@@ -108,7 +119,8 @@ class SelectBankTypeWidget extends StatelessWidget {
                     hintText: 'Tìm theo tên',
                     controller: searchController,
                     keyboardAction: TextInputAction.done,
-                    autoFocus: true,
+                    autoFocus: false,
+                    focusNode: _searchFocus,
                     onChange: (value) {
                       if (searchController.text.isNotEmpty) {
                         _searchClearProvider.updateClearSearch(true);
@@ -172,7 +184,7 @@ class SelectBankTypeWidget extends StatelessWidget {
           Provider.of<AddBankProvider>(context, listen: false)
               .updateRegisterAuthentication(false);
         }
-        callBack!(2);
+        widget.callBack!(2);
       },
       child: BoxLayout(
         width: width,
