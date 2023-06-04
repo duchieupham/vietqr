@@ -29,9 +29,9 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Using for Scan QR Code</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string></string>
+	<string>Using for update your avatar, update your business logo and banner.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string></string>
+	<string>Using for update your avatar, update your business logo and banner.</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>mbbank</string>
@@ -52,13 +52,13 @@
 		<string>bluetooth-central</string>
 	</array>
 	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>Need BLE permission</string>
+	<string>Using for connect printer to print QR Code</string>
 	<key>LSApplicationCategoryType</key>
 	<array>
 		<string></string>
 	</array>
 	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>Need BLE permission</string>
+	<string>Using for connect printer to print QR Code</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Need Location permission</string>
 	<key>NSLocationAlwaysUsageDescription</key>

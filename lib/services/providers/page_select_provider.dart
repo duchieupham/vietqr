@@ -23,7 +23,7 @@ class PageSelectProvider with ChangeNotifier {
         key: PageStorageKey('QR_GENERATOR_PAGE'),
       ),
     ),
-    NavigationDTO(
+    const NavigationDTO(
       name: 'Mở tài khoản MB',
       assetsActive: 'assets/images/ic-linked.png',
       assetsUnActive: 'assets/images/ic-linked-unselect.png',

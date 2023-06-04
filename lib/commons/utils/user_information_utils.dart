@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'dart:io';
+
+import 'package:vierqr/commons/utils/log.dart';
 
 class UserInformationUtils {
   const UserInformationUtils._privateConsrtructor();
@@ -46,6 +49,24 @@ class UserInformationUtils {
       result = 3;
     } else {
       result = 3;
+    }
+    return result;
+  }
+
+  //get user device IP address
+  Future<String> getIPAddress() async {
+    String result = '';
+    try {
+      for (var interface in await NetworkInterface.list()) {
+        for (var addr in interface.addresses) {
+          // kiểm tra xem địa chỉ IP có phải là IPv4 hay không
+          if (addr.type == InternetAddressType.IPv4 && !addr.isLinkLocal) {
+            result = addr.address;
+          }
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
     }
     return result;
   }

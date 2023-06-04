@@ -3,6 +3,7 @@ import 'package:vierqr/commons/enums/textfield_type.dart';
 import 'package:vierqr/commons/utils/encrypt_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
+import 'package:vierqr/commons/utils/user_information_utils.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/sub_header_widget.dart';
@@ -330,7 +331,7 @@ class RegisterView extends StatelessWidget {
         text: 'Đăng ký tài khoản',
         textColor: DefaultTheme.WHITE,
         bgColor: DefaultTheme.GREEN,
-        function: () {
+        function: () async {
           Provider.of<RegisterProvider>(context, listen: false).updateErrs(
             phoneErr: !StringUtils.instance.isNumeric(_phoneNoController.text),
             passErr:
@@ -341,15 +342,16 @@ class RegisterView extends StatelessWidget {
           );
           if (Provider.of<RegisterProvider>(context, listen: false)
               .isValidValidation()) {
+            String userIP = await UserInformationUtils.instance.getIPAddress();
             AccountLoginDTO dto = AccountLoginDTO(
               phoneNo: _phoneNoController.text,
               password: EncryptUtils.instance.encrypted(
                 _phoneNoController.text,
                 _passwordController.text,
               ),
-              device: '',
+              device: userIP,
               fcmToken: '',
-              platform: '',
+              platform: 'MOBILE',
             );
             _registerBloc.add(RegisterEventSubmit(dto: dto));
           }

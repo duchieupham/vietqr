@@ -496,9 +496,9 @@ class _HomeScreen extends State<HomeScreen>
         height: 45,
         decoration: BoxDecoration(
           color: (index == 2)
-              ? DefaultTheme.PURPLE_NEON.withOpacity(0.5)
+              ? DefaultTheme.PURPLE_NEON.withOpacity(0.8)
               : DefaultTheme.TRANSPARENT,
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(8),
         ),
         child: Image.asset(
           url,
