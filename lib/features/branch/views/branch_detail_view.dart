@@ -597,7 +597,7 @@ class BranchDetailView extends StatelessWidget {
               child: Row(
                 children: [
                   ButtonIconWidget(
-                    width: width / 2 - 45,
+                    width: width / 2 - 35,
                     height: 30,
                     icon: Icons.info_rounded,
                     title: 'Chi tiết',
@@ -618,7 +618,7 @@ class BranchDetailView extends StatelessWidget {
                     padding: EdgeInsets.only(left: 10),
                   ),
                   ButtonIconWidget(
-                    width: width / 2 - 45,
+                    width: width / 2 - 35,
                     height: 30,
                     textSize: 12,
                     icon: Icons.remove_circle_outline_rounded,

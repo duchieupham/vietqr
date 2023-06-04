@@ -55,8 +55,8 @@ class DefaultTheme {
   static const Color BANK_CARD_COLOR_2 = Color(0xFFE4E3DF);
   static const Color BANK_CARD_COLOR_3 = Color(0xFFA1A09C);
   static const Color COLOR_CBC2ED = Color(0xFFCBC2ED);
-  static const Color COLOR_141CD6 = Color(0xFF141CD6);
-  static const Color COLOR_F4272A = Color(0xFFF4272A);
+  static const Color BLUE_MB = Color(0xFF141CD6);
+  static const Color RED_MB = Color(0xFFF4272A);
 
   //THEME NAME
   static const String THEME_LIGHT = 'LIGHT';
@@ -87,7 +87,7 @@ class DefaultThemeData {
       accentColor: DefaultTheme.GREY_LIGHT,
       hoverColor: DefaultTheme.TRANSPARENT,
       toggleableActiveColor: DefaultTheme.BLACK_LIGHT,
-      //  focusColor: DefaultTheme.BLUE_TEXT,
+      focusColor: DefaultTheme.BLUE_TEXT,
       cardColor: DefaultTheme.BLACK_BUTTON,
       shadowColor: DefaultTheme.BLACK_LIGHT,
       hintColor: DefaultTheme.WHITE,
@@ -115,7 +115,7 @@ class DefaultThemeData {
       primaryColor: DefaultTheme.WHITE,
       hoverColor: DefaultTheme.TRANSPARENT,
       toggleableActiveColor: DefaultTheme.WHITE,
-      // focusColor: DefaultTheme.BLUE_DARK,
+      focusColor: DefaultTheme.BLUE_MB,
       accentColor: DefaultTheme.GREY_TEXT,
       cardColor: DefaultTheme.WHITE,
       shadowColor: DefaultTheme.GREY_TOP_TAB_BAR,
