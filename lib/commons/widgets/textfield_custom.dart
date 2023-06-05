@@ -1,13 +1,15 @@
 import 'package:dudv_base/dudv_base.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
+import 'package:vierqr/layouts/border_layout.dart';
 
 class TextFieldCustom extends StatefulWidget {
   final double width;
   final String hintText;
   final TextEditingController? controller;
-  final ValueChanged<Object>? onChange;
+  final ValueChanged<String>? onChange;
   final VoidCallback? onEditingComplete;
   final ValueChanged<Object>? onSubmitted;
   final TextInputAction? keyboardAction;
@@ -28,6 +30,13 @@ class TextFieldCustom extends StatefulWidget {
   final TextStyle? errorStyle;
   final Function(String? error)? showToast;
   final FormFieldValidator<String>? validator;
+  final List<TextInputFormatter>? inputFormatter;
+
+  //Border textfield
+  final double widthLayout;
+  final EdgeInsets? paddingLayout;
+  final double? heightLayout;
+  final bool isBorder;
 
   const TextFieldCustom({
     Key? key,
@@ -55,6 +64,11 @@ class TextFieldCustom extends StatefulWidget {
     this.errorStyle,
     this.showToast,
     this.validator,
+    required this.widthLayout,
+    this.paddingLayout,
+    this.heightLayout,
+    this.inputFormatter,
+    this.isBorder = true,
   }) : super(key: key);
 
   @override
@@ -67,70 +81,105 @@ class _TextFieldWidgetState extends State<TextFieldCustom> {
 
   @override
   Widget build(BuildContext context) {
+    Widget textFiledTypeLabel = TextField(
+      obscureText: widget.isObscureText,
+      controller: _editingController,
+      onChanged: widget.onChange,
+      textAlign:
+          (widget.textAlign != null) ? widget.textAlign! : TextAlign.left,
+      onEditingComplete: widget.onEditingComplete,
+      inputFormatters: widget.inputFormatter,
+      onSubmitted: widget.onSubmitted,
+      onTapOutside: widget.onTapOutside,
+      maxLength: widget.maxLength,
+      enabled: widget.enable,
+      autofocus: widget.autoFocus ?? false,
+      focusNode: widget.focusNode,
+      keyboardType: widget.inputType,
+      maxLines: (widget.maxLines == null) ? 1 : widget.maxLines,
+      textInputAction: widget.keyboardAction,
+      decoration: InputDecoration(
+        hintText: widget.hintText,
+        counterText: '',
+        border: InputBorder.none,
+        hintStyle: TextStyle(
+          fontSize: (widget.fontSize != null) ? widget.fontSize : 16,
+          color: (widget.title != null)
+              ? DefaultTheme.GREY_TEXT
+              : Theme.of(context).hintColor,
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+        focusedBorder: InputBorder.none,
+        enabledBorder: InputBorder.none,
+        errorBorder: InputBorder.none,
+      ),
+    );
+
+    Widget textFiled = TextField(
+      obscureText: widget.isObscureText,
+      controller: _editingController,
+      textAlign:
+          (widget.textAlign != null) ? widget.textAlign! : TextAlign.left,
+      onChanged: widget.onChange,
+      onSubmitted: widget.onSubmitted,
+      onEditingComplete: widget.onEditingComplete,
+      keyboardType: widget.inputType,
+      maxLines: 1,
+      maxLength: widget.maxLength,
+      textInputAction: widget.keyboardAction,
+      autofocus: widget.autoFocus ?? false,
+      focusNode: widget.focusNode,
+      enabled: widget.enable,
+      inputFormatters: widget.inputFormatter,
+      decoration: InputDecoration(
+        hintText: widget.hintText,
+        counterText: '',
+        border: InputBorder.none,
+        hintStyle: TextStyle(
+          fontSize: (widget.fontSize != null) ? widget.fontSize : 16,
+          color: Theme.of(context).hintColor,
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+        focusedBorder: InputBorder.none,
+        enabledBorder: InputBorder.none,
+        errorBorder: InputBorder.none,
+      ),
+    );
+
     return (widget.textFieldType != null &&
             widget.textFieldType == TextfieldType.LABEL)
         ? Column(
             children: [
               Container(
-                  width: widget.width,
-                  height: 60,
-                  alignment: Alignment.centerLeft,
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        width: (widget.titleWidth != null)
-                            ? widget.titleWidth
-                            : 80,
-                        child: Text(
-                          widget.title ?? '',
-                          style: TextStyle(
-                            fontSize: (widget.fontSize != null)
-                                ? widget.fontSize
-                                : 16,
-                          ),
+                width: widget.width,
+                height: 60,
+                alignment: Alignment.centerLeft,
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width:
+                          (widget.titleWidth != null) ? widget.titleWidth : 80,
+                      child: Text(
+                        widget.title ?? '',
+                        style: TextStyle(
+                          fontSize:
+                              (widget.fontSize != null) ? widget.fontSize : 16,
                         ),
                       ),
-                      Flexible(
-                        child: TextField(
-                          obscureText: widget.isObscureText,
-                          controller: _editingController,
-                          onChanged: widget.onChange,
-                          textAlign: (widget.textAlign != null)
-                              ? widget.textAlign!
-                              : TextAlign.left,
-                          onEditingComplete: widget.onEditingComplete,
-                          onSubmitted: widget.onSubmitted,
-                          onTapOutside: widget.onTapOutside,
-                          maxLength: widget.maxLength,
-                          enabled: widget.enable,
-                          autofocus: widget.autoFocus ?? false,
-                          focusNode: widget.focusNode,
-                          keyboardType: widget.inputType,
-                          maxLines:
-                              (widget.maxLines == null) ? 1 : widget.maxLines,
-                          textInputAction: widget.keyboardAction,
-                          decoration: InputDecoration(
-                            hintText: widget.hintText,
-                            counterText: '',
-                            border: InputBorder.none,
-                            hintStyle: TextStyle(
-                              fontSize: (widget.fontSize != null)
-                                  ? widget.fontSize
-                                  : 16,
-                              color: (widget.title != null)
-                                  ? DefaultTheme.GREY_TEXT
-                                  : Theme.of(context).hintColor,
-                            ),
-                            contentPadding:
-                                const EdgeInsets.symmetric(horizontal: 10),
-                            focusedBorder: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            errorBorder: InputBorder.none,
-                          ),
-                        ),
-                      ),
-                    ],
-                  )),
+                    ),
+                    Flexible(
+                      child: widget.isBorder
+                          ? BorderLayout(
+                              width: widget.widthLayout,
+                              isError: _msgError != null,
+                              padding: widget.paddingLayout,
+                              height: widget.heightLayout,
+                              child: textFiledTypeLabel)
+                          : textFiledTypeLabel,
+                    ),
+                  ],
+                ),
+              ),
               if (_msgError != null && !widget.isShowToast)
                 Container(
                   width: double.infinity,
@@ -153,37 +202,14 @@ class _TextFieldWidgetState extends State<TextFieldCustom> {
                 width: widget.width,
                 height: 60,
                 alignment: Alignment.center,
-                child: TextField(
-                  obscureText: widget.isObscureText,
-                  controller: _editingController,
-                  textAlign: (widget.textAlign != null)
-                      ? widget.textAlign!
-                      : TextAlign.left,
-                  onChanged: widget.onChange,
-                  onSubmitted: widget.onSubmitted,
-                  onEditingComplete: widget.onEditingComplete,
-                  keyboardType: widget.inputType,
-                  maxLines: 1,
-                  maxLength: widget.maxLength,
-                  textInputAction: widget.keyboardAction,
-                  autofocus: widget.autoFocus ?? false,
-                  focusNode: widget.focusNode,
-                  enabled: widget.enable,
-                  decoration: InputDecoration(
-                    hintText: widget.hintText,
-                    counterText: '',
-                    border: InputBorder.none,
-                    hintStyle: TextStyle(
-                      fontSize:
-                          (widget.fontSize != null) ? widget.fontSize : 16,
-                      color: Theme.of(context).hintColor,
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-                    focusedBorder: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    errorBorder: InputBorder.none,
-                  ),
-                ),
+                child: widget.isBorder
+                    ? BorderLayout(
+                        width: widget.widthLayout,
+                        isError: _msgError != null,
+                        padding: widget.paddingLayout,
+                        height: widget.heightLayout,
+                        child: textFiled)
+                    : textFiled,
               ),
               if (_msgError != null && !widget.isShowToast)
                 Container(
