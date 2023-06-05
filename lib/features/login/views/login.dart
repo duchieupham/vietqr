@@ -1,3 +1,4 @@
+import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:uuid/uuid.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
@@ -7,17 +8,17 @@ import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
-import 'package:vierqr/commons/widgets/textfield_widget.dart';
+import 'package:vierqr/commons/widgets/textfield_custom.dart';
 import 'package:vierqr/features/login/blocs/login_bloc.dart';
 import 'package:vierqr/features/login/events/login_event.dart';
 import 'package:vierqr/features/login/frames/login_frame.dart';
 import 'package:vierqr/features/login/states/login_state.dart';
 import 'package:vierqr/features/register/views/register_view.dart';
-import 'package:vierqr/layouts/border_layout.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/models/account_login_dto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vierqr/services/providers/login_provider.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -146,20 +147,23 @@ class _Login extends State<Login> {
                   height: 100,
                 ),
               ),
-              BorderLayout(
-                width: width,
-                isError: false,
-                child: TextFieldWidget(
-                  width: width,
-                  isObscureText: false,
-                  autoFocus: true,
-                  hintText: 'Số điện thoại',
-                  controller: phoneNoController,
-                  inputType: TextInputType.number,
-                  keyboardAction: TextInputAction.next,
-                  onChange: (vavlue) {},
-                ),
+              Consumer<ValidProvider>(
+                builder: (context, provider, child) {
+                  return TextFieldCustom(
+                    width: width,
+                    widthLayout: width,
+                    isObscureText: false,
+                    autoFocus: true,
+                    key: provider.phoneKey,
+                    hintText: 'Số điện thoại',
+                    controller: phoneNoController,
+                    inputType: TextInputType.phone,
+                    keyboardAction: TextInputAction.next,
+                    onChange: provider.onChangePhone,
+                  );
+                },
               ),
+
               // const Padding(padding: EdgeInsets.only(top: 15)),
               // const Text(
               //   'Quên mật khẩu?',

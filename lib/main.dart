@@ -70,6 +70,7 @@ import 'package:vierqr/services/providers/business_inforamtion_provider.dart';
 import 'package:vierqr/services/providers/create_qr_page_select_provider.dart';
 import 'package:vierqr/services/providers/create_qr_provider.dart';
 import 'package:vierqr/services/providers/home_tab_provider.dart';
+import 'package:vierqr/services/providers/login_provider.dart';
 import 'package:vierqr/services/providers/memeber_manage_provider.dart';
 import 'package:vierqr/services/providers/page_select_provider.dart';
 import 'package:vierqr/services/providers/pin_provider.dart';
@@ -310,6 +311,7 @@ class _VietQRApp extends State<VietQRApp> {
                 create: (context) => BankArrangementProvider()),
             ChangeNotifierProvider(create: (context) => ActionShareProvider()),
             ChangeNotifierProvider(create: (context) => AvatarProvider()),
+            ChangeNotifierProvider(create: (context) => ValidProvider()),
           ],
           child: Consumer<ThemeProvider>(
             builder: (context, themeSelect, child) {
@@ -353,7 +355,7 @@ class _VietQRApp extends State<VietQRApp> {
                       const TransactionHistoryView(),
                   Routes.SCAN_QR_VIEW: (context) => const QRScanView(),
                   Routes.PRINTER_SETTING: (context) => PrinterSettingView(),
-                  Routes.SEARCH_BANK: (context) => const SearchBankView(),
+                  Routes.SEARCH_BANK: (context) => SearchBankView(),
                   Routes.NOTIFICATION_VIEW: (context) =>
                       const NotificationView(),
                   Routes.TRANSACTION_DETAIL: (context) =>

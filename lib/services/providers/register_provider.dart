@@ -1,5 +1,6 @@
 import 'package:vierqr/commons/utils/bank_information_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:vierqr/commons/utils/string_utils.dart';
 
 class RegisterProvider with ChangeNotifier {
   //error handler
@@ -8,8 +9,26 @@ class RegisterProvider with ChangeNotifier {
   bool _isConfirmPassErr = false;
 
   get phoneErr => _isPhoneErr;
+
   get passwordErr => _isPasswordErr;
+
   get confirmPassErr => _isConfirmPassErr;
+
+  final dynamic _phoneKey = GlobalKey();
+  final dynamic _passKey = GlobalKey();
+  final dynamic _rePassKey = GlobalKey();
+
+  get phoneKey => _phoneKey;
+
+  get passKey => _passKey;
+
+  get rePassKey => _rePassKey;
+
+  void onChangePhone(String value) {
+    String? msgErr = StringUtils.instance.validatePhone(value);
+    _phoneKey.currentState.showError(msgErr);
+    notifyListeners();
+  }
 
   void updateErrs({
     required bool phoneErr,

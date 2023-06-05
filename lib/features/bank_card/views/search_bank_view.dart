@@ -15,11 +15,11 @@ class SearchBankView extends StatelessWidget {
   static final SearchClearProvider _searchClearProvider =
       SearchClearProvider(false);
 
-  static final TextEditingController searchController = TextEditingController();
+  final TextEditingController searchController = TextEditingController();
 
   static final _formKey = GlobalKey<FormState>();
 
-  const SearchBankView({super.key});
+  SearchBankView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +109,27 @@ class SearchBankView extends StatelessWidget {
                           ),
                         ],
                       )
-                    : const SizedBox();
+                    : Column(
+                        children: [
+                          const Padding(padding: EdgeInsets.only(top: 10)),
+                          Expanded(
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: provider.banks.length,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              itemBuilder: (context, index) {
+                                return _buildCardItem(
+                                  context: context,
+                                  index: index,
+                                  dto: provider.banks[index],
+                                  color: provider.colors[index],
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      );
               },
             ),
           ),
@@ -136,7 +156,7 @@ class SearchBankView extends StatelessWidget {
                       hintText: 'Nhập để tìm kiếm',
                       controller: searchController,
                       keyboardAction: TextInputAction.done,
-                      autoFocus: false,
+                      autoFocus: true,
                       onChange: (value) {
                         search(bankCardProvider);
                       },
