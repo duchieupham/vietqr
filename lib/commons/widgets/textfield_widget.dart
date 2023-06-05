@@ -1,14 +1,13 @@
-import 'package:dudv_base/dudv_base.dart';
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
 
-class TextFieldWidget extends StatefulWidget {
+class TextFieldWidget extends StatelessWidget {
   final double width;
   final String hintText;
-  final TextEditingController? controller;
+  final TextEditingController controller;
   final ValueChanged<Object>? onChange;
-  final VoidCallback? onEditingComplete;
+  final VoidCallback? onEdittingComplete;
   final ValueChanged<Object>? onSubmitted;
   final TextInputAction? keyboardAction;
   final TextInputType inputType;
@@ -24,16 +23,12 @@ class TextFieldWidget extends StatefulWidget {
   final int? maxLength;
   final TextAlign? textAlign;
   final Function(PointerDownEvent)? onTapOutside;
-  final bool isShowToast;
-  final TextStyle? errorStyle;
-  final Function(String? error)? showToast;
-  final FormFieldValidator<String>? validator;
 
   const TextFieldWidget({
     Key? key,
     required this.width,
     required this.hintText,
-    this.controller,
+    required this.controller,
     required this.keyboardAction,
     required this.onChange,
     required this.inputType,
@@ -45,198 +40,101 @@ class TextFieldWidget extends StatefulWidget {
     this.autoFocus,
     this.focusNode,
     this.maxLines,
-    this.onEditingComplete,
+    this.onEdittingComplete,
     this.onSubmitted,
     this.maxLength,
     this.textAlign,
     this.onTapOutside,
     this.enable,
-    this.isShowToast = false,
-    this.errorStyle,
-    this.showToast,
-    this.validator,
   }) : super(key: key);
 
   @override
-  State<TextFieldWidget> createState() => _TextFieldWidgetState();
-}
-
-class _TextFieldWidgetState extends State<TextFieldWidget> {
-  String? _msgError;
-  final _controller = TextEditingController();
-
-  @override
   Widget build(BuildContext context) {
-    return (widget.textfieldType != null &&
-            widget.textfieldType == TextfieldType.LABEL)
-        ? Column(
-            children: [
-              Container(
-                  width: widget.width,
-                  height: 60,
-                  alignment: Alignment.centerLeft,
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        width: (widget.titleWidth != null)
-                            ? widget.titleWidth
-                            : 80,
-                        child: Text(
-                          widget.title ?? '',
-                          style: TextStyle(
-                            fontSize: (widget.fontSize != null)
-                                ? widget.fontSize
-                                : 16,
-                          ),
-                        ),
-                      ),
-                      Flexible(
-                        child: TextField(
-                          obscureText: widget.isObscureText,
-                          controller: _editingController,
-                          onChanged: widget.onChange,
-                          textAlign: (widget.textAlign != null)
-                              ? widget.textAlign!
-                              : TextAlign.left,
-                          onEditingComplete: widget.onEditingComplete,
-                          onSubmitted: widget.onSubmitted,
-                          onTapOutside: widget.onTapOutside,
-                          maxLength: widget.maxLength,
-                          enabled: widget.enable,
-                          autofocus: widget.autoFocus ?? false,
-                          focusNode: widget.focusNode,
-                          keyboardType: widget.inputType,
-                          maxLines:
-                              (widget.maxLines == null) ? 1 : widget.maxLines,
-                          textInputAction: widget.keyboardAction,
-                          decoration: InputDecoration(
-                            hintText: widget.hintText,
-                            counterText: '',
-                            border: InputBorder.none,
-                            hintStyle: TextStyle(
-                              fontSize: (widget.fontSize != null)
-                                  ? widget.fontSize
-                                  : 16,
-                              color: (widget.title != null)
-                                  ? DefaultTheme.GREY_TEXT
-                                  : Theme.of(context).hintColor,
-                            ),
-                            contentPadding:
-                                const EdgeInsets.symmetric(horizontal: 10),
-                            focusedBorder: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            errorBorder: InputBorder.none,
-                          ),
-                        ),
-                      ),
-                    ],
-                  )),
-              if (_msgError != null && !widget.isShowToast)
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.only(
-                    top: 10,
-                  ),
+    return (textfieldType != null && textfieldType == TextfieldType.LABEL)
+        ? Container(
+            width: width,
+            height: 60,
+            alignment: Alignment.centerLeft,
+            child: Row(
+              children: [
+                SizedBox(
+                  width: (titleWidth != null) ? titleWidth : 80,
                   child: Text(
-                    _msgError!,
-                    maxLines: 2,
-                    textAlign: TextAlign.start,
-                    overflow: TextOverflow.ellipsis,
-                    style: widget.errorStyle ?? Styles.errorStyle(fontSize: 12),
-                  ),
-                ),
-            ],
-          )
-        : Column(
-            children: [
-              Container(
-                width: widget.width,
-                height: 60,
-                alignment: Alignment.center,
-                child: TextField(
-                  obscureText: widget.isObscureText,
-                  controller: _editingController,
-                  textAlign: (widget.textAlign != null)
-                      ? widget.textAlign!
-                      : TextAlign.left,
-                  onChanged: widget.onChange,
-                  onSubmitted: widget.onSubmitted,
-                  onEditingComplete: widget.onEditingComplete,
-                  keyboardType: widget.inputType,
-                  maxLines: 1,
-                  maxLength: widget.maxLength,
-                  textInputAction: widget.keyboardAction,
-                  autofocus: widget.autoFocus ?? false,
-                  focusNode: widget.focusNode,
-                  enabled: widget.enable,
-                  decoration: InputDecoration(
-                    hintText: widget.hintText,
-                    counterText: '',
-                    border: InputBorder.none,
-                    hintStyle: TextStyle(
-                      fontSize:
-                          (widget.fontSize != null) ? widget.fontSize : 16,
-                      color: Theme.of(context).hintColor,
+                    title ?? '',
+                    style: TextStyle(
+                      fontSize: (fontSize != null) ? fontSize : 16,
                     ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-                    focusedBorder: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    errorBorder: InputBorder.none,
                   ),
                 ),
+                Flexible(
+                  child: TextField(
+                    obscureText: isObscureText,
+                    controller: controller,
+                    onChanged: onChange,
+                    textAlign:
+                        (textAlign != null) ? textAlign! : TextAlign.left,
+                    onEditingComplete: onEdittingComplete,
+                    onSubmitted: onSubmitted,
+                    onTapOutside: onTapOutside,
+                    maxLength: maxLength,
+                    enabled: enable,
+                    autofocus: autoFocus ?? false,
+                    focusNode: focusNode,
+                    keyboardType: inputType,
+                    maxLines: (maxLines == null) ? 1 : maxLines,
+                    textInputAction: keyboardAction,
+                    decoration: InputDecoration(
+                      hintText: hintText,
+                      counterText: '',
+                      border: InputBorder.none,
+                      hintStyle: TextStyle(
+                        fontSize: (fontSize != null) ? fontSize : 16,
+                        color: (title != null)
+                            ? DefaultTheme.GREY_TEXT
+                            : Theme.of(context).hintColor,
+                      ),
+                      contentPadding:
+                          const EdgeInsets.symmetric(horizontal: 10),
+                      focusedBorder: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      errorBorder: InputBorder.none,
+                    ),
+                  ),
+                ),
+              ],
+            ))
+        : Container(
+            width: width,
+            height: 60,
+            alignment: Alignment.center,
+            child: TextField(
+              obscureText: isObscureText,
+              controller: controller,
+              textAlign: (textAlign != null) ? textAlign! : TextAlign.left,
+              onChanged: onChange,
+              onSubmitted: onSubmitted,
+              onEditingComplete: onEdittingComplete,
+              keyboardType: inputType,
+              maxLines: 1,
+              maxLength: maxLength,
+              textInputAction: keyboardAction,
+              autofocus: autoFocus ?? false,
+              focusNode: focusNode,
+              enabled: enable,
+              decoration: InputDecoration(
+                hintText: hintText,
+                counterText: '',
+                border: InputBorder.none,
+                hintStyle: TextStyle(
+                  fontSize: (fontSize != null) ? fontSize : 16,
+                  color: Theme.of(context).hintColor,
+                ),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+                focusedBorder: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                errorBorder: InputBorder.none,
               ),
-              if (_msgError != null && !widget.isShowToast)
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.only(
-                    top: 10,
-                  ),
-                  child: Text(
-                    _msgError!,
-                    maxLines: 2,
-                    textAlign: TextAlign.start,
-                    overflow: TextOverflow.ellipsis,
-                    style: widget.errorStyle ?? Styles.errorStyle(fontSize: 12),
-                  ),
-                ),
-            ],
+            ),
           );
   }
-
-  bool checkValidate() {
-    if (widget.validator != null) {
-      setState(() {
-        _msgError = widget.validator!(_editingController.text);
-        if (widget.isShowToast && _msgError != null) {
-          widget.showToast!(_msgError);
-        }
-      });
-    }
-    return _msgError == null;
-  }
-
-  void resetValide() {
-    setState(() {
-      _msgError = null;
-    });
-  }
-
-  void onTap() {
-    if (_msgError != null) {
-      setState(() {
-        _msgError = null;
-      });
-    }
-  }
-
-  void showError(String? value) {
-    setState(() {
-      _msgError = value;
-    });
-  }
-
-  TextEditingController get _editingController =>
-      widget.controller ?? _controller;
-
-  String get text => _editingController.text;
 }
