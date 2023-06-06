@@ -51,26 +51,11 @@ class _BranchDetailViewState extends State<BranchDetailView> {
 
   final List<Color> colors = [];
 
-  // final List<BusinessMemberDTO> members = [];
-
   final _formModalKey = GlobalKey<FormState>();
 
   void initialServices(BuildContext context, String branchId) {
     colors.clear();
-    // members.clear();
     banks.clear();
-    // branchInformationDTO = const BranchInformationDTO(
-    //   id: '',
-    //   businessId: '',
-    //   code: '',
-    //   name: '',
-    //   address: '',
-    //   isActive: false,
-    // );
-    // _branchBloc = BlocProvider.of(context);
-    // _branchBloc.add(BranchEventGetDetail(id: branchId));
-    // _branchBloc.add(BranchEventGetBanks(id: branchId));
-    // _branchBloc.add(BranchEventGetMembers(id: branchId));
   }
 
   @override
@@ -130,7 +115,6 @@ class _BranchDetailViewState extends State<BranchDetailView> {
                     }
                     if (state is BranchInsertMemberSuccessState ||
                         state is BranchDeleteMemberSuccessState) {
-                      // members.clear();
                       context
                           .read<BranchBloc>()
                           .add(const BranchEventGetMembers());
@@ -363,6 +347,12 @@ class _BranchDetailViewState extends State<BranchDetailView> {
                                                                 businessId,
                                                           ),
                                                         );
+
+                                                        if (!mounted) return;
+                                                        context
+                                                            .read<BranchBloc>()
+                                                            .add(
+                                                                const BranchEventGetMembers());
                                                       },
                                                       bgColor:
                                                           DefaultTheme.GREEN,
@@ -413,25 +403,19 @@ class _BranchDetailViewState extends State<BranchDetailView> {
               return (provider.userRole != 4 && provider.userRole != 0)
                   ? InkWell(
                       onTap: () async {
-                        // await DialogWidget.instance.showModalBottomContent(
-                        //   context: context,
-                        //   widget: Form(
-                        //     key: _formModalKey,
-                        //     child: AddBranchMemberWidget(
-                        //       branchId: branchId,
-                        //       businessId: businessId,
-                        //     ),
-                        //   ),
-                        //   height: height * 0.4,
-                        // );
                         await DialogWidget.instance.showModelBottomSheet(
                           context: context,
-                          height: height * 0.4,
+                          height: height * 0.5,
                           widget: AddBranchMemberWidget(
                             branchId: branchId,
                             businessId: businessId,
                           ),
                         );
+
+                        if (!mounted) return;
+                        context
+                            .read<BranchBloc>()
+                            .add(const BranchEventGetMembers());
                       },
                       child: const BoxLayout(
                         width: 40,

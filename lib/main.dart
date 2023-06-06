@@ -13,7 +13,6 @@ import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/utils/log.dart';
-import 'package:vierqr/commons/utils/pref_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_card/views/bank_card_detail_view.dart';
@@ -75,6 +74,7 @@ import 'package:vierqr/services/providers/memeber_manage_provider.dart';
 import 'package:vierqr/services/providers/page_select_provider.dart';
 import 'package:vierqr/services/providers/pin_provider.dart';
 import 'package:vierqr/services/providers/register_provider.dart';
+import 'package:vierqr/services/providers/search_clear_provider.dart';
 import 'package:vierqr/services/providers/shortcut_provider.dart';
 import 'package:vierqr/services/providers/suggestion_widget_provider.dart';
 import 'package:vierqr/services/providers/theme_provider.dart';
@@ -312,6 +312,7 @@ class _VietQRApp extends State<VietQRApp> {
             ChangeNotifierProvider(create: (context) => ActionShareProvider()),
             ChangeNotifierProvider(create: (context) => AvatarProvider()),
             ChangeNotifierProvider(create: (context) => ValidProvider()),
+            ChangeNotifierProvider(create: (context) => SearchProvider()),
           ],
           child: Consumer<ThemeProvider>(
             builder: (context, themeSelect, child) {

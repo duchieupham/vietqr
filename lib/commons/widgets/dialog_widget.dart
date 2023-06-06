@@ -416,61 +416,39 @@ class DialogWidget {
         });
   }
 
-  // Future showBottomSheet({
-  //   required BuildContext context,
-  //   required Widget widget,
-  // }) async {
-  //   final height = MediaQuery.of(context).size.height;
-  //   double top = kToolbarHeight;
-  //   // if (Utils.isIOS) {
-  //   //   top = MediaQuery.of(context).padding.top;
-  //   // }
-  //   return showModalBottomSheet(
-  //     context: context,
-  //     isScrollControlled: false,
-  //     constraints: BoxConstraints(
-  //       maxHeight: height - top,
-  //       minHeight: height - top,
-  //     ),
-  //     shape: const RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.all(Radius.circular(10.0)),
-  //     ),
-  //     builder: (_) {
-  //       return BackdropFilter(
-  //         filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-  //         child: widget,
-  //       );
-  //     },
-  //   );
-  // }
-
   Future showModelBottomSheet(
-      {required BuildContext context,
+      {BuildContext? context,
       required Widget widget,
       required double height}) async {
-    return showBottomSheet(
+    context ??= NavigationService.navigatorKey.currentContext!;
+    return showModalBottomSheet(
+      isScrollControlled: true,
       enableDrag: false,
+      useRootNavigator: true,
       context: context,
       backgroundColor: DefaultTheme.TRANSPARENT,
       builder: (context) {
         final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
-        return ClipRRect(
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 5, left: 5, right: 5),
-            child: Container(
-              padding: EdgeInsets.only(
-                left: 20,
-                right: 20,
-                top: 10,
-                bottom: keyboardHeight,
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+          child: ClipRRect(
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 5, left: 5, right: 5),
+              child: Container(
+                padding: EdgeInsets.only(
+                  left: 20,
+                  right: 20,
+                  top: 10,
+                  bottom: keyboardHeight,
+                ),
+                width: MediaQuery.of(context).size.width - 10,
+                height: height + keyboardHeight,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  color: Theme.of(context).cardColor,
+                ),
+                child: widget,
               ),
-              width: MediaQuery.of(context).size.width - 10,
-              height: height + keyboardHeight,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                color: Theme.of(context).cardColor,
-              ),
-              child: widget,
             ),
           ),
         );

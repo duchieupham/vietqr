@@ -177,7 +177,7 @@ class BranchBloc extends Bloc<BranchEvent, BranchState> {
   void _deleteMember(BranchEvent event, Emitter emit) async {
     try {
       if (event is BranchEventRemove) {
-        emit(BranchLoadingState());
+        emit(BranchDeleteMemberLoadingState());
         final ResponseMessageDTO result =
             await branchRepository.deleteMember(event.dto);
         if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
