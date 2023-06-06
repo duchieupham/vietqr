@@ -24,10 +24,12 @@ import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class InputInformationBankWidget extends StatefulWidget {
   final Function(int)? callBack;
+  final String bankAccount;
 
   const InputInformationBankWidget({
     super.key,
     required this.callBack,
+    required this.bankAccount,
   });
 
   @override
@@ -61,7 +63,13 @@ class _InputInformationBankWidgetState
 
   void initialServices(BuildContext context) {
     bankCardBloc = BlocProvider.of(context);
-    _focusNode.requestFocus();
+    if (widget.bankAccount.isNotEmpty) {
+      bankAccountController.value =
+          bankAccountController.value.copyWith(text: widget.bankAccount);
+      _onSearch();
+    } else {
+      _focusNode.requestFocus();
+    }
   }
 
   @override
@@ -233,33 +241,7 @@ class _InputInformationBankWidgetState
                                   _focusNode.unfocus();
                                   SystemChannels.textInput
                                       .invokeMethod('TextInput.hide');
-                                  if (bankAccountController.text.isNotEmpty &&
-                                      bankAccountController.text.length > 5) {
-                                    String transferType = '';
-                                    String bankCode =
-                                        Provider.of<AddBankProvider>(context,
-                                                listen: false)
-                                            .bankTypeDTO
-                                            .caiValue;
-                                    if (Provider.of<AddBankProvider>(context,
-                                                listen: false)
-                                            .bankTypeDTO
-                                            .bankCode ==
-                                        'MB') {
-                                      transferType = 'INHOUSE';
-                                    } else {
-                                      transferType = 'NAPAS';
-                                    }
-                                    BankNameSearchDTO bankNameSearchDTO =
-                                        BankNameSearchDTO(
-                                      accountNumber: bankAccountController.text,
-                                      accountType: 'ACCOUNT',
-                                      transferType: transferType,
-                                      bankCode: bankCode,
-                                    );
-                                    bankCardBloc.add(BankCardEventSearchName(
-                                        dto: bankNameSearchDTO));
-                                  }
+                                  _onSearch();
                                 }
                               },
                               onChange: (text) {
@@ -505,6 +487,32 @@ class _InputInformationBankWidgetState
     }
   }
 
+  void _onSearch() {
+    if (bankAccountController.text.isNotEmpty &&
+        bankAccountController.text.length > 5) {
+      String transferType = '';
+      String bankCode = Provider.of<AddBankProvider>(context, listen: false)
+          .bankTypeDTO
+          .caiValue;
+      if (Provider.of<AddBankProvider>(context, listen: false)
+          .bankTypeDTO
+          .bankCode ==
+          'MB') {
+        transferType = 'INHOUSE';
+      } else {
+        transferType = 'NAPAS';
+      }
+      BankNameSearchDTO bankNameSearchDTO = BankNameSearchDTO(
+        accountNumber: bankAccountController.text,
+        accountType: 'ACCOUNT',
+        transferType: transferType,
+        bankCode: bankCode,
+      );
+      bankCardBloc.add(BankCardEventSearchName(dto: bankNameSearchDTO));
+    }
+  }
+
+
   @override
   void dispose() {
     bankAccountController.clear();
@@ -513,4 +521,5 @@ class _InputInformationBankWidgetState
     phoneAuthController.clear();
     super.dispose();
   }
+
 }

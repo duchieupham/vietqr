@@ -42,10 +42,6 @@ class _DashboardViewState extends State<DashboardView>
 
   initialServices(BuildContext context) {
     businessInformationBloc = BlocProvider.of(context);
-
-    String userId = UserInformationHelper.instance.getUserId();
-    businessInformationBloc
-        .add(BusinessInformationEventGetList(userId: userId));
   }
 
   Future<void> _refresh() async {
@@ -55,10 +51,21 @@ class _DashboardViewState extends State<DashboardView>
   }
 
   @override
+  void initState() {
+    super.initState();
+    initialServices(context);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      String userId = UserInformationHelper.instance.getUserId();
+      businessInformationBloc
+          .add(BusinessInformationEventGetList(userId: userId));
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    initialServices(context);
     return RefreshIndicator(
       onRefresh: _refresh,
       child: SizedBox(
