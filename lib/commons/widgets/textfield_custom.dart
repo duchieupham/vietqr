@@ -168,32 +168,36 @@ class _TextFieldWidgetState extends State<TextFieldCustom> {
                       ),
                     ),
                     Flexible(
-                      child: widget.isBorder
-                          ? BorderLayout(
-                              width: widget.widthLayout,
-                              isError: _msgError != null,
-                              padding: widget.paddingLayout,
-                              height: widget.heightLayout,
-                              child: textFiledTypeLabel)
-                          : textFiledTypeLabel,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          widget.isBorder
+                              ? BorderLayout(
+                                  width: widget.widthLayout,
+                                  isError: _msgError != null,
+                                  padding: widget.paddingLayout,
+                                  height: widget.heightLayout,
+                                  child: textFiledTypeLabel)
+                              : textFiledTypeLabel,
+                          if (_msgError != null && !widget.isShowToast)
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.only(left: 10),
+                              child: Text(
+                                _msgError!,
+                                maxLines: 2,
+                                textAlign: TextAlign.start,
+                                overflow: TextOverflow.ellipsis,
+                                style: widget.errorStyle ??
+                                    Styles.errorStyle(fontSize: 12),
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
               ),
-              if (_msgError != null && !widget.isShowToast)
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.only(
-                    top: 10,
-                  ),
-                  child: Text(
-                    _msgError!,
-                    maxLines: 2,
-                    textAlign: TextAlign.start,
-                    overflow: TextOverflow.ellipsis,
-                    style: widget.errorStyle ?? Styles.errorStyle(fontSize: 12),
-                  ),
-                ),
             ],
           )
         : Column(

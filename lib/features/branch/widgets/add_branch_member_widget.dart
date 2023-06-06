@@ -17,7 +17,6 @@ class AddBranchMemberWidget extends StatelessWidget {
   final TextEditingController nameController = TextEditingController();
   final String branchId;
   final String businessId;
-  final BranchBloc branchBloc;
   final SearchClearProvider searchClearProvider = SearchClearProvider(false);
   static final _formAddMemberKey = GlobalKey<FormState>();
   static String message = '';
@@ -33,7 +32,6 @@ class AddBranchMemberWidget extends StatelessWidget {
 
   AddBranchMemberWidget({
     super.key,
-    required this.branchBloc,
     required this.branchId,
     required this.businessId,
   });
@@ -90,6 +88,18 @@ class AddBranchMemberWidget extends StatelessWidget {
           const Padding(padding: EdgeInsets.only(top: 30)),
           BlocBuilder<BranchBloc, BranchState>(
             builder: (context, state) {
+              if (state is BranchInsertMemberLoadingState) {
+                return SizedBox(
+                  width: width,
+                  height: 200,
+                  child: const Center(
+                    child: CircularProgressIndicator(
+                      color: DefaultTheme.GREEN,
+                    ),
+                  ),
+                );
+              }
+
               if (state is BranchSeachMemberSuccessState) {
                 message = '';
                 dto = state.dto;
@@ -172,7 +182,7 @@ class AddBranchMemberWidget extends StatelessWidget {
                       }
                       if (nameController.text.length >= 10 &&
                           nameController.text.length <= 12) {
-                        branchBloc.add(BranchEventSearchMember(
+                        context.read<BranchBloc>().add(BranchEventSearchMember(
                             phoneNo: nameController.text,
                             businessId: businessId));
                       } else {
@@ -186,7 +196,7 @@ class AddBranchMemberWidget extends StatelessWidget {
                           phoneNo: '',
                           role: 0,
                         );
-                        branchBloc.add(BranchEventInitial());
+                        context.read<BranchBloc>().add(BranchEventInitial());
                       }
                     },
                   ),
@@ -284,7 +294,7 @@ class AddBranchMemberWidget extends StatelessWidget {
                       userId: dto.userId,
                       role: 4,
                     );
-                    branchBloc.add(
+                    context.read<BranchBloc>().add(
                         BranchEventInsertMember(dto: branchMemberInsertDTO));
                     reset(context);
                   },
@@ -329,6 +339,6 @@ class AddBranchMemberWidget extends StatelessWidget {
       role: 0,
     );
     searchClearProvider.updateClearSearch(false);
-    branchBloc.add(BranchEventInitial());
+    // context.read<BranchBloc>().add(BranchEventInitial());
   }
 }

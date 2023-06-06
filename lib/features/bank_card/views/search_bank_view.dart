@@ -76,8 +76,11 @@ class SearchBankView extends StatelessWidget {
           SubHeader(
             title: 'Tìm kiếm TK ngân hàng',
             function: () {
+              FocusManager.instance.primaryFocus?.unfocus();
               reset(context: context);
-              Navigator.of(context).pop();
+              Future.delayed(const Duration(milliseconds: 200), () {
+                Navigator.of(context).pop();
+              });
             },
             callBackHome: () {
               reset(context: context);

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 class SubHeader extends StatelessWidget {
   final String title;
-  VoidCallback? function;
-  VoidCallback? callBackHome;
+  final VoidCallback? function;
+  final VoidCallback? callBackHome;
 
-  SubHeader({Key? key, required this.title, this.function, this.callBackHome})
+  const SubHeader({Key? key, required this.title, this.function, this.callBackHome})
       : super(key: key);
 
   @override

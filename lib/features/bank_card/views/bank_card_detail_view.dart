@@ -91,7 +91,7 @@ class BankCardDetailView extends StatelessWidget {
     bankId = arg['bankId'] ?? '';
     initialServives(context, bankId);
     return Scaffold(
-      appBar: CustomAppBarWidget(
+      appBar: const CustomAppBarWidget(
         child: SubHeader(title: 'Chi tiết TK ngân hàng'),
       ),
       body: Column(

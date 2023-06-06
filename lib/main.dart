@@ -274,7 +274,7 @@ class _VietQRApp extends State<VietQRApp> {
             create: (BuildContext context) => BusinessInformationBloc(),
           ),
           BlocProvider<BranchBloc>(
-            create: (BuildContext context) => BranchBloc(),
+            create: (BuildContext context) => BranchBloc(id: ''),
           ),
           BlocProvider<ScanQrBloc>(
             create: (BuildContext context) => ScanQrBloc(),
@@ -364,7 +364,7 @@ class _VietQRApp extends State<VietQRApp> {
                       const NationalInformationView(),
                   Routes.BUSINESS_TRANSACTION: (context) =>
                       BusinessTransactionView(),
-                  Routes.BRANCH_DETAIL: (context) => const BranchDetailView(),
+                  Routes.BRANCH_DETAIL: (context) => BranchDetailView(),
                 },
                 onGenerateRoute: (settings) {
                   if (settings.name == Routes.BUSINESS_INFORMATION_VIEW) {

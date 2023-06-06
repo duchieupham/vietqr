@@ -68,6 +68,7 @@ class _AddBankCardViewState extends State<AddBankCardView> {
         ),
         InputInformationBankWidget(
           key: const PageStorageKey('INPUT_INFORMATION_BANK'),
+          bankAccount: bankAccountController.text,
           callBack: (index) {
             _animatedToPage(index);
           },
