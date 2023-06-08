@@ -13,7 +13,6 @@ import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/utils/log.dart';
-import 'package:vierqr/commons/utils/pref_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_card/views/bank_card_detail_view.dart';
@@ -70,10 +69,12 @@ import 'package:vierqr/services/providers/business_inforamtion_provider.dart';
 import 'package:vierqr/services/providers/create_qr_page_select_provider.dart';
 import 'package:vierqr/services/providers/create_qr_provider.dart';
 import 'package:vierqr/services/providers/home_tab_provider.dart';
+import 'package:vierqr/services/providers/login_provider.dart';
 import 'package:vierqr/services/providers/memeber_manage_provider.dart';
 import 'package:vierqr/services/providers/page_select_provider.dart';
 import 'package:vierqr/services/providers/pin_provider.dart';
 import 'package:vierqr/services/providers/register_provider.dart';
+import 'package:vierqr/services/providers/search_clear_provider.dart';
 import 'package:vierqr/services/providers/shortcut_provider.dart';
 import 'package:vierqr/services/providers/suggestion_widget_provider.dart';
 import 'package:vierqr/services/providers/theme_provider.dart';
@@ -249,7 +250,7 @@ class _VietQRApp extends State<VietQRApp> {
             create: (BuildContext context) => PermissionBloc(),
           ),
           BlocProvider<BankTypeBloc>(
-            create: (BuildContext context) => BankTypeBloc(),
+            create: (BuildContext context) => BankTypeBloc(context),
           ),
           BlocProvider<TokenBloc>(
             create: (BuildContext context) => TokenBloc(),
@@ -273,7 +274,7 @@ class _VietQRApp extends State<VietQRApp> {
             create: (BuildContext context) => BusinessInformationBloc(),
           ),
           BlocProvider<BranchBloc>(
-            create: (BuildContext context) => BranchBloc(),
+            create: (BuildContext context) => BranchBloc(id: ''),
           ),
           BlocProvider<ScanQrBloc>(
             create: (BuildContext context) => ScanQrBloc(),
@@ -310,6 +311,8 @@ class _VietQRApp extends State<VietQRApp> {
                 create: (context) => BankArrangementProvider()),
             ChangeNotifierProvider(create: (context) => ActionShareProvider()),
             ChangeNotifierProvider(create: (context) => AvatarProvider()),
+            ChangeNotifierProvider(create: (context) => ValidProvider()),
+            ChangeNotifierProvider(create: (context) => SearchProvider()),
           ],
           child: Consumer<ThemeProvider>(
             builder: (context, themeSelect, child) {
@@ -337,7 +340,7 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.UI_SETTING: (context) => const ThemeSettingView(),
                   // Routes.TRANSACTION_HISTORY: (context) =>
                   //     const TransactionHistory(),
-                  Routes.ADD_BANK_CARD: (context) => AddBankCardView(),
+                  Routes.ADD_BANK_CARD: (context) => const AddBankCardView(),
                   Routes.BANK_CARD_GENERATED_VIEW: (context) =>
                       const BankCardGeneratedView(),
                   Routes.BANK_MEMBER_VIEW: (context) => const BankMemberView(),
@@ -353,7 +356,7 @@ class _VietQRApp extends State<VietQRApp> {
                       const TransactionHistoryView(),
                   Routes.SCAN_QR_VIEW: (context) => const QRScanView(),
                   Routes.PRINTER_SETTING: (context) => PrinterSettingView(),
-                  Routes.SEARCH_BANK: (context) => const SearchBankView(),
+                  Routes.SEARCH_BANK: (context) => SearchBankView(),
                   Routes.NOTIFICATION_VIEW: (context) =>
                       const NotificationView(),
                   Routes.TRANSACTION_DETAIL: (context) =>
@@ -362,7 +365,7 @@ class _VietQRApp extends State<VietQRApp> {
                       const NationalInformationView(),
                   Routes.BUSINESS_TRANSACTION: (context) =>
                       BusinessTransactionView(),
-                  Routes.BRANCH_DETAIL: (context) => const BranchDetailView(),
+                  Routes.BRANCH_DETAIL: (context) => BranchDetailView(),
                 },
                 onGenerateRoute: (settings) {
                   if (settings.name == Routes.BUSINESS_INFORMATION_VIEW) {
