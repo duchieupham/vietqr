@@ -13,7 +13,7 @@ import 'package:vierqr/features/login/blocs/login_bloc.dart';
 import 'package:vierqr/features/login/events/login_event.dart';
 import 'package:vierqr/features/login/frames/login_frame.dart';
 import 'package:vierqr/features/login/states/login_state.dart';
-import 'package:vierqr/features/register/views/register_view.dart';
+import 'package:vierqr/features/register/views/register_screen.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/models/account_login_dto.dart';
 import 'package:flutter/material.dart';
@@ -239,7 +239,7 @@ class _Login extends State<Login> {
                 function: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => RegisterView(
+                      builder: (context) => RegisterScreen(
                         phoneNo: phoneNoController.text,
                       ),
                     ),
