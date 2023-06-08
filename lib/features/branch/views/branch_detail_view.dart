@@ -119,10 +119,36 @@ class _BranchDetailViewState extends State<BranchDetailView> {
                           .read<BranchBloc>()
                           .add(const BranchEventGetMembers());
                     }
+
+                    if (state is BranchDeleteMemberLoadingState) {
+                      Provider.of<BusinessInformationProvider>(context,
+                              listen: false)
+                          .updateElementAtBusinessMember(state.index, true);
+                    }
+
+                    if (state is BranchDeleteMemberFailedState) {
+                      if (state.updateAll) {
+                        Provider.of<BusinessInformationProvider>(context,
+                                listen: false)
+                            .updateElementAtBusinessMember(state.index, false);
+                      } else {
+                        Provider.of<BusinessInformationProvider>(context,
+                                listen: false)
+                            .updateElementAtBusinessMember(state.index, false);
+                      }
+                    }
+
                     if (state is BranchConnectBankSuccessState ||
                         state is BranchRemoveBankSuccessState) {
                       initialServices(context, branchId);
                     }
+
+                    if (state is BranchGetMembersLoadingState) {
+                      Provider.of<BusinessInformationProvider>(context,
+                              listen: false)
+                          .updateLoadingGetMember(true);
+                    }
+
                     if (state is BranchGetMembersSuccessState) {
                       Provider.of<BusinessInformationProvider>(context,
                               listen: false)
@@ -299,94 +325,97 @@ class _BranchDetailViewState extends State<BranchDetailView> {
                                 color: DefaultTheme.BLUE_TEXT,
                                 icon: Icons.people_alt_rounded,
                               ),
-                              (provider.businessMembers.isEmpty)
-                                  ? BoxLayout(
-                                      width: width,
-                                      alignment: Alignment.center,
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          const Padding(
-                                              padding:
-                                                  EdgeInsets.only(top: 30)),
-                                          Icon(
-                                            Icons.people_outline_rounded,
-                                            size: width * 0.2,
-                                            color: DefaultTheme.BLUE_TEXT,
-                                          ),
-                                          const Padding(
-                                              padding:
-                                                  EdgeInsets.only(top: 30)),
-                                          const Text(
-                                            'Chưa có tài khoản ngân hàng được kết nối.',
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(fontSize: 15),
-                                          ),
-                                          const Padding(
-                                              padding:
-                                                  EdgeInsets.only(top: 10)),
-                                          Consumer<BusinessInformationProvider>(
-                                            builder:
-                                                (context, provider, child) {
-                                              return (provider.userRole == 5)
-                                                  ? ButtonIconWidget(
-                                                      width: width,
-                                                      icon: Icons.add_rounded,
-                                                      title: 'Thêm thành viên',
-                                                      function: () async {
-                                                        await DialogWidget
-                                                            .instance
-                                                            .showModelBottomSheet(
-                                                          context: context,
-                                                          height: height * 0.5,
-                                                          widget:
-                                                              AddBranchMemberWidget(
-                                                            branchId: branchId,
-                                                            businessId:
-                                                                businessId,
-                                                          ),
-                                                        );
+                              if (provider.isLoadingGetMember)
+                                Container(
+                                  margin: const EdgeInsets.only(top: 24),
+                                  color: DefaultTheme.TRANSPARENT,
+                                  width: 36,
+                                  height: 36,
+                                  child: const CircularProgressIndicator(
+                                    color: DefaultTheme.GREEN,
+                                  ),
+                                )
+                              else
+                                (provider.businessMembers.isEmpty)
+                                    ? BoxLayout(
+                                        width: width,
+                                        alignment: Alignment.center,
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            const Padding(
+                                                padding:
+                                                    EdgeInsets.only(top: 30)),
+                                            Icon(
+                                              Icons.people_outline_rounded,
+                                              size: width * 0.2,
+                                              color: DefaultTheme.BLUE_TEXT,
+                                            ),
+                                            const Padding(
+                                                padding:
+                                                    EdgeInsets.only(top: 30)),
+                                            const Text(
+                                              'Chưa có tài khoản ngân hàng được kết nối.',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(fontSize: 15),
+                                            ),
+                                            const Padding(
+                                                padding:
+                                                    EdgeInsets.only(top: 10)),
+                                            (provider.userRole == 5)
+                                                ? ButtonIconWidget(
+                                                    width: width,
+                                                    icon: Icons.add_rounded,
+                                                    title: 'Thêm thành viên',
+                                                    function: () async {
+                                                      await DialogWidget
+                                                          .instance
+                                                          .showModelBottomSheet(
+                                                        context: context,
+                                                        height: height * 0.5,
+                                                        widget:
+                                                            AddBranchMemberWidget(
+                                                          branchId: branchId,
+                                                          businessId:
+                                                              businessId,
+                                                        ),
+                                                      );
 
-                                                        if (!mounted) return;
-                                                        context
-                                                            .read<BranchBloc>()
-                                                            .add(
-                                                                const BranchEventGetMembers());
-                                                      },
-                                                      bgColor:
-                                                          DefaultTheme.GREEN,
-                                                      textColor:
-                                                          DefaultTheme.WHITE,
-                                                    )
-                                                  : const SizedBox();
-                                            },
-                                          ),
-                                          const Padding(
-                                              padding:
-                                                  EdgeInsets.only(top: 10)),
-                                        ],
+                                                      if (!mounted) return;
+                                                      context
+                                                          .read<BranchBloc>()
+                                                          .add(
+                                                              const BranchEventGetMembers());
+                                                    },
+                                                    bgColor: DefaultTheme.GREEN,
+                                                    textColor:
+                                                        DefaultTheme.WHITE,
+                                                  )
+                                                : const SizedBox(),
+                                            const Padding(
+                                                padding:
+                                                    EdgeInsets.only(top: 10)),
+                                          ],
+                                        ),
+                                      )
+                                    : ListView.builder(
+                                        shrinkWrap: true,
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        itemCount:
+                                            provider.businessMembers.length,
+                                        itemBuilder: (context, index) {
+                                          final int userRole =
+                                              provider.userRole;
+                                          return _buildElementMember(
+                                              index: index,
+                                              context: context,
+                                              dto: provider
+                                                  .businessMembers[index],
+                                              userRole: userRole);
+                                        },
                                       ),
-                                    )
-                                  : ListView.builder(
-                                      shrinkWrap: true,
-                                      physics:
-                                          const NeverScrollableScrollPhysics(),
-                                      itemCount:
-                                          provider.businessMembers.length,
-                                      itemBuilder: (context, index) {
-                                        final int userRole = Provider.of<
-                                                    BusinessInformationProvider>(
-                                                context,
-                                                listen: false)
-                                            .userRole;
-                                        return _buildElementMember(
-                                            context: context,
-                                            dto:
-                                                provider.businessMembers[index],
-                                            userRole: userRole);
-                                      },
-                                    ),
                             ],
                           );
                         }),
@@ -441,6 +470,7 @@ class _BranchDetailViewState extends State<BranchDetailView> {
   Widget _buildElementMember(
       {required BuildContext context,
       required BusinessMemberDTO dto,
+      required int index,
       required int userRole}) {
     final double width = MediaQuery.of(context).size.width;
 
@@ -502,33 +532,47 @@ class _BranchDetailViewState extends State<BranchDetailView> {
             ),
           ),
           if (isDelete) ...[
-            const Padding(
-              padding: EdgeInsets.only(left: 10),
-            ),
-            InkWell(
-              onTap: () {
-                BranchMemberDeleteDTO branchMemberDeleteDTO =
-                    BranchMemberDeleteDTO(
-                  userId: dto.userId,
-                  businessId: businessId,
-                );
-                context
-                    .read<BranchBloc>()
-                    .add(BranchEventRemove(dto: branchMemberDeleteDTO));
-              },
-              child: BoxLayout(
-                width: 30,
-                height: 30,
-                borderRadius: 15,
-                bgColor: Theme.of(context).canvasColor,
-                padding: const EdgeInsets.all(0),
-                child: const Icon(
-                  Icons.remove_circle_outline_rounded,
-                  color: DefaultTheme.RED_TEXT,
-                  size: 12,
-                ),
-              ),
-            ),
+            Consumer<BusinessInformationProvider>(
+                builder: (context, provider, child) {
+              return dto.isDelete
+                  ? Container(
+                      color: DefaultTheme.TRANSPARENT,
+                      margin: const EdgeInsets.only(left: 10),
+                      width: 16,
+                      height: 16,
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          color: DefaultTheme.GREEN,
+                        ),
+                      ),
+                    )
+                  : Container(
+                      margin: const EdgeInsets.only(left: 10),
+                      child: InkWell(
+                        onTap: () {
+                          BranchMemberDeleteDTO branchMemberDeleteDTO =
+                              BranchMemberDeleteDTO(
+                            userId: dto.userId,
+                            businessId: businessId,
+                          );
+                          context.read<BranchBloc>().add(BranchEventRemove(
+                              dto: branchMemberDeleteDTO, index: index));
+                        },
+                        child: BoxLayout(
+                          width: 30,
+                          height: 30,
+                          borderRadius: 15,
+                          bgColor: Theme.of(context).canvasColor,
+                          padding: const EdgeInsets.all(0),
+                          child: const Icon(
+                            Icons.remove_circle_outline_rounded,
+                            color: DefaultTheme.RED_TEXT,
+                            size: 12,
+                          ),
+                        ),
+                      ),
+                    );
+            }),
           ]
         ],
       ),

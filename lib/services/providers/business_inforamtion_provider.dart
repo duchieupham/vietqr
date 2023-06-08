@@ -26,9 +26,34 @@ class BusinessInformationProvider extends ChangeNotifier {
 
   get businessMembers => _businessMembers;
 
+  bool _isLoadingGetMember = false;
+
+  get isLoadingGetMember => _isLoadingGetMember;
+
+  void updateLoadingGetMember(value) {
+    _isLoadingGetMember = value;
+    notifyListeners();
+  }
+
   void updateBusinessMember(List<BusinessMemberDTO> value) {
     _businessMembers.clear();
     _businessMembers.addAll(value);
+    _isLoadingGetMember = false;
+    notifyListeners();
+  }
+
+  void updateElementAtBusinessMember(index, bool value) {
+    if (index < 0) {
+      _businessMembers.map((e) => e.isDelete = false).toList();
+      for (var element in _businessMembers) {
+        print(element.isDelete);
+      }
+    } else {
+      BusinessMemberDTO businessMemberDTO = _businessMembers.elementAt(index);
+      businessMemberDTO.isDelete = value;
+      _businessMembers[_businessMembers.indexWhere(
+          (element) => element == businessMemberDTO)] = businessMemberDTO;
+    }
     notifyListeners();
   }
 

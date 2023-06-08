@@ -1,14 +1,19 @@
+import 'package:vierqr/commons/enums/check_type.dart';
+
 class BusinessMemberDTO {
   final String userId;
   final int role;
   final String name;
   final String phoneNo;
   final String imgId;
+  bool isDelete;
+
   //for check status reponse found member or not
   final String status;
   final int existed;
 
-  const BusinessMemberDTO({
+  BusinessMemberDTO({
+    this.isDelete = false,
     required this.userId,
     required this.name,
     required this.role,
@@ -17,6 +22,15 @@ class BusinessMemberDTO {
     required this.status,
     required this.existed,
   });
+
+  TypeAddMember get typeMember {
+    if (existed == 0) {
+      return TypeAddMember.MORE;
+    } else if (existed == 1) {
+      return TypeAddMember.ADDED;
+    }
+    return TypeAddMember.MORE;
+  }
 
   factory BusinessMemberDTO.fromJson(Map<String, dynamic> json) {
     return BusinessMemberDTO(
