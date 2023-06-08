@@ -9,28 +9,42 @@ import 'package:vierqr/features/bank_card/views/policy_bank_view.dart';
 import 'package:vierqr/features/bank_card/views/select_bank_type_widget.dart';
 import 'package:vierqr/features/bank_type/blocs/bank_type_bloc.dart';
 import 'package:vierqr/features/bank_type/events/bank_type_event.dart';
+import 'package:vierqr/features/home/widgets/custom_app_bar_widget.dart';
 import 'package:vierqr/services/providers/add_bank_provider.dart';
 
-class AddBankCardView extends StatelessWidget {
-  static late BankTypeBloc bankTypeBloc;
-  static late PageController _pageController;
+class AddBankCardView extends StatefulWidget {
+  const AddBankCardView({super.key});
 
-  final TextEditingController searchController = TextEditingController();
-  final TextEditingController bankAccountController = TextEditingController();
-  final TextEditingController nationalController = TextEditingController();
-  final TextEditingController phoneAuthenController = TextEditingController();
-  final TextEditingController nameController = TextEditingController();
+  @override
+  State<AddBankCardView> createState() => _AddBankCardViewState();
+}
+
+class _AddBankCardViewState extends State<AddBankCardView> {
+  late PageController _pageController;
+
+  final bankAccountController = TextEditingController();
+  final nationalController = TextEditingController();
+  final phoneAuthController = TextEditingController();
+  final nameController = TextEditingController();
+
   final List<Widget> _pages = [];
 
-  AddBankCardView({super.key});
+  int initialPage = 0;
+  String bankAccount = '';
+  String userBankName = '';
 
-  void initialServices(BuildContext context, int initialPage,
-      String bankAccount, String userBankName) {
-    searchController.clear();
-    bankAccountController.clear();
-    nationalController.clear();
-    phoneAuthenController.clear();
-    nameController.clear();
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {});
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  void initData(BuildContext context) {
     if (bankAccount.isNotEmpty) {
       bankAccountController.value =
           bankAccountController.value.copyWith(text: bankAccount);
@@ -38,98 +52,83 @@ class AddBankCardView extends StatelessWidget {
     if (userBankName.isNotEmpty) {
       nameController.value = nameController.value.copyWith(text: userBankName);
     }
+    _pageController = PageController(initialPage: initialPage);
 
-    if (!Provider.of<AddBankProvider>(context, listen: false).getBankTypes) {
-      _pageController = PageController(
-        initialPage: initialPage,
-      );
-      _pages.clear();
-      _pages.addAll(
-        [
-          ChooseBankPlanView(
-            key: const PageStorageKey('SELECT_BANK_TYPE'),
-            pageController: _pageController,
-          ),
-          SelectBankTypeWidget(
-            key: const PageStorageKey('SELECT_BANK_TYPE'),
-            callBack: (index) {
-              _animatedToPage(index);
-            },
-          ),
-          InputInformationBankWidget(
-            key: const PageStorageKey('INPUT_INFORMATION_BANK'),
-            bankAccountController: bankAccountController,
-            nameController: nameController,
-            pageController: _pageController,
-            nationalController: nationalController,
-            phoneAuthenController: phoneAuthenController,
-          ),
-          InputAuthInformationView(
-            bankAccountController: bankAccountController,
-            nameController: nameController,
-            phoneAuthenController: phoneAuthenController,
-            nationalController: nationalController,
-            pageController: _pageController,
-          ),
-          PolicyBankView(
-            key: const PageStorageKey('POLICY_BANK'),
-            bankAccountController: bankAccountController,
-            nameController: nameController,
-            nationalController: nationalController,
-            phoneAuthenController: phoneAuthenController,
-            pageController: _pageController,
-          ),
-        ],
-      );
-      bankTypeBloc = BlocProvider.of(context);
-      bankTypeBloc.add(const BankTypeEventGetList());
-      Future.delayed(const Duration(milliseconds: 0), () {
-        Provider.of<AddBankProvider>(context, listen: false)
-            .updateGetBankType(true);
-      });
-    }
+    _pages.addAll(
+      [
+        ChooseBankPlanView(
+          key: const PageStorageKey('SELECT_BANK_TYPE'),
+          pageController: _pageController,
+        ),
+        SelectBankTypeWidget(
+          key: const PageStorageKey('SELECT_BANK_TYPE'),
+          callBack: (index) {
+            _animatedToPage(index);
+          },
+        ),
+        InputInformationBankWidget(
+          key: const PageStorageKey('INPUT_INFORMATION_BANK'),
+          bankAccount: bankAccountController.text,
+          callBack: (index) {
+            _animatedToPage(index);
+          },
+        ),
+        InputAuthInformationView(
+          bankAccountController: bankAccountController,
+          nameController: nameController,
+          phoneAuthenController: phoneAuthController,
+          nationalController: nationalController,
+          pageController: _pageController,
+        ),
+        PolicyBankView(
+          key: const PageStorageKey('POLICY_BANK'),
+          bankAccountController: bankAccountController,
+          nameController: nameController,
+          nationalController: nationalController,
+          phoneAuthenController: phoneAuthController,
+          pageController: _pageController,
+        ),
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     // final double width = MediaQuery.of(context).size.width;
-    int initialPage = 0;
-    String bankAccount = '';
-    String userBankName = '';
     if (ModalRoute.of(context)!.settings.arguments != null) {
       final args = ModalRoute.of(context)!.settings.arguments as Map;
       initialPage = args['pageIndex'] ?? 0;
       bankAccount = args['bankAccount'] ?? '';
       userBankName = args['name'] ?? '';
     }
-    initialServices(context, initialPage, bankAccount, userBankName);
+    initData(context);
     return WillPopScope(
       onWillPop: () async {
         _hideKeyboardBack(context);
         return false;
       },
       child: Scaffold(
-        appBar: AppBar(toolbarHeight: 0),
+        appBar: CustomAppBarWidget(
+          child: Consumer<AddBankProvider>(
+            builder: (context, provider, child) {
+              return SubHeader(
+                title: (provider.select == 0 || provider.select == 2)
+                    ? 'Liên kết TK ngân hàng'
+                    : (provider.select == 1)
+                        ? 'Thêm TK ngân hàng'
+                        : 'Mở TK MB Bank',
+                function: () {
+                  _hideKeyboardBack(context);
+                },
+                callBackHome: () {
+                  _hideKeyboardBack(context);
+                },
+              );
+            },
+          ),
+        ),
         body: Column(
           children: [
-            Consumer<AddBankProvider>(
-              builder: (context, provider, child) {
-                return SubHeader(
-                  title: (provider.select == 0 || provider.select == 2)
-                      ? 'Liên kết TK ngân hàng'
-                      : (provider.select == 1)
-                          ? 'Thêm TK ngân hàng'
-                          : 'Mở TK MB Bank',
-                  function: () {
-                    _hideKeyboardBack(context);
-                  },
-                  callBackHome: () {
-                    _hideKeyboardBack(context);
-                  },
-                );
-              },
-            ),
-
             // _buildStepWidget(context, width),
             Expanded(
               child: PageView(
@@ -153,11 +152,10 @@ class AddBankCardView extends StatelessWidget {
   void _navigateBack(BuildContext context) {
     int index = Provider.of<AddBankProvider>(context, listen: false).index;
     if (index == 0) {
-      searchController.clear();
       bankAccountController.clear();
       nameController.clear();
       nationalController.clear();
-      phoneAuthenController.clear();
+      phoneAuthController.clear();
       Provider.of<AddBankProvider>(context, listen: false).reset();
       Navigator.of(context).pop();
     } else {
@@ -190,5 +188,16 @@ class AddBankCardView extends StatelessWidget {
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeInOutQuart,
     );
+  }
+
+  @override
+  void dispose() {
+    bankAccountController.clear();
+    nationalController.clear();
+    phoneAuthController.clear();
+    nameController.clear();
+    _pages.clear();
+    _pageController.dispose();
+    super.dispose();
   }
 }

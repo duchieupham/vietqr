@@ -37,6 +37,8 @@ import 'dart:ui';
 
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
+import 'widgets/custom_app_bar_widget.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -47,7 +49,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreen extends State<HomeScreen>
     with WidgetsBindingObserver, AutomaticKeepAliveClientMixin {
   //page controller
-  static late PageController _pageController;
+  late PageController _pageController;
 
   //list page
   final List<Widget> _homeScreens = [];
@@ -56,7 +58,6 @@ class _HomeScreen extends State<HomeScreen>
   final FocusNode focusNode = FocusNode();
 
   //blocs
-
   late PermissionBloc _permissionBloc;
   late TokenBloc _tokenBloc;
   late NotificationBloc _notificationBloc;
@@ -72,7 +73,6 @@ class _HomeScreen extends State<HomeScreen>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-
     _permissionBloc = BlocProvider.of(context);
     _tokenBloc = BlocProvider.of(context);
     _notificationBloc = BlocProvider.of(context);
@@ -94,7 +94,7 @@ class _HomeScreen extends State<HomeScreen>
     _homeScreens.addAll(
       [
         const BankCardSelectView(key: PageStorageKey('QR_GENERATOR_PAGE')),
-        IntroduceScreen(),
+        const IntroduceScreen(),
         const SizedBox(),
         const DashboardView(key: PageStorageKey('SMS_LIST_PAGE')),
         UserSetting(
@@ -246,9 +246,11 @@ class _HomeScreen extends State<HomeScreen>
             }
             return Scaffold(
               resizeToAvoidBottomInset: true,
+              appBar: CustomAppBarWidget(
+                child: _buildAppBar(),
+              ),
               body: Stack(
                 children: [
-                  //body
                   PageView(
                     key: const PageStorageKey('PAGE_VIEW'),
                     allowImplicitScrolling: true,
@@ -260,210 +262,71 @@ class _HomeScreen extends State<HomeScreen>
                     },
                     children: _homeScreens,
                   ),
-                  //header
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    height: (height <= 800) ? 80 : 90,
-                    child: ClipRRect(
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(
-                          sigmaX: 25,
-                          sigmaY: 25,
-                        ),
-                        child: Container(
-                          padding: const EdgeInsets.only(
-                              left: 20, right: 10, top: 35),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context)
-                                .scaffoldBackgroundColor
-                                .withOpacity(0.6),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Consumer<PageSelectProvider>(
-                                  builder: (context, page, child) {
-                                return _getTitlePaqe(
-                                    context, page.indexSelected);
-                              }),
-                              const Spacer(),
-                              ButtonIconWidget(
-                                width: 35,
-                                height: 35,
-                                borderRadius: 40,
-                                icon: Icons.search_rounded,
-                                title: '',
-                                function: () {
-                                  Navigator.pushNamed(
-                                      context, Routes.SEARCH_BANK);
-                                },
-                                bgColor: Theme.of(context)
-                                    .cardColor
-                                    .withOpacity(0.3),
-                                textColor: Theme.of(context).hintColor,
-                              ),
-                              const Padding(padding: EdgeInsets.only(left: 5)),
-                              SizedBox(
-                                  width: 50,
-                                  height: 60,
-                                  child: BlocConsumer<NotificationBloc,
-                                      NotificationState>(
-                                    listener: (context, state) {
-                                      //
-                                    },
-                                    builder: (context, state) {
-                                      if (state
-                                          is NotificationCountSuccessState) {
-                                        _notificationCount = state.count;
-                                      }
-                                      if (state
-                                          is NotificationUpdateStatusSuccessState) {
-                                        _notificationCount = 0;
-                                      }
-                                      return Stack(
-                                        alignment: Alignment.center,
-                                        children: [
-                                          ButtonIconWidget(
-                                            width: 35,
-                                            height: 35,
-                                            borderRadius: 40,
-                                            icon: Icons.notifications_outlined,
-                                            title: '',
-                                            function: () {
-                                              Navigator.pushNamed(
-                                                context,
-                                                Routes.NOTIFICATION_VIEW,
-                                                arguments: {
-                                                  'notificationBloc':
-                                                      _notificationBloc,
-                                                },
-                                              ).then((value) {
-                                                _notificationBloc.add(
-                                                  NotificationUpdateStatusEvent(
-                                                    userId:
-                                                        UserInformationHelper
-                                                            .instance
-                                                            .getUserId(),
-                                                  ),
-                                                );
-                                              });
-                                            },
-                                            bgColor: Theme.of(context)
-                                                .cardColor
-                                                .withOpacity(0.3),
-                                            textColor:
-                                                Theme.of(context).hintColor,
-                                          ),
-                                          if (_notificationCount != 0)
-                                            Positioned(
-                                              top: 5,
-                                              right: 0,
-                                              child: Container(
-                                                width: 20,
-                                                height: 20,
-                                                alignment: Alignment.center,
-                                                decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(30),
-                                                  color:
-                                                      DefaultTheme.RED_CALENDAR,
-                                                ),
-                                                child: Text(
-                                                  _notificationCount.toString(),
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                    fontSize:
-                                                        (_notificationCount
-                                                                    .toString()
-                                                                    .length >=
-                                                                3)
-                                                            ? 8
-                                                            : 10,
-                                                    color: DefaultTheme.WHITE,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                        ],
-                                      );
-                                    },
-                                  )),
-                              const Padding(padding: EdgeInsets.only(left: 5)),
-                              Container(
-                                width: 60,
-                                height: 30,
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      margin: (PlatformUtils.instance.isAndroidApp())
+                          ? const EdgeInsets.only(bottom: 5)
+                          : null,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ClipRRect(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(20)),
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                              child: Container(
+                                alignment: Alignment.center,
+                                height: 60,
                                 decoration: BoxDecoration(
-                                  //color: Theme.of(context).cardColor,
-                                  borderRadius: BorderRadius.circular(10),
+                                  color: Theme.of(context)
+                                      .cardColor
+                                      .withOpacity(0.5),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: DefaultTheme.GREY_VIEW
+                                          .withOpacity(0.5),
+                                      spreadRadius: 2,
+                                      blurRadius: 3,
+                                      offset: const Offset(2, 2),
+                                    ),
+                                  ],
                                 ),
-                                child: Image.asset(
-                                  'assets/images/ic-viet-qr.png',
-                                  width: 50,
+                                child: Stack(
+                                  children: [
+                                    Consumer<PageSelectProvider>(
+                                      builder: (context, provider, child) {
+                                        return Row(
+                                          children: List.generate(
+                                              provider.listItem.length,
+                                              (index) {
+                                            var item = provider.listItem
+                                                .elementAt(index);
+
+                                            String url = (index ==
+                                                    provider.indexSelected)
+                                                ? item.assetsActive
+                                                : item.assetsUnActive;
+
+                                            return _buildShortcut(
+                                                index, url, context);
+                                          }).toList(),
+                                        );
+                                      },
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ],
+                            ),
                           ),
-                        ),
+                        ],
                       ),
                     ),
-                  ),
+                  )
                 ],
-              ),
-              floatingActionButtonLocation:
-                  FloatingActionButtonLocation.centerDocked,
-              floatingActionButton: Container(
-                margin: (PlatformUtils.instance.isAndroidApp())
-                    ? const EdgeInsets.only(bottom: 5)
-                    : null,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ClipRRect(
-                      borderRadius: const BorderRadius.all(Radius.circular(20)),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                        child: Container(
-                          alignment: Alignment.center,
-                          height: 60,
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).cardColor.withOpacity(0.5),
-                            boxShadow: [
-                              BoxShadow(
-                                color: DefaultTheme.GREY_VIEW.withOpacity(0.5),
-                                spreadRadius: 2,
-                                blurRadius: 3,
-                                offset: const Offset(2, 2),
-                              ),
-                            ],
-                          ),
-                          child: Stack(
-                            children: [
-                              Consumer<PageSelectProvider>(
-                                builder: (context, provider, child) {
-                                  return Row(
-                                    children: List.generate(
-                                        provider.listItem.length, (index) {
-                                      var item =
-                                          provider.listItem.elementAt(index);
-
-                                      String url =
-                                          (index == provider.indexSelected)
-                                              ? item.assetsActive
-                                              : item.assetsUnActive;
-
-                                      return _buildShortcut(
-                                          index, url, context);
-                                    }).toList(),
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
               ),
             );
           },
@@ -670,4 +533,136 @@ class _HomeScreen extends State<HomeScreen>
 
   @override
   bool get wantKeepAlive => true;
+
+//header
+  Widget _buildAppBar() {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      child: ClipRRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(
+            sigmaX: 25,
+            sigmaY: 25,
+          ),
+          child: Container(
+            padding: const EdgeInsets.only(left: 20, right: 10, top: 0),
+            decoration: BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.6),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Consumer<PageSelectProvider>(
+                  builder: (context, page, child) {
+                    return _getTitlePaqe(context, page.indexSelected);
+                  },
+                ),
+                const Spacer(),
+                ButtonIconWidget(
+                  width: 35,
+                  height: 35,
+                  borderRadius: 40,
+                  icon: Icons.search_rounded,
+                  title: '',
+                  function: () {
+                    Navigator.pushNamed(context, Routes.SEARCH_BANK);
+                  },
+                  bgColor: Theme.of(context).cardColor.withOpacity(0.3),
+                  textColor: Theme.of(context).hintColor,
+                ),
+                const Padding(padding: EdgeInsets.only(left: 5)),
+                SizedBox(
+                    width: 50,
+                    height: 60,
+                    child: BlocConsumer<NotificationBloc, NotificationState>(
+                      listener: (context, state) {
+                        //
+                      },
+                      builder: (context, state) {
+                        if (state is NotificationCountSuccessState) {
+                          _notificationCount = state.count;
+                        }
+                        if (state is NotificationUpdateStatusSuccessState) {
+                          _notificationCount = 0;
+                        }
+                        return Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            ButtonIconWidget(
+                              width: 35,
+                              height: 35,
+                              borderRadius: 40,
+                              icon: Icons.notifications_outlined,
+                              title: '',
+                              function: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  Routes.NOTIFICATION_VIEW,
+                                  arguments: {
+                                    'notificationBloc': _notificationBloc,
+                                  },
+                                ).then((value) {
+                                  _notificationBloc.add(
+                                    NotificationUpdateStatusEvent(
+                                      userId: UserInformationHelper.instance
+                                          .getUserId(),
+                                    ),
+                                  );
+                                });
+                              },
+                              bgColor:
+                                  Theme.of(context).cardColor.withOpacity(0.3),
+                              textColor: Theme.of(context).hintColor,
+                            ),
+                            if (_notificationCount != 0)
+                              Positioned(
+                                top: 5,
+                                right: 0,
+                                child: Container(
+                                  width: 20,
+                                  height: 20,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(30),
+                                    color: DefaultTheme.RED_CALENDAR,
+                                  ),
+                                  child: Text(
+                                    _notificationCount.toString(),
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: (_notificationCount
+                                                  .toString()
+                                                  .length >=
+                                              3)
+                                          ? 8
+                                          : 10,
+                                      color: DefaultTheme.WHITE,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        );
+                      },
+                    )),
+                const Padding(padding: EdgeInsets.only(left: 5)),
+                Container(
+                  width: 60,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    //color: Theme.of(context).cardColor,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Image.asset(
+                    'assets/images/ic-viet-qr.png',
+                    width: 50,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }

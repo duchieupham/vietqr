@@ -41,134 +41,131 @@ class _UserSetting extends State<UserSetting>
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     Alignment buttonTextAlignment = Alignment.centerLeft;
-    return Padding(
-      padding: const EdgeInsets.only(top: 70),
-      child: BlocListener<LogoutBloc, LogoutState>(
-        listener: (context, state) {
-          if (state is LogoutLoadingState) {
-            DialogWidget.instance.openLoadingDialog();
-          }
-          if (state is LogoutSuccessfulState) {
-            if (Navigator.canPop(context)) {
-              Navigator.pop(context);
-            }
-            Navigator.of(context).pushReplacementNamed(
-              Routes.LOGIN,
-            );
-            widget.voidCallback!();
-          }
-          if (state is LogoutFailedState) {
-            if (!mounted) return;
+    return BlocListener<LogoutBloc, LogoutState>(
+      listener: (context, state) {
+        if (state is LogoutLoadingState) {
+          DialogWidget.instance.openLoadingDialog();
+        }
+        if (state is LogoutSuccessfulState) {
+          if (Navigator.canPop(context)) {
             Navigator.pop(context);
-            DialogWidget.instance.openMsgDialog(
-              title: 'Không thể đăng xuất',
-              msg: 'Vui lòng thử lại sau.',
-            );
           }
-        },
-        child: ClipRRect(
-          child: Column(
-            children: [
-              const Padding(padding: EdgeInsets.only(top: 50)),
-              _buildAvatarWidget(context),
-              Padding(
-                padding: const EdgeInsets.only(
-                  top: 20,
-                  bottom: 30,
-                ),
-                child: Text(
-                  UserInformationHelper.instance.getUserFullname(),
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                  ),
+          Navigator.of(context).pushReplacementNamed(
+            Routes.LOGIN,
+          );
+          widget.voidCallback!();
+        }
+        if (state is LogoutFailedState) {
+          if (!mounted) return;
+          Navigator.pop(context);
+          DialogWidget.instance.openMsgDialog(
+            title: 'Không thể đăng xuất',
+            msg: 'Vui lòng thử lại sau.',
+          );
+        }
+      },
+      child: ClipRRect(
+        child: Column(
+          children: [
+            const Padding(padding: EdgeInsets.only(top: 50)),
+            _buildAvatarWidget(context),
+            Padding(
+              padding: const EdgeInsets.only(
+                top: 20,
+                bottom: 30,
+              ),
+              child: Text(
+                UserInformationHelper.instance.getUserFullname(),
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
-              Container(
-                width: width - 40,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).cardColor,
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: Column(
-                  children: [
-                    ButtonTextWidget(
-                      width: width,
-                      alignment: buttonTextAlignment,
-                      text: 'Cập nhật thông tin cá nhân',
-                      textColor: DefaultTheme.GREEN,
-                      function: () {
-                        Navigator.of(context).pushNamed(Routes.USER_EDIT);
-                      },
-                    ),
-                    const Divider(
-                      color: DefaultTheme.GREY_LIGHT,
-                      height: 1,
-                    ),
-                    ButtonTextWidget(
-                      width: width,
-                      alignment: buttonTextAlignment,
-                      text: 'Cài đặt máy in',
-                      textColor: DefaultTheme.GREEN,
-                      function: () async {
-                        if (PlatformUtils.instance.isPhysicalDevice()) {
-                          if (PlatformUtils.instance.isAndroidApp()) {
-                            await Permission.bluetooth.request();
-                            await Permission.bluetoothScan.request();
-                            await Permission.bluetoothConnect.request();
-                          }
-                          await Permission.bluetooth.request().then((value) =>
-                              Navigator.pushNamed(
-                                  context, Routes.PRINTER_SETTING));
-                        } else {
-                          Navigator.pushNamed(context, Routes.PRINTER_SETTING);
+            ),
+            Container(
+              width: width - 40,
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Column(
+                children: [
+                  ButtonTextWidget(
+                    width: width,
+                    alignment: buttonTextAlignment,
+                    text: 'Cập nhật thông tin cá nhân',
+                    textColor: DefaultTheme.GREEN,
+                    function: () {
+                      Navigator.of(context).pushNamed(Routes.USER_EDIT);
+                    },
+                  ),
+                  const Divider(
+                    color: DefaultTheme.GREY_LIGHT,
+                    height: 1,
+                  ),
+                  ButtonTextWidget(
+                    width: width,
+                    alignment: buttonTextAlignment,
+                    text: 'Cài đặt máy in',
+                    textColor: DefaultTheme.GREEN,
+                    function: () async {
+                      if (PlatformUtils.instance.isPhysicalDevice()) {
+                        if (PlatformUtils.instance.isAndroidApp()) {
+                          await Permission.bluetooth.request();
+                          await Permission.bluetoothScan.request();
+                          await Permission.bluetoothConnect.request();
                         }
-                      },
-                    ),
-                    const Divider(
-                      color: DefaultTheme.GREY_LIGHT,
-                      height: 1,
-                    ),
-                    // ButtonTextWidget(
-                    //   width: width,
-                    //   alignment: buttonTextAlignment,
-                    //   text: 'Kết nối với Telegram',
-                    //   textColor: DefaultTheme.GREEN,
-                    //   function: () {},
-                    // ),
-                    // const Divider(
-                    //   color: DefaultTheme.GREY_LIGHT,
-                    //   height: 1,
-                    // ),
-                    ButtonTextWidget(
-                      width: width,
-                      alignment: buttonTextAlignment,
-                      text: 'Thay đổi giao diện',
-                      textColor: DefaultTheme.GREEN,
-                      function: () {
-                        Navigator.of(context).pushNamed(Routes.UI_SETTING);
-                      },
-                    ),
-                    const Divider(
-                      color: DefaultTheme.GREY_LIGHT,
-                      height: 1,
-                    ),
-                    ButtonTextWidget(
-                      width: width,
-                      alignment: buttonTextAlignment,
-                      text: 'Đăng xuất',
-                      textColor: DefaultTheme.RED_TEXT,
-                      function: () async {
-                        Navigator.of(context)
-                            .popUntil((route) => route.isFirst);
-                        _logoutBloc.add(const LogoutEventSubmit());
-                      },
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
+                        await Permission.bluetooth.request().then((value) =>
+                            Navigator.pushNamed(
+                                context, Routes.PRINTER_SETTING));
+                      } else {
+                        Navigator.pushNamed(context, Routes.PRINTER_SETTING);
+                      }
+                    },
+                  ),
+                  const Divider(
+                    color: DefaultTheme.GREY_LIGHT,
+                    height: 1,
+                  ),
+                  // ButtonTextWidget(
+                  //   width: width,
+                  //   alignment: buttonTextAlignment,
+                  //   text: 'Kết nối với Telegram',
+                  //   textColor: DefaultTheme.GREEN,
+                  //   function: () {},
+                  // ),
+                  // const Divider(
+                  //   color: DefaultTheme.GREY_LIGHT,
+                  //   height: 1,
+                  // ),
+                  ButtonTextWidget(
+                    width: width,
+                    alignment: buttonTextAlignment,
+                    text: 'Thay đổi giao diện',
+                    textColor: DefaultTheme.GREEN,
+                    function: () {
+                      Navigator.of(context).pushNamed(Routes.UI_SETTING);
+                    },
+                  ),
+                  const Divider(
+                    color: DefaultTheme.GREY_LIGHT,
+                    height: 1,
+                  ),
+                  ButtonTextWidget(
+                    width: width,
+                    alignment: buttonTextAlignment,
+                    text: 'Đăng xuất',
+                    textColor: DefaultTheme.RED_TEXT,
+                    function: () async {
+                      Navigator.of(context)
+                          .popUntil((route) => route.isFirst);
+                      _logoutBloc.add(const LogoutEventSubmit());
+                    },
+                  ),
+                ],
+              ),
+            )
+          ],
         ),
       ),
     );

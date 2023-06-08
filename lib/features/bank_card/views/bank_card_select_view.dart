@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:uuid/uuid.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'dart:math' as math;
@@ -45,54 +46,68 @@ class BankCardSelectView extends StatefulWidget {
 
 class _BankCardSelectViewState extends State<BankCardSelectView>
     with AutomaticKeepAliveClientMixin {
-  static final List<BankAccountDTO> bankAccounts = [];
-  static final List<Color> cardColors = [];
-  static final List<QRGeneratedDTO> qrGenerateds = [];
-  static final List<Widget> cardWidgets = [];
-  static final ScrollController scrollController = ScrollController();
-  static late QRBloc qrBloc;
-  static final CarouselController carouselController = CarouselController();
+  final List<BankAccountDTO> bankAccounts = [];
+  final List<Color> cardColors = [];
+  final List<QRGeneratedDTO> qrGenerateds = [];
+  final List<Widget> cardWidgets = [];
+  final ScrollController scrollController = ScrollController();
+  late QRBloc qrBloc;
+  final CarouselController carouselController = CarouselController();
 
   late BusinessInformationBloc businessInformationBloc;
   late BankCardBloc bankCardBloc;
 
+  final refreshController = RefreshController(initialRefresh: false);
+
   initialServices(BuildContext context) {
     businessInformationBloc = BlocProvider.of(context);
     bankCardBloc = BlocProvider.of(context);
-
+    qrBloc = BlocProvider.of(context);
     Provider.of<BankCardSelectProvider>(context, listen: false).reset();
     bankAccounts.clear();
     cardColors.clear();
+  }
+
+  initData() {
     String userId = UserInformationHelper.instance.getUserId();
     bankCardBloc.add(BankCardEventGetList(userId: userId));
-    qrBloc = BlocProvider.of(context);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initialServices(context);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      initData();
+    });
+  }
+
+  Future<void> _refresh() async {
+    initData();
+    refreshController.refreshCompleted();
+  }
+
+  void onLoading() async {
+    refreshController.loadComplete();
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final double width = MediaQuery.of(context).size.width;
     final double maxListHeight = MediaQuery.of(context).size.height - 200;
     final double height = MediaQuery.of(context).size.height;
     double sizedBox = 0;
     double listHeight = 0;
-    initialServices(context);
     return Consumer<BankArrangementProvider>(
       builder: (context, provider, child) {
-        return Container(
-          width: width,
-          height: height,
-          decoration: BoxDecoration(
-            image: (provider.type == 0)
-                ? null
-                : const DecorationImage(
-                    image: AssetImage('assets/images/bg-qr.png'),
-                    fit: BoxFit.fitHeight,
-                  ),
-          ),
+        return SmartRefresher(
+          controller: refreshController,
+          onLoading: onLoading,
+          onRefresh: _refresh,
           child: (provider.type == 0)
               ? Column(
                   children: [
-                    const Padding(padding: EdgeInsets.only(top: 100)),
                     BlocConsumer<BankCardBloc, BankCardState>(
                       listener: (context, state) {
                         if (state is BankCardGetListSuccessState) {
@@ -139,27 +154,17 @@ class _BankCardSelectViewState extends State<BankCardSelectView>
                         }
 
                         return (sizedBox <= listHeight)
-                            ? buildList(
-                                maxListHeight,
-                                bankAccounts,
-                                cardColors,
-                                listHeight,
-                                sizedBox,
-                              )
+                            ? buildList(maxListHeight, bankAccounts, cardColors,
+                                listHeight, sizedBox, _refresh)
                             : Expanded(
-                                child: buildList(
-                                  maxListHeight,
-                                  bankAccounts,
-                                  cardColors,
-                                  listHeight,
-                                  sizedBox,
-                                ),
+                                child: buildList(maxListHeight, bankAccounts,
+                                    cardColors, listHeight, sizedBox, _refresh),
                               );
                       },
                     ),
                     Container(
                       height: (PlatformUtils.instance.isAndroidApp())
-                          ? 56
+                          ? 80
                           : (PlatformUtils.instance.isIOsApp() && height <= 800)
                               ? 90
                               : 110,
@@ -169,7 +174,6 @@ class _BankCardSelectViewState extends State<BankCardSelectView>
               : Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    const Padding(padding: EdgeInsets.only(top: 35)),
                     Expanded(
                       child: BlocConsumer<BankCardBloc, BankCardState>(
                         listener: ((context, state) {
@@ -344,229 +348,6 @@ class _BankCardSelectViewState extends State<BankCardSelectView>
                         }),
                       ),
                     ),
-                    // const Padding(padding: EdgeInsets.only(top: 10)),
-                    // SizedBox(
-                    //   width: width,
-                    //   height: 40,
-                    //   child: Row(
-                    //     mainAxisAlignment: MainAxisAlignment.center,
-                    //     children: [
-                    //       ButtonIconWidget(
-                    //         width: width * 0.2,
-                    //         height: 40,
-                    //         icon: Icons.print_rounded,
-                    //         title: '',
-                    //         function: () async {
-                    //           int indexSelected =
-                    //               Provider.of<BankAccountProvider>(context,
-                    //                       listen: false)
-                    //                   .indexSelected;
-
-                    //           String userId =
-                    //               UserInformationHelper.instance.getUserId();
-                    //           BluetoothPrinterDTO bluetoothPrinterDTO =
-                    //               await LocalDatabase.instance
-                    //                   .getBluetoothPrinter(userId);
-                    //           if (bluetoothPrinterDTO.id.isNotEmpty) {
-                    //             bool isPrinting = false;
-                    //             if (!isPrinting) {
-                    //               isPrinting = true;
-                    //               DialogWidget.instance
-                    //                   .showFullModalBottomContent(
-                    //                       widget: const PrintingView());
-                    //               await PrinterUtils.instance
-                    //                   .print(qrGenerateds[indexSelected])
-                    //                   .then((value) {
-                    //                 Navigator.pop(context);
-                    //                 isPrinting = false;
-                    //               });
-                    //             }
-                    //           } else {
-                    //             DialogWidget.instance.openMsgDialog(
-                    //                 title: 'Không thể in',
-                    //                 msg:
-                    //                     'Vui lòng kết nối với máy in để thực hiện việc in.');
-                    //           }
-                    //         },
-                    //         bgColor: Theme.of(context).cardColor,
-                    //         textColor: DefaultTheme.ORANGE,
-                    //       ),
-                    //       const Padding(
-                    //         padding: EdgeInsets.only(left: 10),
-                    //       ),
-                    //       ButtonIconWidget(
-                    //         width: width * 0.2,
-                    //         height: 40,
-                    //         icon: Icons.photo_rounded,
-                    //         title: '',
-                    //         function: () {
-                    //           int indexSelected =
-                    //               Provider.of<BankAccountProvider>(context,
-                    //                       listen: false)
-                    //                   .indexSelected;
-                    //           Navigator.pushNamed(
-                    //             context,
-                    //             Routes.QR_SHARE_VIEW,
-                    //             arguments: {
-                    //               'qrGeneratedDTO': qrGenerateds[indexSelected],
-                    //               'action': 'SAVE'
-                    //             },
-                    //           );
-                    //         },
-                    //         bgColor: Theme.of(context).cardColor,
-                    //         textColor: DefaultTheme.RED_CALENDAR,
-                    //       ),
-                    //       const Padding(
-                    //         padding: EdgeInsets.only(left: 10),
-                    //       ),
-                    //       ButtonIconWidget(
-                    //         width: width * 0.2,
-                    //         height: 40,
-                    //         icon: Icons.copy_rounded,
-                    //         title: '',
-                    //         function: () async {
-                    //           int indexSelected =
-                    //               Provider.of<BankAccountProvider>(context,
-                    //                       listen: false)
-                    //                   .indexSelected;
-                    //           await FlutterClipboard.copy(ShareUtils.instance
-                    //                   .getTextSharing(
-                    //                       qrGenerateds[indexSelected]))
-                    //               .then(
-                    //             (value) => Fluttertoast.showToast(
-                    //               msg: 'Đã sao chép',
-                    //               toastLength: Toast.LENGTH_SHORT,
-                    //               gravity: ToastGravity.CENTER,
-                    //               timeInSecForIosWeb: 1,
-                    //               backgroundColor:
-                    //                   Theme.of(context).primaryColor,
-                    //               textColor: Theme.of(context).hintColor,
-                    //               fontSize: 15,
-                    //               webBgColor: 'rgba(255, 255, 255)',
-                    //               webPosition: 'center',
-                    //             ),
-                    //           );
-                    //         },
-                    //         bgColor: Theme.of(context).cardColor,
-                    //         textColor: DefaultTheme.BLUE_TEXT,
-                    //       ),
-                    //       const Padding(
-                    //         padding: EdgeInsets.only(left: 10),
-                    //       ),
-                    //       ButtonIconWidget(
-                    //         width: width * 0.2,
-                    //         height: 40,
-                    //         icon: Icons.share_rounded,
-                    //         title: '',
-                    //         function: () {
-                    //           int indexSelected =
-                    //               Provider.of<BankAccountProvider>(context,
-                    //                       listen: false)
-                    //                   .indexSelected;
-                    //           Navigator.pushNamed(
-                    //             context,
-                    //             Routes.QR_SHARE_VIEW,
-                    //             arguments: {
-                    //               'qrGeneratedDTO': qrGenerateds[indexSelected],
-                    //             },
-                    //           );
-                    //         },
-                    //         bgColor: Theme.of(context).cardColor,
-                    //         textColor: DefaultTheme.GREEN,
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
-                    // const Padding(
-                    //   padding: EdgeInsets.only(top: 10),
-                    // ),
-                    // SizedBox(
-                    //   width: width,
-                    //   height: 40,
-                    //   child: Row(
-                    //     mainAxisAlignment: MainAxisAlignment.center,
-                    //     children: [
-                    //       ButtonIconWidget(
-                    //         width: width * 0.4 + 10,
-                    //         height: 40,
-                    //         icon: Icons.add_rounded,
-                    //         title: 'QR giao dịch',
-                    //         function: () {
-                    //           if (bankAccounts.isNotEmpty &&
-                    //               qrGenerateds.isNotEmpty) {
-                    //             Navigator.of(context)
-                    //                 .push(
-                    //               MaterialPageRoute(
-                    //                 builder: (context) => CreateQR(
-                    //                   bankAccountDTO: bankAccounts[
-                    //                       Provider.of<BankAccountProvider>(
-                    //                               context,
-                    //                               listen: false)
-                    //                           .indexSelected],
-                    //                 ),
-                    //               ),
-                    //             )
-                    //                 .then((value) {
-                    //               String userId = UserInformationHelper.instance
-                    //                   .getUserId();
-                    //               businessInformationBloc.add(
-                    //                 BusinessInformationEventGetList(
-                    //                     userId: userId),
-                    //               );
-                    //             });
-                    //           } else {
-                    //             DialogWidget.instance.openMsgDialog(
-                    //                 title: 'Không thể tạo mã QR thanh toán',
-                    //                 msg:
-                    //                     'Thêm tài khoản ngân hàng để sử dụng chức năng này.');
-                    //           }
-                    //         },
-                    //         textColor: DefaultTheme.WHITE,
-                    //         bgColor: DefaultTheme.GREEN,
-                    //       ),
-                    //       const Padding(padding: EdgeInsets.only(left: 10)),
-                    //       ButtonIconWidget(
-                    //         width: width * 0.4 + 10,
-                    //         height: 40,
-                    //         icon: Icons.add_rounded,
-                    //         title: 'TK ngân hàng',
-                    //         function: () {
-                    //           if (bankAccounts.isNotEmpty &&
-                    //               qrGenerateds.isNotEmpty) {
-                    //             Navigator.of(context)
-                    //                 .push(
-                    //               MaterialPageRoute(
-                    //                 builder: (context) => CreateQR(
-                    //                   bankAccountDTO: bankAccounts[
-                    //                       Provider.of<BankAccountProvider>(
-                    //                               context,
-                    //                               listen: false)
-                    //                           .indexSelected],
-                    //                 ),
-                    //               ),
-                    //             )
-                    //                 .then((value) {
-                    //               String userId = UserInformationHelper.instance
-                    //                   .getUserId();
-                    //               businessInformationBloc.add(
-                    //                 BusinessInformationEventGetList(
-                    //                     userId: userId),
-                    //               );
-                    //             });
-                    //           } else {
-                    //             DialogWidget.instance.openMsgDialog(
-                    //                 title: 'Không thể tạo mã QR thanh toán',
-                    //                 msg:
-                    //                     'Thêm tài khoản ngân hàng để sử dụng chức năng này.');
-                    //           }
-                    //         },
-                    //         textColor: DefaultTheme.WHITE,
-                    //         bgColor: DefaultTheme.GREEN,
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
-
                     Padding(
                       padding: EdgeInsets.only(
                         bottom: (PlatformUtils.instance.isAndroidApp())
@@ -584,9 +365,14 @@ class _BankCardSelectViewState extends State<BankCardSelectView>
     );
   }
 
-  Widget buildList(double maxListHeight, List<BankAccountDTO> banks,
-      List<Color> colors, double listHeight, double sizeBox) {
-    return Padding(
+  Widget buildList(
+      double maxListHeight,
+      List<BankAccountDTO> banks,
+      List<Color> colors,
+      double listHeight,
+      double sizeBox,
+      VoidCallback? onRefresh) {
+    return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: StackedList(
         maxListHeight: maxListHeight,
@@ -595,6 +381,7 @@ class _BankCardSelectViewState extends State<BankCardSelectView>
         scrollController: scrollController,
         height: listHeight,
         sizeBox: sizeBox,
+        onRefresh: onRefresh,
       ),
     );
   }
@@ -680,6 +467,7 @@ class StackedList extends StatefulWidget {
   final ScrollController scrollController;
   final double sizeBox;
   final double height;
+  final VoidCallback? onRefresh;
 
   const StackedList({
     super.key,
@@ -689,6 +477,7 @@ class StackedList extends StatefulWidget {
     required this.scrollController,
     required this.sizeBox,
     required this.height,
+    this.onRefresh,
   });
 
   @override
@@ -696,6 +485,8 @@ class StackedList extends StatefulWidget {
 }
 
 class _StackedList extends State<StackedList> {
+  final refreshController = RefreshController(initialRefresh: false);
+
   @override
   void initState() {
     super.initState();
@@ -749,28 +540,32 @@ class _StackedList extends State<StackedList> {
                     ),
                     child: SizedBox(
                       height: widget.height,
-                      child: CustomScrollView(
-                        controller: widget.scrollController,
-                        slivers: widget.list.map(
-                          (item) {
-                            int index = widget.list.indexOf(item);
-                            return StackedListChild(
-                              key: Key(const Uuid().v1()),
-                              minHeight: _minHeight,
-                              maxHeight: widget.list.indexOf(item) ==
-                                      widget.list.length - 1
-                                  ? MediaQuery.of(context).size.height
-                                  : _maxHeight,
-                              pinned: isPinned,
-                              floating: true,
-                              child: _buildCardItem(
-                                context: context,
-                                index: index,
-                                dto: widget.list[index],
-                              ),
-                            );
-                          },
-                        ).toList(),
+                      child: SmartRefresher(
+                        onRefresh: widget.onRefresh,
+                        controller: refreshController,
+                        scrollController: widget.scrollController,
+                        child: CustomScrollView(
+                          slivers: widget.list.map(
+                            (item) {
+                              int index = widget.list.indexOf(item);
+                              return StackedListChild(
+                                key: Key(const Uuid().v1()),
+                                minHeight: _minHeight,
+                                maxHeight: widget.list.indexOf(item) ==
+                                        widget.list.length - 1
+                                    ? MediaQuery.of(context).size.height
+                                    : _maxHeight,
+                                pinned: isPinned,
+                                floating: true,
+                                child: _buildCardItem(
+                                  context: context,
+                                  index: index,
+                                  dto: widget.list[index],
+                                ),
+                              );
+                            },
+                          ).toList(),
+                        ),
                       ),
                     ),
                   )
@@ -804,35 +599,45 @@ class _StackedList extends State<StackedList> {
                             ),
                             child: SizedBox(
                               height: widget.height,
-                              child: CustomScrollView(
-                                controller: widget.scrollController,
-                                slivers: widget.list.map(
-                                  (item) {
-                                    int index = widget.list.indexOf(item);
-                                    return StackedListChild(
-                                      key: Key(const Uuid().v1()),
-                                      minHeight: _minHeight,
-                                      maxHeight: widget.list.indexOf(item) ==
-                                              widget.list.length - 1
-                                          ? MediaQuery.of(context).size.height
-                                          : _maxHeight,
-                                      pinned: isPinned,
-                                      floating: true,
-                                      child: _buildCardItem(
-                                        context: context,
-                                        index: index,
-                                        dto: widget.list[index],
-                                      ),
-                                    );
-                                  },
-                                ).toList(),
+                              child: SmartRefresher(
+                                onRefresh: widget.onRefresh,
+                                controller: refreshController,
+                                scrollController: widget.scrollController,
+                                child: CustomScrollView(
+                                  controller: widget.scrollController,
+                                  slivers: widget.list.map(
+                                    (item) {
+                                      int index = widget.list.indexOf(item);
+                                      return StackedListChild(
+                                        key: Key(const Uuid().v1()),
+                                        minHeight: _minHeight,
+                                        maxHeight: widget.list.indexOf(item) ==
+                                                widget.list.length - 1
+                                            ? MediaQuery.of(context).size.height
+                                            : _maxHeight,
+                                        pinned: isPinned,
+                                        floating: true,
+                                        child: _buildCardItem(
+                                          context: context,
+                                          index: index,
+                                          dto: widget.list[index],
+                                        ),
+                                      );
+                                    },
+                                  ).toList(),
+                                ),
                               ),
                             ),
                           ),
                   ),
         const Padding(padding: EdgeInsets.only(top: 10)),
-        SizedBox(
-          width: width,
+        InkWell(
+          onTap: () {
+            Provider.of<AddBankProvider>(context, listen: false)
+                .updateSelect(1);
+            Navigator.pushNamed(context, Routes.ADD_BANK_CARD,
+                arguments: {'pageIndex': 1});
+          },
           child: Row(
             children: [
               BoxLayout(
@@ -841,30 +646,22 @@ class _StackedList extends State<StackedList> {
                 bgColor: Theme.of(context).buttonColor,
                 borderRadius: 5,
                 enableShadow: true,
-                child: InkWell(
-                  onTap: () {
-                    Provider.of<AddBankProvider>(context, listen: false)
-                        .updateSelect(1);
-                    Navigator.pushNamed(context, Routes.ADD_BANK_CARD,
-                        arguments: {'pageIndex': 1});
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(
-                        Icons.add_rounded,
-                        size: 15,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(
+                      Icons.add_rounded,
+                      size: 15,
+                      color: DefaultTheme.GREEN,
+                    ),
+                    Padding(padding: EdgeInsets.only(left: 5)),
+                    Text(
+                      'TK ngân hàng',
+                      style: TextStyle(
                         color: DefaultTheme.GREEN,
                       ),
-                      Padding(padding: EdgeInsets.only(left: 5)),
-                      Text(
-                        'TK ngân hàng',
-                        style: TextStyle(
-                          color: DefaultTheme.GREEN,
-                        ),
-                      )
-                    ],
-                  ),
+                    )
+                  ],
                 ),
               ),
               const Spacer(),

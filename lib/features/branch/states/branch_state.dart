@@ -16,6 +16,8 @@ class BranchState extends Equatable {
 
 class BranchInitialState extends BranchState {}
 
+class BranchLoadingState extends BranchState {}
+
 class BranchChoiceLoadingState extends BranchState {}
 
 class BranchChoiceSuccessfulState extends BranchState {
