@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vierqr/commons/enums/check_type.dart';
 import 'package:vierqr/models/business_member_dto.dart';
 
 class SearchClearProvider extends ValueNotifier {
@@ -10,15 +11,11 @@ class SearchClearProvider extends ValueNotifier {
 }
 
 class SearchProvider with ChangeNotifier {
-  bool _isLoading = false;
+  TypeAddMember _typeMember = TypeAddMember.MORE;
 
-  bool get isLoading => _isLoading;
+  TypeAddMember get typeMember => _typeMember;
 
-  int _existed = 0;
-
-  int get existed => _existed;
-
-  BusinessMemberDTO _dto = const BusinessMemberDTO(
+  BusinessMemberDTO _dto = BusinessMemberDTO(
     userId: '',
     status: '',
     existed: 0,
@@ -30,18 +27,13 @@ class SearchProvider with ChangeNotifier {
 
   BusinessMemberDTO get dto => _dto;
 
-  void updateLoading(bool value) {
-    _isLoading = value;
-    notifyListeners();
-  }
-
   void updateDTO(value) {
     _dto = value;
     notifyListeners();
   }
 
   void updateExisted(value) {
-    _existed = value;
+    _typeMember = value;
     notifyListeners();
   }
 }
