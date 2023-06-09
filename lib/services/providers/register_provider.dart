@@ -1,6 +1,6 @@
-import 'package:vierqr/commons/utils/bank_information_utils.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:vierqr/commons/utils/string_utils.dart';
+import 'package:vierqr/commons/enums/check_type.dart';
 
 class RegisterProvider with ChangeNotifier {
   //error handler
@@ -14,19 +14,25 @@ class RegisterProvider with ChangeNotifier {
 
   get confirmPassErr => _isConfirmPassErr;
 
-  final dynamic _phoneKey = GlobalKey();
-  final dynamic _passKey = GlobalKey();
-  final dynamic _rePassKey = GlobalKey();
+  String _verificationId = '';
 
-  get phoneKey => _phoneKey;
+  get verificationId => _verificationId;
 
-  get passKey => _passKey;
+  TypeOTP _typeSentOtp = TypeOTP.NONE;
 
-  get rePassKey => _rePassKey;
+  get typeSentOtp => _typeSentOtp;
 
-  void onChangePhone(String value) {
-    String? msgErr = StringUtils.instance.validatePhone(value);
-    _phoneKey.currentState.showError(msgErr);
+  final auth = FirebaseAuth.instance;
+
+  static const String countryCode = '+84';
+
+  void updateVerifyId(value) {
+    _verificationId = value;
+    notifyListeners();
+  }
+
+  void updateSentOtp(value) {
+    _typeSentOtp = value;
     notifyListeners();
   }
 
@@ -38,7 +44,6 @@ class RegisterProvider with ChangeNotifier {
     _isPhoneErr = phoneErr;
     _isPasswordErr = passErr;
     _isConfirmPassErr = confirmPassErr;
-
     notifyListeners();
   }
 
@@ -51,5 +56,30 @@ class RegisterProvider with ChangeNotifier {
     _isPasswordErr = false;
     _isConfirmPassErr = false;
     notifyListeners();
+  }
+
+  Future<void> phoneAuthentication(
+      String phone, Function(TypeOTP) onSentOtp) async {
+    await auth.verifyPhoneNumber(
+      phoneNumber: '+840972574143',
+      verificationCompleted: (PhoneAuthCredential credential) async {},
+      codeSent: (String verificationId, int? resendToken) {
+        updateVerifyId(verificationId);
+        updateSentOtp(TypeOTP.SUCCESS);
+        onSentOtp(TypeOTP.SUCCESS);
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {},
+      verificationFailed: (FirebaseAuthException e) {
+        onSentOtp(TypeOTP.FAILED);
+      },
+      timeout: const Duration(seconds: 10),
+    );
+  }
+
+  Future<bool> verifyOTP(String otp) async {
+    var credentials = await auth.signInWithCredential(
+        PhoneAuthProvider.credential(
+            verificationId: verificationId, smsCode: otp));
+    return credentials.user != null ? true : false;
   }
 }
