@@ -6,3 +6,11 @@ enum CheckType {
   C03,
   C04,
 }
+
+enum TypeOTP {
+  SUCCESS,
+  FAILED,
+  ERROR,
+  AWAIT,
+  NONE,
+}

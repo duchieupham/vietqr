@@ -50,6 +50,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "84188087131-b059g6pa1btpi1etbed21t0foq94g9cq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vietqr.product",
+            "certificate_hash": "37c7f36b1350da5cbf835e40ec3c9637e1310b39"
+          }
+        },
+        {
           "client_id": "84188087131-ddlsglqs4db3dfevfqti6ir4dt7elf5i.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

@@ -1,3 +1,4 @@
+import 'package:vierqr/commons/enums/check_type.dart';
 import 'package:vierqr/models/account_login_dto.dart';
 import 'package:equatable/equatable.dart';
 
@@ -15,4 +16,13 @@ class RegisterEventSubmit extends RegisterEvent {
 
   @override
   List<Object?> get props => [dto];
+}
+
+class RegisterEventSentOTP extends RegisterEvent {
+  final TypeOTP typeOTP;
+
+  const RegisterEventSentOTP({required this.typeOTP});
+
+  @override
+  List<Object?> get props => [typeOTP];
 }

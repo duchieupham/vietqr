@@ -16,7 +16,10 @@ class DefaultTheme {
   static const Color GREY_LIGHT = Color(0xFF9BA5B9);
   static const Color GREY_BG = Color(0xFFF4F4F4);
   static const Color GREY_HIGHLIGHT = Color(0xFF222222);
+  static const Color GREY_444B56 = Color(0xff444B56);
   static const Color RED_TEXT = Color(0xFFFF0A0A);
+  static const Color RED_EC1010 = Color(0xffEC1010);
+  static const Color error700 = Color(0xffD8281E);
   static const Color BLUE_TEXT = Color(0xFF0A7AFF);
   static const Color RED_CALENDAR = Color(0xFFF5233C);
   static const Color TRANSPARENT = Color(0x00000000);
@@ -57,6 +60,7 @@ class DefaultTheme {
   static const Color COLOR_CBC2ED = Color(0xFFCBC2ED);
   static const Color BLUE_MB = Color(0xFF141CD6);
   static const Color RED_MB = Color(0xFFF4272A);
+  static const secondary400 = Color(0xff464F77);
 
   //THEME NAME
   static const String THEME_LIGHT = 'LIGHT';
