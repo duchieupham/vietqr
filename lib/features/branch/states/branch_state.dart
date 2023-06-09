@@ -127,17 +127,34 @@ class BranchInsertMemberFailedState extends BranchState {
 }
 
 //
-class BranchDeleteMemberLoadingState extends BranchState {}
+class BranchDeleteMemberLoadingState extends BranchState {
+  final int index;
 
-class BranchDeleteMemberSuccessState extends BranchState {}
+  const BranchDeleteMemberLoadingState({required this.index});
+
+  @override
+  List<Object?> get props => [index];
+}
+
+class BranchDeleteMemberSuccessState extends BranchState {
+  final int index;
+
+  const BranchDeleteMemberSuccessState({required this.index});
+
+  @override
+  List<Object?> get props => [index];
+}
 
 class BranchDeleteMemberFailedState extends BranchState {
   final String message;
+  final int index;
+  final bool updateAll;
 
-  const BranchDeleteMemberFailedState({required this.message});
+  const BranchDeleteMemberFailedState(
+      {required this.message, required this.index, this.updateAll = false});
 
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [message, index, updateAll];
 }
 
 //
