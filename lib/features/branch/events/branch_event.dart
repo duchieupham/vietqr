@@ -76,11 +76,12 @@ class BranchEventInitial extends BranchEvent {}
 
 class BranchEventRemove extends BranchEvent {
   final BranchMemberDeleteDTO dto;
+  final int index;
 
-  const BranchEventRemove({required this.dto});
+  const BranchEventRemove({required this.dto, required this.index});
 
   @override
-  List<Object?> get props => [dto];
+  List<Object?> get props => [dto, index];
 }
 
 class BranchEventGetConnectBanks extends BranchEvent {
