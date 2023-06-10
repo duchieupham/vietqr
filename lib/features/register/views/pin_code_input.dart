@@ -47,7 +47,7 @@ class PinCodeInput extends StatelessWidget {
       cursorHeight: 18,
       showCursor: true,
       autoDisposeControllers: false,
-      enablePinAutofill: false,
+      enablePinAutofill: true,
       pinTheme: PinTheme(
         borderWidth: borderWidth,
         shape: shape,

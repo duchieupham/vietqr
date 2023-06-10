@@ -18,21 +18,12 @@ class RegisterProvider with ChangeNotifier {
 
   get verificationId => _verificationId;
 
-  TypeOTP _typeSentOtp = TypeOTP.NONE;
-
-  get typeSentOtp => _typeSentOtp;
-
   final auth = FirebaseAuth.instance;
 
   static const String countryCode = '+84';
 
   void updateVerifyId(value) {
     _verificationId = value;
-    notifyListeners();
-  }
-
-  void updateSentOtp(value) {
-    _typeSentOtp = value;
     notifyListeners();
   }
 
@@ -61,11 +52,10 @@ class RegisterProvider with ChangeNotifier {
   Future<void> phoneAuthentication(
       String phone, Function(TypeOTP) onSentOtp) async {
     await auth.verifyPhoneNumber(
-      phoneNumber: '+840972574143',
+      phoneNumber: countryCode + phone,
       verificationCompleted: (PhoneAuthCredential credential) async {},
       codeSent: (String verificationId, int? resendToken) {
         updateVerifyId(verificationId);
-        updateSentOtp(TypeOTP.SUCCESS);
         onSentOtp(TypeOTP.SUCCESS);
       },
       codeAutoRetrievalTimeout: (String verificationId) {},
