@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/check_type.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
@@ -43,6 +44,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   bool _isChangePass = false;
 
+  final auth = FirebaseAuth.instance;
+
   void initialServices(BuildContext context) {
     if (!_isChangePass) {
       _passwordController.clear();
@@ -60,75 +63,73 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void initState() {
     super.initState();
     initialServices(context);
-    registerBloc = BlocProvider.of(context);
   }
-
-  late RegisterBloc registerBloc;
 
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    return BlocProvider(
-      create: (BuildContext context) => RegisterBloc(),
-      child: BlocConsumer<RegisterBloc, RegisterState>(
-        listener: (context, state) async {
-          if (state is RegisterLoadingState) {
-            DialogWidget.instance.openLoadingDialog();
-          }
-          if (state is RegisterFailedState) {
-            //pop loading dialog
-            Navigator.pop(context);
-            //
+    return BlocConsumer<RegisterBloc, RegisterState>(
+      listener: (context, state) async {
+        if (state is RegisterLoadingState) {
+          DialogWidget.instance.openLoadingDialog();
+        }
+        if (state is RegisterFailedState) {
+          //pop loading dialog
+          Navigator.pop(context);
+          //
+          DialogWidget.instance.openMsgDialog(
+            title: 'Không thể đăng ký',
+            msg: state.msg,
+          );
+        }
+        if (state is RegisterSuccessState) {
+          //pop loading dialog
+          Navigator.of(context).pop();
+          //pop to login page
+          backToPreviousPage(context);
+        }
+        if (state is RegisterSentOTPFailedState) {
+          DialogWidget.instance.openLoadingDialog();
+
+          Future.delayed(const Duration(milliseconds: 500), () {
+            Navigator.of(context).pop();
             DialogWidget.instance.openMsgDialog(
               title: 'Không thể đăng ký',
               msg: state.msg,
             );
-          }
-          if (state is RegisterSuccessState) {
-            //pop loading dialog
-            Navigator.of(context).pop();
-            //pop to login page
-            backToPreviousPage(context);
-          }
-          if (state is RegisterSentOTPFailedState) {
-            DialogWidget.instance.openLoadingDialog();
+          });
+        }
 
-            Future.delayed(const Duration(milliseconds: 500), () {
-              Navigator.of(context).pop();
-              DialogWidget.instance.openMsgDialog(
-                title: 'Không thể đăng ký',
-                msg: state.msg,
-              );
-            });
-          }
-
-          if (state is RegisterSentOTPSuccessState) {
-            String userIP = await UserInformationUtils.instance.getIPAddress();
-            AccountLoginDTO dto = AccountLoginDTO(
-              phoneNo: _phoneNoController.text,
-              password: EncryptUtils.instance.encrypted(
-                _phoneNoController.text,
-                _passwordController.text,
-              ),
-              device: userIP,
-              fcmToken: '',
-              platform: 'MOBILE',
-            );
-            DialogWidget.instance
-                .showModalBottomContent(
-                  widget: VerifyOTPView(
-                    phone: _phoneNoController.text,
-                    dto: dto,
-                    requestId: '',
-                  ),
-                  height: height * 0.5,
-                )
-                .then((value) => isOpenOTP = false);
-          }
-        },
-        builder: (context, state) {
-          return Scaffold(
+        if (state is RegisterSentOTPSuccessState) {
+          String userIP = await UserInformationUtils.instance.getIPAddress();
+          AccountLoginDTO dto = AccountLoginDTO(
+            phoneNo: _phoneNoController.text,
+            password: EncryptUtils.instance.encrypted(
+              _phoneNoController.text,
+              _passwordController.text,
+            ),
+            device: userIP,
+            fcmToken: '',
+            platform: 'MOBILE',
+          );
+          DialogWidget.instance
+              .showModalBottomContent(
+                widget: VerifyOTPView(
+                  phone: _phoneNoController.text,
+                  dto: dto,
+                ),
+                height: height * 0.5,
+              )
+              .then((value) => isOpenOTP = false);
+        }
+      },
+      builder: (context, state) {
+        return GestureDetector(
+          onTap: () {
+            FocusManager.instance.primaryFocus?.unfocus();
+          },
+          child: Scaffold(
             appBar: AppBar(toolbarHeight: 0),
             body: Column(
               children: [
@@ -364,9 +365,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
               ],
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 

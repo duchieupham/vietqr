@@ -37,6 +37,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   void _sentOtp(RegisterEvent event, Emitter<RegisterState> emit) {
     try {
       if (event is RegisterEventSentOTP) {
+        emit(RegisterSentOTPLoadingState());
         if (event.typeOTP == TypeOTP.SUCCESS) {
           emit(RegisterSentOTPSuccessState());
         } else if (event.typeOTP == TypeOTP.FAILED) {
