@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -7,8 +9,8 @@ import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/features/register/blocs/register_bloc.dart';
 import 'package:vierqr/features/register/events/register_event.dart';
 import 'package:vierqr/models/account_login_dto.dart';
-import 'package:vierqr/services/providers/countdown_provider.dart';
 import 'package:vierqr/services/providers/register_provider.dart';
+import 'package:vierqr/services/providers/verify_otp_provider.dart';
 
 import 'pin_code_input.dart';
 
@@ -26,120 +28,82 @@ class VerifyOTPView extends StatefulWidget {
   State<StatefulWidget> createState() => _VerifyOTPView();
 }
 
-class _VerifyOTPView extends State<VerifyOTPView> {
+class _VerifyOTPView extends State<VerifyOTPView> with WidgetsBindingObserver {
   final otpController = TextEditingController();
-  late CountdownProvider countdownProvider;
+  late CountDownOTPNotifier countdownProvider;
 
   @override
   void initState() {
     super.initState();
-    countdownProvider = CountdownProvider(120);
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {});
+    countdownProvider = CountDownOTPNotifier(120);
     countdownProvider.countDown();
   }
 
-  String otpError = '';
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    countdownProvider.onHideApp(state);
+  }
 
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
     return Consumer<VerifyOtpProvider>(
       builder: (context, provider, child) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        return Stack(
           children: [
-            SizedBox(
-              width: width,
-              height: 50,
-              child: Row(
-                children: [
-                  const SizedBox(
-                    width: 80,
-                    height: 50,
-                  ),
-                  Expanded(
-                    child: Container(
-                      alignment: Alignment.center,
-                      child: const Text(
-                        'Xác thực OTP',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 15,
-                        ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                  width: width,
+                  height: 50,
+                  child: Row(
+                    children: [
+                      const SizedBox(
+                        width: 80,
+                        height: 50,
                       ),
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      width: 80,
-                      alignment: Alignment.centerRight,
-                      child: const Text(
-                        'Đóng',
-                        style: TextStyle(
-                          color: DefaultTheme.GREEN,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            DividerWidget(width: width),
-            Expanded(
-              child: ListView(
-                shrinkWrap: true,
-                children: [
-                  const Padding(padding: EdgeInsets.only(top: 30)),
-                  RichText(
-                    textAlign: TextAlign.center,
-                    text: TextSpan(
-                      style: TextStyle(
-                        color: Theme.of(context).hintColor,
-                        fontSize: 15,
-                      ),
-                      children: [
-                        const TextSpan(text: 'Mã OTP được gửi tới SĐT '),
-                        TextSpan(
-                          text: widget.phone,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
+                      Expanded(
+                        child: Container(
+                          alignment: Alignment.center,
+                          child: const Text(
+                            'Xác thực OTP',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 15,
+                            ),
                           ),
                         ),
-                        const TextSpan(
-                            text:
-                                '. Vui lòng nhập mã để xác thực đăng ký tài khoản.'),
-                      ],
-                    ),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Navigator.pop(context);
+                          Provider.of<VerifyOtpProvider>(context, listen: false)
+                              .reset();
+                        },
+                        child: Container(
+                          width: 80,
+                          alignment: Alignment.centerRight,
+                          child: const Text(
+                            'Đóng',
+                            style: TextStyle(
+                              color: DefaultTheme.GREEN,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  //
-                  const Padding(padding: EdgeInsets.only(top: 30)),
-                  PinCodeInput(
-                    controller: otpController,
-                    onChanged: provider.onChangePinCode,
-                    clBorderErr: provider.otpError != null
-                        ? DefaultTheme.error700
-                        : null,
-                    error: provider.otpError != null ? true : false,
-                  ),
-                  Text(
-                    provider.otpError ?? '',
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      height: 20 / 12,
-                      color: DefaultTheme.error700,
-                    ),
-                  )
-                ],
-              ),
-            ),
-            ValueListenableBuilder(
-              valueListenable: countdownProvider,
-              builder: (_, value, child) {
-                return (value != 0)
-                    ? RichText(
+                ),
+                DividerWidget(width: width),
+                Expanded(
+                  child: ListView(
+                    shrinkWrap: true,
+                    children: [
+                      const Padding(padding: EdgeInsets.only(top: 30)),
+                      RichText(
                         textAlign: TextAlign.center,
                         text: TextSpan(
                           style: TextStyle(
@@ -147,68 +111,146 @@ class _VerifyOTPView extends State<VerifyOTPView> {
                             fontSize: 15,
                           ),
                           children: [
-                            const TextSpan(
-                                text: 'Mã OTP có hiệu lực trong vòng '),
+                            const TextSpan(text: 'Mã OTP được gửi tới SĐT '),
                             TextSpan(
-                              text: value.toString(),
-                              style: const TextStyle(color: DefaultTheme.GREEN),
+                              text: widget.phone,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                            const TextSpan(text: 's.'),
+                            const TextSpan(
+                                text:
+                                    '. Vui lòng nhập mã để xác thực đăng ký tài khoản.'),
                           ],
+                        ),
+                      ),
+                      //
+                      const Padding(padding: EdgeInsets.only(top: 30)),
+                      PinCodeInput(
+                        controller: otpController,
+                        onChanged: provider.onChangePinCode,
+                        clBorderErr: provider.otpError != null
+                            ? DefaultTheme.error700
+                            : null,
+                        error: provider.otpError != null ? true : false,
+                      ),
+                      Text(
+                        provider.otpError ?? '',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          height: 20 / 12,
+                          color: DefaultTheme.error700,
                         ),
                       )
-                    : RichText(
-                        textAlign: TextAlign.center,
-                        text: TextSpan(
-                          style: TextStyle(
-                            color: Theme.of(context).hintColor,
-                            fontSize: 15,
-                          ),
-                          children: [
-                            const TextSpan(text: 'Không nhận được mã OTP? '),
-                            TextSpan(
-                              text: 'Gửi lại',
-                              style: const TextStyle(
-                                decoration: TextDecoration.underline,
-                                color: DefaultTheme.GREEN,
+                    ],
+                  ),
+                ),
+                ValueListenableBuilder(
+                  valueListenable: countdownProvider,
+                  builder: (_, value, child) {
+                    return (value != 0)
+                        ? RichText(
+                            textAlign: TextAlign.center,
+                            text: TextSpan(
+                              style: TextStyle(
+                                color: Theme.of(context).hintColor,
+                                fontSize: 15,
                               ),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () {
-                                  countdownProvider = CountdownProvider(120);
-                                  // widget.bankCardBloc.add(
-                                  //   BankCardEventRequestOTP(dto: widget.dto),
-                                  // );
-                                },
+                              children: [
+                                const TextSpan(
+                                    text: 'Mã OTP có hiệu lực trong vòng '),
+                                TextSpan(
+                                  text: value.toString(),
+                                  style: const TextStyle(
+                                      color: DefaultTheme.GREEN),
+                                ),
+                                const TextSpan(text: 's.'),
+                              ],
                             ),
-                          ],
-                        ),
-                      );
-              },
-            ),
-            const Padding(padding: EdgeInsets.only(top: 10)),
-            ButtonWidget(
-              width: width,
-              text: 'Xác thực',
-              textColor: DefaultTheme.WHITE,
-              bgColor: provider.isButton
-                  ? DefaultTheme.GREEN
-                  : DefaultTheme.GREY_444B56,
-              function: () async {
-                final data =
-                    await Provider.of<RegisterProvider>(context, listen: false)
-                        .verifyOTP(otpController.text);
+                          )
+                        : RichText(
+                            textAlign: TextAlign.center,
+                            text: TextSpan(
+                              style: TextStyle(
+                                color: Theme.of(context).hintColor,
+                                fontSize: 15,
+                              ),
+                              children: [
+                                const TextSpan(
+                                    text: 'Không nhận được mã OTP? '),
+                                countdownProvider.resendOtp <= 0
+                                    ? const TextSpan()
+                                    : TextSpan(
+                                        text:
+                                            'Gửi lại (${countdownProvider.resendOtp})',
+                                        style: const TextStyle(
+                                          decoration: TextDecoration.underline,
+                                          color: DefaultTheme.GREEN,
+                                        ),
+                                        recognizer: TapGestureRecognizer()
+                                          ..onTap = () async {
+                                            countdownProvider.resendCountDown();
+                                            otpController.clear();
+                                            await Provider.of<RegisterProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .phoneAuthentication(
+                                                    widget.phone);
+                                          },
+                                      ),
+                              ],
+                            ),
+                          );
+                  },
+                ),
+                const Padding(padding: EdgeInsets.only(top: 10)),
+                ButtonWidget(
+                  width: width,
+                  text: 'Xác thực',
+                  textColor: DefaultTheme.WHITE,
+                  bgColor: provider.isButton
+                      ? DefaultTheme.GREEN
+                      : DefaultTheme.GREY_444B56,
+                  function: () async {
+                    final data = await Provider.of<RegisterProvider>(context,
+                            listen: false)
+                        .verifyOTP(otpController.text, () {
+                      provider.updateLoading(true);
+                    });
 
-                if (data) {
-                  if (!mounted) return;
-                  context
-                      .read<RegisterBloc>()
-                      .add(RegisterEventSubmit(dto: widget.dto));
-                } else {
-                  provider.onOtpSubmit();
-                }
-              },
+                    if (data is bool) {
+                      if (!mounted) return;
+                      provider.updateLoading(false);
+                      context
+                          .read<RegisterBloc>()
+                          .add(RegisterEventSubmit(dto: widget.dto));
+                    } else if (data is String) {
+                      provider.onOtpSubmit(data, () {
+                        countdownProvider.setValue(0);
+                      });
+                    }
+                  },
+                ),
+                const Padding(padding: EdgeInsets.only(bottom: 10)),
+              ],
             ),
-            const Padding(padding: EdgeInsets.only(bottom: 10)),
+            Visibility(
+              visible: provider.isLoading,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).cardColor.withOpacity(0.9),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                alignment: Alignment.center,
+                child: const Center(
+                  child: CircularProgressIndicator(
+                    color: DefaultTheme.GREEN,
+                  ),
+                ),
+              ),
+            )
           ],
         );
       },
