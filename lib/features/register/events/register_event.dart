@@ -26,3 +26,12 @@ class RegisterEventSentOTP extends RegisterEvent {
   @override
   List<Object?> get props => [typeOTP];
 }
+
+class RegisterEventReSentOTP extends RegisterEvent {
+  final TypeOTP typeOTP;
+
+  const RegisterEventReSentOTP({required this.typeOTP});
+
+  @override
+  List<Object?> get props => [typeOTP];
+}

@@ -11,6 +11,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   RegisterBloc() : super(RegisterInitialState()) {
     on<RegisterEventSubmit>(_register);
     on<RegisterEventSentOTP>(_sentOtp);
+    // on<RegisterEventReSentOTP>(_reSentOtp);
   }
 
   void _register(RegisterEvent event, Emitter emit) async {
@@ -51,6 +52,24 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
           msg: 'Có lỗi xảy ra. Vui lòng kiểm tra lại kết nối.'));
     }
   }
+//
+// void _reSentOtp(RegisterEvent event, Emitter<RegisterState> emit) {
+//   try {
+//     if (event is RegisterEventReSentOTP) {
+//       emit(RegisterSentOTPLoadingState());
+//       if (event.typeOTP == TypeOTP.SUCCESS) {
+//         emit(RegisterReSentOTPSuccessState());
+//       } else if (event.typeOTP == TypeOTP.FAILED) {
+//         emit(const RegisterReSentOTPFailedState(
+//             msg: 'Có lỗi xảy ra. Vui lòng kiểm tra lại kết nối.'));
+//       }
+//     }
+//   } catch (e) {
+//     print('Error at register - RegisterBloc: $e');
+//     emit(const RegisterReSentOTPFailedState(
+//         msg: 'Có lỗi xảy ra. Vui lòng kiểm tra lại kết nối.'));
+//   }
+// }
 }
 
 const RegisterRepository registerRepository = RegisterRepository();

@@ -34,3 +34,14 @@ class RegisterSentOTPFailedState extends RegisterState {
   @override
   List<Object?> get props => [msg];
 }
+
+class RegisterReSentOTPSuccessState extends RegisterState {}
+
+class RegisterReSentOTPFailedState extends RegisterState {
+  final String msg;
+
+  const RegisterReSentOTPFailedState({required this.msg});
+
+  @override
+  List<Object?> get props => [msg];
+}

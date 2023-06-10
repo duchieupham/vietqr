@@ -14,27 +14,3 @@ class CountdownProvider extends ValueNotifier {
     );
   }
 }
-
-class VerifyOtpProvider extends ChangeNotifier {
-  String? _otpError;
-
-  get otpError => _otpError;
-
-  bool _isButton = false;
-
-  get isButton => _isButton;
-
-  onChangePinCode(String value) {
-    _otpError = null;
-    if ((value.isEmpty || value.length < 6) || _isButton) {
-      _isButton = false;
-    } else {
-      _isButton = true;
-    }
-    notifyListeners();
-  }
-
-  onOtpSubmit() {
-
-  }
-}

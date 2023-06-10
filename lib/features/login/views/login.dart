@@ -56,44 +56,42 @@ class _Login extends State<Login> {
       isLogoutEnterHome = arg['isLogout'] ?? false;
     }
 
-    return Scaffold(
-      body: BlocProvider(
-        create: (BuildContext context) => LoginBloc(),
-        child: BlocListener<LoginBloc, LoginState>(
-          listener: ((context, state) {
-            if (state is LoginLoadingState) {
-              DialogWidget.instance.openLoadingDialog();
-            }
-            if (state is LoginSuccessfulState) {
-              // _loginBloc.add(LoginEventGetUserInformation(userId: state.userId));
-              //pop loading dialog
-              Navigator.of(context).pop();
-              //navigate to home screen
-              Navigator.of(context).popUntil((route) => route.isFirst);
-              Navigator.of(context).pushReplacementNamed(Routes.HOME,
-                  arguments: {
-                    'isFromLogin': true,
-                    'isLogoutEnterHome': isLogoutEnterHome
-                  });
-            }
-            if (state is LoginFailedState) {
-              FocusManager.instance.primaryFocus?.unfocus();
-              //pop loading dialog
-              Navigator.of(context).pop();
+    return BlocConsumer<LoginBloc, LoginState>(
+      listener: (context, state) {
+        if (state is LoginLoadingState) {
+          DialogWidget.instance.openLoadingDialog();
+        }
+        if (state is LoginSuccessfulState) {
+          // _loginBloc.add(LoginEventGetUserInformation(userId: state.userId));
+          //pop loading dialog
+          Navigator.of(context).pop();
+          //navigate to home screen
+          Navigator.of(context).popUntil((route) => route.isFirst);
+          Navigator.of(context).pushReplacementNamed(Routes.HOME, arguments: {
+            'isFromLogin': true,
+            'isLogoutEnterHome': isLogoutEnterHome
+          });
+        }
+        if (state is LoginFailedState) {
+          FocusManager.instance.primaryFocus?.unfocus();
+          //pop loading dialog
+          Navigator.of(context).pop();
 
-              //show msg dialog
-              DialogWidget.instance.openMsgDialog(
-                title: 'Đăng nhập không thành công',
-                msg:
-                    'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập.',
-              );
-            }
-          }),
-          child: GestureDetector(
-            onTap: () {
-              FocusManager.instance.primaryFocus?.unfocus();
-            },
-            child: LoginFrame(
+          //show msg dialog
+          DialogWidget.instance.openMsgDialog(
+            title: 'Đăng nhập không thành công',
+            msg:
+                'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập.',
+          );
+        }
+      },
+      builder: (context, state) {
+        return GestureDetector(
+          onTap: () {
+            FocusManager.instance.primaryFocus?.unfocus();
+          },
+          child: Scaffold(
+            body: LoginFrame(
               width: width,
               height: height,
               padding: EdgeInsets.zero,
@@ -104,8 +102,8 @@ class _Login extends State<Login> {
               widget2: _buildWidget2(context: context),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 

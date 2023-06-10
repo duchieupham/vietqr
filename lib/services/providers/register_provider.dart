@@ -18,12 +18,21 @@ class RegisterProvider with ChangeNotifier {
 
   get verificationId => _verificationId;
 
+  int? _resendToken;
+
+  get resendToken => _resendToken;
+
   final auth = FirebaseAuth.instance;
 
   static const String countryCode = '+84';
 
   void updateVerifyId(value) {
     _verificationId = value;
+    notifyListeners();
+  }
+
+  void updateResendToken(value) {
+    _resendToken = value;
     notifyListeners();
   }
 
@@ -49,27 +58,42 @@ class RegisterProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> phoneAuthentication(
-      String phone, Function(TypeOTP) onSentOtp) async {
+  Future<void> phoneAuthentication(String phone,
+      {Function(TypeOTP)? onSentOtp}) async {
     await auth.verifyPhoneNumber(
       phoneNumber: countryCode + phone,
       verificationCompleted: (PhoneAuthCredential credential) async {},
       codeSent: (String verificationId, int? resendToken) {
         updateVerifyId(verificationId);
-        onSentOtp(TypeOTP.SUCCESS);
+        updateResendToken(resendToken);
+        if (onSentOtp != null) {
+          onSentOtp(TypeOTP.SUCCESS);
+        }
       },
       codeAutoRetrievalTimeout: (String verificationId) {},
       verificationFailed: (FirebaseAuthException e) {
-        onSentOtp(TypeOTP.FAILED);
+        if (onSentOtp != null) {
+          onSentOtp(TypeOTP.FAILED);
+        }
       },
-      timeout: const Duration(seconds: 10),
+      forceResendingToken: _resendToken,
+      timeout: const Duration(seconds: 120),
     );
   }
 
-  Future<bool> verifyOTP(String otp) async {
-    var credentials = await auth.signInWithCredential(
-        PhoneAuthProvider.credential(
-            verificationId: verificationId, smsCode: otp));
-    return credentials.user != null ? true : false;
+  Future<dynamic> verifyOTP(String otp, Function onLoading) async {
+    try {
+      onLoading();
+      var credentials = await auth.signInWithCredential(
+          PhoneAuthProvider.credential(
+              verificationId: verificationId, smsCode: otp));
+      updateResendToken(null);
+      return credentials.user != null;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'session-expired') {
+        updateResendToken(null);
+      }
+      return e.code;
+    }
   }
 }

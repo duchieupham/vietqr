@@ -72,11 +72,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return BlocConsumer<RegisterBloc, RegisterState>(
       listener: (context, state) async {
         if (state is RegisterLoadingState) {
-          DialogWidget.instance.openLoadingDialog();
+          // DialogWidget.instance.openLoadingDialog();
         }
         if (state is RegisterFailedState) {
           //pop loading dialog
-          Navigator.pop(context);
+          // Navigator.pop(context);
           //
           DialogWidget.instance.openMsgDialog(
             title: 'Không thể đăng ký',
@@ -396,11 +396,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
         if (Provider.of<RegisterProvider>(context, listen: false)
             .isValidValidation()) {
           await Provider.of<RegisterProvider>(context, listen: false)
-              .phoneAuthentication(_phoneNoController.text, (type) {
-            context
-                .read<RegisterBloc>()
-                .add(RegisterEventSentOTP(typeOTP: type));
-          });
+              .phoneAuthentication(
+            _phoneNoController.text,
+            onSentOtp: (type) {
+              context
+                  .read<RegisterBloc>()
+                  .add(RegisterEventSentOTP(typeOTP: type));
+            },
+          );
         }
       },
     );
