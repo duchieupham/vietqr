@@ -14,3 +14,19 @@ enum TypeOTP {
   AWAIT,
   NONE,
 }
+
+enum TypeAddMember { MORE, ADDED, AWAIT }
+
+extension TypeMemberExt on TypeAddMember {
+  int get existed {
+    switch (this) {
+      case TypeAddMember.MORE:
+        return 0;
+      case TypeAddMember.ADDED:
+        return 1;
+      case TypeAddMember.AWAIT:
+      default:
+        return 2;
+    }
+  }
+}
