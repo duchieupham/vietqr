@@ -7,6 +7,8 @@ enum CheckType {
   C04,
 }
 
+enum TypeMoveEvent { LEFT, RIGHT, NONE }
+
 enum TypeAddMember { MORE, ADDED, AWAIT }
 
 extension TypeMemberExt on TypeAddMember {
