@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/enums/check_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_widget.dart';
@@ -21,10 +22,10 @@ class AddBranchMemberWidget extends StatelessWidget {
   final SearchClearProvider searchClearProvider = SearchClearProvider(false);
   final _formAddMemberKey = GlobalKey<FormState>();
   String message = '';
-  static const BusinessMemberDTO dto = BusinessMemberDTO(
+  static BusinessMemberDTO dto = BusinessMemberDTO(
     userId: '',
     status: '',
-    existed: 0,
+    existed: TypeAddMember.MORE.existed,
     imgId: '',
     name: '',
     phoneNo: '',
@@ -91,13 +92,11 @@ class AddBranchMemberWidget extends StatelessWidget {
             listener: (context, state) {
               if (state is BranchInsertMemberLoadingState) {
                 Provider.of<SearchProvider>(context, listen: false)
-                    .updateLoading(true);
+                    .updateExisted(TypeAddMember.AWAIT);
               }
               if (state is BranchInsertMemberSuccessState) {
                 Provider.of<SearchProvider>(context, listen: false)
-                    .updateLoading(false);
-                Provider.of<SearchProvider>(context, listen: false)
-                    .updateExisted(1);
+                    .updateExisted(TypeAddMember.ADDED);
               }
 
               if (state is BranchSeachMemberSuccessState) {
@@ -105,7 +104,7 @@ class AddBranchMemberWidget extends StatelessWidget {
                 Provider.of<SearchProvider>(context, listen: false)
                     .updateDTO(state.dto);
                 Provider.of<SearchProvider>(context, listen: false)
-                    .updateExisted(dto.existed);
+                    .updateExisted(state.dto.typeMember);
               }
               if (state is BranchSearchMemberNotFoundState) {
                 message = state.message;
@@ -117,57 +116,37 @@ class AddBranchMemberWidget extends StatelessWidget {
             },
             child: Consumer<SearchProvider>(
               builder: (context, provider, child) {
-                return Stack(
+                return Column(
                   children: [
-                    Column(
-                      children: [
-                        const Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            'Kết quả tìm kiếm',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                        (message.trim().isNotEmpty &&
-                                provider.dto.userId.isEmpty)
-                            ? BoxLayout(
-                                width: width,
-                                borderRadius: 5,
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 10),
-                                margin:
-                                    const EdgeInsets.symmetric(vertical: 10),
-                                alignment: Alignment.center,
-                                bgColor: Theme.of(context).canvasColor,
-                                child: Text(
-                                  message,
-                                ),
-                              )
-                            : (provider.dto.userId.isNotEmpty &&
-                                    message.trim().isEmpty)
-                                ? _buildSearchItem(
-                                    context: context,
-                                    dto: provider.dto,
-                                    existed: provider.existed,
-                                  )
-                                : const SizedBox(),
-                      ],
-                    ),
-                    Visibility(
-                      visible: provider.isLoading,
-                      child: Container(
-                        width: width,
-                        height: 200,
-                        color: DefaultTheme.TRANSPARENT,
-                        child: const Center(
-                          child: CircularProgressIndicator(
-                            color: DefaultTheme.GREEN,
-                          ),
+                    const Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Kết quả tìm kiếm',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ),
+                    (message.trim().isNotEmpty && provider.dto.userId.isEmpty)
+                        ? BoxLayout(
+                            width: width,
+                            borderRadius: 5,
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            margin: const EdgeInsets.symmetric(vertical: 10),
+                            alignment: Alignment.center,
+                            bgColor: Theme.of(context).canvasColor,
+                            child: Text(
+                              message,
+                            ),
+                          )
+                        : (provider.dto.userId.isNotEmpty &&
+                                message.trim().isEmpty)
+                            ? _buildSearchItem(
+                                context: context,
+                                dto: provider.dto,
+                                existed: provider.typeMember,
+                              )
+                            : const SizedBox(),
                   ],
                 );
               },
@@ -214,7 +193,7 @@ class AddBranchMemberWidget extends StatelessWidget {
                         Provider.of<SearchProvider>(context, listen: false)
                             .updateDTO(dto);
                         Provider.of<SearchProvider>(context, listen: false)
-                            .updateExisted(0);
+                            .updateExisted(TypeAddMember.MORE);
                         context.read<BranchBloc>().add(BranchEventInitial());
                       }
                     },
@@ -250,7 +229,7 @@ class AddBranchMemberWidget extends StatelessWidget {
   Widget _buildSearchItem(
       {required BuildContext context,
       required BusinessMemberDTO dto,
-      required int existed}) {
+      required TypeAddMember existed}) {
     final double width = MediaQuery.of(context).size.width;
     return Container(
       width: width,
@@ -285,7 +264,7 @@ class AddBranchMemberWidget extends StatelessWidget {
               ],
             ),
           ),
-          (existed == 1)
+          (existed == TypeAddMember.ADDED)
               ? Container(
                   padding:
                       const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
@@ -306,44 +285,56 @@ class AddBranchMemberWidget extends StatelessWidget {
                     )
                   ]),
                 )
-              : InkWell(
-                  onTap: () {
-                    BranchMemberInsertDTO branchMemberInsertDTO =
-                        BranchMemberInsertDTO(
-                      branchId: branchId,
-                      businessId: businessId,
-                      userId: dto.userId,
-                      role: 4,
-                    );
-                    context.read<BranchBloc>().add(
-                        BranchEventInsertMember(dto: branchMemberInsertDTO));
-                    // reset(context);
-                  },
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: DefaultTheme.GREEN,
-                    ),
-                    child: Row(
-                      children: const [
-                        Icon(
-                          Icons.add_rounded,
-                          color: DefaultTheme.WHITE,
-                          size: 13,
+              : (existed == TypeAddMember.AWAIT)
+                  ? Container(
+                      color: DefaultTheme.TRANSPARENT,
+                      margin: const EdgeInsets.only(right: 8),
+                      width: 24,
+                      height: 24,
+                      child: const Center(
+                        child: CircularProgressIndicator(
+                          color: DefaultTheme.GREEN,
                         ),
-                        Padding(padding: EdgeInsets.only(left: 5)),
-                        Text(
-                          'Thêm',
-                          style: TextStyle(
-                            color: DefaultTheme.WHITE,
-                          ),
-                        )
-                      ],
+                      ),
+                    )
+                  : InkWell(
+                      onTap: () {
+                        BranchMemberInsertDTO branchMemberInsertDTO =
+                            BranchMemberInsertDTO(
+                          branchId: branchId,
+                          businessId: businessId,
+                          userId: dto.userId,
+                          role: 4,
+                        );
+                        context.read<BranchBloc>().add(BranchEventInsertMember(
+                            dto: branchMemberInsertDTO));
+                        // reset(context);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 5, horizontal: 10),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: DefaultTheme.GREEN,
+                        ),
+                        child: Row(
+                          children: const [
+                            Icon(
+                              Icons.add_rounded,
+                              color: DefaultTheme.WHITE,
+                              size: 13,
+                            ),
+                            Padding(padding: EdgeInsets.only(left: 5)),
+                            Text(
+                              'Thêm',
+                              style: TextStyle(
+                                color: DefaultTheme.WHITE,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
-                ),
         ],
       ),
     );
@@ -354,6 +345,7 @@ class AddBranchMemberWidget extends StatelessWidget {
     message = '';
     searchClearProvider.updateClearSearch(false);
     Provider.of<SearchProvider>(context, listen: false).updateDTO(dto);
-    Provider.of<SearchProvider>(context, listen: false).updateExisted(0);
+    Provider.of<SearchProvider>(context, listen: false)
+        .updateExisted(dto.typeMember);
   }
 }

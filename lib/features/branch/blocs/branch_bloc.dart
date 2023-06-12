@@ -41,9 +41,7 @@ class BranchBloc extends Bloc<BranchEvent, BranchState> {
   void _getMembers(BranchEvent event, Emitter emit) async {
     try {
       if (event is BranchEventGetMembers) {
-        if (event.isLoading!) {
-          emit(BranchGetMembersLoadingState());
-        }
+        emit(BranchGetMembersLoadingState());
         List<BusinessMemberDTO> list =
             await branchRepository.getBranchMembers(id);
         emit(BranchGetMembersSuccessState(list: list));
@@ -177,15 +175,16 @@ class BranchBloc extends Bloc<BranchEvent, BranchState> {
   void _deleteMember(BranchEvent event, Emitter emit) async {
     try {
       if (event is BranchEventRemove) {
-        emit(BranchDeleteMemberLoadingState());
+        emit(BranchDeleteMemberLoadingState(index: event.index));
         final ResponseMessageDTO result =
             await branchRepository.deleteMember(event.dto);
         if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
-          emit(BranchDeleteMemberSuccessState());
+          emit(BranchDeleteMemberSuccessState(index: event.index));
         } else {
           emit(
             BranchDeleteMemberFailedState(
               message: ErrorUtils.instance.getErrorMessage(result.message),
+              index: event.index,
             ),
           );
         }
@@ -197,6 +196,7 @@ class BranchBloc extends Bloc<BranchEvent, BranchState> {
       emit(
         BranchDeleteMemberFailedState(
           message: ErrorUtils.instance.getErrorMessage(result.message),
+          index: 0,
         ),
       );
     }
