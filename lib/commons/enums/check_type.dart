@@ -22,3 +22,21 @@ extension TypeMemberExt on TypeAddMember {
     }
   }
 }
+
+enum TypeRole { ADMIN, USER, MANAGER, BRANCH_MANAGER }
+
+extension TypeRoleExt on TypeRole {
+  int get role {
+    switch (this) {
+      case TypeRole.ADMIN:
+        return 5;
+      case TypeRole.MANAGER:
+        return 1;
+      case TypeRole.BRANCH_MANAGER:
+        return 3;
+      case TypeRole.USER:
+      default:
+        return -1;
+    }
+  }
+}

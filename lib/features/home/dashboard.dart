@@ -4,22 +4,20 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/enums/check_type.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/commons/utils/transaction_utils.dart';
-import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
 import 'package:vierqr/features/business/events/business_information_event.dart';
 import 'package:vierqr/features/business/states/business_information_state.dart';
-import 'package:vierqr/features/personal/views/user_edit_view.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/models/business_item_dto.dart';
 import 'package:vierqr/models/related_transaction_receive_dto.dart';
 import 'package:vierqr/services/providers/add_bank_provider.dart';
 import 'package:vierqr/services/providers/bank_account_provider.dart';
-import 'package:vierqr/services/providers/business_inforamtion_provider.dart';
 import 'package:vierqr/services/providers/shortcut_provider.dart';
 import 'package:vierqr/services/providers/suggestion_widget_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
@@ -107,6 +105,7 @@ class _DashboardViewState extends State<DashboardView>
             ),
           );
         }
+
         if (state is BusinessGetListSuccessfulState) {
           if (state.list.isEmpty) {
             return SizedBox(
@@ -117,21 +116,32 @@ class _DashboardViewState extends State<DashboardView>
               ),
             );
           } else {
-            return Column(
-              children: [
-                _buildTitle('Doanh nghiệp', DefaultTheme.GREEN),
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: state.list.length,
-                  itemBuilder: (context, index) {
-                    return _buildBusinessItem(
-                      context: context,
-                      dto: state.list[index],
-                    );
-                  },
-                ),
-              ],
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Text(
+                    'Doanh nghiệp',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: state.list.length,
+                    itemBuilder: (context, index) {
+                      return _buildBusinessItem(
+                        context: context,
+                        dto: state.list[index],
+                      );
+                    },
+                  ),
+                ],
+              ),
             );
           }
         }
@@ -146,232 +156,156 @@ class _DashboardViewState extends State<DashboardView>
     String heroId = dto.businessId;
     return Container(
       width: width,
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.all(Radius.circular(12)),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: DefaultTheme.BLACK_LIGHT.withOpacity(0.1),
+            blurRadius: 1,
+          ),
+        ],
+        color: DefaultTheme.WHITE,
+      ),
       child: Column(
         children: [
-          SizedBox(
-            child: Stack(
+          GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(
+                context,
+                Routes.BUSINESS_INFORMATION_VIEW,
+                arguments: {
+                  'heroId': heroId,
+                  'img': dto.coverImgId,
+                  'businessItem': dto,
+                },
+              ).then((value) {
+                heroId = value.toString();
+                String userId = UserInformationHelper.instance.getUserId();
+                businessInformationBloc
+                    .add(BusinessInformationEventGetList(userId: userId));
+              });
+            },
+            child: Row(
               children: [
-                Hero(
-                  tag: heroId,
-                  child: Container(
-                    width: width,
-                    // height: width * 9 / 16,
-                    height: 150,
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(15),
-                        topRight: Radius.circular(15),
-                      ),
-                      color: DefaultTheme.GREY_TOP_TAB_BAR.withOpacity(0.3),
-                      image: (dto.coverImgId.isNotEmpty)
-                          ? DecorationImage(
+                Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(25),
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: (dto.imgId.isNotEmpty)
+                          ? ImageUtils.instance.getImageNetWork(dto.imgId)
+                          : Image.asset(
+                              'assets/images/ic-avatar-business.png',
                               fit: BoxFit.cover,
-                              image: ImageUtils.instance
-                                  .getImageNetWork(dto.coverImgId),
-                            )
-                          : null,
+                              width: 50,
+                              height: 50,
+                            ).image,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Text(
+                    dto.name,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
                 Container(
-                  width: width,
-                  // height: width * 9 / 16,
-                  height: 150,
+                  padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        DefaultTheme.TRANSPARENT,
-                        Theme.of(context)
-                            .scaffoldBackgroundColor
-                            .withOpacity(0.4),
-                        Theme.of(context).scaffoldBackgroundColor,
-                        Theme.of(context).scaffoldBackgroundColor,
-                      ],
+                    color: DefaultTheme.BANK_CARD_COLOR_3.withOpacity(0.3),
+                    borderRadius: const BorderRadius.all(Radius.circular(100)),
+                  ),
+                  child: const ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(100)),
+                    child: Icon(
+                      Icons.arrow_forward_ios_outlined,
+                      size: 10,
+                      color: DefaultTheme.GREY_TEXT,
                     ),
                   ),
+                )
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          Container(
+            margin: const EdgeInsets.only(left: 32),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildChip(
+                  context: context,
+                  icon: Icons.business_rounded,
+                  color: DefaultTheme.BLACK_LIGHT,
+                  text: '${dto.totalBranch} chi nhánh',
                 ),
-                Positioned(
-                  right: 10,
-                  top: 10,
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.pushNamed(
-                        context,
-                        Routes.BUSINESS_INFORMATION_VIEW,
-                        arguments: {
-                          'heroId': heroId,
-                          'img': dto.coverImgId,
-                          'businessItem': dto,
-                        },
-                      ).then((value) {
-                        heroId = value.toString();
-                        String userId =
-                            UserInformationHelper.instance.getUserId();
-                        businessInformationBloc.add(
-                            BusinessInformationEventGetList(userId: userId));
-                      });
-                    },
-                    child: const BoxLayout(
-                      width: 85,
-                      borderRadius: 40,
+                const SizedBox(height: 4),
+                _buildChip(
+                  context: context,
+                  icon: Icons.people_rounded,
+                  text: '${dto.totalMember} thành viên',
+                  color: DefaultTheme.BLACK_LIGHT,
+                ),
+              ],
+            ),
+          ),
+          if (dto.role == TypeRole.ADMIN.role) ...[
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(
+                  child: GestureDetector(
+                    child: Container(
                       alignment: Alignment.center,
-                      child: Text(
-                        'Chi tiết',
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      decoration: BoxDecoration(
+                        color: DefaultTheme.GREY_TEXT.withOpacity(0.1),
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(4),
+                        ),
+                      ),
+                      child: const Text(
+                        'Kết nối TK ngân hàng',
                         style: TextStyle(
+                          color: DefaultTheme.GREEN,
                           fontSize: 12,
                         ),
                       ),
                     ),
                   ),
                 ),
-                Positioned(
-                  bottom: 30,
-                  left: 0,
-                  child: SizedBox(
-                    width: width - 50,
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 50,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(25),
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: (dto.imgId.isNotEmpty)
-                                  ? ImageUtils.instance
-                                      .getImageNetWork(dto.imgId)
-                                  : Image.asset(
-                                      'assets/images/ic-avatar-business.png',
-                                      fit: BoxFit.cover,
-                                      width: 50,
-                                      height: 50,
-                                    ).image,
-                            ),
-                          ),
+                const SizedBox(width: 20),
+                Expanded(
+                  child: GestureDetector(
+                    child: Container(
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      decoration: BoxDecoration(
+                        color: DefaultTheme.GREY_TEXT.withOpacity(0.1),
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(4),
                         ),
-                        const Padding(padding: EdgeInsets.only(left: 20)),
-                        Expanded(
-                          child: Text(
-                            dto.name,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
+                      ),
+                      child: const Text(
+                        'Thêm thành viên',
+                        style: TextStyle(
+                          color: DefaultTheme.BLUE_TEXT,
+                          fontSize: 12,
                         ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
+                )
               ],
             ),
-          ),
-          SizedBox(
-            width: width,
-            child: Wrap(
-              spacing: 10,
-              runSpacing: 10,
-              children: [
-                _buildChip(
-                  context: context,
-                  icon: Icons.assignment_ind_rounded,
-                  color: DefaultTheme.RED_CALENDAR,
-                  text: getRoleName(dto.role),
-                ),
-                _buildChip(
-                  context: context,
-                  icon: Icons.business_rounded,
-                  color: DefaultTheme.GREEN,
-                  text: '${dto.totalBranch} chi nhánh',
-                ),
-                _buildChip(
-                  context: context,
-                  icon: Icons.people_rounded,
-                  text: '${dto.totalMember} thành viên',
-                  color: DefaultTheme.BLUE_TEXT,
-                ),
-              ],
-            ),
-          ),
-          if (dto.transactions.isEmpty) ...[
-            const Padding(padding: EdgeInsets.only(top: 10)),
-            Container(
-              width: width,
-              height: 40,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: Theme.of(context).cardColor,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Text('Chưa có giao dịch nào'),
-            ),
-          ],
-          if (dto.transactions.isNotEmpty) ...[
-            const Padding(padding: EdgeInsets.only(top: 30)),
-            SizedBox(
-              width: width,
-              child: const Text(
-                'Giao dịch gần đây',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-            const Padding(padding: EdgeInsets.only(top: 10)),
-            Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).cardColor,
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: ListView.separated(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: dto.transactions.length,
-                itemBuilder: (context, index) {
-                  return _buildTransactionItem(
-                    context: context,
-                    dto: dto.transactions[index],
-                  );
-                },
-                separatorBuilder: (context, index) {
-                  return DividerWidget(width: width);
-                },
-              ),
-            ),
-            const Padding(padding: EdgeInsets.only(top: 10)),
-            InkWell(
-              onTap: () {
-                Future.delayed(const Duration(milliseconds: 0), () {
-                  Provider.of<BusinessInformationProvider>(context,
-                          listen: false)
-                      .updateBusinessId(dto.businessId);
-                });
-                Navigator.pushNamed(
-                  context,
-                  Routes.BUSINESS_TRANSACTION,
-                );
-              },
-              child: BoxLayout(
-                width: width,
-                height: 40,
-                alignment: Alignment.center,
-                padding: const EdgeInsets.all(0),
-                bgColor: DefaultTheme.TRANSPARENT,
-                child: const Text(
-                  'Xem thêm',
-                  style: TextStyle(
-                    color: DefaultTheme.GREEN,
-                    decoration: TextDecoration.underline,
-                  ),
-                ),
-              ),
-            ),
-          ],
+          ]
         ],
       ),
     );
@@ -464,25 +398,16 @@ class _DashboardViewState extends State<DashboardView>
     required String text,
     required Color color,
   }) {
-    return UnconstrainedBox(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-        decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
-          borderRadius: BorderRadius.circular(50),
+    return Row(
+      children: [
+        Icon(
+          icon,
+          size: 15,
+          color: color,
         ),
-        child: Row(
-          children: [
-            Icon(
-              icon,
-              size: 15,
-              color: color,
-            ),
-            const Padding(padding: EdgeInsets.only(left: 5)),
-            Text(text),
-          ],
-        ),
-      ),
+        const SizedBox(width: 8),
+        Text(text),
+      ],
     );
   }
 
@@ -547,7 +472,7 @@ class _DashboardViewState extends State<DashboardView>
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         _buildTitle(
-                          'Phím tắt',
+                          'Tiện ích',
                           DefaultTheme.BLUE_TEXT,
                         ),
                         const Spacer(),
@@ -608,68 +533,6 @@ class _DashboardViewState extends State<DashboardView>
                             );
                           },
                         ),
-                        // _buildShorcutIcon(
-                        //   widgetWidth: width,
-                        //   title: 'Mở TK\nMB Bank',
-                        //   icon: Icons.account_balance_rounded,
-                        //   color: DefaultTheme.BLUE_DARK,
-                        //   function: () async {
-                        //     Navigator.pushNamed(
-                        //       context,
-                        //       Routes.NATIONAL_INFORMATION,
-                        //     );
-                        //     // String url = '';
-                        //     // try {
-                        //     //   if (PlatformUtils.instance.isIOsApp()) {
-                        //     //     url = 'mbbank://';
-                        //     //   } else if (PlatformUtils.instance
-                        //     //       .isAndroidApp()) {
-                        //     //     url = 'mbmobile://';
-                        //     //   }
-                        //     //   if (url.trim().isNotEmpty) {
-                        //     //     final Uri uri = Uri.parse(url);
-                        //     //     if (await canLaunchUrl(uri)) {
-                        //     //       await launchUrl(
-                        //     //         uri,
-                        //     //         mode: LaunchMode.externalApplication,
-                        //     //       );
-                        //     //     } else {
-                        //     //       if (PlatformUtils.instance.isIOsApp()) {
-                        //     //         url =
-                        //     //             'https://apps.apple.com/vn/app/mb-bank/id1205807363?l=vi';
-                        //     //       } else if (PlatformUtils.instance
-                        //     //           .isAndroidApp()) {
-                        //     //         url =
-                        //     //             'https://play.google.com/store/apps/details?id=com.mbmobile';
-                        //     //       }
-                        //     //       if (url.trim().isNotEmpty) {
-                        //     //         final Uri uri = Uri.parse(url);
-                        //     //         if (await canLaunchUrl(uri)) {
-                        //     //           await launchUrl(
-                        //     //             uri,
-                        //     //             mode: LaunchMode.externalApplication,
-                        //     //           );
-                        //     //         }
-                        //     //       }
-                        //     //     }
-                        //     //   }
-                        //     // } catch (e) {
-                        //     //   LOG.error(e.toString());
-                        //     // }
-                        //   },
-                        // ),
-                        // _buildShorcutIcon(
-                        //   widgetWidth: width,
-                        //   title: 'Nạp tiền\nđiện thoại',
-                        //   icon: Icons.phone_iphone_rounded,
-                        //   color: DefaultTheme.RED_CALENDAR,
-                        //   function: () {
-                        //     DialogWidget.instance.openMsgDialog(
-                        //       title: 'Đang phát triển',
-                        //       msg: 'Tính năng đang được phát triển',
-                        //     );
-                        //   },
-                        // ),
                       ],
                     ),
                     const Padding(padding: EdgeInsets.only(top: 10)),
