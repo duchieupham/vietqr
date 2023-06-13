@@ -25,92 +25,89 @@ class SelectBankConnectBranchWidget extends StatelessWidget {
     required this.businessId,
   });
 
-  void initialServices(BuildContext context) {
-    list.clear();
-    colors.clear();
-    String userId = UserInformationHelper.instance.getUserId();
-    branchBloc.add(BranchEventGetConnectBanks(userId: userId));
-  }
-
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
-    initialServices(context);
-    return SizedBox(
-      width: width,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: width,
-            height: 50,
-            child: Row(
-              children: [
-                const SizedBox(
-                  width: 80,
-                  height: 50,
-                ),
-                Expanded(
-                  child: Container(
-                    alignment: Alignment.center,
-                    child: const Text(
-                      'Kết nối TK ngân hàng',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 15,
-                      ),
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Container(
+    String userId = UserInformationHelper.instance.getUserId();
+    return BlocProvider(
+      create: (BuildContext context) => BranchBloc(id: branchId)
+        ..add(BranchEventGetConnectBanks(userId: userId)),
+      child: SizedBox(
+        width: width,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: width,
+              height: 50,
+              child: Row(
+                children: [
+                  const SizedBox(
                     width: 80,
-                    alignment: Alignment.centerRight,
-                    child: const Text(
-                      'Xong',
-                      style: TextStyle(
-                        color: DefaultTheme.GREEN,
+                    height: 50,
+                  ),
+                  Expanded(
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: const Text(
+                        'Kết nối TK ngân hàng',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 15,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                  InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      width: 80,
+                      alignment: Alignment.centerRight,
+                      child: const Text(
+                        'Xong',
+                        style: TextStyle(
+                          color: DefaultTheme.GREEN,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          DividerWidget(width: width),
-          const Padding(padding: EdgeInsets.only(top: 30)),
-          Expanded(
-            child: BlocBuilder<BranchBloc, BranchState>(
-              builder: (context, state) {
-                if (state is BranchGetConnectBankSuccessState) {
-                  list.clear();
-                  colors.clear();
-                  if (list.isEmpty) {
-                    list.addAll(state.list);
-                    colors.addAll(state.colors);
+            DividerWidget(width: width),
+            const Padding(padding: EdgeInsets.only(top: 30)),
+            Expanded(
+              child: BlocBuilder<BranchBloc, BranchState>(
+                builder: (context, state) {
+                  if (state is BranchGetConnectBankSuccessState) {
+                    list.clear();
+                    colors.clear();
+                    if (list.isEmpty) {
+                      list.addAll(state.list);
+                      colors.addAll(state.colors);
+                    }
                   }
-                }
-                return (list.isEmpty)
-                    ? const SizedBox()
-                    : ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: list.length,
-                        itemBuilder: (context, index) {
-                          return _buildCardItem(
-                            context: context,
-                            index: index,
-                            dto: list[index],
-                            color: colors[index],
-                          );
-                        },
-                      );
-              },
+                  return (list.isEmpty)
+                      ? const SizedBox()
+                      : ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: list.length,
+                          itemBuilder: (context, index) {
+                            return _buildCardItem(
+                              context: context,
+                              index: index,
+                              dto: list[index],
+                              color: colors[index],
+                            );
+                          },
+                        );
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
