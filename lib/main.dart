@@ -79,6 +79,7 @@ import 'package:vierqr/services/providers/shortcut_provider.dart';
 import 'package:vierqr/services/providers/suggestion_widget_provider.dart';
 import 'package:vierqr/services/providers/theme_provider.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
+import 'package:vierqr/services/providers/verify_otp_provider.dart';
 import 'package:vierqr/services/shared_references/account_helper.dart';
 import 'package:vierqr/services/shared_references/bank_arrangement_helper.dart';
 import 'package:vierqr/services/shared_references/create_qr_helper.dart';
@@ -313,6 +314,7 @@ class _VietQRApp extends State<VietQRApp> {
             ChangeNotifierProvider(create: (context) => AvatarProvider()),
             ChangeNotifierProvider(create: (context) => ValidProvider()),
             ChangeNotifierProvider(create: (context) => SearchProvider()),
+            ChangeNotifierProvider(create: (context) => VerifyOtpProvider()),
           ],
           child: Consumer<ThemeProvider>(
             builder: (context, themeSelect, child) {
