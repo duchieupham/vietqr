@@ -15,6 +15,8 @@ enum TypeOTP {
   NONE,
 }
 
+enum TypeMoveEvent { LEFT, RIGHT, NONE }
+
 enum TypeAddMember { MORE, ADDED, AWAIT }
 
 extension TypeMemberExt on TypeAddMember {
