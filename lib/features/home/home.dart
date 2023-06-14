@@ -2,6 +2,7 @@
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
+import 'package:vierqr/commons/enums/check_type.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
@@ -21,6 +22,7 @@ import 'package:vierqr/features/permission/states/permission_state.dart';
 import 'package:vierqr/features/personal/views/user_setting.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:vierqr/features/scan_qr/views/qr_scan_view.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
 import 'package:vierqr/features/token/blocs/token_bloc.dart';
 import 'package:vierqr/features/token/events/token_event.dart';
@@ -251,16 +253,59 @@ class _HomeScreen extends State<HomeScreen>
               ),
               body: Stack(
                 children: [
-                  PageView(
-                    key: const PageStorageKey('PAGE_VIEW'),
-                    allowImplicitScrolling: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    controller: _pageController,
-                    onPageChanged: (index) {
-                      Provider.of<PageSelectProvider>(context, listen: false)
-                          .updateIndex(index);
+                  Listener(
+                    onPointerMove: (moveEvent) {
+                      if (moveEvent.delta.dx > 0) {
+                        Provider.of<PageSelectProvider>(context, listen: false)
+                            .updateMoveEvent(TypeMoveEvent.RIGHT);
+                      } else {
+                        Provider.of<PageSelectProvider>(context, listen: false)
+                            .updateMoveEvent(TypeMoveEvent.LEFT);
+                      }
                     },
-                    children: _homeScreens,
+                    child: Consumer<PageSelectProvider>(
+                        builder: (context, page, child) {
+                      return PageView(
+                        key: const PageStorageKey('PAGE_VIEW'),
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        controller: _pageController,
+                        onPageChanged: (index) async {
+                          if (index == 2) {
+                            if (QRScannerHelper.instance.getQrIntro()) {
+                              await Navigator.pushNamed(
+                                context,
+                                Routes.SCAN_QR_VIEW,
+                              );
+                            } else {
+                              await DialogWidget.instance
+                                  .showFullModalBottomContent(
+                                widget: const QRScanWidget(),
+                                color: DefaultTheme.BLACK,
+                              );
+                              await Navigator.pushNamed(
+                                  context, Routes.SCAN_QR_VIEW);
+                            }
+
+                            if (page.moveEvent == TypeMoveEvent.RIGHT) {
+                              _animatedToPage(index + 1);
+                              Provider.of<PageSelectProvider>(context,
+                                      listen: false)
+                                  .updateIndex(index + 1);
+                            } else {
+                              _animatedToPage(index - 1);
+                              Provider.of<PageSelectProvider>(context,
+                                      listen: false)
+                                  .updateIndex(index - 1);
+                            }
+                          } else {
+                            Provider.of<PageSelectProvider>(context,
+                                    listen: false)
+                                .updateIndex(index);
+                          }
+                        },
+                        children: _homeScreens,
+                      );
+                    }),
                   ),
                   Positioned(
                     bottom: 0,
@@ -375,10 +420,10 @@ class _HomeScreen extends State<HomeScreen>
   //navigate to page
   void _animatedToPage(int index) {
     try {
-      _pageController.animateToPage(
+      _pageController.jumpToPage(
         index,
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeInOutQuart,
+        // duration: const Duration(milliseconds: 200),
+        // curve: Curves.easeInOutQuart,
       );
     } catch (e) {
       _pageController = PageController(

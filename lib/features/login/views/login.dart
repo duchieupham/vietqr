@@ -13,7 +13,7 @@ import 'package:vierqr/features/login/blocs/login_bloc.dart';
 import 'package:vierqr/features/login/events/login_event.dart';
 import 'package:vierqr/features/login/frames/login_frame.dart';
 import 'package:vierqr/features/login/states/login_state.dart';
-import 'package:vierqr/features/register/views/register_view.dart';
+import 'package:vierqr/features/register/views/register_screen.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/models/account_login_dto.dart';
 import 'package:flutter/material.dart';
@@ -28,23 +28,20 @@ class Login extends StatefulWidget {
 }
 
 class _Login extends State<Login> {
-  static final TextEditingController phoneNoController =
-      TextEditingController();
+  final TextEditingController phoneNoController = TextEditingController();
 
-  static late LoginBloc _loginBloc;
-  static String code = '';
-  static const Uuid uuid = Uuid();
+  String code = '';
+  Uuid uuid = const Uuid();
 
   @override
   void initState() {
     super.initState();
     code = uuid.v1();
-    _loginBloc = BlocProvider.of(context);
   }
 
   @override
   void dispose() {
-    // LoginRepository.codeLoginController.close();
+    phoneNoController.clear();
     super.dispose();
   }
 
@@ -59,48 +56,54 @@ class _Login extends State<Login> {
       isLogoutEnterHome = arg['isLogout'] ?? false;
     }
 
-    return Scaffold(
-      appBar: AppBar(toolbarHeight: 0),
-      body: BlocListener<LoginBloc, LoginState>(
-        listener: ((context, state) {
-          if (state is LoginLoadingState) {
-            DialogWidget.instance.openLoadingDialog();
-          }
-          if (state is LoginSuccessfulState) {
-            // _loginBloc.add(LoginEventGetUserInformation(userId: state.userId));
-            //pop loading dialog
-            Navigator.of(context).pop();
-            //navigate to home screen
-            Navigator.of(context).popUntil((route) => route.isFirst);
-            Navigator.of(context).pushReplacementNamed(Routes.HOME, arguments: {
-              'isFromLogin': true,
-              'isLogoutEnterHome': isLogoutEnterHome
-            });
-          }
-          if (state is LoginFailedState) {
-            FocusManager.instance.primaryFocus?.unfocus();
-            //pop loading dialog
-            Navigator.of(context).pop();
+    return BlocConsumer<LoginBloc, LoginState>(
+      listener: (context, state) {
+        if (state is LoginLoadingState) {
+          DialogWidget.instance.openLoadingDialog();
+        }
+        if (state is LoginSuccessfulState) {
+          // _loginBloc.add(LoginEventGetUserInformation(userId: state.userId));
+          //pop loading dialog
+          Navigator.of(context).pop();
+          //navigate to home screen
+          Navigator.of(context).popUntil((route) => route.isFirst);
+          Navigator.of(context).pushReplacementNamed(Routes.HOME, arguments: {
+            'isFromLogin': true,
+            'isLogoutEnterHome': isLogoutEnterHome
+          });
+        }
+        if (state is LoginFailedState) {
+          FocusManager.instance.primaryFocus?.unfocus();
+          //pop loading dialog
+          Navigator.of(context).pop();
 
-            //show msg dialog
-            DialogWidget.instance.openMsgDialog(
-              title: 'Đăng nhập không thành công',
-              msg:
-                  'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập.',
-            );
-          }
-        }),
-        child: LoginFrame(
-          width: width,
-          height: height,
-          padding: EdgeInsets.zero,
-          widget1: _buildWidget1(
-            width: width,
-            isResized: PlatformUtils.instance.resizeWhen(width, 750),
+          //show msg dialog
+          DialogWidget.instance.openMsgDialog(
+            title: 'Đăng nhập không thành công',
+            msg:
+                'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập.',
+          );
+        }
+      },
+      builder: (context, state) {
+        return GestureDetector(
+          onTap: () {
+            FocusManager.instance.primaryFocus?.unfocus();
+          },
+          child: Scaffold(
+            body: LoginFrame(
+              width: width,
+              height: height,
+              padding: EdgeInsets.zero,
+              widget1: _buildWidget1(
+                width: width,
+                isResized: PlatformUtils.instance.resizeWhen(width, 750),
+              ),
+              widget2: _buildWidget2(context: context),
+            ),
           ),
-          widget2: _buildWidget2(context: context),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -111,23 +114,22 @@ class _Login extends State<Login> {
           msg: 'Vui lòng nhập số điện thoại để đăng nhập.');
     } else {
       DialogWidget.instance.openPINDialog(
-          title: 'Nhập Mật khẩu',
-          onDone: (pin) {
-            Navigator.of(context).pop();
-            AccountLoginDTO dto = AccountLoginDTO(
-              phoneNo: phoneNoController.text,
-              password: EncryptUtils.instance.encrypted(
-                phoneNoController.text,
-                pin,
-              ),
-              device: '',
-              fcmToken: '',
-              platform: '',
-            );
-            _loginBloc.add(
-              LoginEventByPhone(dto: dto),
-            );
-          });
+        title: 'Nhập Mật khẩu',
+        onDone: (pin) {
+          Navigator.of(context).pop();
+          AccountLoginDTO dto = AccountLoginDTO(
+            phoneNo: phoneNoController.text,
+            password: EncryptUtils.instance.encrypted(
+              phoneNoController.text,
+              pin,
+            ),
+            device: '',
+            fcmToken: '',
+            platform: '',
+          );
+          context.read<LoginBloc>().add(LoginEventByPhone(dto: dto));
+        },
+      );
     }
   }
 
@@ -153,7 +155,7 @@ class _Login extends State<Login> {
                     width: width,
                     widthLayout: width,
                     isObscureText: false,
-                    autoFocus: true,
+                    autoFocus: false,
                     key: provider.phoneKey,
                     hintText: 'Số điện thoại',
                     controller: phoneNoController,
@@ -237,11 +239,15 @@ class _Login extends State<Login> {
                 textColor: DefaultTheme.WHITE,
                 bgColor: DefaultTheme.BLUE_TEXT,
                 function: () {
+                  final keyboardHeight =
+                      MediaQuery.of(context).viewInsets.bottom;
+                  if (keyboardHeight > 0.0) {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                  }
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => RegisterView(
-                        phoneNo: phoneNoController.text,
-                      ),
+                      builder: (context) =>
+                          RegisterScreen(phoneNo: phoneNoController.text),
                     ),
                   );
                 },

@@ -14,13 +14,11 @@ import 'package:vierqr/services/shared_references/user_information_helper.dart';
 class SelectBankConnectBranchWidget extends StatelessWidget {
   final String businessId;
   final String branchId;
-  final BranchBloc branchBloc;
   final List<AccountBankConnectBranchDTO> list = [];
   final List<Color> colors = [];
 
   SelectBankConnectBranchWidget({
     super.key,
-    required this.branchBloc,
     required this.branchId,
     required this.businessId,
   });
@@ -30,8 +28,8 @@ class SelectBankConnectBranchWidget extends StatelessWidget {
     final double width = MediaQuery.of(context).size.width;
     String userId = UserInformationHelper.instance.getUserId();
     return BlocProvider(
-      create: (BuildContext context) => BranchBloc(id: branchId)
-        ..add(BranchEventGetConnectBanks(userId: userId)),
+      create: (BuildContext context) =>
+          BranchBloc()..add(BranchEventGetConnectBanks(userId: userId)),
       child: SizedBox(
         width: width,
         child: Column(
@@ -217,9 +215,9 @@ class SelectBankConnectBranchWidget extends StatelessWidget {
                                 businessId: businessId,
                                 branchId: branchId,
                               );
-                              branchBloc.add(BranchEventConnectBank(
-                                  dto: accountBankBranchInsertDTO));
-                              Navigator.pop(context);
+
+                              Navigator.pop(
+                                  context, accountBankBranchInsertDTO);
                             },
                             child: BoxLayout(
                               width: 100,

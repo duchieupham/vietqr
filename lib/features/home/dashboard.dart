@@ -10,10 +10,13 @@ import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/commons/utils/transaction_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:vierqr/commons/widgets/dialog_widget.dart';
+import 'package:vierqr/features/branch/widgets/select_bank_connect_branch_widget.dart';
 import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
 import 'package:vierqr/features/business/events/business_information_event.dart';
 import 'package:vierqr/features/business/states/business_information_state.dart';
 import 'package:vierqr/layouts/box_layout.dart';
+import 'package:vierqr/models/business_detail_dto.dart';
 import 'package:vierqr/models/business_item_dto.dart';
 import 'package:vierqr/models/related_transaction_receive_dto.dart';
 import 'package:vierqr/services/providers/add_bank_provider.dart';
@@ -37,6 +40,21 @@ class DashboardView extends StatefulWidget {
 class _DashboardViewState extends State<DashboardView>
     with AutomaticKeepAliveClientMixin {
   late BusinessInformationBloc businessInformationBloc;
+
+  BusinessDetailDTO businessDetailDTO = const BusinessDetailDTO(
+    id: '',
+    name: '',
+    address: '',
+    code: '',
+    imgId: '',
+    coverImgId: '',
+    taxCode: '',
+    userRole: 0,
+    managers: [],
+    branchs: [],
+    transactions: [],
+    active: false,
+  );
 
   initialServices(BuildContext context) {
     businessInformationBloc = BlocProvider.of(context);
@@ -64,22 +82,31 @@ class _DashboardViewState extends State<DashboardView>
     super.build(context);
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    return RefreshIndicator(
-      onRefresh: _refresh,
-      child: SizedBox(
-        width: width,
-        height: height,
-        child: ListView(
-          shrinkWrap: true,
-          physics: const AlwaysScrollableScrollPhysics(),
-          children: [
-            _buildSuggestion(context),
-            _buildShortcut(context),
-            _buildBusinessWidget(context),
-            const Padding(padding: EdgeInsets.only(bottom: 100)),
-          ],
-        ),
-      ),
+    return BlocConsumer<BusinessInformationBloc, BusinessInformationState>(
+      listener: (context, state) {
+        if (state is BusinessGetDetailSuccessState) {
+          businessDetailDTO = state.dto;
+        }
+      },
+      builder: (context, state) {
+        return RefreshIndicator(
+          onRefresh: _refresh,
+          child: SizedBox(
+            width: width,
+            height: height,
+            child: ListView(
+              shrinkWrap: true,
+              physics: const AlwaysScrollableScrollPhysics(),
+              children: [
+                _buildSuggestion(context),
+                _buildShortcut(context),
+                _buildBusinessWidget(context),
+                const Padding(padding: EdgeInsets.only(bottom: 100)),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -153,9 +180,11 @@ class _DashboardViewState extends State<DashboardView>
   Widget _buildBusinessItem(
       {required BuildContext context, required BusinessItemDTO dto}) {
     final double width = MediaQuery.of(context).size.width;
+    final double height = MediaQuery.of(context).size.height;
     String heroId = dto.businessId;
     return Container(
       width: width,
+      margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(12)),
@@ -262,6 +291,21 @@ class _DashboardViewState extends State<DashboardView>
               children: [
                 Expanded(
                   child: GestureDetector(
+                    onTap: () {
+                      String userId =
+                          UserInformationHelper.instance.getUserId();
+                      businessInformationBloc.add(BusinessGetDetailEvent(
+                          businessId: dto.businessId, userId: userId));
+
+                      DialogWidget.instance.showModalBottomContent(
+                        context: context,
+                        widget: SelectBankConnectBranchWidget(
+                          branchId: businessDetailDTO.branchs.first.id ?? '',
+                          businessId: dto.businessId,
+                        ),
+                        height: height * 0.5,
+                      );
+                    },
                     child: Container(
                       alignment: Alignment.center,
                       padding: const EdgeInsets.symmetric(vertical: 8),

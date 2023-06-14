@@ -1,6 +1,6 @@
-import 'package:vierqr/commons/utils/bank_information_utils.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:vierqr/commons/utils/string_utils.dart';
+import 'package:vierqr/commons/enums/check_type.dart';
 
 class RegisterProvider with ChangeNotifier {
   //error handler
@@ -14,19 +14,25 @@ class RegisterProvider with ChangeNotifier {
 
   get confirmPassErr => _isConfirmPassErr;
 
-  final dynamic _phoneKey = GlobalKey();
-  final dynamic _passKey = GlobalKey();
-  final dynamic _rePassKey = GlobalKey();
+  String _verificationId = '';
 
-  get phoneKey => _phoneKey;
+  get verificationId => _verificationId;
 
-  get passKey => _passKey;
+  int? _resendToken;
 
-  get rePassKey => _rePassKey;
+  get resendToken => _resendToken;
 
-  void onChangePhone(String value) {
-    String? msgErr = StringUtils.instance.validatePhone(value);
-    _phoneKey.currentState.showError(msgErr);
+  final auth = FirebaseAuth.instance;
+
+  static const String countryCode = '+84';
+
+  void updateVerifyId(value) {
+    _verificationId = value;
+    notifyListeners();
+  }
+
+  void updateResendToken(value) {
+    _resendToken = value;
     notifyListeners();
   }
 
@@ -38,7 +44,6 @@ class RegisterProvider with ChangeNotifier {
     _isPhoneErr = phoneErr;
     _isPasswordErr = passErr;
     _isConfirmPassErr = confirmPassErr;
-
     notifyListeners();
   }
 
@@ -51,5 +56,44 @@ class RegisterProvider with ChangeNotifier {
     _isPasswordErr = false;
     _isConfirmPassErr = false;
     notifyListeners();
+  }
+
+  Future<void> phoneAuthentication(String phone,
+      {Function(TypeOTP)? onSentOtp}) async {
+    await auth.verifyPhoneNumber(
+      phoneNumber: countryCode + phone,
+      verificationCompleted: (PhoneAuthCredential credential) async {},
+      codeSent: (String verificationId, int? resendToken) {
+        updateVerifyId(verificationId);
+        updateResendToken(resendToken);
+        if (onSentOtp != null) {
+          onSentOtp(TypeOTP.SUCCESS);
+        }
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {},
+      verificationFailed: (FirebaseAuthException e) {
+        if (onSentOtp != null) {
+          onSentOtp(TypeOTP.FAILED);
+        }
+      },
+      forceResendingToken: _resendToken,
+      timeout: const Duration(seconds: 120),
+    );
+  }
+
+  Future<dynamic> verifyOTP(String otp, Function onLoading) async {
+    try {
+      onLoading();
+      var credentials = await auth.signInWithCredential(
+          PhoneAuthProvider.credential(
+              verificationId: verificationId, smsCode: otp));
+      updateResendToken(null);
+      return credentials.user != null;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'session-expired') {
+        updateResendToken(null);
+      }
+      return e.code;
+    }
   }
 }

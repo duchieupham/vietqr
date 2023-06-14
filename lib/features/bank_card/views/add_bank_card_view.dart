@@ -78,7 +78,9 @@ class _AddBankCardViewState extends State<AddBankCardView> {
           nameController: nameController,
           phoneAuthenController: phoneAuthController,
           nationalController: nationalController,
-          pageController: _pageController,
+          callBack: (index) {
+            _animatedToPage(index);
+          },
         ),
         PolicyBankView(
           key: const PageStorageKey('POLICY_BANK'),
@@ -86,7 +88,9 @@ class _AddBankCardViewState extends State<AddBankCardView> {
           nameController: nameController,
           nationalController: nationalController,
           phoneAuthenController: phoneAuthController,
-          pageController: _pageController,
+          callBack: (index) {
+            _animatedToPage(index);
+          },
         ),
       ],
     );
