@@ -25,8 +25,9 @@ class InputAuthInformationView extends StatelessWidget {
   final TextEditingController nameController;
   final TextEditingController nationalController;
   final TextEditingController phoneAuthenController;
-  final PageController pageController;
   static late BankCardBloc bankCardBloc;
+
+  final Function(int)? callBack;
 
   const InputAuthInformationView({
     super.key,
@@ -34,7 +35,7 @@ class InputAuthInformationView extends StatelessWidget {
     required this.nameController,
     required this.phoneAuthenController,
     required this.nationalController,
-    required this.pageController,
+    this.callBack,
   });
 
   void initialServices(BuildContext context) {
@@ -54,7 +55,7 @@ class InputAuthInformationView extends StatelessWidget {
           if (Provider.of<AddBankProvider>(context, listen: false)
               .registerAuthentication) {
             Navigator.pop(context);
-            _animatedToPage(4);
+            callBack!(4);
           } else {
             String bankTypeId =
                 Provider.of<AddBankProvider>(context, listen: false)
@@ -389,14 +390,6 @@ class InputAuthInformationView extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  void _animatedToPage(int index) {
-    pageController.animateToPage(
-      index,
-      duration: const Duration(milliseconds: 200),
-      curve: Curves.easeInOutQuart,
     );
   }
 }

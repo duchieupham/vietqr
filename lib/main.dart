@@ -79,6 +79,7 @@ import 'package:vierqr/services/providers/shortcut_provider.dart';
 import 'package:vierqr/services/providers/suggestion_widget_provider.dart';
 import 'package:vierqr/services/providers/theme_provider.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
+import 'package:vierqr/services/providers/verify_otp_provider.dart';
 import 'package:vierqr/services/shared_references/account_helper.dart';
 import 'package:vierqr/services/shared_references/bank_arrangement_helper.dart';
 import 'package:vierqr/services/shared_references/create_qr_helper.dart';
@@ -274,7 +275,7 @@ class _VietQRApp extends State<VietQRApp> {
             create: (BuildContext context) => BusinessInformationBloc(),
           ),
           BlocProvider<BranchBloc>(
-            create: (BuildContext context) => BranchBloc(id: ''),
+            create: (BuildContext context) => BranchBloc(),
           ),
           BlocProvider<ScanQrBloc>(
             create: (BuildContext context) => ScanQrBloc(),
@@ -313,6 +314,7 @@ class _VietQRApp extends State<VietQRApp> {
             ChangeNotifierProvider(create: (context) => AvatarProvider()),
             ChangeNotifierProvider(create: (context) => ValidProvider()),
             ChangeNotifierProvider(create: (context) => SearchProvider()),
+            ChangeNotifierProvider(create: (context) => VerifyOtpProvider()),
           ],
           child: Consumer<ThemeProvider>(
             builder: (context, themeSelect, child) {
@@ -365,7 +367,7 @@ class _VietQRApp extends State<VietQRApp> {
                       const NationalInformationView(),
                   Routes.BUSINESS_TRANSACTION: (context) =>
                       BusinessTransactionView(),
-                  Routes.BRANCH_DETAIL: (context) => BranchDetailView(),
+                  Routes.BRANCH_DETAIL: (context) => const BranchDetailView(),
                 },
                 onGenerateRoute: (settings) {
                   if (settings.name == Routes.BUSINESS_INFORMATION_VIEW) {
@@ -375,6 +377,8 @@ class _VietQRApp extends State<VietQRApp> {
                       transitionDuration: const Duration(milliseconds: 300),
                     );
                   }
+
+                  return null;
                 },
                 themeMode:
                     (themeSelect.themeSystem == DefaultTheme.THEME_SYSTEM)
