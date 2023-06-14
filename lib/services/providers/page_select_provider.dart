@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vierqr/commons/enums/check_type.dart';
 import 'package:vierqr/features/bank_card/views/bank_card_select_view.dart';
 import 'package:vierqr/features/introduce/views/introduce_screen.dart';
 import 'package:vierqr/features/personal/views/user_setting.dart';
@@ -13,6 +14,18 @@ class PageSelectProvider with ChangeNotifier {
   get notificationCount => _notificationCount;
 
   List<NavigationDTO> get listItem => _listBottomNavigation;
+
+  TypeMoveEvent _moveEvent = TypeMoveEvent.NONE;
+
+  get moveEvent => _moveEvent;
+
+  updateMoveEvent(value) {
+    if (_moveEvent == value) {
+      return;
+    }
+    _moveEvent = value;
+    notifyListeners();
+  }
 
   final _listBottomNavigation = [
     const NavigationDTO(
