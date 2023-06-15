@@ -29,6 +29,7 @@ import 'package:vierqr/services/providers/suggestion_widget_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 import 'blocs/dashboard_bloc.dart';
+import 'widgets/select_branch_widget.dart';
 
 class DashboardScreen extends StatefulWidget {
   final AsyncCallback? voidCallback;
@@ -262,15 +263,29 @@ class _DashboardScreenState extends State<DashboardScreen>
               children: [
                 Expanded(
                   child: GestureDetector(
-                    onTap: () {
-                      DialogWidget.instance.showModalBottomContent(
+                    onTap: () async {
+                      final data =
+                          await DialogWidget.instance.showModelBottomSheet(
                         context: context,
-                        widget: SelectBankConnectBranchWidget(
-                          branchId: '',
+                        padding: EdgeInsets.zero,
+                        widget: SelectBranchWidget(
                           businessId: dto.businessId,
                         ),
                         height: height * 0.5,
                       );
+
+                      if (!mounted) return;
+                      if (data != null && data is String) {
+                        final result =
+                            await DialogWidget.instance.showModalBottomContent(
+                          context: context,
+                          widget: SelectBankConnectBranchWidget(
+                            branchId: data,
+                            businessId: dto.businessId,
+                          ),
+                          height: height * 0.7,
+                        );
+                      }
                     },
                     child: Container(
                       alignment: Alignment.center,
@@ -295,14 +310,31 @@ class _DashboardScreenState extends State<DashboardScreen>
                 Expanded(
                   child: GestureDetector(
                     onTap: () async {
-                      await DialogWidget.instance.showModelBottomSheet(
+                      final data =
+                          await DialogWidget.instance.showModelBottomSheet(
                         context: context,
                         height: height * 0.5,
-                        widget: AddBranchMemberWidget(
-                          branchId: '',
+                        padding: EdgeInsets.zero,
+                        widget: SelectBranchWidget(
                           businessId: dto.businessId,
+                          tySelect: TypeSelect.MEMBER,
                         ),
                       );
+
+                      if (!mounted) return;
+                      if (data != null && data is String) {
+                        final result =
+                            await DialogWidget.instance.showModelBottomSheet(
+                          context: context,
+                          widget: AddBranchMemberWidget(
+                            branchId: data,
+                            businessId: dto.businessId,
+                          ),
+                          height: height * 0.5,
+                        );
+
+                        _dashboardBloc.add(DashboardInitEvent(isLoading: true));
+                      }
                     },
                     child: Container(
                       alignment: Alignment.center,

@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/check_type.dart';
+import 'package:vierqr/commons/utils/check_utils.dart';
+import 'package:vierqr/commons/utils/error_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
+import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_widget.dart';
 import 'package:vierqr/features/branch/blocs/branch_bloc.dart';
@@ -13,16 +17,35 @@ import 'package:vierqr/layouts/border_layout.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/models/branch_member_insert_dto.dart';
 import 'package:vierqr/models/business_member_dto.dart';
+import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/services/providers/search_clear_provider.dart';
 
-class AddBranchMemberWidget extends StatelessWidget {
-  final TextEditingController nameController = TextEditingController();
-  final String branchId;
+class AddBranchMemberWidget extends StatefulWidget {
   final String businessId;
+  final String branchId;
+
+  const AddBranchMemberWidget({
+    super.key,
+    required this.businessId,
+    required this.branchId,
+  });
+
+  @override
+  State<AddBranchMemberWidget> createState() => _AddBranchMemberWidgetState();
+}
+
+class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
+  final TextEditingController nameController = TextEditingController();
+
   final SearchClearProvider searchClearProvider = SearchClearProvider(false);
+
   final _formAddMemberKey = GlobalKey<FormState>();
+
   String message = '';
-  static BusinessMemberDTO dto = BusinessMemberDTO(
+
+  TypeAddMember _typeMember = TypeAddMember.MORE;
+
+  static BusinessMemberDTO dtoDefault = BusinessMemberDTO(
     userId: '',
     status: '',
     existed: TypeAddMember.MORE.existed,
@@ -32,11 +55,15 @@ class AddBranchMemberWidget extends StatelessWidget {
     role: 0,
   );
 
-  AddBranchMemberWidget({
-    super.key,
-    required this.branchId,
-    required this.businessId,
-  });
+  BusinessMemberDTO _dto = BusinessMemberDTO(
+    userId: '',
+    status: '',
+    existed: 0,
+    imgId: '',
+    name: '',
+    phoneNo: '',
+    role: 0,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -88,69 +115,37 @@ class AddBranchMemberWidget extends StatelessWidget {
           ),
           DividerWidget(width: width),
           const Padding(padding: EdgeInsets.only(top: 30)),
-          BlocListener<BranchBloc, BranchState>(
-            listener: (context, state) {
-              if (state is BranchInsertMemberLoadingState) {
-                Provider.of<SearchProvider>(context, listen: false)
-                    .updateExisted(TypeAddMember.AWAIT);
-              }
-              if (state is BranchInsertMemberSuccessState) {
-                Provider.of<SearchProvider>(context, listen: false)
-                    .updateExisted(TypeAddMember.ADDED);
-              }
-
-              if (state is BranchSeachMemberSuccessState) {
-                message = '';
-                Provider.of<SearchProvider>(context, listen: false)
-                    .updateDTO(state.dto);
-                Provider.of<SearchProvider>(context, listen: false)
-                    .updateExisted(state.dto.typeMember);
-              }
-              if (state is BranchSearchMemberNotFoundState) {
-                message = state.message;
-                Provider.of<SearchProvider>(context, listen: false)
-                    .updateDTO(dto);
-                Provider.of<SearchProvider>(context, listen: false)
-                    .updateExisted(dto.existed);
-              }
-            },
-            child: Consumer<SearchProvider>(
-              builder: (context, provider, child) {
-                return Column(
-                  children: [
-                    const Align(
-                      alignment: Alignment.centerLeft,
+          Column(
+            children: [
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Kết quả tìm kiếm',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              (message.trim().isNotEmpty && _dto.userId.isEmpty)
+                  ? BoxLayout(
+                      width: width,
+                      borderRadius: 5,
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      margin: const EdgeInsets.symmetric(vertical: 10),
+                      alignment: Alignment.center,
+                      bgColor: Theme.of(context).canvasColor,
                       child: Text(
-                        'Kết quả tìm kiếm',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                        ),
+                        message,
                       ),
-                    ),
-                    (message.trim().isNotEmpty && provider.dto.userId.isEmpty)
-                        ? BoxLayout(
-                            width: width,
-                            borderRadius: 5,
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            margin: const EdgeInsets.symmetric(vertical: 10),
-                            alignment: Alignment.center,
-                            bgColor: Theme.of(context).canvasColor,
-                            child: Text(
-                              message,
-                            ),
-                          )
-                        : (provider.dto.userId.isNotEmpty &&
-                                message.trim().isEmpty)
-                            ? _buildSearchItem(
-                                context: context,
-                                dto: provider.dto,
-                                existed: provider.typeMember,
-                              )
-                            : const SizedBox(),
-                  ],
-                );
-              },
-            ),
+                    )
+                  : (_dto.userId.isNotEmpty && message.trim().isEmpty)
+                      ? _buildSearchItem(
+                          context: context,
+                          dto: _dto,
+                          existed: _typeMember,
+                        )
+                      : const SizedBox(),
+            ],
           ),
           const Spacer(),
           Form(
@@ -185,16 +180,13 @@ class AddBranchMemberWidget extends StatelessWidget {
                       }
                       if (nameController.text.length >= 10 &&
                           nameController.text.length <= 12) {
-                        context.read<BranchBloc>().add(BranchEventSearchMember(
-                            phoneNo: nameController.text,
-                            businessId: businessId));
+                        _searchMember();
                       } else {
                         message = '';
-                        Provider.of<SearchProvider>(context, listen: false)
-                            .updateDTO(dto);
-                        Provider.of<SearchProvider>(context, listen: false)
-                            .updateExisted(TypeAddMember.MORE);
-                        context.read<BranchBloc>().add(BranchEventInitial());
+                        setState(() {
+                          _dto = dtoDefault;
+                          _typeMember = TypeAddMember.MORE;
+                        });
                       }
                     },
                   ),
@@ -301,13 +293,12 @@ class AddBranchMemberWidget extends StatelessWidget {
                       onTap: () {
                         BranchMemberInsertDTO branchMemberInsertDTO =
                             BranchMemberInsertDTO(
-                          branchId: branchId,
-                          businessId: businessId,
+                          branchId: widget.branchId,
+                          businessId: widget.businessId,
                           userId: dto.userId,
                           role: 4,
                         );
-                        context.read<BranchBloc>().add(BranchEventInsertMember(
-                            dto: branchMemberInsertDTO));
+                        _insertMember(branchMemberInsertDTO);
                         // reset(context);
                       },
                       child: Container(
@@ -344,8 +335,56 @@ class AddBranchMemberWidget extends StatelessWidget {
     nameController.clear();
     message = '';
     searchClearProvider.updateClearSearch(false);
-    Provider.of<SearchProvider>(context, listen: false).updateDTO(dto);
-    Provider.of<SearchProvider>(context, listen: false)
-        .updateExisted(dto.typeMember);
+    setState(() {
+      _dto = dtoDefault;
+      _typeMember = dtoDefault.typeMember;
+    });
+  }
+
+  void _insertMember(dto) async {
+    try {
+      setState(() {
+        _typeMember = TypeAddMember.AWAIT;
+      });
+      final ResponseMessageDTO result =
+          await branchRepository.insertMember(dto);
+      if (!mounted) return;
+      if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
+        setState(() {
+          _typeMember = TypeAddMember.ADDED;
+        });
+      } else {
+        ErrorUtils.instance.getErrorMessage(result.message);
+      }
+    } catch (e) {
+      ResponseMessageDTO result =
+          const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+      LOG.error(e.toString());
+      ErrorUtils.instance.getErrorMessage(result.message);
+    }
+  }
+
+  void _searchMember() async {
+    try {
+      final responseDTO = await branchRepository.searchMemberBranch(
+          nameController.text.trim(), widget.businessId);
+      if (!mounted) return;
+      if (responseDTO.status.isNotEmpty) {
+        ResponseMessageDTO result = responseDTO;
+        CheckUtils.instance.getCheckMessage(result.message);
+        message = result.message;
+        setState(() {
+          _dto = dtoDefault;
+          _typeMember = dtoDefault.typeMember;
+        });
+      } else {
+        BusinessMemberDTO result = responseDTO;
+        setState(() {
+          _dto = result;
+        });
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
   }
 }

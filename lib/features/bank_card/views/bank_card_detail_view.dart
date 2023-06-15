@@ -707,6 +707,7 @@ class BankCardDetailView extends StatelessWidget {
                       transactions: [],
                       totalMember: 0,
                       totalBranch: 0,
+                      branchs: [],
                     );
                     Navigator.pushNamed(
                       context,
