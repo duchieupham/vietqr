@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/enums/check_type.dart';
@@ -9,7 +7,7 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_card/states/bank_card_state.dart';
 import 'package:vierqr/features/bank_card/views/bank_card_select_view.dart';
-import 'package:vierqr/features/home/dashboard.dart';
+import 'package:vierqr/features/dashboard/dashboard_screen.dart';
 import 'package:vierqr/features/home/widgets/disconnect_widget.dart';
 import 'package:vierqr/features/home/widgets/maintain_widget.dart';
 import 'package:vierqr/features/introduce/views/introduce_screen.dart';
@@ -22,7 +20,6 @@ import 'package:vierqr/features/permission/states/permission_state.dart';
 import 'package:vierqr/features/personal/views/user_setting.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:vierqr/features/scan_qr/views/qr_scan_view.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
 import 'package:vierqr/features/token/blocs/token_bloc.dart';
 import 'package:vierqr/features/token/events/token_event.dart';
@@ -98,7 +95,7 @@ class _HomeScreen extends State<HomeScreen>
         const BankCardSelectView(key: PageStorageKey('QR_GENERATOR_PAGE')),
         const IntroduceScreen(),
         const SizedBox(),
-        const DashboardView(key: PageStorageKey('SMS_LIST_PAGE')),
+        const DashboardScreen(key: PageStorageKey('SMS_LIST_PAGE')),
         UserSetting(
           key: const PageStorageKey('USER_SETTING_PAGE'),
           voidCallback: () {
@@ -161,7 +158,6 @@ class _HomeScreen extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final double height = MediaQuery.of(context).size.height;
     bool isFromLogin = false;
     if (ModalRoute.of(context)!.settings.arguments != null) {
       final arg = ModalRoute.of(context)!.settings.arguments as Map;
@@ -282,17 +278,21 @@ class _HomeScreen extends State<HomeScreen>
                                 widget: const QRScanWidget(),
                                 color: DefaultTheme.BLACK,
                               );
+                              if (!mounted) return;
+
                               await Navigator.pushNamed(
                                   context, Routes.SCAN_QR_VIEW);
                             }
 
                             if (page.moveEvent == TypeMoveEvent.RIGHT) {
                               _animatedToPage(index + 1);
+                              if (!mounted) return;
                               Provider.of<PageSelectProvider>(context,
                                       listen: false)
                                   .updateIndex(index + 1);
                             } else {
                               _animatedToPage(index - 1);
+                              if (!mounted) return;
                               Provider.of<PageSelectProvider>(context,
                                       listen: false)
                                   .updateIndex(index - 1);
