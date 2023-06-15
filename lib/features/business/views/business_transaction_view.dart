@@ -85,7 +85,6 @@ class BusinessTransactionView extends StatelessWidget {
       body: Column(
         children: [
           const SubHeader(title: 'Lịch sử giao dịch'),
-          // const Padding(padding: EdgeInsets.only(top: 10)),
           //filter search
           BlocBuilder<BranchBloc, BranchState>(
             builder: (context, state) {

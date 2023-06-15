@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/enums/check_type.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
@@ -12,13 +13,10 @@ import 'package:vierqr/commons/utils/transaction_utils.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/commons/widgets/sliver_header.dart';
-import 'package:vierqr/features/branch/blocs/branch_bloc.dart';
-import 'package:vierqr/features/branch/events/branch_event.dart';
 import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
 import 'package:vierqr/features/business/events/business_information_event.dart';
 import 'package:vierqr/features/business/states/business_information_state.dart';
 import 'package:vierqr/layouts/box_layout.dart';
-import 'package:vierqr/models/branch_filter_insert_dto.dart';
 import 'package:vierqr/models/business_detail_dto.dart';
 import 'package:vierqr/models/business_item_dto.dart';
 import 'package:vierqr/models/transaction_branch_input_dto.dart';
@@ -48,7 +46,6 @@ class _BusinessInformationView extends State<BusinessInformationView>
     transactions: [],
     active: false,
   );
-  late BranchBloc _branchBloc;
   late BusinessInformationBloc _businessInformationBloc;
 
   BusinessItemDTO dto = const BusinessItemDTO(
@@ -69,17 +66,23 @@ class _BusinessInformationView extends State<BusinessInformationView>
   @override
   void initState() {
     super.initState();
-    _branchBloc = BlocProvider.of(context);
     _businessInformationBloc = BlocProvider.of(context);
+    WidgetsBinding.instance.addPostFrameCallback((_) {});
+  }
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final args = ModalRoute.of(context)!.settings.arguments as Map;
-      String userId = UserInformationHelper.instance.getUserId();
-      heroId = args['heroId'];
-      dto = args['businessItem'];
-      _businessInformationBloc.add(
-          BusinessGetDetailEvent(businessId: dto.businessId, userId: userId));
-    });
+  initData(BuildContext context) {
+    final args = ModalRoute.of(context)!.settings.arguments as Map;
+    String userId = UserInformationHelper.instance.getUserId();
+    heroId = args['heroId'];
+    dto = args['businessItem'];
+    _businessInformationBloc.add(
+        BusinessGetDetailEvent(businessId: dto.businessId, userId: userId));
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    initData(context);
   }
 
   @override
@@ -122,31 +125,20 @@ class _BusinessInformationView extends State<BusinessInformationView>
                 body: BlocConsumer<BusinessInformationBloc,
                     BusinessInformationState>(
                   listener: (context, state) {
-                    if (state is BusinessGetDetailSuccessState) {
-                      businessDetailDTO = state.dto;
+                    if (state.status == BlocStatus.SUCCESS) {
+                      businessDetailDTO = state.dto!;
+                      String businessId = businessDetailDTO.id;
                       String userId =
                           UserInformationHelper.instance.getUserId();
-                      String businessId = businessDetailDTO.id;
-                      int role = businessDetailDTO.userRole;
-                      BranchFilterInsertDTO branchFilter =
-                          BranchFilterInsertDTO(
-                              userId: userId,
-                              role: role,
-                              businessId: businessId);
-                      _branchBloc.add(BranchEventGetFilter(dto: branchFilter));
 
                       Future.delayed(const Duration(milliseconds: 0), () {
                         //update user role
                         int userRole = 0;
                         if (businessDetailDTO.managers
-                            .where((element) =>
-                                element.userId ==
-                                UserInformationHelper.instance.getUserId())
+                            .where((element) => element.userId == userId)
                             .isNotEmpty) {
                           userRole = businessDetailDTO.managers
-                              .where((element) =>
-                                  element.userId ==
-                                  UserInformationHelper.instance.getUserId())
+                              .where((element) => element.userId == userId)
                               .first
                               .role;
                           Provider.of<BusinessInformationProvider>(context,
@@ -228,39 +220,6 @@ class _BusinessInformationView extends State<BusinessInformationView>
                             ),
                           ),
                         ),
-                        // const Padding(padding: EdgeInsets.only(top: 10)),
-                        // InkWell(
-                        //   onTap: () {},
-                        //   child: Container(
-                        //     height: 40,
-                        //     alignment: Alignment.centerLeft,
-                        //     padding: const EdgeInsets.only(left: 10),
-                        //     child: const Text(
-                        //       'Cập nhật ảnh bìa',
-                        //       style: TextStyle(
-                        //         fontSize: 15,
-                        //         color: DefaultTheme.GREEN,
-                        //         decoration: TextDecoration.underline,
-                        //       ),
-                        //     ),
-                        //   ),
-                        // ),
-                        // InkWell(
-                        //   onTap: () {},
-                        //   child: Container(
-                        //     height: 40,
-                        //     alignment: Alignment.centerLeft,
-                        //     padding: const EdgeInsets.only(left: 10),
-                        //     child: const Text(
-                        //       'Cập nhật ảnh đại diện',
-                        //       style: TextStyle(
-                        //         fontSize: 15,
-                        //         color: DefaultTheme.GREEN,
-                        //         decoration: TextDecoration.underline,
-                        //       ),
-                        //     ),
-                        //   ),
-                        // ),
                         const Padding(padding: EdgeInsets.only(top: 30)),
                         _buildTitle(
                           context: context,
@@ -294,23 +253,6 @@ class _BusinessInformationView extends State<BusinessInformationView>
                             },
                           ),
                         ),
-                        // const Padding(padding: EdgeInsets.only(top: 10)),
-                        // InkWell(
-                        //   onTap: () {},
-                        //   child: Container(
-                        //     height: 40,
-                        //     alignment: Alignment.centerLeft,
-                        //     padding: const EdgeInsets.only(left: 10),
-                        //     child: const Text(
-                        //       'Thêm mới',
-                        //       style: TextStyle(
-                        //         fontSize: 15,
-                        //         color: DefaultTheme.GREEN,
-                        //         decoration: TextDecoration.underline,
-                        //       ),
-                        //     ),
-                        //   ),
-                        // ),
                         const Padding(padding: EdgeInsets.only(top: 30)),
                         _buildTitle(
                           context: context,
@@ -334,43 +276,12 @@ class _BusinessInformationView extends State<BusinessInformationView>
                                 index: index,
                               );
                             },
-                            // separatorBuilder: (context, index) {
-                            //   return Padding(
-                            //     padding:
-                            //         const EdgeInsets.symmetric(vertical: 10),
-                            //     child: DividerWidget(width: width),
-                            //   );
-                            // },
                           ),
                         ),
-                        // const Padding(padding: EdgeInsets.only(top: 10)),
-                        // InkWell(
-                        //   onTap: () {},
-                        //   child: Container(
-                        //     height: 40,
-                        //     alignment: Alignment.centerLeft,
-                        //     padding: const EdgeInsets.only(left: 10),
-                        //     child: const Text(
-                        //       'Thêm mới',
-                        //       style: TextStyle(
-                        //         fontSize: 15,
-                        //         color: DefaultTheme.GREEN,
-                        //         decoration: TextDecoration.underline,
-                        //       ),
-                        //     ),
-                        //   ),
-                        // ),
                         const Padding(padding: EdgeInsets.only(top: 30)),
                         _buildTitle(
                           context: context,
                           title: 'Giao dịch gần đây',
-                          // functionName: 'Xem thêm',
-                          // function: () {
-                          //   Navigator.pushNamed(
-                          //     context,
-                          //     Routes.BUSINESS_TRANSACTION,
-                          //   );
-                          // },
                         ),
                         BoxLayout(
                           width: width - 40,
@@ -544,13 +455,6 @@ class _BusinessInformationView extends State<BusinessInformationView>
                 ),
               ),
             ),
-
-            // const Padding(padding: EdgeInsets.only(left: 5)),
-            // Icon(
-            //   TransactionUtils.instance.getIconStatus(dto.status),
-            //   size: 15,
-            //   color: TransactionUtils.instance.getColorStatus(dto.status),
-            // ),
           ],
         ),
       ),
@@ -715,17 +619,6 @@ class _BusinessInformationView extends State<BusinessInformationView>
                 ? 'Chưa có thành viên'
                 : '${dto.totalMember} thành viên',
           ),
-          // const Padding(padding: EdgeInsets.only(top: 10)),
-          // _buildElementInformation(
-          //   context: context,
-          //   title: 'Quản lý',
-          //   descriptionColor:
-          //       (dto.manager.id.isEmpty) ? DefaultTheme.GREY_TEXT : null,
-          //   description: (dto.manager.id.isEmpty)
-          //       ? 'Chưa có quản lý'
-          //       : '${dto.manager.lastName} ${dto.manager.middleName} ${dto.manager.firstName}'
-          //           .trim(),
-          // ),
           const Padding(padding: EdgeInsets.only(top: 10)),
           (dto.banks.isNotEmpty)
               ? SizedBox(
@@ -829,8 +722,8 @@ class _BusinessInformationView extends State<BusinessInformationView>
             height: 40,
             icon: Icons.info_rounded,
             title: 'Chi tiết',
-            function: () {
-              Navigator.pushNamed(
+            function: () async {
+              await Navigator.pushNamed(
                 context,
                 Routes.BRANCH_DETAIL,
                 arguments: {
@@ -839,6 +732,8 @@ class _BusinessInformationView extends State<BusinessInformationView>
                   'businessName': businessDetailDTO.name,
                 },
               );
+              if (!mounted) return;
+              initData(context);
             },
             bgColor: DefaultTheme.TRANSPARENT,
             textColor: DefaultTheme.GREEN,

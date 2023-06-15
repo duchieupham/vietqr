@@ -1,52 +1,40 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vierqr/commons/enums/check_type.dart';
+import 'package:vierqr/models/branch_filter_dto.dart';
 import 'package:vierqr/models/business_detail_dto.dart';
 import 'package:vierqr/models/business_item_dto.dart';
 
 class BusinessInformationState extends Equatable {
-  const BusinessInformationState();
-
-  @override
-  List<Object?> get props => [];
-}
-
-class BusinessInformationInitialState extends BusinessInformationState {}
-
-class BusinessInformationLoadingState extends BusinessInformationState {}
-
-class BusinessInformationInsertSuccessfulState
-    extends BusinessInformationState {}
-
-class BusinessInformationInsertFailedState extends BusinessInformationState {
-  final String msg;
-
-  const BusinessInformationInsertFailedState({required this.msg});
-
-  @override
-  List<Object?> get props => [msg];
-}
-
-class BusinessLoadingListState extends BusinessInformationState {}
-
-class BusinessGetListSuccessfulState extends BusinessInformationState {
+  final BusinessDetailDTO? dto;
+  final String? msg;
   final List<BusinessItemDTO> list;
+  final BlocStatus status;
+  final List<BranchFilterDTO> listBranch;
 
-  const BusinessGetListSuccessfulState({required this.list});
+  const BusinessInformationState({
+    this.dto,
+    this.msg,
+    this.list = const [],
+    this.listBranch = const [],
+    this.status = BlocStatus.NONE,
+  });
+
+  BusinessInformationState copyWith(
+      {List<BusinessItemDTO>? list,
+      BlocStatus? status,
+      String? msg,
+      BusinessDetailDTO? dto,
+      List<BranchFilterDTO>? listBranch}) {
+    return BusinessInformationState(
+      list: list ?? this.list,
+      status: status ?? this.status,
+      msg: msg ?? this.msg,
+      dto: dto ?? this.dto,
+      listBranch: listBranch ?? this.listBranch,
+    );
+  }
 
   @override
-  List<Object?> get props => [list];
+  List<Object?> get props => [list, status, msg, dto, listBranch];
 }
-
-class BusinessGetListFailedState extends BusinessInformationState {}
-
-class BusinessGetDetailLoadingState extends BusinessInformationState {}
-
-class BusinessGetDetailSuccessState extends BusinessInformationState {
-  final BusinessDetailDTO dto;
-
-  const BusinessGetDetailSuccessState({required this.dto});
-
-  @override
-  List<Object?> get props => [dto];
-}
-
-class BusinessGetDetailFailedState extends BusinessInformationState {}

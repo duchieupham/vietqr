@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/enums/check_type.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
 import 'package:vierqr/commons/utils/file_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
@@ -78,10 +79,11 @@ class AddBusinessView extends StatelessWidget {
     return Scaffold(
       body: BlocListener<BusinessInformationBloc, BusinessInformationState>(
         listener: (context, state) {
-          if (state is BusinessInformationLoadingState) {
+          if (state.status == BlocStatus.LOADING) {
             DialogWidget.instance.openLoadingDialog();
           }
-          if (state is BusinessInformationInsertSuccessfulState) {
+
+          if (state.status == BlocStatus.SUCCESS) {
             Navigator.pop(context);
             reset(context);
             Fluttertoast.showToast(
@@ -94,11 +96,11 @@ class AddBusinessView extends StatelessWidget {
             );
             Navigator.pop(context);
           }
-          if (state is BusinessInformationInsertFailedState) {
+          if (state.status == BlocStatus.ERROR) {
             Navigator.pop(context);
             DialogWidget.instance.openMsgDialog(
               title: 'Lỗi',
-              msg: state.msg,
+              msg: state.msg ?? '',
             );
           }
         },

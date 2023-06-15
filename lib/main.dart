@@ -28,6 +28,7 @@ import 'package:vierqr/features/business/blocs/business_member_bloc.dart';
 import 'package:vierqr/features/business/views/add_business_view.dart';
 import 'package:vierqr/features/business/views/business_information_view.dart';
 import 'package:vierqr/features/business/views/business_transaction_view.dart';
+import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/generate_qr/blocs/qr_blocs.dart';
 import 'package:vierqr/features/generate_qr/views/qr_generated.dart';
 import 'package:vierqr/features/generate_qr/views/qr_share_view.dart';
@@ -249,6 +250,9 @@ class _VietQRApp extends State<VietQRApp> {
           ),
           BlocProvider<PermissionBloc>(
             create: (BuildContext context) => PermissionBloc(),
+          ),
+          BlocProvider<DashboardBloc>(
+            create: (BuildContext context) => DashboardBloc(context),
           ),
           BlocProvider<BankTypeBloc>(
             create: (BuildContext context) => BankTypeBloc(context),

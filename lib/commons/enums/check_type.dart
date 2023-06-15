@@ -1,5 +1,14 @@
 // ignore_for_file: constant_identifier_names
 
+enum BlocStatus {
+  NONE,
+  LOADING,
+  ERROR,
+  AWAIT,
+  SUCCESS,
+  DONE,
+}
+
 enum CheckType {
   C01,
   C02,

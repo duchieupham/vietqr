@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/user_repository.dart';
+import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 ///1. quản lý view chung mà 80% các màn dùng: appbar, dialog confirm, button...
 ///2 lấy thông tin model chung: user
@@ -17,6 +18,8 @@ mixin BaseManager {
   List<BankTypeDTO> get banks => userRes.banks;
 
   set banks(List<BankTypeDTO> value) => userRes.banks = value;
+
+  String get userId => UserInformationHelper.instance.getUserId();
 }
 
 class AlwaysDisabledFocusNode extends FocusNode {
