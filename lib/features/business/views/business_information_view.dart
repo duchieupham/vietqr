@@ -55,6 +55,7 @@ class _BusinessInformationView extends State<BusinessInformationView>
       imgId: '',
       coverImgId: '',
       name: '',
+      branchs: [],
       address: '',
       taxCode: '',
       transactions: [],

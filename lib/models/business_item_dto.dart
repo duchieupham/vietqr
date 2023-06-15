@@ -10,6 +10,7 @@ class BusinessItemDTO {
   final String address;
   final String taxCode;
   final List<RelatedTransactionReceiveDTO> transactions;
+  final List<BranchDTO> branchs;
   final int totalMember;
   final int totalBranch;
 
@@ -25,6 +26,7 @@ class BusinessItemDTO {
     required this.transactions,
     required this.totalMember,
     required this.totalBranch,
+    required this.branchs,
   });
 
   factory BusinessItemDTO.fromJson(Map<String, dynamic> json) {
@@ -34,6 +36,14 @@ class BusinessItemDTO {
         transactions.add(RelatedTransactionReceiveDTO.fromJson(v));
       });
     }
+
+    List<BranchDTO> branchs = [];
+    if (json['branchs'] != null) {
+      json['branchs'].forEach((v) {
+        branchs.add(BranchDTO.fromJson(v));
+      });
+    }
+
     return BusinessItemDTO(
       businessId: json['businessId'] ?? '',
       code: json['code'] ?? '',
@@ -46,6 +56,7 @@ class BusinessItemDTO {
       transactions: transactions,
       totalMember: json['totalMember'] ?? 0,
       totalBranch: json['totalBranch'] ?? 0,
+      branchs: branchs,
     );
   }
 
@@ -63,5 +74,19 @@ class BusinessItemDTO {
     data['totalMember'] = totalMember;
     data['totalBranch'] = totalBranch;
     return data;
+  }
+}
+
+class BranchDTO {
+  final String branchId;
+  final int connected;
+
+  BranchDTO({required this.branchId, required this.connected});
+
+  factory BranchDTO.fromJson(Map<String, dynamic> json) {
+    return BranchDTO(
+      branchId: json['branchId'] ?? '',
+      connected: json['connected'] ?? 0,
+    );
   }
 }

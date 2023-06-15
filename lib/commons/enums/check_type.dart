@@ -9,6 +9,11 @@ enum BlocStatus {
   DONE,
 }
 
+enum TypeSelect {
+  BANK,
+  MEMBER,
+}
+
 enum CheckType {
   C01,
   C02,
