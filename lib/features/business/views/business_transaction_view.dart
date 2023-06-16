@@ -26,6 +26,7 @@ class BusinessTransactionView extends StatelessWidget {
   final List<BusinessTransactionDTO> transactions = [];
   int offset = 0;
   bool isEnded = false;
+
   BusinessTransactionView({super.key});
 
   void initialServices(BuildContext context) {
@@ -83,8 +84,7 @@ class BusinessTransactionView extends StatelessWidget {
       appBar: AppBar(toolbarHeight: 0),
       body: Column(
         children: [
-          SubHeader(title: 'Lịch sử giao dịch'),
-          // const Padding(padding: EdgeInsets.only(top: 10)),
+          const SubHeader(title: 'Lịch sử giao dịch'),
           //filter search
           BlocBuilder<BranchBloc, BranchState>(
             builder: (context, state) {

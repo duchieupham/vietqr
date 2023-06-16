@@ -34,20 +34,31 @@ class BranchEventGetFilter extends BranchEvent {
 //
 
 class BranchEventGetDetail extends BranchEvent {
-  const BranchEventGetDetail();
+  final String id;
+
+  const BranchEventGetDetail({required this.id});
+
+  @override
+  List<Object?> get props => [id];
 }
 
 class BranchEventGetBanks extends BranchEvent {
-  const BranchEventGetBanks();
+  final String id;
+
+  const BranchEventGetBanks({required this.id});
+
+  @override
+  List<Object?> get props => [id];
 }
 
 class BranchEventGetMembers extends BranchEvent {
   final bool? isLoading;
+  final String id;
 
-  const BranchEventGetMembers({this.isLoading = false});
+  const BranchEventGetMembers({this.isLoading = false, required this.id});
 
   @override
-  List<Object?> get props => [isLoading];
+  List<Object?> get props => [isLoading, id];
 }
 
 class BranchEventSearchMember extends BranchEvent {
