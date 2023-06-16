@@ -15,6 +15,7 @@ class ThemeSettingView extends StatelessWidget {
   //theme UI controller
   static late PageController _themeUIController;
   static late ThemeProvider _themeProvider;
+
   //asset UI list
   static final List<String> _assetList = [
     'assets/images/ic-light-theme.png',
@@ -38,7 +39,7 @@ class ThemeSettingView extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SubHeader(title: 'Giao diện'),
+          const SubHeader(title: 'Giao diện'),
           Expanded(
             child: ListView(
               children: [

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/check_type.dart';
+import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/features/business/repositories/business_information_repository.dart';
@@ -53,54 +54,55 @@ class _SelectBranchWidgetState extends State<SelectBranchWidget> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    if (businessDetailDTO != null) {
-      return Container(
-        decoration: BoxDecoration(
-            color: DefaultTheme.BANK_CARD_COLOR_3.withOpacity(0.1),
-            borderRadius: const BorderRadius.all(Radius.circular(15))),
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              width: width,
-              height: 50,
-              child: Row(
-                children: [
-                  const SizedBox(
+    return Container(
+      decoration: BoxDecoration(
+          color: DefaultTheme.BANK_CARD_COLOR_3.withOpacity(0.1),
+          borderRadius: const BorderRadius.all(Radius.circular(15))),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            width: width,
+            height: 50,
+            child: Row(
+              children: [
+                const SizedBox(
+                  width: 80,
+                  height: 50,
+                ),
+                Expanded(
+                  child: Container(
+                    alignment: Alignment.center,
+                    child: const Text(
+                      'Chọn chi nhánh',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Container(
                     width: 80,
-                    height: 50,
-                  ),
-                  Expanded(
-                    child: Container(
-                      alignment: Alignment.center,
-                      child: const Text(
-                        'Chọn chi nhánh',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 15,
-                        ),
+                    alignment: Alignment.centerRight,
+                    child: const Text(
+                      'Xong',
+                      style: TextStyle(
+                        color: DefaultTheme.GREEN,
                       ),
                     ),
                   ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      width: 80,
-                      alignment: Alignment.centerRight,
-                      child: const Text(
-                        'Xong',
-                        style: TextStyle(
-                          color: DefaultTheme.GREEN,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-            DividerWidget(width: width),
+          ),
+          DividerWidget(width: width),
+          if (businessDetailDTO != null) ...[
+            const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               width: width,
@@ -110,31 +112,18 @@ class _SelectBranchWidgetState extends State<SelectBranchWidget> {
                 physics: const NeverScrollableScrollPhysics(),
                 padding: const EdgeInsetsDirectional.all(0),
                 itemBuilder: (context, index) {
-                  if (widget.tySelect == TypeSelect.BANK) {
-                    if (businessDetailDTO!.branchs
-                        .elementAt(index)
-                        .banks
-                        .isEmpty) {
-                      return _buildBranchList(
-                        context: context,
-                        dto: businessDetailDTO!.branchs[index],
-                        index: index,
-                      );
-                    }
-                  } else {
-                    return _buildBranchList(
-                      context: context,
-                      dto: businessDetailDTO!.branchs[index],
-                      index: index,
-                    );
-                  }
+                  return _buildBranchList(
+                    context: context,
+                    dto: businessDetailDTO!.branchs[index],
+                    index: index,
+                  );
                 },
               ),
             ),
-          ],
-        ),
-      );
-    }
+          ]
+        ],
+      ),
+    );
 
     return const SizedBox();
   }
@@ -145,65 +134,88 @@ class _SelectBranchWidgetState extends State<SelectBranchWidget> {
     required int index,
   }) {
     final double width = MediaQuery.of(context).size.width;
-    return GestureDetector(
-      onTap: () async {
-        Navigator.of(context).pop(dto.id);
-      },
-      child: Container(
-        width: width,
-        margin: const EdgeInsets.symmetric(vertical: 12),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(16)),
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-              color: DefaultTheme.BLACK_LIGHT.withOpacity(0.1),
-              blurRadius: 1,
-            ),
-          ],
-          color: DefaultTheme.WHITE,
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(25),
-                image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: Image.asset(
-                    'assets/images/ic-avatar-business.png',
+    if (dto.banks.isEmpty || widget.tySelect == TypeSelect.MEMBER) {
+      return GestureDetector(
+        onTap: () async {
+          Navigator.of(context).pop(dto.id);
+        },
+        child: Container(
+          width: width,
+          margin: const EdgeInsets.only(bottom: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(Radius.circular(16)),
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                color: DefaultTheme.BLACK_LIGHT.withOpacity(0.1),
+                blurRadius: 1,
+              ),
+            ],
+            color: DefaultTheme.WHITE,
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(25),
+                  image: DecorationImage(
                     fit: BoxFit.cover,
-                    width: 48,
-                    height: 48,
-                  ).image,
+                    image: Image.asset(
+                      'assets/images/ic-avatar-business.png',
+                      fit: BoxFit.cover,
+                      width: 48,
+                      height: 48,
+                    ).image,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                children: [
-                  _buildElementInformation(
-                    context: context,
-                    description: dto.name,
-                    isDescriptionBold: true,
-                  ),
-                  const Padding(padding: EdgeInsets.only(top: 10)),
-                  _buildElementInformation(
-                    context: context,
-                    descriptionColor: DefaultTheme.GREY_TEXT,
-                    description: 'Chưa liên kết',
-                  ),
-                ],
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  children: [
+                    _buildElementInformation(
+                      context: context,
+                      description: dto.name,
+                      isDescriptionBold: true,
+                    ),
+                    const SizedBox(height: 4),
+                    (dto.banks.isNotEmpty)
+                        ? Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${dto.banks[index].bankCode} - ${dto.banks[index].bankAccount}',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          )
+                        : _buildElementInformation(
+                            context: context,
+                            descriptionColor: DefaultTheme.GREY_TEXT,
+                            description: 'Chưa liên kết',
+                          ),
+                    const SizedBox(height: 4),
+                    _buildElementInformation(
+                      context: context,
+                      descriptionColor: DefaultTheme.GREY_TEXT,
+                      description: (dto.totalMember == 0)
+                          ? 'Chưa có thành viên'
+                          : '${dto.totalMember} thành viên',
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const Icon(Icons.arrow_forward_ios, size: 14),
-          ],
+              const Icon(Icons.arrow_forward_ios, size: 14),
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    }
+
+    return const SizedBox();
   }
 
   Widget _buildElementInformation({
