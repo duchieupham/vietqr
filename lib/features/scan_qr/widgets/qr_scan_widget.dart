@@ -116,7 +116,6 @@ class QRScanWidget extends StatelessWidget {
           title: 'Quét mã QR',
           function: () {
             Navigator.pop(context);
-            Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
           },
           bgColor: DefaultTheme.BLACK_BUTTON,
           textColor: DefaultTheme.WHITE,

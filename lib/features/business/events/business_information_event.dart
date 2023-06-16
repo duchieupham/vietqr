@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:vierqr/models/branch_filter_insert_dto.dart';
 import 'package:vierqr/models/business_information_insert_dto.dart';
 
 class BusinessInformationEvent extends Equatable {
@@ -37,4 +38,15 @@ class BusinessGetDetailEvent extends BusinessInformationEvent {
 
   @override
   List<Object?> get props => [businessId, userId];
+}
+
+class BusinessEventGetFilter extends BusinessInformationEvent {
+  final BranchFilterInsertDTO dto;
+
+  const BusinessEventGetFilter({
+    required this.dto,
+  });
+
+  @override
+  List<Object?> get props => [dto];
 }
