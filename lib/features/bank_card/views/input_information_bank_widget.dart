@@ -90,16 +90,19 @@ class _InputInformationBankWidgetState
           SystemChannels.textInput.invokeMethod('TextInput.hide');
           Navigator.pop(context);
         }
-        if (state is BankCardSearchNameFailedState) {
-          Navigator.pop(context);
-          SystemChannels.textInput.invokeMethod('TextInput.hide');
-          _focusNode.unfocus();
-        }
+        // if (state is BankCardSearchNameFailedState) {
+        //   Navigator.pop(context);
+        //   SystemChannels.textInput.invokeMethod('TextInput.hide');
+        //   _focusNode.unfocus();
+        // }
         if (state is BankCardLoadingState) {
           DialogWidget.instance.openLoadingDialog();
         }
 
         if (state is BankCardSearchNameFailedState) {
+          Navigator.pop(context);
+          SystemChannels.textInput.invokeMethod('TextInput.hide');
+          _focusNode.unfocus();
           DialogWidget.instance.openMsgDialog(
             title: 'Thông báo',
             msg: state.msg,

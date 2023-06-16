@@ -1,41 +1,95 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:palette_generator/palette_generator.dart';
+import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/utils/error_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
+import 'package:vierqr/commons/utils/log.dart';
+import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/features/branch/blocs/branch_bloc.dart';
 import 'package:vierqr/features/branch/events/branch_event.dart';
+import 'package:vierqr/features/branch/repositories/branch_repository.dart';
 import 'package:vierqr/features/branch/states/branch_state.dart';
 import 'package:vierqr/layouts/box_layout.dart';
+import 'package:vierqr/main.dart';
 import 'package:vierqr/models/account_bank_branch_insert_dto.dart';
 import 'package:vierqr/models/account_bank_connect_branch_dto.dart';
+import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
-class SelectBankConnectBranchWidget extends StatelessWidget {
+class SelectBankConnectBranchWidget extends StatefulWidget {
   final String businessId;
   final String branchId;
-  final BranchBloc branchBloc;
-  final List<AccountBankConnectBranchDTO> list = [];
-  final List<Color> colors = [];
 
-  SelectBankConnectBranchWidget({
+  const SelectBankConnectBranchWidget({
     super.key,
-    required this.branchBloc,
     required this.branchId,
     required this.businessId,
   });
 
-  void initialServices(BuildContext context) {
-    list.clear();
-    colors.clear();
-    String userId = UserInformationHelper.instance.getUserId();
-    branchBloc.add(BranchEventGetConnectBanks(userId: userId));
+  @override
+  State<SelectBankConnectBranchWidget> createState() =>
+      _SelectBankConnectBranchWidgetState();
+}
+
+class _SelectBankConnectBranchWidgetState
+    extends State<SelectBankConnectBranchWidget> {
+  List<AccountBankConnectBranchDTO> list = [];
+  List<Color> _colors = [];
+  String _msgError = '';
+  bool _isConnectBank = false;
+
+  String userId = UserInformationHelper.instance.getUserId();
+  late BranchRepository branchRepository;
+
+  @override
+  void initState() {
+    super.initState();
+    branchRepository = const BranchRepository();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _getConnectBanks();
+  }
+
+  void _getConnectBanks() async {
+    try {
+      final List<AccountBankConnectBranchDTO> listData =
+          await branchRepository.getBranchConnectBanks(userId);
+      final List<Color> colors = [];
+      PaletteGenerator? paletteGenerator;
+      BuildContext context = NavigationService.navigatorKey.currentContext!;
+      if (listData.isNotEmpty) {
+        for (AccountBankConnectBranchDTO dto in listData) {
+          NetworkImage image = ImageUtils.instance.getImageNetWork(dto.imgId);
+          paletteGenerator = await PaletteGenerator.fromImageProvider(image);
+          if (paletteGenerator.dominantColor != null) {
+            colors.add(paletteGenerator.dominantColor!.color);
+          } else {
+            colors.add(Theme.of(context).cardColor);
+          }
+        }
+      }
+
+      setState(() {
+        _colors = colors;
+        list = listData;
+      });
+    } catch (e) {
+      LOG.error(e.toString());
+      ResponseMessageDTO result =
+          const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+      LOG.error(e.toString());
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
-    initialServices(context);
     return SizedBox(
       width: width,
       child: Column(
@@ -87,10 +141,10 @@ class SelectBankConnectBranchWidget extends StatelessWidget {
               builder: (context, state) {
                 if (state is BranchGetConnectBankSuccessState) {
                   list.clear();
-                  colors.clear();
+                  _colors.clear();
                   if (list.isEmpty) {
                     list.addAll(state.list);
-                    colors.addAll(state.colors);
+                    _colors.addAll(state.colors);
                   }
                 }
                 return (list.isEmpty)
@@ -103,7 +157,7 @@ class SelectBankConnectBranchWidget extends StatelessWidget {
                             context: context,
                             index: index,
                             dto: list[index],
-                            color: colors[index],
+                            color: _colors[index],
                           );
                         },
                       );
@@ -209,20 +263,18 @@ class SelectBankConnectBranchWidget extends StatelessWidget {
                             ),
                           ),
                           InkWell(
-                            onTap: () {
-                              String userId =
-                                  UserInformationHelper.instance.getUserId();
+                            onTap: () async {
                               AccountBankBranchInsertDTO
                                   accountBankBranchInsertDTO =
                                   AccountBankBranchInsertDTO(
                                 userId: userId,
                                 bankId: dto.bankId,
-                                businessId: businessId,
-                                branchId: branchId,
+                                businessId: widget.businessId,
+                                branchId: widget.branchId,
                               );
-                              branchBloc.add(BranchEventConnectBank(
-                                  dto: accountBankBranchInsertDTO));
-                              Navigator.pop(context);
+                              await _connectBank(accountBankBranchInsertDTO);
+                              if (!mounted) return;
+                              Navigator.pop(context, _isConnectBank);
                             },
                             child: BoxLayout(
                               width: 100,
@@ -260,5 +312,31 @@ class SelectBankConnectBranchWidget extends StatelessWidget {
             ),
           )
         : const SizedBox();
+  }
+
+  Future _connectBank(dto) async {
+    try {
+      DialogWidget.instance.openLoadingDialog();
+      final ResponseMessageDTO result =
+          await branchRepository.addBankConnectBranch(dto);
+      if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
+        if (!mounted) return;
+        Navigator.of(context).pop();
+        setState(() {
+          _isConnectBank = true;
+        });
+      } else {
+        setState(() {
+          _msgError = ErrorUtils.instance.getErrorMessage(result.message);
+        });
+      }
+    } catch (e) {
+      ResponseMessageDTO result =
+          const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+      LOG.error(e.toString());
+      setState(() {
+        _msgError = ErrorUtils.instance.getErrorMessage(result.message);
+      });
+    }
   }
 }
