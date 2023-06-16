@@ -83,6 +83,7 @@ dependencies:
   pull_to_refresh:
   firebase_auth: ^4.6.2
   pin_code_fields: ^7.4.0
+  event_bus: ^2.0.0
 
 
 dev_dependencies:

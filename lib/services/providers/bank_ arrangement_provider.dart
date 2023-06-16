@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/services/shared_references/bank_arrangement_helper.dart';
 
 class BankArrangementProvider with ChangeNotifier {
@@ -11,6 +12,7 @@ class BankArrangementProvider with ChangeNotifier {
   Future<void> updateBankArr(int value) async {
     await BankArrangementHelper.instance.updateBankArr(value);
     _type = BankArrangementHelper.instance.getBankArr();
+    eventBus.fire(ChangeThemeEvent());
     notifyListeners();
   }
 }
