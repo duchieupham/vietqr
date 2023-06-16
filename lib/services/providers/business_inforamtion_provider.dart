@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vierqr/models/account_bank_branch_dto.dart';
 import 'package:vierqr/models/branch_filter_dto.dart';
 import 'package:vierqr/models/business_member_dto.dart';
 import 'package:vierqr/models/transaction_branch_input_dto.dart';
@@ -29,6 +30,21 @@ class BusinessInformationProvider extends ChangeNotifier {
   bool _isLoadingGetMember = false;
 
   get isLoadingGetMember => _isLoadingGetMember;
+
+  List<AccountBankBranchDTO> banks = [];
+  List<Color> colors = [];
+
+  void updateBanks(value) {
+    banks.clear();
+    banks = value;
+    notifyListeners();
+  }
+
+  void updateColors(value) {
+    colors.clear();
+    colors = value;
+    notifyListeners();
+  }
 
   void updateLoadingGetMember(value) {
     _isLoadingGetMember = value;

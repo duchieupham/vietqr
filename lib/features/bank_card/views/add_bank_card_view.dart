@@ -42,9 +42,17 @@ class _AddBankCardViewState extends State<AddBankCardView> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    initData(context);
   }
 
   void initData(BuildContext context) {
+    if (ModalRoute.of(context)!.settings.arguments != null) {
+      final args = ModalRoute.of(context)!.settings.arguments as Map;
+      initialPage = args['pageIndex'] ?? 0;
+      bankAccount = args['bankAccount'] ?? '';
+      userBankName = args['name'] ?? '';
+    }
+
     if (bankAccount.isNotEmpty) {
       bankAccountController.value =
           bankAccountController.value.copyWith(text: bankAccount);
@@ -78,7 +86,9 @@ class _AddBankCardViewState extends State<AddBankCardView> {
           nameController: nameController,
           phoneAuthenController: phoneAuthController,
           nationalController: nationalController,
-          pageController: _pageController,
+          callBack: (index) {
+            _animatedToPage(index);
+          },
         ),
         PolicyBankView(
           key: const PageStorageKey('POLICY_BANK'),
@@ -86,7 +96,9 @@ class _AddBankCardViewState extends State<AddBankCardView> {
           nameController: nameController,
           nationalController: nationalController,
           phoneAuthenController: phoneAuthController,
-          pageController: _pageController,
+          callBack: (index) {
+            _animatedToPage(index);
+          },
         ),
       ],
     );
@@ -95,13 +107,7 @@ class _AddBankCardViewState extends State<AddBankCardView> {
   @override
   Widget build(BuildContext context) {
     // final double width = MediaQuery.of(context).size.width;
-    if (ModalRoute.of(context)!.settings.arguments != null) {
-      final args = ModalRoute.of(context)!.settings.arguments as Map;
-      initialPage = args['pageIndex'] ?? 0;
-      bankAccount = args['bankAccount'] ?? '';
-      userBankName = args['name'] ?? '';
-    }
-    initData(context);
+
     return WillPopScope(
       onWillPop: () async {
         _hideKeyboardBack(context);

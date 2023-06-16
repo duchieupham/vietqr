@@ -25,8 +25,7 @@ class PolicyBankView extends StatelessWidget {
   final TextEditingController nameController;
   final TextEditingController nationalController;
   final TextEditingController phoneAuthenController;
-  final PageController pageController;
-
+  final Function(int)? callBack;
   static bool isOpenOTP = false;
 
   const PolicyBankView({
@@ -35,7 +34,7 @@ class PolicyBankView extends StatelessWidget {
     required this.nameController,
     required this.nationalController,
     required this.phoneAuthenController,
-    required this.pageController,
+    this.callBack,
   });
 
   @override
@@ -72,7 +71,7 @@ class PolicyBankView extends StatelessWidget {
               title: 'Xác thực thất bại',
               msg: state.message,
               function: () {
-                _animatedToPage(2);
+                callBack!(2);
                 Navigator.pop(context);
               },
             );
@@ -319,14 +318,6 @@ class PolicyBankView extends StatelessWidget {
           );
         },
       ),
-    );
-  }
-
-  void _animatedToPage(int index) {
-    pageController.animateToPage(
-      index,
-      duration: const Duration(milliseconds: 200),
-      curve: Curves.easeInOutQuart,
     );
   }
 }

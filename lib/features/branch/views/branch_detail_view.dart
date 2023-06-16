@@ -47,202 +47,214 @@ class _BranchDetailViewState extends State<BranchDetailView> {
     isActive: false,
   );
 
-  final List<AccountBankBranchDTO> banks = [];
-
-  final List<Color> colors = [];
+  late BranchBloc branchBloc;
 
   final _formModalKey = GlobalKey<FormState>();
 
-  void initialServices(BuildContext context, String branchId) {
-    colors.clear();
-    banks.clear();
+  void initialServices(BuildContext context) {
+    String userId = UserInformationHelper.instance.getUserId();
+    branchBloc.add(BranchEventGetConnectBanks(userId: userId));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    branchBloc = BlocProvider.of(context);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final arg = ModalRoute.of(context)!.settings.arguments as Map;
+      branchId = arg['branchId'] ?? '';
+      businessId = arg['businessId'] ?? '';
+      businessName = arg['businessName'] ?? '';
+
+      branchBloc.add(BranchEventGetDetail(id: branchId));
+      branchBloc.add(BranchEventGetBanks(id: branchId));
+      branchBloc.add(BranchEventGetMembers(id: branchId));
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
     final double height = MediaQuery.of(context).size.height;
-    final arg = ModalRoute.of(context)!.settings.arguments as Map;
-    branchId = arg['branchId'] ?? '';
-    businessId = arg['businessId'] ?? '';
-    businessName = arg['businessName'] ?? '';
-    return BlocProvider(
-      create: (BuildContext context) => BranchBloc(id: branchId)
-        ..add(
-          const BranchEventGetDetail(),
-        )
-        ..add(
-          const BranchEventGetBanks(),
-        )
-        ..add(
-          const BranchEventGetMembers(),
+
+    return WillPopScope(
+      onWillPop: () async {
+        // Provider.of<BusinessInformationProvider>(context, listen: false)
+        //     .updateUserRole(0);
+        Navigator.pop(context);
+        return false;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          toolbarHeight: 0,
         ),
-      child: WillPopScope(
-        onWillPop: () async {
-          // Provider.of<BusinessInformationProvider>(context, listen: false)
-          //     .updateUserRole(0);
-          Navigator.pop(context);
-          return false;
-        },
-        child: Scaffold(
-          appBar: AppBar(
-            toolbarHeight: 0,
-          ),
-          resizeToAvoidBottomInset: false,
-          body: Column(
-            children: [
-              SubHeader(
-                title: 'Chi nhánh',
-                function: () {
-                  // Provider.of<BusinessInformationProvider>(context, listen: false)
-                  //     .updateUserRole(0);
-                  Navigator.pop(context);
-                },
-              ),
-              Expanded(
-                child: BlocConsumer<BranchBloc, BranchState>(
-                  listener: (context, state) {
-                    if (state is BranchDetailSuccessState) {
-                      branchInformationDTO = state.dto;
-                    }
-                    if (state is BranchGetBanksSuccessState) {
-                      banks.clear();
-                      colors.clear();
-                      if (banks.isEmpty) {
-                        banks.addAll(state.list);
-                        colors.addAll(state.colors);
-                      }
-                    }
-                    if (state is BranchInsertMemberSuccessState ||
-                        state is BranchDeleteMemberSuccessState) {
-                      context
-                          .read<BranchBloc>()
-                          .add(const BranchEventGetMembers());
-                    }
+        resizeToAvoidBottomInset: false,
+        body: Column(
+          children: [
+            SubHeader(
+              title: 'Chi nhánh',
+              function: () {
+                // Provider.of<BusinessInformationProvider>(context, listen: false)
+                //     .updateUserRole(0);
+                Navigator.pop(context);
+              },
+            ),
+            Expanded(
+              child: BlocConsumer<BranchBloc, BranchState>(
+                listener: (context, state) {
+                  if (state is BranchDetailSuccessState) {
+                    branchInformationDTO = state.dto;
+                  }
+                  if (state is BranchGetBanksSuccessState) {
+                    Provider.of<BusinessInformationProvider>(context,
+                            listen: false)
+                        .updateBanks(state.list);
+                    Provider.of<BusinessInformationProvider>(context,
+                            listen: false)
+                        .updateColors(state.colors);
+                  }
+                  if (state is BranchInsertMemberSuccessState ||
+                      state is BranchDeleteMemberSuccessState) {
+                    context
+                        .read<BranchBloc>()
+                        .add(BranchEventGetMembers(id: branchId));
+                  }
 
-                    if (state is BranchDeleteMemberLoadingState) {
+                  if (state is BranchDeleteMemberLoadingState) {
+                    Provider.of<BusinessInformationProvider>(context,
+                            listen: false)
+                        .updateElementAtBusinessMember(state.index, true);
+                  }
+
+                  if (state is BranchDeleteMemberFailedState) {
+                    if (state.updateAll) {
                       Provider.of<BusinessInformationProvider>(context,
                               listen: false)
-                          .updateElementAtBusinessMember(state.index, true);
-                    }
-
-                    if (state is BranchDeleteMemberFailedState) {
-                      if (state.updateAll) {
-                        Provider.of<BusinessInformationProvider>(context,
-                                listen: false)
-                            .updateElementAtBusinessMember(state.index, false);
-                      } else {
-                        Provider.of<BusinessInformationProvider>(context,
-                                listen: false)
-                            .updateElementAtBusinessMember(state.index, false);
-                      }
-                    }
-
-                    if (state is BranchConnectBankSuccessState ||
-                        state is BranchRemoveBankSuccessState) {
-                      initialServices(context, branchId);
-                    }
-
-                    if (state is BranchGetMembersLoadingState) {
+                          .updateElementAtBusinessMember(state.index, false);
+                    } else {
                       Provider.of<BusinessInformationProvider>(context,
                               listen: false)
-                          .updateLoadingGetMember(true);
+                          .updateElementAtBusinessMember(state.index, false);
                     }
+                  }
 
-                    if (state is BranchGetMembersSuccessState) {
-                      Provider.of<BusinessInformationProvider>(context,
-                              listen: false)
-                          .updateBusinessMember(state.list);
-                      if (state.list.isNotEmpty) {
-                        Future.delayed(
-                          const Duration(milliseconds: 0),
-                          () {
-                            //update user role
-                            int userRole = 0;
-                            if (state.list
+                  if (state is BranchConnectBankSuccessState) {
+                    context
+                        .read<BranchBloc>()
+                        .add(BranchEventGetBanks(id: branchId));
+                  }
+
+                  if (state is BranchRemoveBankSuccessState) {
+                    initialServices(context);
+                    Provider.of<BusinessInformationProvider>(context,
+                            listen: false)
+                        .updateBanks([]);
+                    Provider.of<BusinessInformationProvider>(context,
+                            listen: false)
+                        .updateColors([]);
+                  }
+
+                  if (state is BranchGetMembersLoadingState) {
+                    Provider.of<BusinessInformationProvider>(context,
+                            listen: false)
+                        .updateLoadingGetMember(true);
+                  }
+
+                  if (state is BranchGetMembersSuccessState) {
+                    Provider.of<BusinessInformationProvider>(context,
+                            listen: false)
+                        .updateBusinessMember(state.list);
+                    if (state.list.isNotEmpty) {
+                      Future.delayed(
+                        const Duration(milliseconds: 0),
+                        () {
+                          //update user role
+                          int userRole = 0;
+                          if (state.list
+                              .where((element) =>
+                                  element.userId ==
+                                  UserInformationHelper.instance.getUserId())
+                              .isNotEmpty) {
+                            userRole = state.list
                                 .where((element) =>
                                     element.userId ==
                                     UserInformationHelper.instance.getUserId())
-                                .isNotEmpty) {
-                              userRole = state.list
-                                  .where((element) =>
-                                      element.userId ==
-                                      UserInformationHelper.instance
-                                          .getUserId())
-                                  .first
-                                  .role;
-                              Provider.of<BusinessInformationProvider>(context,
-                                      listen: false)
-                                  .updateUserRole(userRole);
-                            }
-                          },
-                        );
-                      }
+                                .first
+                                .role;
+                            Provider.of<BusinessInformationProvider>(context,
+                                    listen: false)
+                                .updateUserRole(userRole);
+                          }
+                        },
+                      );
                     }
-                  },
-                  builder: (context, state) {
-                    return ListView(
-                      shrinkWrap: true,
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      children: [
-                        _buildTitle(
-                          context: context,
-                          title: 'Thông tin chi nhánh',
-                        ),
-                        BoxLayout(
-                          width: width - 40,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 0, vertical: 10),
-                          child: BoxLayout(
-                            width: width,
-                            child: Column(
-                              children: [
-                                _buildElementInformation(
-                                  context: context,
-                                  title: 'Chi nhánh',
-                                  description: branchInformationDTO.name,
-                                ),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 15),
-                                  child: DividerWidget(width: width),
-                                ),
-                                _buildElementInformation(
-                                  context: context,
-                                  title: 'Doanh nghiệp',
-                                  description: businessName,
-                                ),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 15),
-                                  child: DividerWidget(width: width),
-                                ),
-                                _buildElementInformation(
-                                  context: context,
-                                  title: 'Code',
-                                  description: branchInformationDTO.code,
-                                  isCopy: true,
-                                ),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 15),
-                                  child: DividerWidget(width: width),
-                                ),
-                                _buildElementInformation(
-                                  context: context,
-                                  title: 'Địa chỉ',
-                                  description: branchInformationDTO.address,
-                                ),
-                              ],
-                            ),
+                  }
+                },
+                builder: (context, state) {
+                  return ListView(
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    children: [
+                      _buildTitle(
+                        context: context,
+                        title: 'Thông tin chi nhánh',
+                      ),
+                      BoxLayout(
+                        width: width - 40,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 0, vertical: 10),
+                        child: BoxLayout(
+                          width: width,
+                          child: Column(
+                            children: [
+                              _buildElementInformation(
+                                context: context,
+                                title: 'Chi nhánh',
+                                description: branchInformationDTO.name,
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 15),
+                                child: DividerWidget(width: width),
+                              ),
+                              _buildElementInformation(
+                                context: context,
+                                title: 'Doanh nghiệp',
+                                description: businessName,
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 15),
+                                child: DividerWidget(width: width),
+                              ),
+                              _buildElementInformation(
+                                context: context,
+                                title: 'Code',
+                                description: branchInformationDTO.code,
+                                isCopy: true,
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 15),
+                                child: DividerWidget(width: width),
+                              ),
+                              _buildElementInformation(
+                                context: context,
+                                title: 'Địa chỉ',
+                                description: branchInformationDTO.address,
+                              ),
+                            ],
                           ),
                         ),
-                        const Padding(padding: EdgeInsets.only(top: 30)),
-                        _buildTitle(
-                          context: context,
-                          title: 'Tài khoản ngân hàng',
-                        ),
-                        (banks.isEmpty)
+                      ),
+                      const Padding(padding: EdgeInsets.only(top: 30)),
+                      _buildTitle(
+                        context: context,
+                        title: 'Tài khoản ngân hàng',
+                      ),
+                      Consumer<BusinessInformationProvider>(
+                          builder: (context, provider, child) {
+                        return (provider.banks.isEmpty)
                             ? BoxLayout(
                                 width: width,
                                 alignment: Alignment.center,
@@ -268,19 +280,26 @@ class _BranchDetailViewState extends State<BranchDetailView> {
                                                 icon: Icons.add_rounded,
                                                 title:
                                                     'Kết nối TK ngân hàng với doanh nghiệp',
-                                                function: () {
-                                                  DialogWidget.instance
+                                                function: () async {
+                                                  final data = await DialogWidget
+                                                      .instance
                                                       .showModalBottomContent(
                                                     context: context,
                                                     widget:
                                                         SelectBankConnectBranchWidget(
-                                                      branchBloc: context
-                                                          .read<BranchBloc>(),
                                                       branchId: branchId,
                                                       businessId: businessId,
                                                     ),
                                                     height: height * 0.5,
                                                   );
+
+                                                  if (!mounted) return;
+                                                  if (data
+                                                      is AccountBankBranchInsertDTO) {
+                                                    context.read<BranchBloc>().add(
+                                                        BranchEventConnectBank(
+                                                            dto: data));
+                                                  }
                                                 },
                                                 bgColor: DefaultTheme.GREEN,
                                                 textColor: DefaultTheme.WHITE,
@@ -296,7 +315,7 @@ class _BranchDetailViewState extends State<BranchDetailView> {
                             : ListView.builder(
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
-                                itemCount: banks.length,
+                                itemCount: provider.banks.length,
                                 itemBuilder: (context, index) {
                                   final int userRole =
                                       Provider.of<BusinessInformationProvider>(
@@ -305,163 +324,160 @@ class _BranchDetailViewState extends State<BranchDetailView> {
                                           .userRole;
                                   return _buildElementBank(
                                     context: context,
-                                    dto: banks[index],
-                                    color: colors[index],
+                                    dto: provider.banks[index],
+                                    color: provider.colors[index],
                                     userRole: userRole,
                                   );
                                 },
-                              ),
-                        const Padding(padding: EdgeInsets.only(top: 20)),
-                        Consumer<BusinessInformationProvider>(
-                            builder: (context, provider, child) {
-                          return Column(
-                            children: [
-                              _buildTitle(
-                                context: context,
-                                title: 'Danh sách thành viên',
-                                label: (provider.businessMembers.isEmpty)
-                                    ? null
-                                    : '${provider.businessMembers.length} thành viên',
-                                color: DefaultTheme.BLUE_TEXT,
-                                icon: Icons.people_alt_rounded,
-                              ),
-                              if (provider.isLoadingGetMember)
-                                Container(
-                                  margin: const EdgeInsets.only(top: 24),
-                                  color: DefaultTheme.TRANSPARENT,
-                                  width: 36,
-                                  height: 36,
-                                  child: const CircularProgressIndicator(
-                                    color: DefaultTheme.GREEN,
-                                  ),
-                                )
-                              else
-                                (provider.businessMembers.isEmpty)
-                                    ? BoxLayout(
-                                        width: width,
-                                        alignment: Alignment.center,
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            const Padding(
-                                                padding:
-                                                    EdgeInsets.only(top: 30)),
-                                            Icon(
-                                              Icons.people_outline_rounded,
-                                              size: width * 0.2,
-                                              color: DefaultTheme.BLUE_TEXT,
-                                            ),
-                                            const Padding(
-                                                padding:
-                                                    EdgeInsets.only(top: 30)),
-                                            const Text(
-                                              'Chưa có tài khoản ngân hàng được kết nối.',
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(fontSize: 15),
-                                            ),
-                                            const Padding(
-                                                padding:
-                                                    EdgeInsets.only(top: 10)),
-                                            (provider.userRole == 5)
-                                                ? ButtonIconWidget(
-                                                    width: width,
-                                                    icon: Icons.add_rounded,
-                                                    title: 'Thêm thành viên',
-                                                    function: () async {
-                                                      await DialogWidget
-                                                          .instance
-                                                          .showModelBottomSheet(
-                                                        context: context,
-                                                        height: height * 0.5,
-                                                        widget:
-                                                            AddBranchMemberWidget(
-                                                          branchId: branchId,
-                                                          businessId:
-                                                              businessId,
-                                                        ),
-                                                      );
+                              );
+                      }),
+                      const Padding(padding: EdgeInsets.only(top: 20)),
+                      Consumer<BusinessInformationProvider>(
+                          builder: (context, provider, child) {
+                        return Column(
+                          children: [
+                            _buildTitle(
+                              context: context,
+                              title: 'Danh sách thành viên',
+                              label: (provider.businessMembers.isEmpty)
+                                  ? null
+                                  : '${provider.businessMembers.length} thành viên',
+                              color: DefaultTheme.BLUE_TEXT,
+                              icon: Icons.people_alt_rounded,
+                            ),
+                            if (provider.isLoadingGetMember)
+                              Container(
+                                margin: const EdgeInsets.only(top: 24),
+                                color: DefaultTheme.TRANSPARENT,
+                                width: 36,
+                                height: 36,
+                                child: const CircularProgressIndicator(
+                                  color: DefaultTheme.GREEN,
+                                ),
+                              )
+                            else
+                              (provider.businessMembers.isEmpty)
+                                  ? BoxLayout(
+                                      width: width,
+                                      alignment: Alignment.center,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          const Padding(
+                                              padding:
+                                                  EdgeInsets.only(top: 30)),
+                                          Icon(
+                                            Icons.people_outline_rounded,
+                                            size: width * 0.2,
+                                            color: DefaultTheme.BLUE_TEXT,
+                                          ),
+                                          const Padding(
+                                              padding:
+                                                  EdgeInsets.only(top: 30)),
+                                          const Text(
+                                            'Chưa có tài khoản ngân hàng được kết nối.',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(fontSize: 15),
+                                          ),
+                                          const Padding(
+                                              padding:
+                                                  EdgeInsets.only(top: 10)),
+                                          (provider.userRole == 5)
+                                              ? ButtonIconWidget(
+                                                  width: width,
+                                                  icon: Icons.add_rounded,
+                                                  title: 'Thêm thành viên',
+                                                  function: () async {
+                                                    await DialogWidget.instance
+                                                        .showModelBottomSheet(
+                                                      context: context,
+                                                      height: height * 0.5,
+                                                      widget:
+                                                          AddBranchMemberWidget(
+                                                        branchId: branchId,
+                                                        businessId: businessId,
+                                                      ),
+                                                    );
 
-                                                      if (!mounted) return;
-                                                      context
-                                                          .read<BranchBloc>()
-                                                          .add(
-                                                              const BranchEventGetMembers());
-                                                    },
-                                                    bgColor: DefaultTheme.GREEN,
-                                                    textColor:
-                                                        DefaultTheme.WHITE,
-                                                  )
-                                                : const SizedBox(),
-                                            const Padding(
-                                                padding:
-                                                    EdgeInsets.only(top: 10)),
-                                          ],
-                                        ),
-                                      )
-                                    : ListView.builder(
-                                        shrinkWrap: true,
-                                        physics:
-                                            const NeverScrollableScrollPhysics(),
-                                        itemCount:
-                                            provider.businessMembers.length,
-                                        itemBuilder: (context, index) {
-                                          final int userRole =
-                                              provider.userRole;
-                                          return _buildElementMember(
-                                              index: index,
-                                              context: context,
-                                              dto: provider
-                                                  .businessMembers[index],
-                                              userRole: userRole);
-                                        },
+                                                    if (!mounted) return;
+                                                    context
+                                                        .read<BranchBloc>()
+                                                        .add(
+                                                            BranchEventGetMembers(
+                                                                id: branchId));
+                                                  },
+                                                  bgColor: DefaultTheme.GREEN,
+                                                  textColor: DefaultTheme.WHITE,
+                                                )
+                                              : const SizedBox(),
+                                          const Padding(
+                                              padding:
+                                                  EdgeInsets.only(top: 10)),
+                                        ],
                                       ),
-                            ],
-                          );
-                        }),
-                        const Padding(padding: EdgeInsets.only(bottom: 50)),
-                      ],
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-          floatingActionButton: Consumer<BusinessInformationProvider>(
-            builder: (context, provider, child) {
-              return (provider.userRole != 4 && provider.userRole != 0)
-                  ? InkWell(
-                      onTap: () async {
-                        await DialogWidget.instance.showModelBottomSheet(
-                          context: context,
-                          height: height * 0.5,
-                          widget: AddBranchMemberWidget(
-                            branchId: branchId,
-                            businessId: businessId,
-                          ),
+                                    )
+                                  : ListView.builder(
+                                      shrinkWrap: true,
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      itemCount:
+                                          provider.businessMembers.length,
+                                      itemBuilder: (context, index) {
+                                        final int userRole = provider.userRole;
+                                        return _buildElementMember(
+                                            index: index,
+                                            context: context,
+                                            dto:
+                                                provider.businessMembers[index],
+                                            userRole: userRole);
+                                      },
+                                    ),
+                          ],
                         );
-
-                        if (!mounted) return;
-                        context
-                            .read<BranchBloc>()
-                            .add(const BranchEventGetMembers());
-                      },
-                      child: const BoxLayout(
-                        width: 40,
-                        height: 40,
-                        borderRadius: 20,
-                        enableShadow: true,
-                        padding: EdgeInsets.all(0),
-                        child: Icon(
-                          Icons.person_add_alt_1_rounded,
-                          size: 15,
-                          color: DefaultTheme.BLUE_TEXT,
+                      }),
+                      const Padding(padding: EdgeInsets.only(bottom: 50)),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+        floatingActionButton: Consumer<BusinessInformationProvider>(
+          builder: (context, provider, child) {
+            return (provider.userRole != 4 && provider.userRole != 0)
+                ? InkWell(
+                    onTap: () async {
+                      await DialogWidget.instance.showModelBottomSheet(
+                        context: context,
+                        height: height * 0.5,
+                        widget: AddBranchMemberWidget(
+                          branchId: branchId,
+                          businessId: businessId,
                         ),
+                      );
+
+                      if (!mounted) return;
+                      context
+                          .read<BranchBloc>()
+                          .add(BranchEventGetMembers(id: branchId));
+                    },
+                    child: const BoxLayout(
+                      width: 40,
+                      height: 40,
+                      borderRadius: 20,
+                      enableShadow: true,
+                      padding: EdgeInsets.all(0),
+                      child: Icon(
+                        Icons.person_add_alt_1_rounded,
+                        size: 15,
+                        color: DefaultTheme.BLUE_TEXT,
                       ),
-                    )
-                  : const SizedBox();
-            },
-          ),
+                    ),
+                  )
+                : const SizedBox();
+          },
         ),
       ),
     );
@@ -717,9 +733,8 @@ class _BranchDetailViewState extends State<BranchDetailView> {
                         businessId: businessId,
                         branchId: branchId,
                       );
-                      Provider.of<BranchBloc>(context).add(
-                          BranchEventRemoveBank(
-                              dto: accountBankBranchInsertDTO));
+                      context.read<BranchBloc>().add(BranchEventRemoveBank(
+                          dto: accountBankBranchInsertDTO));
                     },
                     bgColor: Theme.of(context).cardColor.withOpacity(0.3),
                     textColor: DefaultTheme.WHITE,

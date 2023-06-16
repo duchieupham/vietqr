@@ -19,11 +19,7 @@ import 'package:vierqr/models/business_member_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 
 class BranchBloc extends Bloc<BranchEvent, BranchState> {
-  final String id;
-
-  BranchBloc({
-    required this.id,
-  }) : super(BranchInitialState()) {
+  BranchBloc() : super(BranchInitialState()) {
     on<BranchEventGetChoice>(_getBusinessBranchChoice);
     on<BranchEventGetFilter>(_getFilter);
     on<BranchEventGetDetail>(_getDetail);
@@ -43,7 +39,7 @@ class BranchBloc extends Bloc<BranchEvent, BranchState> {
       if (event is BranchEventGetMembers) {
         emit(BranchGetMembersLoadingState());
         List<BusinessMemberDTO> list =
-            await branchRepository.getBranchMembers(id);
+            await branchRepository.getBranchMembers(event.id);
         emit(BranchGetMembersSuccessState(list: list));
       }
     } catch (e) {
@@ -82,7 +78,8 @@ class BranchBloc extends Bloc<BranchEvent, BranchState> {
     try {
       if (event is BranchEventGetDetail) {
         emit(BranchDetailLoadingState());
-        BranchInformationDTO dto = await branchRepository.getBranchDetail(id);
+        BranchInformationDTO dto =
+            await branchRepository.getBranchDetail(event.id);
         emit(BranchDetailSuccessState(dto: dto));
       }
     } catch (e) {
@@ -96,7 +93,7 @@ class BranchBloc extends Bloc<BranchEvent, BranchState> {
       if (event is BranchEventGetBanks) {
         emit(BranchGetBanksLoadingState());
         List<AccountBankBranchDTO> list =
-            await branchRepository.getBranchBanks(id);
+            await branchRepository.getBranchBanks(event.id);
         final List<Color> colors = [];
         PaletteGenerator? paletteGenerator;
         BuildContext context = NavigationService.navigatorKey.currentContext!;
