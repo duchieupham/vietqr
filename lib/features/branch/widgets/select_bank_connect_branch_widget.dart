@@ -244,6 +244,8 @@ class _SelectBankConnectBranchWidgetState
                               children: [
                                 Text(
                                   dto.bankAccountName.toUpperCase(),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
                                     color: DefaultTheme.WHITE,
                                     fontSize: 18,

@@ -318,6 +318,8 @@ class SearchBankView extends StatelessWidget {
                               children: [
                                 Text(
                                   dto.userBankName.toUpperCase(),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
                                     color: DefaultTheme.WHITE,
                                     fontSize: 18,

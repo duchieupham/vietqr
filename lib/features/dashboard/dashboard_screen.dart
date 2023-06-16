@@ -156,38 +156,38 @@ class _DashboardScreenState extends State<DashboardScreen>
     final double width = MediaQuery.of(context).size.width;
     final double height = MediaQuery.of(context).size.height;
     String heroId = dto.businessId;
-    return Container(
-      width: width,
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(Radius.circular(12)),
-        boxShadow: <BoxShadow>[
-          BoxShadow(
-            color: DefaultTheme.BLACK_LIGHT.withOpacity(0.1),
-            blurRadius: 1,
-          ),
-        ],
-        color: DefaultTheme.WHITE,
-      ),
-      child: Column(
-        children: [
-          GestureDetector(
-            onTap: () {
-              Navigator.pushNamed(
-                context,
-                Routes.BUSINESS_INFORMATION_VIEW,
-                arguments: {
-                  'heroId': heroId,
-                  'img': dto.coverImgId,
-                  'businessItem': dto,
-                },
-              ).then((value) {
-                heroId = value.toString();
-                _dashboardBloc.add(DashboardInitEvent());
-              });
-            },
-            child: Row(
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(
+          context,
+          Routes.BUSINESS_INFORMATION_VIEW,
+          arguments: {
+            'heroId': heroId,
+            'img': dto.coverImgId,
+            'businessItem': dto,
+          },
+        ).then((value) {
+          heroId = value.toString();
+          _dashboardBloc.add(DashboardInitEvent());
+        });
+      },
+      child: Container(
+        width: width,
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(Radius.circular(12)),
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+              color: DefaultTheme.BLACK_LIGHT.withOpacity(0.1),
+              blurRadius: 1,
+            ),
+          ],
+          color: Theme.of(context).cardColor,
+        ),
+        child: Column(
+          children: [
+            Row(
               children: [
                 Container(
                   width: 50,
@@ -211,6 +211,8 @@ class _DashboardScreenState extends State<DashboardScreen>
                 Expanded(
                   child: Text(
                     dto.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
@@ -218,147 +220,146 @@ class _DashboardScreenState extends State<DashboardScreen>
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.all(4),
+                  width: 20,
+                  height: 20,
                   decoration: BoxDecoration(
-                    color: DefaultTheme.BANK_CARD_COLOR_3.withOpacity(0.3),
-                    borderRadius: const BorderRadius.all(Radius.circular(100)),
+                    color: Theme.of(context).canvasColor,
+                    borderRadius: const BorderRadius.all(Radius.circular(20)),
                   ),
-                  child: const ClipRRect(
-                    borderRadius: BorderRadius.all(Radius.circular(100)),
-                    child: Icon(
-                      Icons.arrow_forward_ios_outlined,
-                      size: 10,
-                      color: DefaultTheme.GREY_TEXT,
-                    ),
+                  child: Icon(
+                    Icons.arrow_forward_ios_outlined,
+                    size: 10,
+                    color: Theme.of(context).hintColor,
                   ),
                 )
               ],
             ),
-          ),
-          const SizedBox(height: 12),
-          Container(
-            margin: const EdgeInsets.only(left: 32),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildChip(
-                  context: context,
-                  icon: Icons.business_rounded,
-                  color: DefaultTheme.BLACK_LIGHT,
-                  text: '${dto.totalBranch} chi nhánh',
-                ),
-                const SizedBox(height: 4),
-                _buildChip(
-                  context: context,
-                  icon: Icons.people_rounded,
-                  text: '${dto.totalMember} thành viên',
-                  color: DefaultTheme.BLACK_LIGHT,
-                ),
-              ],
-            ),
-          ),
-          if (dto.role == TypeRole.ADMIN.role) ...[
-            const SizedBox(height: 24),
-            Row(
-              children: [
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () async {
-                      final data =
-                          await DialogWidget.instance.showModelBottomSheet(
-                        context: context,
-                        padding: EdgeInsets.zero,
-                        widget: SelectBranchWidget(
-                          businessId: dto.businessId,
-                        ),
-                        height: height * 0.5,
-                      );
-
-                      if (!mounted) return;
-                      if (data != null && data is String) {
-                        final result =
-                            await DialogWidget.instance.showModalBottomContent(
-                          context: context,
-                          widget: SelectBankConnectBranchWidget(
-                            branchId: data,
-                            businessId: dto.businessId,
-                          ),
-                          height: height * 0.7,
-                        );
-                      }
-                    },
-                    child: Container(
-                      alignment: Alignment.center,
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      decoration: BoxDecoration(
-                        color: DefaultTheme.GREY_TEXT.withOpacity(0.1),
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(4),
-                        ),
-                      ),
-                      child: const Text(
-                        'Kết nối TK ngân hàng',
-                        style: TextStyle(
-                          color: DefaultTheme.GREEN,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
+            const SizedBox(height: 15),
+            Container(
+              margin: const EdgeInsets.only(left: 15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildChip(
+                    context: context,
+                    icon: Icons.business_rounded,
+                    color: DefaultTheme.GREY_TEXT,
+                    text: '${dto.totalBranch} chi nhánh',
                   ),
-                ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () async {
-                      final data =
-                          await DialogWidget.instance.showModelBottomSheet(
-                        context: context,
-                        height: height * 0.5,
-                        padding: EdgeInsets.zero,
-                        widget: SelectBranchWidget(
-                          businessId: dto.businessId,
-                          tySelect: TypeSelect.MEMBER,
-                        ),
-                      );
-
-                      if (!mounted) return;
-                      if (data != null && data is String) {
-                        final result =
+                  const SizedBox(height: 4),
+                  _buildChip(
+                    context: context,
+                    icon: Icons.people_rounded,
+                    text: '${dto.totalMember} thành viên',
+                    color: DefaultTheme.GREY_TEXT,
+                  ),
+                ],
+              ),
+            ),
+            if (dto.role == TypeRole.ADMIN.role) ...[
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () async {
+                        final data =
                             await DialogWidget.instance.showModelBottomSheet(
                           context: context,
-                          widget: AddBranchMemberWidget(
-                            branchId: data,
+                          padding: EdgeInsets.zero,
+                          widget: SelectBranchWidget(
                             businessId: dto.businessId,
                           ),
                           height: height * 0.5,
                         );
 
-                        _dashboardBloc.add(DashboardInitEvent(isLoading: true));
-                      }
-                    },
-                    child: Container(
-                      alignment: Alignment.center,
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      decoration: BoxDecoration(
-                        color: DefaultTheme.GREY_TEXT.withOpacity(0.1),
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(4),
+                        if (!mounted) return;
+                        if (data != null && data is String) {
+                          final result = await DialogWidget.instance
+                              .showModalBottomContent(
+                            context: context,
+                            widget: SelectBankConnectBranchWidget(
+                              branchId: data,
+                              businessId: dto.businessId,
+                            ),
+                            height: height * 0.7,
+                          );
+                        }
+                      },
+                      child: Container(
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).canvasColor,
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(4),
+                          ),
                         ),
-                      ),
-                      child: const Text(
-                        'Thêm thành viên',
-                        style: TextStyle(
-                          color: DefaultTheme.BLUE_TEXT,
-                          fontSize: 12,
+                        child: const Text(
+                          'Kết nối TK ngân hàng',
+                          style: TextStyle(
+                            color: DefaultTheme.GREEN,
+                            fontSize: 12,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                )
-              ],
-            ),
-          ]
-        ],
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () async {
+                        final data =
+                            await DialogWidget.instance.showModelBottomSheet(
+                          context: context,
+                          height: height * 0.5,
+                          padding: EdgeInsets.zero,
+                          widget: SelectBranchWidget(
+                            businessId: dto.businessId,
+                            tySelect: TypeSelect.MEMBER,
+                          ),
+                        );
+
+                        if (!mounted) return;
+                        if (data != null && data is String) {
+                          final result =
+                              await DialogWidget.instance.showModelBottomSheet(
+                            context: context,
+                            widget: AddBranchMemberWidget(
+                              branchId: data,
+                              businessId: dto.businessId,
+                            ),
+                            height: height * 0.5,
+                          );
+
+                          _dashboardBloc
+                              .add(DashboardInitEvent(isLoading: true));
+                        }
+                      },
+                      child: Container(
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).canvasColor,
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(4),
+                          ),
+                        ),
+                        child: const Text(
+                          'Thêm thành viên',
+                          style: TextStyle(
+                            color: DefaultTheme.BLUE_TEXT,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ]
+          ],
+        ),
       ),
     );
   }

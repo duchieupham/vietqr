@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,6 +10,7 @@ import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'dart:math' as math;
 
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
@@ -50,14 +53,17 @@ class _BankCardSelectViewState extends State<BankCardSelectView>
   final List<Color> cardColors = [];
   final List<QRGeneratedDTO> qrGenerateds = [];
   final List<Widget> cardWidgets = [];
-  final ScrollController scrollController = ScrollController();
+  final scrollController = ScrollController();
   late QRBloc qrBloc;
-  final CarouselController carouselController = CarouselController();
+  final carouselController = CarouselController();
 
   late BusinessInformationBloc businessInformationBloc;
   late BankCardBloc bankCardBloc;
 
   final refreshController = RefreshController(initialRefresh: false);
+  String userId = UserInformationHelper.instance.getUserId();
+
+  StreamSubscription? _subscription;
 
   initialServices(BuildContext context) {
     businessInformationBloc = BlocProvider.of(context);
@@ -69,7 +75,6 @@ class _BankCardSelectViewState extends State<BankCardSelectView>
   }
 
   initData() {
-    String userId = UserInformationHelper.instance.getUserId();
     bankCardBloc.add(BankCardEventGetList(userId: userId));
   }
 
@@ -79,6 +84,10 @@ class _BankCardSelectViewState extends State<BankCardSelectView>
     initialServices(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       initData();
+    });
+
+    _subscription = eventBus.on<ChangeThemeEvent>().listen((_) {
+      bankCardBloc.add(BankCardEventGetList(userId: userId));
     });
   }
 
@@ -171,12 +180,17 @@ class _BankCardSelectViewState extends State<BankCardSelectView>
                     ),
                   ],
                 )
-              : Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: BlocConsumer<BankCardBloc, BankCardState>(
-                        listener: ((context, state) {
+              : Container(
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/bg-qr.png'),
+                      fit: BoxFit.fitHeight,
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      BlocConsumer<BankCardBloc, BankCardState>(
+                        listener: (context, state) {
                           if (state is BankCardGetListSuccessState) {
                             resetProvider(context);
                             if (bankAccounts.isEmpty) {
@@ -205,120 +219,107 @@ class _BankCardSelectViewState extends State<BankCardSelectView>
                               state is BankCardInsertSuccessfulState) {
                             getListBank(context);
                           }
-                        }),
-                        builder: ((context, state) {
-                          return SizedBox(
-                            width: width,
-                            height: height,
-                            child: BlocBuilder<QRBloc, QRState>(
-                              builder: (context, state) {
-                                if (state is QRGeneratedListSuccessfulState) {
-                                  cardWidgets.clear();
-                                  qrGenerateds.clear();
-                                  if (state.list.isNotEmpty) {
-                                    addQRWidget(width, height, state.list);
-                                  }
+                        },
+                        builder: (context, state) {
+                          if (state is BankCardLoadingListState) {
+                            return const Expanded(
+                              child: UnconstrainedBox(
+                                child: SizedBox(
+                                  width: 30,
+                                  height: 30,
+                                  child: CircularProgressIndicator(
+                                    color: DefaultTheme.WHITE,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+                          return BlocBuilder<QRBloc, QRState>(
+                            builder: (context, state) {
+                              if (state is QRGeneratedListSuccessfulState) {
+                                cardWidgets.clear();
+                                qrGenerateds.clear();
+                                if (state.list.isNotEmpty) {
+                                  addQRWidget(width, height, state.list);
                                 }
-                                return Column(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    const Padding(
-                                        padding: EdgeInsets.only(top: 50)),
-                                    Expanded(
-                                      child: (qrGenerateds.isEmpty)
-                                          ? UnconstrainedBox(
-                                              child: BoxLayout(
-                                                width: width - 60,
-                                                borderRadius: 15,
-                                                alignment: Alignment.center,
-                                                bgColor:
-                                                    Theme.of(context).cardColor,
-                                                child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    Image.asset(
-                                                      'assets/images/ic-card.png',
-                                                      width: width * 0.4,
-                                                    ),
-                                                    const Text(
-                                                      'Chưa có tài khoản ngân hàng được thêm.',
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: TextStyle(
-                                                          fontSize: 15),
-                                                    ),
-                                                    const Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                top: 10)),
-                                                    ButtonIconWidget(
-                                                      width: width,
-                                                      icon: Icons.add_rounded,
-                                                      title:
-                                                          'Thêm TK ngân hàng',
-                                                      function: () {
-                                                        Provider.of<AddBankProvider>(
-                                                                context,
-                                                                listen: false)
-                                                            .updateSelect(1);
-                                                        Navigator.pushNamed(
-                                                            context,
-                                                            Routes
-                                                                .ADD_BANK_CARD,
-                                                            arguments: {
-                                                              'pageIndex': 1
-                                                            }).then(
-                                                          (value) {
-                                                            Provider.of<BankAccountProvider>(
-                                                                    context,
-                                                                    listen:
-                                                                        false)
-                                                                .reset();
-                                                          },
-                                                        );
-                                                      },
-                                                      bgColor:
-                                                          DefaultTheme.GREEN,
-                                                      textColor:
-                                                          DefaultTheme.WHITE,
-                                                    ),
-                                                    const Padding(
-                                                        padding:
-                                                            EdgeInsets.only(
-                                                                top: 10)),
-                                                  ],
-                                                ),
+                              }
+                              return Expanded(
+                                child: (qrGenerateds.isEmpty)
+                                    ? UnconstrainedBox(
+                                        child: BoxLayout(
+                                          width: width - 60,
+                                          borderRadius: 15,
+                                          alignment: Alignment.center,
+                                          bgColor: Theme.of(context).cardColor,
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Image.asset(
+                                                'assets/images/ic-card.png',
+                                                width: width * 0.4,
                                               ),
-                                            )
-                                          : SizedBox(
-                                              width: width,
-                                              child: CarouselSlider(
-                                                carouselController:
-                                                    carouselController,
-                                                items: cardWidgets,
-                                                options: CarouselOptions(
-                                                  aspectRatio: 1,
-                                                  // autoPlay: true,
-                                                  enlargeCenterPage: true,
-                                                  viewportFraction: 1,
-                                                  // autoPlayInterval:
-                                                  //     const Duration(seconds: 5),
-                                                  disableCenter: true,
-                                                  onPageChanged:
-                                                      ((index, reason) {
-                                                    Provider.of<BankAccountProvider>(
-                                                            context,
-                                                            listen: false)
-                                                        .updateIndex(index);
-                                                  }),
-                                                ),
+                                              const Text(
+                                                'Chưa có tài khoản ngân hàng được thêm.',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(fontSize: 15),
                                               ),
+                                              const Padding(
+                                                  padding:
+                                                      EdgeInsets.only(top: 10)),
+                                              ButtonIconWidget(
+                                                width: width,
+                                                icon: Icons.add_rounded,
+                                                title: 'Thêm TK ngân hàng',
+                                                function: () {
+                                                  Provider.of<AddBankProvider>(
+                                                          context,
+                                                          listen: false)
+                                                      .updateSelect(1);
+                                                  Navigator.pushNamed(context,
+                                                      Routes.ADD_BANK_CARD,
+                                                      arguments: {
+                                                        'pageIndex': 1
+                                                      }).then(
+                                                    (value) {
+                                                      Provider.of<BankAccountProvider>(
+                                                              context,
+                                                              listen: false)
+                                                          .reset();
+                                                    },
+                                                  );
+                                                },
+                                                bgColor: DefaultTheme.GREEN,
+                                                textColor: DefaultTheme.WHITE,
+                                              ),
+                                              const Padding(
+                                                  padding:
+                                                      EdgeInsets.only(top: 10)),
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                    : Column(
+                                        children: [
+                                          CarouselSlider(
+                                            carouselController:
+                                                carouselController,
+                                            items: cardWidgets,
+                                            options: CarouselOptions(
+                                              viewportFraction: 1,
+                                              aspectRatio: width /
+                                                  (width + width * 0.25),
+                                              disableCenter: true,
+                                              onPageChanged: ((index, reason) {
+                                                Provider.of<BankAccountProvider>(
+                                                        context,
+                                                        listen: false)
+                                                    .updateIndex(index);
+                                              }),
                                             ),
-                                    ),
-                                    (qrGenerateds.isEmpty)
-                                        ? const SizedBox()
-                                        : Container(
+                                          ),
+                                          const Spacer(),
+                                          Container(
                                             width: width,
                                             height: 10,
                                             alignment: Alignment.center,
@@ -340,25 +341,23 @@ class _BankCardSelectViewState extends State<BankCardSelectView>
                                                           page.indexSelected))));
                                             }),
                                           ),
-                                  ],
-                                );
-                              },
-                            ),
+                                        ],
+                                      ),
+                              );
+                            },
                           );
-                        }),
+                        },
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                        bottom: (PlatformUtils.instance.isAndroidApp())
+                      SizedBox(
+                        height: (PlatformUtils.instance.isAndroidApp())
                             ? 90
                             : (PlatformUtils.instance.isIOsApp() &&
                                     height <= 800)
                                 ? 70
                                 : 110,
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
         );
       },
@@ -407,7 +406,8 @@ class _BankCardSelectViewState extends State<BankCardSelectView>
       qrGenerateds.addAll(list);
       if (qrGenerateds.isNotEmpty) {
         for (int i = 0; i < qrGenerateds.length; i++) {
-          final Widget qrWidget = UnconstrainedBox(
+          final Widget qrWidget = Padding(
+            padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
             child: InkWell(
               onTap: () {
                 DialogWidget.instance.showModalBottomContent(
@@ -458,6 +458,13 @@ class _BankCardSelectViewState extends State<BankCardSelectView>
 
   @override
   bool get wantKeepAlive => true;
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    _subscription = null;
+    super.dispose();
+  }
 }
 
 class StackedList extends StatefulWidget {
@@ -495,12 +502,6 @@ class _StackedList extends State<StackedList> {
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
-    // final double sizedBox = (widget.list.length * _maxHeight) * 0.75;
-    // final double height = (sizedBox < _maxHeight)
-    //     ? _maxHeight
-    //     : (sizedBox > widget.maxListHeight)
-    //         ? widget.maxListHeight
-    //         : sizedBox;
     final bool isPinned = (widget.sizeBox <= widget.maxListHeight) ||
         (((widget.list.length * _minHeight) + _maxHeight) < widget.height);
     return Column(
@@ -818,6 +819,8 @@ class _StackedList extends State<StackedList> {
                               children: [
                                 Text(
                                   dto.userBankName.toUpperCase(),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
                                     color: DefaultTheme.WHITE,
                                     fontSize: 18,

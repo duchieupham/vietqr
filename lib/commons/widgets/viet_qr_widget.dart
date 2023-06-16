@@ -188,6 +188,8 @@ class VietQRWidget extends StatelessWidget {
             Expanded(
               child: Text(
                 description,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontSize: (isSmallWidget != null && isSmallWidget!) ? 12 : 15,
                   fontWeight: (isUnbold != null && isUnbold)
