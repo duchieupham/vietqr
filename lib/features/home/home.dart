@@ -93,9 +93,9 @@ class _HomeScreen extends State<HomeScreen>
     _homeScreens.addAll(
       [
         const BankCardSelectView(key: PageStorageKey('QR_GENERATOR_PAGE')),
-        const IntroduceScreen(),
-        const SizedBox(),
         const DashboardScreen(key: PageStorageKey('SMS_LIST_PAGE')),
+        const SizedBox(),
+        const IntroduceScreen(),
         UserSetting(
           key: const PageStorageKey('USER_SETTING_PAGE'),
           voidCallback: () {

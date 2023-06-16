@@ -37,11 +37,10 @@ class PageSelectProvider with ChangeNotifier {
       ),
     ),
     const NavigationDTO(
-      name: 'Mở tài khoản MB',
-      assetsActive: 'assets/images/ic-linked.png',
-      assetsUnActive: 'assets/images/ic-linked-unselect.png',
-      page: IntroduceScreen(),
-    ),
+        name: 'Trang chủ\n',
+        assetsActive: 'assets/images/ic-dashboard.png',
+        assetsUnActive: 'assets/images/ic-dashboard-unselect.png',
+        page: SizedBox()),
     const NavigationDTO(
       name: '',
       assetsActive: 'assets/images/ic-qr-scanning.png',
@@ -49,10 +48,11 @@ class PageSelectProvider with ChangeNotifier {
       page: SizedBox(),
     ),
     const NavigationDTO(
-        name: 'Trang chủ\n',
-        assetsActive: 'assets/images/ic-dashboard.png',
-        assetsUnActive: 'assets/images/ic-dashboard-unselect.png',
-        page: SizedBox()),
+      name: 'Mở tài khoản MB',
+      assetsActive: 'assets/images/ic-linked.png',
+      assetsUnActive: 'assets/images/ic-linked-unselect.png',
+      page: IntroduceScreen(),
+    ),
     const NavigationDTO(
       name: 'Cá nhân',
       assetsActive: 'assets/images/ic-user.png',
