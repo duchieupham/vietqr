@@ -54,54 +54,54 @@ class _SelectBranchWidgetState extends State<SelectBranchWidget> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    if (businessDetailDTO != null) {
-      return Container(
-        decoration: BoxDecoration(
-            color: DefaultTheme.BANK_CARD_COLOR_3.withOpacity(0.1),
-            borderRadius: const BorderRadius.all(Radius.circular(15))),
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              width: width,
-              height: 50,
-              child: Row(
-                children: [
-                  const SizedBox(
+    return Container(
+      decoration: BoxDecoration(
+          color: DefaultTheme.BANK_CARD_COLOR_3.withOpacity(0.1),
+          borderRadius: const BorderRadius.all(Radius.circular(15))),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            width: width,
+            height: 50,
+            child: Row(
+              children: [
+                const SizedBox(
+                  width: 80,
+                  height: 50,
+                ),
+                Expanded(
+                  child: Container(
+                    alignment: Alignment.center,
+                    child: const Text(
+                      'Chọn chi nhánh',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Container(
                     width: 80,
-                    height: 50,
-                  ),
-                  Expanded(
-                    child: Container(
-                      alignment: Alignment.center,
-                      child: const Text(
-                        'Chọn chi nhánh',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 15,
-                        ),
+                    alignment: Alignment.centerRight,
+                    child: const Text(
+                      'Xong',
+                      style: TextStyle(
+                        color: DefaultTheme.GREEN,
                       ),
                     ),
                   ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      width: 80,
-                      alignment: Alignment.centerRight,
-                      child: const Text(
-                        'Xong',
-                        style: TextStyle(
-                          color: DefaultTheme.GREEN,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-            DividerWidget(width: width),
+          ),
+          DividerWidget(width: width),
+          if (businessDetailDTO != null) ...[
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -120,10 +120,10 @@ class _SelectBranchWidgetState extends State<SelectBranchWidget> {
                 },
               ),
             ),
-          ],
-        ),
-      );
-    }
+          ]
+        ],
+      ),
+    );
 
     return const SizedBox();
   }
