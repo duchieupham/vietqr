@@ -236,6 +236,7 @@ class _QRGenerated extends State<QRGenerated> {
           return Container(
             width: width,
             height: height,
+            padding: const EdgeInsets.only(top: 24),
             decoration: BoxDecoration(
               image: DecorationImage(
                   fit: BoxFit.fitHeight,
