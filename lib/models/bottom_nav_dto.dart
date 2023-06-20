@@ -5,13 +5,13 @@ class NavigationDTO extends Equatable {
   final String name;
   final String assetsActive;
   final String assetsUnActive;
-  final Widget page;
+  final int index;
 
   const NavigationDTO({
     required this.name,
     required this.assetsActive,
     required this.assetsUnActive,
-    required this.page,
+    required this.index,
   });
 
   @override
@@ -19,6 +19,6 @@ class NavigationDTO extends Equatable {
         name,
         assetsActive,
         assetsUnActive,
-        page,
+        index,
       ];
 }
