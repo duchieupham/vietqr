@@ -50,9 +50,7 @@ class _UserSetting extends State<UserSetting>
           if (Navigator.canPop(context)) {
             Navigator.pop(context);
           }
-          Navigator.of(context).pushReplacementNamed(
-            Routes.LOGIN,
-          );
+          Navigator.of(context).pushReplacementNamed(Routes.LOGIN);
           widget.voidCallback!();
         }
         if (state is LogoutFailedState) {
@@ -157,8 +155,7 @@ class _UserSetting extends State<UserSetting>
                     text: 'Đăng xuất',
                     textColor: DefaultTheme.RED_TEXT,
                     function: () async {
-                      Navigator.of(context)
-                          .popUntil((route) => route.isFirst);
+                      Navigator.of(context).popUntil((route) => route.isFirst);
                       _logoutBloc.add(const LogoutEventSubmit());
                     },
                   ),

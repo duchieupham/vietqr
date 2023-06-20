@@ -22,7 +22,9 @@ class QRScanView extends StatefulWidget {
 class _QRScanView extends State<QRScanView>
     with SingleTickerProviderStateMixin {
   static late ScanQrBloc scanQrBloc;
-  final MobileScannerController cameraController = MobileScannerController();
+  final MobileScannerController cameraController = MobileScannerController(
+    detectionSpeed: DetectionSpeed.noDuplicates,
+  );
   bool isDetected = false;
 
   @override
@@ -160,14 +162,16 @@ class _QRScanView extends State<QRScanView>
                             ? const SizedBox()
                             : MobileScanner(
                                 controller: cameraController,
-                                allowDuplicates: false,
-                                onDetect: (barcode, args) {
+                                onDetect: (data) {
                                   if (!isDetected) {
-                                    final String code = barcode.rawValue ?? '';
-                                    if (code.isNotEmpty) {
-                                      isDetected = true;
-                                      scanQrBloc.add(
-                                          ScanQrEventGetBankType(code: code));
+                                    if (data.barcodes.isNotEmpty) {
+                                      final String code =
+                                          data.barcodes.first.rawValue ?? '';
+                                      if (code.isNotEmpty) {
+                                        isDetected = true;
+                                        scanQrBloc.add(
+                                            ScanQrEventGetBankType(code: code));
+                                      }
                                     }
                                   }
                                 },

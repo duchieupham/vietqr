@@ -72,11 +72,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return BlocConsumer<RegisterBloc, RegisterState>(
       listener: (context, state) async {
         if (state is RegisterLoadingState) {
-          // DialogWidget.instance.openLoadingDialog();
+          DialogWidget.instance.openLoadingDialog();
         }
         if (state is RegisterFailedState) {
           //pop loading dialog
-          // Navigator.pop(context);
+          Navigator.pop(context);
           //
           DialogWidget.instance.openMsgDialog(
             title: 'Không thể đăng ký',
@@ -89,40 +89,40 @@ class _RegisterScreenState extends State<RegisterScreen> {
           //pop to login page
           backToPreviousPage(context);
         }
-        if (state is RegisterSentOTPFailedState) {
-          DialogWidget.instance.openLoadingDialog();
+        // if (state is RegisterSentOTPFailedState) {
+        //   DialogWidget.instance.openLoadingDialog();
+        //
+        //   Future.delayed(const Duration(milliseconds: 500), () {
+        //     Navigator.of(context).pop();
+        //     DialogWidget.instance.openMsgDialog(
+        //       title: 'Không thể đăng ký',
+        //       msg: state.msg,
+        //     );
+        //   });
+        // }
 
-          Future.delayed(const Duration(milliseconds: 500), () {
-            Navigator.of(context).pop();
-            DialogWidget.instance.openMsgDialog(
-              title: 'Không thể đăng ký',
-              msg: state.msg,
-            );
-          });
-        }
-
-        if (state is RegisterSentOTPSuccessState) {
-          String userIP = await UserInformationUtils.instance.getIPAddress();
-          AccountLoginDTO dto = AccountLoginDTO(
-            phoneNo: _phoneNoController.text,
-            password: EncryptUtils.instance.encrypted(
-              _phoneNoController.text,
-              _passwordController.text,
-            ),
-            device: userIP,
-            fcmToken: '',
-            platform: 'MOBILE',
-          );
-          DialogWidget.instance
-              .showModalBottomContent(
-                widget: VerifyOTPView(
-                  phone: _phoneNoController.text,
-                  dto: dto,
-                ),
-                height: height * 0.5,
-              )
-              .then((value) => isOpenOTP = false);
-        }
+        // if (state is RegisterSentOTPSuccessState) {
+        //   String userIP = await UserInformationUtils.instance.getIPAddress();
+        //   AccountLoginDTO dto = AccountLoginDTO(
+        //     phoneNo: _phoneNoController.text,
+        //     password: EncryptUtils.instance.encrypted(
+        //       _phoneNoController.text,
+        //       _passwordController.text,
+        //     ),
+        //     device: userIP,
+        //     fcmToken: '',
+        //     platform: 'MOBILE',
+        //   );
+        //   DialogWidget.instance
+        //       .showModalBottomContent(
+        //         widget: VerifyOTPView(
+        //           phone: _phoneNoController.text,
+        //           dto: dto,
+        //         ),
+        //         height: height * 0.5,
+        //       )
+        //       .then((value) => isOpenOTP = false);
+        // }
       },
       builder: (context, state) {
         return GestureDetector(
@@ -395,15 +395,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
         );
         if (Provider.of<RegisterProvider>(context, listen: false)
             .isValidValidation()) {
-          await Provider.of<RegisterProvider>(context, listen: false)
-              .phoneAuthentication(
-            _phoneNoController.text,
-            onSentOtp: (type) {
-              context
-                  .read<RegisterBloc>()
-                  .add(RegisterEventSentOTP(typeOTP: type));
-            },
+          String userIP = await UserInformationUtils.instance.getIPAddress();
+          AccountLoginDTO dto = AccountLoginDTO(
+            phoneNo: _phoneNoController.text,
+            password: EncryptUtils.instance.encrypted(
+              _phoneNoController.text,
+              _passwordController.text,
+            ),
+            device: userIP,
+            fcmToken: '',
+            platform: 'MOBILE',
           );
+          if (!mounted) return;
+          context.read<RegisterBloc>().add(RegisterEventSubmit(dto: dto));
+          // await Provider.of<RegisterProvider>(context, listen: false)
+          //     .phoneAuthentication(
+          //   _phoneNoController.text,
+          //   onSentOtp: (type) {
+          //     context
+          //         .read<RegisterBloc>()
+          //         .add(RegisterEventSentOTP(typeOTP: type));
+          //   },
+          // );
         }
       },
     );
