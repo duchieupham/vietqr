@@ -29,9 +29,6 @@ class _CreateQR extends State<CreateQR> {
     keepPage: true,
   );
 
-  final TextEditingController amountController = TextEditingController();
-  final TextEditingController msgController = TextEditingController();
-
   final List<Widget> _pages = [];
 
   @override
@@ -49,7 +46,6 @@ class _CreateQR extends State<CreateQR> {
       InputContentWidget(
         key: const PageStorageKey('INPUT_CONTENT_PAGE'),
         bankAccountDTO: widget.bankAccountDTO,
-        msgController: msgController,
         bankCardBloc: widget.bankCardBloc,
       ),
     ]);
@@ -69,9 +65,6 @@ class _CreateQR extends State<CreateQR> {
             SubHeader(
               title: 'Tạo QR giao dịch',
               function: () {
-                _navigateBack(context);
-              },
-              callBackHome: () {
                 _navigateBack(context);
               },
             ),

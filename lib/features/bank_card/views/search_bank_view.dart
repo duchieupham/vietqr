@@ -84,7 +84,7 @@ class SearchBankView extends StatelessWidget {
             },
             callBackHome: () {
               reset(context: context);
-              Navigator.of(context).pop();
+              Navigator.of(context).popUntil((route) => route.isFirst);
             },
           ),
           Expanded(
