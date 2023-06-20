@@ -94,7 +94,6 @@ class _HomeScreen extends State<HomeScreen>
       [
         const BankCardSelectView(key: PageStorageKey('QR_GENERATOR_PAGE')),
         const DashboardScreen(key: PageStorageKey('SMS_LIST_PAGE')),
-        const SizedBox(),
         const IntroduceScreen(),
         UserSetting(
           key: const PageStorageKey('USER_SETTING_PAGE'),
@@ -266,42 +265,9 @@ class _HomeScreen extends State<HomeScreen>
                         physics: const AlwaysScrollableScrollPhysics(),
                         controller: _pageController,
                         onPageChanged: (index) async {
-                          if (index == 2) {
-                            if (QRScannerHelper.instance.getQrIntro()) {
-                              await Navigator.pushNamed(
-                                context,
-                                Routes.SCAN_QR_VIEW,
-                              );
-                            } else {
-                              await DialogWidget.instance
-                                  .showFullModalBottomContent(
-                                widget: const QRScanWidget(),
-                                color: DefaultTheme.BLACK,
-                              );
-                              if (!mounted) return;
-
-                              await Navigator.pushNamed(
-                                  context, Routes.SCAN_QR_VIEW);
-                            }
-
-                            if (page.moveEvent == TypeMoveEvent.RIGHT) {
-                              _animatedToPage(index + 1);
-                              if (!mounted) return;
-                              Provider.of<PageSelectProvider>(context,
-                                      listen: false)
-                                  .updateIndex(index + 1);
-                            } else {
-                              _animatedToPage(index - 1);
-                              if (!mounted) return;
-                              Provider.of<PageSelectProvider>(context,
-                                      listen: false)
-                                  .updateIndex(index - 1);
-                            }
-                          } else {
-                            Provider.of<PageSelectProvider>(context,
-                                    listen: false)
-                                .updateIndex(index);
-                          }
+                          Provider.of<PageSelectProvider>(context,
+                                  listen: false)
+                              .updateIndex(index);
                         },
                         children: _homeScreens,
                       );
@@ -351,13 +317,13 @@ class _HomeScreen extends State<HomeScreen>
                                             var item = provider.listItem
                                                 .elementAt(index);
 
-                                            String url = (index ==
+                                            String url = (item.index ==
                                                     provider.indexSelected)
                                                 ? item.assetsActive
                                                 : item.assetsUnActive;
 
                                             return _buildShortcut(
-                                                index, url, context);
+                                                item.index, url, context);
                                           }).toList(),
                                         );
                                       },
@@ -384,7 +350,7 @@ class _HomeScreen extends State<HomeScreen>
   Widget _buildShortcut(int index, String url, BuildContext context) {
     return GestureDetector(
       onTap: () {
-        if (index != 2) {
+        if (index != -1) {
           _animatedToPage(index);
         } else {
           if (QRScannerHelper.instance.getQrIntro()) {
@@ -403,7 +369,7 @@ class _HomeScreen extends State<HomeScreen>
         width: 45,
         height: 45,
         decoration: BoxDecoration(
-          color: (index == 2)
+          color: (index == -1)
               ? DefaultTheme.PURPLE_NEON.withOpacity(0.8)
               : DefaultTheme.TRANSPARENT,
           borderRadius: BorderRadius.circular(8),
