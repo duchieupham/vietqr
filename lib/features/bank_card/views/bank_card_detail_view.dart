@@ -189,9 +189,7 @@ class BankCardDetailView extends StatelessWidget {
                                       ? 'Đã liên kết'
                                       : 'Chưa liên kết',
                                 ),
-                                if (!dto.authenticated &&
-                                    dto.bankCode.trim().toUpperCase() ==
-                                        'MB') ...[
+                                if (!dto.authenticated) ...[
                                   const Padding(
                                       padding: EdgeInsets.only(top: 10)),
                                   const Text(
