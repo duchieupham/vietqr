@@ -1,22 +1,19 @@
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/enums/check_type.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/features/bank_card/blocs/bank_card_bloc.dart';
-import 'package:vierqr/features/bank_card/states/bank_card_state.dart';
 import 'package:vierqr/features/bank_card/views/bank_card_select_view.dart';
 import 'package:vierqr/features/dashboard/dashboard_screen.dart';
+import 'package:vierqr/features/home/states/home_state.dart';
 import 'package:vierqr/features/home/widgets/disconnect_widget.dart';
 import 'package:vierqr/features/home/widgets/maintain_widget.dart';
 import 'package:vierqr/features/introduce/views/introduce_screen.dart';
 import 'package:vierqr/features/notification/blocs/notification_bloc.dart';
 import 'package:vierqr/features/notification/events/notification_event.dart';
 import 'package:vierqr/features/notification/states/notification_state.dart';
-import 'package:vierqr/features/permission/blocs/permission_bloc.dart';
-import 'package:vierqr/features/permission/events/permission_event.dart';
-import 'package:vierqr/features/permission/states/permission_state.dart';
 import 'package:vierqr/features/personal/views/user_setting.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -25,7 +22,9 @@ import 'package:vierqr/features/token/blocs/token_bloc.dart';
 import 'package:vierqr/features/token/events/token_event.dart';
 import 'package:vierqr/features/token/states/token_state.dart';
 import 'package:vierqr/main.dart';
+import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/services/providers/account_balance_home_provider.dart';
+import 'package:vierqr/services/providers/add_bank_provider.dart';
 import 'package:vierqr/services/providers/bank_card_select_provider.dart';
 import 'package:vierqr/services/providers/page_select_provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
@@ -36,6 +35,8 @@ import 'dart:ui';
 
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
+import 'blocs/home_bloc.dart';
+import 'events/home_event.dart';
 import 'widgets/custom_app_bar_widget.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -57,12 +58,14 @@ class _HomeScreen extends State<HomeScreen>
   final FocusNode focusNode = FocusNode();
 
   //blocs
-  late PermissionBloc _permissionBloc;
+  late HomeBloc _homeBloc;
   late TokenBloc _tokenBloc;
   late NotificationBloc _notificationBloc;
 
   //notification count
   int _notificationCount = 0;
+
+  NationalScannerDTO? identityDTO;
 
   //providers
   final AccountBalanceHomeProvider accountBalanceHomeProvider =
@@ -72,7 +75,7 @@ class _HomeScreen extends State<HomeScreen>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _permissionBloc = BlocProvider.of(context);
+    _homeBloc = BlocProvider.of(context);
     _tokenBloc = BlocProvider.of(context);
     _notificationBloc = BlocProvider.of(context);
     String userId = UserInformationHelper.instance.getUserId();
@@ -85,10 +88,53 @@ class _HomeScreen extends State<HomeScreen>
     listenNewNotification(userId);
   }
 
+  Future<void> startBarcodeScanStream() async {
+    String data = await FlutterBarcodeScanner.scanBarcode(
+        '#ff6666', 'Cancel', true, ScanMode.QR);
+    // String data =
+    //     '001300033018||Kiều Ngọc Ánh|03122000|Nữ|Thôn Thái Khê, Cấn Hữu, Quốc Oai, Hà Nội|20072021';
+    //
+    // // String data = '-2';
+
+    // String data =
+    //     "00020101021138530010A0000007270123000697043201091622366360208QRIBFTTA5303704540105802VN6304AB36";
+
+    if (data.isNotEmpty) {
+      if (data == TypeQR.NEGATIVE_ONE.value) {
+      } else if (data == TypeQR.NEGATIVE_TWO.value) {
+        DialogWidget.instance.openMsgDialog(
+          title: 'Không thể xác nhận mã QR',
+          msg: 'Ảnh QR không đúng định dạng, vui lòng chọn ảnh khác.',
+          function: () {
+            Navigator.pop(context);
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+          },
+        );
+      } else {
+        if (data.contains('|')) {
+          final list = data.split("|");
+          if (list.isNotEmpty) {
+            identityDTO = NationalScannerDTO.fromJson(list);
+            if (!mounted) return;
+            Navigator.pushNamed(
+              context,
+              Routes.NATIONAL_INFORMATION,
+              arguments: {'dto': identityDTO},
+            );
+          }
+        } else {
+          _homeBloc.add(ScanQrEventGetBankType(code: data));
+        }
+      }
+    }
+  }
+
   void initialServices(BuildContext context, String userId) {
     checkUserInformation();
     _tokenBloc.add(const TokenEventCheckValid());
-    _permissionBloc.add(const PermissionEventRequest());
+    _homeBloc.add(const PermissionEventRequest());
     _notificationBloc.add(NotificationGetCounterEvent(userId: userId));
     _homeScreens.addAll(
       [
@@ -120,7 +166,7 @@ class _HomeScreen extends State<HomeScreen>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       if (!PlatformUtils.instance.isWeb()) {
-        _permissionBloc.add(const PermissionEventGetStatus());
+        _homeBloc.add(const PermissionEventGetStatus());
       }
     }
   }
@@ -203,144 +249,175 @@ class _HomeScreen extends State<HomeScreen>
           );
         }
       },
-      child: BlocListener<PermissionBloc, PermissionState>(
+      child: BlocListener<HomeBloc, HomeState>(
         listener: (context, state) {
-          if (state is PermissionDeniedRequestState) {
-            _permissionBloc.add(const PermissionEventGetStatus());
+          if (state.type == TypePermission.Request) {
+            _homeBloc.add(const PermissionEventGetStatus());
           }
-          if (state is PermissionCameraDeniedState) {
+          if (state.type == TypePermission.CameraDenied) {
             Future.delayed(const Duration(milliseconds: 0), () {
               Provider.of<SuggestionWidgetProvider>(context, listen: false)
                   .updateCameraSuggestion(true);
             });
           }
-          if (state is PermissionCameraAllowsedState) {
+          if (state.type == TypePermission.CameraAllow) {
             Future.delayed(const Duration(milliseconds: 0), () {
               Provider.of<SuggestionWidgetProvider>(context, listen: false)
                   .updateCameraSuggestion(false);
             });
           }
-          if (state is PermissionAllowedState) {
+          if (state.type == TypePermission.Allow) {
             Future.delayed(const Duration(milliseconds: 0), () {
-              // Provider.of<SuggestionWidgetProvider>(context, listen: false)
-              //     .updateSMSStatus(2);
               Provider.of<SuggestionWidgetProvider>(context, listen: false)
                   .updateCameraSuggestion(false);
             });
+          }
+
+          if (state.type == TypePermission.ScanNotFound) {
+            DialogWidget.instance.openMsgDialog(
+              title: 'Không thể xác nhận mã QR',
+              msg:
+                  'Không tìm thấy thông tin trong đoạn mã QR. Vui lòng kiểm tra lại thông tin.',
+              function: () {
+                Navigator.pop(context);
+                if (Navigator.canPop(context)) {
+                  Navigator.pop(context);
+                }
+              },
+            );
+          }
+          if (state.type == TypePermission.ScanError) {
+            DialogWidget.instance.openMsgDialog(
+              title: 'Không tìm thấy thông tin',
+              msg:
+                  'Không tìm thấy thông tin ngân hàng tương ứng. Vui lòng thử lại sau.',
+              function: () {
+                Navigator.pop(context);
+                if (Navigator.canPop(context)) {
+                  Navigator.pop(context);
+                }
+              },
+            );
+          }
+          if (state.type == TypePermission.ScanSuccess) {
+            if (state.bankTypeDTO!.bankCode == 'MB') {
+              Provider.of<AddBankProvider>(context, listen: false)
+                  .updateSelect(2);
+              Provider.of<AddBankProvider>(context, listen: false)
+                  .updateRegisterAuthentication(true);
+            } else {
+              Provider.of<AddBankProvider>(context, listen: false)
+                  .updateSelect(1);
+              Provider.of<AddBankProvider>(context, listen: false)
+                  .updateRegisterAuthentication(false);
+            }
+            Provider.of<AddBankProvider>(context, listen: false)
+                .updateSelectBankType(state.bankTypeDTO!);
+            Navigator.pushNamed(
+              context,
+              Routes.ADD_BANK_CARD,
+              arguments: {
+                'pageIndex': 2,
+                'bankAccount': state.bankAccount,
+              },
+            );
           }
         },
-        child: BlocBuilder<BankCardBloc, BankCardState>(
-          builder: (context, state) {
-            if (state is BankCardGetListSuccessState) {
-              Future.delayed(const Duration(milliseconds: 0), () {
-                Provider.of<BankCardSelectProvider>(context, listen: false)
-                    .updateTotalBanks(state.list.length);
-                Provider.of<BankCardSelectProvider>(context, listen: false)
-                    .updateBanks(state.list);
-                Provider.of<BankCardSelectProvider>(context, listen: false)
-                    .updateColors(state.colors);
-              });
-            }
-            return Scaffold(
-              resizeToAvoidBottomInset: true,
-              appBar: CustomAppBarWidget(
-                child: _buildAppBar(),
-              ),
-              body: Stack(
-                children: [
-                  Listener(
-                    onPointerMove: (moveEvent) {
-                      if (moveEvent.delta.dx > 0) {
-                        Provider.of<PageSelectProvider>(context, listen: false)
-                            .updateMoveEvent(TypeMoveEvent.RIGHT);
-                      } else {
-                        Provider.of<PageSelectProvider>(context, listen: false)
-                            .updateMoveEvent(TypeMoveEvent.LEFT);
-                      }
+        child: Scaffold(
+          resizeToAvoidBottomInset: true,
+          appBar: CustomAppBarWidget(
+            child: _buildAppBar(),
+          ),
+          body: Stack(
+            children: [
+              Listener(
+                onPointerMove: (moveEvent) {
+                  if (moveEvent.delta.dx > 0) {
+                    Provider.of<PageSelectProvider>(context, listen: false)
+                        .updateMoveEvent(TypeMoveEvent.RIGHT);
+                  } else {
+                    Provider.of<PageSelectProvider>(context, listen: false)
+                        .updateMoveEvent(TypeMoveEvent.LEFT);
+                  }
+                },
+                child: Consumer<PageSelectProvider>(
+                    builder: (context, page, child) {
+                  return PageView(
+                    key: const PageStorageKey('PAGE_VIEW'),
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    controller: _pageController,
+                    onPageChanged: (index) async {
+                      Provider.of<PageSelectProvider>(context, listen: false)
+                          .updateIndex(index);
                     },
-                    child: Consumer<PageSelectProvider>(
-                        builder: (context, page, child) {
-                      return PageView(
-                        key: const PageStorageKey('PAGE_VIEW'),
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        controller: _pageController,
-                        onPageChanged: (index) async {
-                          Provider.of<PageSelectProvider>(context,
-                                  listen: false)
-                              .updateIndex(index);
-                        },
-                        children: _homeScreens,
-                      );
-                    }),
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      margin: (PlatformUtils.instance.isAndroidApp())
-                          ? const EdgeInsets.only(bottom: 5)
-                          : null,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ClipRRect(
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(20)),
-                            child: BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                              child: Container(
-                                alignment: Alignment.center,
-                                height: 60,
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context)
-                                      .cardColor
-                                      .withOpacity(0.5),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: DefaultTheme.GREY_VIEW
-                                          .withOpacity(0.5),
-                                      spreadRadius: 2,
-                                      blurRadius: 3,
-                                      offset: const Offset(2, 2),
-                                    ),
-                                  ],
+                    children: _homeScreens,
+                  );
+                }),
+              ),
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  margin: (PlatformUtils.instance.isAndroidApp())
+                      ? const EdgeInsets.only(bottom: 5)
+                      : null,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ClipRRect(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(20)),
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                          child: Container(
+                            alignment: Alignment.center,
+                            height: 60,
+                            decoration: BoxDecoration(
+                              color:
+                                  Theme.of(context).cardColor.withOpacity(0.5),
+                              boxShadow: [
+                                BoxShadow(
+                                  color:
+                                      DefaultTheme.GREY_VIEW.withOpacity(0.5),
+                                  spreadRadius: 2,
+                                  blurRadius: 3,
+                                  offset: const Offset(2, 2),
                                 ),
-                                child: Stack(
-                                  children: [
-                                    Consumer<PageSelectProvider>(
-                                      builder: (context, provider, child) {
-                                        return Row(
-                                          children: List.generate(
-                                              provider.listItem.length,
-                                              (index) {
-                                            var item = provider.listItem
-                                                .elementAt(index);
+                              ],
+                            ),
+                            child: Stack(
+                              children: [
+                                Consumer<PageSelectProvider>(
+                                  builder: (context, provider, child) {
+                                    return Row(
+                                      children: List.generate(
+                                          provider.listItem.length, (index) {
+                                        var item =
+                                            provider.listItem.elementAt(index);
 
-                                            String url = (item.index ==
-                                                    provider.indexSelected)
-                                                ? item.assetsActive
-                                                : item.assetsUnActive;
+                                        String url = (item.index ==
+                                                provider.indexSelected)
+                                            ? item.assetsActive
+                                            : item.assetsUnActive;
 
-                                            return _buildShortcut(
-                                                item.index, url, context);
-                                          }).toList(),
-                                        );
-                                      },
-                                    ),
-                                  ],
+                                        return _buildShortcut(
+                                            item.index, url, context);
+                                      }).toList(),
+                                    );
+                                  },
                                 ),
-                              ),
+                              ],
                             ),
                           ),
-                        ],
+                        ),
                       ),
-                    ),
-                  )
-                ],
+                    ],
+                  ),
+                ),
               ),
-            );
-          },
+            ],
+          ),
         ),
       ),
     );
@@ -354,7 +431,8 @@ class _HomeScreen extends State<HomeScreen>
           _animatedToPage(index);
         } else {
           if (QRScannerHelper.instance.getQrIntro()) {
-            Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
+            startBarcodeScanStream();
+            // Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
           } else {
             DialogWidget.instance.showFullModalBottomContent(
               widget: const QRScanWidget(),
@@ -677,3 +755,12 @@ class _HomeScreen extends State<HomeScreen>
     );
   }
 }
+
+// Future.delayed(const Duration(milliseconds: 0), () {
+// Provider.of<BankCardSelectProvider>(context, listen: false)
+//     .updateTotalBanks(state.list.length);
+// Provider.of<BankCardSelectProvider>(context, listen: false)
+//     .updateBanks(state.list);
+// Provider.of<BankCardSelectProvider>(context, listen: false)
+//     .updateColors(state.colors);
+// });
