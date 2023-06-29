@@ -32,34 +32,31 @@ class PageSelectProvider with ChangeNotifier {
       name: 'TK ngân hàng',
       assetsActive: 'assets/images/ic-card-selected.png',
       assetsUnActive: 'assets/images/ic-card-unselect.png',
-      page: BankCardSelectView(
-        key: PageStorageKey('QR_GENERATOR_PAGE'),
-      ),
+      index: 0,
     ),
     const NavigationDTO(
-        name: 'Trang chủ\n',
-        assetsActive: 'assets/images/ic-dashboard.png',
-        assetsUnActive: 'assets/images/ic-dashboard-unselect.png',
-        page: SizedBox()),
+      name: 'Trang chủ\n',
+      assetsActive: 'assets/images/ic-dashboard.png',
+      assetsUnActive: 'assets/images/ic-dashboard-unselect.png',
+      index: 1,
+    ),
     const NavigationDTO(
       name: '',
       assetsActive: 'assets/images/ic-qr-scanning.png',
       assetsUnActive: 'assets/images/ic-qr-scanning.png',
-      page: SizedBox(),
+      index: -1,
     ),
     const NavigationDTO(
       name: 'Mở tài khoản MB',
       assetsActive: 'assets/images/ic-linked.png',
       assetsUnActive: 'assets/images/ic-linked-unselect.png',
-      page: IntroduceScreen(),
+      index: 2,
     ),
     const NavigationDTO(
       name: 'Cá nhân',
       assetsActive: 'assets/images/ic-user.png',
       assetsUnActive: 'assets/images/ic-user-unselect.png',
-      page: UserSetting(
-        key: PageStorageKey('USER_SETTING_PAGE'),
-      ),
+      index: 3,
     ),
   ];
 
