@@ -96,7 +96,7 @@ class NationalInformationView extends StatelessWidget {
                     width: width - 40,
                     context: context,
                     title: 'Ngày sinh',
-                    content: dto.birthdate,
+                    content: dto.getBirth,
                   ),
                   Padding(
                     padding: const EdgeInsets.only(
@@ -122,7 +122,7 @@ class NationalInformationView extends StatelessWidget {
                     width: width - 40,
                     context: context,
                     title: 'Ngày cấp',
-                    content: dto.dateValid,
+                    content: dto.getDateValid,
                   ),
                 ],
               ),

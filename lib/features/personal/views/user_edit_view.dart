@@ -687,7 +687,7 @@ class UserEditView extends StatelessWidget {
     _birthDate = '';
     Provider.of<UserEditProvider>(context, listen: false).reset();
     Provider.of<UserEditProvider>(context, listen: false).resetPasswordErr();
-    Navigator.pop(context);
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   void backToHome(BuildContext context) {

@@ -5,7 +5,8 @@ class SubHeader extends StatelessWidget {
   final VoidCallback? function;
   final VoidCallback? callBackHome;
 
-  const SubHeader({Key? key, required this.title, this.function, this.callBackHome})
+  const SubHeader(
+      {Key? key, required this.title, this.function, this.callBackHome})
       : super(key: key);
 
   @override
@@ -46,7 +47,7 @@ class SubHeader extends StatelessWidget {
           GestureDetector(
             onTap: (callBackHome == null)
                 ? () {
-                    Navigator.of(context).pop('isBackHome');
+                    Navigator.of(context).popUntil((route) => route.isFirst);
                   }
                 : callBackHome,
             child: Container(
