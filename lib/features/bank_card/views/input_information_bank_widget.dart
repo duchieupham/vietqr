@@ -24,34 +24,36 @@ import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class InputInformationBankWidget extends StatefulWidget {
   final Function(int)? callBack;
-  final String bankAccount;
+  final TextEditingController bankAccountController;
+
+  final TextEditingController nameController;
 
   const InputInformationBankWidget({
     super.key,
     required this.callBack,
-    required this.bankAccount,
+    required this.bankAccountController,
+    required this.nameController,
   });
 
   @override
   State<InputInformationBankWidget> createState() =>
-      _InputInformationBankWidgetState();
+      _InputInformationBankWidgetState(bankAccountController, nameController);
 }
 
 class _InputInformationBankWidgetState
     extends State<InputInformationBankWidget> {
-  final bankAccountController = TextEditingController();
+  final TextEditingController bankAccountController;
 
-  final nameController = TextEditingController();
-
-  final nationalController = TextEditingController();
-
-  final phoneAuthController = TextEditingController();
+  final TextEditingController nameController;
 
   late BankCardBloc bankCardBloc;
 
   final _focusNode = FocusNode();
 
   final _focusNodeName = FocusNode();
+
+  _InputInformationBankWidgetState(
+      this.bankAccountController, this.nameController);
 
   @override
   void initState() {
@@ -63,10 +65,17 @@ class _InputInformationBankWidgetState
 
   void initialServices(BuildContext context) {
     bankCardBloc = BlocProvider.of(context);
-    if (widget.bankAccount.isNotEmpty) {
-      bankAccountController.value =
-          bankAccountController.value.copyWith(text: widget.bankAccount);
-      _onSearch();
+    Provider.of<AddBankProvider>(context, listen: false).resetValidate();
+
+    if (bankAccountController.text.isNotEmpty) {
+      Provider.of<AddBankProvider>(context, listen: false)
+          .updateValidBankAccount(bankAccountController.text);
+      Provider.of<AddBankProvider>(context, listen: false)
+          .updateValidUserBankName(true);
+
+      if (nameController.text.isEmpty) {
+        _onSearch();
+      }
     } else {
       _focusNode.requestFocus();
     }
@@ -77,42 +86,41 @@ class _InputInformationBankWidgetState
     final double width = MediaQuery.of(context).size.width;
 
     return BlocConsumer<BankCardBloc, BankCardState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state is BankCardSearchingNameState) {
           DialogWidget.instance.openLoadingDialog();
         }
 
         if (state is BankCardSearchNameSuccessState) {
+          Provider.of<AddBankProvider>(context, listen: false)
+              .updateValidUserBankName(true);
           nameController.clear();
-          nameController.value = nameController.value.copyWith(
-            text: state.dto.accountName,
-          );
+          nameController.value =
+              nameController.value.copyWith(text: state.dto.accountName);
           SystemChannels.textInput.invokeMethod('TextInput.hide');
           Navigator.pop(context);
         }
-        // if (state is BankCardSearchNameFailedState) {
-        //   Navigator.pop(context);
-        //   SystemChannels.textInput.invokeMethod('TextInput.hide');
-        //   _focusNode.unfocus();
-        // }
         if (state is BankCardLoadingState) {
           DialogWidget.instance.openLoadingDialog();
         }
 
         if (state is BankCardSearchNameFailedState) {
+          Provider.of<AddBankProvider>(context, listen: false)
+              .setEnableNameTK(true);
           Navigator.pop(context);
           SystemChannels.textInput.invokeMethod('TextInput.hide');
           _focusNode.unfocus();
-          DialogWidget.instance.openMsgDialog(
+          await DialogWidget.instance.openMsgDialog(
             title: 'Thông báo',
             msg: state.msg,
           );
 
-          Provider.of<AddBankProvider>(context, listen: false)
-              .setEnableNameTK(true);
+          if (!mounted) return;
+
           _focusNodeName.requestFocus();
         }
         if (state is BankCardCheckNotExistedState) {
+          if (!mounted) return;
           if (Provider.of<AddBankProvider>(context, listen: false)
               .registerAuthentication) {
             Navigator.pop(context);
@@ -137,16 +145,19 @@ class _InputInformationBankWidgetState
           }
         }
         if (state is BankCardCheckFailedState) {
+          if (!mounted) return;
           Navigator.pop(context);
           DialogWidget.instance
               .openMsgDialog(title: 'Lỗi', msg: 'Vui lòng thử lại sau');
         }
         if (state is BankCardCheckExistedState) {
+          if (!mounted) return;
           Navigator.pop(context);
           DialogWidget.instance
               .openMsgDialog(title: 'Không thể thêm TK', msg: state.msg);
         }
         if (state is BankCardInsertUnauthenticatedSuccessState) {
+          if (!mounted) return;
           BankTypeDTO bankTypeDTO =
               Provider.of<AddBankProvider>(context, listen: false).bankTypeDTO;
           Navigator.pop(context);
@@ -164,9 +175,7 @@ class _InputInformationBankWidgetState
             businessName: '',
             isAuthenticated: false,
           );
-          phoneAuthController.clear();
           nameController.clear();
-          nationalController.clear();
           bankAccountController.clear();
           Navigator.of(context).pushReplacementNamed(
             Routes.BANK_CARD_GENERATED_VIEW,
@@ -178,199 +187,204 @@ class _InputInformationBankWidgetState
           );
         }
         if (state is BankCardInsertUnauthenticatedFailedState) {
+          if (!mounted) return;
           Navigator.pop(context);
           DialogWidget.instance
               .openMsgDialog(title: 'Không thể thêm TK', msg: state.msg);
         }
       },
       builder: (context, state) {
-        return Column(
-          children: [
-            Expanded(
-              child: ListView(
-                shrinkWrap: true,
-                children: [
-                  Consumer<AddBankProvider>(
-                    builder: (context, provider, child) {
-                      return _buildSelectedBankType(
-                          context, width, provider.bankTypeDTO);
-                    },
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.only(left: 20, top: 30, bottom: 5),
-                    child: Text(
-                      'Thông tin tài khoản',
-                      style:
-                          TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+        return GestureDetector(
+          onTap: () {
+            FocusManager.instance.primaryFocus?.unfocus();
+          },
+          child: Column(
+            children: [
+              Expanded(
+                child: ListView(
+                  shrinkWrap: true,
+                  children: [
+                    Consumer<AddBankProvider>(
+                      builder: (context, provider, child) {
+                        return _buildSelectedBankType(
+                            context, width, provider.bankTypeDTO);
+                      },
                     ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.only(left: 20, right: 20, bottom: 10),
-                    child: Text(
-                      'Lưu ý: Đối với loại tài khoản ngân hàng doanh nghiệp, "Chủ TK" ứng với tên của doanh nghiệp',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: DefaultTheme.GREY_TEXT,
+                    const Padding(
+                      padding: EdgeInsets.only(left: 20, top: 30, bottom: 5),
+                      child: Text(
+                        'Thông tin tài khoản',
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w500),
                       ),
                     ),
-                  ),
-                  Consumer<AddBankProvider>(
-                    builder: (context, provider, child) {
-                      return BoxLayout(
-                        width: width,
-                        margin: const EdgeInsets.symmetric(horizontal: 20),
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 20),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                      child: Text(
+                        'Lưu ý: Đối với loại tài khoản ngân hàng doanh nghiệp, "Chủ TK" ứng với tên của doanh nghiệp',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: DefaultTheme.GREY_TEXT,
+                        ),
+                      ),
+                    ),
+                    Consumer<AddBankProvider>(
+                      builder: (context, provider, child) {
+                        return BoxLayout(
+                          width: width,
+                          margin: const EdgeInsets.symmetric(horizontal: 20),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 20),
+                          child: Column(
+                            children: [
+                              TextFieldWidget(
+                                textfieldType: TextfieldType.LABEL,
+                                titleWidth: 100,
+                                width: width,
+                                isObscureText: false,
+                                title: 'Số TK \u002A',
+                                hintText: 'Nhập số tài khoản',
+                                fontSize: 15,
+                                controller: bankAccountController,
+                                inputType: TextInputType.number,
+                                keyboardAction: TextInputAction.done,
+                                focusNode: _focusNode,
+                                onSubmitted: (txt) {
+                                  _onSubmitted(txt, context);
+                                },
+                                onTapOutside: (event) {
+                                  if (_focusNode.hasFocus) {
+                                    _focusNode.unfocus();
+                                    SystemChannels.textInput
+                                        .invokeMethod('TextInput.hide');
+                                    _onSearch();
+                                  }
+                                },
+                                onChange: (text) {
+                                  provider.updateValidBankAccount(
+                                      bankAccountController.text);
+                                },
+                              ),
+                              DividerWidget(width: width),
+                              TextFieldWidget(
+                                textfieldType: TextfieldType.LABEL,
+                                titleWidth: 100,
+                                width: width,
+                                isObscureText: false,
+                                title: 'Chủ TK \u002A',
+                                hintText: 'Chủ TK/Tên doanh nghiệp',
+                                fontSize: 15,
+                                focusNode: _focusNodeName,
+                                enable: provider.enableNameTK,
+                                controller: nameController,
+                                inputType: TextInputType.text,
+                                keyboardAction: TextInputAction.done,
+                                onChange: (text) {
+                                  provider.updateValidUserBankName(StringUtils
+                                      .instance
+                                      .isValidFullName(nameController.text));
+                                },
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                    const Padding(padding: EdgeInsets.only(top: 10)),
+                    Consumer<AddBankProvider>(
+                        builder: (context, provider, child) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            TextFieldWidget(
-                              textfieldType: TextfieldType.LABEL,
-                              titleWidth: 100,
-                              width: width,
-                              isObscureText: false,
-                              title: 'Số TK \u002A',
-                              hintText: 'Nhập số tài khoản',
-                              fontSize: 15,
-                              controller: bankAccountController,
-                              inputType: TextInputType.number,
-                              keyboardAction: TextInputAction.done,
-                              focusNode: _focusNode,
-                              onSubmitted: (txt) {
-                                _onSubmitted(txt, context);
-                              },
-                              onTapOutside: (event) {
-                                if (_focusNode.hasFocus) {
-                                  _focusNode.unfocus();
-                                  _focusNode.unfocus();
-                                  SystemChannels.textInput
-                                      .invokeMethod('TextInput.hide');
-                                  _onSearch();
-                                }
-                              },
-                              onChange: (text) {
-                                provider.updateValidBankAccount(
-                                  (bankAccountController.text.isEmpty ||
-                                      !StringUtils.instance.isNumeric(
-                                          bankAccountController.text)),
-                                );
-                              },
+                            Visibility(
+                              visible: provider.errorTk != null,
+                              child: Text(
+                                provider.errorTk ?? '',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: DefaultTheme.RED_TEXT,
+                                ),
+                              ),
                             ),
-                            DividerWidget(width: width),
-                            TextFieldWidget(
-                              textfieldType: TextfieldType.LABEL,
-                              titleWidth: 100,
-                              width: width,
-                              isObscureText: false,
-                              title: 'Chủ TK \u002A',
-                              hintText: 'Chủ TK/Tên doanh nghiệp',
-                              fontSize: 15,
-                              focusNode: _focusNodeName,
-                              enable: provider.enableNameTK,
-                              controller: nameController,
-                              inputType: TextInputType.text,
-                              keyboardAction: TextInputAction.done,
-                              onChange: (text) {
-                                provider.updateValidUserBankName(!StringUtils
-                                    .instance
-                                    .isValidFullName(nameController.text));
-                              },
+                            if (provider.validBankAccount &&
+                                provider.validUserBankName)
+                              const Padding(padding: EdgeInsets.only(top: 10)),
+                            Visibility(
+                              visible: provider.errorNameTK != null,
+                              child: Text(
+                                provider.errorNameTK ?? '',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: DefaultTheme.RED_TEXT,
+                                ),
+                              ),
                             ),
                           ],
                         ),
                       );
-                    },
-                  ),
-                  const Padding(padding: EdgeInsets.only(top: 10)),
-                  Consumer<AddBankProvider>(
-                      builder: (context, provider, child) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Visibility(
-                            visible: provider.validBankAccount,
-                            child: const Text(
-                              'Số thẻ/tài khoản không hợp lệ.',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: DefaultTheme.RED_TEXT,
-                              ),
-                            ),
-                          ),
-                          const Padding(padding: EdgeInsets.only(top: 10)),
-                          Visibility(
-                            visible: provider.validUserBankName,
-                            child: const Text(
-                              'Chủ thẻ/tài khoản không hợp lệ',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: DefaultTheme.RED_TEXT,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }),
-                ],
+                    }),
+                  ],
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Consumer<AddBankProvider>(
-                builder: (context, provider, child) {
-                  return (provider.registerAuthentication)
-                      ? ButtonWidget(
-                          width: width,
-                          text: 'Tiếp theo',
-                          textColor: DefaultTheme.WHITE,
-                          bgColor: DefaultTheme.GREEN,
-                          function: () {
-                            if (provider.isValidFormUnauthentication()) {
-                              String bankTypeId = Provider.of<AddBankProvider>(
-                                      context,
-                                      listen: false)
-                                  .bankTypeDTO
-                                  .id;
-                              bankCardBloc.add(BankCardCheckExistedEvent(
-                                  bankAccount: bankAccountController.text,
-                                  bankTypeId: bankTypeId));
-                            } else {
-                              DialogWidget.instance.openMsgDialog(
-                                  title: 'Thông tin không hợp lệ',
-                                  msg:
-                                      'Thông tin không hợp lệ. Vui lòng nhập đúng các dữ liệu.');
-                            }
-                          },
-                        )
-                      : ButtonWidget(
-                          width: width,
-                          text: 'Thêm',
-                          textColor: DefaultTheme.WHITE,
-                          bgColor: DefaultTheme.GREEN,
-                          function: () {
-                            if (provider.isValidFormUnauthentication()) {
-                              String bankTypeId = Provider.of<AddBankProvider>(
-                                      context,
-                                      listen: false)
-                                  .bankTypeDTO
-                                  .id;
-                              bankCardBloc.add(BankCardCheckExistedEvent(
-                                  bankAccount: bankAccountController.text,
-                                  bankTypeId: bankTypeId));
-                            } else {
-                              DialogWidget.instance.openMsgDialog(
-                                  title: 'Thông tin không hợp lệ',
-                                  msg:
-                                      'Thông tin không hợp lệ. Vui lòng nhập đúng các dữ liệu.');
-                            }
-                          },
-                        );
-                },
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Consumer<AddBankProvider>(
+                  builder: (context, provider, child) {
+                    return (provider.registerAuthentication)
+                        ? ButtonWidget(
+                            width: width,
+                            text: 'Tiếp theo',
+                            textColor: DefaultTheme.WHITE,
+                            bgColor: DefaultTheme.GREEN,
+                            function: () async {
+                              FocusManager.instance.primaryFocus?.unfocus();
+                              if (provider.isValidFormUnauthentication()) {
+                                String bankTypeId =
+                                    Provider.of<AddBankProvider>(context,
+                                            listen: false)
+                                        .bankTypeDTO
+                                        .id;
+                                bankCardBloc.add(BankCardCheckExistedEvent(
+                                    bankAccount: bankAccountController.text,
+                                    bankTypeId: bankTypeId));
+                              } else {
+                                await DialogWidget.instance.openMsgDialog(
+                                    title: 'Thông tin không hợp lệ',
+                                    msg:
+                                        'Thông tin không hợp lệ. Vui lòng nhập đúng các dữ liệu.');
+                              }
+                            },
+                          )
+                        : ButtonWidget(
+                            width: width,
+                            text: 'Thêm',
+                            textColor: DefaultTheme.WHITE,
+                            bgColor: DefaultTheme.GREEN,
+                            function: () {
+                              if (provider.isValidFormUnauthentication()) {
+                                String bankTypeId =
+                                    Provider.of<AddBankProvider>(context,
+                                            listen: false)
+                                        .bankTypeDTO
+                                        .id;
+                                bankCardBloc.add(BankCardCheckExistedEvent(
+                                    bankAccount: bankAccountController.text,
+                                    bankTypeId: bankTypeId));
+                              } else {
+                                DialogWidget.instance.openMsgDialog(
+                                    title: 'Thông tin không hợp lệ',
+                                    msg:
+                                        'Thông tin không hợp lệ. Vui lòng nhập đúng các dữ liệu.');
+                              }
+                            },
+                          );
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         );
       },
     );
@@ -498,8 +512,8 @@ class _InputInformationBankWidgetState
           .bankTypeDTO
           .caiValue;
       if (Provider.of<AddBankProvider>(context, listen: false)
-          .bankTypeDTO
-          .bankCode ==
+              .bankTypeDTO
+              .bankCode ==
           'MB') {
         transferType = 'INHOUSE';
       } else {
@@ -515,14 +529,12 @@ class _InputInformationBankWidgetState
     }
   }
 
-
   @override
   void dispose() {
-    bankAccountController.clear();
-    nameController.clear();
-    nationalController.clear();
-    phoneAuthController.clear();
+    // bankAccountController.clear();
+    // nameController.clear();
+    // nationalController.clear();
+    // phoneAuthController.clear();
     super.dispose();
   }
-
 }

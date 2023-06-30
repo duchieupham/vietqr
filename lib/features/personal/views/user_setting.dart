@@ -167,16 +167,16 @@ class _UserSetting extends State<UserSetting>
                 ],
               ),
             ),
-            _IntroduceWidget(
-              onTap: () async {
-                final data = await DialogWidget.instance.showModelBottomSheet(
-                  context: context,
-                  padding: EdgeInsets.zero,
-                  widget: const IntroduceBottomSheet(),
-                  height: height * 0.6,
-                );
-              },
-            ),
+            // _IntroduceWidget(
+            //   onTap: () async {
+            //     final data = await DialogWidget.instance.showModelBottomSheet(
+            //       context: context,
+            //       padding: EdgeInsets.zero,
+            //       widget: const IntroduceBottomSheet(),
+            //       height: height * 0.6,
+            //     );
+            //   },
+            // ),
           ],
         ),
       ),

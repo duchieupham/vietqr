@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/branch_choice_dto.dart';
 
@@ -41,6 +42,10 @@ class AddBankProvider with ChangeNotifier {
   bool _isInValidPhoneAuthenticated = false;
   bool _isAgreeWithPolicy = false;
   bool _isRegisterAuthentication = false;
+  String? errorTk;
+  String? errorNameTK;
+  String? errorCMT;
+  String? errorSDT;
 
   get getBankTypes => _isGetBankTypes;
 
@@ -117,22 +122,45 @@ class AddBankProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void updateValidBankAccount(bool value) {
-    _isInvalidBankAccount = value;
+  void updateValidBankAccount(String text) {
+    errorTk = null;
+    if (text.isEmpty) {
+      _isInvalidBankAccount = false;
+      errorTk = 'Số thẻ/tài khoản không hợp lệ.';
+    } else {
+      if (text.length <= 5) {
+        _isInvalidBankAccount = false;
+        errorTk = 'Số thẻ/tài khoản không hợp lệ.';
+      } else {
+        _isInvalidBankAccount = true;
+      }
+    }
     notifyListeners();
   }
 
   void updateValidUserBankName(bool value) {
+    errorNameTK = null;
+    if (!value) {
+      errorNameTK = 'Chủ thẻ/tài khoản không hợp lệ';
+    }
     _isInvalidUserBankName = value;
     notifyListeners();
   }
 
   void updateValidNationalId(bool value) {
+    errorCMT = null;
+    if (!value) {
+      errorCMT = 'CCCD/CMT không hợp lệ';
+    }
     _isInValidNationalId = value;
     notifyListeners();
   }
 
   void updateValidPhoneAuthenticated(bool value) {
+    errorSDT = null;
+    if (!value) {
+      errorSDT = 'Số điện thoại xác thực không hợp lệ';
+    }
     _isInValidPhoneAuthenticated = value;
     notifyListeners();
   }
@@ -144,10 +172,10 @@ class AddBankProvider with ChangeNotifier {
 
   bool isValidForm() {
     bool result = false;
-    if (!_isInvalidBankAccount &&
-        !_isInvalidUserBankName &&
-        !_isInValidNationalId &&
-        !_isInValidPhoneAuthenticated) {
+    if (_isInvalidBankAccount &&
+        _isInvalidUserBankName &&
+        _isInValidNationalId &&
+        _isInValidPhoneAuthenticated) {
       result = true;
     }
     return result;
@@ -155,7 +183,7 @@ class AddBankProvider with ChangeNotifier {
 
   bool isValidFormUnauthentication() {
     bool result = false;
-    if (!_isInvalidBankAccount && !_isInvalidUserBankName) {
+    if (_isInvalidBankAccount && _isInvalidUserBankName) {
       result = true;
     }
     return result;
@@ -163,6 +191,19 @@ class AddBankProvider with ChangeNotifier {
 
   setEnableNameTK(bool value) {
     _enableNameTK = value;
+    notifyListeners();
+  }
+
+  void resetValidate() {
+    _isInvalidBankAccount = false;
+    _isInvalidUserBankName = false;
+    _isInValidNationalId = false;
+    _isInValidPhoneAuthenticated = false;
+    errorNameTK = null;
+    errorTk = null;
+    errorCMT = null;
+    errorSDT = null;
+    notifyListeners();
   }
 
   void reset() {
@@ -179,6 +220,8 @@ class AddBankProvider with ChangeNotifier {
     _isInValidPhoneAuthenticated = false;
     _isRegisterAuthentication = false;
     _isAgreeWithPolicy = false;
+    errorNameTK = null;
+    errorTk = null;
 
     _branchChoiceInsertDTO = const BranchChoiceInsertDTO(
       companyName: '',
@@ -188,5 +231,7 @@ class AddBankProvider with ChangeNotifier {
       branchAddress: '',
       branchId: '',
     );
+
+    notifyListeners();
   }
 }

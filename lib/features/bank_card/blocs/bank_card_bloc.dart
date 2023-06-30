@@ -282,11 +282,12 @@ void _searchBankName(BankCardEvent event, Emitter emit) async {
         emit(BankCardSearchNameSuccessState(dto: dto));
       } else {
         emit(const BankCardSearchNameFailedState(
-            msg: 'Không tìm thấy tên chủ TK'));
+            msg: 'Tài khoản ngân hàng không tồn tại.'));
       }
     }
   } catch (e) {
     LOG.error(e.toString());
-    emit(const BankCardSearchNameFailedState(msg: 'Không tìm thấy tên chủ TK'));
+    emit(const BankCardSearchNameFailedState(
+        msg: 'Tài khoản ngân hàng không tồn tại.'));
   }
 }

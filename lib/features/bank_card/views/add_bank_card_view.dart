@@ -76,7 +76,8 @@ class _AddBankCardViewState extends State<AddBankCardView> {
         ),
         InputInformationBankWidget(
           key: const PageStorageKey('INPUT_INFORMATION_BANK'),
-          bankAccount: bankAccountController.text,
+          bankAccountController: bankAccountController,
+          nameController: nameController,
           callBack: (index) {
             _animatedToPage(index);
           },
@@ -98,6 +99,8 @@ class _AddBankCardViewState extends State<AddBankCardView> {
           phoneAuthenController: phoneAuthController,
           callBack: (index) {
             _animatedToPage(index);
+            nationalController.clear();
+            phoneAuthController.clear();
           },
         ),
       ],
@@ -157,11 +160,17 @@ class _AddBankCardViewState extends State<AddBankCardView> {
 
   void _navigateBack(BuildContext context) {
     int index = Provider.of<AddBankProvider>(context, listen: false).index;
-    if (index == 0) {
+    if (index == 0 || index == 2) {
       bankAccountController.clear();
       nameController.clear();
       nationalController.clear();
       phoneAuthController.clear();
+    } else if (index == 3) {
+      nationalController.clear();
+      phoneAuthController.clear();
+    }
+
+    if (index == 0) {
       Provider.of<AddBankProvider>(context, listen: false).reset();
       Navigator.of(context).pop();
     } else {
@@ -179,7 +188,7 @@ class _AddBankCardViewState extends State<AddBankCardView> {
     double bottom = WidgetsBinding.instance.window.viewInsets.bottom;
     if (bottom > 0.0) {
       FocusManager.instance.primaryFocus?.unfocus();
-      Future.delayed(const Duration(milliseconds: 200), () {
+      Future.delayed(const Duration(milliseconds: 250), () {
         _navigateBack(context);
       });
     } else {
