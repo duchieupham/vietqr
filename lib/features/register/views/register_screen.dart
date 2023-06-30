@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/check_type.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
@@ -44,7 +43,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   bool _isChangePass = false;
 
-  final auth = FirebaseAuth.instance;
+  // final auth = FirebaseAuth.instance;
 
   void initialServices(BuildContext context) {
     if (!_isChangePass) {

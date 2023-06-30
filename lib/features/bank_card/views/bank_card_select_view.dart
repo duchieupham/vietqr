@@ -116,70 +116,76 @@ class _BankCardSelectViewState extends State<BankCardSelectView>
           onRefresh: _refresh,
           child: (provider.type == 0)
               ? Column(
-                  children: [
-                    BlocConsumer<BankCardBloc, BankCardState>(
-                      listener: (context, state) {
-                        if (state is BankCardGetListSuccessState) {
-                          resetProvider(context);
-                          if (bankAccounts.isEmpty) {
-                            bankAccounts.addAll(state.list);
-                            cardColors.addAll(state.colors);
-                          }
+                children: [
+                  BlocConsumer<BankCardBloc, BankCardState>(
+                    listener: (context, state) {
+                      if (state is BankCardGetListSuccessState) {
+                        resetProvider(context);
+                        if (bankAccounts.isEmpty) {
+                          bankAccounts.addAll(state.list);
+                          cardColors.addAll(state.colors);
                         }
-                        if (state
-                                is BankCardInsertUnauthenticatedSuccessState ||
-                            state is BankCardRemoveSuccessState ||
-                            state is BankCardInsertSuccessfulState) {
-                          if (scrollController.hasClients) {
-                            scrollController.jumpTo(0);
-                          }
-                          getListBank(context);
+                      }
+                      if (state
+                              is BankCardInsertUnauthenticatedSuccessState ||
+                          state is BankCardRemoveSuccessState ||
+                          state is BankCardInsertSuccessfulState) {
+                        if (scrollController.hasClients) {
+                          scrollController.jumpTo(0);
                         }
-                      },
-                      builder: (context, state) {
-                        if (state is BankCardLoadingListState) {
-                          return const Expanded(
-                            child: UnconstrainedBox(
-                              child: SizedBox(
-                                width: 30,
-                                height: 30,
-                                child: CircularProgressIndicator(
-                                  color: DefaultTheme.GREEN,
-                                ),
+                        getListBank(context);
+                      }
+                    },
+                    builder: (context, state) {
+                      if (state is BankCardLoadingListState) {
+                        return const Expanded(
+                          child: UnconstrainedBox(
+                            child: SizedBox(
+                              width: 30,
+                              height: 30,
+                              child: CircularProgressIndicator(
+                                color: DefaultTheme.GREEN,
                               ),
                             ),
-                          );
+                          ),
+                        );
+                      }
+                      if (state is BankCardGetListSuccessState) {
+                        if (scrollController.hasClients) {
+                          scrollController.jumpTo(0);
                         }
-                        if (state is BankCardGetListSuccessState) {
-                          if (scrollController.hasClients) {
-                            scrollController.jumpTo(0);
-                          }
-                          sizedBox = (bankAccounts.length * _maxHeight) * 0.7;
-                          listHeight = (sizedBox < _maxHeight)
-                              ? _maxHeight
-                              : (sizedBox > maxListHeight)
-                                  ? maxListHeight
-                                  : sizedBox;
-                        }
+                        sizedBox = (bankAccounts.length * _maxHeight) * 0.7;
+                        listHeight = (sizedBox < _maxHeight)
+                            ? _maxHeight
+                            : (sizedBox > maxListHeight)
+                                ? maxListHeight
+                                : sizedBox;
+                      }
 
-                        return (sizedBox <= listHeight)
-                            ? buildList(maxListHeight, bankAccounts, cardColors,
-                                listHeight, sizedBox, _refresh)
-                            : Expanded(
-                                child: buildList(maxListHeight, bankAccounts,
-                                    cardColors, listHeight, sizedBox, _refresh),
-                              );
-                      },
-                    ),
-                    Container(
-                      height: (PlatformUtils.instance.isAndroidApp())
-                          ? 80
-                          : (PlatformUtils.instance.isIOsApp() && height <= 800)
-                              ? 90
-                              : 110,
-                    ),
-                  ],
-                )
+                      return (sizedBox <= listHeight)
+                          ? buildList(maxListHeight, bankAccounts,
+                              cardColors, listHeight, sizedBox, _refresh)
+                          : Expanded(
+                              child: buildList(
+                                  maxListHeight,
+                                  bankAccounts,
+                                  cardColors,
+                                  listHeight,
+                                  sizedBox,
+                                  _refresh),
+                            );
+                    },
+                  ),
+                  Container(
+                    height: (PlatformUtils.instance.isAndroidApp())
+                        ? 80
+                        : (PlatformUtils.instance.isIOsApp() &&
+                                height <= 800)
+                            ? 90
+                            : 110,
+                  ),
+                ],
+              )
               : Container(
                   decoration: const BoxDecoration(
                     image: DecorationImage(

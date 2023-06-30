@@ -426,18 +426,19 @@ class _HomeScreen extends State<HomeScreen>
   //build shorcuts in bottom bar
   Widget _buildShortcut(int index, String url, BuildContext context) {
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
         if (index != -1) {
           _animatedToPage(index);
         } else {
-          if (QRScannerHelper.instance.getQrIntro()) {
+          if (!QRScannerHelper.instance.getQrIntro()) {
             startBarcodeScanStream();
             // Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
           } else {
-            DialogWidget.instance.showFullModalBottomContent(
+            await DialogWidget.instance.showFullModalBottomContent(
               widget: const QRScanWidget(),
               color: DefaultTheme.BLACK,
             );
+            startBarcodeScanStream();
           }
         }
       },
