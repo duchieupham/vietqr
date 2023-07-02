@@ -140,7 +140,7 @@ class _HomeScreen extends State<HomeScreen>
       [
         const BankCardSelectView(key: PageStorageKey('QR_GENERATOR_PAGE')),
         const DashboardScreen(key: PageStorageKey('SMS_LIST_PAGE')),
-        const IntroduceScreen(),
+        if (PlatformUtils.instance.isAndroidApp()) const IntroduceScreen(),
         UserSetting(
           key: const PageStorageKey('USER_SETTING_PAGE'),
           voidCallback: () {
@@ -355,7 +355,7 @@ class _HomeScreen extends State<HomeScreen>
                 }),
               ),
               Positioned(
-                bottom: 0,
+                bottom: 10,
                 left: 0,
                 right: 0,
                 child: Container(

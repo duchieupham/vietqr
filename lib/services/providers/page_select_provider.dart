@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/enums/check_type.dart';
+import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/features/bank_card/views/bank_card_select_view.dart';
 import 'package:vierqr/features/introduce/views/introduce_screen.dart';
 import 'package:vierqr/features/personal/views/user_setting.dart';
@@ -46,17 +47,18 @@ class PageSelectProvider with ChangeNotifier {
       assetsUnActive: 'assets/images/ic-qr-scanning.png',
       index: -1,
     ),
-    const NavigationDTO(
-      name: 'Mở tài khoản MB',
-      assetsActive: 'assets/images/ic-linked.png',
-      assetsUnActive: 'assets/images/ic-linked-unselect.png',
-      index: 2,
-    ),
-    const NavigationDTO(
+    if (PlatformUtils.instance.isAndroidApp())
+      const NavigationDTO(
+        name: 'Mở tài khoản MB',
+        assetsActive: 'assets/images/ic-linked.png',
+        assetsUnActive: 'assets/images/ic-linked-unselect.png',
+        index: 2,
+      ),
+    NavigationDTO(
       name: 'Cá nhân',
       assetsActive: 'assets/images/ic-user.png',
       assetsUnActive: 'assets/images/ic-user-unselect.png',
-      index: 3,
+      index: (PlatformUtils.instance.isAndroidApp()) ? 3 : 2,
     ),
   ];
 
