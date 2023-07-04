@@ -4,7 +4,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
+
+// import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:uuid/uuid.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'dart:math' as math;
@@ -60,7 +61,7 @@ class _BankCardSelectViewState extends State<BankCardSelectView>
   late BusinessInformationBloc businessInformationBloc;
   late BankCardBloc bankCardBloc;
 
-  final refreshController = RefreshController(initialRefresh: false);
+  // final refreshController = RefreshController(initialRefresh: false);
   String userId = UserInformationHelper.instance.getUserId();
 
   StreamSubscription? _subscription;
@@ -93,11 +94,11 @@ class _BankCardSelectViewState extends State<BankCardSelectView>
 
   Future<void> _refresh() async {
     initData();
-    refreshController.refreshCompleted();
+    // refreshController.refreshCompleted();
   }
 
   void onLoading() async {
-    refreshController.loadComplete();
+    // refreshController.loadComplete();
   }
 
   @override
@@ -110,82 +111,74 @@ class _BankCardSelectViewState extends State<BankCardSelectView>
     double listHeight = 0;
     return Consumer<BankArrangementProvider>(
       builder: (context, provider, child) {
-        return SmartRefresher(
-          controller: refreshController,
-          onLoading: onLoading,
+        return RefreshIndicator(
           onRefresh: _refresh,
           child: (provider.type == 0)
               ? Column(
-                children: [
-                  BlocConsumer<BankCardBloc, BankCardState>(
-                    listener: (context, state) {
-                      if (state is BankCardGetListSuccessState) {
-                        resetProvider(context);
-                        if (bankAccounts.isEmpty) {
-                          bankAccounts.addAll(state.list);
-                          cardColors.addAll(state.colors);
+                  children: [
+                    BlocConsumer<BankCardBloc, BankCardState>(
+                      listener: (context, state) {
+                        if (state is BankCardGetListSuccessState) {
+                          resetProvider(context);
+                          if (bankAccounts.isEmpty) {
+                            bankAccounts.addAll(state.list);
+                            cardColors.addAll(state.colors);
+                          }
                         }
-                      }
-                      if (state
-                              is BankCardInsertUnauthenticatedSuccessState ||
-                          state is BankCardRemoveSuccessState ||
-                          state is BankCardInsertSuccessfulState) {
-                        if (scrollController.hasClients) {
-                          scrollController.jumpTo(0);
+                        if (state
+                                is BankCardInsertUnauthenticatedSuccessState ||
+                            state is BankCardRemoveSuccessState ||
+                            state is BankCardInsertSuccessfulState) {
+                          if (scrollController.hasClients) {
+                            scrollController.jumpTo(0);
+                          }
+                          getListBank(context);
                         }
-                        getListBank(context);
-                      }
-                    },
-                    builder: (context, state) {
-                      if (state is BankCardLoadingListState) {
-                        return const Expanded(
-                          child: UnconstrainedBox(
-                            child: SizedBox(
-                              width: 30,
-                              height: 30,
-                              child: CircularProgressIndicator(
-                                color: DefaultTheme.GREEN,
+                      },
+                      builder: (context, state) {
+                        if (state is BankCardLoadingListState) {
+                          return const Expanded(
+                            child: UnconstrainedBox(
+                              child: SizedBox(
+                                width: 30,
+                                height: 30,
+                                child: CircularProgressIndicator(
+                                  color: DefaultTheme.GREEN,
+                                ),
                               ),
                             ),
-                          ),
-                        );
-                      }
-                      if (state is BankCardGetListSuccessState) {
-                        if (scrollController.hasClients) {
-                          scrollController.jumpTo(0);
+                          );
                         }
-                        sizedBox = (bankAccounts.length * _maxHeight) * 0.7;
-                        listHeight = (sizedBox < _maxHeight)
-                            ? _maxHeight
-                            : (sizedBox > maxListHeight)
-                                ? maxListHeight
-                                : sizedBox;
-                      }
+                        if (state is BankCardGetListSuccessState) {
+                          if (scrollController.hasClients) {
+                            scrollController.jumpTo(0);
+                          }
+                          sizedBox = (bankAccounts.length * _maxHeight) * 0.7;
+                          listHeight = (sizedBox < _maxHeight)
+                              ? _maxHeight
+                              : (sizedBox > maxListHeight)
+                                  ? maxListHeight
+                                  : sizedBox;
+                        }
 
-                      return (sizedBox <= listHeight)
-                          ? buildList(maxListHeight, bankAccounts,
-                              cardColors, listHeight, sizedBox, _refresh)
-                          : Expanded(
-                              child: buildList(
-                                  maxListHeight,
-                                  bankAccounts,
-                                  cardColors,
-                                  listHeight,
-                                  sizedBox,
-                                  _refresh),
-                            );
-                    },
-                  ),
-                  Container(
-                    height: (PlatformUtils.instance.isAndroidApp())
-                        ? 80
-                        : (PlatformUtils.instance.isIOsApp() &&
-                                height <= 800)
-                            ? 90
-                            : 110,
-                  ),
-                ],
-              )
+                        return (sizedBox <= listHeight)
+                            ? buildList(maxListHeight, bankAccounts, cardColors,
+                                listHeight, sizedBox, _refresh)
+                            : Expanded(
+                                child: buildList(maxListHeight, bankAccounts,
+                                    cardColors, listHeight, sizedBox, _refresh),
+                              );
+                      },
+                    ),
+                    Container(
+                      height: (PlatformUtils.instance.isAndroidApp())
+                          ? 80
+                          : (PlatformUtils.instance.isIOsApp() && height <= 800)
+                              ? 90
+                              : 110,
+                    ),
+                  ],
+                )
               : Container(
                   decoration: const BoxDecoration(
                     image: DecorationImage(
@@ -376,7 +369,7 @@ class _BankCardSelectViewState extends State<BankCardSelectView>
       List<Color> colors,
       double listHeight,
       double sizeBox,
-      VoidCallback? onRefresh) {
+      RefreshCallback? onRefresh) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: StackedList(
@@ -480,7 +473,7 @@ class StackedList extends StatefulWidget {
   final ScrollController scrollController;
   final double sizeBox;
   final double height;
-  final VoidCallback? onRefresh;
+  final RefreshCallback? onRefresh;
 
   const StackedList({
     super.key,
@@ -498,7 +491,7 @@ class StackedList extends StatefulWidget {
 }
 
 class _StackedList extends State<StackedList> {
-  final refreshController = RefreshController(initialRefresh: false);
+  // final refreshController = RefreshController(initialRefresh: false);
 
   @override
   void initState() {
@@ -547,10 +540,10 @@ class _StackedList extends State<StackedList> {
                     ),
                     child: SizedBox(
                       height: widget.height,
-                      child: SmartRefresher(
-                        onRefresh: widget.onRefresh,
-                        controller: refreshController,
-                        scrollController: widget.scrollController,
+                      child: RefreshIndicator(
+                        onRefresh: widget.onRefresh!,
+                        // controller: refreshController,
+                        // scrollController: widget.scrollController,
                         child: CustomScrollView(
                           slivers: widget.list.map(
                             (item) {
@@ -606,10 +599,10 @@ class _StackedList extends State<StackedList> {
                             ),
                             child: SizedBox(
                               height: widget.height,
-                              child: SmartRefresher(
-                                onRefresh: widget.onRefresh,
-                                controller: refreshController,
-                                scrollController: widget.scrollController,
+                              child: RefreshIndicator(
+                                onRefresh: widget.onRefresh!,
+                                // controller: refreshController,
+                                // scrollController: widget.scrollController,
                                 child: CustomScrollView(
                                   controller: widget.scrollController,
                                   slivers: widget.list.map(

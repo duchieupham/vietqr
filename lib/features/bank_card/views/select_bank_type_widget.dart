@@ -206,7 +206,7 @@ class _SelectBankTypeWidgetState extends State<SelectBankTypeWidget> {
             const Padding(padding: EdgeInsets.only(left: 10)),
             Expanded(
               child: Text(
-                '${dto.bankCode} - ${dto.bankName}',
+                '${dto.bankShortName} - ${dto.bankName}',
                 style: const TextStyle(
                   fontSize: 12,
                 ),

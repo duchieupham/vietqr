@@ -3,12 +3,14 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/enums/check_type.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
 import 'package:vierqr/commons/utils/file_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
@@ -31,6 +33,7 @@ import 'package:vierqr/layouts/border_layout.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/account_information_dto.dart';
+import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/services/providers/add_business_provider.dart';
 import 'package:vierqr/services/providers/avatar_provider.dart';
 import 'package:vierqr/services/providers/suggestion_widget_provider.dart';
@@ -298,17 +301,19 @@ class UserEditView extends StatelessWidget {
                             text: 'Cập nhật thông tin qua CCCD',
                             textColor: DefaultTheme.GREEN,
                             bgColor: Theme.of(context).cardColor,
-                            function: () {
-                              Navigator.pop(context);
+                            function: () async {
+                              // Navigator.pop(context);
                               if (QRScannerHelper.instance.getQrIntro()) {
-                                Navigator.pushNamed(
-                                    context, Routes.SCAN_QR_VIEW);
+                                // Navigator.pushNamed(
+                                //     context, Routes.SCAN_QR_VIEW);
+                                startBarcodeScanStream(context);
                               } else {
-                                DialogWidget.instance
+                                await DialogWidget.instance
                                     .showFullModalBottomContent(
                                   widget: const QRScanWidget(),
                                   color: DefaultTheme.BLACK,
                                 );
+                                startBarcodeScanStream(context);
                               }
                             },
                           ),
@@ -678,6 +683,38 @@ class UserEditView extends StatelessWidget {
   //     }
   //   });
   // }
+
+  Future<void> startBarcodeScanStream(BuildContext context) async {
+    String data = await FlutterBarcodeScanner.scanBarcode(
+        '#ff6666', 'Cancel', true, ScanMode.QR);
+    if (data.isNotEmpty) {
+      if (data == TypeQR.NEGATIVE_ONE.value) {
+      } else if (data == TypeQR.NEGATIVE_TWO.value) {
+        DialogWidget.instance.openMsgDialog(
+          title: 'Không thể xác nhận mã QR',
+          msg: 'Ảnh QR không đúng định dạng, vui lòng chọn ảnh khác.',
+          function: () {
+            Navigator.pop(context);
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+          },
+        );
+      } else {
+        if (data.contains('|')) {
+          final list = data.split("|");
+          if (list.isNotEmpty) {
+            NationalScannerDTO identityDTO = NationalScannerDTO.fromJson(list);
+            Navigator.pushNamed(
+              context,
+              Routes.NATIONAL_INFORMATION,
+              arguments: {'dto': identityDTO},
+            );
+          }
+        }
+      }
+    }
+  }
 
   backToPreviousPage(BuildContext context) async {
     _lastNameController.clear();

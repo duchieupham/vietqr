@@ -3,7 +3,7 @@ class IntroduceDTO {
   final String? point;
   final String? sharingCode;
   final String? walletId;
-  final String? enableService;
+  final bool? enableService;
 
   IntroduceDTO({
     this.amount,
@@ -12,6 +12,9 @@ class IntroduceDTO {
     this.walletId,
     this.enableService,
   });
+
+  String get sharingCodeLink =>
+      'https://vietqr.vn/register?share_code=${sharingCode ?? ''}';
 
   factory IntroduceDTO.fromJson(Map<String, dynamic> json) {
     return IntroduceDTO(

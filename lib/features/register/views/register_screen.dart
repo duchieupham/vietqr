@@ -1,3 +1,4 @@
+import 'package:vierqr/commons/constants/configurations/numeral.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/check_type.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
@@ -7,6 +8,7 @@ import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/utils/user_information_utils.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
+import 'package:vierqr/commons/widgets/pin_widget.dart';
 import 'package:vierqr/commons/widgets/sub_header_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_widget.dart';
 import 'package:vierqr/features/register/blocs/register_bloc.dart';
