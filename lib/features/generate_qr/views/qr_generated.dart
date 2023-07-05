@@ -125,7 +125,7 @@ class _QRGenerated extends State<QRGenerated> {
                             toastLength: Toast.LENGTH_SHORT,
                             gravity: ToastGravity.CENTER,
                             backgroundColor: Theme.of(context).cardColor,
-                            textColor: Theme.of(context).cardColor,
+                            textColor: Colors.black,
                             fontSize: 15,
                           );
                         });
@@ -150,7 +150,7 @@ class _QRGenerated extends State<QRGenerated> {
                           gravity: ToastGravity.CENTER,
                           timeInSecForIosWeb: 1,
                           backgroundColor: Theme.of(context).cardColor,
-                          textColor: Theme.of(context).cardColor,
+                          textColor: Colors.black,
                           fontSize: 15,
                           webBgColor: 'rgba(255, 255, 255)',
                           webPosition: 'center',
@@ -187,7 +187,7 @@ class _QRGenerated extends State<QRGenerated> {
                 icon: Icons.home_rounded,
                 title: 'Trang chủ',
                 function: () {
-                  Navigator.pop(context);
+                  Navigator.of(context).popUntil((route) => route.isFirst);
                 },
                 bgColor: DefaultTheme.GREEN,
                 textColor: DefaultTheme.WHITE,

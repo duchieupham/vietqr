@@ -512,14 +512,13 @@ class BankCardDetailView extends StatelessWidget {
                     : dto.businessDetails.first.businessName,
                 isAuthenticated: dto.authenticated,
               );
-              // Navigator.of(context).push(
-              //   MaterialPageRoute(
-              //     builder: (context) => CreateQR(
-              //       bankAccountDTO: bankAccountDTO,
-              //       bankCardBloc: bankCardBloc,
-              //     ),
-              //   ),
-              // );
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => CreateQR(
+                    bankAccountDTO: bankAccountDTO,
+                  ),
+                ),
+              );
             },
             textColor: DefaultTheme.WHITE,
             bgColor: DefaultTheme.GREEN,
