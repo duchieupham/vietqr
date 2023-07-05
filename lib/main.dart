@@ -16,6 +16,7 @@ import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/account/blocs/account_bloc.dart';
+import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_card/views/bank_card_detail_view.dart';
 import 'package:vierqr/features/bank_card/views/bank_card_generated_view.dart';
@@ -292,6 +293,9 @@ class _VietQRApp extends State<VietQRApp> {
           BlocProvider<AccountBloc>(
             create: (BuildContext context) => AccountBloc(),
           ),
+          BlocProvider<BankBloc>(
+            create: (BuildContext context) => BankBloc(),
+          ),
         ],
         child: MultiProvider(
           providers: [
@@ -401,7 +405,6 @@ class _VietQRApp extends State<VietQRApp> {
                   GlobalMaterialLocalizations.delegate,
                   GlobalWidgetsLocalizations.delegate,
                   GlobalCupertinoLocalizations.delegate,
-                  RefreshLocalizations.delegate,
                 ],
                 supportedLocales: const [
                   //  Locale('en'), // English

@@ -20,12 +20,11 @@ import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/services/providers/add_bank_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
-class InputAuthInformationView extends StatelessWidget {
+class InputAuthInformationView extends StatefulWidget {
   final TextEditingController bankAccountController;
   final TextEditingController nameController;
   final TextEditingController nationalController;
   final TextEditingController phoneAuthenController;
-  static late BankCardBloc bankCardBloc;
 
   final Function(int)? callBack;
 
@@ -38,16 +37,31 @@ class InputAuthInformationView extends StatelessWidget {
     this.callBack,
   });
 
+  @override
+  State<InputAuthInformationView> createState() =>
+      _InputAuthInformationViewState();
+}
+
+class _InputAuthInformationViewState extends State<InputAuthInformationView> {
+  late BankCardBloc bankCardBloc;
+
   void initialServices(BuildContext context) {
     bankCardBloc = BlocProvider.of(context);
-    Provider.of<AddBankProvider>(context, listen: false)
-        .updateAgreeWithPolicy(false);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initialServices(context);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<AddBankProvider>(context, listen: false)
+          .updateAgreeWithPolicy(false);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
-    initialServices(context);
     return BlocListener<BankCardBloc, BankCardState>(
       listener: (context, state) {
         if (state is BankCardLoadingState) {
@@ -58,7 +72,7 @@ class InputAuthInformationView extends StatelessWidget {
               .registerAuthentication) {
             Navigator.pop(context);
             FocusManager.instance.primaryFocus?.unfocus();
-            callBack!(4);
+            widget.callBack!(4);
           } else {
             String bankTypeId =
                 Provider.of<AddBankProvider>(context, listen: false)
@@ -67,13 +81,13 @@ class InputAuthInformationView extends StatelessWidget {
             String userId = UserInformationHelper.instance.getUserId();
             String formattedName = StringUtils.instance.removeDiacritic(
                 StringUtils.instance
-                    .capitalFirstCharacter(nameController.text));
+                    .capitalFirstCharacter(widget.nameController.text));
             BankCardInsertUnauthenticatedDTO dto =
                 BankCardInsertUnauthenticatedDTO(
               bankTypeId: bankTypeId,
               userId: userId,
               userBankName: formattedName,
-              bankAccount: bankAccountController.text,
+              bankAccount: widget.bankAccountController.text,
             );
 
             bankCardBloc.add(BankCardEventInsertUnauthenticated(dto: dto));
@@ -97,8 +111,8 @@ class InputAuthInformationView extends StatelessWidget {
             imgId: bankTypeDTO.imageId,
             bankCode: bankTypeDTO.bankCode,
             bankName: bankTypeDTO.bankName,
-            bankAccount: bankAccountController.text,
-            userBankName: nameController.text,
+            bankAccount: widget.bankAccountController.text,
+            userBankName: widget.nameController.text,
             id: '',
             type: Provider.of<AddBankProvider>(context, listen: false).type,
             branchId: '',
@@ -107,10 +121,10 @@ class InputAuthInformationView extends StatelessWidget {
             businessName: '',
             isAuthenticated: false,
           );
-          phoneAuthenController.clear();
-          nameController.clear();
-          nationalController.clear();
-          bankAccountController.clear();
+          widget.phoneAuthenController.clear();
+          widget.nameController.clear();
+          widget.nationalController.clear();
+          widget.bankAccountController.clear();
           Navigator.of(context).pushReplacementNamed(
             Routes.BANK_CARD_GENERATED_VIEW,
             arguments: {
@@ -168,14 +182,15 @@ class InputAuthInformationView extends StatelessWidget {
                               hintText: 'Số điện thoại xác thực OTP',
                               autoFocus: false,
                               fontSize: 15,
-                              controller: phoneAuthenController,
+                              controller: widget.phoneAuthenController,
                               inputType: TextInputType.number,
                               keyboardAction: TextInputAction.done,
                               onChange: (text) {
                                 provider.updateValidPhoneAuthenticated(
-                                  (phoneAuthenController.text.isNotEmpty &&
+                                  (widget.phoneAuthenController.text
+                                          .isNotEmpty &&
                                       StringUtils.instance.isNumeric(
-                                          phoneAuthenController.text)),
+                                          widget.phoneAuthenController.text)),
                                 );
                               },
                             ),
@@ -189,12 +204,12 @@ class InputAuthInformationView extends StatelessWidget {
                               hintText: 'CCCD hoặc GPKD',
                               autoFocus: false,
                               fontSize: 15,
-                              controller: nationalController,
+                              controller: widget.nationalController,
                               inputType: TextInputType.text,
                               keyboardAction: TextInputAction.done,
                               onChange: (text) {
                                 provider.updateValidNationalId(
-                                    nationalController.text.isNotEmpty);
+                                    widget.nationalController.text.isNotEmpty);
                               },
                             ),
                           ],
@@ -300,7 +315,7 @@ class InputAuthInformationView extends StatelessWidget {
                                 .bankTypeDTO
                                 .id;
                             bankCardBloc.add(BankCardCheckExistedEvent(
-                                bankAccount: bankAccountController.text,
+                                bankAccount: widget.bankAccountController.text,
                                 bankTypeId: bankTypeId));
                           } else {
                             DialogWidget.instance.openMsgDialog(
@@ -324,7 +339,7 @@ class InputAuthInformationView extends StatelessWidget {
                                 .bankTypeDTO
                                 .id;
                             bankCardBloc.add(BankCardCheckExistedEvent(
-                                bankAccount: bankAccountController.text,
+                                bankAccount: widget.bankAccountController.text,
                                 bankTypeId: bankTypeId));
                           } else {
                             Provider.of<AddBankProvider>(context, listen: false)

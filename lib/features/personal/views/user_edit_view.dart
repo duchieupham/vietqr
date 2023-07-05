@@ -313,6 +313,7 @@ class UserEditView extends StatelessWidget {
                                   widget: const QRScanWidget(),
                                   color: DefaultTheme.BLACK,
                                 );
+
                                 startBarcodeScanStream(context);
                               }
                             },
@@ -708,9 +709,19 @@ class UserEditView extends StatelessWidget {
             Navigator.pushNamed(
               context,
               Routes.NATIONAL_INFORMATION,
-              arguments: {'dto': identityDTO},
+              arguments: {'dto': identityDTO, 'isPop': true},
             );
           }
+        } else {
+          DialogWidget.instance.openMsgDialog(
+            title: 'Không thể xác nhận mã QR',
+            msg: 'Ảnh QR không đúng định dạng, vui lòng chọn ảnh khác.',
+            function: () {
+              if (Navigator.canPop(context)) {
+                Navigator.pop(context);
+              }
+            },
+          );
         }
       }
     }

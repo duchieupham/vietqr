@@ -70,7 +70,7 @@ class _SelectBankTypeWidgetState extends State<SelectBankTypeWidget> {
                 if (state.list.isNotEmpty && bankTypes.isEmpty) {
                   bankTypes.addAll(state.list);
                   bankTypesResult.addAll(bankTypes);
-                  Future.delayed(const Duration(milliseconds: 200), () {
+                  Future.delayed(const Duration(milliseconds: 100), () {
                     _searchFocus.requestFocus();
                   });
                 }

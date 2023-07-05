@@ -18,6 +18,7 @@ const QRRepository qrRepository = QRRepository();
 void _generateQRList(QREvent event, Emitter emit) async {
   try {
     if (event is QREventGenerateList) {
+      emit(QRGenerateLoadingState());
       final List<QRGeneratedDTO> list =
           await qrRepository.generateQRList(event.list);
       emit(QRGeneratedListSuccessfulState(list: list));

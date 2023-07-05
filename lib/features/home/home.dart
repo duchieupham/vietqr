@@ -5,8 +5,7 @@ import 'package:vierqr/commons/enums/check_type.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/features/account/account_screen.dart';
-import 'package:vierqr/features/bank_card/views/bank_card_select_view.dart';
+import 'package:vierqr/features/bank_card/bank_screen.dart';
 import 'package:vierqr/features/dashboard/dashboard_screen.dart';
 import 'package:vierqr/features/home/states/home_state.dart';
 import 'package:vierqr/features/home/widgets/disconnect_widget.dart';
@@ -136,17 +135,18 @@ class _HomeScreen extends State<HomeScreen>
     checkUserInformation();
     _tokenBloc.add(const TokenEventCheckValid());
     _homeBloc.add(const PermissionEventRequest());
-    // _notificationBloc.add(NotificationGetCounterEvent(userId: userId));
+    _notificationBloc.add(NotificationGetCounterEvent(userId: userId));
     _homeScreens.addAll(
       [
-        const BankCardSelectView(key: PageStorageKey('QR_GENERATOR_PAGE')),
+        // const BankCardSelectView(key: PageStorageKey('QR_GENERATOR_PAGE')),
+        const BankScreen(key: PageStorageKey('QR_GENERATOR_PAGE')),
         const DashboardScreen(key: PageStorageKey('SMS_LIST_PAGE')),
         if (PlatformUtils.instance.isAndroidApp()) const IntroduceScreen(),
-        const AccountScreen(
-          key: PageStorageKey('USER_SETTING_PAGE'),
-          // voidCallback: () {
-          //   _animatedToPage(0);
-          // },
+        UserSetting(
+          key: const PageStorageKey('USER_SETTING_PAGE'),
+          voidCallback: () {
+            _animatedToPage(0);
+          },
         ),
       ],
     );
@@ -331,88 +331,90 @@ class _HomeScreen extends State<HomeScreen>
                     child: _buildAppBar(),
                   )
                 : null,
-            body: Stack(
-              children: [
-                Listener(
-                  onPointerMove: (moveEvent) {
-                    if (moveEvent.delta.dx > 0) {
-                      Provider.of<PageSelectProvider>(context, listen: false)
-                          .updateMoveEvent(TypeMoveEvent.RIGHT);
-                    } else {
-                      Provider.of<PageSelectProvider>(context, listen: false)
-                          .updateMoveEvent(TypeMoveEvent.LEFT);
-                    }
-                  },
-                  child: PageView(
-                    key: const PageStorageKey('PAGE_VIEW'),
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    controller: _pageController,
-                    onPageChanged: (index) async {
-                      Provider.of<PageSelectProvider>(context, listen: false)
-                          .updateIndex(index);
+            body: SafeArea(
+              child: Stack(
+                children: [
+                  Listener(
+                    onPointerMove: (moveEvent) {
+                      if (moveEvent.delta.dx > 0) {
+                        Provider.of<PageSelectProvider>(context, listen: false)
+                            .updateMoveEvent(TypeMoveEvent.RIGHT);
+                      } else {
+                        Provider.of<PageSelectProvider>(context, listen: false)
+                            .updateMoveEvent(TypeMoveEvent.LEFT);
+                      }
                     },
-                    children: _homeScreens,
+                    child: PageView(
+                      key: const PageStorageKey('PAGE_VIEW'),
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      controller: _pageController,
+                      onPageChanged: (index) async {
+                        Provider.of<PageSelectProvider>(context, listen: false)
+                            .updateIndex(index);
+                      },
+                      children: _homeScreens,
+                    ),
                   ),
-                ),
-                Positioned(
-                  bottom: 10,
-                  left: 0,
-                  right: 0,
-                  child: Container(
-                    margin: (PlatformUtils.instance.isAndroidApp())
-                        ? const EdgeInsets.only(bottom: 5)
-                        : null,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ClipRRect(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(20)),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                            child: Container(
-                              alignment: Alignment.center,
-                              height: 60,
-                              decoration: BoxDecoration(
-                                color: Theme.of(context)
-                                    .cardColor
-                                    .withOpacity(0.5),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color:
-                                        DefaultTheme.GREY_VIEW.withOpacity(0.5),
-                                    spreadRadius: 2,
-                                    blurRadius: 3,
-                                    offset: const Offset(2, 2),
-                                  ),
-                                ],
-                              ),
-                              child: Stack(
-                                children: [
-                                  Row(
-                                    children: List.generate(
-                                        page.listItem.length, (index) {
-                                      var item = page.listItem.elementAt(index);
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      margin: (PlatformUtils.instance.isAndroidApp())
+                          ? const EdgeInsets.only(bottom: 5)
+                          : null,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ClipRRect(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(20)),
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                              child: Container(
+                                alignment: Alignment.center,
+                                height: 60,
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context)
+                                      .cardColor
+                                      .withOpacity(0.5),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color:
+                                          DefaultTheme.GREY_VIEW.withOpacity(0.5),
+                                      spreadRadius: 2,
+                                      blurRadius: 3,
+                                      offset: const Offset(2, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Stack(
+                                  children: [
+                                    Row(
+                                      children: List.generate(
+                                          page.listItem.length, (index) {
+                                        var item = page.listItem.elementAt(index);
 
-                                      String url =
-                                          (item.index == page.indexSelected)
-                                              ? item.assetsActive
-                                              : item.assetsUnActive;
+                                        String url =
+                                            (item.index == page.indexSelected)
+                                                ? item.assetsActive
+                                                : item.assetsUnActive;
 
-                                      return _buildShortcut(
-                                          item.index, url, context);
-                                    }).toList(),
-                                  ),
-                                ],
+                                        return _buildShortcut(
+                                            item.index, url, context);
+                                      }).toList(),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         }),
@@ -427,7 +429,7 @@ class _HomeScreen extends State<HomeScreen>
         if (index != -1) {
           _animatedToPage(index);
         } else {
-          if (!QRScannerHelper.instance.getQrIntro()) {
+          if (QRScannerHelper.instance.getQrIntro()) {
             startBarcodeScanStream();
             // Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
           } else {
