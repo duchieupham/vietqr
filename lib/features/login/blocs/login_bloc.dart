@@ -17,7 +17,7 @@ void _login(LoginEvent event, Emitter emit) async {
       emit(LoginLoadingState());
       bool check = await loginRepository.login(event.dto);
       if (check) {
-        emit(LoginSuccessfulState());
+        emit(LoginSuccessfulState(isToast: event.isToast));
       } else {
         emit(LoginFailedState());
       }
