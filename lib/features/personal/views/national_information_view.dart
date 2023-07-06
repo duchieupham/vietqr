@@ -186,7 +186,7 @@ class NationalInformationView extends StatelessWidget {
                             firstName: namePaths[0].trim(),
                             middleName: namePaths[1].trim(),
                             lastName: namePaths[2].trim(),
-                            birthDate: dto.birthdate,
+                            birthDate: dto.getBirth,
                             gender: gender,
                             address: dto.address,
                             email: UserInformationHelper.instance
