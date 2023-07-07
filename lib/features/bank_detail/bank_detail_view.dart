@@ -19,11 +19,8 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/commons/widgets/sub_header_widget.dart';
 import 'package:vierqr/commons/widgets/viet_qr_widget.dart';
-import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
-import 'package:vierqr/features/bank_card/blocs/bank_card_bloc.dart';
-import 'package:vierqr/features/bank_card/events/bank_card_event.dart';
-import 'package:vierqr/features/bank_card/states/bank_card_state.dart';
-import 'package:vierqr/features/bank_card/states/bank_state.dart';
+import 'package:vierqr/features/bank_detail/blocs/bank_detail_bloc.dart';
+import 'package:vierqr/features/bank_detail/states/bank_detail_state.dart';
 import 'package:vierqr/features/generate_qr/views/create_qr.dart';
 import 'package:vierqr/features/home/widgets/custom_app_bar_widget.dart';
 import 'package:vierqr/features/printer/views/printing_view.dart';
@@ -41,10 +38,32 @@ import 'package:vierqr/services/providers/add_bank_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 import 'package:vierqr/services/sqflite/local_database.dart';
 
-class BankCardDetailView extends StatelessWidget {
-  static late BankBloc bankCardBloc;
+import 'events/bank_detail_event.dart';
 
-  static QRGeneratedDTO qrGeneratedDTO = const QRGeneratedDTO(
+class BankCardDetail extends StatelessWidget {
+  const BankCardDetail({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => BankDetailBloc(),
+      child: const BankDetailScreen(),
+    );
+  }
+}
+
+class BankDetailScreen extends StatefulWidget {
+  const BankDetailScreen({super.key});
+
+  @override
+  State<BankDetailScreen> createState() => _BankDetailScreenState();
+}
+
+class _BankDetailScreenState extends State<BankDetailScreen> {
+  late BankDetailBloc _bloc;
+  String bankId = '';
+
+  QRGeneratedDTO qrGeneratedDTO = const QRGeneratedDTO(
       bankCode: '',
       bankName: '',
       bankAccount: '',
@@ -54,7 +73,7 @@ class BankCardDetailView extends StatelessWidget {
       qrCode: '',
       imgId: '');
 
-  static AccountBankDetailDTO dto = AccountBankDetailDTO(
+  AccountBankDetailDTO dto = AccountBankDetailDTO(
     id: '',
     bankAccount: '',
     userBankName: '',
@@ -74,25 +93,28 @@ class BankCardDetailView extends StatelessWidget {
     caiValue: '',
   );
 
-  static String bankId = '';
-
-  const BankCardDetailView({super.key});
-
-  void initialServives(BuildContext context, String bankId) {
-    bankCardBloc = BlocProvider.of(context);
-    bankCardBloc.add(BankCardGetDetailEvent(bankId: bankId));
+  void initData(BuildContext context) {
+    final arg = ModalRoute.of(context)!.settings.arguments as Map;
+    bankId = arg['bankId'] ?? '';
+    _bloc.add(BankCardGetDetailEvent(bankId: bankId));
   }
 
   Future<void> _refresh() async {
-    bankCardBloc.add(BankCardGetDetailEvent(bankId: bankId));
+    _bloc.add(BankCardGetDetailEvent(bankId: bankId));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _bloc = BlocProvider.of(context);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      initData(context);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
-    final arg = ModalRoute.of(context)!.settings.arguments as Map;
-    bankId = arg['bankId'] ?? '';
-    initialServives(context, bankId);
     return Scaffold(
       appBar: const CustomAppBarWidget(
         child: SubHeader(title: 'Chi tiết TK ngân hàng'),
@@ -107,10 +129,10 @@ class BankCardDetailView extends StatelessWidget {
                 builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
                   if (snapshot.hasData) {
                     if (snapshot.data == true) {
-                      bankCardBloc.add(BankCardGetDetailEvent(bankId: bankId));
+                      _bloc.add(BankCardGetDetailEvent(bankId: bankId));
                     }
                   }
-                  return BlocConsumer<BankBloc, BankState>(
+                  return BlocConsumer<BankDetailBloc, BankDetailState>(
                     listener: (context, state) async {
                       if (state.status == BlocStatus.DELETE) {
                         Fluttertoast.showToast(
@@ -275,7 +297,7 @@ class BankCardDetailView extends StatelessWidget {
                                           'bankAccount': dto.bankAccount,
                                           'name': dto.userBankName,
                                         },
-                                      ).then((value) => bankCardBloc.add(
+                                      ).then((value) => _bloc.add(
                                           BankCardGetDetailEvent(
                                               bankId: bankId)));
                                     },
@@ -364,7 +386,7 @@ class BankCardDetailView extends StatelessWidget {
                                   type: dto.type,
                                   isAuthenticated: dto.authenticated,
                                 );
-                                bankCardBloc.add(BankCardEventRemove(
+                                _bloc.add(BankCardEventRemove(
                                     dto: bankAccountRemoveDTO));
                               },
                             ),
@@ -731,7 +753,7 @@ class BankCardDetailView extends StatelessWidget {
                       },
                     ).then((value) {
                       heroId = value.toString();
-                      bankCardBloc.add(BankCardGetDetailEvent(bankId: bankId));
+                      _bloc.add(BankCardGetDetailEvent(bankId: bankId));
                     });
                   },
                 )
@@ -764,7 +786,7 @@ class BankCardDetailView extends StatelessWidget {
                   Routes.TRANSACTION_DETAIL,
                   arguments: {
                     'transactionId': transactions[index].transactionId,
-                    'bankCardBloc': bankCardBloc,
+                    'bankCardBloc': _bloc,
                     'bankId': bankId,
                   },
                 );

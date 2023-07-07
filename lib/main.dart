@@ -16,11 +16,10 @@ import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/account/blocs/account_bloc.dart';
-import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_card_bloc.dart';
-import 'package:vierqr/features/bank_card/views/bank_card_detail_view.dart';
 import 'package:vierqr/features/bank_card/views/bank_card_generated_view.dart';
 import 'package:vierqr/features/bank_card/views/search_bank_view.dart';
+import 'package:vierqr/features/bank_detail/bank_detail_view.dart';
 import 'package:vierqr/features/bank_member/blocs/bank_member_bloc.dart';
 import 'package:vierqr/features/bank_member/views/bank_member_view.dart';
 import 'package:vierqr/features/bank_type/blocs/bank_type_bloc.dart';
@@ -43,16 +42,13 @@ import 'package:vierqr/features/personal/views/national_information_view.dart';
 import 'package:vierqr/features/printer/blocs/printer_bloc.dart';
 import 'package:vierqr/features/printer/views/printer_setting_view.dart';
 import 'package:vierqr/features/transaction/blocs/transaction_bloc.dart';
-import 'package:vierqr/features/logout/blocs/log_out_bloc.dart';
 import 'package:vierqr/features/notification/blocs/notification_bloc.dart';
-import 'package:vierqr/features/login/blocs/login_bloc.dart';
 import 'package:vierqr/features/login/views/login.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_manage_bloc.dart';
 import 'package:vierqr/features/personal/blocs/user_edit_bloc.dart';
 import 'package:vierqr/features/bank_card/views/add_bank_card_view.dart';
 import 'package:vierqr/features/personal/views/user_edit_view.dart';
 import 'package:vierqr/features/personal/views/user_update_password_view.dart';
-import 'package:vierqr/features/register/blocs/register_bloc.dart';
 import 'package:vierqr/features/scan_qr/blocs/scan_qr_bloc.dart';
 import 'package:vierqr/features/scan_qr/views/qr_scan_view.dart';
 import 'package:vierqr/features/token/blocs/token_bloc.dart';
@@ -230,21 +226,9 @@ class _VietQRApp extends State<VietQRApp> {
           BlocProvider<BankManageBloc>(
             create: (BuildContext context) => BankManageBloc(),
           ),
-          BlocProvider<LoginBloc>(
-            create: (BuildContext context) => LoginBloc(),
-          ),
-          BlocProvider<RegisterBloc>(
-            create: (BuildContext context) => RegisterBloc(),
-          ),
           BlocProvider<UserEditBloc>(
             create: (BuildContext context) => UserEditBloc(),
           ),
-          // BlocProvider<MemberManageBloc>(
-          //   create: (BuildContext context) => MemberManageBloc(),
-          // ),
-          // BlocProvider<SMSBloc>(
-          //   create: (BuildContext context) => SMSBloc(),
-          // ),
           BlocProvider<TransactionBloc>(
             create: (BuildContext context) => TransactionBloc(),
           ),
@@ -272,9 +256,6 @@ class _VietQRApp extends State<VietQRApp> {
           BlocProvider<QRBloc>(
             create: (BuildContext context) => QRBloc(),
           ),
-          BlocProvider<LogoutBloc>(
-            create: (BuildContext context) => LogoutBloc(),
-          ),
           BlocProvider<BusinessMemberBloc>(
             create: (BuildContext context) => BusinessMemberBloc(),
           ),
@@ -292,9 +273,6 @@ class _VietQRApp extends State<VietQRApp> {
           ),
           BlocProvider<AccountBloc>(
             create: (BuildContext context) => AccountBloc(),
-          ),
-          BlocProvider<BankBloc>(
-            create: (BuildContext context) => BankBloc(),
           ),
         ],
         child: MultiProvider(
@@ -366,7 +344,7 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.ADD_BUSINESS_VIEW: (context) =>
                       const AddBusinessView(),
                   Routes.BANK_CARD_DETAIL_VEW: (context) =>
-                      const BankCardDetailView(),
+                      const BankCardDetail(),
                   Routes.TRANSACTION_HISTORY_VIEW: (context) =>
                       const TransactionHistoryView(),
                   Routes.SCAN_QR_VIEW: (context) => const QRScanView(),

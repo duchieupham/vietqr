@@ -6,11 +6,14 @@ import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/bank_card/bank_screen.dart';
+import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
+import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/dashboard_screen.dart';
 import 'package:vierqr/features/home/states/home_state.dart';
 import 'package:vierqr/features/home/widgets/disconnect_widget.dart';
 import 'package:vierqr/features/home/widgets/maintain_widget.dart';
 import 'package:vierqr/features/introduce/views/introduce_screen.dart';
+import 'package:vierqr/features/logout/blocs/log_out_bloc.dart';
 import 'package:vierqr/features/notification/blocs/notification_bloc.dart';
 import 'package:vierqr/features/notification/events/notification_event.dart';
 import 'package:vierqr/features/notification/states/notification_state.dart';
@@ -139,14 +142,23 @@ class _HomeScreen extends State<HomeScreen>
     _homeScreens.addAll(
       [
         // const BankCardSelectView(key: PageStorageKey('QR_GENERATOR_PAGE')),
-        const BankScreen(key: PageStorageKey('QR_GENERATOR_PAGE')),
-        const DashboardScreen(key: PageStorageKey('SMS_LIST_PAGE')),
+        BlocProvider<BankBloc>(
+          create: (context) => BankBloc(),
+          child: const BankScreen(key: PageStorageKey('QR_GENERATOR_PAGE')),
+        ),
+        BlocProvider<DashboardBloc>(
+          create: (context) => DashboardBloc(context),
+          child: const DashboardScreen(key: PageStorageKey('SMS_LIST_PAGE')),
+        ),
         if (PlatformUtils.instance.isAndroidApp()) const IntroduceScreen(),
-        UserSetting(
-          key: const PageStorageKey('USER_SETTING_PAGE'),
-          voidCallback: () {
-            _animatedToPage(0);
-          },
+        BlocProvider<LogoutBloc>(
+          create: (context) => LogoutBloc(),
+          child: UserSetting(
+            key: const PageStorageKey('USER_SETTING_PAGE'),
+            voidCallback: () {
+              _animatedToPage(0);
+            },
+          ),
         ),
       ],
     );
@@ -380,8 +392,8 @@ class _HomeScreen extends State<HomeScreen>
                                       .withOpacity(0.5),
                                   boxShadow: [
                                     BoxShadow(
-                                      color:
-                                          DefaultTheme.GREY_VIEW.withOpacity(0.5),
+                                      color: DefaultTheme.GREY_VIEW
+                                          .withOpacity(0.5),
                                       spreadRadius: 2,
                                       blurRadius: 3,
                                       offset: const Offset(2, 2),
@@ -393,7 +405,8 @@ class _HomeScreen extends State<HomeScreen>
                                     Row(
                                       children: List.generate(
                                           page.listItem.length, (index) {
-                                        var item = page.listItem.elementAt(index);
+                                        var item =
+                                            page.listItem.elementAt(index);
 
                                         String url =
                                             (item.index == page.indexSelected)

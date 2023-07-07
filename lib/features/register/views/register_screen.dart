@@ -25,6 +25,20 @@ import 'package:provider/provider.dart';
 
 import 'pin_code_input.dart';
 
+class Register extends StatelessWidget {
+  final String phoneNo;
+
+  const Register({super.key, required this.phoneNo});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider<RegisterBloc>(
+      create: (BuildContext context) => RegisterBloc(),
+      child: RegisterScreen(phoneNo: phoneNo),
+    );
+  }
+}
+
 class RegisterScreen extends StatefulWidget {
   final String phoneNo;
 

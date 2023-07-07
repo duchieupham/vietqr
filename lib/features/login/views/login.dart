@@ -21,14 +21,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/services/providers/login_provider.dart';
 
-class Login extends StatefulWidget {
-  const Login({Key? key}) : super(key: key);
+class Login extends StatelessWidget {
+  const Login({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider<LoginBloc>(
+      create: (BuildContext context) => LoginBloc(),
+      child: const LoginScreen(),
+    );
+  }
+}
+
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _Login();
 }
 
-class _Login extends State<Login> {
+class _Login extends State<LoginScreen> {
   final TextEditingController phoneNoController = TextEditingController();
 
   String code = '';
@@ -258,7 +270,7 @@ class _Login extends State<Login> {
                   final data = await Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) =>
-                          RegisterScreen(phoneNo: phoneNoController.text),
+                          Register(phoneNo: phoneNoController.text),
                     ),
                   );
 

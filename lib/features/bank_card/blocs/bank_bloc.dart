@@ -27,14 +27,8 @@ class BankBloc extends Bloc<BankCardEvent, BankState> {
     on<BankCardEventGetList>(_getBankAccounts);
     on<BankCardEventInsertUnauthenticated>(_insertBankCardUnauthenticated);
     on<BankCardEventRegisterAuthentication>(_registerAuthentication);
-    on<BankCardEventRemove>(_removeBankAccount);
-    // on<BankCardEventRequestOTP>(_requestOTP);
-    // on<BankCardEventConfirmOTP>(_confirmOTP);
-    on<BankCardGetDetailEvent>(_getDetail);
     on<ScanQrEventGetBankType>(_getBankType);
     on<UpdateEvent>(_updateEvent);
-    // on<BankCardCheckExistedEvent>(_checkExistedBank);
-    // on<BankCardEventSearchName>(_searchBankName);
   }
 
   String userId = UserInformationHelper.instance.getUserId();
@@ -161,144 +155,6 @@ class BankBloc extends Bloc<BankCardEvent, BankState> {
           msg: 'Không thể tải danh sách. Vui lòng kiểm tra lại kết nối'));
     }
   }
-
-  void _removeBankAccount(BankCardEvent event, Emitter emit) async {
-    try {
-      if (event is BankCardEventRemove) {
-        emit(state.copyWith(status: BlocStatus.LOADING));
-        final ResponseMessageDTO responseMessageDTO =
-            await bankCardRepository.removeBankAccount(event.dto);
-        if (responseMessageDTO.status == Stringify.RESPONSE_STATUS_SUCCESS) {
-          emit(state.copyWith(status: BlocStatus.DELETE));
-        } else if (responseMessageDTO.status ==
-            Stringify.RESPONSE_STATUS_CHECK) {
-          String message =
-              CheckUtils.instance.getCheckMessage(responseMessageDTO.message);
-          emit(state.copyWith(status: BlocStatus.ERROR, msg: message));
-        } else {
-          String message =
-              ErrorUtils.instance.getErrorMessage(responseMessageDTO.message);
-          emit(state.copyWith(status: BlocStatus.ERROR, msg: message));
-        }
-      }
-    } catch (e) {
-      LOG.error(e.toString());
-      emit(state.copyWith(
-          status: BlocStatus.ERROR,
-          msg: 'Không thể huỷ liên kết. Vui lòng kiểm tra lại kết nối'));
-    }
-  }
-
-  void _requestOTP(BankCardEvent event, Emitter emit) async {
-    try {
-      if (event is BankCardEventRequestOTP) {
-        emit(state.copyWith(status: BlocStatus.LOADING));
-        final ResponseMessageDTO responseMessageDTO =
-            await bankCardRepository.requestOTP(event.dto);
-        if (responseMessageDTO.status == Stringify.RESPONSE_STATUS_SUCCESS) {
-          emit(state.copyWith(
-              status: BlocStatus.SUCCESS,
-              dto: event.dto,
-              requestId: responseMessageDTO.message));
-        } else {
-          emit(state.copyWith(
-              status: BlocStatus.ERROR,
-              msg: ErrorUtils.instance
-                  .getErrorMessage(responseMessageDTO.message)));
-        }
-      }
-    } catch (e) {
-      LOG.error(e.toString());
-      ResponseMessageDTO responseMessageDTO =
-          const ResponseMessageDTO(status: 'FAILED', message: 'E05');
-      emit(state.copyWith(
-          status: BlocStatus.ERROR,
-          msg:
-              ErrorUtils.instance.getErrorMessage(responseMessageDTO.message)));
-    }
-  }
-
-  // void _confirmOTP(BankCardEvent event, Emitter emit) async {
-  //   try {
-  //     if (event is BankCardEventConfirmOTP) {
-  //       emit(BankCardConfirmOTPLoadingState());
-  //       final ResponseMessageDTO responseMessageDTO =
-  //           await bankCardRepository.confirmOTP(event.dto);
-  //       if (responseMessageDTO.status == Stringify.RESPONSE_STATUS_SUCCESS) {
-  //         emit(BankCardConfirmOTPSuccessState());
-  //       } else {
-  //         emit(state.copyWith(
-  //             status: BlocStatus.ERROR,
-  //             msg: ErrorUtils.instance
-  //                 .getErrorMessage(responseMessageDTO.message)));
-  //       }
-  //     }
-  //   } catch (e) {
-  //     LOG.error(e.toString());
-  //     ResponseMessageDTO responseMessageDTO =
-  //         const ResponseMessageDTO(status: 'FAILED', message: 'E05');
-  //     emit(state.copyWith(
-  //         status: BlocStatus.ERROR,
-  //         msg:
-  //             ErrorUtils.instance.getErrorMessage(responseMessageDTO.message)));
-  //   }
-  // }
-
-  void _getDetail(BankCardEvent event, Emitter emit) async {
-    try {
-      if (event is BankCardGetDetailEvent) {
-        emit(state.copyWith(status: BlocStatus.LOADING));
-        final AccountBankDetailDTO dto =
-            await bankCardRepository.getAccountBankDetail(event.bankId);
-        emit(state.copyWith(status: BlocStatus.SUCCESS, bankDetailDTO: dto));
-      }
-    } catch (e) {
-      LOG.error(e.toString());
-      emit(state.copyWith(status: BlocStatus.ERROR));
-    }
-  }
-
-// void _checkExistedBank(BankCardEvent event, Emitter emit) async {
-//   try {
-//     if (event is BankCardCheckExistedEvent) {
-//       emit(BankCardLoadingState());
-//       final ResponseMessageDTO result = await bankCardRepository
-//           .checkExistedBank(event.bankAccount, event.bankTypeId);
-//       if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
-//         emit(BankCardCheckNotExistedState());
-//       } else if (result.status == Stringify.RESPONSE_STATUS_CHECK) {
-//         emit(BankCardCheckExistedState(
-//             msg: CheckUtils.instance.getCheckMessage(result.message)));
-//       } else {
-//         emit(state.copyWith(status: BlocStatus.ERROR));
-//       }
-//     }
-//   } catch (e) {
-//     LOG.error(e.toString());
-//     emit(state.copyWith(status: BlocStatus.ERROR));
-//   }
-// }
-
-// void _searchBankName(BankCardEvent event, Emitter emit) async {
-//   try {
-//     if (event is BankCardEventSearchName) {
-//       emit(BankCardSearchingNameState());
-//       BankNameInformationDTO dto =
-//           await bankCardRepository.searchBankName(event.dto);
-//       if (dto.accountName.trim().isNotEmpty) {
-//         emit(BankCardSearchNameSuccessState(dto: dto));
-//       } else {
-//         emit(state.copyWith(
-//             status: BlocStatus.ERROR,
-//             msg: 'Tài khoản ngân hàng không tồn tại.'));
-//       }
-//     }
-//   } catch (e) {
-//     LOG.error(e.toString());
-//     emit(state.copyWith(
-//         status: BlocStatus.ERROR, msg: 'Tài khoản ngân hàng không tồn tại.'));
-//   }
-// }
 
   void _getBankType(BankCardEvent event, Emitter emit) async {
     try {
