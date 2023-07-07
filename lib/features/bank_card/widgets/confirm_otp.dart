@@ -16,6 +16,7 @@ class ConfirmOTPView extends StatefulWidget {
   final String phone;
   final BankCardBloc bankCardBloc;
   final BankCardRequestOTP dto;
+
   const ConfirmOTPView({
     super.key,
     required this.requestId,
@@ -29,9 +30,9 @@ class ConfirmOTPView extends StatefulWidget {
 }
 
 class _ConfirmOTPView extends State<ConfirmOTPView> {
-  static final _formKey = GlobalKey<FormState>();
-  static final TextEditingController otpController = TextEditingController();
-  static late CountdownProvider countdownProvider;
+  final _formKey = GlobalKey<FormState>();
+  final otpController = TextEditingController();
+  late CountdownProvider countdownProvider;
 
   @override
   void initState() {
@@ -174,7 +175,9 @@ class _ConfirmOTPView extends State<ConfirmOTPView> {
                           ),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
-                              countdownProvider = CountdownProvider(120);
+                              otpController.clear();
+                              countdownProvider.setValue(120);
+                              countdownProvider.countDown();
                               widget.bankCardBloc.add(
                                 BankCardEventRequestOTP(dto: widget.dto),
                               );
@@ -192,6 +195,7 @@ class _ConfirmOTPView extends State<ConfirmOTPView> {
           textColor: DefaultTheme.WHITE,
           bgColor: DefaultTheme.GREEN,
           function: () {
+            FocusManager.instance.primaryFocus?.unfocus();
             if (otpController.text.isNotEmpty) {
               ConfirmOTPBankDTO confirmDTO = ConfirmOTPBankDTO(
                 requestId: widget.requestId,

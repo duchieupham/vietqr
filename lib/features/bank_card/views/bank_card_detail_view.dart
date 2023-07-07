@@ -207,47 +207,6 @@ class BankCardDetailView extends StatelessWidget {
                                   ),
                                   const Padding(
                                       padding: EdgeInsets.only(top: 10)),
-                                  DividerWidget(width: width),
-                                  ButtonIconWidget(
-                                    width: width,
-                                    height: 40,
-                                    icon: Icons.link_rounded,
-                                    title: 'Liên kết ngay',
-                                    function: () {
-                                      BankTypeDTO bankTypeDTO = BankTypeDTO(
-                                          id: dto.bankTypeId,
-                                          bankCode: dto.bankCode,
-                                          bankName: dto.bankName,
-                                          imageId: dto.imgId,
-                                          status: dto.bankTypeStatus,
-                                          caiValue: dto.caiValue);
-                                      Provider.of<AddBankProvider>(context,
-                                              listen: false)
-                                          .updateBankId(dto.id);
-                                      Provider.of<AddBankProvider>(context,
-                                              listen: false)
-                                          .updateSelect(2);
-                                      Provider.of<AddBankProvider>(context,
-                                              listen: false)
-                                          .updateRegisterAuthentication(true);
-                                      Provider.of<AddBankProvider>(context,
-                                              listen: false)
-                                          .updateSelectBankType(bankTypeDTO);
-                                      Navigator.pushNamed(
-                                        context,
-                                        Routes.ADD_BANK_CARD,
-                                        arguments: {
-                                          'pageIndex': 3,
-                                          'bankAccount': dto.bankAccount,
-                                          'name': dto.userBankName,
-                                        },
-                                      ).then((value) => bankCardBloc.add(
-                                          BankCardGetDetailEvent(
-                                              bankId: bankId)));
-                                    },
-                                    bgColor: DefaultTheme.TRANSPARENT,
-                                    textColor: DefaultTheme.GREEN,
-                                  ),
                                 ],
                                 if (dto.nationalId.isNotEmpty) ...[
                                   Padding(
@@ -275,6 +234,56 @@ class BankCardDetailView extends StatelessWidget {
                                     description: dto.phoneAuthenticated,
                                   ),
                                 ],
+                                const SizedBox(height: 10),
+                                if (!dto.authenticated &&
+                                    dto.bankCode.trim().toUpperCase() ==
+                                        'MB') ...[
+                                  DividerWidget(width: width),
+                                  const SizedBox(height: 10),
+                                  ButtonIconWidget(
+                                    width: width,
+                                    icon: Icons.link_rounded,
+                                    title: 'Liên kết ngay',
+                                    function: () {
+                                      BankTypeDTO bankTypeDTO = BankTypeDTO(
+                                          id: dto.bankTypeId,
+                                          bankCode: dto.bankCode,
+                                          bankName: dto.bankName,
+                                          imageId: dto.imgId,
+                                          status: dto.bankTypeStatus,
+                                          caiValue: dto.caiValue);
+                                      Provider.of<AddBankProvider>(context,
+                                              listen: false)
+                                          .updateBankId(dto.id);
+                                      Provider.of<AddBankProvider>(context,
+                                              listen: false)
+                                          .updateSelect(2);
+                                      Provider.of<AddBankProvider>(context,
+                                              listen: false)
+                                          .updateRegisterAuthentication(true);
+                                      Provider.of<AddBankProvider>(context,
+                                              listen: false)
+                                          .updateSelectBankType(bankTypeDTO);
+                                      Provider.of<AddBankProvider>(context,
+                                              listen: false)
+                                          .resetValidate();
+                                      Navigator.pushNamed(
+                                        context,
+                                        Routes.ADD_BANK_CARD,
+                                        arguments: {
+                                          'pageIndex': 3,
+                                          'bankAccount': dto.bankAccount,
+                                          'name': dto.userBankName,
+                                        },
+                                      ).then((value) => bankCardBloc.add(
+                                          BankCardGetDetailEvent(
+                                              bankId: bankId)));
+                                    },
+                                    bgColor: DefaultTheme.TRANSPARENT,
+                                    textColor: DefaultTheme.GREEN,
+                                  ),
+                                ],
+                                const SizedBox(height: 10),
                               ],
                             ),
                           ),
