@@ -171,6 +171,10 @@ class AddBankProvider with ChangeNotifier {
   }
 
   bool isValidForm() {
+    print("errorNameTK : $errorNameTK - $_isInvalidUserBankName");
+    print("errorSDT : $errorSDT - $_isInValidPhoneAuthenticated");
+    print("errorCMT : $errorCMT - $_isInValidNationalId");
+    print("errorTk : $errorTk - $_isInvalidBankAccount");
     bool result = false;
     if (_isInvalidBankAccount &&
         _isInvalidUserBankName &&

@@ -46,16 +46,25 @@ class _InputAuthInformationViewState extends State<InputAuthInformationView> {
   late BankCardBloc bankCardBloc;
 
   void initialServices(BuildContext context) {
-    bankCardBloc = BlocProvider.of(context);
+    Provider.of<AddBankProvider>(context, listen: false)
+        .updateAgreeWithPolicy(false);
+    if (widget.bankAccountController.text.isNotEmpty) {
+      Provider.of<AddBankProvider>(context, listen: false)
+          .updateValidBankAccount(widget.bankAccountController.text);
+    }
+
+    if (widget.nameController.text.isNotEmpty) {
+      Provider.of<AddBankProvider>(context, listen: false)
+          .updateValidUserBankName(true);
+    }
   }
 
   @override
   void initState() {
     super.initState();
-    initialServices(context);
+    bankCardBloc = BlocProvider.of(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<AddBankProvider>(context, listen: false)
-          .updateAgreeWithPolicy(false);
+      initialServices(context);
     });
   }
 
