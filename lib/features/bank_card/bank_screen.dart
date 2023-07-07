@@ -784,7 +784,7 @@ class _StackedList extends State<StackedList> {
     return (dto.id.isNotEmpty)
         ? InkWell(
             onTap: () async {
-              final data = await Navigator.pushNamed(
+              await Navigator.pushNamed(
                 context,
                 Routes.BANK_CARD_DETAIL_VEW,
                 arguments: {
@@ -792,9 +792,7 @@ class _StackedList extends State<StackedList> {
                 },
               );
 
-              if (data is bool) {
-                getListBank();
-              }
+              getListBank();
             },
             child: Container(
               padding: const EdgeInsets.all(0),

@@ -41,7 +41,7 @@ void _registerAuthentication(BankCardEvent event, Emitter emit) async {
       final ResponseMessageDTO result =
           await bankCardRepository.updateRegisterAuthenticationBank(event.dto);
       if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
-        emit(BankCardUpdateAuthenticateSuccessState());
+        emit(BankCardUpdateAuthenticateSuccessState(event.dto.bankId));
       } else {
         emit(BankCardUpdateAuthenticateFailedState(
             msg: ErrorUtils.instance.getErrorMessage(result.message)));
