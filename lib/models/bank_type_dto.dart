@@ -2,6 +2,7 @@ class BankTypeDTO {
   final String id;
   final String bankCode;
   final String bankName;
+  final String? bankShortName;
   final String imageId;
   final int status;
   final String caiValue;
@@ -10,6 +11,7 @@ class BankTypeDTO {
     required this.id,
     required this.bankCode,
     required this.bankName,
+    this.bankShortName,
     required this.imageId,
     required this.status,
     required this.caiValue,
@@ -20,6 +22,7 @@ class BankTypeDTO {
       id: json['id'] ?? '',
       bankCode: json['bankCode'] ?? '',
       bankName: json['bankName'] ?? '',
+      bankShortName: json['bankShortName'] ?? '',
       imageId: json['imageId'] ?? '',
       status: json['status'] ?? 0,
       caiValue: json['caiValue'] ?? '',

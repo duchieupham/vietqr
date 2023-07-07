@@ -18,7 +18,7 @@ class NationalScannerDTO {
   });
 
   String convertDate(String data) {
-    if (data.isNotEmpty) {
+    if (data.isNotEmpty && data.length == 8) {
       String day = data.substring(0, 2);
       String month = data.substring(2, 4);
       String year = data.substring(4, data.length);

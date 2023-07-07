@@ -25,7 +25,16 @@ class SearchProvider with ChangeNotifier {
     role: 0,
   );
 
+  final msgController = TextEditingController();
+
   BusinessMemberDTO get dto => _dto;
+
+  bool isIcon = false;
+
+  void updateIcon(value) {
+    isIcon = value;
+    notifyListeners();
+  }
 
   void updateDTO(value) {
     _dto = value;
@@ -34,6 +43,22 @@ class SearchProvider with ChangeNotifier {
 
   void updateExisted(value) {
     _typeMember = value;
+    notifyListeners();
+  }
+
+  void updateMsg(value) {
+    msgController.value = msgController.value.copyWith(text: value.toString());
+    notifyListeners();
+  }
+
+  void clearMsgController() {
+    msgController.clear();
+    notifyListeners();
+  }
+
+  void reset() {
+    msgController.clear();
+    isIcon = false;
     notifyListeners();
   }
 }

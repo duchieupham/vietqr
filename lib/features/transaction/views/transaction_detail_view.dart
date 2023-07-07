@@ -208,7 +208,7 @@ class TransactionDetailView extends StatelessWidget {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SubHeader(title: 'Chi tiết giao dịch'),
+                  const SubHeader(title: 'Chi tiết giao dịch'),
                   Expanded(
                     child: RefreshIndicator(
                       onRefresh: () async {

@@ -1,0 +1,467 @@
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
+import 'package:vierqr/commons/constants/configurations/route.dart';
+import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/utils/file_utils.dart';
+import 'package:vierqr/commons/utils/platform_utils.dart';
+import 'package:vierqr/commons/widgets/ambient_avatar_widget.dart';
+import 'package:vierqr/commons/widgets/dialog_widget.dart';
+import 'package:vierqr/features/account/blocs/account_bloc.dart';
+import 'package:vierqr/features/account/events/account_event.dart';
+import 'package:vierqr/features/account/states/account_state.dart';
+import 'package:vierqr/features/personal/views/introduce_bottom_sheet.dart';
+import 'package:vierqr/models/introduce_dto.dart';
+import 'package:vierqr/services/providers/user_edit_provider.dart';
+import 'package:vierqr/services/shared_references/user_information_helper.dart';
+
+class IconData {
+  final String url;
+  final String name;
+
+  IconData({required this.url, required this.name});
+}
+
+List<IconData> listIcon = [
+  // IconData(
+  //   url: 'assets/images/ic-my-qr-setting.png',
+  //   name: 'QR của tôi',
+  // ),
+  IconData(
+    url: 'assets/images/ic-edit-personal-setting.png',
+    name: 'Cá nhân',
+  ),
+  IconData(
+    url: 'assets/images/ic-edit-avatar-setting.png',
+    name: 'Ảnh đại diện',
+  ),
+  IconData(
+    url: 'assets/images/ic-edit-password-setting.png',
+    name: 'Mật khẩu',
+  ),
+];
+
+class AccountScreen extends StatefulWidget {
+  const AccountScreen({super.key});
+
+  @override
+  State<AccountScreen> createState() => _AccountScreenState();
+}
+
+class _AccountScreenState extends State<AccountScreen> {
+  late AccountBloc _accountBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _accountBloc = BlocProvider.of(context);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _accountBloc.add(InitAccountEvent());
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final double width = MediaQuery.of(context).size.width;
+    return BlocConsumer<AccountBloc, AccountState>(
+      listener: (context, state) {},
+      builder: (context, state) {
+        return SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _BannerWidget(),
+              const SizedBox(height: 30),
+              _FeatureWidget(),
+              const SizedBox(height: 30),
+              _IntroduceWidget(dto: state.introduceDTO),
+              const SizedBox(height: 20),
+              _SettingWidget(),
+              const SizedBox(height: 16),
+              _buildLogOutWidget(),
+              const SizedBox(height: kToolbarHeight + 16),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildLogOutWidget() {
+    return GestureDetector(
+      child: Container(
+        alignment: Alignment.center,
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(Radius.circular(10)),
+          color: Theme.of(context).cardColor,
+          boxShadow: [
+            BoxShadow(
+              color: DefaultTheme.GREY_TEXT.withOpacity(0.2),
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: const Offset(0, 2), // changes position of shadow
+            ),
+          ],
+        ),
+        child: const Text(
+          'Đăng xuất',
+          style: TextStyle(
+            color: DefaultTheme.RED_TEXT,
+            fontSize: 15,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _BannerWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 220,
+      width: MediaQuery.of(context).size.width,
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/images/bg-qr.png'),
+          fit: BoxFit.fill,
+        ),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          _buildAvatarWidget(context),
+          const SizedBox(height: 16),
+          Text(
+            UserInformationHelper.instance.getUserFullname(),
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: DefaultTheme.WHITE,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            UserInformationHelper.instance.getPhoneNo(),
+            style: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+              color: DefaultTheme.WHITE,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAvatarWidget(BuildContext context) {
+    double size = 80;
+    String imgId = UserInformationHelper.instance.getAccountInformation().imgId;
+    return Consumer<UserEditProvider>(
+      builder: (context, provider, child) {
+        return (provider.imageFile != null)
+            ? AmbientAvatarWidget(
+                imgId: imgId,
+                size: size,
+                imageFile: provider.imageFile,
+              )
+            : (imgId.isEmpty)
+                ? ClipOval(
+                    child: SizedBox(
+                      width: size,
+                      height: size,
+                      child: Image.asset('assets/images/ic-avatar.png'),
+                    ),
+                  )
+                : AmbientAvatarWidget(imgId: imgId, size: size);
+      },
+    );
+  }
+}
+
+class _FeatureWidget extends StatelessWidget {
+  final ImagePicker imagePicker = ImagePicker();
+
+  void onTap(BuildContext context, int index) {
+    switch (index) {
+      case 0:
+        onNaviAccount(context);
+        break;
+      case 1:
+        onChangeAvatar();
+        break;
+      case 2:
+        onNaviPassword(context);
+        break;
+      case 3:
+      default:
+        () {
+          Navigator.of(context).pushNamed(Routes.USER_EDIT);
+        };
+    }
+  }
+
+  void onNaviAccount(BuildContext context) {
+    Navigator.of(context).pushNamed(Routes.USER_EDIT);
+  }
+
+  void onNaviPassword(BuildContext context) {
+    Navigator.of(context).pushNamed(Routes.UPDATE_PASSWORD);
+  }
+
+  void onChangeAvatar() async {
+    await Permission.mediaLibrary.request();
+    await imagePicker.pickImage(source: ImageSource.gallery).then(
+      (pickedFile) async {
+        if (pickedFile != null) {
+          File? file = File(pickedFile.path);
+          File? compressedFile = FileUtils.instance.compressImage(file);
+          // Provider.of<AddBusinessProvider>(context, listen: false)
+          //     .setImage(compressedFile);
+          await Future.delayed(const Duration(milliseconds: 200), () {
+            String userId = UserInformationHelper.instance.getUserId();
+            String imgId =
+                UserInformationHelper.instance.getAccountInformation().imgId;
+            // _userEditBloc.add(
+            //   UserEditAvatarEvent(
+            //       userId: userId, imgId: imgId, image: compressedFile),
+            // );
+          });
+        }
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: List.generate(listIcon.length, (index) {
+        return GestureDetector(
+          onTap: () {
+            onTap(context, index);
+          },
+          child: _buildItem(listIcon.elementAt(index)),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildItem(IconData data) {
+    return Column(
+      children: [
+        Container(
+          width: 60,
+          height: 60,
+          padding: const EdgeInsets.all(12),
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(30)),
+            color: DefaultTheme.WHITE,
+          ),
+          child: ClipRRect(
+            borderRadius: const BorderRadius.all(Radius.circular(30)),
+            child: Image.asset(data.url),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          data.name,
+          style: const TextStyle(fontSize: 15),
+        ),
+      ],
+    );
+  }
+}
+
+class _IntroduceWidget extends StatelessWidget {
+  final IntroduceDTO? dto;
+
+  const _IntroduceWidget({super.key, this.dto});
+
+  @override
+  Widget build(BuildContext context) {
+    final double height = MediaQuery.of(context).size.height;
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
+        color: Theme.of(context).cardColor,
+        boxShadow: [
+          BoxShadow(
+            color: DefaultTheme.GREY_TEXT.withOpacity(0.2),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: const Offset(0, 2), // changes position of shadow
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              const Text(
+                'Điểm thưởng : ',
+                style: TextStyle(
+                  color: DefaultTheme.GREY_TEXT,
+                  fontSize: 15,
+                ),
+              ),
+              Text(
+                dto?.point ?? '0',
+                style: const TextStyle(fontSize: 18),
+              ),
+              Image.asset(
+                'assets/images/ic_point.png',
+                width: 28,
+                height: 28,
+              ),
+            ],
+          ),
+          const Divider(),
+          GestureDetector(
+            onTap: () async {
+              final data = await DialogWidget.instance.showModelBottomSheet(
+                context: context,
+                padding: EdgeInsets.zero,
+                widget: IntroduceBottomSheet(introduceDTO: dto),
+                height: height * 0.6,
+              );
+            },
+            child: Row(
+              children: [
+                Image.asset(
+                  'assets/images/ic_share_code.png',
+                  width: 36,
+                  height: 36,
+                ),
+                const SizedBox(width: 8),
+                const Expanded(
+                  child: Text(
+                    'Giới thiệu VietQR VN',
+                    style: TextStyle(
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(16)),
+                    color: DefaultTheme.GREY_BG,
+                  ),
+                  child: const Icon(Icons.arrow_forward_ios, size: 12),
+                )
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SettingWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Text(
+            'Cài đặt',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(10)),
+              color: Theme.of(context).cardColor,
+              boxShadow: [
+                BoxShadow(
+                  color: DefaultTheme.GREY_TEXT.withOpacity(0.2),
+                  spreadRadius: 2,
+                  blurRadius: 5,
+                  offset: const Offset(0, 2), // changes position of shadow
+                ),
+              ],
+            ),
+            child: Column(
+              children: [
+                GestureDetector(
+                  onTap: () async {
+                    if (PlatformUtils.instance.isPhysicalDevice()) {
+                      if (PlatformUtils.instance.isAndroidApp()) {
+                        await Permission.bluetooth.request();
+                        await Permission.bluetoothScan.request();
+                        await Permission.bluetoothConnect.request();
+                      }
+                      await Permission.bluetooth.request().then((value) =>
+                          Navigator.pushNamed(context, Routes.PRINTER_SETTING));
+                    } else {
+                      Navigator.pushNamed(context, Routes.PRINTER_SETTING);
+                    }
+                  },
+                  child: Row(
+                    children: [
+                      Image.asset(
+                        'assets/images/ic-printer-setting.png',
+                        width: 36,
+                        height: 36,
+                      ),
+                      const SizedBox(width: 8),
+                      const Expanded(
+                        child: Text(
+                          'Cài đặt máy in',
+                          style: TextStyle(
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(),
+                GestureDetector(
+                  onTap: () async {
+                    Navigator.of(context).pushNamed(Routes.UI_SETTING);
+                  },
+                  child: Row(
+                    children: [
+                      Image.asset(
+                        'assets/images/ic-theme-setting.png',
+                        width: 36,
+                        height: 36,
+                      ),
+                      const SizedBox(width: 8),
+                      const Expanded(
+                        child: Text(
+                          'Thay đổi giao diện',
+                          style: TextStyle(
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

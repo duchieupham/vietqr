@@ -105,6 +105,7 @@ class _InputInformationBankWidgetState
         }
 
         if (state is BankCardSearchNameFailedState) {
+          nameController.clear();
           Provider.of<AddBankProvider>(context, listen: false)
               .setEnableNameTK(true);
           Navigator.pop(context);

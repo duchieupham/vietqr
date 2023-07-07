@@ -1,13 +1,10 @@
-import 'package:flutter/cupertino.dart';
-
-import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:hive/hive.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/commons/enums/check_type.dart';
 import 'package:vierqr/commons/utils/log.dart';
+import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/features/business/repositories/business_information_repository.dart';
 import 'package:vierqr/models/introduce_dto.dart';
@@ -101,10 +98,10 @@ class _IntroduceBottomSheetState extends State<IntroduceBottomSheet> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         _buildItemIntroduce('Mã giới thiệu',
-                            widget.introduceDTO?.sharingCode ?? 'avasvsav'),
+                            widget.introduceDTO?.sharingCode ?? ''),
                         const SizedBox(height: 20),
                         _buildItemIntroduce('Link giới thiệu',
-                            widget.introduceDTO?.walletId ?? 'vasasvasv'),
+                            widget.introduceDTO?.sharingCodeLink ?? ''),
                       ],
                     ),
                   ),
@@ -123,6 +120,11 @@ class _IntroduceBottomSheetState extends State<IntroduceBottomSheet> {
                   ),
                   const SizedBox(height: 12),
                   GestureDetector(
+                    onTap: () async {
+                      Share.share(
+                        'Đăng ký thành viên mới của VietQR VN ngay! Cùng trải nghiệm những tiện ích và ưu đãi mà chúng tôi mang lại bằng cách nhập mã “${widget.introduceDTO?.sharingCode ?? ''}” khi đăng ký tại https://vietqr.vn/register hoặc trên ứng dụng di động.',
+                      );
+                    },
                     child: Container(
                       padding: const EdgeInsets.all(12),
                       decoration: const BoxDecoration(
@@ -156,6 +158,18 @@ class _IntroduceBottomSheetState extends State<IntroduceBottomSheet> {
     );
   }
 
+  // Future<void> share({required QRGeneratedDTO dto}) async {
+  //   await Future.delayed(const Duration(milliseconds: 200), () async {
+  //     await ShareUtils.instance
+  //         .shareImage(
+  //           textSharing:
+  //               '${dto.bankAccount} - ${dto.bankName}\nĐược tạo bởi vietqr.vn - Hotline 19006234'
+  //                   .trim(),
+  //         )
+  //         .then((value) => _waterMarkProvider.updateWaterMark(false));
+  //   });
+  // }
+
   Widget _buildItemIntroduce(String title, String data) {
     return GestureDetector(
       onTap: () async {
@@ -180,6 +194,8 @@ class _IntroduceBottomSheetState extends State<IntroduceBottomSheet> {
                 Expanded(
                   child: Text(
                     data,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                         fontSize: 14, color: DefaultTheme.GREY_TEXT),
                   ),

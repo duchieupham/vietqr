@@ -7,6 +7,8 @@ enum BlocStatus {
   AWAIT,
   SUCCESS,
   DONE,
+  DELETE,
+  INSERT,
 }
 
 enum TypeSelect {

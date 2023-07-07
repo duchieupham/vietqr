@@ -30,13 +30,11 @@ class UserSetting extends StatefulWidget {
 
 class _UserSetting extends State<UserSetting>
     with AutomaticKeepAliveClientMixin {
-  static late LoginBloc _loginBloc;
   static late LogoutBloc _logoutBloc;
 
   @override
   void initState() {
     super.initState();
-    _loginBloc = BlocProvider.of(context);
     _logoutBloc = BlocProvider.of(context);
   }
 

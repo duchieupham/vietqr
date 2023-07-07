@@ -6,7 +6,7 @@ import 'package:vierqr/features/bank_card/views/choose_bank_plan_view.dart';
 import 'package:vierqr/features/bank_card/views/input_auth_information_view.dart';
 import 'package:vierqr/features/bank_card/views/input_information_bank_widget.dart';
 import 'package:vierqr/features/bank_card/views/policy_bank_view.dart';
-import 'package:vierqr/features/bank_card/views/select_bank_type_widget.dart';
+import 'package:vierqr/features/bank_type/select_bank_type_widget.dart';
 import 'package:vierqr/features/bank_type/blocs/bank_type_bloc.dart';
 import 'package:vierqr/features/bank_type/events/bank_type_event.dart';
 import 'package:vierqr/features/home/widgets/custom_app_bar_widget.dart';
@@ -130,7 +130,7 @@ class _AddBankCardViewState extends State<AddBankCardView> {
                   _hideKeyboardBack(context);
                 },
                 callBackHome: () {
-                  _hideKeyboardBack(context);
+                  _hideKeyboardBack(context, isFirst: true);
                 },
               );
             },
@@ -184,15 +184,23 @@ class _AddBankCardViewState extends State<AddBankCardView> {
     }
   }
 
-  void _hideKeyboardBack(BuildContext context) {
+  void _hideKeyboardBack(BuildContext context, {bool isFirst = false}) {
     double bottom = WidgetsBinding.instance.window.viewInsets.bottom;
     if (bottom > 0.0) {
       FocusManager.instance.primaryFocus?.unfocus();
       Future.delayed(const Duration(milliseconds: 250), () {
-        _navigateBack(context);
+        if (isFirst) {
+          Navigator.of(context).popUntil((route) => route.isFirst);
+        } else {
+          _navigateBack(context);
+        }
       });
     } else {
-      _navigateBack(context);
+      if (isFirst) {
+        Navigator.of(context).popUntil((route) => route.isFirst);
+      } else {
+        _navigateBack(context);
+      }
     }
   }
 

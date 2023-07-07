@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/enums/check_type.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
@@ -18,9 +19,11 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/commons/widgets/sub_header_widget.dart';
 import 'package:vierqr/commons/widgets/viet_qr_widget.dart';
+import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_card/events/bank_card_event.dart';
 import 'package:vierqr/features/bank_card/states/bank_card_state.dart';
+import 'package:vierqr/features/bank_card/states/bank_state.dart';
 import 'package:vierqr/features/generate_qr/views/create_qr.dart';
 import 'package:vierqr/features/home/widgets/custom_app_bar_widget.dart';
 import 'package:vierqr/features/printer/views/printing_view.dart';
@@ -39,7 +42,7 @@ import 'package:vierqr/services/shared_references/user_information_helper.dart';
 import 'package:vierqr/services/sqflite/local_database.dart';
 
 class BankCardDetailView extends StatelessWidget {
-  static late BankCardBloc bankCardBloc;
+  static late BankBloc bankCardBloc;
 
   static QRGeneratedDTO qrGeneratedDTO = const QRGeneratedDTO(
       bankCode: '',
@@ -107,13 +110,9 @@ class BankCardDetailView extends StatelessWidget {
                       bankCardBloc.add(BankCardGetDetailEvent(bankId: bankId));
                     }
                   }
-                  return BlocConsumer<BankCardBloc, BankCardState>(
-                    listener: (context, state) {
-                      if (state is BankCardRemoveLoadingState) {
-                        DialogWidget.instance.openLoadingDialog();
-                      }
-                      if (state is BankCardRemoveSuccessState) {
-                        Navigator.pop(context);
+                  return BlocConsumer<BankBloc, BankState>(
+                    listener: (context, state) async {
+                      if (state.status == BlocStatus.DELETE) {
                         Fluttertoast.showToast(
                           msg: 'Đã xoá TK ngân hàng',
                           toastLength: Toast.LENGTH_SHORT,
@@ -122,32 +121,37 @@ class BankCardDetailView extends StatelessWidget {
                           textColor: Theme.of(context).hintColor,
                           fontSize: 15,
                         );
+
                         if (Navigator.canPop(context)) {
-                          Navigator.pop(context);
+                          Navigator.pop(context, true);
                         }
                       }
-                      if (state is BankCardRemoveFailedState) {
+                      if (state.status == BlocStatus.ERROR) {
                         Navigator.pop(context);
-                        DialogWidget.instance.openMsgDialog(
+                        await DialogWidget.instance.openMsgDialog(
                           title: 'Không thể xoá tài khoản',
-                          msg: state.message,
+                          msg: state.msg ?? '',
                         );
                       }
                     },
                     builder: (context, state) {
-                      if (state is BankCardGetDetailLoadingState) {
-                        return const UnconstrainedBox(
-                          child: SizedBox(
-                            width: 50,
-                            height: 50,
-                            child: CircularProgressIndicator(
-                              color: DefaultTheme.GREEN,
+                      if (state.status == BlocStatus.LOADING) {
+                        return const Center(
+                          child: UnconstrainedBox(
+                            child: SizedBox(
+                              width: 50,
+                              height: 50,
+                              child: CircularProgressIndicator(
+                                color: DefaultTheme.GREEN,
+                              ),
                             ),
                           ),
                         );
                       }
-                      if (state is BankCardGetDetailSuccessState) {
-                        dto = state.dto;
+                      if (state.status == BlocStatus.SUCCESS) {
+                        if (state.bankDetailDTO != null) {
+                          dto = state.bankDetailDTO!;
+                        }
                         qrGeneratedDTO = QRGeneratedDTO(
                             bankCode: dto.bankCode,
                             bankName: dto.bankName,
@@ -512,7 +516,6 @@ class BankCardDetailView extends StatelessWidget {
                 MaterialPageRoute(
                   builder: (context) => CreateQR(
                     bankAccountDTO: bankAccountDTO,
-                    bankCardBloc: bankCardBloc,
                   ),
                 ),
               );

@@ -32,6 +32,7 @@ class NationalInformationView extends StatelessWidget {
     final double height = MediaQuery.of(context).size.height;
     final arg = ModalRoute.of(context)!.settings.arguments as Map;
     NationalScannerDTO dto = arg['dto'];
+    bool isPop = arg['isPop'] ?? false;
     initialServices(context);
     return Scaffold(
       appBar: AppBar(
@@ -148,7 +149,9 @@ class NationalInformationView extends StatelessWidget {
                         }
                         if (state is UserEditSuccessfulState) {
                           //pop loading dialog
-                          Navigator.of(context).pop();
+                          if (!isPop) {
+                            Navigator.of(context).pop();
+                          }
                           Provider.of<SuggestionWidgetProvider>(context,
                                   listen: false)
                               .updateUserUpdating(false);
@@ -163,7 +166,9 @@ class NationalInformationView extends StatelessWidget {
                             webBgColor: 'rgba(255, 255, 255)',
                             webPosition: 'center',
                           );
-                          Navigator.pop(context);
+                          if (!isPop) {
+                            Navigator.pop(context);
+                          }
                         }
                       },
                       child: ButtonIconWidget(
@@ -181,7 +186,7 @@ class NationalInformationView extends StatelessWidget {
                             firstName: namePaths[0].trim(),
                             middleName: namePaths[1].trim(),
                             lastName: namePaths[2].trim(),
-                            birthDate: dto.birthdate,
+                            birthDate: dto.getBirth,
                             gender: gender,
                             address: dto.address,
                             email: UserInformationHelper.instance

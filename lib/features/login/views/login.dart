@@ -1,3 +1,4 @@
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:uuid/uuid.dart';
@@ -69,8 +70,18 @@ class _Login extends State<Login> {
           Navigator.of(context).popUntil((route) => route.isFirst);
           Navigator.of(context).pushReplacementNamed(Routes.HOME, arguments: {
             'isFromLogin': true,
-            'isLogoutEnterHome': isLogoutEnterHome
+            'isLogoutEnterHome': isLogoutEnterHome,
           });
+          if (state.isToast) {
+            Fluttertoast.showToast(
+              msg: 'Đăng ký thành công',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              backgroundColor: Theme.of(context).cardColor,
+              textColor: Theme.of(context).hintColor,
+              fontSize: 15,
+            );
+          }
         }
         if (state is LoginFailedState) {
           FocusManager.instance.primaryFocus?.unfocus();
@@ -238,18 +249,35 @@ class _Login extends State<Login> {
                 borderRadius: 5,
                 textColor: DefaultTheme.WHITE,
                 bgColor: DefaultTheme.BLUE_TEXT,
-                function: () {
+                function: () async {
                   final keyboardHeight =
                       MediaQuery.of(context).viewInsets.bottom;
                   if (keyboardHeight > 0.0) {
                     FocusManager.instance.primaryFocus?.unfocus();
                   }
-                  Navigator.of(context).push(
+                  final data = await Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) =>
                           RegisterScreen(phoneNo: phoneNoController.text),
                     ),
                   );
+
+                  if (data is Map) {
+                    AccountLoginDTO dto = AccountLoginDTO(
+                      phoneNo: data['phone'],
+                      password: EncryptUtils.instance.encrypted(
+                        data['phone'],
+                        data['password'],
+                      ),
+                      device: '',
+                      fcmToken: '',
+                      platform: '',
+                    );
+                    if (!mounted) return;
+                    context
+                        .read<LoginBloc>()
+                        .add(LoginEventByPhone(dto: dto, isToast: true));
+                  }
                 },
               ),
             ],

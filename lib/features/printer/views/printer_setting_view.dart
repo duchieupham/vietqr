@@ -142,7 +142,7 @@ class PrinterSettingView extends StatelessWidget {
       ),
       body: Column(
         children: [
-          SubHeader(title: 'Cài đặt máy in'),
+          const SubHeader(title: 'Cài đặt máy in'),
           Expanded(
             child: BlocConsumer<PrinterBloc, PrinterState>(
               listener: (context, state) {
