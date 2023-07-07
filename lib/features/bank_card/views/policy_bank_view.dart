@@ -125,11 +125,32 @@ class PolicyBankView extends StatelessWidget {
             );
           }
           if (state is BankCardUpdateAuthenticateSuccessState) {
+            BankTypeDTO bankTypeDTO =
+                Provider.of<AddBankProvider>(context, listen: false)
+                    .bankTypeDTO;
+            BankAccountDTO dto = BankAccountDTO(
+              imgId: bankTypeDTO.imageId,
+              bankCode: bankTypeDTO.bankCode,
+              bankName: bankTypeDTO.bankName,
+              bankAccount: bankAccountController.text,
+              userBankName: nameController.text,
+              id: '',
+              type: Provider.of<AddBankProvider>(context, listen: false).type,
+              branchId: '',
+              branchName: '',
+              businessId: '',
+              businessName: '',
+              isAuthenticated: false,
+            );
+            Navigator.pop(context);
             phoneAuthenController.clear();
             nameController.clear();
             nationalController.clear();
             bankAccountController.clear();
-            Navigator.pop(context);
+            Navigator.of(context).pushReplacementNamed(
+              Routes.BANK_CARD_GENERATED_VIEW,
+              arguments: {'bankAccountDTO': dto},
+            );
           }
           if (state is BankCardUpdateAuthenticateFailedState) {
             DialogWidget.instance.openMsgDialog(
