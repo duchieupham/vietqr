@@ -6,6 +6,7 @@ import 'package:rive/rive.dart' as rive;
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/widgets/bank_card_widget.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
@@ -137,11 +138,12 @@ class _BankCardGeneratedView extends State<BankCardGeneratedView> {
                               Provider.of<AddBankProvider>(context,
                                       listen: false)
                                   .reset();
-                              Future.delayed(const Duration(milliseconds: 800),
+                              Future.delayed(const Duration(milliseconds: 0),
                                   () {
                                 Navigator.popUntil(
                                     context, (route) => route.isFirst);
                               });
+                              eventBus.fire(ChangeThemeEvent());
                             },
                           ),
                           const Padding(padding: EdgeInsets.only(left: 10)),
