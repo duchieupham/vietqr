@@ -193,8 +193,8 @@ class QRInformationView extends StatelessWidget {
                                                 },
                                               );
                                             },
-                                            bgColor: DefaultTheme.GREEN,
-                                            textColor: DefaultTheme.WHITE,
+                                            bgColor: AppColor.GREEN,
+                                            textColor: AppColor.WHITE,
                                           ),
                                           const Padding(
                                               padding:
@@ -295,7 +295,7 @@ class QRInformationView extends StatelessWidget {
                     }
                   },
                   bgColor: Theme.of(context).cardColor,
-                  textColor: DefaultTheme.ORANGE,
+                  textColor: AppColor.ORANGE,
                 ),
                 const Padding(
                   padding: EdgeInsets.only(left: 10),
@@ -321,7 +321,7 @@ class QRInformationView extends StatelessWidget {
                     );
                   },
                   bgColor: Theme.of(context).cardColor,
-                  textColor: DefaultTheme.RED_CALENDAR,
+                  textColor: AppColor.RED_CALENDAR,
                 ),
                 const Padding(
                   padding: EdgeInsets.only(left: 10),
@@ -352,7 +352,7 @@ class QRInformationView extends StatelessWidget {
                     );
                   },
                   bgColor: Theme.of(context).cardColor,
-                  textColor: DefaultTheme.BLUE_TEXT,
+                  textColor: AppColor.BLUE_TEXT,
                 ),
                 const Padding(
                   padding: EdgeInsets.only(left: 10),
@@ -377,7 +377,7 @@ class QRInformationView extends StatelessWidget {
                     );
                   },
                   bgColor: Theme.of(context).cardColor,
-                  textColor: DefaultTheme.GREEN,
+                  textColor: AppColor.GREEN,
                 ),
               ],
             ),
@@ -423,8 +423,8 @@ class QRInformationView extends StatelessWidget {
                               'Thêm tài khoản ngân hàng để sử dụng chức năng này.');
                     }
                   },
-                  textColor: DefaultTheme.WHITE,
-                  bgColor: DefaultTheme.GREEN,
+                  textColor: AppColor.WHITE,
+                  bgColor: AppColor.GREEN,
                 ),
                 const Padding(padding: EdgeInsets.only(left: 10)),
                 ButtonIconWidget(
@@ -459,8 +459,8 @@ class QRInformationView extends StatelessWidget {
                               'Thêm tài khoản ngân hàng để sử dụng chức năng này.');
                     }
                   },
-                  textColor: DefaultTheme.WHITE,
-                  bgColor: DefaultTheme.GREEN,
+                  textColor: AppColor.WHITE,
+                  bgColor: AppColor.GREEN,
                 ),
               ],
             ),
@@ -486,9 +486,9 @@ class QRInformationView extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 5),
       decoration: BoxDecoration(
         border: (isSelected)
-            ? Border.all(color: DefaultTheme.GREY_LIGHT, width: 0.5)
+            ? Border.all(color: AppColor.GREY_LIGHT, width: 0.5)
             : null,
-        color: (isSelected) ? DefaultTheme.WHITE : DefaultTheme.GREY_LIGHT,
+        color: (isSelected) ? AppColor.WHITE : AppColor.GREY_LIGHT,
         borderRadius: BorderRadius.circular(10),
       ),
     );

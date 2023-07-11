@@ -9,6 +9,7 @@ import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
+import 'package:vierqr/commons/widgets/phone_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_custom.dart';
 import 'package:vierqr/features/login/blocs/login_bloc.dart';
 import 'package:vierqr/features/login/events/login_event.dart';
@@ -16,22 +17,34 @@ import 'package:vierqr/features/login/frames/login_frame.dart';
 import 'package:vierqr/features/login/states/login_state.dart';
 import 'package:vierqr/features/register/views/register_screen.dart';
 import 'package:vierqr/layouts/box_layout.dart';
+import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/account_login_dto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/services/providers/login_provider.dart';
 
-class Login extends StatefulWidget {
+class Login extends StatelessWidget {
   const Login({Key? key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _Login();
+  Widget build(BuildContext context) {
+    return BlocProvider<LoginBloc>(
+      create: (BuildContext context) => LoginBloc(),
+      child: _Login(),
+    );
+  }
 }
 
-class _Login extends State<Login> {
+class _Login extends StatefulWidget {
+  @override
+  State<_Login> createState() => _LoginState();
+}
+
+class _LoginState extends State<_Login> {
   final TextEditingController phoneNoController = TextEditingController();
 
   String code = '';
+
   Uuid uuid = const Uuid();
 
   @override
@@ -102,16 +115,23 @@ class _Login extends State<Login> {
             FocusManager.instance.primaryFocus?.unfocus();
           },
           child: Scaffold(
-            body: LoginFrame(
-              width: width,
-              height: height,
-              padding: EdgeInsets.zero,
-              widget1: _buildWidget1(
-                width: width,
-                isResized: PlatformUtils.instance.resizeWhen(width, 750),
-              ),
-              widget2: _buildWidget2(context: context),
+            appBar: const MAppBar(
+              title: 'Đăng nhập',
+              isLeading: false,
             ),
+            body: PhoneWidget(
+              onChanged: (value) {},
+            ),
+            // body: LoginFrame(
+            //   width: width,
+            //   height: height,
+            //   padding: EdgeInsets.zero,
+            //   widget1: _buildWidget1(
+            //     width: width,
+            //     isResized: PlatformUtils.instance.resizeWhen(width, 750),
+            //   ),
+            //   widget2: _buildWidget2(context: context),
+            // ),
           ),
         );
       },
@@ -191,8 +211,8 @@ class _Login extends State<Login> {
                 height: 40,
                 text: 'Đăng nhập',
                 borderRadius: 5,
-                textColor: DefaultTheme.WHITE,
-                bgColor: DefaultTheme.GREEN,
+                textColor: AppColor.WHITE,
+                bgColor: AppColor.GREEN,
                 function: () {
                   openPinDialog(context);
                 },
@@ -231,7 +251,7 @@ class _Login extends State<Login> {
                         'hoặc',
                         style: TextStyle(
                           fontSize: 13,
-                          color: DefaultTheme.GREY_TEXT,
+                          color: AppColor.GREY_TEXT,
                         ),
                       ),
                     ),
@@ -247,8 +267,8 @@ class _Login extends State<Login> {
                 height: 40,
                 text: 'Đăng ký',
                 borderRadius: 5,
-                textColor: DefaultTheme.WHITE,
-                bgColor: DefaultTheme.BLUE_TEXT,
+                textColor: AppColor.WHITE,
+                bgColor: AppColor.BLUE_TEXT,
                 function: () async {
                   final keyboardHeight =
                       MediaQuery.of(context).viewInsets.bottom;
@@ -258,7 +278,7 @@ class _Login extends State<Login> {
                   final data = await Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) =>
-                          RegisterScreen(phoneNo: phoneNoController.text),
+                          Register(phoneNo: phoneNoController.text),
                     ),
                   );
 
@@ -303,7 +323,7 @@ class _Login extends State<Login> {
             borderRadius: 5,
             enableShadow: true,
             alignment: Alignment.center,
-            bgColor: DefaultTheme.WHITE,
+            bgColor: AppColor.WHITE,
             padding: const EdgeInsets.all(0),
             child: QrImage(
               data: code,

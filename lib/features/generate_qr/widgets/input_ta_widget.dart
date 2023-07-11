@@ -32,7 +32,7 @@ class InputTAWidget extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
-                      color: DefaultTheme.GREEN,
+                      color: AppColor.GREEN,
                     ),
                     children: [
                       TextSpan(

@@ -225,7 +225,7 @@ class _InputInformationBankWidgetState
                         'Lưu ý: Đối với loại tài khoản ngân hàng doanh nghiệp, "Chủ TK" ứng với tên của doanh nghiệp',
                         style: TextStyle(
                           fontSize: 13,
-                          color: DefaultTheme.GREY_TEXT,
+                          color: AppColor.GREY_TEXT,
                         ),
                       ),
                     ),
@@ -305,7 +305,7 @@ class _InputInformationBankWidgetState
                                 provider.errorTk ?? '',
                                 style: const TextStyle(
                                   fontSize: 12,
-                                  color: DefaultTheme.RED_TEXT,
+                                  color: AppColor.RED_TEXT,
                                 ),
                               ),
                             ),
@@ -318,7 +318,7 @@ class _InputInformationBankWidgetState
                                 provider.errorNameTK ?? '',
                                 style: const TextStyle(
                                   fontSize: 12,
-                                  color: DefaultTheme.RED_TEXT,
+                                  color: AppColor.RED_TEXT,
                                 ),
                               ),
                             ),
@@ -337,8 +337,8 @@ class _InputInformationBankWidgetState
                         ? ButtonWidget(
                             width: width,
                             text: 'Tiếp theo',
-                            textColor: DefaultTheme.WHITE,
-                            bgColor: DefaultTheme.GREEN,
+                            textColor: AppColor.WHITE,
+                            bgColor: AppColor.GREEN,
                             function: () async {
                               FocusManager.instance.primaryFocus?.unfocus();
                               if (provider.isValidFormUnauthentication()) {
@@ -361,8 +361,8 @@ class _InputInformationBankWidgetState
                         : ButtonWidget(
                             width: width,
                             text: 'Thêm',
-                            textColor: DefaultTheme.WHITE,
-                            bgColor: DefaultTheme.GREEN,
+                            textColor: AppColor.WHITE,
+                            bgColor: AppColor.GREEN,
                             function: () {
                               if (provider.isValidFormUnauthentication()) {
                                 String bankTypeId =
@@ -459,7 +459,7 @@ class _InputInformationBankWidgetState
           height: size - 10,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(size - 10),
-            color: DefaultTheme.WHITE,
+            color: AppColor.WHITE,
             boxShadow: [
               BoxShadow(
                 color: Theme.of(context).shadowColor.withOpacity(0.3),

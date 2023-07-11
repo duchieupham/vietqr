@@ -102,7 +102,7 @@ class _QRGenerated extends State<QRGenerated> {
                       }
                     },
                     bgColor: Theme.of(context).cardColor,
-                    textColor: DefaultTheme.ORANGE,
+                    textColor: AppColor.ORANGE,
                   ),
                   const Padding(padding: EdgeInsets.only(left: 10)),
                   ButtonIconWidget(
@@ -132,7 +132,7 @@ class _QRGenerated extends State<QRGenerated> {
                       });
                     },
                     bgColor: Theme.of(context).cardColor,
-                    textColor: DefaultTheme.RED_CALENDAR,
+                    textColor: AppColor.RED_CALENDAR,
                   ),
                   const Padding(padding: EdgeInsets.only(left: 10)),
                   ButtonIconWidget(
@@ -158,7 +158,7 @@ class _QRGenerated extends State<QRGenerated> {
                       );
                     },
                     bgColor: Theme.of(context).cardColor,
-                    textColor: DefaultTheme.BLUE_TEXT,
+                    textColor: AppColor.BLUE_TEXT,
                   ),
                   const Padding(padding: EdgeInsets.only(left: 10)),
                   ButtonIconWidget(
@@ -170,7 +170,7 @@ class _QRGenerated extends State<QRGenerated> {
                       await share(dto: qrGeneratedDTO);
                     },
                     bgColor: Theme.of(context).cardColor,
-                    textColor: DefaultTheme.GREEN,
+                    textColor: AppColor.GREEN,
                   ),
                 ],
               ),
@@ -189,8 +189,8 @@ class _QRGenerated extends State<QRGenerated> {
                 function: () {
                   Navigator.of(context).popUntil((route) => route.isFirst);
                 },
-                bgColor: DefaultTheme.GREEN,
-                textColor: DefaultTheme.WHITE,
+                bgColor: AppColor.GREEN,
+                textColor: AppColor.WHITE,
               ),
             ),
           ),
@@ -269,7 +269,7 @@ class _QRGenerated extends State<QRGenerated> {
                           textAlign: TextAlign.right,
                           text: const TextSpan(
                             style: TextStyle(
-                              color: DefaultTheme.WHITE,
+                              color: AppColor.WHITE,
                               fontSize: 12,
                             ),
                             children: [

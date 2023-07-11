@@ -202,8 +202,8 @@ class NationalInformationView extends StatelessWidget {
                             ),
                           );
                         },
-                        bgColor: DefaultTheme.GREEN,
-                        textColor: DefaultTheme.WHITE,
+                        bgColor: AppColor.GREEN,
+                        textColor: AppColor.WHITE,
                       ),
                     ),
                     const Padding(padding: EdgeInsets.only(left: 10)),
@@ -216,7 +216,7 @@ class NationalInformationView extends StatelessWidget {
                         Navigator.pop(context);
                       },
                       bgColor: Theme.of(context).cardColor,
-                      textColor: DefaultTheme.GREEN,
+                      textColor: AppColor.GREEN,
                     )
                   ],
                 ),
@@ -245,7 +245,7 @@ class NationalInformationView extends StatelessWidget {
             child: Text(
               title,
               style: const TextStyle(
-                color: DefaultTheme.GREY_TEXT,
+                color: AppColor.GREY_TEXT,
               ),
             ),
           ),

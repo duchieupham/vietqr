@@ -56,8 +56,8 @@ class SliverHeaderOld extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            DefaultTheme.BLACK.withOpacity(0.2),
-            DefaultTheme.BLACK.withOpacity(0.7),
+            AppColor.BLACK.withOpacity(0.2),
+            AppColor.BLACK.withOpacity(0.7),
           ],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
@@ -85,7 +85,7 @@ class SliverHeaderOld extends StatelessWidget {
           ),
           child: const Icon(
             Icons.arrow_back_ios_rounded,
-            color: DefaultTheme.WHITE,
+            color: AppColor.WHITE,
             size: 20,
           ),
         ),
@@ -110,7 +110,7 @@ class SliverHeaderOld extends StatelessWidget {
                 borderRadius: BorderRadius.circular(
                   Tween<double>(begin: 30, end: 10).evaluate(animation),
                 ),
-                color: DefaultTheme.WHITE,
+                color: AppColor.WHITE,
                 image: DecorationImage(
                   fit: BoxFit.contain,
                   image: AssetImage(
@@ -156,7 +156,7 @@ class SliverHeaderOld extends StatelessWidget {
                     fontSize:
                         Tween<double>(begin: 0, end: 20).evaluate(animation),
                     fontWeight: FontWeight.w500,
-                    color: DefaultTheme.WHITE),
+                    color: AppColor.WHITE),
               ),
             ),
             const Padding(padding: EdgeInsets.only(top: 5)),
@@ -197,7 +197,7 @@ class SliverHeaderOld extends StatelessWidget {
                         style: TextStyle(
                           fontSize: Tween<double>(begin: 13, end: 15)
                               .evaluate(animation),
-                          color: DefaultTheme.GREY_TEXT,
+                          color: AppColor.GREY_TEXT,
                         ),
                       ),
                     ),
@@ -228,7 +228,7 @@ class SliverHeaderOld extends StatelessWidget {
                         style: TextStyle(
                           fontSize: Tween<double>(begin: 13, end: 15)
                               .evaluate(animation),
-                          color: DefaultTheme.GREEN,
+                          color: AppColor.GREEN,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

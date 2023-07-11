@@ -53,8 +53,8 @@ class SliverHeader extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            DefaultTheme.BLACK.withOpacity(0.2),
-            DefaultTheme.BLACK.withOpacity(0.7),
+            AppColor.BLACK.withOpacity(0.2),
+            AppColor.BLACK.withOpacity(0.7),
           ],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
@@ -110,7 +110,7 @@ class SliverHeader extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               maxLines: 3,
               style: TextStyle(
-                color: DefaultTheme.WHITE,
+                color: AppColor.WHITE,
                 fontSize: Tween<double>(begin: 15, end: 20).evaluate(animation),
                 fontWeight: FontWeight.bold,
               ),
@@ -129,7 +129,7 @@ class SliverHeader extends StatelessWidget {
         width: width,
         height: (width - 20) / 1.2,
         decoration: BoxDecoration(
-          color: DefaultTheme.GREY_TEXT,
+          color: AppColor.GREY_TEXT,
           image: (coverImgId.isNotEmpty)
               ? DecorationImage(
                   image: ImageUtils.instance.getImageNetWork(coverImgId),

@@ -26,8 +26,8 @@ class BorderLayout extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border.all(
             color: (isError)
-                ? DefaultTheme.RED_TEXT
-                : DefaultTheme.GREY_TOP_TAB_BAR,
+                ? AppColor.RED_TEXT
+                : AppColor.GREY_TOP_TAB_BAR,
             width: 0.5),
         borderRadius: BorderRadius.circular(5),
       ),

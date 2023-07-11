@@ -242,7 +242,7 @@ class _InputAuthInformationViewState extends State<InputAuthInformationView> {
                                   provider.errorCMT ?? '',
                                   style: const TextStyle(
                                     fontSize: 12,
-                                    color: DefaultTheme.RED_TEXT,
+                                    color: AppColor.RED_TEXT,
                                   ),
                                 ),
                               ),
@@ -253,7 +253,7 @@ class _InputAuthInformationViewState extends State<InputAuthInformationView> {
                                   provider.errorSDT ?? '',
                                   style: const TextStyle(
                                     fontSize: 12,
-                                    color: DefaultTheme.RED_TEXT,
+                                    color: AppColor.RED_TEXT,
                                   ),
                                 ),
                               ),
@@ -280,7 +280,7 @@ class _InputAuthInformationViewState extends State<InputAuthInformationView> {
                             '- Đối với loại tài khoản ngân hàng doanh nghiệp, “CCCD/CMT” tương ứng với Mã số Giấy phép kinh doanh (GPKD).',
                             style: TextStyle(
                               fontSize: 13,
-                              color: DefaultTheme.GREY_TEXT,
+                              color: AppColor.GREY_TEXT,
                             ),
                           ),
                           SizedBox(height: 4),
@@ -288,7 +288,7 @@ class _InputAuthInformationViewState extends State<InputAuthInformationView> {
                             '- Số điện thoại phải trùng khớp với thông tin đăng ký tài khoản ngân hàng.',
                             style: TextStyle(
                               fontSize: 13,
-                              color: DefaultTheme.GREY_TEXT,
+                              color: AppColor.GREY_TEXT,
                             ),
                           ),
                           SizedBox(height: 4),
@@ -296,7 +296,7 @@ class _InputAuthInformationViewState extends State<InputAuthInformationView> {
                             '- CCCD/CMT và GPKD phải trùng khớp với thông tin đăng ký tài khoản ngân hàng.',
                             style: TextStyle(
                               fontSize: 13,
-                              color: DefaultTheme.GREY_TEXT,
+                              color: AppColor.GREY_TEXT,
                             ),
                           ),
                         ],
@@ -313,8 +313,8 @@ class _InputAuthInformationViewState extends State<InputAuthInformationView> {
                       ButtonWidget(
                         width: width / 2 - 15,
                         text: 'Bỏ qua',
-                        textColor: DefaultTheme.GREEN,
-                        bgColor: DefaultTheme.WHITE,
+                        textColor: AppColor.GREEN,
+                        bgColor: AppColor.WHITE,
                         function: () {
                           provider.updateRegisterAuthentication(false);
                           if (provider.isValidFormUnauthentication()) {
@@ -338,8 +338,8 @@ class _InputAuthInformationViewState extends State<InputAuthInformationView> {
                       ButtonWidget(
                         width: width / 2 - 15,
                         text: 'Xác thực',
-                        textColor: DefaultTheme.WHITE,
-                        bgColor: DefaultTheme.GREEN,
+                        textColor: AppColor.WHITE,
+                        bgColor: AppColor.GREEN,
                         function: () {
                           if (provider.isValidForm()) {
                             String bankTypeId = Provider.of<AddBankProvider>(
@@ -441,7 +441,7 @@ class _InputAuthInformationViewState extends State<InputAuthInformationView> {
           height: size - 10,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(size - 10),
-            color: DefaultTheme.WHITE,
+            color: AppColor.WHITE,
             boxShadow: [
               BoxShadow(
                 color: Theme.of(context).shadowColor.withOpacity(0.3),

@@ -209,7 +209,7 @@ class _BusinessInformationView extends State<BusinessInformationView>
                                   title: 'Mã số thuế',
                                   descriptionColor:
                                       (businessDetailDTO.taxCode.isEmpty)
-                                          ? DefaultTheme.GREY_TEXT
+                                          ? AppColor.GREY_TEXT
                                           : null,
                                   description:
                                       (businessDetailDTO.taxCode.isEmpty)
@@ -227,7 +227,7 @@ class _BusinessInformationView extends State<BusinessInformationView>
                           title: 'Quản trị viên',
                           label:
                               '${businessDetailDTO.managers.length} quản trị viên',
-                          color: DefaultTheme.BLUE_TEXT,
+                          color: AppColor.BLUE_TEXT,
                           icon: Icons.people_alt_rounded,
                           // function: () {},
                           // functionName: 'Cập nhật',
@@ -260,7 +260,7 @@ class _BusinessInformationView extends State<BusinessInformationView>
                           title: 'Chi nhánh',
                           label:
                               '${businessDetailDTO.branchs.length} chi nhánh',
-                          color: DefaultTheme.GREEN,
+                          color: AppColor.GREEN,
                           icon: Icons.business_rounded,
                         ),
                         SizedBox(
@@ -319,8 +319,8 @@ class _BusinessInformationView extends State<BusinessInformationView>
                                                   );
                                                 },
                                                 bgColor:
-                                                    DefaultTheme.TRANSPARENT,
-                                                textColor: DefaultTheme.GREEN,
+                                                    AppColor.TRANSPARENT,
+                                                textColor: AppColor.GREEN,
                                               ),
                                             )
                                           : _buildTransactionItem(
@@ -362,11 +362,11 @@ class _BusinessInformationView extends State<BusinessInformationView>
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
-                    color: DefaultTheme.BLACK_BUTTON.withOpacity(0.6),
+                    color: AppColor.BLACK_BUTTON.withOpacity(0.6),
                   ),
                   child: const Icon(
                     Icons.close_rounded,
-                    color: DefaultTheme.WHITE,
+                    color: AppColor.WHITE,
                     size: 15,
                   ),
                 ),
@@ -440,7 +440,7 @@ class _BusinessInformationView extends State<BusinessInformationView>
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      color: DefaultTheme.GREY_TEXT,
+                      color: AppColor.GREY_TEXT,
                     ),
                   ),
                 ],
@@ -513,7 +513,7 @@ class _BusinessInformationView extends State<BusinessInformationView>
               },
               child: const Icon(
                 Icons.copy_rounded,
-                color: DefaultTheme.GREY_TEXT,
+                color: AppColor.GREY_TEXT,
                 size: 15,
               ),
             ),
@@ -614,8 +614,8 @@ class _BusinessInformationView extends State<BusinessInformationView>
             context: context,
             title: 'Thành viên',
             descriptionColor: (dto.totalMember == 0)
-                ? DefaultTheme.GREY_TEXT
-                : DefaultTheme.BLUE_TEXT,
+                ? AppColor.GREY_TEXT
+                : AppColor.BLUE_TEXT,
             description: (dto.totalMember == 0)
                 ? 'Chưa có thành viên'
                 : '${dto.totalMember} thành viên',
@@ -647,10 +647,10 @@ class _BusinessInformationView extends State<BusinessInformationView>
                                     width: 30,
                                     height: 30,
                                     decoration: BoxDecoration(
-                                      color: DefaultTheme.WHITE,
+                                      color: AppColor.WHITE,
                                       borderRadius: BorderRadius.circular(30),
                                       border: Border.all(
-                                        color: DefaultTheme.GREY_TOP_TAB_BAR,
+                                        color: AppColor.GREY_TOP_TAB_BAR,
                                         width: 0.5,
                                       ),
                                       image: DecorationImage(
@@ -691,7 +691,7 @@ class _BusinessInformationView extends State<BusinessInformationView>
                                     },
                                     child: const Icon(
                                       Icons.copy_rounded,
-                                      color: DefaultTheme.GREY_TEXT,
+                                      color: AppColor.GREY_TEXT,
                                       size: 15,
                                     ),
                                   ),
@@ -713,7 +713,7 @@ class _BusinessInformationView extends State<BusinessInformationView>
               : _buildElementInformation(
                   context: context,
                   title: 'TK đối soát',
-                  descriptionColor: DefaultTheme.GREY_TEXT,
+                  descriptionColor: AppColor.GREY_TEXT,
                   description: 'Chưa liên kết',
                 ),
           const Padding(padding: EdgeInsets.only(top: 10)),
@@ -736,8 +736,8 @@ class _BusinessInformationView extends State<BusinessInformationView>
               if (!mounted) return;
               initData(context);
             },
-            bgColor: DefaultTheme.TRANSPARENT,
-            textColor: DefaultTheme.GREEN,
+            bgColor: AppColor.TRANSPARENT,
+            textColor: AppColor.GREEN,
           ),
         ],
       ),
@@ -831,7 +831,7 @@ class MyPersistentHeaderDelegate extends SliverPersistentHeaderDelegate {
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
-      color: DefaultTheme.TRANSPARENT,
+      color: AppColor.TRANSPARENT,
       alignment: Alignment.center,
       child: child, // Widget được pin
     );

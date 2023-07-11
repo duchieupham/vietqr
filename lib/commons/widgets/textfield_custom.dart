@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
-import 'package:vierqr/layouts/border_layout.dart';
 
 class TextFieldCustom extends StatefulWidget {
   final double width;
@@ -18,7 +17,6 @@ class TextFieldCustom extends StatefulWidget {
   final double? fontSize;
   final TextfieldType? textFieldType;
   final String? title;
-  final double? titleWidth;
   final bool? autoFocus;
   final bool? enable;
   final FocusNode? focusNode;
@@ -31,12 +29,15 @@ class TextFieldCustom extends StatefulWidget {
   final Function(String? error)? showToast;
   final FormFieldValidator<String>? validator;
   final List<TextInputFormatter>? inputFormatter;
+  final Widget? prefixIcon;
+  final Widget? suffixIcon;
 
   //Border textfield
   final double widthLayout;
   final EdgeInsets? paddingLayout;
   final double? heightLayout;
   final bool isBorder;
+  final bool isRequired;
 
   const TextFieldCustom({
     Key? key,
@@ -50,7 +51,6 @@ class TextFieldCustom extends StatefulWidget {
     this.fontSize,
     this.textFieldType,
     this.title,
-    this.titleWidth,
     this.autoFocus,
     this.focusNode,
     this.maxLines,
@@ -69,6 +69,9 @@ class TextFieldCustom extends StatefulWidget {
     this.heightLayout,
     this.inputFormatter,
     this.isBorder = true,
+    this.prefixIcon,
+    this.suffixIcon,
+    this.isRequired = false,
   }) : super(key: key);
 
   @override
@@ -81,7 +84,7 @@ class _TextFieldWidgetState extends State<TextFieldCustom> {
 
   @override
   Widget build(BuildContext context) {
-    Widget textFiledTypeLabel = TextField(
+    Widget textFiledTypeLabel = TextFormField(
       obscureText: widget.isObscureText,
       controller: _editingController,
       onChanged: widget.onChange,
@@ -89,7 +92,6 @@ class _TextFieldWidgetState extends State<TextFieldCustom> {
           (widget.textAlign != null) ? widget.textAlign! : TextAlign.left,
       onEditingComplete: widget.onEditingComplete,
       inputFormatters: widget.inputFormatter,
-      onSubmitted: widget.onSubmitted,
       onTapOutside: widget.onTapOutside,
       maxLength: widget.maxLength,
       enabled: widget.enable,
@@ -100,127 +102,61 @@ class _TextFieldWidgetState extends State<TextFieldCustom> {
       textInputAction: widget.keyboardAction,
       decoration: InputDecoration(
         hintText: widget.hintText,
-        counterText: '',
         border: InputBorder.none,
         hintStyle: TextStyle(
-          fontSize: (widget.fontSize != null) ? widget.fontSize : 16,
+          fontSize: (widget.fontSize != null) ? widget.fontSize : 14,
           color: (widget.title != null)
-              ? DefaultTheme.GREY_TEXT
+              ? AppColor.GREY_TEXT
               : Theme.of(context).hintColor,
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-        focusedBorder: InputBorder.none,
-        enabledBorder: InputBorder.none,
-        errorBorder: InputBorder.none,
+        prefixIcon: widget.prefixIcon,
+        suffixIcon: widget.suffixIcon,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+        fillColor: AppColor.WHITE,
+        filled: true,
       ),
     );
 
-    Widget textFiled = TextField(
-      obscureText: widget.isObscureText,
-      controller: _editingController,
-      textAlign:
-          (widget.textAlign != null) ? widget.textAlign! : TextAlign.left,
-      onChanged: widget.onChange,
-      onSubmitted: widget.onSubmitted,
-      onEditingComplete: widget.onEditingComplete,
-      keyboardType: widget.inputType,
-      maxLines: 1,
-      maxLength: widget.maxLength,
-      textInputAction: widget.keyboardAction,
-      autofocus: widget.autoFocus ?? false,
-      focusNode: widget.focusNode,
-      enabled: widget.enable,
-      inputFormatters: widget.inputFormatter,
-      decoration: InputDecoration(
-        hintText: widget.hintText,
-        counterText: '',
-        border: InputBorder.none,
-        hintStyle: TextStyle(
-          fontSize: (widget.fontSize != null) ? widget.fontSize : 16,
-          color: Theme.of(context).hintColor,
-        ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-        focusedBorder: InputBorder.none,
-        enabledBorder: InputBorder.none,
-        errorBorder: InputBorder.none,
-      ),
-    );
-
-    return (widget.textFieldType != null &&
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (widget.textFieldType != null &&
             widget.textFieldType == TextfieldType.LABEL)
-        ? Column(
+          Row(
             children: [
-              Container(
-                width: widget.width,
-                height: 60,
-                alignment: Alignment.centerLeft,
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width:
-                          (widget.titleWidth != null) ? widget.titleWidth : 80,
-                      child: Text(
-                        widget.title ?? '',
-                        style: TextStyle(
-                          fontSize:
-                              (widget.fontSize != null) ? widget.fontSize : 16,
-                        ),
-                      ),
-                    ),
-                    Flexible(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          widget.isBorder
-                              ? BorderLayout(
-                                  width: widget.widthLayout,
-                                  isError: _msgError != null,
-                                  padding: widget.paddingLayout,
-                                  height: widget.heightLayout,
-                                  child: textFiledTypeLabel)
-                              : textFiledTypeLabel,
-                          if (_msgError != null && !widget.isShowToast)
-                            Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.only(left: 10),
-                              child: Text(
-                                _msgError!,
-                                maxLines: 2,
-                                textAlign: TextAlign.start,
-                                overflow: TextOverflow.ellipsis,
-                                style: widget.errorStyle ??
-                                    Styles.errorStyle(fontSize: 12),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                  ],
+              SizedBox(
+                child: Text(
+                  widget.title ?? '',
+                  style: TextStyle(
+                    fontSize: (widget.fontSize != null) ? widget.fontSize : 14,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
+              const SizedBox(width: 4),
+              if (widget.isRequired)
+                Text(
+                  '*',
+                  style: TextStyle(
+                    fontSize: (widget.fontSize != null) ? widget.fontSize : 14,
+                    fontWeight: FontWeight.bold,
+                    color: AppColor.RED_EC1010,
+                  ),
+                ),
             ],
-          )
-        : Column(
+          ),
+        const SizedBox(height: 8),
+        Container(
+          width: widget.width,
+          alignment: Alignment.centerLeft,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                width: widget.width,
-                height: 60,
-                alignment: Alignment.center,
-                child: widget.isBorder
-                    ? BorderLayout(
-                        width: widget.widthLayout,
-                        isError: _msgError != null,
-                        padding: widget.paddingLayout,
-                        height: widget.heightLayout,
-                        child: textFiled)
-                    : textFiled,
-              ),
+              textFiledTypeLabel,
               if (_msgError != null && !widget.isShowToast)
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.only(
-                    top: 10,
-                  ),
+                  padding: const EdgeInsets.only(left: 10),
                   child: Text(
                     _msgError!,
                     maxLines: 2,
@@ -230,7 +166,10 @@ class _TextFieldWidgetState extends State<TextFieldCustom> {
                   ),
                 ),
             ],
-          );
+          ),
+        ),
+      ],
+    );
   }
 
   bool checkValidate() {

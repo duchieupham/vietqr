@@ -30,13 +30,13 @@ class UserInformationUtils {
   }
 
   Color getMemberRoleColor(int role) {
-    Color result = DefaultTheme.GREEN;
+    Color result = AppColor.GREEN;
     if (role == 1) {
-      result = DefaultTheme.BLUE_TEXT;
+      result = AppColor.BLUE_TEXT;
     } else if (role == 2) {
-      result = DefaultTheme.ORANGE;
+      result = AppColor.ORANGE;
     } else {
-      result = DefaultTheme.GREEN;
+      result = AppColor.GREEN;
     }
     return result;
   }

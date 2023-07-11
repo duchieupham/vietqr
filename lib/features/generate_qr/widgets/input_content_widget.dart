@@ -154,7 +154,7 @@ class _InputContentWidgetState extends State<InputContentWidget> {
                             title: 'Số tiền',
                             description: Provider.of<CreateQRProvider>(context)
                                 .currencyFormatted,
-                            descriptionColor: DefaultTheme.GREEN,
+                            descriptionColor: AppColor.GREEN,
                             unit: 'VND',
                           ),
                         ],
@@ -254,7 +254,7 @@ class _BottomSheetWidget extends StatelessWidget {
             ),
             boxShadow: [
               BoxShadow(
-                color: DefaultTheme.BLACK.withOpacity(0.1),
+                color: AppColor.BLACK.withOpacity(0.1),
                 spreadRadius: 3,
                 blurRadius: 3,
                 offset: const Offset(0, -1),
@@ -270,7 +270,7 @@ class _BottomSheetWidget extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
-                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                    color: AppColor.GREY_TOP_TAB_BAR,
                     width: 0.5,
                   ),
                 ),
@@ -284,7 +284,7 @@ class _BottomSheetWidget extends StatelessWidget {
                     const Icon(
                       Icons.notes_rounded,
                       size: 15,
-                      color: DefaultTheme.GREY_TEXT,
+                      color: AppColor.GREY_TEXT,
                     ),
                     Expanded(
                       child: TextFieldWidget(
@@ -322,7 +322,7 @@ class _BottomSheetWidget extends StatelessWidget {
                             child: const Icon(
                               Icons.close_rounded,
                               size: 15,
-                              color: DefaultTheme.GREY_TEXT,
+                              color: AppColor.GREY_TEXT,
                             ),
                           ),
                         ],
@@ -419,8 +419,8 @@ class _BottomSheetWidget extends StatelessWidget {
                     );
                   }
                 },
-                bgColor: DefaultTheme.GREEN,
-                textColor: DefaultTheme.WHITE,
+                bgColor: AppColor.GREEN,
+                textColor: AppColor.WHITE,
               ),
             ],
           ),

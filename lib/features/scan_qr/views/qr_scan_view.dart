@@ -46,7 +46,7 @@ class _QRScanView extends State<QRScanView>
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: DefaultTheme.BLACK,
+      backgroundColor: AppColor.BLACK,
       body: BlocListener<ScanQrBloc, ScanQrState>(
         listener: (context, state) {
           if (state is ScanQrLoadingState) {
@@ -131,7 +131,7 @@ class _QRScanView extends State<QRScanView>
                     },
                     child: const Icon(
                       Icons.close_rounded,
-                      color: DefaultTheme.WHITE,
+                      color: AppColor.WHITE,
                       size: 30,
                     ),
                   ),
@@ -194,7 +194,7 @@ class _QRScanView extends State<QRScanView>
             const Padding(padding: EdgeInsets.only(top: 20)),
             const Text(
               'Đặt mã QR vào khung để thực hiện việc quét mã',
-              style: TextStyle(color: DefaultTheme.WHITE),
+              style: TextStyle(color: AppColor.WHITE),
             ),
             // const Padding(padding: EdgeInsets.only(top: 20)),
             // ButtonIconWidget(
@@ -225,7 +225,7 @@ class _QRScanView extends State<QRScanView>
                             height: 50,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(50),
-                              color: DefaultTheme.GREY_VIEW.withOpacity(0.6),
+                              color: AppColor.GREY_VIEW.withOpacity(0.6),
                             ),
                             child: ValueListenableBuilder(
                               valueListenable: cameraController.torchState,
@@ -234,12 +234,12 @@ class _QRScanView extends State<QRScanView>
                                   case TorchState.off:
                                     return const Icon(
                                       Icons.flash_on_rounded,
-                                      color: DefaultTheme.WHITE,
+                                      color: AppColor.WHITE,
                                     );
                                   case TorchState.on:
                                     return const Icon(
                                       Icons.flash_off_rounded,
-                                      color: DefaultTheme.WHITE,
+                                      color: AppColor.WHITE,
                                     );
                                 }
                               },
@@ -265,11 +265,11 @@ class _QRScanView extends State<QRScanView>
                             height: 50,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(50),
-                              color: DefaultTheme.GREY_VIEW.withOpacity(0.6),
+                              color: AppColor.GREY_VIEW.withOpacity(0.6),
                             ),
                             child: const Icon(
                               Icons.autorenew_rounded,
-                              color: DefaultTheme.WHITE,
+                              color: AppColor.WHITE,
                             ),
                           ),
                         ),

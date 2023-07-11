@@ -78,7 +78,7 @@ class _ConfirmOTPView extends State<ConfirmOTPView> {
                   child: const Text(
                     'Đóng',
                     style: TextStyle(
-                      color: DefaultTheme.GREEN,
+                      color: AppColor.GREEN,
                     ),
                   ),
                 ),
@@ -152,7 +152,7 @@ class _ConfirmOTPView extends State<ConfirmOTPView> {
                         const TextSpan(text: 'Mã OTP có hiệu lực trong vòng '),
                         TextSpan(
                           text: value.toString(),
-                          style: const TextStyle(color: DefaultTheme.GREEN),
+                          style: const TextStyle(color: AppColor.GREEN),
                         ),
                         const TextSpan(text: 's.'),
                       ],
@@ -171,7 +171,7 @@ class _ConfirmOTPView extends State<ConfirmOTPView> {
                           text: 'Gửi lại',
                           style: const TextStyle(
                             decoration: TextDecoration.underline,
-                            color: DefaultTheme.GREEN,
+                            color: AppColor.GREEN,
                           ),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
@@ -192,8 +192,8 @@ class _ConfirmOTPView extends State<ConfirmOTPView> {
         ButtonWidget(
           width: width,
           text: 'Xác thực',
-          textColor: DefaultTheme.WHITE,
-          bgColor: DefaultTheme.GREEN,
+          textColor: AppColor.WHITE,
+          bgColor: AppColor.GREEN,
           function: () {
             FocusManager.instance.primaryFocus?.unfocus();
             if (otpController.text.isNotEmpty) {

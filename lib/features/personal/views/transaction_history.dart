@@ -123,7 +123,7 @@ class _TransactionHistory extends State<TransactionHistory> {
                     icon: Icons.search_rounded,
                     borderRadius: 10,
                     title: 'Tìm kiếm',
-                    textColor: DefaultTheme.BLUE_TEXT,
+                    textColor: AppColor.BLUE_TEXT,
                     bgColor: Theme.of(context).cardColor,
                     function: () async {
                       setState(() {

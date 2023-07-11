@@ -9,11 +9,12 @@ class PinCodeInput extends StatelessWidget {
     this.onChanged,
     this.onCompleted,
     this.controller,
-    this.obscureText = true,
+    this.obscureText = false,
     this.themeKey = false,
     this.focusNode,
     this.clBorderErr,
     this.error = false,
+    this.autoFocus = false,
   }) : super(key: key);
 
   final ValueChanged<String>? onChanged;
@@ -24,13 +25,14 @@ class PinCodeInput extends StatelessWidget {
   final FocusNode? focusNode;
   final Color? clBorderErr;
   final bool error;
+  final bool autoFocus;
 
   @override
   Widget build(BuildContext context) {
     return PinCodeTextField(
       appContext: context,
       length: 6,
-      autoFocus: true,
+      autoFocus: autoFocus,
       focusNode: focusNode,
       obscureText: obscureText,
       autovalidateMode: AutovalidateMode.always,
@@ -49,20 +51,20 @@ class PinCodeInput extends StatelessWidget {
       autoDisposeControllers: false,
       enablePinAutofill: true,
       pinTheme: PinTheme(
-        borderWidth: 2,
+        borderWidth: borderWidth,
         shape: shape,
-        fieldHeight: 30,
+        fieldHeight: size,
         fieldOuterPadding: EdgeInsets.zero,
-        fieldWidth: 15,
+        fieldWidth: size,
         activeColor: clBorderErr ?? activeColor,
         borderRadius: BorderRadius.circular(5),
         activeFillColor: activeFillColor,
         selectedColor: activeColor,
-        errorBorderColor: DefaultTheme.GREY_444B56,
+        errorBorderColor: AppColor.GREY_444B56,
         inactiveFillColor: inactiveFillColor,
         selectedFillColor: activeFillColor,
         inactiveColor: inactiveColor,
-        disabledColor: DefaultTheme.RED_EC1010,
+        disabledColor: AppColor.RED_EC1010,
       ),
       onCompleted: onCompleted,
     );
@@ -71,30 +73,30 @@ class PinCodeInput extends StatelessWidget {
   TextStyle get textStyle {
     if (obscureText) {
       return Styles.copyStyle(
-        fontSize: 22,
+        fontSize: 16,
         fontWeight: FontWeight.w600,
       );
     }
 
     if (error) {
       return Styles.copyStyle(
-        fontSize: 22,
+        fontSize: 16,
         fontWeight: FontWeight.w600,
-        color: DefaultTheme.error700,
+        color: AppColor.error700,
       );
     }
     return Styles.copyStyle(
-      fontSize: 22,
+      fontSize: 16,
       fontWeight: FontWeight.w600,
     );
   }
 
   Color get activeColor {
-    return DefaultTheme.SUCCESS_STATUS;
+    return AppColor.BLUE_TEXT;
   }
 
   Color get inactiveColor {
-    return DefaultTheme.secondary400;
+    return AppColor.secondary400;
   }
 
 //border
@@ -108,16 +110,16 @@ class PinCodeInput extends StatelessWidget {
 
   double get borderWidthDark {
     if (obscureText) {
-      return 2.5;
+      return 1;
     }
-    return 2;
+    return 1;
   }
 
   double get borderWidthLight {
     if (obscureText) {
-      return 2.5;
+      return 1;
     }
-    return 2;
+    return 1;
   }
 
 // Size
@@ -131,23 +133,20 @@ class PinCodeInput extends StatelessWidget {
 
   double get sizeDark {
     if (obscureText) {
-      return 15;
+      return 40;
     }
-    return 15;
+    return 40;
   }
 
   double get sizeLight {
     if (obscureText) {
-      return 15;
+      return 40;
     }
-    return 15;
+    return 40;
   }
 
 //màu ô input khi  chọn
   Color get activeFillColor {
-    if (themeKey) {
-      return Colors.transparent;
-    }
     return Colors.transparent;
   }
 
@@ -155,18 +154,12 @@ class PinCodeInput extends StatelessWidget {
 
 //màu ô input khi chưa chọn
   Color get inactiveFillColor {
-    if (themeKey) {
-      return Colors.transparent;
-    }
     return Colors.transparent;
   }
 
 //màu border khi chọn
 
   Color get cursorColor {
-    if (themeKey) {
-      return Colors.white;
-    }
     return Colors.transparent;
   }
 
@@ -178,19 +171,11 @@ class PinCodeInput extends StatelessWidget {
   }
 
   PinCodeFieldShape get shapeLightMode {
-    // if (obscureText) {
-    //   return PinCodeFieldShape.circle;
-    // }
-    return PinCodeFieldShape.circle;
-    // return PinCodeFieldShape.box;
+    return PinCodeFieldShape.box;
   }
 
   PinCodeFieldShape get shapeDarkMode {
-    // if (obscureText) {
-    //   return PinCodeFieldShape.circle;
-    // }
     return PinCodeFieldShape.circle;
-    // return PinCodeFieldShape.box;
   }
 
   void _onChanged(String value) {}

@@ -16,7 +16,7 @@ class IconNavigateNextWidget extends StatelessWidget {
       ),
       child: const Icon(
         Icons.navigate_next_rounded,
-        color: DefaultTheme.GREY_TEXT,
+        color: AppColor.GREY_TEXT,
         size: 20,
       ),
     );

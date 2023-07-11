@@ -95,7 +95,7 @@ class UserUpdatePassword extends StatelessWidget {
                             ),
                             const Divider(
                               height: 0.5,
-                              color: DefaultTheme.GREY_LIGHT,
+                              color: AppColor.GREY_LIGHT,
                             ),
                             TextFieldWidget(
                               width: width,
@@ -111,7 +111,7 @@ class UserUpdatePassword extends StatelessWidget {
                             ),
                             const Divider(
                               height: 0.5,
-                              color: DefaultTheme.GREY_LIGHT,
+                              color: AppColor.GREY_LIGHT,
                             ),
                             TextFieldWidget(
                               width: width,
@@ -135,7 +135,7 @@ class UserUpdatePassword extends StatelessWidget {
                           child: Text(
                             'Mật khẩu cũ không đúng định dạng.',
                             style: TextStyle(
-                                color: DefaultTheme.RED_TEXT, fontSize: 13),
+                                color: AppColor.RED_TEXT, fontSize: 13),
                           ),
                         ),
                       ),
@@ -146,7 +146,7 @@ class UserUpdatePassword extends StatelessWidget {
                           child: Text(
                             'Mật khẩu mới bao gồm 6 số.',
                             style: TextStyle(
-                                color: DefaultTheme.RED_TEXT, fontSize: 13),
+                                color: AppColor.RED_TEXT, fontSize: 13),
                           ),
                         ),
                       ),
@@ -157,7 +157,7 @@ class UserUpdatePassword extends StatelessWidget {
                           child: Text(
                             'Xác nhận Mật khẩu không trùng khớp.',
                             style: TextStyle(
-                                color: DefaultTheme.RED_TEXT, fontSize: 13),
+                                color: AppColor.RED_TEXT, fontSize: 13),
                           ),
                         ),
                       ),
@@ -172,8 +172,8 @@ class UserUpdatePassword extends StatelessWidget {
             child: ButtonWidget(
               width: width - 40,
               text: 'Cập nhật',
-              textColor: DefaultTheme.WHITE,
-              bgColor: DefaultTheme.GREEN,
+              textColor: AppColor.WHITE,
+              bgColor: AppColor.GREEN,
               function: () {
                 Provider.of<UserEditProvider>(context, listen: false)
                     .updatePasswordErrs(

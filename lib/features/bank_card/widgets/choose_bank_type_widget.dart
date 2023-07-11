@@ -46,7 +46,7 @@ class ChooseBankTypeWidget extends StatelessWidget {
                     child: const Text(
                       'Xong',
                       style: TextStyle(
-                        color: DefaultTheme.GREEN,
+                        color: AppColor.GREEN,
                       ),
                     ),
                   ),
@@ -72,7 +72,7 @@ class ChooseBankTypeWidget extends StatelessWidget {
             title: 'Gói dịch vụ VietQR Pro',
             description: 'Nội dung miêu tả',
             icon: Icons.shopping_bag_rounded,
-            color: DefaultTheme.GREEN,
+            color: AppColor.GREEN,
             onTap: () {
               Navigator.pop(context, 1);
             },
@@ -129,7 +129,7 @@ class ChooseBankTypeWidget extends StatelessWidget {
               height: 30,
               child: Icon(
                 Icons.navigate_next_rounded,
-                color: DefaultTheme.GREY_TEXT,
+                color: AppColor.GREY_TEXT,
                 size: 20,
               ),
             ),

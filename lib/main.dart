@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -52,7 +51,6 @@ import 'package:vierqr/features/personal/blocs/user_edit_bloc.dart';
 import 'package:vierqr/features/bank_card/views/add_bank_card_view.dart';
 import 'package:vierqr/features/personal/views/user_edit_view.dart';
 import 'package:vierqr/features/personal/views/user_update_password_view.dart';
-import 'package:vierqr/features/register/blocs/register_bloc.dart';
 import 'package:vierqr/features/scan_qr/blocs/scan_qr_bloc.dart';
 import 'package:vierqr/features/scan_qr/views/qr_scan_view.dart';
 import 'package:vierqr/features/token/blocs/token_bloc.dart';
@@ -77,7 +75,6 @@ import 'package:vierqr/services/providers/login_provider.dart';
 import 'package:vierqr/services/providers/memeber_manage_provider.dart';
 import 'package:vierqr/services/providers/page_select_provider.dart';
 import 'package:vierqr/services/providers/pin_provider.dart';
-import 'package:vierqr/services/providers/register_provider.dart';
 import 'package:vierqr/services/providers/search_clear_provider.dart';
 import 'package:vierqr/services/providers/shortcut_provider.dart';
 import 'package:vierqr/services/providers/suggestion_widget_provider.dart';
@@ -230,21 +227,9 @@ class _VietQRApp extends State<VietQRApp> {
           BlocProvider<BankManageBloc>(
             create: (BuildContext context) => BankManageBloc(),
           ),
-          BlocProvider<LoginBloc>(
-            create: (BuildContext context) => LoginBloc(),
-          ),
-          BlocProvider<RegisterBloc>(
-            create: (BuildContext context) => RegisterBloc(),
-          ),
           BlocProvider<UserEditBloc>(
             create: (BuildContext context) => UserEditBloc(),
           ),
-          // BlocProvider<MemberManageBloc>(
-          //   create: (BuildContext context) => MemberManageBloc(),
-          // ),
-          // BlocProvider<SMSBloc>(
-          //   create: (BuildContext context) => SMSBloc(),
-          // ),
           BlocProvider<TransactionBloc>(
             create: (BuildContext context) => TransactionBloc(),
           ),
@@ -306,7 +291,6 @@ class _VietQRApp extends State<VietQRApp> {
             ChangeNotifierProvider(create: (context) => CreateQRProvider()),
             ChangeNotifierProvider(create: (context) => BankAccountProvider()),
             ChangeNotifierProvider(create: (context) => BankSelectProvider()),
-            ChangeNotifierProvider(create: (context) => RegisterProvider()),
             ChangeNotifierProvider(create: (context) => PinProvider()),
             ChangeNotifierProvider(create: (context) => UserEditProvider()),
             ChangeNotifierProvider(create: (context) => HomeTabProvider()),
@@ -393,12 +377,11 @@ class _VietQRApp extends State<VietQRApp> {
 
                   return null;
                 },
-                themeMode:
-                    (themeSelect.themeSystem == DefaultTheme.THEME_SYSTEM)
-                        ? ThemeMode.system
-                        : (themeSelect.themeSystem == DefaultTheme.THEME_LIGHT)
-                            ? ThemeMode.light
-                            : ThemeMode.dark,
+                themeMode: (themeSelect.themeSystem == AppColor.THEME_SYSTEM)
+                    ? ThemeMode.system
+                    : (themeSelect.themeSystem == AppColor.THEME_LIGHT)
+                        ? ThemeMode.light
+                        : ThemeMode.dark,
                 darkTheme: DefaultThemeData(context: context).darkTheme,
                 theme: DefaultThemeData(context: context).lightTheme,
                 localizationsDelegates: const [
@@ -412,7 +395,7 @@ class _VietQRApp extends State<VietQRApp> {
                 ],
                 home: Title(
                   title: 'VietQR',
-                  color: DefaultTheme.BLACK,
+                  color: AppColor.BLACK,
                   child: _homeScreen,
                 ),
               );

@@ -131,8 +131,8 @@ class _BankCardGeneratedView extends State<BankCardGeneratedView> {
                             height: 40,
                             icon: Icons.home_rounded,
                             title: 'Trang chủ',
-                            textColor: DefaultTheme.GREEN,
-                            bgColor: DefaultTheme.WHITE,
+                            textColor: AppColor.GREEN,
+                            bgColor: AppColor.WHITE,
                             function: () {
                               _doEndAnimation();
                               Provider.of<AddBankProvider>(context,
@@ -152,8 +152,8 @@ class _BankCardGeneratedView extends State<BankCardGeneratedView> {
                             height: 40,
                             icon: Icons.info_outline_rounded,
                             title: 'Chi tiết',
-                            textColor: DefaultTheme.WHITE,
-                            bgColor: DefaultTheme.GREEN,
+                            textColor: AppColor.WHITE,
+                            bgColor: AppColor.GREEN,
                             function: () {
                               _doEndAnimation();
                               Provider.of<AddBankProvider>(context,

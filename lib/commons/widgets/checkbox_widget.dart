@@ -21,7 +21,7 @@ class CheckBoxWidget extends StatelessWidget {
         (check)
             ? 'assets/images/ic-checked.png'
             : 'assets/images/ic-uncheck.png',
-        color: DefaultTheme.GREEN,
+        color: AppColor.GREEN,
         width: size,
         height: size,
         fit: BoxFit.contain,

@@ -100,7 +100,7 @@ class NotificationView extends StatelessWidget {
                                       width: 50,
                                       height: 50,
                                       child: CircularProgressIndicator(
-                                        color: DefaultTheme.GREEN,
+                                        color: AppColor.GREEN,
                                       ),
                                     ),
                                   )
@@ -160,7 +160,7 @@ class NotificationView extends StatelessWidget {
                     height: 5,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
-                      color: DefaultTheme.BLUE_TEXT,
+                      color: AppColor.BLUE_TEXT,
                     ),
                   ),
             const Padding(padding: EdgeInsets.only(left: 5)),
@@ -190,8 +190,8 @@ class NotificationView extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 10,
                       color: (dto.isRead)
-                          ? DefaultTheme.GREY_TEXT
-                          : DefaultTheme.BLUE_TEXT,
+                          ? AppColor.GREY_TEXT
+                          : AppColor.BLUE_TEXT,
                     ),
                   ),
                 ],
@@ -207,25 +207,25 @@ class NotificationView extends StatelessWidget {
     Icon result = const Icon(
       Icons.notifications_rounded,
       size: 18,
-      color: DefaultTheme.BLUE_TEXT,
+      color: AppColor.BLUE_TEXT,
     );
     if (type == Stringify.NOTI_TYPE_LOGIN) {
       result = const Icon(
         Icons.login_rounded,
         size: 18,
-        color: DefaultTheme.RED_CALENDAR,
+        color: AppColor.RED_CALENDAR,
       );
     } else if (type == Stringify.NOTI_TYPE_NEW_TRANSACTION) {
       result = const Icon(
         Icons.attach_money_rounded,
         size: 18,
-        color: DefaultTheme.ORANGE,
+        color: AppColor.ORANGE,
       );
     } else if (type == Stringify.NOTI_TYPE_UPDATE_TRANSACTION) {
       result = const Icon(
         Icons.check_rounded,
         size: 15,
-        color: DefaultTheme.GREEN,
+        color: AppColor.GREEN,
       );
     }
     return result;

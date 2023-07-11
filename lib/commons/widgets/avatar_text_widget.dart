@@ -23,8 +23,8 @@ class AvatarTextWidget extends StatelessWidget {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            DefaultTheme.GREY_VIEW,
-            DefaultTheme.GREY_TOP_TAB_BAR,
+            AppColor.GREY_VIEW,
+            AppColor.GREY_TOP_TAB_BAR,
           ],
         ),
       ),
@@ -33,7 +33,7 @@ class AvatarTextWidget extends StatelessWidget {
         textAlign: TextAlign.center,
         style: TextStyle(
           fontSize: size * (1 / 2),
-          color: DefaultTheme.GREY_TEXT,
+          color: AppColor.GREY_TEXT,
         ),
       ),
     );

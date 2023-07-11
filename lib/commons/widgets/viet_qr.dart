@@ -29,7 +29,7 @@ class VietQr extends StatelessWidget {
             margin:
                 const EdgeInsets.only(left: 40, right: 40, top: 40, bottom: 24),
             decoration: BoxDecoration(
-              color: DefaultTheme.WHITE,
+              color: AppColor.WHITE,
               borderRadius: const BorderRadius.all(Radius.circular(16)),
               boxShadow: [
                 BoxShadow(

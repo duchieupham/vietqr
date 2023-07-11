@@ -72,8 +72,8 @@ class _TransactionSuccessWidget extends State<TransactionSuccessWidget> {
                     fontSize: 30,
                     fontWeight: FontWeight.w500,
                     color: (widget.dto.transType.trim() == 'C')
-                        ? DefaultTheme.NEON
-                        : DefaultTheme.RED_CALENDAR,
+                        ? AppColor.NEON
+                        : AppColor.RED_CALENDAR,
                   ),
                 ),
               ),
@@ -154,8 +154,8 @@ class _TransactionSuccessWidget extends State<TransactionSuccessWidget> {
             text: 'OK',
             height: 40,
             borderRadius: 10,
-            textColor: DefaultTheme.WHITE,
-            bgColor: DefaultTheme.GREEN,
+            textColor: AppColor.WHITE,
+            bgColor: AppColor.GREEN,
             function: () {
               if (widget.dto.transType == 'C') {
                 _doEndAnimation();

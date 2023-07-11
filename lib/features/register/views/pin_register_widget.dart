@@ -61,13 +61,13 @@ class _PinRegisterWidgetState extends State<PinRegisterWidget> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(widget.pinSize),
                             color: (_length <= index)
-                                ? DefaultTheme.TRANSPARENT
+                                ? AppColor.TRANSPARENT
                                 : _isShowText
-                                    ? DefaultTheme.TRANSPARENT
-                                    : DefaultTheme.GREY_TOP_TAB_BAR,
+                                    ? AppColor.TRANSPARENT
+                                    : AppColor.GREY_TOP_TAB_BAR,
                             border: Border.all(
                               width: 2,
-                              color: DefaultTheme.GREY_TOP_TAB_BAR,
+                              color: AppColor.GREY_TOP_TAB_BAR,
                             ),
                           ),
                           child: _isShowText
@@ -94,7 +94,7 @@ class _PinRegisterWidgetState extends State<PinRegisterWidget> {
                   counterText: '',
                   border: InputBorder.none,
                 ),
-                style: const TextStyle(color: DefaultTheme.TRANSPARENT),
+                style: const TextStyle(color: AppColor.TRANSPARENT),
                 keyboardType: TextInputType.number,
                 onChanged: ((text) {
                   setState(() {

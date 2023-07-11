@@ -158,7 +158,7 @@ class _BankScreenState extends State<BankScreen>
                                 width: 30,
                                 height: 30,
                                 child: CircularProgressIndicator(
-                                  color: DefaultTheme.GREEN,
+                                  color: AppColor.GREEN,
                                 ),
                               ),
                             ),
@@ -246,7 +246,7 @@ class _BankScreenState extends State<BankScreen>
                                       width: 30,
                                       height: 30,
                                       child: CircularProgressIndicator(
-                                        color: DefaultTheme.WHITE,
+                                        color: AppColor.WHITE,
                                       ),
                                     ),
                                   ),
@@ -307,8 +307,8 @@ class _BankScreenState extends State<BankScreen>
                                                     },
                                                   );
                                                 },
-                                                bgColor: DefaultTheme.GREEN,
-                                                textColor: DefaultTheme.WHITE,
+                                                bgColor: AppColor.GREEN,
+                                                textColor: AppColor.WHITE,
                                               ),
                                               const Padding(
                                                   padding:
@@ -477,9 +477,9 @@ class _BankScreenState extends State<BankScreen>
       margin: const EdgeInsets.symmetric(horizontal: 5),
       decoration: BoxDecoration(
         border: (isSelected)
-            ? Border.all(color: DefaultTheme.GREY_LIGHT, width: 0.5)
+            ? Border.all(color: AppColor.GREY_LIGHT, width: 0.5)
             : null,
-        color: (isSelected) ? DefaultTheme.WHITE : DefaultTheme.GREY_LIGHT,
+        color: (isSelected) ? AppColor.WHITE : AppColor.GREY_LIGHT,
         borderRadius: BorderRadius.circular(10),
       ),
     );
@@ -726,13 +726,13 @@ class _StackedList extends State<StackedList> {
                     Icon(
                       Icons.add_rounded,
                       size: 15,
-                      color: DefaultTheme.GREEN,
+                      color: AppColor.GREEN,
                     ),
                     Padding(padding: EdgeInsets.only(left: 5)),
                     Text(
                       'TK ngân hàng',
                       style: TextStyle(
-                        color: DefaultTheme.GREEN,
+                        color: AppColor.GREEN,
                       ),
                     )
                   ],
@@ -753,7 +753,7 @@ class _StackedList extends State<StackedList> {
                     } else {
                       await DialogWidget.instance.showFullModalBottomContent(
                         widget: const QRScanWidget(),
-                        color: DefaultTheme.BLACK,
+                        color: AppColor.BLACK,
                       );
                       if (!mounted) return;
                       startBarcodeScanStream(context);
@@ -765,13 +765,13 @@ class _StackedList extends State<StackedList> {
                       Icon(
                         Icons.qr_code_scanner_rounded,
                         size: 15,
-                        color: DefaultTheme.BLUE_TEXT,
+                        color: AppColor.BLUE_TEXT,
                       ),
                       Padding(padding: EdgeInsets.only(left: 5)),
                       Text(
                         'Quét mã QR',
                         style: TextStyle(
-                          color: DefaultTheme.BLUE_TEXT,
+                          color: AppColor.BLUE_TEXT,
                         ),
                       )
                     ],
@@ -849,7 +849,7 @@ class _StackedList extends State<StackedList> {
                               width: 60,
                               height: 30,
                               decoration: BoxDecoration(
-                                color: DefaultTheme.WHITE,
+                                color: AppColor.WHITE,
                                 borderRadius: BorderRadius.circular(5),
                                 image: DecorationImage(
                                   image: ImageUtils.instance.getImageNetWork(
@@ -866,7 +866,7 @@ class _StackedList extends State<StackedList> {
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
-                                color: DefaultTheme.WHITE,
+                                color: AppColor.WHITE,
                               ),
                             ),
                           ),
@@ -877,12 +877,12 @@ class _StackedList extends State<StackedList> {
                                 borderRadius:
                                     const BorderRadius.all(Radius.circular(25)),
                                 color: dto.userId == userId
-                                    ? DefaultTheme.GREEN
-                                    : DefaultTheme.ORANGE,
+                                    ? AppColor.GREEN
+                                    : AppColor.ORANGE,
                               ),
                               child: const Icon(
                                 Icons.check,
-                                color: DefaultTheme.WHITE,
+                                color: AppColor.WHITE,
                                 size: 14,
                               ),
                             )
@@ -905,7 +905,7 @@ class _StackedList extends State<StackedList> {
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
-                                    color: DefaultTheme.WHITE,
+                                    color: AppColor.WHITE,
                                     fontSize: 18,
                                   ),
                                 ),
@@ -916,7 +916,7 @@ class _StackedList extends State<StackedList> {
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
-                                    color: DefaultTheme.WHITE,
+                                    color: AppColor.WHITE,
                                   ),
                                 ),
                               ],
@@ -968,7 +968,7 @@ class _StackedList extends State<StackedList> {
                                 children: const [
                                   Icon(
                                     Icons.add_rounded,
-                                    color: DefaultTheme.WHITE,
+                                    color: AppColor.WHITE,
                                     size: 15,
                                   ),
                                   Padding(padding: EdgeInsets.only(left: 5)),
@@ -976,7 +976,7 @@ class _StackedList extends State<StackedList> {
                                     'Tạo QR',
                                     style: TextStyle(
                                       fontSize: 12,
-                                      color: DefaultTheme.WHITE,
+                                      color: AppColor.WHITE,
                                     ),
                                   ),
                                 ],

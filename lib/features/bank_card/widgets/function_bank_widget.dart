@@ -75,7 +75,7 @@ class FunctionBankWidget extends StatelessWidget {
                   }
                 },
                 bgColor: Theme.of(context).canvasColor,
-                textColor: DefaultTheme.ORANGE,
+                textColor: AppColor.ORANGE,
               ),
               ButtonIconWidget(
                 width: width * 0.2,
@@ -96,7 +96,7 @@ class FunctionBankWidget extends StatelessWidget {
                   );
                 },
                 bgColor: Theme.of(context).canvasColor,
-                textColor: DefaultTheme.RED_CALENDAR,
+                textColor: AppColor.RED_CALENDAR,
               ),
               ButtonIconWidget(
                 width: width * 0.2,
@@ -122,7 +122,7 @@ class FunctionBankWidget extends StatelessWidget {
                   );
                 },
                 bgColor: Theme.of(context).canvasColor,
-                textColor: DefaultTheme.BLUE_TEXT,
+                textColor: AppColor.BLUE_TEXT,
               ),
               ButtonIconWidget(
                 width: width * 0.2,
@@ -142,7 +142,7 @@ class FunctionBankWidget extends StatelessWidget {
                   );
                 },
                 bgColor: Theme.of(context).canvasColor,
-                textColor: DefaultTheme.GREEN,
+                textColor: AppColor.GREEN,
               ),
             ],
           ),

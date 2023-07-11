@@ -140,7 +140,7 @@ class BankCardDetailView extends StatelessWidget {
                               width: 50,
                               height: 50,
                               child: CircularProgressIndicator(
-                                color: DefaultTheme.GREEN,
+                                color: AppColor.GREEN,
                               ),
                             ),
                           ),
@@ -200,7 +200,7 @@ class BankCardDetailView extends StatelessWidget {
                                     'Liên kết TK ngân hàng để nhận thông báo biến động số dư',
                                     style: TextStyle(
                                       // fontSize: 12,
-                                      color: DefaultTheme.GREY_TEXT,
+                                      color: AppColor.GREY_TEXT,
                                     ),
                                   ),
                                   const Padding(
@@ -277,8 +277,8 @@ class BankCardDetailView extends StatelessWidget {
                                           BankCardGetDetailEvent(
                                               bankId: bankId)));
                                     },
-                                    bgColor: DefaultTheme.TRANSPARENT,
-                                    textColor: DefaultTheme.GREEN,
+                                    bgColor: AppColor.TRANSPARENT,
+                                    textColor: AppColor.GREEN,
                                   ),
                                 ],
                                 const SizedBox(height: 10),
@@ -304,12 +304,12 @@ class BankCardDetailView extends StatelessWidget {
                                 height: 40,
                                 alignment: Alignment.center,
                                 padding: const EdgeInsets.all(0),
-                                bgColor: DefaultTheme.TRANSPARENT,
+                                bgColor: AppColor.TRANSPARENT,
                                 child: const Text(
                                   'Xem thêm',
                                   style: TextStyle(
                                     fontSize: 15,
-                                    color: DefaultTheme.GREEN,
+                                    color: AppColor.GREEN,
                                     decoration: TextDecoration.underline,
                                   ),
                                 ),
@@ -330,8 +330,8 @@ class BankCardDetailView extends StatelessWidget {
                             ButtonIconWidget(
                               width: width,
                               height: 40,
-                              bgColor: DefaultTheme.TRANSPARENT,
-                              textColor: DefaultTheme.RED_TEXT,
+                              bgColor: AppColor.TRANSPARENT,
+                              textColor: AppColor.RED_TEXT,
                               icon: Icons.remove_circle_rounded,
                               alignment: Alignment.centerLeft,
                               title: 'Huỷ liên kết TK ngân hàng',
@@ -350,8 +350,8 @@ class BankCardDetailView extends StatelessWidget {
                             ButtonIconWidget(
                               width: width,
                               height: 40,
-                              bgColor: DefaultTheme.TRANSPARENT,
-                              textColor: DefaultTheme.RED_TEXT,
+                              bgColor: AppColor.TRANSPARENT,
+                              textColor: AppColor.RED_TEXT,
                               icon: Icons.delete_rounded,
                               alignment: Alignment.centerLeft,
                               title: 'Xoá TK ngân hàng',
@@ -415,7 +415,7 @@ class BankCardDetailView extends StatelessWidget {
                     }
                   },
                   bgColor: Theme.of(context).cardColor,
-                  textColor: DefaultTheme.ORANGE,
+                  textColor: AppColor.ORANGE,
                 ),
                 const Padding(
                   padding: EdgeInsets.only(left: 10),
@@ -438,7 +438,7 @@ class BankCardDetailView extends StatelessWidget {
                     );
                   },
                   bgColor: Theme.of(context).cardColor,
-                  textColor: DefaultTheme.RED_CALENDAR,
+                  textColor: AppColor.RED_CALENDAR,
                 ),
                 const Padding(
                   padding: EdgeInsets.only(left: 10),
@@ -466,7 +466,7 @@ class BankCardDetailView extends StatelessWidget {
                     );
                   },
                   bgColor: Theme.of(context).cardColor,
-                  textColor: DefaultTheme.BLUE_TEXT,
+                  textColor: AppColor.BLUE_TEXT,
                 ),
                 const Padding(
                   padding: EdgeInsets.only(left: 10),
@@ -483,7 +483,7 @@ class BankCardDetailView extends StatelessWidget {
                         arguments: {'qrGeneratedDTO': qrGeneratedDTO});
                   },
                   bgColor: Theme.of(context).cardColor,
-                  textColor: DefaultTheme.GREEN,
+                  textColor: AppColor.GREEN,
                 ),
               ],
             ),
@@ -527,8 +527,8 @@ class BankCardDetailView extends StatelessWidget {
                 ),
               );
             },
-            textColor: DefaultTheme.WHITE,
-            bgColor: DefaultTheme.GREEN,
+            textColor: AppColor.WHITE,
+            bgColor: AppColor.GREEN,
           ),
           Padding(
               padding: EdgeInsets.only(
@@ -702,8 +702,8 @@ class BankCardDetailView extends StatelessWidget {
                   width: width,
                   height: 40,
                   text: 'Chi tiết doanh nghiệp',
-                  textColor: DefaultTheme.GREEN,
-                  bgColor: DefaultTheme.TRANSPARENT,
+                  textColor: AppColor.GREEN,
+                  bgColor: AppColor.TRANSPARENT,
                   function: () {
                     BusinessItemDTO businessItemDTO = BusinessItemDTO(
                       businessId: list[index].businessId,
@@ -811,7 +811,7 @@ class BankCardDetailView extends StatelessWidget {
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
-                              color: DefaultTheme.GREY_TEXT,
+                              color: AppColor.GREY_TEXT,
                             ),
                           ),
                         ],
@@ -878,7 +878,7 @@ class BankCardDetailView extends StatelessWidget {
                   : Icons.pending_actions_rounded,
               size: 18,
               color:
-                  (isAuthenticated) ? DefaultTheme.GREEN : DefaultTheme.ORANGE,
+                  (isAuthenticated) ? AppColor.GREEN : AppColor.ORANGE,
             ),
             const Padding(padding: EdgeInsets.only(left: 10)),
           ],
@@ -888,9 +888,9 @@ class BankCardDetailView extends StatelessWidget {
             style: TextStyle(
               fontSize: 15,
               color: (isAuthenticated != null && isAuthenticated)
-                  ? DefaultTheme.GREEN
+                  ? AppColor.GREEN
                   : (isAuthenticated != null && !isAuthenticated)
-                      ? DefaultTheme.ORANGE
+                      ? AppColor.ORANGE
                       : Theme.of(context).hintColor,
             ),
           ),

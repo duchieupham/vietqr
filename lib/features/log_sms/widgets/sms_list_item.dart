@@ -35,7 +35,7 @@ class SMSListItem extends StatelessWidget {
                   height: 40,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
-                    color: DefaultTheme.WHITE,
+                    color: AppColor.WHITE,
                     image: DecorationImage(
                       image: AssetImage(
                         LogoUtils.instance
@@ -67,7 +67,7 @@ class SMSListItem extends StatelessWidget {
                             ? TextSpan(
                                 text: 'TK: ${transactionDTO.bankAccount}',
                                 style: const TextStyle(
-                                  color: DefaultTheme.GREY_TEXT,
+                                  color: AppColor.GREY_TEXT,
                                   fontSize: 12,
                                   letterSpacing: 0.2,
                                 ),
@@ -101,8 +101,8 @@ class SMSListItem extends StatelessWidget {
                         style: TextStyle(
                           color: (BankInformationUtil.instance
                                   .isIncome(transactionDTO.transaction))
-                              ? DefaultTheme.GREEN
-                              : DefaultTheme.RED_TEXT,
+                              ? AppColor.GREEN
+                              : AppColor.RED_TEXT,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -132,7 +132,7 @@ class SMSListItem extends StatelessWidget {
                   ),
                   child: const Icon(
                     Icons.navigate_next_rounded,
-                    color: DefaultTheme.GREY_TEXT,
+                    color: AppColor.GREY_TEXT,
                     size: 20,
                   ),
                 ),

@@ -45,8 +45,8 @@ class ChooseBankPlanView extends StatelessWidget {
           borderRadius: 5,
           icon: Icons.credit_card_rounded,
           title: 'Thêm TK ngân hàng',
-          textColor: DefaultTheme.WHITE,
-          bgColor: DefaultTheme.GREEN,
+          textColor: AppColor.WHITE,
+          bgColor: AppColor.GREEN,
           function: () {
             Provider.of<AddBankProvider>(context, listen: false)
                 .updateSelect(1);

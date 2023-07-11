@@ -42,7 +42,7 @@ class ButtonNavigatePageWidget extends StatelessWidget {
             (isPrevious)
                 ? Icons.arrow_back_ios_rounded
                 : Icons.arrow_forward_ios_rounded,
-            color: DefaultTheme.GREY_TEXT,
+            color: AppColor.GREY_TEXT,
             size: 20,
           ),
         ),

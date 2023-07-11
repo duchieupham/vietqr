@@ -34,7 +34,7 @@ class QRStatisticWidget extends StatelessWidget {
               width: (isExpanded != null && isExpanded!) ? 300 : 250,
               height: (isExpanded != null && isExpanded!) ? 400 : 250 * 4 / 3,
               decoration: BoxDecoration(
-                color: DefaultTheme.WHITE,
+                color: AppColor.WHITE,
                 borderRadius: BorderRadius.circular(15),
               ),
               // child: SingleChildScrollView(
@@ -50,9 +50,9 @@ class QRStatisticWidget extends StatelessWidget {
                   Container(
                     // padding: const EdgeInsets.all(2),
                     decoration: BoxDecoration(
-                      color: DefaultTheme.WHITE,
+                      color: AppColor.WHITE,
                       border: Border.all(
-                        color: DefaultTheme.GREY_TEXT,
+                        color: AppColor.GREY_TEXT,
                         width: 0.5,
                       ),
                     ),
@@ -67,7 +67,7 @@ class QRStatisticWidget extends StatelessWidget {
                             ? const Size(40, 40)
                             : const Size(20, 20),
                       ),
-                      backgroundColor: DefaultTheme.WHITE,
+                      backgroundColor: AppColor.WHITE,
                     ),
                   ),
                   const Padding(padding: EdgeInsets.only(top: 10)),
@@ -82,7 +82,7 @@ class QRStatisticWidget extends StatelessWidget {
                       Container(
                         width: 0.5,
                         height: 30,
-                        color: DefaultTheme.GREY_TOP_TAB_BAR,
+                        color: AppColor.GREY_TOP_TAB_BAR,
                         margin: const EdgeInsets.symmetric(horizontal: 10),
                       ),
                       SizedBox(
@@ -98,7 +98,7 @@ class QRStatisticWidget extends StatelessWidget {
                   Text(
                     'Tên chủ TK: ${bankAccountDTO.bankName.toUpperCase()}',
                     style: const TextStyle(
-                      color: DefaultTheme.BLUE_TEXT,
+                      color: AppColor.BLUE_TEXT,
                       fontSize: 13,
                     ),
                   ),
@@ -108,7 +108,7 @@ class QRStatisticWidget extends StatelessWidget {
                     'Số TK: ${bankAccountDTO.bankAccount}',
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: DefaultTheme.BLUE_TEXT,
+                      color: AppColor.BLUE_TEXT,
                       fontSize: 13,
                     ),
                   ),
@@ -119,7 +119,7 @@ class QRStatisticWidget extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
-                      color: DefaultTheme.BLUE_TEXT,
+                      color: AppColor.BLUE_TEXT,
                       fontSize: 12,
                     ),
                   ),
@@ -135,7 +135,7 @@ class QRStatisticWidget extends StatelessWidget {
               width: width - 60,
               padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
               decoration: BoxDecoration(
-                color: DefaultTheme.WHITE,
+                color: AppColor.WHITE,
                 borderRadius: BorderRadius.circular(15),
               ),
               child: Column(
@@ -150,9 +150,9 @@ class QRStatisticWidget extends StatelessWidget {
                     padding: const EdgeInsets.all(5),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      color: DefaultTheme.WHITE,
+                      color: AppColor.WHITE,
                       border: Border.all(
-                        color: DefaultTheme.GREY_TEXT,
+                        color: AppColor.GREY_TEXT,
                         width: 0.5,
                       ),
                     ),
@@ -165,7 +165,7 @@ class QRStatisticWidget extends StatelessWidget {
                       embeddedImageStyle: QrEmbeddedImageStyle(
                         size: const Size(30, 30),
                       ),
-                      backgroundColor: DefaultTheme.WHITE,
+                      backgroundColor: AppColor.WHITE,
                     ),
                   ),
                   const Padding(padding: EdgeInsets.only(top: 10)),
@@ -180,7 +180,7 @@ class QRStatisticWidget extends StatelessWidget {
                       Container(
                         width: 0.5,
                         height: 30,
-                        color: DefaultTheme.GREY_TOP_TAB_BAR,
+                        color: AppColor.GREY_TOP_TAB_BAR,
                         margin: const EdgeInsets.symmetric(horizontal: 10),
                       ),
                       SizedBox(
@@ -196,7 +196,7 @@ class QRStatisticWidget extends StatelessWidget {
                   Text(
                     'Tên chủ TK: ${bankAccountDTO.bankName.toUpperCase()}',
                     style: const TextStyle(
-                      color: DefaultTheme.BLUE_TEXT,
+                      color: AppColor.BLUE_TEXT,
                       fontSize: 15,
                     ),
                   ),
@@ -206,7 +206,7 @@ class QRStatisticWidget extends StatelessWidget {
                     'Số TK: ${bankAccountDTO.bankAccount}',
                     style: const TextStyle(
                       fontWeight: FontWeight.w500,
-                      color: DefaultTheme.BLUE_TEXT,
+                      color: AppColor.BLUE_TEXT,
                       fontSize: 15,
                     ),
                   ),
@@ -216,7 +216,7 @@ class QRStatisticWidget extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      color: DefaultTheme.BLUE_TEXT,
+                      color: AppColor.BLUE_TEXT,
                       fontSize: 13,
                     ),
                   ),

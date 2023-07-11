@@ -95,20 +95,20 @@ class _UserSetting extends State<UserSetting>
                     width: width,
                     alignment: buttonTextAlignment,
                     text: 'Cập nhật thông tin cá nhân',
-                    textColor: DefaultTheme.GREEN,
+                    textColor: AppColor.GREEN,
                     function: () {
                       Navigator.of(context).pushNamed(Routes.USER_EDIT);
                     },
                   ),
                   const Divider(
-                    color: DefaultTheme.GREY_LIGHT,
+                    color: AppColor.GREY_LIGHT,
                     height: 1,
                   ),
                   ButtonTextWidget(
                     width: width,
                     alignment: buttonTextAlignment,
                     text: 'Cài đặt máy in',
-                    textColor: DefaultTheme.GREEN,
+                    textColor: AppColor.GREEN,
                     function: () async {
                       if (PlatformUtils.instance.isPhysicalDevice()) {
                         if (PlatformUtils.instance.isAndroidApp()) {
@@ -125,7 +125,7 @@ class _UserSetting extends State<UserSetting>
                     },
                   ),
                   const Divider(
-                    color: DefaultTheme.GREY_LIGHT,
+                    color: AppColor.GREY_LIGHT,
                     height: 1,
                   ),
                   // ButtonTextWidget(
@@ -143,20 +143,20 @@ class _UserSetting extends State<UserSetting>
                     width: width,
                     alignment: buttonTextAlignment,
                     text: 'Thay đổi giao diện',
-                    textColor: DefaultTheme.GREEN,
+                    textColor: AppColor.GREEN,
                     function: () {
                       Navigator.of(context).pushNamed(Routes.UI_SETTING);
                     },
                   ),
                   const Divider(
-                    color: DefaultTheme.GREY_LIGHT,
+                    color: AppColor.GREY_LIGHT,
                     height: 1,
                   ),
                   ButtonTextWidget(
                     width: width,
                     alignment: buttonTextAlignment,
                     text: 'Đăng xuất',
-                    textColor: DefaultTheme.RED_TEXT,
+                    textColor: AppColor.RED_TEXT,
                     function: () async {
                       Navigator.of(context).popUntil((route) => route.isFirst);
                       _logoutBloc.add(const LogoutEventSubmit());
@@ -228,7 +228,7 @@ class _IntroduceWidget extends StatelessWidget {
               const Text(
                 'Điểm thưởng : ',
                 style: TextStyle(
-                  color: DefaultTheme.GREY_TEXT,
+                  color: AppColor.GREY_TEXT,
                   fontSize: 14,
                 ),
               ),
@@ -266,7 +266,7 @@ class _IntroduceWidget extends StatelessWidget {
                   padding: const EdgeInsets.all(6),
                   decoration: const BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(16)),
-                    color: DefaultTheme.GREY_BG,
+                    color: AppColor.GREY_BG,
                   ),
                   child: const Icon(Icons.arrow_forward_ios, size: 12),
                 )

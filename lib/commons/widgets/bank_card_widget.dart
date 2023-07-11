@@ -30,7 +30,7 @@ class BankCardWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           boxShadow: const [
             BoxShadow(
-              color: DefaultTheme.GREY_TOP_TAB_BAR,
+              color: AppColor.GREY_TOP_TAB_BAR,
               spreadRadius: 1,
               blurRadius: 1,
               offset: Offset(2, 2),
@@ -47,7 +47,7 @@ class BankCardWidget extends StatelessWidget {
                 ),
           color: (isEnableColorBg != null && isEnableColorBg!)
               ? colorBg
-              : DefaultTheme.WHITE,
+              : AppColor.WHITE,
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -59,7 +59,7 @@ class BankCardWidget extends StatelessWidget {
                     width: width / 8,
                     height: width / 8,
                     decoration: BoxDecoration(
-                      color: DefaultTheme.WHITE,
+                      color: AppColor.WHITE,
                       image: DecorationImage(
                         image: ImageUtils.instance.getImageNetWork(dto.imgId),
                       ),
@@ -72,7 +72,7 @@ class BankCardWidget extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
-                    color: DefaultTheme.GREY_TEXT,
+                    color: AppColor.GREY_TEXT,
                   ),
                 )
               ],
@@ -92,13 +92,13 @@ class BankCardWidget extends StatelessWidget {
                           fontSize: 25,
                           fontWeight: FontWeight.w500,
                           letterSpacing: 1.5,
-                          color: DefaultTheme.BLACK,
+                          color: AppColor.BLACK,
                         ),
                       ),
                       Text(
                         dto.userBankName.toUpperCase(),
                         style: const TextStyle(
-                          color: DefaultTheme.GREY_TEXT,
+                          color: AppColor.GREY_TEXT,
                         ),
                       ),
                     ],

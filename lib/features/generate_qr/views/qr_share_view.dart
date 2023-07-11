@@ -100,7 +100,7 @@ class QRShareView extends StatelessWidget {
                     child: Icon(
                       Icons.arrow_back_ios_rounded,
                       size: 20,
-                      color: DefaultTheme.WHITE,
+                      color: AppColor.WHITE,
                     ),
                   ),
                 ),
@@ -109,7 +109,7 @@ class QRShareView extends StatelessWidget {
                   'Chia sẻ mã QR',
                   style: TextStyle(
                     fontSize: 20,
-                    color: DefaultTheme.WHITE,
+                    color: AppColor.WHITE,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -152,7 +152,7 @@ class QRShareView extends StatelessWidget {
                       );
                     },
                     bgColor: Theme.of(context).cardColor,
-                    textColor: DefaultTheme.BLUE_TEXT,
+                    textColor: AppColor.BLUE_TEXT,
                   ),
                   const Padding(padding: EdgeInsets.only(left: 10)),
                   ButtonIconWidget(
@@ -164,7 +164,7 @@ class QRShareView extends StatelessWidget {
                       await share(dto: dto);
                     },
                     bgColor: Theme.of(context).cardColor,
-                    textColor: DefaultTheme.GREEN,
+                    textColor: AppColor.GREEN,
                   ),
                   const Padding(padding: EdgeInsets.only(left: 20)),
                 ],
@@ -229,7 +229,7 @@ class QRShareView extends StatelessWidget {
                           textAlign: TextAlign.right,
                           text: const TextSpan(
                             style: TextStyle(
-                              color: DefaultTheme.WHITE,
+                              color: AppColor.WHITE,
                               fontSize: 12,
                             ),
                             children: [

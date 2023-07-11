@@ -123,7 +123,7 @@ class SmsDetailScreen extends StatelessWidget {
                             ),
                             child: const Icon(
                               Icons.keyboard_arrow_up_rounded,
-                              color: DefaultTheme.GREY_TEXT,
+                              color: AppColor.GREY_TEXT,
                               size: 30,
                             ),
                           ),

@@ -381,7 +381,7 @@ class _HomeScreen extends State<HomeScreen>
                                   boxShadow: [
                                     BoxShadow(
                                       color:
-                                          DefaultTheme.GREY_VIEW.withOpacity(0.5),
+                                          AppColor.GREY_VIEW.withOpacity(0.5),
                                       spreadRadius: 2,
                                       blurRadius: 3,
                                       offset: const Offset(2, 2),
@@ -435,7 +435,7 @@ class _HomeScreen extends State<HomeScreen>
           } else {
             await DialogWidget.instance.showFullModalBottomContent(
               widget: const QRScanWidget(),
-              color: DefaultTheme.BLACK,
+              color: AppColor.BLACK,
             );
             startBarcodeScanStream();
           }
@@ -448,8 +448,8 @@ class _HomeScreen extends State<HomeScreen>
         height: 45,
         decoration: BoxDecoration(
           color: (index == -1)
-              ? DefaultTheme.PURPLE_NEON.withOpacity(0.8)
-              : DefaultTheme.TRANSPARENT,
+              ? AppColor.PURPLE_NEON.withOpacity(0.8)
+              : AppColor.TRANSPARENT,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Image.asset(
@@ -512,7 +512,7 @@ class _HomeScreen extends State<HomeScreen>
                     alignment: Alignment.center,
                     margin: const EdgeInsets.only(left: 5),
                     decoration: BoxDecoration(
-                      color: DefaultTheme.PURPLE_NEON.withOpacity(0.3),
+                      color: AppColor.PURPLE_NEON.withOpacity(0.3),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
@@ -599,7 +599,7 @@ class _HomeScreen extends State<HomeScreen>
               style: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.normal,
-                color: DefaultTheme.GREY_TEXT,
+                color: AppColor.GREY_TEXT,
               ),
             ),
           ],
@@ -713,7 +713,7 @@ class _HomeScreen extends State<HomeScreen>
                                   alignment: Alignment.center,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(30),
-                                    color: DefaultTheme.RED_CALENDAR,
+                                    color: AppColor.RED_CALENDAR,
                                   ),
                                   child: Text(
                                     _notificationCount.toString(),
@@ -725,7 +725,7 @@ class _HomeScreen extends State<HomeScreen>
                                               3)
                                           ? 8
                                           : 10,
-                                      color: DefaultTheme.WHITE,
+                                      color: AppColor.WHITE,
                                     ),
                                   ),
                                 ),
