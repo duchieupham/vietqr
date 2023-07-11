@@ -1,6 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:io';
+
+import 'package:vierqr/commons/constants/configurations/numeral.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/commons/enums/check_type.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
 import 'package:vierqr/commons/utils/encrypt_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
@@ -14,15 +15,17 @@ import 'package:vierqr/features/register/blocs/register_bloc.dart';
 import 'package:vierqr/features/register/events/register_event.dart';
 import 'package:vierqr/features/register/frame/register_frame.dart';
 import 'package:vierqr/features/register/states/register_state.dart';
+import 'package:vierqr/features/register/views/pin_register_widget.dart';
 import 'package:vierqr/layouts/border_layout.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/models/account_login_dto.dart';
+import 'package:vierqr/services/providers/pin_provider.dart';
 import 'package:vierqr/services/providers/register_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
-import 'verify_otp_screen.dart';
+import 'pin_code_input.dart';
 
 class RegisterScreen extends StatefulWidget {
   final String phoneNo;
@@ -44,7 +47,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   bool _isChangePass = false;
 
-  final auth = FirebaseAuth.instance;
+  final FocusNode focusNode = FocusNode();
+
+  // final auth = FirebaseAuth.instance;
 
   void initialServices(BuildContext context) {
     if (!_isChangePass) {
@@ -87,7 +92,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           //pop loading dialog
           Navigator.of(context).pop();
           //pop to login page
-          backToPreviousPage(context);
+          backToPreviousPage(context, true);
         }
         // if (state is RegisterSentOTPFailedState) {
         //   DialogWidget.instance.openLoadingDialog();
@@ -136,7 +141,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 SubHeader(
                     title: 'Đăng ký',
                     function: () {
-                      backToPreviousPage(context);
+                      backToPreviousPage(context, false);
+                      Provider.of<PinProvider>(context, listen: false).reset();
                     }),
                 (PlatformUtils.instance.isWeb())
                     ? const Padding(padding: EdgeInsets.only(top: 10))
@@ -169,38 +175,93 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   height: 0.5,
                                   color: DefaultTheme.GREY_LIGHT,
                                 ),
-                                TextFieldWidget(
-                                  width: width,
-                                  isObscureText: true,
-                                  textfieldType: TextfieldType.LABEL,
-                                  title: 'Mật khẩu',
-                                  titleWidth: 100,
-                                  hintText: 'Bao gồm 6 số',
-                                  controller: _passwordController,
-                                  inputType: TextInputType.number,
-                                  keyboardAction: TextInputAction.next,
-                                  onChange: (value) {
-                                    _isChangePass = true;
-                                  },
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    const SizedBox(
+                                      width: 100,
+                                      child: Text(
+                                        'Mật khẩu',
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: PinRegisterWidget(
+                                        pinSize: 20,
+                                        pinLength: Numeral.DEFAULT_PIN_LENGTH,
+                                        onDone: (value) {
+                                          setState(() {
+                                            _passwordController.value =
+                                                _passwordController.value
+                                                    .copyWith(text: value);
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                  ],
                                 ),
+
+                                // TextFieldWidget(
+                                //   width: width,
+                                //   isObscureText: true,
+                                //   textfieldType: TextfieldType.LABEL,
+                                //   title: 'Mật khẩu',
+                                //   titleWidth: 100,
+                                //   hintText: 'Bao gồm 6 số',
+                                //   controller: _passwordController,
+                                //   inputType: TextInputType.number,
+                                //   keyboardAction: TextInputAction.next,
+                                //   onChange: (value) {
+                                //     _isChangePass = true;
+                                //   },
+                                // ),
                                 const Divider(
                                   height: 0.5,
                                   color: DefaultTheme.GREY_LIGHT,
                                 ),
-                                TextFieldWidget(
-                                  width: width,
-                                  isObscureText: true,
-                                  textfieldType: TextfieldType.LABEL,
-                                  title: 'Xác nhận lại',
-                                  titleWidth: 100,
-                                  hintText: 'Xác nhận lại Mật khẩu',
-                                  controller: _confirmPassController,
-                                  inputType: TextInputType.number,
-                                  keyboardAction: TextInputAction.next,
-                                  onChange: (value) {
-                                    _isChangePass = true;
-                                  },
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    const SizedBox(
+                                      width: 100,
+                                      child: Text(
+                                        'Xác nhận lại',
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: PinRegisterWidget(
+                                        pinSize: 20,
+                                        pinLength: Numeral.DEFAULT_PIN_LENGTH,
+                                        onDone: (value) {
+                                          setState(() {
+                                            _confirmPassController.value =
+                                                _confirmPassController.value
+                                                    .copyWith(text: value);
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                  ],
                                 ),
+                                // TextFieldWidget(
+                                //   width: width,
+                                //   isObscureText: true,
+                                //   textfieldType: TextfieldType.LABEL,
+                                //   title: 'Xác nhận lại',
+                                //   titleWidth: 100,
+                                //   hintText: 'Xác nhận lại Mật khẩu',
+                                //   controller: _confirmPassController,
+                                //   inputType: TextInputType.number,
+                                //   keyboardAction: TextInputAction.next,
+                                //   onChange: (value) {
+                                //     _isChangePass = true;
+                                //   },
+                                // ),
                               ],
                             ),
                           ),
@@ -371,11 +432,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  void backToPreviousPage(BuildContext context) {
+  void backToPreviousPage(BuildContext context, bool isRegisterSuccess) {
     _isChangePhone = false;
     _isChangePass = false;
     Provider.of<RegisterProvider>(context, listen: false).reset();
-    Navigator.pop(context);
+    Navigator.pop(
+        context,
+        isRegisterSuccess
+            ? {
+                'phone': _phoneNoController.text,
+                'password': _passwordController.text,
+              }
+            : null);
   }
 
   Widget _buildButtonSubmit(BuildContext context, double width) {
@@ -404,7 +472,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
             device: userIP,
             fcmToken: '',
-            platform: 'MOBILE',
+            platform:
+                PlatformUtils.instance.isIOsApp() ? 'MOBILE' : 'MOBILE_ADR',
           );
           if (!mounted) return;
           context.read<RegisterBloc>().add(RegisterEventSubmit(dto: dto));

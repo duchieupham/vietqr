@@ -109,3 +109,14 @@ class BankCardEventSearchName extends BankCardEvent {
   @override
   List<Object?> get props => [dto];
 }
+
+class ScanQrEventGetBankType extends BankCardEvent {
+  final String code;
+
+  const ScanQrEventGetBankType({required this.code});
+
+  @override
+  List<Object?> get props => [code];
+}
+
+class UpdateEvent extends BankCardEvent {}

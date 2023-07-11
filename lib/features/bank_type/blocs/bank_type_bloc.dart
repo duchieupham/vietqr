@@ -48,6 +48,9 @@ class BankTypeBloc extends Bloc<BankTypeEvent, BankTypeState> with BaseManager {
                       .contains(event.textSearch.toUpperCase()) ||
                   dto.bankName
                       .toUpperCase()
+                      .contains(event.textSearch.toUpperCase()) ||
+                  dto.bankShortName!
+                      .toUpperCase()
                       .contains(event.textSearch.toUpperCase()))
               .toList());
         } else {

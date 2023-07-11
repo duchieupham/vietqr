@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
@@ -16,6 +17,8 @@ import 'package:vierqr/services/providers/avatar_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 import 'package:flutter/material.dart';
 
+import 'introduce_bottom_sheet.dart';
+
 class UserSetting extends StatefulWidget {
   const UserSetting({Key? key, this.voidCallback}) : super(key: key);
 
@@ -27,19 +30,19 @@ class UserSetting extends StatefulWidget {
 
 class _UserSetting extends State<UserSetting>
     with AutomaticKeepAliveClientMixin {
-  static late LoginBloc _loginBloc;
   static late LogoutBloc _logoutBloc;
 
   @override
   void initState() {
     super.initState();
-    _loginBloc = BlocProvider.of(context);
     _logoutBloc = BlocProvider.of(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
+    super.build(context);
+    final double width = MediaQuery.of(context).size.width;
+    final double height = MediaQuery.of(context).size.height;
     Alignment buttonTextAlignment = Alignment.centerLeft;
     return BlocListener<LogoutBloc, LogoutState>(
       listener: (context, state) {
@@ -161,7 +164,17 @@ class _UserSetting extends State<UserSetting>
                   ),
                 ],
               ),
-            )
+            ),
+            // _IntroduceWidget(
+            //   onTap: () async {
+            //     final data = await DialogWidget.instance.showModelBottomSheet(
+            //       context: context,
+            //       padding: EdgeInsets.zero,
+            //       widget: const IntroduceBottomSheet(),
+            //       height: height * 0.6,
+            //     );
+            //   },
+            // ),
           ],
         ),
       ),
@@ -191,4 +204,77 @@ class _UserSetting extends State<UserSetting>
 
   @override
   bool get wantKeepAlive => true;
+}
+
+class _IntroduceWidget extends StatelessWidget {
+  final String? point;
+  final GestureTapCallback? onTap;
+
+  const _IntroduceWidget({super.key, this.point, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.all(Radius.circular(16)),
+        color: Theme.of(context).cardColor,
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              const Text(
+                'Điểm thưởng : ',
+                style: TextStyle(
+                  color: DefaultTheme.GREY_TEXT,
+                  fontSize: 14,
+                ),
+              ),
+              Text(
+                point ?? '0',
+                style: const TextStyle(fontSize: 18),
+              ),
+              Image.asset(
+                'assets/images/ic_point.png',
+                width: 36,
+                height: 36,
+              ),
+            ],
+          ),
+          const Divider(),
+          GestureDetector(
+            onTap: onTap,
+            child: Row(
+              children: [
+                Image.asset(
+                  'assets/images/ic_share_code.png',
+                  width: 36,
+                  height: 36,
+                ),
+                const SizedBox(width: 8),
+                const Expanded(
+                  child: Text(
+                    'Giới thiệu VietQR VN',
+                    style: TextStyle(
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(16)),
+                    color: DefaultTheme.GREY_BG,
+                  ),
+                  child: const Icon(Icons.arrow_forward_ios, size: 12),
+                )
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

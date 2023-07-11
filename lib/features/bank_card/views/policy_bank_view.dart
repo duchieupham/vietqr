@@ -125,11 +125,19 @@ class PolicyBankView extends StatelessWidget {
             );
           }
           if (state is BankCardUpdateAuthenticateSuccessState) {
+            Navigator.pop(context);
             phoneAuthenController.clear();
             nameController.clear();
             nationalController.clear();
             bankAccountController.clear();
+            Provider.of<AddBankProvider>(context, listen: false).reset();
             Navigator.pop(context);
+            // Navigator.of(context).pushReplacementNamed(
+            //   Routes.BANK_CARD_DETAIL_VEW,
+            //   arguments: {
+            //     'bankId': state.bankId,
+            //   },
+            // );
           }
           if (state is BankCardUpdateAuthenticateFailedState) {
             DialogWidget.instance.openMsgDialog(
@@ -160,9 +168,13 @@ class PolicyBankView extends StatelessWidget {
             nameController.clear();
             nationalController.clear();
             bankAccountController.clear();
+            Provider.of<AddBankProvider>(context, listen: false).reset();
             Navigator.of(context).pushReplacementNamed(
               Routes.BANK_CARD_GENERATED_VIEW,
-              arguments: {'bankAccountDTO': dto},
+              arguments: {
+                'bankAccountDTO': dto,
+                'bankId': state.bankId,
+              },
             );
           }
           if (state is BankCardInsertFailedState) {

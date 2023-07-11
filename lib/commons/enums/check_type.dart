@@ -7,6 +7,8 @@ enum BlocStatus {
   AWAIT,
   SUCCESS,
   DONE,
+  DELETE,
+  INSERT,
 }
 
 enum TypeSelect {
@@ -63,4 +65,40 @@ extension TypeRoleExt on TypeRole {
         return -1;
     }
   }
+}
+
+enum TypeQR {
+  QR_CMT,
+  QR_BANK,
+  NEGATIVE_TWO,
+  NEGATIVE_ONE,
+}
+
+extension TypeQRExt on TypeQR {
+  String get value {
+    switch (this) {
+      case TypeQR.NEGATIVE_TWO:
+        return '-2';
+      case TypeQR.NEGATIVE_ONE:
+        return '-1';
+      case TypeQR.QR_CMT:
+      case TypeQR.QR_BANK:
+      default:
+        return '0';
+    }
+  }
+}
+
+enum TypePermission {
+  None,
+  CameraDenied,
+  CameraAllow,
+  CameraRequest,
+  Allow,
+  Request,
+  Denied,
+  Error,
+  ScanError,
+  ScanNotFound,
+  ScanSuccess,
 }

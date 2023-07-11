@@ -1,3 +1,4 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/sub_header_widget.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_card_bloc.dart';
@@ -8,15 +9,14 @@ import 'package:vierqr/services/providers/create_qr_page_select_provider.dart';
 import 'package:vierqr/services/providers/create_qr_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:vierqr/services/providers/search_clear_provider.dart';
 
 class CreateQR extends StatefulWidget {
   final BankAccountDTO bankAccountDTO;
-  BankCardBloc? bankCardBloc;
 
-  CreateQR({
+  const CreateQR({
     Key? key,
     required this.bankAccountDTO,
-    this.bankCardBloc,
   }) : super(key: key);
 
   @override
@@ -29,28 +29,28 @@ class _CreateQR extends State<CreateQR> {
     keepPage: true,
   );
 
-  final TextEditingController amountController = TextEditingController();
-  final TextEditingController msgController = TextEditingController();
+  late BankCardBloc? bankCardBloc;
 
   final List<Widget> _pages = [];
 
   @override
   void initState() {
     super.initState();
+    bankCardBloc = BlocProvider.of(context);
     Provider.of<CreateQRProvider>(context, listen: false).reset();
     Provider.of<CreateQRPageSelectProvider>(context, listen: false).reset();
     _pages.addAll([
       InputTAWidget(
         key: const PageStorageKey('INPUT_TA_PAGE'),
         onNext: () {
+          Provider.of<SearchProvider>(context, listen: false).reset();
           onNext(context);
         },
       ),
       InputContentWidget(
         key: const PageStorageKey('INPUT_CONTENT_PAGE'),
         bankAccountDTO: widget.bankAccountDTO,
-        msgController: msgController,
-        bankCardBloc: widget.bankCardBloc,
+        bankCardBloc: bankCardBloc,
       ),
     ]);
   }
@@ -69,9 +69,6 @@ class _CreateQR extends State<CreateQR> {
             SubHeader(
               title: 'Tạo QR giao dịch',
               function: () {
-                _navigateBack(context);
-              },
-              callBackHome: () {
                 _navigateBack(context);
               },
             ),

@@ -61,6 +61,8 @@ class DefaultTheme {
   static const Color BLUE_MB = Color(0xFF141CD6);
   static const Color RED_MB = Color(0xFFF4272A);
   static const secondary400 = Color(0xff464F77);
+  static const greyF0F0F0 = Color(0xffF0F0F0);
+  static const grey979797 = Color(0xff979797);
 
   //THEME NAME
   static const String THEME_LIGHT = 'LIGHT';

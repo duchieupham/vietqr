@@ -2,23 +2,27 @@ import 'dart:async';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
+
+// import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:uuid/uuid.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'dart:math' as math;
 
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/enums/check_type.dart';
 import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
+import 'package:vierqr/commons/widgets/viet_qr.dart';
 import 'package:vierqr/commons/widgets/viet_qr_widget.dart';
-import 'package:vierqr/features/bank_card/blocs/bank_card_bloc.dart';
+import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/events/bank_card_event.dart';
-import 'package:vierqr/features/bank_card/states/bank_card_state.dart';
+import 'package:vierqr/features/bank_card/states/bank_state.dart';
 import 'package:vierqr/features/bank_card/widgets/function_bank_widget.dart';
 import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
 import 'package:vierqr/features/generate_qr/blocs/qr_blocs.dart';
@@ -28,6 +32,7 @@ import 'package:vierqr/features/generate_qr/views/create_qr.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
+import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/models/qr_create_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/services/providers/add_bank_provider.dart';
@@ -40,17 +45,15 @@ import 'package:vierqr/services/shared_references/user_information_helper.dart';
 const double _minHeight = 60;
 const double _maxHeight = 150;
 
-class BankCardSelectView extends StatefulWidget {
-  const BankCardSelectView({super.key});
+class BankScreen extends StatefulWidget {
+  const BankScreen({super.key});
 
   @override
-  State<BankCardSelectView> createState() => _BankCardSelectViewState();
+  State<BankScreen> createState() => _BankScreenState();
 }
 
-class _BankCardSelectViewState extends State<BankCardSelectView>
+class _BankScreenState extends State<BankScreen>
     with AutomaticKeepAliveClientMixin {
-  final List<BankAccountDTO> bankAccounts = [];
-  final List<Color> cardColors = [];
   final List<QRGeneratedDTO> qrGenerateds = [];
   final List<Widget> cardWidgets = [];
   final scrollController = ScrollController();
@@ -58,9 +61,8 @@ class _BankCardSelectViewState extends State<BankCardSelectView>
   final carouselController = CarouselController();
 
   late BusinessInformationBloc businessInformationBloc;
-  late BankCardBloc bankCardBloc;
+  late BankBloc bankCardBloc;
 
-  final refreshController = RefreshController(initialRefresh: false);
   String userId = UserInformationHelper.instance.getUserId();
 
   StreamSubscription? _subscription;
@@ -70,8 +72,6 @@ class _BankCardSelectViewState extends State<BankCardSelectView>
     bankCardBloc = BlocProvider.of(context);
     qrBloc = BlocProvider.of(context);
     Provider.of<BankCardSelectProvider>(context, listen: false).reset();
-    bankAccounts.clear();
-    cardColors.clear();
   }
 
   initData() {
@@ -93,11 +93,11 @@ class _BankCardSelectViewState extends State<BankCardSelectView>
 
   Future<void> _refresh() async {
     initData();
-    refreshController.refreshCompleted();
+    // refreshController.refreshCompleted();
   }
 
   void onLoading() async {
-    refreshController.loadComplete();
+    // refreshController.loadComplete();
   }
 
   @override
@@ -110,34 +110,48 @@ class _BankCardSelectViewState extends State<BankCardSelectView>
     double listHeight = 0;
     return Consumer<BankArrangementProvider>(
       builder: (context, provider, child) {
-        return SmartRefresher(
-          controller: refreshController,
-          onLoading: onLoading,
+        return RefreshIndicator(
           onRefresh: _refresh,
           child: (provider.type == 0)
               ? Column(
                   children: [
-                    BlocConsumer<BankCardBloc, BankCardState>(
-                      listener: (context, state) {
-                        if (state is BankCardGetListSuccessState) {
-                          resetProvider(context);
-                          if (bankAccounts.isEmpty) {
-                            bankAccounts.addAll(state.list);
-                            cardColors.addAll(state.colors);
+                    BlocConsumer<BankBloc, BankState>(
+                      listener: (context, state) async {
+                        if (state.type == TypePermission.ScanSuccess) {
+                          if (state.bankTypeDTO!.bankCode == 'MB') {
+                            Provider.of<AddBankProvider>(context, listen: false)
+                                .updateSelect(2);
+                            Provider.of<AddBankProvider>(context, listen: false)
+                                .updateRegisterAuthentication(true);
+                          } else {
+                            Provider.of<AddBankProvider>(context, listen: false)
+                                .updateSelect(1);
+                            Provider.of<AddBankProvider>(context, listen: false)
+                                .updateRegisterAuthentication(false);
                           }
+                          Provider.of<AddBankProvider>(context, listen: false)
+                              .updateSelectBankType(state.bankTypeDTO!);
+                          await Navigator.pushNamed(
+                            context,
+                            Routes.ADD_BANK_CARD,
+                            arguments: {
+                              'pageIndex': 2,
+                              'bankAccount': state.bankAccount,
+                            },
+                          );
+
+                          bankCardBloc.add(UpdateEvent());
                         }
-                        if (state
-                                is BankCardInsertUnauthenticatedSuccessState ||
-                            state is BankCardRemoveSuccessState ||
-                            state is BankCardInsertSuccessfulState) {
-                          if (scrollController.hasClients) {
-                            scrollController.jumpTo(0);
-                          }
-                          getListBank(context);
-                        }
+                        // if (state.status == BlocStatus.INSERT ||
+                        //     state.status == BlocStatus.DELETE) {
+                        //   if (scrollController.hasClients) {
+                        //     scrollController.jumpTo(0);
+                        //   }
+                        //   getListBank(context);
+                        // }
                       },
                       builder: (context, state) {
-                        if (state is BankCardLoadingListState) {
+                        if (state.status == BlocStatus.LOADING) {
                           return const Expanded(
                             child: UnconstrainedBox(
                               child: SizedBox(
@@ -150,11 +164,12 @@ class _BankCardSelectViewState extends State<BankCardSelectView>
                             ),
                           );
                         }
-                        if (state is BankCardGetListSuccessState) {
+                        if (state.status == BlocStatus.SUCCESS) {
                           if (scrollController.hasClients) {
                             scrollController.jumpTo(0);
                           }
-                          sizedBox = (bankAccounts.length * _maxHeight) * 0.7;
+                          sizedBox =
+                              (state.listBanks.length * _maxHeight) * 0.7;
                           listHeight = (sizedBox < _maxHeight)
                               ? _maxHeight
                               : (sizedBox > maxListHeight)
@@ -163,11 +178,16 @@ class _BankCardSelectViewState extends State<BankCardSelectView>
                         }
 
                         return (sizedBox <= listHeight)
-                            ? buildList(maxListHeight, bankAccounts, cardColors,
-                                listHeight, sizedBox, _refresh)
+                            ? buildList(maxListHeight, state.listBanks,
+                                state.colors, listHeight, sizedBox, _refresh)
                             : Expanded(
-                                child: buildList(maxListHeight, bankAccounts,
-                                    cardColors, listHeight, sizedBox, _refresh),
+                                child: buildList(
+                                    maxListHeight,
+                                    state.listBanks,
+                                    state.colors,
+                                    listHeight,
+                                    sizedBox,
+                                    _refresh),
                               );
                       },
                     ),
@@ -181,6 +201,7 @@ class _BankCardSelectViewState extends State<BankCardSelectView>
                   ],
                 )
               : Container(
+                  width: width,
                   decoration: const BoxDecoration(
                     image: DecorationImage(
                       image: AssetImage('assets/images/bg-qr.png'),
@@ -189,58 +210,55 @@ class _BankCardSelectViewState extends State<BankCardSelectView>
                   ),
                   child: Column(
                     children: [
-                      BlocConsumer<BankCardBloc, BankCardState>(
+                      BlocConsumer<BankBloc, BankState>(
                         listener: (context, state) {
-                          if (state is BankCardGetListSuccessState) {
-                            resetProvider(context);
-                            if (bankAccounts.isEmpty) {
-                              bankAccounts.addAll(state.list);
-                              List<QRCreateDTO> qrCreateDTOs = [];
-                              if (bankAccounts.isNotEmpty) {
-                                for (BankAccountDTO bankAccountDTO
-                                    in bankAccounts) {
-                                  QRCreateDTO qrCreateDTO = QRCreateDTO(
-                                    bankId: bankAccountDTO.id,
-                                    amount: '',
-                                    content: '',
-                                    branchId: '',
-                                    businessId: '',
-                                    userId: '',
-                                  );
-                                  qrCreateDTOs.add(qrCreateDTO);
-                                }
-                                getListQR(context, qrCreateDTOs);
+                          if (state.status == BlocStatus.SUCCESS) {
+                            List<QRCreateDTO> qrCreateDTOs = [];
+                            if (state.listBanks.isNotEmpty) {
+                              for (BankAccountDTO bankAccountDTO
+                                  in state.listBanks) {
+                                QRCreateDTO qrCreateDTO = QRCreateDTO(
+                                  bankId: bankAccountDTO.id,
+                                  amount: '',
+                                  content: '',
+                                  branchId: '',
+                                  businessId: '',
+                                  userId: '',
+                                );
+                                qrCreateDTOs.add(qrCreateDTO);
                               }
+                              getListQR(context, qrCreateDTOs);
                             }
                           }
-                          if (state
-                                  is BankCardInsertUnauthenticatedSuccessState ||
-                              state is BankCardRemoveSuccessState ||
-                              state is BankCardInsertSuccessfulState) {
-                            getListBank(context);
-                          }
+                          // if (state.status == BlocStatus.INSERT ||
+                          //     state.status == BlocStatus.DELETE) {
+                          //   getListBank(context);
+                          // }
                         },
                         builder: (context, state) {
-                          if (state is BankCardLoadingListState) {
-                            return const Expanded(
-                              child: UnconstrainedBox(
-                                child: SizedBox(
-                                  width: 30,
-                                  height: 30,
-                                  child: CircularProgressIndicator(
-                                    color: DefaultTheme.WHITE,
-                                  ),
-                                ),
-                              ),
-                            );
-                          }
                           return BlocBuilder<QRBloc, QRState>(
-                            builder: (context, state) {
-                              if (state is QRGeneratedListSuccessfulState) {
+                            builder: (context, qrState) {
+                              if (state.status == BlocStatus.LOADING ||
+                                  qrState is QRGenerateLoadingState) {
+                                return const Expanded(
+                                  child: UnconstrainedBox(
+                                    child: SizedBox(
+                                      width: 30,
+                                      height: 30,
+                                      child: CircularProgressIndicator(
+                                        color: DefaultTheme.WHITE,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }
+
+                              if (qrState is QRGeneratedListSuccessfulState) {
                                 cardWidgets.clear();
                                 qrGenerateds.clear();
-                                if (state.list.isNotEmpty) {
-                                  addQRWidget(width, height, state.list);
+                                if (qrState.list.isNotEmpty) {
+                                  addQRWidget(width, height, qrState.list,
+                                      state.listBanks);
                                 }
                               }
                               return Expanded(
@@ -318,6 +336,23 @@ class _BankCardSelectViewState extends State<BankCardSelectView>
                                               }),
                                             ),
                                           ),
+                                          // Expanded(
+                                          //   child: PageView(
+                                          //     onPageChanged: (index) {
+                                          //       Provider.of<BankAccountProvider>(
+                                          //               context,
+                                          //               listen: false)
+                                          //           .updateIndex(index);
+                                          //     },
+                                          //     children: List.generate(
+                                          //       cardWidgets.length,
+                                          //       (index) {
+                                          //         return cardWidgets[index];
+                                          //       },
+                                          //     ).toList(),
+                                          //   ),
+                                          // ),
+                                          // const SizedBox(height: 100),
                                           const Spacer(),
                                           Container(
                                             width: width,
@@ -370,7 +405,7 @@ class _BankCardSelectViewState extends State<BankCardSelectView>
       List<Color> colors,
       double listHeight,
       double sizeBox,
-      VoidCallback? onRefresh) {
+      RefreshCallback? onRefresh) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: StackedList(
@@ -381,18 +416,17 @@ class _BankCardSelectViewState extends State<BankCardSelectView>
         height: listHeight,
         sizeBox: sizeBox,
         onRefresh: onRefresh,
+        getListBank: () {
+          getListBank(context);
+        },
       ),
     );
   }
 
   void getListBank(BuildContext context) {
-    bankAccounts.clear();
-    cardColors.clear();
     String userId = UserInformationHelper.instance.getUserId();
     bankCardBloc.add(
-      BankCardEventGetList(
-        userId: userId,
-      ),
+      BankCardEventGetList(userId: userId),
     );
   }
 
@@ -401,7 +435,8 @@ class _BankCardSelectViewState extends State<BankCardSelectView>
     qrBloc.add(QREventGenerateList(list: list));
   }
 
-  void addQRWidget(double width, double height, List<QRGeneratedDTO> list) {
+  void addQRWidget(double width, double height, List<QRGeneratedDTO> list,
+      List<BankAccountDTO> bankAccounts) {
     if (qrGenerateds.isEmpty) {
       qrGenerateds.addAll(list);
       if (qrGenerateds.isNotEmpty) {
@@ -451,8 +486,6 @@ class _BankCardSelectViewState extends State<BankCardSelectView>
   }
 
   void resetProvider(BuildContext context) {
-    bankAccounts.clear();
-    cardColors.clear();
     Provider.of<BankCardSelectProvider>(context, listen: false).reset();
   }
 
@@ -474,7 +507,8 @@ class StackedList extends StatefulWidget {
   final ScrollController scrollController;
   final double sizeBox;
   final double height;
-  final VoidCallback? onRefresh;
+  final RefreshCallback? onRefresh;
+  final Function getListBank;
 
   const StackedList({
     super.key,
@@ -485,6 +519,7 @@ class StackedList extends StatefulWidget {
     required this.sizeBox,
     required this.height,
     this.onRefresh,
+    required this.getListBank,
   });
 
   @override
@@ -492,11 +527,46 @@ class StackedList extends StatefulWidget {
 }
 
 class _StackedList extends State<StackedList> {
-  final refreshController = RefreshController(initialRefresh: false);
+  // final refreshController = RefreshController(initialRefresh: false);
 
   @override
   void initState() {
     super.initState();
+  }
+
+  Future<void> startBarcodeScanStream(BuildContext context) async {
+    String data = await FlutterBarcodeScanner.scanBarcode(
+        '#ff6666', 'Cancel', true, ScanMode.QR);
+    if (data.isNotEmpty) {
+      if (data == TypeQR.NEGATIVE_ONE.value) {
+      } else if (data == TypeQR.NEGATIVE_TWO.value) {
+        DialogWidget.instance.openMsgDialog(
+          title: 'Không thể xác nhận mã QR',
+          msg: 'Ảnh QR không đúng định dạng, vui lòng chọn ảnh khác.',
+          function: () {
+            Navigator.pop(context);
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+          },
+        );
+      } else {
+        if (data.contains('|')) {
+          final list = data.split("|");
+          if (list.isNotEmpty) {
+            NationalScannerDTO identityDTO = NationalScannerDTO.fromJson(list);
+            if (!mounted) return;
+            Navigator.pushNamed(
+              context,
+              Routes.NATIONAL_INFORMATION,
+              arguments: {'dto': identityDTO},
+            );
+          }
+        } else {
+          context.read<BankBloc>().add(ScanQrEventGetBankType(code: data));
+        }
+      }
+    }
   }
 
   @override
@@ -541,10 +611,10 @@ class _StackedList extends State<StackedList> {
                     ),
                     child: SizedBox(
                       height: widget.height,
-                      child: SmartRefresher(
-                        onRefresh: widget.onRefresh,
-                        controller: refreshController,
-                        scrollController: widget.scrollController,
+                      child: RefreshIndicator(
+                        onRefresh: widget.onRefresh!,
+                        // controller: refreshController,
+                        // scrollController: widget.scrollController,
                         child: CustomScrollView(
                           slivers: widget.list.map(
                             (item) {
@@ -562,6 +632,7 @@ class _StackedList extends State<StackedList> {
                                   context: context,
                                   index: index,
                                   dto: widget.list[index],
+                                  getListBank: widget.getListBank,
                                 ),
                               );
                             },
@@ -600,10 +671,10 @@ class _StackedList extends State<StackedList> {
                             ),
                             child: SizedBox(
                               height: widget.height,
-                              child: SmartRefresher(
-                                onRefresh: widget.onRefresh,
-                                controller: refreshController,
-                                scrollController: widget.scrollController,
+                              child: RefreshIndicator(
+                                onRefresh: widget.onRefresh!,
+                                // controller: refreshController,
+                                // scrollController: widget.scrollController,
                                 child: CustomScrollView(
                                   controller: widget.scrollController,
                                   slivers: widget.list.map(
@@ -622,6 +693,7 @@ class _StackedList extends State<StackedList> {
                                           context: context,
                                           index: index,
                                           dto: widget.list[index],
+                                          getListBank: widget.getListBank,
                                         ),
                                       );
                                     },
@@ -633,11 +705,12 @@ class _StackedList extends State<StackedList> {
                   ),
         const Padding(padding: EdgeInsets.only(top: 10)),
         InkWell(
-          onTap: () {
+          onTap: () async {
             Provider.of<AddBankProvider>(context, listen: false)
                 .updateSelect(1);
-            Navigator.pushNamed(context, Routes.ADD_BANK_CARD,
+            await Navigator.pushNamed(context, Routes.ADD_BANK_CARD,
                 arguments: {'pageIndex': 1});
+            widget.getListBank();
           },
           child: Row(
             children: [
@@ -673,14 +746,17 @@ class _StackedList extends State<StackedList> {
                 borderRadius: 5,
                 enableShadow: true,
                 child: InkWell(
-                  onTap: () {
+                  onTap: () async {
                     if (QRScannerHelper.instance.getQrIntro()) {
-                      Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
+                      // Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
+                      startBarcodeScanStream(context);
                     } else {
-                      DialogWidget.instance.showFullModalBottomContent(
+                      await DialogWidget.instance.showFullModalBottomContent(
                         widget: const QRScanWidget(),
                         color: DefaultTheme.BLACK,
                       );
+                      if (!mounted) return;
+                      startBarcodeScanStream(context);
                     }
                   },
                   child: Row(
@@ -709,10 +785,13 @@ class _StackedList extends State<StackedList> {
     );
   }
 
-  Widget _buildCardItem(
-      {required BuildContext context,
-      required int index,
-      required BankAccountDTO dto}) {
+  Widget _buildCardItem({
+    required BuildContext context,
+    required int index,
+    required BankAccountDTO dto,
+    required Function getListBank,
+  }) {
+    String userId = UserInformationHelper.instance.getUserId();
     final double width = MediaQuery.of(context).size.width;
     ScrollController scrollController = ScrollController();
     scrollController.addListener(() {
@@ -723,14 +802,16 @@ class _StackedList extends State<StackedList> {
 
     return (dto.id.isNotEmpty)
         ? InkWell(
-            onTap: () {
-              Navigator.pushNamed(
+            onTap: () async {
+              await Navigator.pushNamed(
                 context,
                 Routes.BANK_CARD_DETAIL_VEW,
                 arguments: {
                   'bankId': dto.id,
                 },
               );
+
+              getListBank();
             },
             child: Container(
               padding: const EdgeInsets.all(0),
@@ -792,10 +873,12 @@ class _StackedList extends State<StackedList> {
                           if (dto.isAuthenticated)
                             Container(
                               padding: const EdgeInsets.all(4),
-                              decoration: const BoxDecoration(
+                              decoration: BoxDecoration(
                                 borderRadius:
-                                    BorderRadius.all(Radius.circular(25)),
-                                color: DefaultTheme.GREEN,
+                                    const BorderRadius.all(Radius.circular(25)),
+                                color: dto.userId == userId
+                                    ? DefaultTheme.GREEN
+                                    : DefaultTheme.ORANGE,
                               ),
                               child: const Icon(
                                 Icons.check,

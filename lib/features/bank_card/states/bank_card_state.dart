@@ -165,7 +165,11 @@ class BankCardCheckNotExistedState extends BankCardState {}
 
 class BankCardCheckFailedState extends BankCardState {}
 
-class BankCardUpdateAuthenticateSuccessState extends BankCardState {}
+class BankCardUpdateAuthenticateSuccessState extends BankCardState {
+  final String bankId;
+
+  const BankCardUpdateAuthenticateSuccessState(this.bankId);
+}
 
 class BankCardUpdateAuthenticateFailedState extends BankCardState {
   final String msg;

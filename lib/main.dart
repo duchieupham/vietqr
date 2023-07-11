@@ -15,6 +15,8 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
+import 'package:vierqr/features/account/blocs/account_bloc.dart';
+import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_card/views/bank_card_detail_view.dart';
 import 'package:vierqr/features/bank_card/views/bank_card_generated_view.dart';
@@ -33,6 +35,7 @@ import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/generate_qr/blocs/qr_blocs.dart';
 import 'package:vierqr/features/generate_qr/views/qr_generated.dart';
 import 'package:vierqr/features/generate_qr/views/qr_share_view.dart';
+import 'package:vierqr/features/home/blocs/home_bloc.dart';
 import 'package:vierqr/features/home/home.dart';
 import 'package:vierqr/features/home/theme_setting.dart';
 import 'package:vierqr/features/notification/views/notification_view.dart';
@@ -44,7 +47,6 @@ import 'package:vierqr/features/logout/blocs/log_out_bloc.dart';
 import 'package:vierqr/features/notification/blocs/notification_bloc.dart';
 import 'package:vierqr/features/login/blocs/login_bloc.dart';
 import 'package:vierqr/features/login/views/login.dart';
-import 'package:vierqr/features/permission/blocs/permission_bloc.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_manage_bloc.dart';
 import 'package:vierqr/features/personal/blocs/user_edit_bloc.dart';
 import 'package:vierqr/features/bank_card/views/add_bank_card_view.dart';
@@ -249,8 +251,8 @@ class _VietQRApp extends State<VietQRApp> {
           BlocProvider<NotificationBloc>(
             create: (BuildContext context) => NotificationBloc(),
           ),
-          BlocProvider<PermissionBloc>(
-            create: (BuildContext context) => PermissionBloc(),
+          BlocProvider<HomeBloc>(
+            create: (BuildContext context) => HomeBloc(),
           ),
           BlocProvider<DashboardBloc>(
             create: (BuildContext context) => DashboardBloc(context),
@@ -287,6 +289,12 @@ class _VietQRApp extends State<VietQRApp> {
           ),
           BlocProvider<PrinterBloc>(
             create: (BuildContext context) => PrinterBloc(),
+          ),
+          BlocProvider<AccountBloc>(
+            create: (BuildContext context) => AccountBloc(),
+          ),
+          BlocProvider<BankBloc>(
+            create: (BuildContext context) => BankBloc(),
           ),
         ],
         child: MultiProvider(
@@ -397,7 +405,6 @@ class _VietQRApp extends State<VietQRApp> {
                   GlobalMaterialLocalizations.delegate,
                   GlobalWidgetsLocalizations.delegate,
                   GlobalCupertinoLocalizations.delegate,
-                  RefreshLocalizations.delegate,
                 ],
                 supportedLocales: const [
                   //  Locale('en'), // English

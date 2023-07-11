@@ -12,7 +12,9 @@ class LoginEvent extends Equatable {
 
 class LoginEventByPhone extends LoginEvent {
   final AccountLoginDTO dto;
-  const LoginEventByPhone({required this.dto});
+  final bool isToast;
+
+  const LoginEventByPhone({required this.dto, this.isToast = false});
 
   @override
   List<Object?> get props => [dto];

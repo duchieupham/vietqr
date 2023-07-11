@@ -9,7 +9,7 @@ class PinCodeInput extends StatelessWidget {
     this.onChanged,
     this.onCompleted,
     this.controller,
-    this.obscureText = false,
+    this.obscureText = true,
     this.themeKey = false,
     this.focusNode,
     this.clBorderErr,
@@ -49,11 +49,11 @@ class PinCodeInput extends StatelessWidget {
       autoDisposeControllers: false,
       enablePinAutofill: true,
       pinTheme: PinTheme(
-        borderWidth: borderWidth,
+        borderWidth: 2,
         shape: shape,
-        fieldHeight: size,
+        fieldHeight: 30,
         fieldOuterPadding: EdgeInsets.zero,
-        fieldWidth: size,
+        fieldWidth: 15,
         activeColor: clBorderErr ?? activeColor,
         borderRadius: BorderRadius.circular(5),
         activeFillColor: activeFillColor,
@@ -131,16 +131,16 @@ class PinCodeInput extends StatelessWidget {
 
   double get sizeDark {
     if (obscureText) {
-      return 30;
+      return 15;
     }
-    return 36;
+    return 15;
   }
 
   double get sizeLight {
     if (obscureText) {
-      return 30;
+      return 15;
     }
-    return 36;
+    return 15;
   }
 
 //màu ô input khi  chọn
@@ -181,7 +181,7 @@ class PinCodeInput extends StatelessWidget {
     // if (obscureText) {
     //   return PinCodeFieldShape.circle;
     // }
-    return PinCodeFieldShape.underline;
+    return PinCodeFieldShape.circle;
     // return PinCodeFieldShape.box;
   }
 
@@ -189,7 +189,7 @@ class PinCodeInput extends StatelessWidget {
     // if (obscureText) {
     //   return PinCodeFieldShape.circle;
     // }
-    return PinCodeFieldShape.underline;
+    return PinCodeFieldShape.circle;
     // return PinCodeFieldShape.box;
   }
 
