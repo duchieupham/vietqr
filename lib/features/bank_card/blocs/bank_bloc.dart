@@ -28,13 +28,9 @@ class BankBloc extends Bloc<BankCardEvent, BankState> {
     on<BankCardEventInsertUnauthenticated>(_insertBankCardUnauthenticated);
     on<BankCardEventRegisterAuthentication>(_registerAuthentication);
     on<BankCardEventRemove>(_removeBankAccount);
-    // on<BankCardEventRequestOTP>(_requestOTP);
-    // on<BankCardEventConfirmOTP>(_confirmOTP);
     on<BankCardGetDetailEvent>(_getDetail);
     on<ScanQrEventGetBankType>(_getBankType);
     on<UpdateEvent>(_updateEvent);
-    // on<BankCardCheckExistedEvent>(_checkExistedBank);
-    // on<BankCardEventSearchName>(_searchBankName);
   }
 
   String userId = UserInformationHelper.instance.getUserId();

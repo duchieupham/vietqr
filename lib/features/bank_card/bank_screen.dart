@@ -18,6 +18,7 @@ import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
+import 'package:vierqr/commons/widgets/viet_qr.dart';
 import 'package:vierqr/commons/widgets/viet_qr_widget.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/events/bank_card_event.dart';
@@ -335,6 +336,23 @@ class _BankScreenState extends State<BankScreen>
                                               }),
                                             ),
                                           ),
+                                          // Expanded(
+                                          //   child: PageView(
+                                          //     onPageChanged: (index) {
+                                          //       Provider.of<BankAccountProvider>(
+                                          //               context,
+                                          //               listen: false)
+                                          //           .updateIndex(index);
+                                          //     },
+                                          //     children: List.generate(
+                                          //       cardWidgets.length,
+                                          //       (index) {
+                                          //         return cardWidgets[index];
+                                          //       },
+                                          //     ).toList(),
+                                          //   ),
+                                          // ),
+                                          // const SizedBox(height: 100),
                                           const Spacer(),
                                           Container(
                                             width: width,
@@ -773,6 +791,7 @@ class _StackedList extends State<StackedList> {
     required BankAccountDTO dto,
     required Function getListBank,
   }) {
+    String userId = UserInformationHelper.instance.getUserId();
     final double width = MediaQuery.of(context).size.width;
     ScrollController scrollController = ScrollController();
     scrollController.addListener(() {
@@ -854,10 +873,12 @@ class _StackedList extends State<StackedList> {
                           if (dto.isAuthenticated)
                             Container(
                               padding: const EdgeInsets.all(4),
-                              decoration: const BoxDecoration(
+                              decoration: BoxDecoration(
                                 borderRadius:
-                                    BorderRadius.all(Radius.circular(25)),
-                                color: DefaultTheme.GREEN,
+                                    const BorderRadius.all(Radius.circular(25)),
+                                color: dto.userId == userId
+                                    ? DefaultTheme.GREEN
+                                    : DefaultTheme.ORANGE,
                               ),
                               child: const Icon(
                                 Icons.check,

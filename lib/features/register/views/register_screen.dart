@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:vierqr/commons/constants/configurations/numeral.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
@@ -470,7 +472,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
             device: userIP,
             fcmToken: '',
-            platform: 'MOBILE',
+            platform:
+                PlatformUtils.instance.isIOsApp() ? 'MOBILE' : 'MOBILE_ADR',
           );
           if (!mounted) return;
           context.read<RegisterBloc>().add(RegisterEventSubmit(dto: dto));

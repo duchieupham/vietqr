@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/enums/check_type.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
-import 'package:vierqr/features/bank_card/views/bank_card_select_view.dart';
-import 'package:vierqr/features/introduce/views/introduce_screen.dart';
-import 'package:vierqr/features/personal/views/user_setting.dart';
 import 'package:vierqr/models/bottom_nav_dto.dart';
 
 class PageSelectProvider with ChangeNotifier {
