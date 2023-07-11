@@ -17,10 +17,9 @@ class BankTypeEventGetList extends BankTypeEvent {
 
 class BankTypeEventSearch extends BankTypeEvent {
   final String textSearch;
-  final List<BankTypeDTO> list;
 
-  const BankTypeEventSearch({required this.textSearch, required this.list});
+  const BankTypeEventSearch({required this.textSearch});
 
   @override
-  List<Object?> get props => [textSearch, list];
+  List<Object?> get props => [textSearch];
 }

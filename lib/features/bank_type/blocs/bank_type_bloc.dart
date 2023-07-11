@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vierqr/commons/enums/check_type.dart';
 import 'package:vierqr/commons/mixin/base_manager.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/bank_type/events/bank_type_event.dart';
@@ -11,7 +12,7 @@ class BankTypeBloc extends Bloc<BankTypeEvent, BankTypeState> with BaseManager {
   @override
   final BuildContext context;
 
-  BankTypeBloc(this.context) : super(BankTypeInitialState()) {
+  BankTypeBloc(this.context) : super(const BankTypeState(list: [])) {
     on<BankTypeEventGetList>(_getBankTypes);
     on<BankTypeEventSearch>(_searchBankTypes);
   }
@@ -22,17 +23,17 @@ class BankTypeBloc extends Bloc<BankTypeEvent, BankTypeState> with BaseManager {
     if (banks.isEmpty) {
       try {
         if (event is BankTypeEventGetList) {
-          emit(BankTypeLoadingState());
+          emit(state.copyWith(status: BlocStatus.LOADING));
           List<BankTypeDTO> list = await bankTypeRepository.getBankTypes();
           banks = list;
-          emit(BankTypeGetListSuccessfulState(list: list));
+          emit(state.copyWith(list: list, status: BlocStatus.SUCCESS));
         }
       } catch (e) {
         LOG.error(e.toString());
-        emit(BankTypeGetListFailedState());
+        emit(state.copyWith(status: BlocStatus.ERROR));
       }
     } else {
-      emit(BankTypeGetListSuccessfulState(list: banks));
+      emit(state.copyWith(list: banks, status: BlocStatus.SUCCESS));
     }
   }
 
@@ -41,7 +42,7 @@ class BankTypeBloc extends Bloc<BankTypeEvent, BankTypeState> with BaseManager {
       if (event is BankTypeEventSearch) {
         List<BankTypeDTO> result = [];
         if (event.textSearch.trim().isNotEmpty) {
-          result.addAll(event.list
+          result.addAll(banks
               .where((dto) =>
                   dto.bankCode
                       .toUpperCase()
@@ -54,13 +55,13 @@ class BankTypeBloc extends Bloc<BankTypeEvent, BankTypeState> with BaseManager {
                       .contains(event.textSearch.toUpperCase()))
               .toList());
         } else {
-          result = event.list;
+          result = banks;
         }
-        emit(BankTypeSearchState(list: result));
+        emit(state.copyWith(list: result, status: BlocStatus.SUCCESS));
       }
     } catch (e) {
       LOG.error(e.toString());
-      emit(BankTypeGetListFailedState());
+      emit(state.copyWith(status: BlocStatus.ERROR));
     }
   }
 }

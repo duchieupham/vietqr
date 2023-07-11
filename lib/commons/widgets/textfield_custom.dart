@@ -5,7 +5,6 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
 
 class TextFieldCustom extends StatefulWidget {
-  final double width;
   final String hintText;
   final TextEditingController? controller;
   final ValueChanged<String>? onChange;
@@ -33,17 +32,14 @@ class TextFieldCustom extends StatefulWidget {
   final Widget? suffixIcon;
 
   //Border textfield
-  final double widthLayout;
-  final EdgeInsets? paddingLayout;
-  final double? heightLayout;
-  final bool isBorder;
   final bool isRequired;
+  final Color? fillColor;
 
   const TextFieldCustom({
     Key? key,
-    required this.width,
     required this.hintText,
     this.controller,
+    this.fillColor,
     required this.keyboardAction,
     required this.onChange,
     required this.inputType,
@@ -64,11 +60,7 @@ class TextFieldCustom extends StatefulWidget {
     this.errorStyle,
     this.showToast,
     this.validator,
-    required this.widthLayout,
-    this.paddingLayout,
-    this.heightLayout,
     this.inputFormatter,
-    this.isBorder = true,
     this.prefixIcon,
     this.suffixIcon,
     this.isRequired = false,
@@ -112,7 +104,7 @@ class _TextFieldWidgetState extends State<TextFieldCustom> {
         prefixIcon: widget.prefixIcon,
         suffixIcon: widget.suffixIcon,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-        fillColor: AppColor.WHITE,
+        fillColor: widget.fillColor ?? AppColor.WHITE,
         filled: true,
       ),
     );
@@ -147,7 +139,6 @@ class _TextFieldWidgetState extends State<TextFieldCustom> {
           ),
         const SizedBox(height: 8),
         Container(
-          width: widget.width,
           alignment: Alignment.centerLeft,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

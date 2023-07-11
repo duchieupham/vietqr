@@ -17,6 +17,7 @@ import 'package:vierqr/features/login/frames/login_frame.dart';
 import 'package:vierqr/features/login/states/login_state.dart';
 import 'package:vierqr/features/register/views/register_screen.dart';
 import 'package:vierqr/layouts/box_layout.dart';
+import 'package:vierqr/layouts/button_widget.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/account_login_dto.dart';
 import 'package:flutter/material.dart';
@@ -119,19 +120,30 @@ class _LoginState extends State<_Login> {
               title: 'Đăng nhập',
               isLeading: false,
             ),
-            body: PhoneWidget(
-              onChanged: (value) {},
-            ),
-            // body: LoginFrame(
-            //   width: width,
-            //   height: height,
-            //   padding: EdgeInsets.zero,
-            //   widget1: _buildWidget1(
-            //     width: width,
-            //     isResized: PlatformUtils.instance.resizeWhen(width, 750),
+            // body: Padding(
+            //   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            //   child: Column(
+            //     children: [
+            //       PhoneWidget(
+            //         onChanged: (value) {},
+            //       ),
+            //     ],
             //   ),
-            //   widget2: _buildWidget2(context: context),
             // ),
+            // bottomSheet: MButtonWidget(
+            //   title: '',
+            //   onTap: (){},
+            // ),
+            body: LoginFrame(
+              width: width,
+              height: height,
+              padding: EdgeInsets.zero,
+              widget1: _buildWidget1(
+                width: width,
+                isResized: PlatformUtils.instance.resizeWhen(width, 750),
+              ),
+              widget2: _buildWidget2(context: context),
+            ),
           ),
         );
       },
@@ -183,8 +195,6 @@ class _LoginState extends State<_Login> {
               Consumer<ValidProvider>(
                 builder: (context, provider, child) {
                   return TextFieldCustom(
-                    width: width,
-                    widthLayout: width,
                     isObscureText: false,
                     autoFocus: false,
                     key: provider.phoneKey,

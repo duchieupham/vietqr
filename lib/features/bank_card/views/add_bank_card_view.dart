@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/widgets/sub_header_widget.dart';
 import 'package:vierqr/features/bank_card/views/choose_bank_plan_view.dart';
 import 'package:vierqr/features/bank_card/views/input_auth_information_view.dart';
 import 'package:vierqr/features/bank_card/views/input_information_bank_widget.dart';
 import 'package:vierqr/features/bank_card/views/policy_bank_view.dart';
-import 'package:vierqr/features/bank_type/select_bank_type_widget.dart';
-import 'package:vierqr/features/bank_type/blocs/bank_type_bloc.dart';
-import 'package:vierqr/features/bank_type/events/bank_type_event.dart';
+import 'package:vierqr/features/bank_type/select_bank_type_screen.dart';
 import 'package:vierqr/features/home/widgets/custom_app_bar_widget.dart';
 import 'package:vierqr/services/providers/add_bank_provider.dart';
 
@@ -68,11 +65,8 @@ class _AddBankCardViewState extends State<AddBankCardView> {
           key: const PageStorageKey('SELECT_BANK_TYPE'),
           pageController: _pageController,
         ),
-        SelectBankTypeWidget(
-          key: const PageStorageKey('SELECT_BANK_TYPE'),
-          callBack: (index) {
-            _animatedToPage(index);
-          },
+        const SelectBankTypeScreen(
+          key: PageStorageKey('SELECT_BANK_TYPE'),
         ),
         InputInformationBankWidget(
           key: const PageStorageKey('INPUT_INFORMATION_BANK'),
@@ -116,43 +110,48 @@ class _AddBankCardViewState extends State<AddBankCardView> {
         _hideKeyboardBack(context);
         return false;
       },
-      child: Scaffold(
-        appBar: CustomAppBarWidget(
-          child: Consumer<AddBankProvider>(
-            builder: (context, provider, child) {
-              return SubHeader(
-                title: (provider.select == 0 || provider.select == 2)
-                    ? 'Liên kết TK ngân hàng'
-                    : (provider.select == 1)
-                        ? 'Thêm TK ngân hàng'
-                        : 'Mở TK MB Bank',
-                function: () {
-                  _hideKeyboardBack(context);
-                },
-                callBackHome: () {
-                  _hideKeyboardBack(context, isFirst: true);
-                },
-              );
-            },
-          ),
-        ),
-        body: Column(
-          children: [
-            // _buildStepWidget(context, width),
-            Expanded(
-              child: PageView(
-                key: const PageStorageKey('PAGE_CREATE_QR_VIEW'),
-                physics: const NeverScrollableScrollPhysics(),
-                controller: _pageController,
-                onPageChanged: (index) {
-                  Provider.of<AddBankProvider>(context, listen: false)
-                      .updateIndex(index);
-                },
-                children: _pages,
-              ),
+      child: GestureDetector(
+        onTap: () {
+          FocusManager.instance.primaryFocus?.unfocus();
+        },
+        child: Scaffold(
+          appBar: CustomAppBarWidget(
+            child: Consumer<AddBankProvider>(
+              builder: (context, provider, child) {
+                return SubHeader(
+                  title: (provider.select == 0 || provider.select == 2)
+                      ? 'Liên kết TK ngân hàng'
+                      : (provider.select == 1)
+                          ? 'Thêm TK ngân hàng'
+                          : 'Mở TK MB Bank',
+                  function: () {
+                    _hideKeyboardBack(context);
+                  },
+                  callBackHome: () {
+                    _hideKeyboardBack(context, isFirst: true);
+                  },
+                );
+              },
             ),
-            const Padding(padding: EdgeInsets.only(bottom: 20)),
-          ],
+          ),
+          body: Column(
+            children: [
+              // _buildStepWidget(context, width),
+              Expanded(
+                child: PageView(
+                  key: const PageStorageKey('PAGE_CREATE_QR_VIEW'),
+                  physics: const NeverScrollableScrollPhysics(),
+                  controller: _pageController,
+                  onPageChanged: (index) {
+                    Provider.of<AddBankProvider>(context, listen: false)
+                        .updateIndex(index);
+                  },
+                  children: _pages,
+                ),
+              ),
+              const Padding(padding: EdgeInsets.only(bottom: 20)),
+            ],
+          ),
         ),
       ),
     );

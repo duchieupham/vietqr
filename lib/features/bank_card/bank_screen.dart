@@ -18,7 +18,6 @@ import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/commons/widgets/viet_qr.dart';
 import 'package:vierqr/commons/widgets/viet_qr_widget.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/events/bank_card_event.dart';
@@ -706,10 +705,9 @@ class _StackedList extends State<StackedList> {
         const Padding(padding: EdgeInsets.only(top: 10)),
         InkWell(
           onTap: () async {
-            Provider.of<AddBankProvider>(context, listen: false)
-                .updateSelect(1);
-            await Navigator.pushNamed(context, Routes.ADD_BANK_CARD,
-                arguments: {'pageIndex': 1});
+            // Provider.of<AddBankProvider>(context, listen: false)
+            //     .updateSelect(1);
+            await Navigator.pushNamed(context, Routes.ADD_BANK_CARD);
             widget.getListBank();
           },
           child: Row(

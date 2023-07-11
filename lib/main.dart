@@ -15,6 +15,7 @@ import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/account/blocs/account_bloc.dart';
+import 'package:vierqr/features/add_bank/add_bank_screen.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_card/views/bank_card_detail_view.dart';
@@ -23,6 +24,7 @@ import 'package:vierqr/features/bank_card/views/search_bank_view.dart';
 import 'package:vierqr/features/bank_member/blocs/bank_member_bloc.dart';
 import 'package:vierqr/features/bank_member/views/bank_member_view.dart';
 import 'package:vierqr/features/bank_type/blocs/bank_type_bloc.dart';
+import 'package:vierqr/features/bank_type/select_bank_type_screen.dart';
 import 'package:vierqr/features/branch/blocs/branch_bloc.dart';
 import 'package:vierqr/features/branch/views/branch_detail_view.dart';
 import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
@@ -237,13 +239,10 @@ class _VietQRApp extends State<VietQRApp> {
             create: (BuildContext context) => NotificationBloc(),
           ),
           BlocProvider<HomeBloc>(
-            create: (BuildContext context) => HomeBloc(),
+            create: (BuildContext context) => HomeBloc(context),
           ),
           BlocProvider<DashboardBloc>(
             create: (BuildContext context) => DashboardBloc(context),
-          ),
-          BlocProvider<BankTypeBloc>(
-            create: (BuildContext context) => BankTypeBloc(context),
           ),
           BlocProvider<TokenBloc>(
             create: (BuildContext context) => TokenBloc(),
@@ -299,7 +298,6 @@ class _VietQRApp extends State<VietQRApp> {
                 create: (context) => SuggestionWidgetProvider()),
             ChangeNotifierProvider(
                 create: (context) => MemeberManageProvider()),
-            ChangeNotifierProvider(create: (context) => AddBankProvider()),
             ChangeNotifierProvider(create: (context) => AddBusinessProvider()),
             ChangeNotifierProvider(
                 create: (context) => BusinessInformationProvider()),
@@ -339,7 +337,9 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.UI_SETTING: (context) => const ThemeSettingView(),
                   // Routes.TRANSACTION_HISTORY: (context) =>
                   //     const TransactionHistory(),
-                  Routes.ADD_BANK_CARD: (context) => const AddBankCardView(),
+                  Routes.ADD_BANK_CARD: (context) => const AddBankScreen(),
+                  Routes.SELECT_BANK_TYPE: (context) =>
+                      const SelectBankTypeScreen(),
                   Routes.BANK_CARD_GENERATED_VIEW: (context) =>
                       const BankCardGeneratedView(),
                   Routes.BANK_MEMBER_VIEW: (context) => const BankMemberView(),

@@ -195,7 +195,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 ),
                                 const SizedBox(height: 30),
                                 TextFieldCustom(
-                                  width: width,
                                   isObscureText: false,
                                   maxLines: 1,
                                   textFieldType: TextfieldType.LABEL,
@@ -207,7 +206,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   onChange: (value) {
                                     provider.updateRePass(value);
                                   },
-                                  widthLayout: width,
                                 ),
                               ],
                             ),
