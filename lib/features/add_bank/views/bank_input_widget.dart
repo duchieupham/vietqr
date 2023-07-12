@@ -1,10 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dudv_base/dudv_base.dart';
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/widgets/textfield_custom.dart';
-import 'package:vierqr/models/bank_account_dto.dart';
 
 class ModelBottomSheetView extends StatefulWidget {
   const ModelBottomSheetView({
@@ -175,7 +172,7 @@ class _BodyWidget extends State<ModelBottomSheetView> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: TextFieldCustom(
-                inputType: TextInputType.number,
+                inputType: TextInputType.text,
                 keyboardAction: TextInputAction.next,
                 isRequired: false,
                 isObscureText: false,

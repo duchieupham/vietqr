@@ -17,6 +17,8 @@ class BankTypeDTO {
     required this.caiValue,
   });
 
+  get name => '${(bankShortName ?? '')} - $bankName';
+
   factory BankTypeDTO.fromJson(Map<String, dynamic> json) {
     return BankTypeDTO(
       id: json['id'] ?? '',

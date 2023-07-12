@@ -150,7 +150,7 @@ class DefaultThemeData {
       focusColor: AppColor.BLUE_MB,
       accentColor: AppColor.GREY_TEXT,
       cardColor: AppColor.WHITE,
-      shadowColor: AppColor.RED_EC1010,
+      shadowColor: AppColor.BLACK_LIGHT,
       indicatorColor: AppColor.DARK_PINK,
       hintColor: AppColor.BLACK,
       splashColor: AppColor.TRANSPARENT,

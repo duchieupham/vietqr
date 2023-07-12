@@ -3,12 +3,24 @@
 enum BlocStatus {
   NONE,
   LOADING,
+  UNLOADING,
   ERROR,
   AWAIT,
   SUCCESS,
-  DONE,
   DELETE,
   INSERT,
+  DONE,
+}
+
+enum BlocRequest {
+  NONE,
+  ERROR,
+  AWAIT,
+  SUCCESS,
+  DELETE,
+  INSERT,
+  SEARCH,
+  DONE,
 }
 
 enum TypeSelect {

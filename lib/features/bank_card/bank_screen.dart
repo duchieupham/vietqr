@@ -4,6 +4,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 // import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -138,9 +139,26 @@ class _BankScreenState extends State<BankScreen>
                               'bankAccount': state.bankAccount,
                             },
                           );
-
                           bankCardBloc.add(UpdateEvent());
                         }
+
+                        if (state.status == BlocStatus.SUCCESS) {
+                          if (scrollController.hasClients) {
+                            scrollController.jumpTo(0);
+                          }
+                          sizedBox =
+                              (state.listBanks.length * _maxHeight) * 0.7;
+                          listHeight = (sizedBox < _maxHeight)
+                              ? _maxHeight
+                              : (sizedBox > maxListHeight)
+                                  ? maxListHeight
+                                  : sizedBox;
+                          bankCardBloc.add(UpdateEvent());
+                        }
+
+                        // if (state.status != BlocStatus.DONE) {
+                        //   bankCardBloc.add(UpdateEvent());
+                        // }
                         // if (state.status == BlocStatus.INSERT ||
                         //     state.status == BlocStatus.DELETE) {
                         //   if (scrollController.hasClients) {
@@ -162,18 +180,6 @@ class _BankScreenState extends State<BankScreen>
                               ),
                             ),
                           );
-                        }
-                        if (state.status == BlocStatus.SUCCESS) {
-                          if (scrollController.hasClients) {
-                            scrollController.jumpTo(0);
-                          }
-                          sizedBox =
-                              (state.listBanks.length * _maxHeight) * 0.7;
-                          listHeight = (sizedBox < _maxHeight)
-                              ? _maxHeight
-                              : (sizedBox > maxListHeight)
-                                  ? maxListHeight
-                                  : sizedBox;
                         }
 
                         return (sizedBox <= listHeight)
@@ -562,6 +568,7 @@ class _StackedList extends State<StackedList> {
             );
           }
         } else {
+          if (!mounted) return;
           context.read<BankBloc>().add(ScanQrEventGetBankType(code: data));
         }
       }
@@ -705,10 +712,21 @@ class _StackedList extends State<StackedList> {
         const Padding(padding: EdgeInsets.only(top: 10)),
         InkWell(
           onTap: () async {
-            // Provider.of<AddBankProvider>(context, listen: false)
-            //     .updateSelect(1);
-            await Navigator.pushNamed(context, Routes.ADD_BANK_CARD);
-            widget.getListBank();
+            final data =
+                await Navigator.pushNamed(context, Routes.ADD_BANK_CARD);
+
+            if (data is bool) {
+              if (!mounted) return;
+              Fluttertoast.showToast(
+                msg: 'Đăng ký thành công',
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.CENTER,
+                backgroundColor: Theme.of(context).cardColor,
+                textColor: Theme.of(context).hintColor,
+                fontSize: 15,
+              );
+              widget.getListBank();
+            }
           },
           child: Row(
             children: [
