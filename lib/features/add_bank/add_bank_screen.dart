@@ -86,7 +86,9 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
       BankTypeDTO? bankTypeDTO = args['bankDTO'];
       String? bankId = args['bankId'];
 
-      Provider.of<AddBankProvider>(context, listen: false).updateEdit(false);
+      if (userName.isNotEmpty) {
+        Provider.of<AddBankProvider>(context, listen: false).updateEdit(false);
+      }
 
       if (bankId != null) {
         Provider.of<AddBankProvider>(context, listen: false)

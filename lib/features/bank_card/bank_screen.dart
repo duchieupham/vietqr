@@ -186,30 +186,15 @@ class _BankScreenState extends State<_BankScreen>
                     Expanded(
                       child: BlocConsumer<BankBloc, BankState>(
                         listener: (context, state) async {
-                          if (state.type == TypePermission.ScanSuccess) {
-                            if (state.bankTypeDTO!.bankCode == 'MB') {
-                              Provider.of<AddBankProvider>(context,
-                                      listen: false)
-                                  .updateSelect(2);
-                              Provider.of<AddBankProvider>(context,
-                                      listen: false)
-                                  .updateRegisterAuthentication(true);
-                            } else {
-                              Provider.of<AddBankProvider>(context,
-                                      listen: false)
-                                  .updateSelect(1);
-                              Provider.of<AddBankProvider>(context,
-                                      listen: false)
-                                  .updateRegisterAuthentication(false);
-                            }
-                            Provider.of<AddBankProvider>(context, listen: false)
-                                .updateSelectBankType(state.bankTypeDTO!);
+                          if (state.request == BankType.SCAN) {
                             await Navigator.pushNamed(
                               context,
                               Routes.ADD_BANK_CARD,
                               arguments: {
-                                'pageIndex': 2,
+                                'step': 0,
+                                'bankDTO': state.bankTypeDTO,
                                 'bankAccount': state.bankAccount,
+                                'name': ''
                               },
                             );
 
@@ -377,7 +362,7 @@ class _BankScreenState extends State<_BankScreen>
           }
         } else {
           if (!mounted) return;
-          context.read<BankBloc>().add(ScanQrEventGetBankType(code: data));
+          _bloc.add(ScanQrEventGetBankType(code: data));
         }
       }
     }
@@ -400,7 +385,7 @@ class _BankScreenState extends State<_BankScreen>
           }
         },
             title: 'Copy mã QR',
-            des: 'Quét mã QR để thêm/liên kết Tk ngân hàng'),
+            des: 'Quét QRmã QR để thêm/liên kết Tk ngân hàng'),
       ],
     );
   }

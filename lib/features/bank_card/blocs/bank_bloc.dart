@@ -5,12 +5,17 @@ import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/base_manager.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
+import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/bank_card/repositories/bank_card_repository.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
+import 'package:vierqr/features/home/blocs/home_bloc.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
+import 'package:vierqr/models/bank_type_dto.dart';
+import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
+import 'package:vierqr/models/viet_qr_scanned_dto.dart';
 
 class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
   @override
@@ -21,6 +26,7 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
     on<BankCardEventGetList>(_getBankAccounts);
     on<UpdateEvent>(_updateEvent);
     on<QREventGenerateList>(_generateQRList);
+    on<ScanQrEventGetBankType>(_getBankTypeQR);
   }
 
   final bankCardRepository = const BankCardRepository();
@@ -32,6 +38,43 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
         final List<QRGeneratedDTO> list =
             await bankCardRepository.generateQRList(event.list);
         emit(state.copyWith(listGeneratedQR: list, request: BankType.QR));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(status: BlocStatus.ERROR));
+    }
+  }
+
+  void _getBankTypeQR(BankEvent event, Emitter emit) async {
+    try {
+      if (event is ScanQrEventGetBankType) {
+        VietQRScannedDTO vietQRScannedDTO =
+            QRScannerUtils.instance.getBankAccountFromQR(event.code);
+
+        if (vietQRScannedDTO.caiValue.isNotEmpty &&
+            vietQRScannedDTO.bankAccount.isNotEmpty) {
+          BankTypeDTO dto = await homeRepository
+              .getBankTypeByCaiValue(vietQRScannedDTO.caiValue);
+          if (dto.id.isNotEmpty) {
+            emit(
+              state.copyWith(
+                request: BankType.SCAN,
+                bankTypeDTO: dto,
+                bankAccount: vietQRScannedDTO.bankAccount,
+              ),
+            );
+          } else {
+            emit(state.copyWith(request: BankType.NONE));
+          }
+        } else {
+          NationalScannerDTO nationalScannerDTO =
+              homeRepository.getNationalInformation(event.code);
+          if (nationalScannerDTO.nationalId.trim().isNotEmpty) {
+            emit(state.copyWith(nationalScannerDTO: nationalScannerDTO));
+          } else {
+            emit(state.copyWith(request: BankType.NONE));
+          }
+        }
       }
     } catch (e) {
       LOG.error(e.toString());
