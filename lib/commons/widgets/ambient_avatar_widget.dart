@@ -38,57 +38,20 @@ class AmbientAvatarWidget extends StatelessWidget {
       );
     }
 
-    return Stack(
-      children: [
-        Center(
-          child: ClipRRect(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-              child: Opacity(
-                opacity: 0.6,
-                child: Container(
-                  width: size + blurRadius,
-                  height: size + blurRadius,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: (imageFile != null)
-                          ? Image.file(imageFile!).image
-                          : ImageUtils.instance.getImageNetworkCache(imgId),
-                    ),
-                  ),
-                ),
-              ),
-            ),
+    return Center(
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          image: DecorationImage(
+            fit: BoxFit.cover,
+            image: (imageFile != null)
+                ? Image.file(imageFile!).image
+                : ImageUtils.instance.getImageNetworkCache(imgId),
           ),
         ),
-        Positioned.fill(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
-            child: Container(
-              color: AppColor.TRANSPARENT,
-            ),
-          ),
-        ),
-        Positioned.fill(
-          child: Center(
-            child: Container(
-              width: size,
-              height: size,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: (imageFile != null)
-                      ? Image.file(imageFile!).image
-                      : ImageUtils.instance.getImageNetworkCache(imgId),
-                ),
-              ),
-            ),
-          ),
-        )
-      ],
+      ),
     );
   }
 }

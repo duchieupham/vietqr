@@ -102,7 +102,7 @@ class StringUtils {
 
   String? validatePhone(String value) {
     RegExp regExp = RegExp(_phonePattern);
-    if (value.isEmpty || value.length <= 10) {
+    if (value.isEmpty) {
       return null;
     } else if (!regExp.hasMatch(value)) {
       return 'Số điện thoại không đúng định dạng.';

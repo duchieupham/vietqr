@@ -7,6 +7,7 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/encrypt_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
+import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
@@ -15,7 +16,6 @@ import 'package:vierqr/commons/widgets/textfield_custom.dart';
 import 'package:vierqr/features/login/blocs/login_bloc.dart';
 import 'package:vierqr/features/login/blocs/login_provider.dart';
 import 'package:vierqr/features/login/events/login_event.dart';
-import 'package:vierqr/features/login/frames/login_frame.dart';
 import 'package:vierqr/features/login/states/login_state.dart';
 import 'package:vierqr/features/register/views/register_screen.dart';
 import 'package:vierqr/layouts/box_layout.dart';
@@ -131,13 +131,6 @@ class _LoginState extends State<_Login> {
             FocusManager.instance.primaryFocus?.unfocus();
           }
 
-          await DialogWidget.instance.openMsgDialog(
-              title: 'TK chưa đăng ký',
-              msg: state.msg ?? '',
-              button: 'Đăng kí ngay'
-              // 'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập.',
-              );
-
           if (!mounted) return;
           final data = await Navigator.of(context).push(
             MaterialPageRoute(
@@ -158,6 +151,7 @@ class _LoginState extends State<_Login> {
               device: '',
               fcmToken: '',
               platform: '',
+              sharingCode: '',
             );
             if (!mounted) return;
             context
@@ -181,7 +175,7 @@ class _LoginState extends State<_Login> {
               if (provider.isQuickLogin) {
                 return Scaffold(
                   body: Container(
-                    color: AppColor.WHITE,
+                    color: AppColor.GREY_BG,
                     child: Column(
                       children: [
                         Container(
@@ -249,19 +243,35 @@ class _LoginState extends State<_Login> {
                                   obscureText: true,
                                   controller: passController,
                                   onChanged: provider.onChangePin,
+                                  onCompleted: (value) {
+                                    AccountLoginDTO dto = AccountLoginDTO(
+                                      phoneNo: provider.phone,
+                                      password: EncryptUtils.instance.encrypted(
+                                        provider.phone,
+                                        passController.text,
+                                      ),
+                                      device: '',
+                                      fcmToken: '',
+                                      platform: '',
+                                      sharingCode: '',
+                                    );
+                                    context
+                                        .read<LoginBloc>()
+                                        .add(LoginEventByPhone(dto: dto));
+                                  },
                                 ),
                               ),
                               const SizedBox(height: 16),
-                              GestureDetector(
-                                child: const Text(
-                                  'Quên mật khẩu?',
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      color: AppColor.BLUE_TEXT),
-                                ),
-                              ),
-                              const SizedBox(height: 16),
+                              // GestureDetector(
+                              //   child: const Text(
+                              //     'Quên mật khẩu?',
+                              //     style: TextStyle(
+                              //         fontSize: 14,
+                              //         fontWeight: FontWeight.w500,
+                              //         color: AppColor.BLUE_TEXT),
+                              //   ),
+                              // ),
+                              // const SizedBox(height: 16),
                               GestureDetector(
                                 onTap: () {
                                   provider.updateQuickLogin(false);
@@ -293,6 +303,7 @@ class _LoginState extends State<_Login> {
                         device: '',
                         fcmToken: '',
                         platform: '',
+                        sharingCode: '',
                       );
                       context
                           .read<LoginBloc>()
@@ -311,10 +322,24 @@ class _LoginState extends State<_Login> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       PhoneWidget(
                         phoneController: phoneNoController,
                         onChanged: provider.updatePhone,
+                      ),
+                      Visibility(
+                        visible: provider.errorPhone != null,
+                        child: Padding(
+                          padding:
+                              const EdgeInsets.only(left: 5, top: 5, right: 30),
+                          child: Text(
+                            provider.errorPhone ?? '',
+                            textAlign: TextAlign.left,
+                            style: const TextStyle(
+                                color: AppColor.RED_TEXT, fontSize: 13),
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -363,6 +388,7 @@ class _LoginState extends State<_Login> {
             device: '',
             fcmToken: '',
             platform: '',
+            sharingCode: '',
           );
           context.read<LoginBloc>().add(LoginEventByPhone(dto: dto));
         },
@@ -497,6 +523,7 @@ class _LoginState extends State<_Login> {
                       device: '',
                       fcmToken: '',
                       platform: '',
+                      sharingCode: '',
                     );
                     if (!mounted) return;
                     context

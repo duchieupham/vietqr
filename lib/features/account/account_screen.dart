@@ -7,6 +7,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/file_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/widgets/ambient_avatar_widget.dart';
@@ -46,13 +47,16 @@ List<IconData> listIcon = [
 ];
 
 class AccountScreen extends StatefulWidget {
-  const AccountScreen({super.key});
+  final VoidCallback? voidCallback;
+
+  const AccountScreen({super.key, this.voidCallback});
 
   @override
   State<AccountScreen> createState() => _AccountScreenState();
 }
 
-class _AccountScreenState extends State<AccountScreen> {
+class _AccountScreenState extends State<AccountScreen>
+    with AutomaticKeepAliveClientMixin {
   late AccountBloc _accountBloc;
 
   @override
@@ -64,26 +68,57 @@ class _AccountScreenState extends State<AccountScreen> {
     });
   }
 
+  Future<void> _onRefresh()async {
+    _accountBloc.add(InitAccountEvent());
+  }
+
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return BlocConsumer<AccountBloc, AccountState>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state.status == BlocStatus.LOADING) {
+          DialogWidget.instance.openLoadingDialog();
+        }
+
+        if (state.status == BlocStatus.UNLOADING) {
+          Navigator.pop(context);
+        }
+        if (state.request == AccountType.LOG_OUT) {
+          if (Navigator.canPop(context)) {
+            Navigator.pop(context);
+          }
+          Navigator.of(context).pushReplacementNamed(Routes.LOGIN);
+          widget.voidCallback!();
+        }
+        if (state.status == BlocStatus.ERROR) {
+          if (!mounted) return;
+          DialogWidget.instance.openMsgDialog(
+            title: 'Không thể đăng xuất',
+            msg: 'Vui lòng thử lại sau.',
+          );
+        }
+      },
       builder: (context, state) {
-        return SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _BannerWidget(),
-              const SizedBox(height: 30),
-              _FeatureWidget(),
-              const SizedBox(height: 30),
-              _IntroduceWidget(dto: state.introduceDTO),
-              const SizedBox(height: 20),
-              _SettingWidget(),
-              const SizedBox(height: 16),
-              _buildLogOutWidget(),
-              const SizedBox(height: kToolbarHeight + 16),
-            ],
+        return RefreshIndicator(
+          onRefresh: _onRefresh,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _BannerWidget(),
+                const SizedBox(height: 30),
+                _FeatureWidget(),
+                const SizedBox(height: 30),
+                _IntroduceWidget(dto: state.introduceDTO),
+                const SizedBox(height: 20),
+                _SettingWidget(),
+                const SizedBox(height: 16),
+                _buildLogOutWidget(),
+                const SizedBox(height: kToolbarHeight + 16),
+              ],
+            ),
           ),
         );
       },
@@ -92,6 +127,10 @@ class _AccountScreenState extends State<AccountScreen> {
 
   Widget _buildLogOutWidget() {
     return GestureDetector(
+      onTap: () {
+        Navigator.of(context).popUntil((route) => route.isFirst);
+        _accountBloc.add(LogoutEventSubmit());
+      },
       child: Container(
         alignment: Alignment.center,
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -112,19 +151,25 @@ class _AccountScreenState extends State<AccountScreen> {
           'Đăng xuất',
           style: TextStyle(
             color: AppColor.RED_TEXT,
-            fontSize: 15,
+            fontSize: 14,
           ),
         ),
       ),
     );
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
+
+
 }
 
 class _BannerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 220,
+      height: 200,
       width: MediaQuery.of(context).size.width,
       decoration: const BoxDecoration(
         image: DecorationImage(
@@ -141,7 +186,7 @@ class _BannerWidget extends StatelessWidget {
           Text(
             UserInformationHelper.instance.getUserFullname(),
             style: const TextStyle(
-              fontSize: 20,
+              fontSize: 18,
               fontWeight: FontWeight.bold,
               color: AppColor.WHITE,
             ),
@@ -150,7 +195,7 @@ class _BannerWidget extends StatelessWidget {
           Text(
             UserInformationHelper.instance.getPhoneNo(),
             style: const TextStyle(
-              fontSize: 15,
+              fontSize: 14,
               fontWeight: FontWeight.w600,
               color: AppColor.WHITE,
             ),
@@ -257,9 +302,9 @@ class _FeatureWidget extends StatelessWidget {
     return Column(
       children: [
         Container(
-          width: 60,
-          height: 60,
-          padding: const EdgeInsets.all(12),
+          width: 40,
+          height: 40,
+          padding: const EdgeInsets.all(8),
           decoration: const BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(30)),
             color: AppColor.WHITE,
@@ -272,7 +317,7 @@ class _FeatureWidget extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           data.name,
-          style: const TextStyle(fontSize: 15),
+          style: const TextStyle(fontSize: 12),
         ),
       ],
     );
@@ -310,12 +355,12 @@ class _IntroduceWidget extends StatelessWidget {
                 'Điểm thưởng : ',
                 style: TextStyle(
                   color: AppColor.GREY_TEXT,
-                  fontSize: 15,
+                  fontSize: 12,
                 ),
               ),
               Text(
                 dto?.point ?? '0',
-                style: const TextStyle(fontSize: 18),
+                style: const TextStyle(fontSize: 14),
               ),
               Image.asset(
                 'assets/images/ic_point.png',
@@ -338,15 +383,15 @@ class _IntroduceWidget extends StatelessWidget {
               children: [
                 Image.asset(
                   'assets/images/ic_share_code.png',
-                  width: 36,
-                  height: 36,
+                  width: 28,
+                  height: 28,
                 ),
                 const SizedBox(width: 8),
                 const Expanded(
                   child: Text(
                     'Giới thiệu VietQR VN',
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: 12,
                     ),
                   ),
                 ),
@@ -378,7 +423,7 @@ class _SettingWidget extends StatelessWidget {
           const Text(
             'Cài đặt',
             style: TextStyle(
-              fontSize: 20,
+              fontSize: 14,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -417,15 +462,15 @@ class _SettingWidget extends StatelessWidget {
                     children: [
                       Image.asset(
                         'assets/images/ic-printer-setting.png',
-                        width: 36,
-                        height: 36,
+                        width: 28,
+                        height: 28,
                       ),
                       const SizedBox(width: 8),
                       const Expanded(
                         child: Text(
                           'Cài đặt máy in',
                           style: TextStyle(
-                            fontSize: 15,
+                            fontSize: 12,
                           ),
                         ),
                       ),
@@ -441,15 +486,15 @@ class _SettingWidget extends StatelessWidget {
                     children: [
                       Image.asset(
                         'assets/images/ic-theme-setting.png',
-                        width: 36,
-                        height: 36,
+                        width: 28,
+                        height: 28,
                       ),
                       const SizedBox(width: 8),
                       const Expanded(
                         child: Text(
                           'Thay đổi giao diện',
                           style: TextStyle(
-                            fontSize: 15,
+                            fontSize: 12,
                           ),
                         ),
                       ),

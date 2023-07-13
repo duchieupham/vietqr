@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:vierqr/commons/utils/string_utils.dart';
 
 class LoginProvider with ChangeNotifier {
   bool isEnableButton = false;
   bool isButtonLogin = false;
   String phone = '';
+  String? errorPhone;
 
   bool isQuickLogin = false;
 
@@ -24,11 +26,13 @@ class LoginProvider with ChangeNotifier {
 
   void updatePhone(String value) {
     phone = value;
-    if (value.isNotEmpty) {
-      isEnableButton = true;
-    } else {
+    errorPhone = StringUtils.instance.validatePhone(value);
+    if (errorPhone != null || value.isEmpty) {
       isEnableButton = false;
+    } else {
+      isEnableButton = true;
     }
+
     notifyListeners();
   }
 

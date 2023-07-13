@@ -160,8 +160,12 @@ class DefaultThemeData {
             bodyColor: AppColor.BLACK,
           ),
       appBarTheme: const AppBarTheme(
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.dark, // For Android (dark icons)
+          statusBarBrightness: Brightness.light, // For iOS (dark icons)
+        ),
         elevation: 0,
-        systemOverlayStyle: SystemUiOverlayStyle.light,
         backgroundColor: AppColor.TRANSPARENT,
       ),
       inputDecorationTheme: InputDecorationTheme(

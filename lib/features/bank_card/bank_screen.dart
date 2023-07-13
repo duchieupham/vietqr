@@ -141,7 +141,7 @@ class _BankScreenState extends State<_BankScreen>
       builder: (context, provider, child) {
         return (provider.type == 0)
             ? Padding(
-                padding: const EdgeInsets.only(bottom: 70),
+                padding: const EdgeInsets.only(bottom: 80),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -177,6 +177,7 @@ class _BankScreenState extends State<_BankScreen>
                         ],
                       ),
                     ),
+                    const SizedBox(height: 10),
                     Expanded(
                       child: BlocConsumer<BankBloc, BankState>(
                         listener: (context, state) async {
