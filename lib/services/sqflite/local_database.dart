@@ -12,9 +12,9 @@ class LocalDatabase {
   static const String DATABASE_NAME = 'VietQR.db';
   static const String PRINTER_TABLE = 'PrinterTable';
 
-  const LocalDatabase._privateConsrtructor();
+  const LocalDatabase._privateConstructor();
 
-  static const LocalDatabase _instance = LocalDatabase._privateConsrtructor();
+  static const LocalDatabase _instance = LocalDatabase._privateConstructor();
   static LocalDatabase get instance => _instance;
 
   Future<Database> get database async {

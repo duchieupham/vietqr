@@ -59,14 +59,7 @@ class BankCardEventConfirmOTP extends BankCardEvent {
   List<Object?> get props => [dto];
 }
 
-class BankCardGetDetailEvent extends BankCardEvent {
-  final String bankId;
-
-  const BankCardGetDetailEvent({required this.bankId});
-
-  @override
-  List<Object?> get props => [bankId];
-}
+class BankCardGetDetailEvent extends BankCardEvent {}
 
 class BankCardCheckExistedEvent extends BankCardEvent {
   final String bankAccount;
@@ -108,15 +101,6 @@ class BankCardEventSearchName extends BankCardEvent {
 
   @override
   List<Object?> get props => [dto];
-}
-
-class ScanQrEventGetBankType extends BankCardEvent {
-  final String code;
-
-  const ScanQrEventGetBankType({required this.code});
-
-  @override
-  List<Object?> get props => [code];
 }
 
 class UpdateEvent extends BankCardEvent {}

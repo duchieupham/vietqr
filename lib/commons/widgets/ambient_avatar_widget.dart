@@ -67,7 +67,7 @@ class AmbientAvatarWidget extends StatelessWidget {
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
             child: Container(
-              color: DefaultTheme.TRANSPARENT,
+              color: AppColor.TRANSPARENT,
             ),
           ),
         ),

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
-import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/services/providers/checker_provider.dart';
 import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
 
@@ -32,7 +30,7 @@ class QRScanWidget extends StatelessWidget {
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w500,
-            color: DefaultTheme.WHITE,
+            color: AppColor.WHITE,
           ),
         ),
         const Padding(padding: EdgeInsets.only(bottom: 10)),
@@ -40,7 +38,7 @@ class QRScanWidget extends StatelessWidget {
           'VietQR cung cấp tính năng quét mã QR trên hệ thống để người dùng có thực hiện các tính năng dễ dàng',
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: DefaultTheme.WHITE,
+            color: AppColor.WHITE,
           ),
         ),
         const Padding(padding: EdgeInsets.only(bottom: 30)),
@@ -49,7 +47,7 @@ class QRScanWidget extends StatelessWidget {
           child: Text(
             '· Sao chép mã VietQR để thêm/liên kết với TK ngân hàng trong hệ thống.',
             style: TextStyle(
-              color: DefaultTheme.WHITE,
+              color: AppColor.WHITE,
             ),
           ),
         ),
@@ -59,7 +57,7 @@ class QRScanWidget extends StatelessWidget {
           child: Text(
             '· Quét mã QR Căn Cước Công dân để cập nhật thông tin người dùng.',
             style: TextStyle(
-              color: DefaultTheme.WHITE,
+              color: AppColor.WHITE,
             ),
           ),
         ),
@@ -69,7 +67,7 @@ class QRScanWidget extends StatelessWidget {
           child: Text(
             '· Đăng nhập hệ thống trên trình duyệt web bằng việc quét mã QR.',
             style: TextStyle(
-              color: DefaultTheme.WHITE,
+              color: AppColor.WHITE,
             ),
           ),
         ),
@@ -86,10 +84,10 @@ class QRScanWidget extends StatelessWidget {
                     width: 30,
                     height: 30,
                     child: Checkbox(
-                      activeColor: DefaultTheme.GREEN,
+                      activeColor: AppColor.GREEN,
                       value: provider as bool,
                       shape: const CircleBorder(),
-                      side: const BorderSide(color: DefaultTheme.WHITE),
+                      side: const BorderSide(color: AppColor.WHITE),
                       onChanged: (bool? value) async {
                         checkerProvider.updateValue(value!);
                         await QRScannerHelper.instance.updateQrIntro(value);
@@ -100,7 +98,7 @@ class QRScanWidget extends StatelessWidget {
                   const Text(
                     'Bỏ qua thông tin này ở lần tiếp theo',
                     style: TextStyle(
-                      color: DefaultTheme.WHITE,
+                      color: AppColor.WHITE,
                     ),
                   ),
                 ],
@@ -117,8 +115,8 @@ class QRScanWidget extends StatelessWidget {
           function: () {
             Navigator.pop(context);
           },
-          bgColor: DefaultTheme.BLACK_BUTTON,
-          textColor: DefaultTheme.WHITE,
+          bgColor: AppColor.BLACK_BUTTON,
+          textColor: AppColor.WHITE,
         ),
         const Padding(
           padding: EdgeInsets.only(bottom: 20),

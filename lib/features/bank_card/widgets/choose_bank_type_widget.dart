@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/layouts/box_layout.dart';
-import 'package:vierqr/services/providers/add_bank_provider.dart';
 
 class ChooseBankTypeWidget extends StatelessWidget {
   const ChooseBankTypeWidget({super.key});
@@ -46,7 +44,7 @@ class ChooseBankTypeWidget extends StatelessWidget {
                     child: const Text(
                       'Xong',
                       style: TextStyle(
-                        color: DefaultTheme.GREEN,
+                        color: AppColor.GREEN,
                       ),
                     ),
                   ),
@@ -72,7 +70,7 @@ class ChooseBankTypeWidget extends StatelessWidget {
             title: 'Gói dịch vụ VietQR Pro',
             description: 'Nội dung miêu tả',
             icon: Icons.shopping_bag_rounded,
-            color: DefaultTheme.GREEN,
+            color: AppColor.GREEN,
             onTap: () {
               Navigator.pop(context, 1);
             },
@@ -129,7 +127,7 @@ class ChooseBankTypeWidget extends StatelessWidget {
               height: 30,
               child: Icon(
                 Icons.navigate_next_rounded,
-                color: DefaultTheme.GREY_TEXT,
+                color: AppColor.GREY_TEXT,
                 size: 20,
               ),
             ),

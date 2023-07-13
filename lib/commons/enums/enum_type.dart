@@ -3,13 +3,16 @@
 enum BlocStatus {
   NONE,
   LOADING,
+  UNLOADING,
   ERROR,
   AWAIT,
   SUCCESS,
-  DONE,
   DELETE,
   INSERT,
+  DONE,
 }
+
+enum StepType { first_screen, second_screen, three_screen }
 
 enum TypeSelect {
   BANK,

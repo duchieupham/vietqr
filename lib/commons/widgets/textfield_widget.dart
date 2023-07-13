@@ -90,7 +90,7 @@ class TextFieldWidget extends StatelessWidget {
                       hintStyle: TextStyle(
                         fontSize: (fontSize != null) ? fontSize : 16,
                         color: (title != null)
-                            ? DefaultTheme.GREY_TEXT
+                            ? AppColor.GREY_TEXT
                             : Theme.of(context).hintColor,
                       ),
                       contentPadding:

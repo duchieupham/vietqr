@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,7 +9,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/commons/enums/check_type.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
 import 'package:vierqr/commons/utils/file_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
@@ -29,9 +28,7 @@ import 'package:vierqr/features/personal/events/user_edit_event.dart';
 import 'package:vierqr/features/personal/frames/user_edit_frame.dart';
 import 'package:vierqr/features/personal/states/user_edit_state.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
-import 'package:vierqr/layouts/border_layout.dart';
 import 'package:vierqr/layouts/box_layout.dart';
-import 'package:vierqr/main.dart';
 import 'package:vierqr/models/account_information_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/services/providers/add_business_provider.dart';
@@ -203,7 +200,7 @@ class UserEditView extends StatelessWidget {
                         children: [
                           BoxLayout(
                             width: width,
-                            bgColor: DefaultTheme.TRANSPARENT,
+                            bgColor: AppColor.TRANSPARENT,
                             margin: const EdgeInsets.only(top: 10),
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 20, vertical: 20),
@@ -233,7 +230,7 @@ class UserEditView extends StatelessWidget {
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: const TextStyle(
-                                          color: DefaultTheme.GREY_TEXT,
+                                          color: AppColor.GREY_TEXT,
                                           fontSize: 15,
                                           fontWeight: FontWeight.w500,
                                         ),
@@ -248,7 +245,7 @@ class UserEditView extends StatelessWidget {
                           ButtonWidget(
                             width: width - 40,
                             text: 'Cập nhật ảnh đại diện',
-                            textColor: DefaultTheme.GREEN,
+                            textColor: AppColor.GREEN,
                             bgColor: Theme.of(context).cardColor,
                             function: () async {
                               await Permission.mediaLibrary.request();
@@ -288,7 +285,7 @@ class UserEditView extends StatelessWidget {
                           ButtonWidget(
                             width: width - 40,
                             text: 'Đổi mật khẩu',
-                            textColor: DefaultTheme.GREEN,
+                            textColor: AppColor.GREEN,
                             bgColor: Theme.of(context).cardColor,
                             function: () {
                               Navigator.of(context)
@@ -299,7 +296,7 @@ class UserEditView extends StatelessWidget {
                           ButtonWidget(
                             width: width - 40,
                             text: 'Cập nhật thông tin qua CCCD',
-                            textColor: DefaultTheme.GREEN,
+                            textColor: AppColor.GREEN,
                             bgColor: Theme.of(context).cardColor,
                             function: () async {
                               // Navigator.pop(context);
@@ -311,9 +308,8 @@ class UserEditView extends StatelessWidget {
                                 await DialogWidget.instance
                                     .showFullModalBottomContent(
                                   widget: const QRScanWidget(),
-                                  color: DefaultTheme.BLACK,
+                                  color: AppColor.BLACK,
                                 );
-
                                 startBarcodeScanStream(context);
                               }
                             },
@@ -384,7 +380,7 @@ class UserEditView extends StatelessWidget {
                               child: Text(
                                 'Tên không được bỏ trống.',
                                 style: TextStyle(
-                                  color: DefaultTheme.RED_TEXT,
+                                  color: AppColor.RED_TEXT,
                                   fontSize: 13,
                                 ),
                               ),
@@ -535,7 +531,7 @@ class UserEditView extends StatelessWidget {
                                         hintText: 'Nhập địa chỉ thường trú',
                                         hintStyle: TextStyle(
                                           fontSize: 16,
-                                          color: DefaultTheme.GREY_TEXT,
+                                          color: AppColor.GREY_TEXT,
                                         ),
                                       ),
                                       onChanged: (value) {
@@ -568,11 +564,11 @@ class UserEditView extends StatelessWidget {
                                   _userEditBloc
                                       .add(UserDeactiveEvent(userId: userId));
                                 },
-                                confirmColor: DefaultTheme.RED_TEXT,
+                                confirmColor: AppColor.RED_TEXT,
                               );
                             },
-                            bgColor: DefaultTheme.TRANSPARENT,
-                            textColor: DefaultTheme.RED_TEXT,
+                            bgColor: AppColor.TRANSPARENT,
+                            textColor: AppColor.RED_TEXT,
                           ),
                           DividerWidget(width: width),
                           const Padding(padding: EdgeInsets.only(top: 30)),
@@ -602,8 +598,8 @@ class UserEditView extends StatelessWidget {
                         child: ButtonWidget(
                           width: width - 40,
                           text: 'Cập nhật',
-                          textColor: DefaultTheme.WHITE,
-                          bgColor: DefaultTheme.GREEN,
+                          textColor: AppColor.WHITE,
+                          bgColor: AppColor.GREEN,
                           function: () {
                             FocusManager.instance.primaryFocus?.unfocus();
                             provider.updateErrors(

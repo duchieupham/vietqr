@@ -14,9 +14,9 @@ class DotWidget extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 5),
       decoration: BoxDecoration(
         border: (isSelected)
-            ? Border.all(color: DefaultTheme.GREY_LIGHT, width: 0.5)
+            ? Border.all(color: AppColor.GREY_LIGHT, width: 0.5)
             : null,
-        color: (isSelected) ? DefaultTheme.WHITE : DefaultTheme.GREY_LIGHT,
+        color: (isSelected) ? AppColor.WHITE : AppColor.GREY_LIGHT,
         borderRadius: BorderRadius.circular(10),
       ),
     );

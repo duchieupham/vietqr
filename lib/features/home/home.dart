@@ -1,7 +1,7 @@
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
-import 'package:vierqr/commons/enums/check_type.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/widgets/ambient_avatar_widget.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
@@ -25,7 +25,6 @@ import 'package:vierqr/features/token/states/token_state.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/services/providers/account_balance_home_provider.dart';
-import 'package:vierqr/services/providers/add_bank_provider.dart';
 import 'package:vierqr/services/providers/avatar_provider.dart';
 import 'package:vierqr/services/providers/bank_card_select_provider.dart';
 import 'package:vierqr/services/providers/page_select_provider.dart';
@@ -39,7 +38,6 @@ import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 import 'blocs/home_bloc.dart';
 import 'events/home_event.dart';
-import 'widgets/custom_app_bar_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -93,14 +91,6 @@ class _HomeScreen extends State<HomeScreen>
   Future<void> startBarcodeScanStream() async {
     String data = await FlutterBarcodeScanner.scanBarcode(
         '#ff6666', 'Cancel', true, ScanMode.QR);
-    // String data =
-    //     '001300033018||Kiều Ngọc Ánh|03122000|Nữ|Thôn Thái Khê, Cấn Hữu, Quốc Oai, Hà Nội|20072021';
-    //
-    // // String data = '-2';
-
-    // String data =
-    //     "00020101021138530010A0000007270123000697043201091622366360208QRIBFTTA5303704540105802VN6304AB36";
-
     if (data.isNotEmpty) {
       if (data == TypeQR.NEGATIVE_ONE.value) {
       } else if (data == TypeQR.NEGATIVE_TWO.value) {
@@ -303,25 +293,14 @@ class _HomeScreen extends State<HomeScreen>
             );
           }
           if (state.type == TypePermission.ScanSuccess) {
-            if (state.bankTypeDTO!.bankCode == 'MB') {
-              Provider.of<AddBankProvider>(context, listen: false)
-                  .updateSelect(2);
-              Provider.of<AddBankProvider>(context, listen: false)
-                  .updateRegisterAuthentication(true);
-            } else {
-              Provider.of<AddBankProvider>(context, listen: false)
-                  .updateSelect(1);
-              Provider.of<AddBankProvider>(context, listen: false)
-                  .updateRegisterAuthentication(false);
-            }
-            Provider.of<AddBankProvider>(context, listen: false)
-                .updateSelectBankType(state.bankTypeDTO!);
             Navigator.pushNamed(
               context,
               Routes.ADD_BANK_CARD,
               arguments: {
-                'pageIndex': 2,
+                'step': 0,
+                'bankDTO': state.bankTypeDTO,
                 'bankAccount': state.bankAccount,
+                'name': ''
               },
             );
           }
@@ -389,8 +368,8 @@ class _HomeScreen extends State<HomeScreen>
                                         .withOpacity(0.5),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: DefaultTheme.GREY_VIEW
-                                            .withOpacity(0.5),
+                                        color:
+                                            AppColor.GREY_VIEW.withOpacity(0.5),
                                         spreadRadius: 2,
                                         blurRadius: 3,
                                         offset: const Offset(2, 2),
@@ -446,7 +425,7 @@ class _HomeScreen extends State<HomeScreen>
           } else {
             await DialogWidget.instance.showFullModalBottomContent(
               widget: const QRScanWidget(),
-              color: DefaultTheme.BLACK,
+              color: AppColor.BLACK,
             );
             startBarcodeScanStream();
           }
@@ -459,8 +438,8 @@ class _HomeScreen extends State<HomeScreen>
         height: 45,
         decoration: BoxDecoration(
           color: (index == -1)
-              ? DefaultTheme.PURPLE_NEON.withOpacity(0.8)
-              : DefaultTheme.TRANSPARENT,
+              ? AppColor.PURPLE_NEON.withOpacity(0.8)
+              : AppColor.TRANSPARENT,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Image.asset(
@@ -573,7 +552,7 @@ class _HomeScreen extends State<HomeScreen>
               style: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.normal,
-                color: DefaultTheme.GREY_TEXT,
+                color: AppColor.GREY_TEXT,
               ),
             ),
           ],
@@ -608,7 +587,7 @@ class _HomeScreen extends State<HomeScreen>
       alignment: Alignment.topCenter,
       decoration: const BoxDecoration(
           image: DecorationImage(
-              image: AssetImage('assets/images/bg-admin-card.png'),
+              image: AssetImage('assets/images/bgr-header.png'),
               fit: BoxFit.fitWidth)),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 25),
@@ -689,7 +668,7 @@ class _HomeScreen extends State<HomeScreen>
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(30),
-                                color: DefaultTheme.RED_CALENDAR,
+                                color: AppColor.RED_CALENDAR,
                               ),
                               child: Text(
                                 _notificationCount.toString(),
@@ -700,7 +679,7 @@ class _HomeScreen extends State<HomeScreen>
                                               3)
                                           ? 8
                                           : 10,
-                                  color: DefaultTheme.WHITE,
+                                  color: AppColor.WHITE,
                                 ),
                               ),
                             ),

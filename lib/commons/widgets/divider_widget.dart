@@ -11,7 +11,7 @@ class DividerWidget extends StatelessWidget {
     return Container(
       width: width,
       height: 0.25,
-      color: DefaultTheme.GREY_TOP_TAB_BAR,
+      color: AppColor.GREY_TOP_TAB_BAR,
     );
   }
 }

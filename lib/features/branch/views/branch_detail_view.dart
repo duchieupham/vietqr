@@ -50,7 +50,6 @@ class _BranchDetailViewState extends State<BranchDetailView> {
 
   late BranchBloc branchBloc;
 
-  final _formModalKey = GlobalKey<FormState>();
 
   void initialServices(BuildContext context) {
     String userId = UserInformationHelper.instance.getUserId();
@@ -322,8 +321,8 @@ class _BranchDetailViewState extends State<BranchDetailView> {
                                                               id: branchId));
                                                     }
                                                   },
-                                                  bgColor: DefaultTheme.GREEN,
-                                                  textColor: DefaultTheme.WHITE,
+                                                  bgColor: AppColor.GREEN,
+                                                  textColor: AppColor.WHITE,
                                                 )
                                               : const SizedBox();
                                         },
@@ -363,17 +362,17 @@ class _BranchDetailViewState extends State<BranchDetailView> {
                                 label: (provider.businessMembers.isEmpty)
                                     ? null
                                     : '${provider.businessMembers.length} thành viên',
-                                color: DefaultTheme.BLUE_TEXT,
+                                color: AppColor.BLUE_TEXT,
                                 icon: Icons.people_alt_rounded,
                               ),
                               if (provider.isLoadingGetMember)
                                 Container(
                                   margin: const EdgeInsets.only(top: 24),
-                                  color: DefaultTheme.TRANSPARENT,
+                                  color: AppColor.TRANSPARENT,
                                   width: 36,
                                   height: 36,
                                   child: const CircularProgressIndicator(
-                                    color: DefaultTheme.GREEN,
+                                    color: AppColor.GREEN,
                                   ),
                                 )
                               else
@@ -391,7 +390,7 @@ class _BranchDetailViewState extends State<BranchDetailView> {
                                             Icon(
                                               Icons.people_outline_rounded,
                                               size: width * 0.2,
-                                              color: DefaultTheme.BLUE_TEXT,
+                                              color: AppColor.BLUE_TEXT,
                                             ),
                                             const Padding(
                                                 padding:
@@ -428,9 +427,9 @@ class _BranchDetailViewState extends State<BranchDetailView> {
                                                           BranchEventGetMembers(
                                                               id: branchId));
                                                     },
-                                                    bgColor: DefaultTheme.GREEN,
+                                                    bgColor: AppColor.GREEN,
                                                     textColor:
-                                                        DefaultTheme.WHITE,
+                                                        AppColor.WHITE,
                                                   )
                                                 : const SizedBox(),
                                             const Padding(
@@ -496,7 +495,7 @@ class _BranchDetailViewState extends State<BranchDetailView> {
                       child: Icon(
                         Icons.person_add_alt_1_rounded,
                         size: 15,
-                        color: DefaultTheme.BLUE_TEXT,
+                        color: AppColor.BLUE_TEXT,
                       ),
                     ),
                   )
@@ -576,13 +575,13 @@ class _BranchDetailViewState extends State<BranchDetailView> {
                 builder: (context, provider, child) {
               return dto.isDelete
                   ? Container(
-                      color: DefaultTheme.TRANSPARENT,
+                      color: AppColor.TRANSPARENT,
                       margin: const EdgeInsets.only(left: 10),
                       width: 16,
                       height: 16,
                       child: const Center(
                         child: CircularProgressIndicator(
-                          color: DefaultTheme.GREEN,
+                          color: AppColor.GREEN,
                         ),
                       ),
                     )
@@ -606,7 +605,7 @@ class _BranchDetailViewState extends State<BranchDetailView> {
                           padding: const EdgeInsets.all(0),
                           child: const Icon(
                             Icons.remove_circle_outline_rounded,
-                            color: DefaultTheme.RED_TEXT,
+                            color: AppColor.RED_TEXT,
                             size: 12,
                           ),
                         ),
@@ -643,7 +642,7 @@ class _BranchDetailViewState extends State<BranchDetailView> {
                   width: 60,
                   height: 30,
                   decoration: BoxDecoration(
-                    color: DefaultTheme.WHITE,
+                    color: AppColor.WHITE,
                     borderRadius: BorderRadius.circular(5),
                     image: DecorationImage(
                       image: ImageUtils.instance.getImageNetWork(dto.imgId),
@@ -658,14 +657,14 @@ class _BranchDetailViewState extends State<BranchDetailView> {
                       Text(
                         '${dto.bankCode} - ${dto.bankAccount}',
                         style: const TextStyle(
-                          color: DefaultTheme.WHITE,
+                          color: AppColor.WHITE,
                           fontSize: 12,
                         ),
                       ),
                       Text(
                         dto.bankName,
                         style: const TextStyle(
-                          color: DefaultTheme.WHITE,
+                          color: AppColor.WHITE,
                           fontSize: 12,
                         ),
                       ),
@@ -679,7 +678,7 @@ class _BranchDetailViewState extends State<BranchDetailView> {
           Text(
             dto.userBankName.toUpperCase(),
             style: const TextStyle(
-              color: DefaultTheme.WHITE,
+              color: AppColor.WHITE,
               fontSize: 15,
             ),
           ),
@@ -687,7 +686,7 @@ class _BranchDetailViewState extends State<BranchDetailView> {
           Text(
             'Trạng thái: ${(dto.authenticated) ? 'Đã liên kết' : 'Chưa liên kết'}',
             style: const TextStyle(
-              color: DefaultTheme.WHITE,
+              color: AppColor.WHITE,
               fontSize: 12,
             ),
           ),
@@ -711,8 +710,8 @@ class _BranchDetailViewState extends State<BranchDetailView> {
                   },
                 );
               },
-              bgColor: DefaultTheme.TRANSPARENT,
-              textColor: DefaultTheme.WHITE,
+              bgColor: AppColor.TRANSPARENT,
+              textColor: AppColor.WHITE,
             ),
           ],
           if (isDelete) ...[
@@ -736,7 +735,7 @@ class _BranchDetailViewState extends State<BranchDetailView> {
                       );
                     },
                     bgColor: Theme.of(context).cardColor.withOpacity(0.3),
-                    textColor: DefaultTheme.WHITE,
+                    textColor: AppColor.WHITE,
                   ),
                   const Padding(
                     padding: EdgeInsets.only(left: 10),
@@ -761,7 +760,7 @@ class _BranchDetailViewState extends State<BranchDetailView> {
                           dto: accountBankBranchInsertDTO));
                     },
                     bgColor: Theme.of(context).cardColor.withOpacity(0.3),
-                    textColor: DefaultTheme.WHITE,
+                    textColor: AppColor.WHITE,
                   ),
                 ],
               ),
@@ -823,7 +822,7 @@ class _BranchDetailViewState extends State<BranchDetailView> {
               },
               child: const Icon(
                 Icons.copy_rounded,
-                color: DefaultTheme.GREY_TEXT,
+                color: AppColor.GREY_TEXT,
                 size: 15,
               ),
             ),

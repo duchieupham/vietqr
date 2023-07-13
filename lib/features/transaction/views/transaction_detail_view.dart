@@ -13,8 +13,6 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
 import 'package:vierqr/commons/widgets/sub_header_widget.dart';
-import 'package:vierqr/features/bank_card/blocs/bank_card_bloc.dart';
-import 'package:vierqr/features/bank_card/events/bank_card_event.dart';
 import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
 import 'package:vierqr/features/business/events/business_information_event.dart';
 import 'package:vierqr/features/generate_qr/blocs/qr_blocs.dart';
@@ -105,11 +103,7 @@ class TransactionDetailView extends StatelessWidget {
                   bloc.add(TransactionEventGetList(dto: transactionInputDTO));
                 }
                 //refresh bank detail
-                if (args['bankCardBloc'] != null) {
-                  String bankId = args['bankId'];
-                  BankCardBloc bloc = args['bankCardBloc'];
-                  bloc.add(BankCardGetDetailEvent(bankId: bankId));
-                }
+                if (args['bankCardBloc'] != null) {}
                 //refresh notification list
                 if (args['notificationBloc'] != null) {
                   String userId = args['userId'];
@@ -281,7 +275,7 @@ class TransactionDetailView extends StatelessWidget {
                                                     dto.transType),
                                             style: const TextStyle(
                                               fontSize: 13,
-                                              color: DefaultTheme.GREY_TEXT,
+                                              color: AppColor.GREY_TEXT,
                                             ),
                                           ),
                                           const Padding(
@@ -302,12 +296,12 @@ class TransactionDetailView extends StatelessWidget {
                                                   width: 30,
                                                   height: 30,
                                                   decoration: BoxDecoration(
-                                                    color: DefaultTheme.WHITE,
+                                                    color: AppColor.WHITE,
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             30),
                                                     border: Border.all(
-                                                      color: DefaultTheme
+                                                      color: AppColor
                                                           .GREY_TOP_TAB_BAR,
                                                       width: 0.5,
                                                     ),
@@ -410,7 +404,7 @@ class TransactionDetailView extends StatelessWidget {
                                             textAlign: TextAlign.right,
                                             text: const TextSpan(
                                               style: TextStyle(
-                                                color: DefaultTheme.GREY_TEXT,
+                                                color: AppColor.GREY_TEXT,
                                                 fontSize: 12,
                                               ),
                                               children: [
@@ -418,8 +412,7 @@ class TransactionDetailView extends StatelessWidget {
                                                 TextSpan(
                                                   text: 'vietqr.vn',
                                                   style: TextStyle(
-                                                    color:
-                                                        DefaultTheme.BLUE_TEXT,
+                                                    color: AppColor.BLUE_TEXT,
                                                     fontSize: 12,
                                                   ),
                                                 ),
@@ -428,8 +421,7 @@ class TransactionDetailView extends StatelessWidget {
                                                 TextSpan(
                                                   text: '19006234',
                                                   style: TextStyle(
-                                                    color:
-                                                        DefaultTheme.BLUE_TEXT,
+                                                    color: AppColor.BLUE_TEXT,
                                                     fontSize: 12,
                                                   ),
                                                 ),
@@ -466,7 +458,7 @@ class TransactionDetailView extends StatelessWidget {
                               await saveImage(context);
                             },
                             bgColor: Theme.of(context).cardColor,
-                            textColor: DefaultTheme.RED_CALENDAR,
+                            textColor: AppColor.RED_CALENDAR,
                           ),
                           const Padding(padding: EdgeInsets.only(left: 10)),
                           ButtonIconWidget(
@@ -478,7 +470,7 @@ class TransactionDetailView extends StatelessWidget {
                               await shareImage();
                             },
                             bgColor: Theme.of(context).cardColor,
-                            textColor: DefaultTheme.GREEN,
+                            textColor: AppColor.GREEN,
                           ),
                         ],
                       ),
@@ -507,8 +499,8 @@ class TransactionDetailView extends StatelessWidget {
                                 qrBloc
                                     .add(QREventRegenerate(dto: qrRecreateDTO));
                               },
-                              bgColor: DefaultTheme.ORANGE,
-                              textColor: DefaultTheme.WHITE,
+                              bgColor: AppColor.ORANGE,
+                              textColor: AppColor.WHITE,
                             ),
                           if (dto.status != 0)
                             ButtonIconWidget(
@@ -528,8 +520,8 @@ class TransactionDetailView extends StatelessWidget {
                                 qrBloc
                                     .add(QREventRegenerate(dto: qrRecreateDTO));
                               },
-                              bgColor: DefaultTheme.GREEN,
-                              textColor: DefaultTheme.WHITE,
+                              bgColor: AppColor.GREEN,
+                              textColor: AppColor.WHITE,
                             ),
                           const Padding(padding: EdgeInsets.only(left: 10)),
                           ButtonIconWidget(
@@ -541,7 +533,7 @@ class TransactionDetailView extends StatelessWidget {
                               await saveImage(context);
                             },
                             bgColor: Theme.of(context).cardColor,
-                            textColor: DefaultTheme.RED_CALENDAR,
+                            textColor: AppColor.RED_CALENDAR,
                           ),
                           const Padding(padding: EdgeInsets.only(left: 10)),
                           ButtonIconWidget(
@@ -553,7 +545,7 @@ class TransactionDetailView extends StatelessWidget {
                               await shareImage();
                             },
                             bgColor: Theme.of(context).cardColor,
-                            textColor: DefaultTheme.GREEN,
+                            textColor: AppColor.GREEN,
                           ),
                         ],
                       ),
@@ -637,7 +629,7 @@ class TransactionDetailView extends StatelessWidget {
             child: Text(
               title,
               style: const TextStyle(
-                color: DefaultTheme.GREY_TEXT,
+                color: AppColor.GREY_TEXT,
               ),
             ),
           ),

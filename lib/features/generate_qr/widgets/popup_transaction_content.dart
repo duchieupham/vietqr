@@ -101,12 +101,12 @@ class PopupTransactionContent extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5),
                   color:
-                      (status == 0) ? DefaultTheme.ORANGE : DefaultTheme.GREEN,
+                      (status == 0) ? AppColor.ORANGE : AppColor.GREEN,
                 ),
                 child: Text(
                   (status == 0) ? 'Chưa thanh toán' : 'Đã thanh toán',
                   style: const TextStyle(
-                    color: DefaultTheme.WHITE,
+                    color: AppColor.WHITE,
                   ),
                 ),
               ),
@@ -130,8 +130,8 @@ class PopupTransactionContent extends StatelessWidget {
         ButtonWidget(
           width: width,
           text: 'OK',
-          textColor: DefaultTheme.WHITE,
-          bgColor: DefaultTheme.GREEN,
+          textColor: AppColor.WHITE,
+          bgColor: AppColor.GREEN,
           function: () {
             Navigator.pop(context);
           },

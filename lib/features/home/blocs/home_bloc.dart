@@ -1,6 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:palette_generator/palette_generator.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:vierqr/commons/enums/check_type.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/commons/mixin/base_manager.dart';
+import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/features/home/events/home_event.dart';
@@ -10,8 +14,11 @@ import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/models/viet_qr_scanned_dto.dart';
 
-class HomeBloc extends Bloc<HomeEvent, HomeState> {
-  HomeBloc() : super(const HomeState()) {
+class HomeBloc extends Bloc<HomeEvent, HomeState> with BaseManager {
+  @override
+  final BuildContext context;
+
+  HomeBloc(this.context) : super(const HomeState()) {
     on<PermissionEventGetStatus>(_getPermissionStatus);
     on<PermissionEventRequest>(_requestPermissions);
     on<ScanQrEventGetBankType>(_getBankType);

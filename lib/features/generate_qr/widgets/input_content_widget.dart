@@ -4,13 +4,10 @@ import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
-import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_widget.dart';
-import 'package:vierqr/features/bank_card/blocs/bank_card_bloc.dart';
-import 'package:vierqr/features/bank_card/events/bank_card_event.dart';
 import 'package:vierqr/features/generate_qr/blocs/qr_blocs.dart';
 import 'package:vierqr/features/generate_qr/events/qr_event.dart';
 import 'package:vierqr/features/generate_qr/states/qr_state.dart';
@@ -21,14 +18,23 @@ import 'package:vierqr/services/providers/create_qr_provider.dart';
 import 'package:vierqr/services/providers/search_clear_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
+class InputContentView extends StatelessWidget {
+  final BankAccountDTO bankAccountDTO;
+
+  const InputContentView({super.key, required this.bankAccountDTO});
+
+  @override
+  Widget build(BuildContext context) {
+    return InputContentWidget(bankAccountDTO: bankAccountDTO);
+  }
+}
+
 class InputContentWidget extends StatefulWidget {
-  final BankCardBloc? bankCardBloc;
   final BankAccountDTO bankAccountDTO;
 
   const InputContentWidget({
     Key? key,
     required this.bankAccountDTO,
-    this.bankCardBloc,
   }) : super(key: key);
 
   @override
@@ -79,12 +85,7 @@ class _InputContentWidgetState extends State<InputContentWidget> {
             arguments: {
               'qrGeneratedDTO': state.dto,
             },
-          ).then((value) {
-            if (widget.bankCardBloc != null) {
-              widget.bankCardBloc!.add(
-                  BankCardGetDetailEvent(bankId: widget.bankAccountDTO.id));
-            }
-          });
+          ).then((value) {});
         }
       },
       child: GestureDetector(
@@ -154,7 +155,7 @@ class _InputContentWidgetState extends State<InputContentWidget> {
                             title: 'Số tiền',
                             description: Provider.of<CreateQRProvider>(context)
                                 .currencyFormatted,
-                            descriptionColor: DefaultTheme.GREEN,
+                            descriptionColor: AppColor.GREEN,
                             unit: 'VND',
                           ),
                         ],
@@ -254,7 +255,7 @@ class _BottomSheetWidget extends StatelessWidget {
             ),
             boxShadow: [
               BoxShadow(
-                color: DefaultTheme.BLACK.withOpacity(0.1),
+                color: AppColor.BLACK.withOpacity(0.1),
                 spreadRadius: 3,
                 blurRadius: 3,
                 offset: const Offset(0, -1),
@@ -270,7 +271,7 @@ class _BottomSheetWidget extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
-                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                    color: AppColor.GREY_TOP_TAB_BAR,
                     width: 0.5,
                   ),
                 ),
@@ -284,7 +285,7 @@ class _BottomSheetWidget extends StatelessWidget {
                     const Icon(
                       Icons.notes_rounded,
                       size: 15,
-                      color: DefaultTheme.GREY_TEXT,
+                      color: AppColor.GREY_TEXT,
                     ),
                     Expanded(
                       child: TextFieldWidget(
@@ -322,7 +323,7 @@ class _BottomSheetWidget extends StatelessWidget {
                             child: const Icon(
                               Icons.close_rounded,
                               size: 15,
-                              color: DefaultTheme.GREY_TEXT,
+                              color: AppColor.GREY_TEXT,
                             ),
                           ),
                         ],
@@ -419,8 +420,8 @@ class _BottomSheetWidget extends StatelessWidget {
                     );
                   }
                 },
-                bgColor: DefaultTheme.GREEN,
-                textColor: DefaultTheme.WHITE,
+                bgColor: AppColor.GREEN,
+                textColor: AppColor.WHITE,
               ),
             ],
           ),

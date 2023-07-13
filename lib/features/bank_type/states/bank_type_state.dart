@@ -1,32 +1,26 @@
 import 'package:equatable/equatable.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 
 class BankTypeState extends Equatable {
-  const BankTypeState();
-
-  @override
-  List<Object?> get props => [];
-}
-
-class BankTypeInitialState extends BankTypeState {}
-
-class BankTypeLoadingState extends BankTypeState {}
-
-class BankTypeGetListSuccessfulState extends BankTypeState {
   final List<BankTypeDTO> list;
+  final BlocStatus status;
+  final String? msg;
 
-  const BankTypeGetListSuccessfulState({required this.list});
+  const BankTypeState({
+    required this.list,
+    this.status = BlocStatus.NONE,
+    this.msg,
+  });
 
-  @override
-  List<Object?> get props => [list];
-}
-
-class BankTypeGetListFailedState extends BankTypeState {}
-
-class BankTypeSearchState extends BankTypeState {
-  final List<BankTypeDTO> list;
-
-  const BankTypeSearchState({required this.list});
+  BankTypeState copyWith(
+      {BlocStatus? status, String? msg, List<BankTypeDTO>? list}) {
+    return BankTypeState(
+      status: status ?? this.status,
+      msg: msg ?? this.msg,
+      list: list ?? this.list,
+    );
+  }
 
   @override
   List<Object?> get props => [list];

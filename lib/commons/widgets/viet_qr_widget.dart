@@ -44,7 +44,7 @@ class VietQRWidget extends StatelessWidget {
                 height: (isSmallWidget != null && isSmallWidget!) ? 30 : 40,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5),
-                  color: DefaultTheme.WHITE,
+                  color: AppColor.WHITE,
                   image: (qrGeneratedDTO.imgId.isEmpty)
                       ? null
                       : DecorationImage(
@@ -77,7 +77,7 @@ class VietQRWidget extends StatelessWidget {
             enableShadow: true,
             padding: const EdgeInsets.symmetric(vertical: 10),
             margin: const EdgeInsets.symmetric(vertical: 20),
-            bgColor: DefaultTheme.WHITE,
+            bgColor: AppColor.WHITE,
             child: Column(
               children: [
                 QrImage(
@@ -131,7 +131,7 @@ class VietQRWidget extends StatelessWidget {
             Text(
               '${CurrencyUtils.instance.getCurrencyFormatted(qrGeneratedDTO.amount)} VND',
               style: const TextStyle(
-                color: DefaultTheme.ORANGE,
+                color: AppColor.ORANGE,
                 fontSize: 25,
                 fontWeight: FontWeight.w500,
               ),

@@ -38,7 +38,7 @@ class BankInformationWidget extends StatelessWidget {
             height: 50,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(25),
-              color: DefaultTheme.WHITE,
+              color: AppColor.WHITE,
               image: DecorationImage(
                 image: AssetImage(
                   LogoUtils.instance.getAssetImageBank(bankAccountDTO.bankCode),
@@ -58,7 +58,7 @@ class BankInformationWidget extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     fontSize: 13,
-                    color: DefaultTheme.GREY_TEXT,
+                    color: AppColor.GREY_TEXT,
                   ),
                 ),
                 Text(
@@ -75,7 +75,7 @@ class BankInformationWidget extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     fontSize: 13,
-                    color: DefaultTheme.GREEN,
+                    color: AppColor.GREEN,
                     letterSpacing: 0.2,
                   ),
                 ),
@@ -104,7 +104,7 @@ class BankInformationWidget extends StatelessWidget {
                   },
                   child: const Icon(
                     Icons.copy_outlined,
-                    color: DefaultTheme.GREY_TOP_TAB_BAR,
+                    color: AppColor.GREY_TOP_TAB_BAR,
                     size: 20,
                   ),
                 )
@@ -112,7 +112,7 @@ class BankInformationWidget extends StatelessWidget {
           (icon != null)
               ? Icon(
                   icon,
-                  color: DefaultTheme.GREY_TOP_TAB_BAR,
+                  color: AppColor.GREY_TOP_TAB_BAR,
                   size: 20,
                 )
               : const SizedBox(),

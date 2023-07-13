@@ -44,11 +44,11 @@ class PinWidget extends StatelessWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(pinSize),
                         color: (value.pinLength < index + 1)
-                            ? DefaultTheme.TRANSPARENT
-                            : DefaultTheme.GREY_TOP_TAB_BAR,
+                            ? AppColor.TRANSPARENT
+                            : AppColor.GREY_TOP_TAB_BAR,
                         border: Border.all(
                           width: 2,
-                          color: DefaultTheme.GREY_TOP_TAB_BAR,
+                          color: AppColor.GREY_TOP_TAB_BAR,
                         ),
                       ),
                     ),
@@ -71,7 +71,7 @@ class PinWidget extends StatelessWidget {
             counterText: '',
             border: InputBorder.none,
           ),
-          style: const TextStyle(color: DefaultTheme.TRANSPARENT),
+          style: const TextStyle(color: AppColor.TRANSPARENT),
           keyboardType: TextInputType.number,
           onChanged: ((text) {
             Provider.of<PinProvider>(context, listen: false)

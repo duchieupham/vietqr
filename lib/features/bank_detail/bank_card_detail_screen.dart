@@ -5,7 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/commons/enums/check_type.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
@@ -18,10 +18,9 @@ import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/commons/widgets/sub_header_widget.dart';
-import 'package:vierqr/commons/widgets/viet_qr_widget.dart';
-import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
-import 'package:vierqr/features/bank_card/events/bank_card_event.dart';
-import 'package:vierqr/features/bank_card/states/bank_state.dart';
+import 'package:vierqr/commons/widgets/viet_qr.dart';
+import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
+import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
 import 'package:vierqr/features/generate_qr/views/create_qr.dart';
 import 'package:vierqr/features/home/widgets/custom_app_bar_widget.dart';
 import 'package:vierqr/features/printer/views/printing_view.dart';
@@ -35,14 +34,36 @@ import 'package:vierqr/models/bluetooth_printer_dto.dart';
 import 'package:vierqr/models/business_item_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/services/providers/action_share_provider.dart';
-import 'package:vierqr/services/providers/add_bank_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 import 'package:vierqr/services/sqflite/local_database.dart';
 
-class BankCardDetailView extends StatelessWidget {
-  static late BankBloc bankCardBloc;
+import 'states/bank_card_state.dart';
 
-  static QRGeneratedDTO qrGeneratedDTO = const QRGeneratedDTO(
+class BankCardDetailScreen extends StatelessWidget {
+  final String bankId;
+
+  const BankCardDetailScreen({super.key, required this.bankId});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider<BankCardBloc>(
+      create: (BuildContext context) => BankCardBloc(bankId),
+      child: const BankCardDetailState(),
+    );
+  }
+}
+
+class BankCardDetailState extends StatefulWidget {
+  const BankCardDetailState({super.key});
+
+  @override
+  State<BankCardDetailState> createState() => _BankCardDetailState();
+}
+
+class _BankCardDetailState extends State<BankCardDetailState> {
+  late BankCardBloc bankCardBloc;
+
+  QRGeneratedDTO qrGeneratedDTO = const QRGeneratedDTO(
       bankCode: '',
       bankName: '',
       bankAccount: '',
@@ -52,7 +73,7 @@ class BankCardDetailView extends StatelessWidget {
       qrCode: '',
       imgId: '');
 
-  static AccountBankDetailDTO dto = AccountBankDetailDTO(
+  AccountBankDetailDTO dto = AccountBankDetailDTO(
     id: '',
     bankAccount: '',
     userBankName: '',
@@ -72,25 +93,27 @@ class BankCardDetailView extends StatelessWidget {
     caiValue: '',
   );
 
-  static String bankId = '';
-
-  const BankCardDetailView({super.key});
-
-  void initialServives(BuildContext context, String bankId) {
-    bankCardBloc = BlocProvider.of(context);
-    bankCardBloc.add(BankCardGetDetailEvent(bankId: bankId));
+  void initData(BuildContext context) {
+    bankCardBloc.add(BankCardGetDetailEvent());
   }
 
   Future<void> _refresh() async {
-    bankCardBloc.add(BankCardGetDetailEvent(bankId: bankId));
+    bankCardBloc.add(BankCardGetDetailEvent());
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    bankCardBloc = BlocProvider.of(context);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      initData(context);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
-    final arg = ModalRoute.of(context)!.settings.arguments as Map;
-    bankId = arg['bankId'] ?? '';
-    initialServives(context, bankId);
+
     return Scaffold(
       appBar: const CustomAppBarWidget(
         child: SubHeader(title: 'Chi tiết TK ngân hàng'),
@@ -105,12 +128,20 @@ class BankCardDetailView extends StatelessWidget {
                 builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
                   if (snapshot.hasData) {
                     if (snapshot.data == true) {
-                      bankCardBloc.add(BankCardGetDetailEvent(bankId: bankId));
+                      bankCardBloc.add(BankCardGetDetailEvent());
                     }
                   }
-                  return BlocConsumer<BankBloc, BankState>(
+                  return BlocConsumer<BankCardBloc, BankCardState>(
                     listener: (context, state) async {
-                      if (state.status == BlocStatus.DELETE) {
+                      if (state.status == BlocStatus.LOADING) {
+                        DialogWidget.instance.openLoadingDialog();
+                      }
+
+                      if (state.status == BlocStatus.UNLOADING) {
+                        Navigator.pop(context);
+                      }
+
+                      if (state.request == BankDetailType.DELETE) {
                         Fluttertoast.showToast(
                           msg: 'Đã xoá TK ngân hàng',
                           toastLength: Toast.LENGTH_SHORT,
@@ -124,29 +155,8 @@ class BankCardDetailView extends StatelessWidget {
                           Navigator.pop(context, true);
                         }
                       }
-                      if (state.status == BlocStatus.ERROR) {
-                        Navigator.pop(context);
-                        await DialogWidget.instance.openMsgDialog(
-                          title: 'Không thể xoá tài khoản',
-                          msg: state.msg ?? '',
-                        );
-                      }
-                    },
-                    builder: (context, state) {
-                      if (state.status == BlocStatus.LOADING) {
-                        return const Center(
-                          child: UnconstrainedBox(
-                            child: SizedBox(
-                              width: 50,
-                              height: 50,
-                              child: CircularProgressIndicator(
-                                color: DefaultTheme.GREEN,
-                              ),
-                            ),
-                          ),
-                        );
-                      }
-                      if (state.status == BlocStatus.SUCCESS) {
+
+                      if (state.request == BankDetailType.SUCCESS) {
                         if (state.bankDetailDTO != null) {
                           dto = state.bankDetailDTO!;
                         }
@@ -160,14 +170,24 @@ class BankCardDetailView extends StatelessWidget {
                             qrCode: dto.qrCode,
                             imgId: dto.imgId);
                       }
+                      if (state.request == BankDetailType.ERROR) {
+                        await DialogWidget.instance.openMsgDialog(
+                          title: 'Không thể xoá tài khoản',
+                          msg: state.msg ?? '',
+                        );
+                      }
+
+                      if (state.status != BlocStatus.NONE ||
+                          state.request != BankDetailType.NONE) {
+                        bankCardBloc.add(UpdateEvent());
+                      }
+                    },
+                    builder: (context, state) {
                       return ListView(
                         shrinkWrap: true,
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         children: [
-                          VietQRWidget(
-                              width: width,
-                              qrGeneratedDTO: qrGeneratedDTO,
-                              content: ''),
+                          VietQr(qrGeneratedDTO: qrGeneratedDTO),
                           const Padding(padding: EdgeInsets.only(top: 30)),
                           BoxLayout(
                             width: width,
@@ -175,8 +195,12 @@ class BankCardDetailView extends StatelessWidget {
                               left: 20,
                               right: 20,
                               top: 20,
-                              bottom: (dto.authenticated ||
-                                      dto.bankCode.trim().toUpperCase() != 'MB')
+                              bottom: (state.bankDetailDTO?.authenticated ??
+                                      false ||
+                                          state.bankDetailDTO?.bankCode
+                                                  .trim()
+                                                  .toUpperCase() !=
+                                              'MB')
                                   ? 20
                                   : 0,
                             ),
@@ -198,7 +222,7 @@ class BankCardDetailView extends StatelessWidget {
                                     'Liên kết TK ngân hàng để nhận thông báo biến động số dư',
                                     style: TextStyle(
                                       // fontSize: 12,
-                                      color: DefaultTheme.GREY_TEXT,
+                                      color: AppColor.GREY_TEXT,
                                     ),
                                   ),
                                   const Padding(
@@ -246,37 +270,27 @@ class BankCardDetailView extends StatelessWidget {
                                           bankCode: dto.bankCode,
                                           bankName: dto.bankName,
                                           imageId: dto.imgId,
+                                          bankShortName: dto.bankCode,
                                           status: dto.bankTypeStatus,
                                           caiValue: dto.caiValue);
-                                      Provider.of<AddBankProvider>(context,
-                                              listen: false)
-                                          .updateBankId(dto.id);
-                                      Provider.of<AddBankProvider>(context,
-                                              listen: false)
-                                          .updateSelect(2);
-                                      Provider.of<AddBankProvider>(context,
-                                              listen: false)
-                                          .updateRegisterAuthentication(true);
-                                      Provider.of<AddBankProvider>(context,
-                                              listen: false)
-                                          .updateSelectBankType(bankTypeDTO);
-                                      Provider.of<AddBankProvider>(context,
-                                              listen: false)
-                                          .resetValidate();
                                       Navigator.pushNamed(
                                         context,
                                         Routes.ADD_BANK_CARD,
                                         arguments: {
-                                          'pageIndex': 3,
+                                          'step': 1,
                                           'bankAccount': dto.bankAccount,
                                           'name': dto.userBankName,
+                                          'bankDTO': bankTypeDTO,
                                         },
-                                      ).then((value) => bankCardBloc.add(
-                                          BankCardGetDetailEvent(
-                                              bankId: bankId)));
+                                      ).then((value) {
+                                        if (value is bool) {
+                                          bankCardBloc
+                                              .add(BankCardGetDetailEvent());
+                                        }
+                                      });
                                     },
-                                    bgColor: DefaultTheme.TRANSPARENT,
-                                    textColor: DefaultTheme.GREEN,
+                                    bgColor: AppColor.TRANSPARENT,
+                                    textColor: AppColor.GREEN,
                                   ),
                                 ],
                                 const SizedBox(height: 10),
@@ -287,14 +301,14 @@ class BankCardDetailView extends StatelessWidget {
                           if (dto.transactions.isNotEmpty) ...[
                             _buildTitle(title: 'Giao dịch gần dây'),
                             _buildRelatedTransaction(
-                                context, dto.transactions, bankId),
+                                context, dto.transactions, state.bankId ?? ''),
                             const Padding(padding: EdgeInsets.only(top: 10)),
                             InkWell(
                               onTap: () {
                                 Navigator.pushNamed(
                                   context,
                                   Routes.TRANSACTION_HISTORY_VIEW,
-                                  arguments: {'bankId': bankId},
+                                  arguments: {'bankId': state.bankId ?? ''},
                                 );
                               },
                               child: BoxLayout(
@@ -302,12 +316,12 @@ class BankCardDetailView extends StatelessWidget {
                                 height: 40,
                                 alignment: Alignment.center,
                                 padding: const EdgeInsets.all(0),
-                                bgColor: DefaultTheme.TRANSPARENT,
+                                bgColor: AppColor.TRANSPARENT,
                                 child: const Text(
                                   'Xem thêm',
                                   style: TextStyle(
                                     fontSize: 15,
-                                    color: DefaultTheme.GREEN,
+                                    color: AppColor.GREEN,
                                     decoration: TextDecoration.underline,
                                   ),
                                 ),
@@ -328,8 +342,8 @@ class BankCardDetailView extends StatelessWidget {
                             ButtonIconWidget(
                               width: width,
                               height: 40,
-                              bgColor: DefaultTheme.TRANSPARENT,
-                              textColor: DefaultTheme.RED_TEXT,
+                              bgColor: AppColor.TRANSPARENT,
+                              textColor: AppColor.RED_TEXT,
                               icon: Icons.remove_circle_rounded,
                               alignment: Alignment.centerLeft,
                               title: 'Huỷ liên kết TK ngân hàng',
@@ -348,15 +362,15 @@ class BankCardDetailView extends StatelessWidget {
                             ButtonIconWidget(
                               width: width,
                               height: 40,
-                              bgColor: DefaultTheme.TRANSPARENT,
-                              textColor: DefaultTheme.RED_TEXT,
+                              bgColor: AppColor.TRANSPARENT,
+                              textColor: AppColor.RED_TEXT,
                               icon: Icons.delete_rounded,
                               alignment: Alignment.centerLeft,
                               title: 'Xoá TK ngân hàng',
                               function: () {
                                 BankAccountRemoveDTO bankAccountRemoveDTO =
                                     BankAccountRemoveDTO(
-                                  bankId: bankId,
+                                  bankId: state.bankId ?? '',
                                   type: dto.type,
                                   isAuthenticated: dto.authenticated,
                                 );
@@ -413,7 +427,7 @@ class BankCardDetailView extends StatelessWidget {
                     }
                   },
                   bgColor: Theme.of(context).cardColor,
-                  textColor: DefaultTheme.ORANGE,
+                  textColor: AppColor.ORANGE,
                 ),
                 const Padding(
                   padding: EdgeInsets.only(left: 10),
@@ -436,7 +450,7 @@ class BankCardDetailView extends StatelessWidget {
                     );
                   },
                   bgColor: Theme.of(context).cardColor,
-                  textColor: DefaultTheme.RED_CALENDAR,
+                  textColor: AppColor.RED_CALENDAR,
                 ),
                 const Padding(
                   padding: EdgeInsets.only(left: 10),
@@ -464,7 +478,7 @@ class BankCardDetailView extends StatelessWidget {
                     );
                   },
                   bgColor: Theme.of(context).cardColor,
-                  textColor: DefaultTheme.BLUE_TEXT,
+                  textColor: AppColor.BLUE_TEXT,
                 ),
                 const Padding(
                   padding: EdgeInsets.only(left: 10),
@@ -481,7 +495,7 @@ class BankCardDetailView extends StatelessWidget {
                         arguments: {'qrGeneratedDTO': qrGeneratedDTO});
                   },
                   bgColor: Theme.of(context).cardColor,
-                  textColor: DefaultTheme.GREEN,
+                  textColor: AppColor.GREEN,
                 ),
               ],
             ),
@@ -519,14 +533,14 @@ class BankCardDetailView extends StatelessWidget {
               );
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => CreateQR(
+                  builder: (context) => CreateQRScreen(
                     bankAccountDTO: bankAccountDTO,
                   ),
                 ),
               );
             },
-            textColor: DefaultTheme.WHITE,
-            bgColor: DefaultTheme.GREEN,
+            textColor: AppColor.WHITE,
+            bgColor: AppColor.GREEN,
           ),
           Padding(
               padding: EdgeInsets.only(
@@ -700,8 +714,8 @@ class BankCardDetailView extends StatelessWidget {
                   width: width,
                   height: 40,
                   text: 'Chi tiết doanh nghiệp',
-                  textColor: DefaultTheme.GREEN,
-                  bgColor: DefaultTheme.TRANSPARENT,
+                  textColor: AppColor.GREEN,
+                  bgColor: AppColor.TRANSPARENT,
                   function: () {
                     BusinessItemDTO businessItemDTO = BusinessItemDTO(
                       businessId: list[index].businessId,
@@ -727,7 +741,7 @@ class BankCardDetailView extends StatelessWidget {
                       },
                     ).then((value) {
                       heroId = value.toString();
-                      bankCardBloc.add(BankCardGetDetailEvent(bankId: bankId));
+                      bankCardBloc.add(BankCardGetDetailEvent());
                     });
                   },
                 )
@@ -809,7 +823,7 @@ class BankCardDetailView extends StatelessWidget {
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
-                              color: DefaultTheme.GREY_TEXT,
+                              color: AppColor.GREY_TEXT,
                             ),
                           ),
                         ],
@@ -875,8 +889,7 @@ class BankCardDetailView extends StatelessWidget {
                   ? Icons.check_rounded
                   : Icons.pending_actions_rounded,
               size: 18,
-              color:
-                  (isAuthenticated) ? DefaultTheme.GREEN : DefaultTheme.ORANGE,
+              color: (isAuthenticated) ? AppColor.GREEN : AppColor.ORANGE,
             ),
             const Padding(padding: EdgeInsets.only(left: 10)),
           ],
@@ -886,9 +899,9 @@ class BankCardDetailView extends StatelessWidget {
             style: TextStyle(
               fontSize: 15,
               color: (isAuthenticated != null && isAuthenticated)
-                  ? DefaultTheme.GREEN
+                  ? AppColor.GREEN
                   : (isAuthenticated != null && !isAuthenticated)
-                      ? DefaultTheme.ORANGE
+                      ? AppColor.ORANGE
                       : Theme.of(context).hintColor,
             ),
           ),

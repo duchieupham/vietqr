@@ -39,7 +39,7 @@ class CalKeyboardWidget extends StatelessWidget {
                         setValue(
                             1.toString(), value.transactionAmount, context);
                       },
-                      textColor: DefaultTheme.GREEN,
+                      textColor: AppColor.GREEN,
                     ),
                     const Padding(padding: EdgeInsets.only(left: 10)),
                     CalButtonWidget(
@@ -49,7 +49,7 @@ class CalKeyboardWidget extends StatelessWidget {
                         setValue(
                             2.toString(), value.transactionAmount, context);
                       },
-                      textColor: DefaultTheme.GREEN,
+                      textColor: AppColor.GREEN,
                     ),
                     const Padding(padding: EdgeInsets.only(left: 10)),
                     CalButtonWidget(
@@ -59,7 +59,7 @@ class CalKeyboardWidget extends StatelessWidget {
                         setValue(
                             3.toString(), value.transactionAmount, context);
                       },
-                      textColor: DefaultTheme.GREEN,
+                      textColor: AppColor.GREEN,
                     )
                   ],
                 ),
@@ -75,7 +75,7 @@ class CalKeyboardWidget extends StatelessWidget {
                         setValue(
                             4.toString(), value.transactionAmount, context);
                       },
-                      textColor: DefaultTheme.GREEN,
+                      textColor: AppColor.GREEN,
                     ),
                     const Padding(padding: EdgeInsets.only(left: 10)),
                     CalButtonWidget(
@@ -85,7 +85,7 @@ class CalKeyboardWidget extends StatelessWidget {
                         setValue(
                             5.toString(), value.transactionAmount, context);
                       },
-                      textColor: DefaultTheme.GREEN,
+                      textColor: AppColor.GREEN,
                     ),
                     const Padding(padding: EdgeInsets.only(left: 10)),
                     CalButtonWidget(
@@ -95,7 +95,7 @@ class CalKeyboardWidget extends StatelessWidget {
                         setValue(
                             6.toString(), value.transactionAmount, context);
                       },
-                      textColor: DefaultTheme.GREEN,
+                      textColor: AppColor.GREEN,
                     )
                   ],
                 ),
@@ -111,7 +111,7 @@ class CalKeyboardWidget extends StatelessWidget {
                         setValue(
                             7.toString(), value.transactionAmount, context);
                       },
-                      textColor: DefaultTheme.GREEN,
+                      textColor: AppColor.GREEN,
                     ),
                     const Padding(padding: EdgeInsets.only(left: 10)),
                     CalButtonWidget(
@@ -121,7 +121,7 @@ class CalKeyboardWidget extends StatelessWidget {
                         setValue(
                             8.toString(), value.transactionAmount, context);
                       },
-                      textColor: DefaultTheme.GREEN,
+                      textColor: AppColor.GREEN,
                     ),
                     const Padding(padding: EdgeInsets.only(left: 10)),
                     CalButtonWidget(
@@ -131,7 +131,7 @@ class CalKeyboardWidget extends StatelessWidget {
                         setValue(
                             9.toString(), value.transactionAmount, context);
                       },
-                      textColor: DefaultTheme.GREEN,
+                      textColor: AppColor.GREEN,
                     )
                   ],
                 ),
@@ -154,7 +154,7 @@ class CalKeyboardWidget extends StatelessWidget {
                               function: () {
                                 setValue('0', value.transactionAmount, context);
                               },
-                              textColor: DefaultTheme.GREEN,
+                              textColor: AppColor.GREEN,
                             ),
                             const Padding(padding: EdgeInsets.only(left: 10)),
                             CalButtonWidget(
@@ -164,7 +164,7 @@ class CalKeyboardWidget extends StatelessWidget {
                                 setValue(
                                     '000', value.transactionAmount, context);
                               },
-                              textColor: DefaultTheme.GREEN,
+                              textColor: AppColor.GREEN,
                             ),
                           ],
                         ),
@@ -177,22 +177,22 @@ class CalKeyboardWidget extends StatelessWidget {
                               size: btnCalWidth,
                               value: '',
                               icon: Icons.clear_rounded,
-                              color: DefaultTheme.RED_CALENDAR.withOpacity(0.3),
+                              color: AppColor.RED_CALENDAR.withOpacity(0.3),
                               function: () {
                                 clearText(context);
                               },
-                              textColor: DefaultTheme.RED_CALENDAR,
+                              textColor: AppColor.RED_CALENDAR,
                             ),
                             const Padding(padding: EdgeInsets.only(left: 10)),
                             CalButtonWidget(
                               size: btnCalWidth,
                               value: '',
                               icon: Icons.arrow_back_rounded,
-                              color: DefaultTheme.ORANGE.withOpacity(0.3),
+                              color: AppColor.ORANGE.withOpacity(0.3),
                               function: () {
                                 removeText(value.transactionAmount, context);
                               },
-                              textColor: DefaultTheme.ORANGE,
+                              textColor: AppColor.ORANGE,
                             ),
                           ],
                         ),
@@ -205,8 +205,8 @@ class CalKeyboardWidget extends StatelessWidget {
                       icon: Icons.navigate_next_rounded,
                       value: '',
                       function: onNext,
-                      color: DefaultTheme.GREEN.withOpacity(0.3),
-                      textColor: DefaultTheme.GREEN,
+                      color: AppColor.GREEN.withOpacity(0.3),
+                      textColor: AppColor.GREEN,
                     ),
                   ],
                 ),

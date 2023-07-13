@@ -24,7 +24,7 @@ class BankItemWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: (isSelected)
             ? Theme.of(context).canvasColor
-            : DefaultTheme.TRANSPARENT,
+            : AppColor.TRANSPARENT,
       ),
       child: Row(
         children: [
@@ -46,7 +46,7 @@ class BankItemWidget extends StatelessWidget {
                         bankAccountDTO.bankAccount,
                         style: const TextStyle(
                           fontSize: 12,
-                          color: DefaultTheme.GREEN,
+                          color: AppColor.GREEN,
                           letterSpacing: 0.5,
                         ),
                       ),

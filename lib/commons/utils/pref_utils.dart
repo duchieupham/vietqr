@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:vierqr/models/bank_account_dto.dart';
 
 /// Tuyệt đối không được dùng box.clear()
 /// vì nó sẽ xoá toàn bộ dữ liệu local app

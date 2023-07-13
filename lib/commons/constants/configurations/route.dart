@@ -15,6 +15,7 @@ class Routes {
   static const String UI_SETTING = '/uiSetting';
   static const String TRANSACTION_HISTORY = '/transactionHistory';
   static const String ADD_BANK_CARD = '/addBankCard';
+  static const String SELECT_BANK_TYPE = '/selectBankType';
   static const String BANK_CARD_GENERATED_VIEW = '/bankCardGenerated';
   static const String BANK_MEMBER_VIEW = '/bankMember';
   static const String QR_SHARE_VIEW = '/qrShare';

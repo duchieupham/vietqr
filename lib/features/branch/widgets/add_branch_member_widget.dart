@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/commons/enums/check_type.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/check_utils.dart';
 import 'package:vierqr/commons/utils/error_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
@@ -11,8 +9,6 @@ import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_widget.dart';
 import 'package:vierqr/features/branch/blocs/branch_bloc.dart';
-import 'package:vierqr/features/branch/events/branch_event.dart';
-import 'package:vierqr/features/branch/states/branch_state.dart';
 import 'package:vierqr/layouts/border_layout.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/models/branch_member_insert_dto.dart';
@@ -105,7 +101,7 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
                     child: const Text(
                       'Xong',
                       style: TextStyle(
-                        color: DefaultTheme.GREEN,
+                        color: AppColor.GREEN,
                       ),
                     ),
                   ),
@@ -262,30 +258,30 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
                       const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
-                    color: DefaultTheme.GREY_VIEW,
+                    color: AppColor.GREY_VIEW,
                   ),
                   child: Row(children: const [
                     Icon(
                       Icons.check_rounded,
-                      color: DefaultTheme.GREEN,
+                      color: AppColor.GREEN,
                       size: 13,
                     ),
                     Padding(padding: EdgeInsets.only(left: 5)),
                     Text(
                       'Đã thêm',
-                      style: TextStyle(color: DefaultTheme.GREEN),
+                      style: TextStyle(color: AppColor.GREEN),
                     )
                   ]),
                 )
               : (existed == TypeAddMember.AWAIT)
                   ? Container(
-                      color: DefaultTheme.TRANSPARENT,
+                      color: AppColor.TRANSPARENT,
                       margin: const EdgeInsets.only(right: 8),
                       width: 24,
                       height: 24,
                       child: const Center(
                         child: CircularProgressIndicator(
-                          color: DefaultTheme.GREEN,
+                          color: AppColor.GREEN,
                         ),
                       ),
                     )
@@ -306,20 +302,20 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
                             vertical: 5, horizontal: 10),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5),
-                          color: DefaultTheme.GREEN,
+                          color: AppColor.GREEN,
                         ),
                         child: Row(
                           children: const [
                             Icon(
                               Icons.add_rounded,
-                              color: DefaultTheme.WHITE,
+                              color: AppColor.WHITE,
                               size: 13,
                             ),
                             Padding(padding: EdgeInsets.only(left: 5)),
                             Text(
                               'Thêm',
                               style: TextStyle(
-                                color: DefaultTheme.WHITE,
+                                color: AppColor.WHITE,
                               ),
                             )
                           ],

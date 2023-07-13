@@ -7,6 +7,7 @@ import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
+import 'package:vierqr/commons/widgets/viet_qr.dart';
 import 'package:vierqr/commons/widgets/viet_qr_widget.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/services/providers/action_share_provider.dart';
@@ -100,7 +101,7 @@ class QRShareView extends StatelessWidget {
                     child: Icon(
                       Icons.arrow_back_ios_rounded,
                       size: 20,
-                      color: DefaultTheme.WHITE,
+                      color: AppColor.WHITE,
                     ),
                   ),
                 ),
@@ -109,7 +110,7 @@ class QRShareView extends StatelessWidget {
                   'Chia sẻ mã QR',
                   style: TextStyle(
                     fontSize: 20,
-                    color: DefaultTheme.WHITE,
+                    color: AppColor.WHITE,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -152,7 +153,7 @@ class QRShareView extends StatelessWidget {
                       );
                     },
                     bgColor: Theme.of(context).cardColor,
-                    textColor: DefaultTheme.BLUE_TEXT,
+                    textColor: AppColor.BLUE_TEXT,
                   ),
                   const Padding(padding: EdgeInsets.only(left: 10)),
                   ButtonIconWidget(
@@ -164,7 +165,7 @@ class QRShareView extends StatelessWidget {
                       await share(dto: dto);
                     },
                     bgColor: Theme.of(context).cardColor,
-                    textColor: DefaultTheme.GREEN,
+                    textColor: AppColor.GREEN,
                   ),
                   const Padding(padding: EdgeInsets.only(left: 20)),
                 ],
@@ -209,8 +210,7 @@ class QRShareView extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                VietQRWidget(
-                  width: width,
+                VietQr(
                   qrGeneratedDTO: dto,
                   content: dto.content,
                 ),
@@ -229,7 +229,7 @@ class QRShareView extends StatelessWidget {
                           textAlign: TextAlign.right,
                           text: const TextSpan(
                             style: TextStyle(
-                              color: DefaultTheme.WHITE,
+                              color: AppColor.WHITE,
                               fontSize: 12,
                             ),
                             children: [

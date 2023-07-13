@@ -4,7 +4,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/commons/enums/check_type.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
@@ -19,7 +19,6 @@ import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/models/business_detail_dto.dart';
 import 'package:vierqr/models/business_item_dto.dart';
 import 'package:vierqr/models/related_transaction_receive_dto.dart';
-import 'package:vierqr/services/providers/add_bank_provider.dart';
 import 'package:vierqr/services/providers/bank_account_provider.dart';
 import 'package:vierqr/services/providers/shortcut_provider.dart';
 import 'package:vierqr/services/providers/suggestion_widget_provider.dart';
@@ -112,7 +111,7 @@ class _DashboardScreenState extends State<DashboardScreen>
             height: 200,
             child: const Center(
               child: CircularProgressIndicator(
-                color: DefaultTheme.GREEN,
+                color: AppColor.GREEN,
               ),
             ),
           );
@@ -176,7 +175,7 @@ class _DashboardScreenState extends State<DashboardScreen>
           borderRadius: const BorderRadius.all(Radius.circular(12)),
           boxShadow: <BoxShadow>[
             BoxShadow(
-              color: DefaultTheme.BLACK_LIGHT.withOpacity(0.1),
+              color: AppColor.BLACK_LIGHT.withOpacity(0.1),
               blurRadius: 1,
             ),
           ],
@@ -240,7 +239,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                   _buildChip(
                     context: context,
                     icon: Icons.business_rounded,
-                    color: DefaultTheme.GREY_TEXT,
+                    color: AppColor.GREY_TEXT,
                     text: '${dto.totalBranch} chi nhánh',
                   ),
                   const SizedBox(height: 4),
@@ -248,7 +247,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                     context: context,
                     icon: Icons.people_rounded,
                     text: '${dto.totalMember} thành viên',
-                    color: DefaultTheme.GREY_TEXT,
+                    color: AppColor.GREY_TEXT,
                   ),
                 ],
               ),
@@ -295,7 +294,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                         child: const Text(
                           'Kết nối TK ngân hàng',
                           style: TextStyle(
-                            color: DefaultTheme.GREEN,
+                            color: AppColor.GREEN,
                             fontSize: 12,
                           ),
                         ),
@@ -345,7 +344,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                         child: const Text(
                           'Thêm thành viên',
                           style: TextStyle(
-                            color: DefaultTheme.BLUE_TEXT,
+                            color: AppColor.BLUE_TEXT,
                             fontSize: 12,
                           ),
                         ),
@@ -420,7 +419,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      color: DefaultTheme.GREY_TEXT,
+                      color: AppColor.GREY_TEXT,
                     ),
                   ),
                 ],
@@ -470,7 +469,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                 children: [
                   _buildTitle(
                     'Gợi ý',
-                    DefaultTheme.ORANGE,
+                    AppColor.ORANGE,
                   ),
                   const Padding(padding: EdgeInsets.only(top: 5)),
                   (provider.showCameraPermission)
@@ -481,7 +480,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                               'Cho phép truy cập quyền máy ảnh để thực hiện các chức năng quét mã QR/Barcode',
                           icon: Icons.camera_alt_rounded,
                           buttonIcon: Icons.settings_rounded,
-                          color: DefaultTheme.BLUE_TEXT,
+                          color: AppColor.BLUE_TEXT,
                           function: () async {
                             await openAppSettings();
                           },
@@ -494,7 +493,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                           text: 'Cập nhật thông tin cá nhân',
                           icon: Icons.person,
                           buttonIcon: Icons.navigate_next_rounded,
-                          color: DefaultTheme.RED_CALENDAR,
+                          color: AppColor.RED_CALENDAR,
                           function: () async {
                             final data = await Navigator.of(context)
                                 .pushNamed(Routes.USER_EDIT);
@@ -523,7 +522,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                       children: [
                         _buildTitle(
                           'Tiện ích',
-                          DefaultTheme.BLUE_TEXT,
+                          AppColor.BLUE_TEXT,
                         ),
                         const Spacer(),
                         InkWell(
@@ -537,7 +536,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                                   ? Icons.keyboard_arrow_up_rounded
                                   : Icons.keyboard_arrow_down_rounded,
                               size: 25,
-                              color: DefaultTheme.GREY_TEXT,
+                              color: AppColor.GREY_TEXT,
                             ),
                           ),
                         ),
@@ -557,7 +556,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                           title: 'Tạo doanh nghiệp',
                           description: 'Quản lý doanh nghiệp trên hệ thống',
                           icon: Icons.business_rounded,
-                          color: DefaultTheme.GREEN,
+                          color: AppColor.GREEN,
                           function: () {
                             Navigator.pushNamed(
                                 context, Routes.ADD_BUSINESS_VIEW);
@@ -569,12 +568,10 @@ class _DashboardScreenState extends State<DashboardScreen>
                           title: 'Tài khoản ngân hàng',
                           description: 'Thêm và Liên kết tài khoản ngân hàng',
                           icon: Icons.credit_card_rounded,
-                          color: DefaultTheme.PURPLE_NEON,
+                          color: AppColor.PURPLE_NEON,
                           function: () {
-                            Provider.of<AddBankProvider>(context, listen: false)
-                                .updateSelect(1);
-                            Navigator.pushNamed(context, Routes.ADD_BANK_CARD,
-                                arguments: {'pageIndex': 1}).then(
+                            Navigator.pushNamed(context, Routes.ADD_BANK_CARD)
+                                .then(
                               (value) {
                                 Provider.of<BankAccountProvider>(context,
                                         listen: false)
@@ -638,7 +635,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                     description,
                     style: const TextStyle(
                       fontSize: 12,
-                      color: DefaultTheme.GREY_TEXT,
+                      color: AppColor.GREY_TEXT,
                     ),
                   ),
                 ],
@@ -734,7 +731,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                     child: Icon(
                       buttonIcon,
                       size: 15,
-                      color: DefaultTheme.GREY_TEXT,
+                      color: AppColor.GREY_TEXT,
                     ),
                   )
                 : const SizedBox(

@@ -76,7 +76,7 @@ class CustomWebView extends StatelessWidget {
                   child: const Text(
                     'Xong',
                     style: TextStyle(
-                      color: DefaultTheme.GREEN,
+                      color: AppColor.GREEN,
                     ),
                   ),
                 ),

@@ -2,7 +2,7 @@ import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/commons/enums/check_type.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
@@ -56,7 +56,7 @@ class _SelectBranchWidgetState extends State<SelectBranchWidget> {
     final width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-          color: DefaultTheme.BANK_CARD_COLOR_3.withOpacity(0.1),
+          color: AppColor.BANK_CARD_COLOR_3.withOpacity(0.1),
           borderRadius: const BorderRadius.all(Radius.circular(15))),
       child: Column(
         children: [
@@ -92,7 +92,7 @@ class _SelectBranchWidgetState extends State<SelectBranchWidget> {
                     child: const Text(
                       'Xong',
                       style: TextStyle(
-                        color: DefaultTheme.GREEN,
+                        color: AppColor.GREEN,
                       ),
                     ),
                   ),
@@ -147,7 +147,7 @@ class _SelectBranchWidgetState extends State<SelectBranchWidget> {
             borderRadius: const BorderRadius.all(Radius.circular(16)),
             boxShadow: <BoxShadow>[
               BoxShadow(
-                color: DefaultTheme.BLACK_LIGHT.withOpacity(0.1),
+                color: AppColor.BLACK_LIGHT.withOpacity(0.1),
                 blurRadius: 1,
               ),
             ],
@@ -194,12 +194,12 @@ class _SelectBranchWidgetState extends State<SelectBranchWidget> {
                           )
                         : _buildElementInformation(
                             context: context,
-                            descriptionColor: DefaultTheme.GREY_TEXT,
+                            descriptionColor: AppColor.GREY_TEXT,
                             description: 'Chưa liên kết',
                           ),
                     _buildElementInformation(
                       context: context,
-                      descriptionColor: DefaultTheme.GREY_TEXT,
+                      descriptionColor: AppColor.GREY_TEXT,
                       description: (dto.totalMember == 0)
                           ? 'Chưa có thành viên'
                           : '${dto.totalMember} thành viên',
@@ -261,7 +261,7 @@ class _SelectBranchWidgetState extends State<SelectBranchWidget> {
               },
               child: const Icon(
                 Icons.copy_rounded,
-                color: DefaultTheme.GREY_TEXT,
+                color: AppColor.GREY_TEXT,
                 size: 15,
               ),
             ),

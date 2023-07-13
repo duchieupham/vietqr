@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/log.dart';
-import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/features/business/repositories/business_information_repository.dart';
 import 'package:vierqr/models/introduce_dto.dart';
@@ -45,7 +43,7 @@ class _IntroduceBottomSheetState extends State<IntroduceBottomSheet> {
     final width = MediaQuery.of(context).size.width;
     return Container(
       decoration: BoxDecoration(
-          color: DefaultTheme.BANK_CARD_COLOR_3.withOpacity(0.1),
+          color: AppColor.BANK_CARD_COLOR_3.withOpacity(0.1),
           borderRadius: const BorderRadius.all(Radius.circular(15))),
       child: Column(
         children: [
@@ -112,7 +110,7 @@ class _IntroduceBottomSheetState extends State<IntroduceBottomSheet> {
                       Text(
                         'hoặc',
                         style: TextStyle(
-                            fontSize: 14, color: DefaultTheme.GREY_TEXT),
+                            fontSize: 14, color: AppColor.GREY_TEXT),
                       ),
                       SizedBox(width: 4),
                       Expanded(child: Divider()),
@@ -128,7 +126,7 @@ class _IntroduceBottomSheetState extends State<IntroduceBottomSheet> {
                     child: Container(
                       padding: const EdgeInsets.all(12),
                       decoration: const BoxDecoration(
-                          color: DefaultTheme.BLUE_TEXT,
+                          color: AppColor.BLUE_TEXT,
                           borderRadius: BorderRadius.all(Radius.circular(5))),
                       child: Row(
                         children: const [
@@ -139,7 +137,7 @@ class _IntroduceBottomSheetState extends State<IntroduceBottomSheet> {
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 14,
-                                color: DefaultTheme.WHITE,
+                                color: AppColor.WHITE,
                               ),
                             ),
                           ),
@@ -186,8 +184,8 @@ class _IntroduceBottomSheetState extends State<IntroduceBottomSheet> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-                color: DefaultTheme.greyF0F0F0,
-                border: Border.all(color: DefaultTheme.grey979797, width: 0.5),
+                color: AppColor.greyF0F0F0,
+                border: Border.all(color: AppColor.grey979797, width: 0.5),
                 borderRadius: const BorderRadius.all(Radius.circular(5))),
             child: Row(
               children: [
@@ -197,7 +195,7 @@ class _IntroduceBottomSheetState extends State<IntroduceBottomSheet> {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                        fontSize: 14, color: DefaultTheme.GREY_TEXT),
+                        fontSize: 14, color: AppColor.GREY_TEXT),
                   ),
                 ),
                 Image.asset(

@@ -66,7 +66,6 @@ class _AccountScreenState extends State<AccountScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final double width = MediaQuery.of(context).size.width;
     return BlocConsumer<AccountBloc, AccountState>(
       listener: (context, state) {},
       builder: (context, state) {
@@ -102,7 +101,7 @@ class _AccountScreenState extends State<AccountScreen> {
           color: Theme.of(context).cardColor,
           boxShadow: [
             BoxShadow(
-              color: DefaultTheme.GREY_TEXT.withOpacity(0.2),
+              color: AppColor.GREY_TEXT.withOpacity(0.2),
               spreadRadius: 2,
               blurRadius: 5,
               offset: const Offset(0, 2), // changes position of shadow
@@ -112,7 +111,7 @@ class _AccountScreenState extends State<AccountScreen> {
         child: const Text(
           'Đăng xuất',
           style: TextStyle(
-            color: DefaultTheme.RED_TEXT,
+            color: AppColor.RED_TEXT,
             fontSize: 15,
           ),
         ),
@@ -144,7 +143,7 @@ class _BannerWidget extends StatelessWidget {
             style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: DefaultTheme.WHITE,
+              color: AppColor.WHITE,
             ),
           ),
           const SizedBox(height: 2),
@@ -153,7 +152,7 @@ class _BannerWidget extends StatelessWidget {
             style: const TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.w600,
-              color: DefaultTheme.WHITE,
+              color: AppColor.WHITE,
             ),
           ),
         ],
@@ -263,7 +262,7 @@ class _FeatureWidget extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           decoration: const BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(30)),
-            color: DefaultTheme.WHITE,
+            color: AppColor.WHITE,
           ),
           child: ClipRRect(
             borderRadius: const BorderRadius.all(Radius.circular(30)),
@@ -296,7 +295,7 @@ class _IntroduceWidget extends StatelessWidget {
         color: Theme.of(context).cardColor,
         boxShadow: [
           BoxShadow(
-            color: DefaultTheme.GREY_TEXT.withOpacity(0.2),
+            color: AppColor.GREY_TEXT.withOpacity(0.2),
             spreadRadius: 2,
             blurRadius: 5,
             offset: const Offset(0, 2), // changes position of shadow
@@ -310,7 +309,7 @@ class _IntroduceWidget extends StatelessWidget {
               const Text(
                 'Điểm thưởng : ',
                 style: TextStyle(
-                  color: DefaultTheme.GREY_TEXT,
+                  color: AppColor.GREY_TEXT,
                   fontSize: 15,
                 ),
               ),
@@ -355,7 +354,7 @@ class _IntroduceWidget extends StatelessWidget {
                   padding: const EdgeInsets.all(6),
                   decoration: const BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(16)),
-                    color: DefaultTheme.GREY_BG,
+                    color: AppColor.GREY_BG,
                   ),
                   child: const Icon(Icons.arrow_forward_ios, size: 12),
                 )
@@ -391,7 +390,7 @@ class _SettingWidget extends StatelessWidget {
               color: Theme.of(context).cardColor,
               boxShadow: [
                 BoxShadow(
-                  color: DefaultTheme.GREY_TEXT.withOpacity(0.2),
+                  color: AppColor.GREY_TEXT.withOpacity(0.2),
                   spreadRadius: 2,
                   blurRadius: 5,
                   offset: const Offset(0, 2), // changes position of shadow

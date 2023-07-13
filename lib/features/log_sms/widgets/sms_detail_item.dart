@@ -35,7 +35,7 @@ class SmsDetailItem extends StatelessWidget {
                           const Text(
                             'Giao dịch: ',
                             style: TextStyle(
-                                fontSize: 12, color: DefaultTheme.GREY_TEXT),
+                                fontSize: 12, color: AppColor.GREY_TEXT),
                           ),
                           Text(
                             transactionDTO.transaction,
@@ -44,8 +44,8 @@ class SmsDetailItem extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                               color: BankInformationUtil.instance
                                       .isIncome(transactionDTO.transaction)
-                                  ? DefaultTheme.GREEN
-                                  : DefaultTheme.RED_TEXT,
+                                  ? AppColor.GREEN
+                                  : AppColor.RED_TEXT,
                             ),
                           ),
                         ],
@@ -70,7 +70,7 @@ class SmsDetailItem extends StatelessWidget {
             // ),
             const Text(
               'Nội dung',
-              style: TextStyle(fontSize: 12, color: DefaultTheme.GREY_TEXT),
+              style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
             ),
             Text(
               transactionDTO.content,

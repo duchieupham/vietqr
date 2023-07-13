@@ -51,7 +51,6 @@ class TransactionHistoryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double width = MediaQuery.of(context).size.width;
     final arg = ModalRoute.of(context)!.settings.arguments as Map;
     bankId = arg['bankId'] ?? '';
     initialServices(context, bankId);
@@ -99,7 +98,7 @@ class TransactionHistoryView extends StatelessWidget {
                                     width: 50,
                                     height: 50,
                                     child: CircularProgressIndicator(
-                                      color: DefaultTheme.GREEN,
+                                      color: AppColor.GREEN,
                                     ),
                                   ),
                                 )
@@ -180,7 +179,7 @@ class TransactionHistoryView extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      color: DefaultTheme.GREY_TEXT,
+                      color: AppColor.GREY_TEXT,
                     ),
                   ),
                 ],

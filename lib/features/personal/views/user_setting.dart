@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive/hive.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
@@ -9,7 +8,6 @@ import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/widgets/ambient_avatar_widget.dart';
 import 'package:vierqr/commons/widgets/button_text_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/features/login/blocs/login_bloc.dart';
 import 'package:vierqr/features/logout/blocs/log_out_bloc.dart';
 import 'package:vierqr/features/logout/events/log_out_event.dart';
 import 'package:vierqr/features/logout/states/log_out_state.dart';
@@ -17,7 +15,6 @@ import 'package:vierqr/services/providers/avatar_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 import 'package:flutter/material.dart';
 
-import 'introduce_bottom_sheet.dart';
 
 class UserSetting extends StatefulWidget {
   const UserSetting({Key? key, this.voidCallback}) : super(key: key);
@@ -42,7 +39,6 @@ class _UserSetting extends State<UserSetting>
   Widget build(BuildContext context) {
     super.build(context);
     final double width = MediaQuery.of(context).size.width;
-    final double height = MediaQuery.of(context).size.height;
     Alignment buttonTextAlignment = Alignment.centerLeft;
     return BlocListener<LogoutBloc, LogoutState>(
       listener: (context, state) {
@@ -95,20 +91,20 @@ class _UserSetting extends State<UserSetting>
                     width: width,
                     alignment: buttonTextAlignment,
                     text: 'Cập nhật thông tin cá nhân',
-                    textColor: DefaultTheme.GREEN,
+                    textColor: AppColor.GREEN,
                     function: () {
                       Navigator.of(context).pushNamed(Routes.USER_EDIT);
                     },
                   ),
                   const Divider(
-                    color: DefaultTheme.GREY_LIGHT,
+                    color: AppColor.GREY_LIGHT,
                     height: 1,
                   ),
                   ButtonTextWidget(
                     width: width,
                     alignment: buttonTextAlignment,
                     text: 'Cài đặt máy in',
-                    textColor: DefaultTheme.GREEN,
+                    textColor: AppColor.GREEN,
                     function: () async {
                       if (PlatformUtils.instance.isPhysicalDevice()) {
                         if (PlatformUtils.instance.isAndroidApp()) {
@@ -125,7 +121,7 @@ class _UserSetting extends State<UserSetting>
                     },
                   ),
                   const Divider(
-                    color: DefaultTheme.GREY_LIGHT,
+                    color: AppColor.GREY_LIGHT,
                     height: 1,
                   ),
                   // ButtonTextWidget(
@@ -143,20 +139,20 @@ class _UserSetting extends State<UserSetting>
                     width: width,
                     alignment: buttonTextAlignment,
                     text: 'Thay đổi giao diện',
-                    textColor: DefaultTheme.GREEN,
+                    textColor: AppColor.GREEN,
                     function: () {
                       Navigator.of(context).pushNamed(Routes.UI_SETTING);
                     },
                   ),
                   const Divider(
-                    color: DefaultTheme.GREY_LIGHT,
+                    color: AppColor.GREY_LIGHT,
                     height: 1,
                   ),
                   ButtonTextWidget(
                     width: width,
                     alignment: buttonTextAlignment,
                     text: 'Đăng xuất',
-                    textColor: DefaultTheme.RED_TEXT,
+                    textColor: AppColor.RED_TEXT,
                     function: () async {
                       Navigator.of(context).popUntil((route) => route.isFirst);
                       _logoutBloc.add(const LogoutEventSubmit());
@@ -228,7 +224,7 @@ class _IntroduceWidget extends StatelessWidget {
               const Text(
                 'Điểm thưởng : ',
                 style: TextStyle(
-                  color: DefaultTheme.GREY_TEXT,
+                  color: AppColor.GREY_TEXT,
                   fontSize: 14,
                 ),
               ),
@@ -266,7 +262,7 @@ class _IntroduceWidget extends StatelessWidget {
                   padding: const EdgeInsets.all(6),
                   decoration: const BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(16)),
-                    color: DefaultTheme.GREY_BG,
+                    color: AppColor.GREY_BG,
                   ),
                   child: const Icon(Icons.arrow_forward_ios, size: 12),
                 )

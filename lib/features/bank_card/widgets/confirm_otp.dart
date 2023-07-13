@@ -4,8 +4,8 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_widget.dart';
-import 'package:vierqr/features/bank_card/blocs/bank_card_bloc.dart';
-import 'package:vierqr/features/bank_card/events/bank_card_event.dart';
+import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
+import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
 import 'package:vierqr/layouts/border_layout.dart';
 import 'package:vierqr/models/bank_card_request_otp.dart';
 import 'package:vierqr/models/confirm_otp_bank_dto.dart';
@@ -78,7 +78,7 @@ class _ConfirmOTPView extends State<ConfirmOTPView> {
                   child: const Text(
                     'Đóng',
                     style: TextStyle(
-                      color: DefaultTheme.GREEN,
+                      color: AppColor.GREEN,
                     ),
                   ),
                 ),
@@ -152,7 +152,7 @@ class _ConfirmOTPView extends State<ConfirmOTPView> {
                         const TextSpan(text: 'Mã OTP có hiệu lực trong vòng '),
                         TextSpan(
                           text: value.toString(),
-                          style: const TextStyle(color: DefaultTheme.GREEN),
+                          style: const TextStyle(color: AppColor.GREEN),
                         ),
                         const TextSpan(text: 's.'),
                       ],
@@ -171,7 +171,7 @@ class _ConfirmOTPView extends State<ConfirmOTPView> {
                           text: 'Gửi lại',
                           style: const TextStyle(
                             decoration: TextDecoration.underline,
-                            color: DefaultTheme.GREEN,
+                            color: AppColor.GREEN,
                           ),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
@@ -192,8 +192,8 @@ class _ConfirmOTPView extends State<ConfirmOTPView> {
         ButtonWidget(
           width: width,
           text: 'Xác thực',
-          textColor: DefaultTheme.WHITE,
-          bgColor: DefaultTheme.GREEN,
+          textColor: AppColor.WHITE,
+          bgColor: AppColor.GREEN,
           function: () {
             FocusManager.instance.primaryFocus?.unfocus();
             if (otpController.text.isNotEmpty) {

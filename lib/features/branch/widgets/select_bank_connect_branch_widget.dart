@@ -9,7 +9,6 @@ import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/features/branch/blocs/branch_bloc.dart';
-import 'package:vierqr/features/branch/events/branch_event.dart';
 import 'package:vierqr/features/branch/repositories/branch_repository.dart';
 import 'package:vierqr/features/branch/states/branch_state.dart';
 import 'package:vierqr/layouts/box_layout.dart';
@@ -126,7 +125,7 @@ class _SelectBankConnectBranchWidgetState
                     child: const Text(
                       'Xong',
                       style: TextStyle(
-                        color: DefaultTheme.GREEN,
+                        color: AppColor.GREEN,
                       ),
                     ),
                   ),
@@ -208,7 +207,7 @@ class _SelectBankConnectBranchWidgetState
                             width: 60,
                             height: 30,
                             decoration: BoxDecoration(
-                              color: DefaultTheme.WHITE,
+                              color: AppColor.WHITE,
                               borderRadius: BorderRadius.circular(5),
                               image: DecorationImage(
                                 image: ImageUtils.instance.getImageNetWork(
@@ -224,7 +223,7 @@ class _SelectBankConnectBranchWidgetState
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
-                                color: DefaultTheme.WHITE,
+                                color: AppColor.WHITE,
                               ),
                             ),
                           ),
@@ -247,7 +246,7 @@ class _SelectBankConnectBranchWidgetState
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
-                                    color: DefaultTheme.WHITE,
+                                    color: AppColor.WHITE,
                                     fontSize: 18,
                                   ),
                                 ),
@@ -258,7 +257,7 @@ class _SelectBankConnectBranchWidgetState
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
-                                    color: DefaultTheme.WHITE,
+                                    color: AppColor.WHITE,
                                   ),
                                 ),
                               ],
@@ -291,12 +290,12 @@ class _SelectBankConnectBranchWidgetState
                                     'Chọn',
                                     style: TextStyle(
                                       fontSize: 12,
-                                      color: DefaultTheme.WHITE,
+                                      color: AppColor.WHITE,
                                     ),
                                   ),
                                   Icon(
                                     Icons.navigate_next_rounded,
-                                    color: DefaultTheme.WHITE,
+                                    color: AppColor.WHITE,
                                     size: 15,
                                   ),
                                 ],

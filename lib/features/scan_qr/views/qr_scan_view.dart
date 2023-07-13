@@ -9,7 +9,6 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/scan_qr/blocs/scan_qr_bloc.dart';
 import 'package:vierqr/features/scan_qr/events/scan_qr_event.dart';
 import 'package:vierqr/features/scan_qr/states/scan_qr_state.dart';
-import 'package:vierqr/services/providers/add_bank_provider.dart';
 import 'package:vierqr/services/providers/suggestion_widget_provider.dart';
 
 class QRScanView extends StatefulWidget {
@@ -46,7 +45,7 @@ class _QRScanView extends State<QRScanView>
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: DefaultTheme.BLACK,
+      backgroundColor: AppColor.BLACK,
       body: BlocListener<ScanQrBloc, ScanQrState>(
         listener: (context, state) {
           if (state is ScanQrLoadingState) {
@@ -93,26 +92,15 @@ class _QRScanView extends State<QRScanView>
           }
           if (state is ScanQrGetBankTypeSuccessState) {
             Navigator.pop(context);
-            if (state.dto.bankCode == 'MB') {
-              Provider.of<AddBankProvider>(context, listen: false)
-                  .updateSelect(2);
-              Provider.of<AddBankProvider>(context, listen: false)
-                  .updateRegisterAuthentication(true);
-            } else {
-              Provider.of<AddBankProvider>(context, listen: false)
-                  .updateSelect(1);
-              Provider.of<AddBankProvider>(context, listen: false)
-                  .updateRegisterAuthentication(false);
-            }
-            Provider.of<AddBankProvider>(context, listen: false)
-                .updateSelectBankType(state.dto);
             isDetected = false;
-            Navigator.pushReplacementNamed(
+            Navigator.pushNamed(
               context,
               Routes.ADD_BANK_CARD,
               arguments: {
-                'pageIndex': 2,
+                'step': 0,
+                'bankDTO': state.dto,
                 'bankAccount': state.bankAccount,
+                'name': ''
               },
             );
           }
@@ -131,7 +119,7 @@ class _QRScanView extends State<QRScanView>
                     },
                     child: const Icon(
                       Icons.close_rounded,
-                      color: DefaultTheme.WHITE,
+                      color: AppColor.WHITE,
                       size: 30,
                     ),
                   ),
@@ -194,7 +182,7 @@ class _QRScanView extends State<QRScanView>
             const Padding(padding: EdgeInsets.only(top: 20)),
             const Text(
               'Đặt mã QR vào khung để thực hiện việc quét mã',
-              style: TextStyle(color: DefaultTheme.WHITE),
+              style: TextStyle(color: AppColor.WHITE),
             ),
             // const Padding(padding: EdgeInsets.only(top: 20)),
             // ButtonIconWidget(
@@ -225,7 +213,7 @@ class _QRScanView extends State<QRScanView>
                             height: 50,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(50),
-                              color: DefaultTheme.GREY_VIEW.withOpacity(0.6),
+                              color: AppColor.GREY_VIEW.withOpacity(0.6),
                             ),
                             child: ValueListenableBuilder(
                               valueListenable: cameraController.torchState,
@@ -234,12 +222,12 @@ class _QRScanView extends State<QRScanView>
                                   case TorchState.off:
                                     return const Icon(
                                       Icons.flash_on_rounded,
-                                      color: DefaultTheme.WHITE,
+                                      color: AppColor.WHITE,
                                     );
                                   case TorchState.on:
                                     return const Icon(
                                       Icons.flash_off_rounded,
-                                      color: DefaultTheme.WHITE,
+                                      color: AppColor.WHITE,
                                     );
                                 }
                               },
@@ -265,11 +253,11 @@ class _QRScanView extends State<QRScanView>
                             height: 50,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(50),
-                              color: DefaultTheme.GREY_VIEW.withOpacity(0.6),
+                              color: AppColor.GREY_VIEW.withOpacity(0.6),
                             ),
                             child: const Icon(
                               Icons.autorenew_rounded,
-                              color: DefaultTheme.WHITE,
+                              color: AppColor.WHITE,
                             ),
                           ),
                         ),

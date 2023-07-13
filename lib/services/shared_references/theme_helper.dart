@@ -8,7 +8,7 @@ class ThemeHelper {
   static ThemeHelper get instance => _instance;
   //
   Future<void> initialTheme() async {
-    await sharedPrefs.setString('THEME_SYSTEM', DefaultTheme.THEME_SYSTEM);
+    await sharedPrefs.setString('THEME_SYSTEM', AppColor.THEME_SYSTEM);
   }
 
   Future<void> updateTheme(String theme) async {

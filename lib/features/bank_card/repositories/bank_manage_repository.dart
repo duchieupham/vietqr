@@ -6,7 +6,6 @@ import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/models/account_balance_dto.dart';
-import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/transaction_bank_dto.dart';
 import 'package:vierqr/services/shared_references/account_helper.dart';
 

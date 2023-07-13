@@ -32,7 +32,6 @@ class UserEditBloc extends Bloc<UserEditEvent, UserEditState> {
         }
       }
     } catch (e) {
-      print('Error at _updateUserInformation - UserEditBloc: $e');
       emit(const UserEditFailedState(msg: 'Vui lòng thử lại sau'));
     }
   }
@@ -56,7 +55,6 @@ class UserEditBloc extends Bloc<UserEditEvent, UserEditState> {
         }
       }
     } catch (e) {
-      print('Error at _updatePassworc - UserEditBloc: $e');
       emit(const UserEditPasswordFailedState(
           msg: 'Vui lòng kiểm tra lại kết nối mạng.'));
     }

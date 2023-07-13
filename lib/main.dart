@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -16,14 +15,11 @@ import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/account/blocs/account_bloc.dart';
-import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
-import 'package:vierqr/features/bank_card/blocs/bank_card_bloc.dart';
-import 'package:vierqr/features/bank_card/views/bank_card_detail_view.dart';
-import 'package:vierqr/features/bank_card/views/bank_card_generated_view.dart';
+import 'package:vierqr/features/add_bank/add_bank_screen.dart';
 import 'package:vierqr/features/bank_card/views/search_bank_view.dart';
 import 'package:vierqr/features/bank_member/blocs/bank_member_bloc.dart';
 import 'package:vierqr/features/bank_member/views/bank_member_view.dart';
-import 'package:vierqr/features/bank_type/blocs/bank_type_bloc.dart';
+import 'package:vierqr/features/bank_type/select_bank_type_screen.dart';
 import 'package:vierqr/features/branch/blocs/branch_bloc.dart';
 import 'package:vierqr/features/branch/views/branch_detail_view.dart';
 import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
@@ -32,7 +28,6 @@ import 'package:vierqr/features/business/views/add_business_view.dart';
 import 'package:vierqr/features/business/views/business_information_view.dart';
 import 'package:vierqr/features/business/views/business_transaction_view.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
-import 'package:vierqr/features/generate_qr/blocs/qr_blocs.dart';
 import 'package:vierqr/features/generate_qr/views/qr_generated.dart';
 import 'package:vierqr/features/generate_qr/views/qr_share_view.dart';
 import 'package:vierqr/features/home/blocs/home_bloc.dart';
@@ -45,14 +40,11 @@ import 'package:vierqr/features/printer/views/printer_setting_view.dart';
 import 'package:vierqr/features/transaction/blocs/transaction_bloc.dart';
 import 'package:vierqr/features/logout/blocs/log_out_bloc.dart';
 import 'package:vierqr/features/notification/blocs/notification_bloc.dart';
-import 'package:vierqr/features/login/blocs/login_bloc.dart';
 import 'package:vierqr/features/login/views/login.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_manage_bloc.dart';
 import 'package:vierqr/features/personal/blocs/user_edit_bloc.dart';
-import 'package:vierqr/features/bank_card/views/add_bank_card_view.dart';
 import 'package:vierqr/features/personal/views/user_edit_view.dart';
 import 'package:vierqr/features/personal/views/user_update_password_view.dart';
-import 'package:vierqr/features/register/blocs/register_bloc.dart';
 import 'package:vierqr/features/scan_qr/blocs/scan_qr_bloc.dart';
 import 'package:vierqr/features/scan_qr/views/qr_scan_view.dart';
 import 'package:vierqr/features/token/blocs/token_bloc.dart';
@@ -62,7 +54,6 @@ import 'package:vierqr/features/transaction/widgets/transaction_sucess_widget.da
 import 'package:vierqr/models/notification_transaction_success_dto.dart';
 import 'package:vierqr/services/local_notification/notification_service.dart';
 import 'package:vierqr/services/providers/action_share_provider.dart';
-import 'package:vierqr/services/providers/add_bank_provider.dart';
 import 'package:vierqr/services/providers/add_business_provider.dart';
 import 'package:vierqr/services/providers/avatar_provider.dart';
 import 'package:vierqr/services/providers/bank_%20arrangement_provider.dart';
@@ -77,7 +68,6 @@ import 'package:vierqr/services/providers/login_provider.dart';
 import 'package:vierqr/services/providers/memeber_manage_provider.dart';
 import 'package:vierqr/services/providers/page_select_provider.dart';
 import 'package:vierqr/services/providers/pin_provider.dart';
-import 'package:vierqr/services/providers/register_provider.dart';
 import 'package:vierqr/services/providers/search_clear_provider.dart';
 import 'package:vierqr/services/providers/shortcut_provider.dart';
 import 'package:vierqr/services/providers/suggestion_widget_provider.dart';
@@ -230,21 +220,9 @@ class _VietQRApp extends State<VietQRApp> {
           BlocProvider<BankManageBloc>(
             create: (BuildContext context) => BankManageBloc(),
           ),
-          BlocProvider<LoginBloc>(
-            create: (BuildContext context) => LoginBloc(),
-          ),
-          BlocProvider<RegisterBloc>(
-            create: (BuildContext context) => RegisterBloc(),
-          ),
           BlocProvider<UserEditBloc>(
             create: (BuildContext context) => UserEditBloc(),
           ),
-          // BlocProvider<MemberManageBloc>(
-          //   create: (BuildContext context) => MemberManageBloc(),
-          // ),
-          // BlocProvider<SMSBloc>(
-          //   create: (BuildContext context) => SMSBloc(),
-          // ),
           BlocProvider<TransactionBloc>(
             create: (BuildContext context) => TransactionBloc(),
           ),
@@ -252,25 +230,16 @@ class _VietQRApp extends State<VietQRApp> {
             create: (BuildContext context) => NotificationBloc(),
           ),
           BlocProvider<HomeBloc>(
-            create: (BuildContext context) => HomeBloc(),
+            create: (BuildContext context) => HomeBloc(context),
           ),
           BlocProvider<DashboardBloc>(
             create: (BuildContext context) => DashboardBloc(context),
           ),
-          BlocProvider<BankTypeBloc>(
-            create: (BuildContext context) => BankTypeBloc(context),
-          ),
           BlocProvider<TokenBloc>(
             create: (BuildContext context) => TokenBloc(),
           ),
-          BlocProvider<BankCardBloc>(
-            create: (BuildContext context) => BankCardBloc(),
-          ),
           BlocProvider<BankMemberBloc>(
             create: (BuildContext context) => BankMemberBloc(),
-          ),
-          BlocProvider<QRBloc>(
-            create: (BuildContext context) => QRBloc(),
           ),
           BlocProvider<LogoutBloc>(
             create: (BuildContext context) => LogoutBloc(),
@@ -293,9 +262,6 @@ class _VietQRApp extends State<VietQRApp> {
           BlocProvider<AccountBloc>(
             create: (BuildContext context) => AccountBloc(),
           ),
-          BlocProvider<BankBloc>(
-            create: (BuildContext context) => BankBloc(),
-          ),
         ],
         child: MultiProvider(
           providers: [
@@ -306,7 +272,6 @@ class _VietQRApp extends State<VietQRApp> {
             ChangeNotifierProvider(create: (context) => CreateQRProvider()),
             ChangeNotifierProvider(create: (context) => BankAccountProvider()),
             ChangeNotifierProvider(create: (context) => BankSelectProvider()),
-            ChangeNotifierProvider(create: (context) => RegisterProvider()),
             ChangeNotifierProvider(create: (context) => PinProvider()),
             ChangeNotifierProvider(create: (context) => UserEditProvider()),
             ChangeNotifierProvider(create: (context) => HomeTabProvider()),
@@ -315,7 +280,6 @@ class _VietQRApp extends State<VietQRApp> {
                 create: (context) => SuggestionWidgetProvider()),
             ChangeNotifierProvider(
                 create: (context) => MemeberManageProvider()),
-            ChangeNotifierProvider(create: (context) => AddBankProvider()),
             ChangeNotifierProvider(create: (context) => AddBusinessProvider()),
             ChangeNotifierProvider(
                 create: (context) => BusinessInformationProvider()),
@@ -355,9 +319,9 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.UI_SETTING: (context) => const ThemeSettingView(),
                   // Routes.TRANSACTION_HISTORY: (context) =>
                   //     const TransactionHistory(),
-                  Routes.ADD_BANK_CARD: (context) => const AddBankCardView(),
-                  Routes.BANK_CARD_GENERATED_VIEW: (context) =>
-                      const BankCardGeneratedView(),
+                  Routes.ADD_BANK_CARD: (context) => const AddBankScreen(),
+                  Routes.SELECT_BANK_TYPE: (context) =>
+                      const SelectBankTypeScreen(),
                   Routes.BANK_MEMBER_VIEW: (context) => const BankMemberView(),
                   Routes.QR_SHARE_VIEW: (context) => QRShareView(),
                   Routes.QR_GENERATED: (context) => const QRGenerated(),
@@ -365,8 +329,8 @@ class _VietQRApp extends State<VietQRApp> {
                       const BusinessInformationView(),
                   Routes.ADD_BUSINESS_VIEW: (context) =>
                       const AddBusinessView(),
-                  Routes.BANK_CARD_DETAIL_VEW: (context) =>
-                      const BankCardDetailView(),
+                  // Routes.BANK_CARD_DETAIL_VEW: (context) =>
+                  //     const BankCardDetailScreen(),
                   Routes.TRANSACTION_HISTORY_VIEW: (context) =>
                       const TransactionHistoryView(),
                   Routes.SCAN_QR_VIEW: (context) => const QRScanView(),
@@ -393,12 +357,11 @@ class _VietQRApp extends State<VietQRApp> {
 
                   return null;
                 },
-                themeMode:
-                    (themeSelect.themeSystem == DefaultTheme.THEME_SYSTEM)
-                        ? ThemeMode.system
-                        : (themeSelect.themeSystem == DefaultTheme.THEME_LIGHT)
-                            ? ThemeMode.light
-                            : ThemeMode.dark,
+                themeMode: (themeSelect.themeSystem == AppColor.THEME_SYSTEM)
+                    ? ThemeMode.system
+                    : (themeSelect.themeSystem == AppColor.THEME_LIGHT)
+                        ? ThemeMode.light
+                        : ThemeMode.dark,
                 darkTheme: DefaultThemeData(context: context).darkTheme,
                 theme: DefaultThemeData(context: context).lightTheme,
                 localizationsDelegates: const [
@@ -412,7 +375,7 @@ class _VietQRApp extends State<VietQRApp> {
                 ],
                 home: Title(
                   title: 'VietQR',
-                  color: DefaultTheme.BLACK,
+                  color: AppColor.BLACK,
                   child: _homeScreen,
                 ),
               );

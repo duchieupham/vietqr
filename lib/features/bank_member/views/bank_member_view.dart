@@ -18,7 +18,6 @@ import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_member_dto.dart';
 import 'package:vierqr/models/bank_member_insert_dto.dart';
 import 'package:vierqr/services/providers/search_clear_provider.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class BankMemberView extends StatelessWidget {
   static final TextEditingController phoneController = TextEditingController();
@@ -179,7 +178,7 @@ class BankMemberView extends StatelessWidget {
                                 'Tạo tài khoản',
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: DefaultTheme.GREEN,
+                                  color: AppColor.GREEN,
                                   decoration: TextDecoration.underline,
                                 ),
                               ),
@@ -202,11 +201,11 @@ class BankMemberView extends StatelessWidget {
                         borderRadius: 5,
                         padding: const EdgeInsets.symmetric(
                             horizontal: 10, vertical: 10),
-                        bgColor: DefaultTheme.RED_CALENDAR.withOpacity(0.3),
+                        bgColor: AppColor.RED_CALENDAR.withOpacity(0.3),
                         child: Text(
                           state.message,
                           style: const TextStyle(
-                            color: DefaultTheme.RED_TEXT,
+                            color: AppColor.RED_TEXT,
                           ),
                         ),
                       ),
@@ -312,7 +311,7 @@ class BankMemberView extends StatelessWidget {
     return BoxLayout(
       width: width,
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-      bgColor: DefaultTheme.TRANSPARENT,
+      bgColor: AppColor.TRANSPARENT,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -365,7 +364,7 @@ class BankMemberView extends StatelessWidget {
                               .formatMemberRole(dto.role),
                           style: const TextStyle(
                             fontSize: 10,
-                            color: DefaultTheme.WHITE,
+                            color: AppColor.WHITE,
                           ),
                         ),
                       )
@@ -417,8 +416,8 @@ class BankMemberView extends StatelessWidget {
                 );
                 bankMemberBloc.add(BankMemberEventInsert(dto: insertDTO));
               },
-              bgColor: DefaultTheme.GREEN,
-              textColor: DefaultTheme.WHITE,
+              bgColor: AppColor.GREEN,
+              textColor: AppColor.WHITE,
             ),
           if (type == 2)
             ButtonIconWidget(
@@ -427,7 +426,7 @@ class BankMemberView extends StatelessWidget {
               title: 'Đã thêm',
               function: () {},
               bgColor: Theme.of(context).cardColor,
-              textColor: DefaultTheme.GREEN,
+              textColor: AppColor.GREEN,
             ),
         ],
       ),

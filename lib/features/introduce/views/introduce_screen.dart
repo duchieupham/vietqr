@@ -55,7 +55,7 @@ class IntroduceScreen extends StatelessWidget {
                     style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
-                        color: DefaultTheme.RED_MB),
+                        color: AppColor.RED_MB),
                   ),
                   const SizedBox(height: 16),
                   Text(
@@ -81,7 +81,7 @@ class IntroduceScreen extends StatelessWidget {
                           style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
-                              color: DefaultTheme.RED_MB),
+                              color: AppColor.RED_MB),
                         ),
                       ],
                     ),

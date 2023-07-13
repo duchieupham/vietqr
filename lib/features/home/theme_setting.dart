@@ -67,7 +67,7 @@ class ThemeSettingView extends StatelessWidget {
                   width: width,
                   margin: const EdgeInsets.only(left: 20, right: 20),
                   padding: const EdgeInsets.only(left: 20, right: 20),
-                  decoration: DefaultTheme.cardDecoration(context),
+                  decoration: AppColor.cardDecoration(context),
                   child: ListView.separated(
                     physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
@@ -106,7 +106,7 @@ class ThemeSettingView extends StatelessWidget {
                     },
                     separatorBuilder: (context, index) {
                       return const Divider(
-                        color: DefaultTheme.GREY_TEXT,
+                        color: AppColor.GREY_TEXT,
                         height: 0.5,
                       );
                     },
@@ -126,7 +126,7 @@ class ThemeSettingView extends StatelessWidget {
                           builder: (context, provider, child) {
                         return Text(
                           (provider.enableShortcut) ? 'Hiện' : 'Ẩn',
-                          style: const TextStyle(color: DefaultTheme.GREY_TEXT),
+                          style: const TextStyle(color: AppColor.GREY_TEXT),
                         );
                       }),
                       const Spacer(),
@@ -136,7 +136,7 @@ class ThemeSettingView extends StatelessWidget {
                             scale: 0.8,
                             child: CupertinoSwitch(
                               value: provider.enableShortcut,
-                              activeColor: DefaultTheme.GREEN,
+                              activeColor: AppColor.GREEN,
                               onChanged: ((_) {
                                 provider.updateEnableShortcut(
                                     !provider.enableShortcut);
@@ -214,7 +214,7 @@ class ThemeSettingView extends StatelessWidget {
         width: width,
         bgColor: (isSelected)
             ? Theme.of(context).canvasColor.withOpacity(0.6)
-            : DefaultTheme.TRANSPARENT,
+            : AppColor.TRANSPARENT,
         child: Column(
           children: [
             Image.asset(
@@ -223,7 +223,7 @@ class ThemeSettingView extends StatelessWidget {
             ),
             Text(
               text,
-              style: const TextStyle(color: DefaultTheme.GREY_TEXT),
+              style: const TextStyle(color: AppColor.GREY_TEXT),
             ),
           ],
         ),

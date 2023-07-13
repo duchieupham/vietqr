@@ -7,66 +7,66 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
 // import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:uuid/uuid.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'dart:math' as math;
 
 import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/commons/enums/check_type.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
-import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/commons/widgets/viet_qr.dart';
 import 'package:vierqr/commons/widgets/viet_qr_widget.dart';
 import 'package:vierqr/features/account/blocs/account_bloc.dart';
 import 'package:vierqr/features/account/events/account_event.dart';
 import 'package:vierqr/features/account/states/account_state.dart';
+import 'package:vierqr/features/bank_detail/bank_card_detail_screen.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
-import 'package:vierqr/features/bank_card/events/bank_card_event.dart';
+import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
 import 'package:vierqr/features/bank_card/widgets/function_bank_widget.dart';
 import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
-import 'package:vierqr/features/generate_qr/blocs/qr_blocs.dart';
-import 'package:vierqr/features/generate_qr/events/qr_event.dart';
-import 'package:vierqr/features/generate_qr/states/qr_state.dart';
 import 'package:vierqr/features/generate_qr/views/create_qr.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
-import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/models/qr_create_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
-import 'package:vierqr/services/providers/add_bank_provider.dart';
 import 'package:vierqr/services/providers/bank_%20arrangement_provider.dart';
 import 'package:vierqr/services/providers/bank_account_provider.dart';
 import 'package:vierqr/services/providers/bank_card_select_provider.dart';
 import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
-const double _minHeight = 60;
-const double _maxHeight = 150;
-
-class BankScreen extends StatefulWidget {
+class BankScreen extends StatelessWidget {
   const BankScreen({super.key});
 
   @override
-  State<BankScreen> createState() => _BankScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider<BankBloc>(
+      create: (BuildContext context) => BankBloc(context),
+      child: const _BankScreen(),
+    );
+  }
 }
 
-class _BankScreenState extends State<BankScreen>
+class _BankScreen extends StatefulWidget {
+  const _BankScreen({super.key});
+
+  @override
+  State<_BankScreen> createState() => _BankScreenState();
+}
+
+class _BankScreenState extends State<_BankScreen>
     with AutomaticKeepAliveClientMixin {
-  final List<QRGeneratedDTO> qrGenerateds = [];
   final List<Widget> cardWidgets = [];
   final scrollController = ScrollController();
-  late QRBloc qrBloc;
   final carouselController = CarouselController();
 
   late BusinessInformationBloc businessInformationBloc;
-  late BankBloc bankCardBloc;
+  late BankBloc _bloc;
 
   String userId = UserInformationHelper.instance.getUserId();
 
@@ -74,13 +74,12 @@ class _BankScreenState extends State<BankScreen>
 
   initialServices(BuildContext context) {
     businessInformationBloc = BlocProvider.of(context);
-    bankCardBloc = BlocProvider.of(context);
-    qrBloc = BlocProvider.of(context);
+    _bloc = BlocProvider.of(context);
     Provider.of<BankCardSelectProvider>(context, listen: false).reset();
   }
 
   initData() {
-    bankCardBloc.add(BankCardEventGetList(userId: userId));
+    _bloc.add(BankCardEventGetList());
   }
 
   @override
@@ -92,7 +91,7 @@ class _BankScreenState extends State<BankScreen>
     });
 
     _subscription = eventBus.on<ChangeThemeEvent>().listen((_) {
-      bankCardBloc.add(BankCardEventGetList(userId: userId));
+      _bloc.add(BankCardEventGetList());
     });
   }
 
@@ -104,6 +103,7 @@ class _BankScreenState extends State<BankScreen>
   void onLoading() async {
     // refreshController.loadComplete();
   }
+
   List<BankAccountDTO> fillListBankAccount(List<BankAccountDTO> list) {
     // if (list.isNotEmpty) {
     //   if (list.length > 3) {
@@ -137,7 +137,6 @@ class _BankScreenState extends State<BankScreen>
     final double maxListHeight = MediaQuery.of(context).size.height - 200;
     final double height = MediaQuery.of(context).size.height;
     double sizedBox = 0;
-    double listHeight = 0;
     return Consumer<BankArrangementProvider>(
       builder: (context, provider, child) {
         return (provider.type == 0)
@@ -158,11 +157,11 @@ class _BankScreenState extends State<BankScreen>
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
+                        children: const [
+                          Text(
                             'Sử dụng tạo mã QR, đối soát giao dịch',
                             style: TextStyle(
-                                fontSize: 12, color: DefaultTheme.GREY_TEXT),
+                                fontSize: 12, color: AppColor.GREY_TEXT),
                           ),
                           // GestureDetector(
                           //   onTap: () {},
@@ -171,7 +170,7 @@ class _BankScreenState extends State<BankScreen>
                           //     style: TextStyle(
                           //       decoration: TextDecoration.underline,
                           //       fontSize: 13,
-                          //       color: DefaultTheme.BLUE_TEXT,
+                          //       color: AppColor.BLUE_TEXT,
                           //     ),
                           //   ),
                           // ),
@@ -181,34 +180,23 @@ class _BankScreenState extends State<BankScreen>
                     Expanded(
                       child: BlocConsumer<BankBloc, BankState>(
                         listener: (context, state) async {
-                          if (state.type == TypePermission.ScanSuccess) {
-                            if (state.bankTypeDTO!.bankCode == 'MB') {
-                              Provider.of<AddBankProvider>(context,
-                                      listen: false)
-                                  .updateSelect(2);
-                              Provider.of<AddBankProvider>(context,
-                                      listen: false)
-                                  .updateRegisterAuthentication(true);
-                            } else {
-                              Provider.of<AddBankProvider>(context,
-                                      listen: false)
-                                  .updateSelect(1);
-                              Provider.of<AddBankProvider>(context,
-                                      listen: false)
-                                  .updateRegisterAuthentication(false);
-                            }
-                            Provider.of<AddBankProvider>(context, listen: false)
-                                .updateSelectBankType(state.bankTypeDTO!);
-                            await Navigator.pushNamed(
+                          if (state.request == BankType.SCAN) {
+                            Navigator.pushNamed(
                               context,
                               Routes.ADD_BANK_CARD,
                               arguments: {
-                                'pageIndex': 2,
+                                'step': 0,
+                                'bankDTO': state.bankTypeDTO,
                                 'bankAccount': state.bankAccount,
+                                'name': ''
                               },
                             );
+                          }
 
-                            bankCardBloc.add(UpdateEvent());
+                          if (state.request == BankType.BANK) {
+                            if (scrollController.hasClients) {
+                              scrollController.jumpTo(0);
+                            }
                           }
                           // if (state.status == BlocStatus.INSERT ||
                           //     state.status == BlocStatus.DELETE) {
@@ -225,15 +213,10 @@ class _BankScreenState extends State<BankScreen>
                                 width: 30,
                                 height: 30,
                                 child: CircularProgressIndicator(
-                                  color: DefaultTheme.GREEN,
+                                  color: AppColor.GREEN,
                                 ),
                               ),
                             );
-                          }
-                          if (state.status == BlocStatus.SUCCESS) {
-                            if (scrollController.hasClients) {
-                              scrollController.jumpTo(0);
-                            }
                           }
 
                           return buildList(
@@ -289,77 +272,48 @@ class _BankScreenState extends State<BankScreen>
                         // }
                       },
                       builder: (context, state) {
-                        return BlocBuilder<QRBloc, QRState>(
-                          builder: (context, qrState) {
-                            if (state.status == BlocStatus.LOADING ||
-                                qrState is QRGenerateLoadingState) {
-                              return const Expanded(
-                                child: UnconstrainedBox(
-                                  child: SizedBox(
-                                    width: 30,
-                                    height: 30,
-                                    child: CircularProgressIndicator(
-                                      color: DefaultTheme.WHITE,
+                        return Expanded(
+                          child: (state.listGeneratedQR.isEmpty)
+                              ? _buildEmptyList(width)
+                              : Column(
+                                  children: [
+                                    CarouselSlider(
+                                      carouselController: carouselController,
+                                      items: cardWidgets,
+                                      options: CarouselOptions(
+                                        viewportFraction: 1,
+                                        aspectRatio:
+                                            width / (width + width * 0.25),
+                                        disableCenter: true,
+                                        onPageChanged: ((index, reason) {
+                                          Provider.of<BankAccountProvider>(
+                                                  context,
+                                                  listen: false)
+                                              .updateIndex(index);
+                                        }),
+                                      ),
                                     ),
-                                  ),
+                                    const Spacer(),
+                                    Container(
+                                      width: width,
+                                      height: 10,
+                                      alignment: Alignment.center,
+                                      child: Consumer<BankAccountProvider>(
+                                          builder: (context, page, child) {
+                                        return ListView.builder(
+                                            shrinkWrap: true,
+                                            scrollDirection: Axis.horizontal,
+                                            physics:
+                                                const NeverScrollableScrollPhysics(),
+                                            itemCount:
+                                                state.listGeneratedQR.length,
+                                            itemBuilder: ((context, index) =>
+                                                _buildDot((index ==
+                                                    page.indexSelected))));
+                                      }),
+                                    ),
+                                  ],
                                 ),
-                              );
-                            }
-
-                            if (qrState is QRGeneratedListSuccessfulState) {
-                              cardWidgets.clear();
-                              qrGenerateds.clear();
-                              if (qrState.list.isNotEmpty) {
-                                addQRWidget(width, height, qrState.list,
-                                    state.listBanks);
-                              }
-                            }
-                            return Expanded(
-                              child: (qrGenerateds.isEmpty)
-                                  ? _buildEmptyList(width)
-                                  : Column(
-                                      children: [
-                                        CarouselSlider(
-                                          carouselController:
-                                              carouselController,
-                                          items: cardWidgets,
-                                          options: CarouselOptions(
-                                            viewportFraction: 1,
-                                            aspectRatio:
-                                                width / (width + width * 0.25),
-                                            disableCenter: true,
-                                            onPageChanged: ((index, reason) {
-                                              Provider.of<BankAccountProvider>(
-                                                      context,
-                                                      listen: false)
-                                                  .updateIndex(index);
-                                            }),
-                                          ),
-                                        ),
-                                        const Spacer(),
-                                        Container(
-                                          width: width,
-                                          height: 10,
-                                          alignment: Alignment.center,
-                                          child: Consumer<BankAccountProvider>(
-                                              builder: (context, page, child) {
-                                            return ListView.builder(
-                                                shrinkWrap: true,
-                                                scrollDirection:
-                                                    Axis.horizontal,
-                                                physics:
-                                                    const NeverScrollableScrollPhysics(),
-                                                itemCount: qrGenerateds.length,
-                                                itemBuilder: ((context,
-                                                        index) =>
-                                                    _buildDot((index ==
-                                                        page.indexSelected))));
-                                          }),
-                                        ),
-                                      ],
-                                    ),
-                            );
-                          },
                         );
                       },
                     ),
@@ -399,7 +353,8 @@ class _BankScreenState extends State<BankScreen>
             );
           }
         } else {
-          context.read<BankBloc>().add(ScanQrEventGetBankType(code: data));
+          if (!mounted) return;
+          _bloc.add(ScanQrEventGetBankType(code: data));
         }
       }
     }
@@ -415,14 +370,14 @@ class _BankScreenState extends State<BankScreen>
           } else {
             await DialogWidget.instance.showFullModalBottomContent(
               widget: const QRScanWidget(),
-              color: DefaultTheme.BLACK,
+              color: AppColor.BLACK,
             );
             if (!mounted) return;
             startBarcodeScanStream(context);
           }
         },
             title: 'Copy mã QR',
-            des: 'Quét mã QR để thêm/liên kết Tk ngân hàng'),
+            des: 'Quét QRmã QR để thêm/liên kết Tk ngân hàng'),
       ],
     );
   }
@@ -439,7 +394,7 @@ class _BankScreenState extends State<BankScreen>
           color: Theme.of(context).cardColor,
           boxShadow: [
             BoxShadow(
-              color: DefaultTheme.GREY_LIGHT.withOpacity(0.3),
+              color: AppColor.GREY_LIGHT.withOpacity(0.3),
               spreadRadius: 1,
               blurRadius: 5,
               offset: const Offset(0, 0), // changes position of shadow
@@ -451,7 +406,7 @@ class _BankScreenState extends State<BankScreen>
             Image.asset(
               pathIcon,
               width: 40,
-              color: DefaultTheme.BLUE_TEXT,
+              color: AppColor.BLUE_TEXT,
             ),
             const SizedBox(
               width: 12,
@@ -470,8 +425,8 @@ class _BankScreenState extends State<BankScreen>
                 ),
                 Text(
                   des,
-                  style: const TextStyle(
-                      fontSize: 12, color: DefaultTheme.GREY_TEXT),
+                  style:
+                      const TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
                 ),
               ],
             )),
@@ -480,10 +435,10 @@ class _BankScreenState extends State<BankScreen>
               margin: const EdgeInsets.only(top: 4, left: 2),
               decoration: BoxDecoration(
                   borderRadius: const BorderRadius.all(Radius.circular(25)),
-                  color: DefaultTheme.GREY_LIGHT.withOpacity(0.2)),
+                  color: AppColor.GREY_LIGHT.withOpacity(0.2)),
               child: const Icon(
                 Icons.arrow_forward_ios,
-                color: DefaultTheme.GREY_HIGHLIGHT,
+                color: AppColor.GREY_HIGHLIGHT,
                 size: 12,
               ),
             )
@@ -518,18 +473,15 @@ class _BankScreenState extends State<BankScreen>
               icon: Icons.add_rounded,
               title: 'Thêm TK ngân hàng',
               function: () {
-                Provider.of<AddBankProvider>(context, listen: false)
-                    .updateSelect(1);
-                Navigator.pushNamed(context, Routes.ADD_BANK_CARD,
-                    arguments: {'pageIndex': 1}).then(
+                Navigator.pushNamed(context, Routes.ADD_BANK_CARD).then(
                   (value) {
                     Provider.of<BankAccountProvider>(context, listen: false)
                         .reset();
                   },
                 );
               },
-              bgColor: DefaultTheme.GREEN,
-              textColor: DefaultTheme.WHITE,
+              bgColor: AppColor.GREEN,
+              textColor: AppColor.WHITE,
             ),
             const Padding(padding: EdgeInsets.only(top: 10)),
           ],
@@ -560,48 +512,41 @@ class _BankScreenState extends State<BankScreen>
   }
 
   void getListBank(BuildContext context) {
-    String userId = UserInformationHelper.instance.getUserId();
-    bankCardBloc.add(
-      BankCardEventGetList(userId: userId),
-    );
+    _bloc.add(BankCardEventGetList());
   }
 
   void getListQR(BuildContext context, List<QRCreateDTO> list) {
-    qrGenerateds.clear();
-    qrBloc.add(QREventGenerateList(list: list));
+    _bloc.add(QREventGenerateList(list: list));
   }
 
   void addQRWidget(double width, double height, List<QRGeneratedDTO> list,
       List<BankAccountDTO> bankAccounts) {
-    if (qrGenerateds.isEmpty) {
-      qrGenerateds.addAll(list);
-      if (qrGenerateds.isNotEmpty) {
-        for (int i = 0; i < qrGenerateds.length; i++) {
-          final Widget qrWidget = Padding(
-            padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-            child: InkWell(
-              onTap: () {
-                DialogWidget.instance.showModalBottomContent(
-                  widget: FunctionBankWidget(
-                    bankAccountDTO: bankAccounts[i],
-                    qrGeneratedDTO: qrGenerateds[i],
-                    businessInformationBloc: businessInformationBloc,
-                  ),
-                  height: height * 0.35,
-                );
-              },
-              child: VietQRWidget(
-                width: width - 10,
-                qrGeneratedDTO: qrGenerateds[i],
-                content: '',
-                isCopy: true,
-                isStatistic: true,
-                // isSmallWidget: (height <= 800),
-              ),
+    if (list.isNotEmpty) {
+      for (int i = 0; i < list.length; i++) {
+        final Widget qrWidget = Padding(
+          padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+          child: InkWell(
+            onTap: () {
+              DialogWidget.instance.showModalBottomContent(
+                widget: FunctionBankWidget(
+                  bankAccountDTO: bankAccounts[i],
+                  qrGeneratedDTO: list[i],
+                  businessInformationBloc: businessInformationBloc,
+                ),
+                height: height * 0.35,
+              );
+            },
+            child: VietQRWidget(
+              width: width - 10,
+              qrGeneratedDTO: list[i],
+              content: '',
+              isCopy: true,
+              isStatistic: true,
+              // isSmallWidget: (height <= 800),
             ),
-          );
-          cardWidgets.add(qrWidget);
-        }
+          ),
+        );
+        cardWidgets.add(qrWidget);
       }
     }
   }
@@ -613,9 +558,9 @@ class _BankScreenState extends State<BankScreen>
       margin: const EdgeInsets.symmetric(horizontal: 5),
       decoration: BoxDecoration(
         border: (isSelected)
-            ? Border.all(color: DefaultTheme.GREY_LIGHT, width: 0.5)
+            ? Border.all(color: AppColor.GREY_LIGHT, width: 0.5)
             : null,
-        color: (isSelected) ? DefaultTheme.WHITE : DefaultTheme.GREY_LIGHT,
+        color: (isSelected) ? AppColor.WHITE : AppColor.GREY_LIGHT,
         borderRadius: BorderRadius.circular(10),
       ),
     );
@@ -667,6 +612,7 @@ class _StackedList extends State<StackedList> {
   List<BankAccountDTO> listBankAccount = [];
   List<Color> listColor = [];
   late AccountBloc _accountBloc;
+
   @override
   void initState() {
     super.initState();
@@ -708,7 +654,6 @@ class _StackedList extends State<StackedList> {
       listBankAccount = [...listBankAccount, otd2];
     } else {
       listBankAccount = [otd, otd2];
-      print('----------------------------${listBankAccount.length} ');
     }
 
     listColor = widget.colors;
@@ -722,8 +667,6 @@ class _StackedList extends State<StackedList> {
 
   @override
   Widget build(BuildContext context) {
-    final double width = MediaQuery.of(context).size.width;
-    final double height = MediaQuery.of(context).size.height;
     return RefreshIndicator(
       onRefresh: widget.onRefresh!,
       child: ListView(
@@ -774,12 +717,13 @@ class _StackedList extends State<StackedList> {
     return (dto.id.isNotEmpty)
         ? InkWell(
             onTap: () async {
-              await Navigator.pushNamed(
-                context,
-                Routes.BANK_CARD_DETAIL_VEW,
-                arguments: {
-                  'bankId': dto.id,
-                },
+              await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => BankCardDetailScreen(bankId: dto.id),
+                  settings: const RouteSettings(
+                    name: Routes.BANK_CARD_DETAIL_VEW,
+                  ),
+                ),
               );
 
               getListBank();
@@ -815,25 +759,13 @@ class _StackedList extends State<StackedList> {
                             dto.userId == userId))
                           InkWell(
                             onTap: () {
-                              Provider.of<AddBankProvider>(context,
-                                      listen: false)
-                                  .updateBankId(dto.id);
-                              Provider.of<AddBankProvider>(context,
-                                      listen: false)
-                                  .updateSelect(2);
-                              Provider.of<AddBankProvider>(context,
-                                      listen: false)
-                                  .updateRegisterAuthentication(true);
-                              Provider.of<AddBankProvider>(context,
-                                      listen: false)
-                                  .resetValidate();
                               Navigator.pushNamed(
                                 context,
                                 Routes.ADD_BANK_CARD,
                                 arguments: {
                                   'pageIndex': 3,
                                   'bankAccount': dto.bankAccount,
-                                  'name': dto.userBankName,
+                                  'name': dto.userBankName
                                 },
                               );
                             },
@@ -857,7 +789,7 @@ class _StackedList extends State<StackedList> {
                                     'Liên kết',
                                     style: TextStyle(
                                       fontSize: 11,
-                                      color: DefaultTheme.WHITE,
+                                      color: AppColor.WHITE,
                                     ),
                                   ),
                                   const SizedBox(
@@ -893,15 +825,13 @@ class _StackedList extends State<StackedList> {
                             );
                             Navigator.of(context)
                                 .push(
-                              MaterialPageRoute(
-                                builder: (context) => CreateQR(
-                                  bankAccountDTO: bankAccountDTO,
-                                ),
-                              ),
-                            )
-                                .then((value) {
-                              //
-                            });
+                                  MaterialPageRoute(
+                                    builder: (context) => CreateQRScreen(
+                                      bankAccountDTO: bankAccountDTO,
+                                    ),
+                                  ),
+                                )
+                                .then((value) {});
                           },
                           child: BoxLayout(
                             width: 95,
@@ -923,7 +853,7 @@ class _StackedList extends State<StackedList> {
                                   'Tạo QR',
                                   style: TextStyle(
                                     fontSize: 11,
-                                    color: DefaultTheme.WHITE,
+                                    color: AppColor.WHITE,
                                   ),
                                 ),
                                 const SizedBox(
@@ -959,7 +889,7 @@ class _StackedList extends State<StackedList> {
                   width: 35,
                   height: 35,
                   decoration: BoxDecoration(
-                    color: DefaultTheme.WHITE,
+                    color: AppColor.WHITE,
                     borderRadius: BorderRadius.circular(40),
                     image: DecorationImage(
                       image: ImageUtils.instance.getImageNetWork(
@@ -977,15 +907,14 @@ class _StackedList extends State<StackedList> {
                       '${dto.bankCode} - ${dto.bankAccount}',
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                          color: DefaultTheme.WHITE,
-                          fontWeight: FontWeight.w600),
+                          color: AppColor.WHITE, fontWeight: FontWeight.w600),
                     ),
                     Text(
                       dto.userBankName.toUpperCase(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                        color: DefaultTheme.WHITE,
+                        color: AppColor.WHITE,
                         fontSize: 10,
                       ),
                     ),
@@ -998,12 +927,12 @@ class _StackedList extends State<StackedList> {
                     decoration: BoxDecoration(
                       borderRadius: const BorderRadius.all(Radius.circular(25)),
                       color: dto.userId == userId
-                          ? DefaultTheme.GREEN
-                          : DefaultTheme.ORANGE,
+                          ? AppColor.GREEN
+                          : AppColor.ORANGE,
                     ),
                     child: const Icon(
                       Icons.check,
-                      color: DefaultTheme.WHITE,
+                      color: AppColor.WHITE,
                       size: 8,
                     ),
                   )
@@ -1014,7 +943,7 @@ class _StackedList extends State<StackedList> {
               padding: EdgeInsets.only(top: 10, right: 6),
               child: Icon(
                 Icons.arrow_forward_ios,
-                color: DefaultTheme.WHITE,
+                color: AppColor.WHITE,
                 size: 12,
               ),
             ),
@@ -1030,8 +959,7 @@ class _StackedList extends State<StackedList> {
       margin: const EdgeInsets.only(top: 16, left: 12, right: 12),
       padding: const EdgeInsets.only(top: 12, left: 12, right: 12),
       decoration: BoxDecoration(
-          color: DefaultTheme.BLUE_TEXT,
-          borderRadius: BorderRadius.circular(22)),
+          color: AppColor.BLUE_TEXT, borderRadius: BorderRadius.circular(22)),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1042,7 +970,7 @@ class _StackedList extends State<StackedList> {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                    color: DefaultTheme.WHITE,
+                    color: AppColor.WHITE,
                     borderRadius: BorderRadius.circular(40),
                     image: const DecorationImage(
                         image:
@@ -1063,7 +991,7 @@ class _StackedList extends State<StackedList> {
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                                 fontSize: 15,
-                                color: DefaultTheme.WHITE,
+                                color: AppColor.WHITE,
                                 fontWeight: FontWeight.w600),
                           ),
                           Row(
@@ -1073,14 +1001,14 @@ class _StackedList extends State<StackedList> {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
-                                  color: DefaultTheme.WHITE,
+                                  color: AppColor.WHITE,
                                   fontSize: 13,
                                 ),
                               ),
                               Image.asset(
                                 'assets/images/ic_point.png',
                                 height: 16,
-                                color: DefaultTheme.WHITE,
+                                color: AppColor.WHITE,
                               )
                             ],
                           ),
@@ -1091,7 +1019,7 @@ class _StackedList extends State<StackedList> {
                       width: 30,
                       height: 30,
                       child: CircularProgressIndicator(
-                        color: DefaultTheme.WHITE,
+                        color: AppColor.WHITE,
                       ),
                     );
                   }),
@@ -1102,7 +1030,7 @@ class _StackedList extends State<StackedList> {
           //   padding: EdgeInsets.only(top: 10, right: 6),
           //   child: Icon(
           //     Icons.arrow_forward_ios,
-          //     color: DefaultTheme.WHITE,
+          //     color: AppColor.WHITE,
           //     size: 12,
           //   ),
           // ),
@@ -1114,9 +1042,8 @@ class _StackedList extends State<StackedList> {
   Widget _buildAddBankCard(double width) {
     return GestureDetector(
       onTap: () async {
-        Provider.of<AddBankProvider>(context, listen: false).updateSelect(1);
-        await Navigator.pushNamed(context, Routes.ADD_BANK_CARD,
-            arguments: {'pageIndex': 1});
+        await Navigator.pushNamed(context, Routes.ADD_BANK_CARD);
+
         widget.getListBank();
       },
       child: Container(
@@ -1156,7 +1083,7 @@ class _StackedList extends State<StackedList> {
                     style: TextStyle(
                       decoration: TextDecoration.underline,
                       fontSize: 15,
-                      color: DefaultTheme.GREY_TEXT,
+                      color: AppColor.GREY_TEXT,
                     ),
                   )
                 ],

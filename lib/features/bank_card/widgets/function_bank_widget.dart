@@ -8,6 +8,7 @@ import 'package:vierqr/commons/utils/printer_utils.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
+import 'package:vierqr/features/bank_detail/bank_card_detail_screen.dart';
 import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
 import 'package:vierqr/features/business/events/business_information_event.dart';
 import 'package:vierqr/features/generate_qr/views/create_qr.dart';
@@ -16,7 +17,6 @@ import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bluetooth_printer_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/services/providers/action_share_provider.dart';
-import 'package:vierqr/services/providers/add_bank_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 import 'package:vierqr/services/sqflite/local_database.dart';
 
@@ -75,7 +75,7 @@ class FunctionBankWidget extends StatelessWidget {
                   }
                 },
                 bgColor: Theme.of(context).canvasColor,
-                textColor: DefaultTheme.ORANGE,
+                textColor: AppColor.ORANGE,
               ),
               ButtonIconWidget(
                 width: width * 0.2,
@@ -96,7 +96,7 @@ class FunctionBankWidget extends StatelessWidget {
                   );
                 },
                 bgColor: Theme.of(context).canvasColor,
-                textColor: DefaultTheme.RED_CALENDAR,
+                textColor: AppColor.RED_CALENDAR,
               ),
               ButtonIconWidget(
                 width: width * 0.2,
@@ -122,7 +122,7 @@ class FunctionBankWidget extends StatelessWidget {
                   );
                 },
                 bgColor: Theme.of(context).canvasColor,
-                textColor: DefaultTheme.BLUE_TEXT,
+                textColor: AppColor.BLUE_TEXT,
               ),
               ButtonIconWidget(
                 width: width * 0.2,
@@ -142,7 +142,7 @@ class FunctionBankWidget extends StatelessWidget {
                   );
                 },
                 bgColor: Theme.of(context).canvasColor,
-                textColor: DefaultTheme.GREEN,
+                textColor: AppColor.GREEN,
               ),
             ],
           ),
@@ -155,14 +155,16 @@ class FunctionBankWidget extends StatelessWidget {
           height: 40,
           icon: Icons.info_outline_rounded,
           title: 'Chi tiết',
-          function: () {
+          function: () async {
             Navigator.pop(context);
-            Navigator.pushNamed(
-              context,
-              Routes.BANK_CARD_DETAIL_VEW,
-              arguments: {
-                'bankId': bankAccountDTO.id,
-              },
+            await Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) =>
+                    BankCardDetailScreen(bankId: bankAccountDTO.id),
+                settings: const RouteSettings(
+                  name: Routes.BANK_CARD_DETAIL_VEW,
+                ),
+              ),
             );
           },
           bgColor: Theme.of(context).canvasColor,
@@ -181,7 +183,7 @@ class FunctionBankWidget extends StatelessWidget {
             Navigator.of(context)
                 .push(
               MaterialPageRoute(
-                builder: (context) => CreateQR(
+                builder: (context) => CreateQRScreen(
                   bankAccountDTO: bankAccountDTO,
                 ),
               ),
@@ -206,10 +208,7 @@ class FunctionBankWidget extends StatelessWidget {
           title: 'Thêm TK ngân hàng',
           function: () {
             Navigator.pop(context);
-            Provider.of<AddBankProvider>(context, listen: false)
-                .updateSelect(1);
-            Navigator.pushNamed(context, Routes.ADD_BANK_CARD,
-                arguments: {'pageIndex': 1});
+            Navigator.pushNamed(context, Routes.ADD_BANK_CARD);
           },
           bgColor: Theme.of(context).canvasColor,
           textColor: Theme.of(context).hintColor,

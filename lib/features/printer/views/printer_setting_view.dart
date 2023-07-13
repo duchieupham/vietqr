@@ -202,7 +202,7 @@ class PrinterSettingView extends StatelessWidget {
                                   .add(PrinterEventRemove(userId: userId));
                             },
                             bgColor: Theme.of(context).cardColor,
-                            textColor: DefaultTheme.RED_TEXT,
+                            textColor: AppColor.RED_TEXT,
                           ),
                         ),
                         const Padding(padding: EdgeInsets.only(bottom: 30)),
@@ -248,7 +248,7 @@ class PrinterSettingView extends StatelessWidget {
                                         child: Text(
                                           'Còn $value giây quét lại',
                                           style: const TextStyle(
-                                            color: DefaultTheme.GREY_TEXT,
+                                            color: AppColor.GREY_TEXT,
                                             fontSize: 12,
                                           ),
                                         ),
@@ -269,7 +269,7 @@ class PrinterSettingView extends StatelessWidget {
                                         bgColor: Theme.of(context)
                                             .cardColor
                                             .withOpacity(0.3),
-                                        textColor: DefaultTheme.GREEN,
+                                        textColor: AppColor.GREEN,
                                       );
                               },
                             ),
@@ -422,7 +422,7 @@ class PrinterSettingView extends StatelessWidget {
                       height: 40,
                       title: 'Quét thiết bị',
                       icon: Icons.bluetooth_searching_rounded,
-                      textColor: DefaultTheme.GREEN,
+                      textColor: AppColor.GREEN,
                       bgColor: Theme.of(context).cardColor,
                       function: () {
                         _printerBloc

@@ -1,27 +1,19 @@
 import 'dart:async';
 import 'dart:ui';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/numeral.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/bank_information_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/utils/sms_information_utils.dart';
-import 'package:vierqr/commons/widgets/bank_card_widget.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/pin_widget.dart';
-import 'package:vierqr/features/bank_card/blocs/bank_card_bloc.dart';
-import 'package:vierqr/features/bank_card/events/bank_card_event.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/main.dart';
-import 'package:vierqr/models/bank_account_dto.dart';
-import 'package:vierqr/models/bank_account_remove_dto.dart';
 import 'package:vierqr/models/bank_information_dto.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:vierqr/services/providers/bank_card_position_provider.dart';
 import 'package:vierqr/services/providers/pin_provider.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class DialogWidget {
   //
@@ -41,7 +33,7 @@ class DialogWidget {
       context: NavigationService.navigatorKey.currentContext!,
       builder: (BuildContext context) {
         return Material(
-          color: DefaultTheme.TRANSPARENT,
+          color: AppColor.TRANSPARENT,
           child: Center(
             child: (PlatformUtils.instance.isWeb())
                 ? Container(
@@ -98,8 +90,8 @@ class DialogWidget {
                           width: 250,
                           height: 30,
                           text: 'Đóng',
-                          textColor: DefaultTheme.WHITE,
-                          bgColor: DefaultTheme.GREEN,
+                          textColor: AppColor.WHITE,
+                          bgColor: AppColor.GREEN,
                           borderRadius: 5,
                           function: () {
                             focusNode.dispose();
@@ -145,7 +137,7 @@ class DialogWidget {
                               ),
                               child: const Icon(
                                 Icons.close_rounded,
-                                color: DefaultTheme.RED_TEXT,
+                                color: AppColor.RED_TEXT,
                                 size: 15,
                               ),
                             ),
@@ -182,7 +174,7 @@ class DialogWidget {
   }) {
     return showDialog(
         context: NavigationService.navigatorKey.currentContext!,
-        barrierColor: DefaultTheme.TRANSPARENT,
+        barrierColor: AppColor.TRANSPARENT,
         barrierDismissible: true,
         builder: (BuildContext context) {
           return Align(
@@ -232,7 +224,7 @@ class DialogWidget {
         context: NavigationService.navigatorKey.currentContext!,
         builder: (BuildContext context) {
           return Material(
-            color: DefaultTheme.TRANSPARENT,
+            color: AppColor.TRANSPARENT,
             child: Center(
               child: Container(
                 width: 300,
@@ -280,10 +272,10 @@ class DialogWidget {
                       width: 250,
                       height: 40,
                       text: confirmText,
-                      textColor: DefaultTheme.WHITE,
+                      textColor: AppColor.WHITE,
                       bgColor: (confirmColor != null)
                           ? confirmColor
-                          : DefaultTheme.GREEN,
+                          : AppColor.GREEN,
                       borderRadius: 5,
                       function: confirmFunction,
                     ),
@@ -320,7 +312,7 @@ class DialogWidget {
         context: context,
         builder: (BuildContext context) {
           return Material(
-            color: DefaultTheme.TRANSPARENT,
+            color: AppColor.TRANSPARENT,
             child: Center(
               child: Container(
                 width: width,
@@ -355,7 +347,7 @@ class DialogWidget {
         enableDrag: false,
         // Ngăn người dùng kéo ModalBottomSheet
         context: context,
-        backgroundColor: (color != null) ? color : DefaultTheme.TRANSPARENT,
+        backgroundColor: (color != null) ? color : AppColor.TRANSPARENT,
         builder: (context) {
           return WillPopScope(
             onWillPop: () async {
@@ -389,7 +381,7 @@ class DialogWidget {
         enableDrag: false,
         // Ngăn người dùng kéo ModalBottomSheet
         context: context,
-        backgroundColor: DefaultTheme.TRANSPARENT,
+        backgroundColor: AppColor.TRANSPARENT,
         builder: (_) {
           final keyboardHeight = MediaQuery.of(context!).viewInsets.bottom;
           return BackdropFilter(
@@ -428,7 +420,7 @@ class DialogWidget {
       enableDrag: false,
       useRootNavigator: true,
       context: context,
-      backgroundColor: DefaultTheme.TRANSPARENT,
+      backgroundColor: AppColor.TRANSPARENT,
       builder: (context) {
         final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
         return BackdropFilter(
@@ -467,7 +459,7 @@ class DialogWidget {
     return await showModalBottomSheet(
         isScrollControlled: true,
         context: NavigationService.navigatorKey.currentContext!,
-        backgroundColor: DefaultTheme.TRANSPARENT,
+        backgroundColor: AppColor.TRANSPARENT,
         builder: (context) {
           return BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
@@ -508,8 +500,8 @@ class DialogWidget {
                         ButtonWidget(
                           width: width,
                           text: 'OK',
-                          textColor: DefaultTheme.WHITE,
-                          bgColor: DefaultTheme.GREEN,
+                          textColor: AppColor.WHITE,
+                          bgColor: AppColor.GREEN,
                           function: () {
                             Navigator.pop(context);
                           },
@@ -531,7 +523,7 @@ class DialogWidget {
           context: NavigationService.navigatorKey.currentContext!,
           builder: (BuildContext context) {
             return Material(
-              color: DefaultTheme.TRANSPARENT,
+              color: AppColor.TRANSPARENT,
               child: Center(
                 child: (PlatformUtils.instance.isWeb())
                     ? Container(
@@ -549,7 +541,7 @@ class DialogWidget {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: const [
                             CircularProgressIndicator(
-                              color: DefaultTheme.GREEN,
+                              color: AppColor.GREEN,
                             ),
                             Padding(padding: EdgeInsets.only(top: 30)),
                             Text(
@@ -572,7 +564,7 @@ class DialogWidget {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: const CircularProgressIndicator(
-                          color: DefaultTheme.GREEN,
+                          color: AppColor.GREEN,
                         ),
                       ),
               ),
@@ -582,13 +574,16 @@ class DialogWidget {
   }
 
   openMsgDialog(
-      {required String title, required String msg, VoidCallback? function}) {
+      {required String title,
+      String? button,
+      required String msg,
+      VoidCallback? function}) {
     return showDialog(
         barrierDismissible: false,
         context: NavigationService.navigatorKey.currentContext!,
         builder: (BuildContext context) {
           return Material(
-            color: DefaultTheme.TRANSPARENT,
+            color: AppColor.TRANSPARENT,
             child: Center(
                 child:
                     // (PlatformUtils.instance.isWeb())
@@ -638,9 +633,9 @@ class DialogWidget {
                   ButtonWidget(
                     width: 250,
                     height: 40,
-                    text: 'Đóng',
-                    textColor: DefaultTheme.WHITE,
-                    bgColor: DefaultTheme.GREEN,
+                    text: button ?? 'Đóng',
+                    textColor: AppColor.WHITE,
+                    bgColor: AppColor.GREEN,
                     borderRadius: 5,
                     function: (function != null)
                         ? function
@@ -703,7 +698,7 @@ class DialogWidget {
         context: context,
         builder: (BuildContext context) {
           return Material(
-            color: DefaultTheme.TRANSPARENT,
+            color: AppColor.TRANSPARENT,
             child: Center(
                 child: Container(
               width: width - 20,
@@ -721,13 +716,13 @@ class DialogWidget {
   }
 
   openTransactionDialog(String address, String body) {
-    final ScrollController _scrollContoller = ScrollController();
+    final ScrollController scrollController = ScrollController();
     return showDialog(
       barrierDismissible: false,
       context: NavigationService.navigatorKey.currentContext!,
       builder: (BuildContext context) {
         return Material(
-          color: DefaultTheme.TRANSPARENT,
+          color: AppColor.TRANSPARENT,
           child: Center(
             child: Container(
               padding: const EdgeInsets.only(left: 10, top: 10, right: 10),
@@ -762,7 +757,7 @@ class DialogWidget {
                             'Từ: ',
                             style: TextStyle(
                               fontSize: 15,
-                              color: DefaultTheme.GREY_TEXT,
+                              color: AppColor.GREY_TEXT,
                             ),
                           ),
                         ),
@@ -791,7 +786,7 @@ class DialogWidget {
                             'Nội dung: ',
                             style: TextStyle(
                               fontSize: 15,
-                              color: DefaultTheme.GREY_TEXT,
+                              color: AppColor.GREY_TEXT,
                             ),
                           ),
                         ),
@@ -799,7 +794,7 @@ class DialogWidget {
                           width: 220,
                           height: 250,
                           child: SingleChildScrollView(
-                            controller: _scrollContoller,
+                            controller: scrollController,
                             child: Text(
                               body,
                               style: const TextStyle(fontSize: 15),
@@ -819,14 +814,14 @@ class DialogWidget {
                       width: 250,
                       height: 50,
                       decoration: BoxDecoration(
-                        color: DefaultTheme.GREEN,
+                        color: AppColor.GREEN,
                         borderRadius: BorderRadius.circular(25),
                       ),
                       alignment: Alignment.center,
                       child: const Text(
                         'OK',
                         style: TextStyle(
-                          color: DefaultTheme.WHITE,
+                          color: AppColor.WHITE,
                         ),
                       ),
                     ),
@@ -850,14 +845,14 @@ class DialogWidget {
     );
     Color transactionColor =
         (BankInformationUtil.instance.isIncome(dto.transaction))
-            ? DefaultTheme.GREEN
-            : DefaultTheme.RED_TEXT;
+            ? AppColor.GREEN
+            : AppColor.RED_TEXT;
     return showDialog(
       barrierDismissible: false,
       context: NavigationService.navigatorKey.currentContext!,
       builder: (BuildContext context) {
         return Material(
-          color: DefaultTheme.TRANSPARENT,
+          color: AppColor.TRANSPARENT,
           child: Center(
             child: Container(
               padding: const EdgeInsets.only(left: 10, top: 10, right: 10),
@@ -902,7 +897,7 @@ class DialogWidget {
                             'Từ: ',
                             style: TextStyle(
                               fontSize: 15,
-                              color: DefaultTheme.GREY_TEXT,
+                              color: AppColor.GREY_TEXT,
                             ),
                           ),
                         ),
@@ -931,7 +926,7 @@ class DialogWidget {
                             'Tài khoản: ',
                             style: TextStyle(
                               fontSize: 15,
-                              color: DefaultTheme.GREY_TEXT,
+                              color: AppColor.GREY_TEXT,
                             ),
                           ),
                         ),
@@ -960,7 +955,7 @@ class DialogWidget {
                             'Số dư: ',
                             style: TextStyle(
                               fontSize: 15,
-                              color: DefaultTheme.GREY_TEXT,
+                              color: AppColor.GREY_TEXT,
                             ),
                           ),
                         ),
@@ -990,7 +985,7 @@ class DialogWidget {
                             'Nội dung: ',
                             style: TextStyle(
                               fontSize: 15,
-                              color: DefaultTheme.GREY_TEXT,
+                              color: AppColor.GREY_TEXT,
                             ),
                           ),
                         ),
@@ -1025,7 +1020,7 @@ class DialogWidget {
                       child: const Text(
                         'OK',
                         style: TextStyle(
-                          color: DefaultTheme.WHITE,
+                          color: AppColor.WHITE,
                         ),
                       ),
                     ),
