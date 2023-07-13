@@ -6,9 +6,11 @@ import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/widgets/ambient_avatar_widget.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
+import 'package:vierqr/features/account/account_screen.dart';
 import 'package:vierqr/features/bank_card/bank_screen.dart';
 import 'package:vierqr/features/dashboard/dashboard_screen.dart';
 import 'package:vierqr/features/home/states/home_state.dart';
+import 'package:vierqr/features/home/widgets/custom_app_bar_widget.dart';
 import 'package:vierqr/features/home/widgets/disconnect_widget.dart';
 import 'package:vierqr/features/home/widgets/maintain_widget.dart';
 import 'package:vierqr/features/introduce/views/introduce_screen.dart';
@@ -134,8 +136,8 @@ class _HomeScreen extends State<HomeScreen>
         const BankScreen(key: PageStorageKey('QR_GENERATOR_PAGE')),
         const DashboardScreen(key: PageStorageKey('SMS_LIST_PAGE')),
         if (PlatformUtils.instance.isAndroidApp()) const IntroduceScreen(),
-        UserSetting(
-          key: const PageStorageKey('USER_SETTING_PAGE'),
+        AccountScreen(
+          key:const PageStorageKey('USER_SETTING_PAGE'),
           voidCallback: () {
             _animatedToPage(0);
           },
@@ -305,17 +307,15 @@ class _HomeScreen extends State<HomeScreen>
             );
           }
         },
-        child: Scaffold(
-          body: Stack(
-            children: [
-              _buildAppBar(),
-              Consumer<PageSelectProvider>(builder: (context, page, child) {
-                return Stack(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 120),
-                      child: SizedBox(
-                        height: MediaQuery.of(context).size.height - 120,
+        child: Consumer<PageSelectProvider>(
+          builder: (context, page, child) {
+            return Scaffold(
+              body: Stack(
+                children: [
+                  Column(
+                    children: [
+                      if (page.indexSelected != 3) _buildAppBar(),
+                      Expanded(
                         child: Listener(
                           onPointerMove: (moveEvent) {
                             if (moveEvent.delta.dx > 0) {
@@ -341,72 +341,71 @@ class _HomeScreen extends State<HomeScreen>
                           ),
                         ),
                       ),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      child: Container(
-                        margin: (PlatformUtils.instance.isAndroidApp())
-                            ? const EdgeInsets.only(bottom: 5)
-                            : null,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            ClipRRect(
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(20)),
-                              child: BackdropFilter(
-                                filter:
-                                    ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  height: 60,
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(context)
-                                        .cardColor
-                                        .withOpacity(0.5),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color:
-                                            AppColor.GREY_VIEW.withOpacity(0.5),
-                                        spreadRadius: 2,
-                                        blurRadius: 3,
-                                        offset: const Offset(2, 2),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Stack(
-                                    children: [
-                                      Row(
-                                        children: List.generate(
-                                            page.listItem.length, (index) {
-                                          var item =
-                                              page.listItem.elementAt(index);
+                    ],
+                  ),
+                  Positioned(
+                    bottom: 10,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      margin: (PlatformUtils.instance.isAndroidApp())
+                          ? const EdgeInsets.only(bottom: 5)
+                          : null,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ClipRRect(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(20)),
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                              child: Container(
+                                alignment: Alignment.center,
+                                height: 60,
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context)
+                                      .cardColor
+                                      .withOpacity(0.5),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color:
+                                          AppColor.GREY_VIEW.withOpacity(0.5),
+                                      spreadRadius: 2,
+                                      blurRadius: 3,
+                                      offset: const Offset(2, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Stack(
+                                  children: [
+                                    Row(
+                                      children: List.generate(
+                                          page.listItem.length, (index) {
+                                        var item =
+                                            page.listItem.elementAt(index);
 
-                                          String url =
-                                              (item.index == page.indexSelected)
-                                                  ? item.assetsActive
-                                                  : item.assetsUnActive;
+                                        String url =
+                                            (item.index == page.indexSelected)
+                                                ? item.assetsActive
+                                                : item.assetsUnActive;
 
-                                          return _buildShortcut(
-                                              item.index, url, context);
-                                        }).toList(),
-                                      ),
-                                    ],
-                                  ),
+                                        return _buildShortcut(
+                                            item.index, url, context);
+                                      }).toList(),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                );
-              }),
-            ],
-          ),
+                  ),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );
@@ -582,7 +581,6 @@ class _HomeScreen extends State<HomeScreen>
 
     return Container(
       width: MediaQuery.of(context).size.width,
-      height: 230,
       padding: EdgeInsets.only(top: paddingTop + 12),
       alignment: Alignment.topCenter,
       decoration: const BoxDecoration(

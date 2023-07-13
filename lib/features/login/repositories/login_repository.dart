@@ -30,6 +30,7 @@ class LoginRepository {
       String fcmToken = await FirebaseMessaging.instance.getToken() ?? '';
       String platform = '';
       String device = '';
+      String sharingCode = '';
       if (!PlatformUtils.instance.isWeb()) {
         if (PlatformUtils.instance.isIOsApp()) {
           platform = 'IOS';
@@ -52,6 +53,7 @@ class LoginRepository {
         platform: platform,
         device: device,
         fcmToken: fcmToken,
+        sharingCode: sharingCode,
       );
       final response = await BaseAPIClient.postAPI(
         url: url,

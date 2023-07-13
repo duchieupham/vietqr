@@ -384,6 +384,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 .confirmPassController
                 .text;
 
+        String sharingCode =
+            Provider.of<RegisterProvider>(context, listen: false)
+                .introduceController
+                .text;
+
         Provider.of<RegisterProvider>(context, listen: false).updateErrs(
           phoneErr: (StringUtils.instance.isValidatePhone(phone)!),
           passErr: (!StringUtils.instance.isNumeric(password) ||
@@ -422,6 +427,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               EncryptUtils.instance.encrypted(phone, password),
                           device: userIP,
                           fcmToken: '',
+                          sharingCode: sharingCode,
                           platform: PlatformUtils.instance.isIOsApp()
                               ? 'MOBILE'
                               : 'MOBILE_ADR',

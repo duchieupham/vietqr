@@ -19,8 +19,8 @@ class ThemeSettingView extends StatelessWidget {
   //asset UI list
   static final List<String> _assetList = [
     'assets/images/ic-light-theme.png',
-    'assets/images/ic-dark-theme.png',
-    'assets/images/ic-system-theme.png',
+    // 'assets/images/ic-dark-theme.png',
+    // 'assets/images/ic-system-theme.png',
   ];
 
   @override
