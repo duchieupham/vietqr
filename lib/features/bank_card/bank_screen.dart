@@ -4,7 +4,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 // import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -13,20 +12,23 @@ import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'dart:math' as math;
 
 import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/commons/enums/check_type.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/events.dart';
+import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
-import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/viet_qr_widget.dart';
+import 'package:vierqr/features/account/blocs/account_bloc.dart';
+import 'package:vierqr/features/account/events/account_event.dart';
+import 'package:vierqr/features/account/states/account_state.dart';
+import 'package:vierqr/features/bank_card/bank_card_detail_screen.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
-import 'package:vierqr/features/bank_card/events/bank_card_event.dart';
+import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
 import 'package:vierqr/features/bank_card/widgets/function_bank_widget.dart';
 import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
 import 'package:vierqr/features/generate_qr/blocs/qr_blocs.dart';
-import 'package:vierqr/features/generate_qr/events/qr_event.dart';
 import 'package:vierqr/features/generate_qr/states/qr_state.dart';
 import 'package:vierqr/features/generate_qr/views/create_qr.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
@@ -45,23 +47,33 @@ import 'package:vierqr/services/shared_references/user_information_helper.dart';
 const double _minHeight = 60;
 const double _maxHeight = 150;
 
-class BankScreen extends StatefulWidget {
+class BankScreen extends StatelessWidget {
   const BankScreen({super.key});
 
   @override
-  State<BankScreen> createState() => _BankScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider<BankBloc>(
+      create: (BuildContext context) => BankBloc(context),
+      child: const _BankScreen(),
+    );
+  }
 }
 
-class _BankScreenState extends State<BankScreen>
+class _BankScreen extends StatefulWidget {
+  const _BankScreen({super.key});
+
+  @override
+  State<_BankScreen> createState() => _BankScreenState();
+}
+
+class _BankScreenState extends State<_BankScreen>
     with AutomaticKeepAliveClientMixin {
-  final List<QRGeneratedDTO> qrGenerateds = [];
   final List<Widget> cardWidgets = [];
   final scrollController = ScrollController();
-  late QRBloc qrBloc;
   final carouselController = CarouselController();
 
   late BusinessInformationBloc businessInformationBloc;
-  late BankBloc bankCardBloc;
+  late BankBloc _bloc;
 
   String userId = UserInformationHelper.instance.getUserId();
 
@@ -69,13 +81,12 @@ class _BankScreenState extends State<BankScreen>
 
   initialServices(BuildContext context) {
     businessInformationBloc = BlocProvider.of(context);
-    bankCardBloc = BlocProvider.of(context);
-    qrBloc = BlocProvider.of(context);
+    _bloc = BlocProvider.of(context);
     Provider.of<BankCardSelectProvider>(context, listen: false).reset();
   }
 
   initData() {
-    bankCardBloc.add(BankCardEventGetList(userId: userId));
+    _bloc.add(BankCardEventGetList());
   }
 
   @override
@@ -87,7 +98,7 @@ class _BankScreenState extends State<BankScreen>
     });
 
     _subscription = eventBus.on<ChangeThemeEvent>().listen((_) {
-      bankCardBloc.add(BankCardEventGetList(userId: userId));
+      _bloc.add(BankCardEventGetList());
     });
   }
 
@@ -100,6 +111,32 @@ class _BankScreenState extends State<BankScreen>
     // refreshController.loadComplete();
   }
 
+  List<BankAccountDTO> fillListBankAccount(List<BankAccountDTO> list) {
+    // if (list.isNotEmpty) {
+    //   if (list.length > 3) {
+    //     return [
+    //       list[0],
+    //       list[1],
+    //       list[2],
+    //     ];
+    //   }
+    // }
+    return list;
+  }
+
+  List<Color> fillListListColor(List<Color> list) {
+    // if (list.isNotEmpty) {
+    //   if (list.length > 3) {
+    //     return [
+    //       list[0],
+    //       list[1],
+    //       list[2],
+    //     ];
+    //   }
+    // }
+    return list;
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -110,67 +147,93 @@ class _BankScreenState extends State<BankScreen>
     double listHeight = 0;
     return Consumer<BankArrangementProvider>(
       builder: (context, provider, child) {
-        return RefreshIndicator(
-          onRefresh: _refresh,
-          child: (provider.type == 0)
-              ? Column(
+        return (provider.type == 0)
+            ? Padding(
+                padding: const EdgeInsets.only(bottom: 70),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    BlocConsumer<BankBloc, BankState>(
-                      listener: (context, state) async {
-                        if (state.type == TypePermission.ScanSuccess) {
-                          if (state.bankTypeDTO!.bankCode == 'MB') {
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        'Tài khoản',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: const [
+                          Text(
+                            'Sử dụng tạo mã QR, đối soát giao dịch',
+                            style: TextStyle(
+                                fontSize: 12, color: AppColor.GREY_TEXT),
+                          ),
+                          // GestureDetector(
+                          //   onTap: () {},
+                          //   child: const Text(
+                          //     'Tất cả',
+                          //     style: TextStyle(
+                          //       decoration: TextDecoration.underline,
+                          //       fontSize: 13,
+                          //       color: AppColor.BLUE_TEXT,
+                          //     ),
+                          //   ),
+                          // ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: BlocConsumer<BankBloc, BankState>(
+                        listener: (context, state) async {
+                          if (state.type == TypePermission.ScanSuccess) {
+                            if (state.bankTypeDTO!.bankCode == 'MB') {
+                              Provider.of<AddBankProvider>(context,
+                                      listen: false)
+                                  .updateSelect(2);
+                              Provider.of<AddBankProvider>(context,
+                                      listen: false)
+                                  .updateRegisterAuthentication(true);
+                            } else {
+                              Provider.of<AddBankProvider>(context,
+                                      listen: false)
+                                  .updateSelect(1);
+                              Provider.of<AddBankProvider>(context,
+                                      listen: false)
+                                  .updateRegisterAuthentication(false);
+                            }
                             Provider.of<AddBankProvider>(context, listen: false)
-                                .updateSelect(2);
-                            Provider.of<AddBankProvider>(context, listen: false)
-                                .updateRegisterAuthentication(true);
-                          } else {
-                            Provider.of<AddBankProvider>(context, listen: false)
-                                .updateSelect(1);
-                            Provider.of<AddBankProvider>(context, listen: false)
-                                .updateRegisterAuthentication(false);
-                          }
-                          Provider.of<AddBankProvider>(context, listen: false)
-                              .updateSelectBankType(state.bankTypeDTO!);
-                          await Navigator.pushNamed(
-                            context,
-                            Routes.ADD_BANK_CARD,
-                            arguments: {
-                              'pageIndex': 2,
-                              'bankAccount': state.bankAccount,
-                            },
-                          );
-                          bankCardBloc.add(UpdateEvent());
-                        }
+                                .updateSelectBankType(state.bankTypeDTO!);
+                            await Navigator.pushNamed(
+                              context,
+                              Routes.ADD_BANK_CARD,
+                              arguments: {
+                                'pageIndex': 2,
+                                'bankAccount': state.bankAccount,
+                              },
+                            );
 
-                        if (state.status == BlocStatus.SUCCESS) {
-                          if (scrollController.hasClients) {
-                            scrollController.jumpTo(0);
+                            _bloc.add(UpdateEvent());
                           }
-                          sizedBox =
-                              (state.listBanks.length * _maxHeight) * 0.7;
-                          listHeight = (sizedBox < _maxHeight)
-                              ? _maxHeight
-                              : (sizedBox > maxListHeight)
-                                  ? maxListHeight
-                                  : sizedBox;
-                          bankCardBloc.add(UpdateEvent());
-                        }
 
-                        // if (state.status != BlocStatus.DONE) {
-                        //   bankCardBloc.add(UpdateEvent());
-                        // }
-                        // if (state.status == BlocStatus.INSERT ||
-                        //     state.status == BlocStatus.DELETE) {
-                        //   if (scrollController.hasClients) {
-                        //     scrollController.jumpTo(0);
-                        //   }
-                        //   getListBank(context);
-                        // }
-                      },
-                      builder: (context, state) {
-                        if (state.status == BlocStatus.LOADING) {
-                          return const Expanded(
-                            child: UnconstrainedBox(
+                          if (state.status == BlocStatus.SUCCESS) {
+                            if (scrollController.hasClients) {
+                              scrollController.jumpTo(0);
+                            }
+                          }
+                          // if (state.status == BlocStatus.INSERT ||
+                          //     state.status == BlocStatus.DELETE) {
+                          //   if (scrollController.hasClients) {
+                          //     scrollController.jumpTo(0);
+                          //   }
+                          //   getListBank(context);
+                          // }
+                        },
+                        builder: (context, state) {
+                          if (state.status == BlocStatus.LOADING) {
+                            return const Center(
                               child: SizedBox(
                                 width: 30,
                                 height: 30,
@@ -178,229 +241,280 @@ class _BankScreenState extends State<BankScreen>
                                   color: AppColor.GREEN,
                                 ),
                               ),
-                            ),
-                          );
-                        }
-
-                        return (sizedBox <= listHeight)
-                            ? buildList(maxListHeight, state.listBanks,
-                                state.colors, listHeight, sizedBox, _refresh)
-                            : Expanded(
-                                child: buildList(
-                                    maxListHeight,
-                                    state.listBanks,
-                                    state.colors,
-                                    listHeight,
-                                    sizedBox,
-                                    _refresh),
-                              );
-                      },
-                    ),
-                    Container(
-                      height: (PlatformUtils.instance.isAndroidApp())
-                          ? 80
-                          : (PlatformUtils.instance.isIOsApp() && height <= 800)
-                              ? 90
-                              : 110,
-                    ),
-                  ],
-                )
-              : Container(
-                  width: width,
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage('assets/images/bg-qr.png'),
-                      fit: BoxFit.fitHeight,
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      BlocConsumer<BankBloc, BankState>(
-                        listener: (context, state) {
-                          if (state.status == BlocStatus.SUCCESS) {
-                            List<QRCreateDTO> qrCreateDTOs = [];
-                            if (state.listBanks.isNotEmpty) {
-                              for (BankAccountDTO bankAccountDTO
-                                  in state.listBanks) {
-                                QRCreateDTO qrCreateDTO = QRCreateDTO(
-                                  bankId: bankAccountDTO.id,
-                                  amount: '',
-                                  content: '',
-                                  branchId: '',
-                                  businessId: '',
-                                  userId: '',
-                                );
-                                qrCreateDTOs.add(qrCreateDTO);
-                              }
-                              getListQR(context, qrCreateDTOs);
-                            }
+                            );
                           }
-                          // if (state.status == BlocStatus.INSERT ||
-                          //     state.status == BlocStatus.DELETE) {
-                          //   getListBank(context);
-                          // }
-                        },
-                        builder: (context, state) {
-                          return BlocBuilder<QRBloc, QRState>(
-                            builder: (context, qrState) {
-                              if (state.status == BlocStatus.LOADING ||
-                                  qrState is QRGenerateLoadingState) {
-                                return const Expanded(
-                                  child: UnconstrainedBox(
-                                    child: SizedBox(
-                                      width: 30,
-                                      height: 30,
-                                      child: CircularProgressIndicator(
-                                        color: AppColor.WHITE,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }
 
-                              if (qrState is QRGeneratedListSuccessfulState) {
-                                cardWidgets.clear();
-                                qrGenerateds.clear();
-                                if (qrState.list.isNotEmpty) {
-                                  addQRWidget(width, height, qrState.list,
-                                      state.listBanks);
-                                }
-                              }
-                              return Expanded(
-                                child: (qrGenerateds.isEmpty)
-                                    ? UnconstrainedBox(
-                                        child: BoxLayout(
-                                          width: width - 60,
-                                          borderRadius: 15,
-                                          alignment: Alignment.center,
-                                          bgColor: Theme.of(context).cardColor,
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Image.asset(
-                                                'assets/images/ic-card.png',
-                                                width: width * 0.4,
-                                              ),
-                                              const Text(
-                                                'Chưa có tài khoản ngân hàng được thêm.',
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(fontSize: 15),
-                                              ),
-                                              const Padding(
-                                                  padding:
-                                                      EdgeInsets.only(top: 10)),
-                                              ButtonIconWidget(
-                                                width: width,
-                                                icon: Icons.add_rounded,
-                                                title: 'Thêm TK ngân hàng',
-                                                function: () {
-                                                  Provider.of<AddBankProvider>(
-                                                          context,
-                                                          listen: false)
-                                                      .updateSelect(1);
-                                                  Navigator.pushNamed(context,
-                                                      Routes.ADD_BANK_CARD,
-                                                      arguments: {
-                                                        'pageIndex': 1
-                                                      }).then(
-                                                    (value) {
-                                                      Provider.of<BankAccountProvider>(
-                                                              context,
-                                                              listen: false)
-                                                          .reset();
-                                                    },
-                                                  );
-                                                },
-                                                bgColor: AppColor.GREEN,
-                                                textColor: AppColor.WHITE,
-                                              ),
-                                              const Padding(
-                                                  padding:
-                                                      EdgeInsets.only(top: 10)),
-                                            ],
-                                          ),
-                                        ),
-                                      )
-                                    : Column(
-                                        children: [
-                                          CarouselSlider(
-                                            carouselController:
-                                                carouselController,
-                                            items: cardWidgets,
-                                            options: CarouselOptions(
-                                              viewportFraction: 1,
-                                              aspectRatio: width /
-                                                  (width + width * 0.25),
-                                              disableCenter: true,
-                                              onPageChanged: ((index, reason) {
-                                                Provider.of<BankAccountProvider>(
-                                                        context,
-                                                        listen: false)
-                                                    .updateIndex(index);
-                                              }),
-                                            ),
-                                          ),
-                                          // Expanded(
-                                          //   child: PageView(
-                                          //     onPageChanged: (index) {
-                                          //       Provider.of<BankAccountProvider>(
-                                          //               context,
-                                          //               listen: false)
-                                          //           .updateIndex(index);
-                                          //     },
-                                          //     children: List.generate(
-                                          //       cardWidgets.length,
-                                          //       (index) {
-                                          //         return cardWidgets[index];
-                                          //       },
-                                          //     ).toList(),
-                                          //   ),
-                                          // ),
-                                          // const SizedBox(height: 100),
-                                          const Spacer(),
-                                          Container(
-                                            width: width,
-                                            height: 10,
-                                            alignment: Alignment.center,
-                                            child:
-                                                Consumer<BankAccountProvider>(
-                                                    builder:
-                                                        (context, page, child) {
-                                              return ListView.builder(
-                                                  shrinkWrap: true,
-                                                  scrollDirection:
-                                                      Axis.horizontal,
-                                                  physics:
-                                                      const NeverScrollableScrollPhysics(),
-                                                  itemCount:
-                                                      qrGenerateds.length,
-                                                  itemBuilder: ((context,
-                                                          index) =>
-                                                      _buildDot((index ==
-                                                          page.indexSelected))));
-                                            }),
-                                          ),
-                                        ],
-                                      ),
-                              );
-                            },
-                          );
+                          return buildList(
+                              maxListHeight,
+                              fillListBankAccount(state.listBanks),
+                              fillListListColor(state.colors),
+                              height - 280,
+                              sizedBox,
+                              _refresh);
                         },
                       ),
-                      SizedBox(
-                        height: (PlatformUtils.instance.isAndroidApp())
-                            ? 90
-                            : (PlatformUtils.instance.isIOsApp() &&
-                                    height <= 800)
-                                ? 70
-                                : 110,
-                      ),
-                    ],
+                    ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    _buildListSection(),
+                  ],
+                ),
+              )
+            : Container(
+                width: width,
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage('assets/images/bg-qr.png'),
+                    fit: BoxFit.fitHeight,
                   ),
                 ),
-        );
+                child: Column(
+                  children: [
+                    BlocConsumer<BankBloc, BankState>(
+                      listener: (context, state) {
+                        if (state.status == BlocStatus.SUCCESS) {
+                          List<QRCreateDTO> qrCreateDTOs = [];
+                          if (state.listBanks.isNotEmpty) {
+                            for (BankAccountDTO bankAccountDTO
+                                in state.listBanks) {
+                              QRCreateDTO qrCreateDTO = QRCreateDTO(
+                                bankId: bankAccountDTO.id,
+                                amount: '',
+                                content: '',
+                                branchId: '',
+                                businessId: '',
+                                userId: '',
+                              );
+                              qrCreateDTOs.add(qrCreateDTO);
+                            }
+                            getListQR(context, qrCreateDTOs);
+                          }
+                        }
+                        // if (state.status == BlocStatus.INSERT ||
+                        //     state.status == BlocStatus.DELETE) {
+                        //   getListBank(context);
+                        // }
+                      },
+                      builder: (context, state) {
+                        return Expanded(
+                          child: (state.listGeneratedQR.isEmpty)
+                              ? _buildEmptyList(width)
+                              : Column(
+                                  children: [
+                                    CarouselSlider(
+                                      carouselController: carouselController,
+                                      items: cardWidgets,
+                                      options: CarouselOptions(
+                                        viewportFraction: 1,
+                                        aspectRatio:
+                                            width / (width + width * 0.25),
+                                        disableCenter: true,
+                                        onPageChanged: ((index, reason) {
+                                          Provider.of<BankAccountProvider>(
+                                                  context,
+                                                  listen: false)
+                                              .updateIndex(index);
+                                        }),
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    Container(
+                                      width: width,
+                                      height: 10,
+                                      alignment: Alignment.center,
+                                      child: Consumer<BankAccountProvider>(
+                                          builder: (context, page, child) {
+                                        return ListView.builder(
+                                            shrinkWrap: true,
+                                            scrollDirection: Axis.horizontal,
+                                            physics:
+                                                const NeverScrollableScrollPhysics(),
+                                            itemCount:
+                                                state.listGeneratedQR.length,
+                                            itemBuilder: ((context, index) =>
+                                                _buildDot((index ==
+                                                    page.indexSelected))));
+                                      }),
+                                    ),
+                                  ],
+                                ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              );
       },
+    );
+  }
+
+  Future<void> startBarcodeScanStream(BuildContext context) async {
+    String data = await FlutterBarcodeScanner.scanBarcode(
+        '#ff6666', 'Cancel', true, ScanMode.QR);
+    if (data.isNotEmpty) {
+      if (data == TypeQR.NEGATIVE_ONE.value) {
+      } else if (data == TypeQR.NEGATIVE_TWO.value) {
+        DialogWidget.instance.openMsgDialog(
+          title: 'Không thể xác nhận mã QR',
+          msg: 'Ảnh QR không đúng định dạng, vui lòng chọn ảnh khác.',
+          function: () {
+            Navigator.pop(context);
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+          },
+        );
+      } else {
+        if (data.contains('|')) {
+          final list = data.split("|");
+          if (list.isNotEmpty) {
+            NationalScannerDTO identityDTO = NationalScannerDTO.fromJson(list);
+            if (!mounted) return;
+            Navigator.pushNamed(
+              context,
+              Routes.NATIONAL_INFORMATION,
+              arguments: {'dto': identityDTO},
+            );
+          }
+        } else {
+          if (!mounted) return;
+          context.read<BankBloc>().add(ScanQrEventGetBankType(code: data));
+        }
+      }
+    }
+  }
+
+  Widget _buildListSection() {
+    return Column(
+      children: [
+        _buildSection('assets/images/ic-qr-white.png', () async {
+          if (QRScannerHelper.instance.getQrIntro()) {
+            // Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
+            startBarcodeScanStream(context);
+          } else {
+            await DialogWidget.instance.showFullModalBottomContent(
+              widget: const QRScanWidget(),
+              color: AppColor.BLACK,
+            );
+            if (!mounted) return;
+            startBarcodeScanStream(context);
+          }
+        },
+            title: 'Copy mã QR',
+            des: 'Quét mã QR để thêm/liên kết Tk ngân hàng'),
+      ],
+    );
+  }
+
+  Widget _buildSection(String pathIcon, VoidCallback onTab,
+      {String title = '', String des = ''}) {
+    return GestureDetector(
+      onTap: onTab,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        margin: const EdgeInsets.symmetric(horizontal: 12),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          color: Theme.of(context).cardColor,
+          boxShadow: [
+            BoxShadow(
+              color: AppColor.GREY_LIGHT.withOpacity(0.3),
+              spreadRadius: 1,
+              blurRadius: 5,
+              offset: const Offset(0, 0), // changes position of shadow
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Image.asset(
+              pathIcon,
+              width: 40,
+              color: AppColor.BLUE_TEXT,
+            ),
+            const SizedBox(
+              width: 12,
+            ),
+            Expanded(
+                child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(
+                  height: 2,
+                ),
+                Text(
+                  des,
+                  style:
+                      const TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
+                ),
+              ],
+            )),
+            Container(
+              padding: const EdgeInsets.all(5),
+              margin: const EdgeInsets.only(top: 4, left: 2),
+              decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(Radius.circular(25)),
+                  color: AppColor.GREY_LIGHT.withOpacity(0.2)),
+              child: const Icon(
+                Icons.arrow_forward_ios,
+                color: AppColor.GREY_HIGHLIGHT,
+                size: 12,
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyList(double width) {
+    return UnconstrainedBox(
+      child: BoxLayout(
+        width: width - 60,
+        borderRadius: 15,
+        alignment: Alignment.center,
+        bgColor: Theme.of(context).cardColor,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              'assets/images/ic-card.png',
+              width: width * 0.4,
+            ),
+            const Text(
+              'Chưa có tài khoản ngân hàng được thêm.',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 15),
+            ),
+            const Padding(padding: EdgeInsets.only(top: 10)),
+            ButtonIconWidget(
+              width: width,
+              icon: Icons.add_rounded,
+              title: 'Thêm TK ngân hàng',
+              function: () {
+                Provider.of<AddBankProvider>(context, listen: false)
+                    .updateSelect(1);
+                Navigator.pushNamed(context, Routes.ADD_BANK_CARD,
+                    arguments: {'pageIndex': 1}).then(
+                  (value) {
+                    Provider.of<BankAccountProvider>(context, listen: false)
+                        .reset();
+                  },
+                );
+              },
+              bgColor: AppColor.GREEN,
+              textColor: AppColor.WHITE,
+            ),
+            const Padding(padding: EdgeInsets.only(top: 10)),
+          ],
+        ),
+      ),
     );
   }
 
@@ -411,66 +525,59 @@ class _BankScreenState extends State<BankScreen>
       double listHeight,
       double sizeBox,
       RefreshCallback? onRefresh) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: StackedList(
-        maxListHeight: maxListHeight,
-        list: banks,
-        colors: colors,
-        scrollController: scrollController,
-        height: listHeight,
-        sizeBox: sizeBox,
-        onRefresh: onRefresh,
-        getListBank: () {
-          getListBank(context);
-        },
-      ),
+    return StackedList(
+      maxListHeight: maxListHeight,
+      list: banks,
+      colors: colors,
+      scrollController: scrollController,
+      height: listHeight,
+      sizeBox: sizeBox,
+      onRefresh: onRefresh,
+      getListBank: () {
+        getListBank(context);
+      },
     );
   }
 
   void getListBank(BuildContext context) {
     String userId = UserInformationHelper.instance.getUserId();
-    bankCardBloc.add(
-      BankCardEventGetList(userId: userId),
+    _bloc.add(
+      BankCardEventGetList(),
     );
   }
 
   void getListQR(BuildContext context, List<QRCreateDTO> list) {
-    qrGenerateds.clear();
-    qrBloc.add(QREventGenerateList(list: list));
+    _bloc.add(QREventGenerateList(list: list));
   }
 
   void addQRWidget(double width, double height, List<QRGeneratedDTO> list,
       List<BankAccountDTO> bankAccounts) {
-    if (qrGenerateds.isEmpty) {
-      qrGenerateds.addAll(list);
-      if (qrGenerateds.isNotEmpty) {
-        for (int i = 0; i < qrGenerateds.length; i++) {
-          final Widget qrWidget = Padding(
-            padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-            child: InkWell(
-              onTap: () {
-                DialogWidget.instance.showModalBottomContent(
-                  widget: FunctionBankWidget(
-                    bankAccountDTO: bankAccounts[i],
-                    qrGeneratedDTO: qrGenerateds[i],
-                    businessInformationBloc: businessInformationBloc,
-                  ),
-                  height: height * 0.35,
-                );
-              },
-              child: VietQRWidget(
-                width: width - 10,
-                qrGeneratedDTO: qrGenerateds[i],
-                content: '',
-                isCopy: true,
-                isStatistic: true,
-                // isSmallWidget: (height <= 800),
-              ),
+    if (list.isNotEmpty) {
+      for (int i = 0; i < list.length; i++) {
+        final Widget qrWidget = Padding(
+          padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+          child: InkWell(
+            onTap: () {
+              DialogWidget.instance.showModalBottomContent(
+                widget: FunctionBankWidget(
+                  bankAccountDTO: bankAccounts[i],
+                  qrGeneratedDTO: list[i],
+                  businessInformationBloc: businessInformationBloc,
+                ),
+                height: height * 0.35,
+              );
+            },
+            child: VietQRWidget(
+              width: width - 10,
+              qrGeneratedDTO: list[i],
+              content: '',
+              isCopy: true,
+              isStatistic: true,
+              // isSmallWidget: (height <= 800),
             ),
-          );
-          cardWidgets.add(qrWidget);
-        }
+          ),
+        );
+        cardWidgets.add(qrWidget);
       }
     }
   }
@@ -533,280 +640,100 @@ class StackedList extends StatefulWidget {
 
 class _StackedList extends State<StackedList> {
   // final refreshController = RefreshController(initialRefresh: false);
+  List<BankAccountDTO> listBankAccount = [];
+  List<Color> listColor = [];
+  late AccountBloc _accountBloc;
 
   @override
   void initState() {
     super.initState();
+    _accountBloc = BlocProvider.of(context);
+    addElementInList();
+    _accountBloc.add(InitAccountEvent());
   }
 
-  Future<void> startBarcodeScanStream(BuildContext context) async {
-    String data = await FlutterBarcodeScanner.scanBarcode(
-        '#ff6666', 'Cancel', true, ScanMode.QR);
-    if (data.isNotEmpty) {
-      if (data == TypeQR.NEGATIVE_ONE.value) {
-      } else if (data == TypeQR.NEGATIVE_TWO.value) {
-        DialogWidget.instance.openMsgDialog(
-          title: 'Không thể xác nhận mã QR',
-          msg: 'Ảnh QR không đúng định dạng, vui lòng chọn ảnh khác.',
-          function: () {
-            Navigator.pop(context);
-            if (Navigator.canPop(context)) {
-              Navigator.pop(context);
-            }
-          },
-        );
-      } else {
-        if (data.contains('|')) {
-          final list = data.split("|");
-          if (list.isNotEmpty) {
-            NationalScannerDTO identityDTO = NationalScannerDTO.fromJson(list);
-            if (!mounted) return;
-            Navigator.pushNamed(
-              context,
-              Routes.NATIONAL_INFORMATION,
-              arguments: {'dto': identityDTO},
-            );
-          }
-        } else {
-          if (!mounted) return;
-          context.read<BankBloc>().add(ScanQrEventGetBankType(code: data));
-        }
-      }
+  addElementInList() {
+    BankAccountDTO otd = const BankAccountDTO(
+        id: '',
+        bankAccount: '',
+        userBankName: '',
+        bankCode: '',
+        bankName: '',
+        imgId: '',
+        type: 0,
+        branchId: '',
+        businessId: '',
+        branchName: '',
+        isAuthenticated: false,
+        businessName: '');
+    BankAccountDTO otd2 = const BankAccountDTO(
+        id: '',
+        bankAccount: 'MB',
+        userBankName: '',
+        bankCode: '',
+        bankName: '',
+        imgId: '',
+        type: 0,
+        branchId: '',
+        businessId: '',
+        branchName: '',
+        isAuthenticated: false,
+        businessName: '');
+    listBankAccount = widget.list;
+    if (listBankAccount.isNotEmpty) {
+      listBankAccount.insert(0, otd);
+      listBankAccount = [...listBankAccount, otd2];
+    } else {
+      listBankAccount = [otd, otd2];
+      print('----------------------------${listBankAccount.length} ');
+    }
+
+    listColor = widget.colors;
+    if (listColor.isNotEmpty) {
+      listColor.insert(0, Colors.white);
+      listColor = [...listColor, Colors.black26];
+    } else {
+      listColor = [Colors.white, Colors.black26];
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
-    final bool isPinned = (widget.sizeBox <= widget.maxListHeight) ||
-        (((widget.list.length * _minHeight) + _maxHeight) < widget.height);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        (widget.list.isEmpty)
-            ? ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(15),
-                ),
-                child: Container(
-                  width: width,
-                  color: Theme.of(context).cardColor,
-                  alignment: Alignment.center,
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        width: 150,
-                        height: 100,
-                        child: Image.asset(
-                          'assets/images/ic-card.png',
-                        ),
-                      ),
-                      const Text('Chưa có tài khoản ngân hàng được thêm.'),
-                      const SizedBox(height: 16),
-                      ClipRRect(
-                          borderRadius: BorderRadius.circular(15.0),
-                          child: Image.asset('assets/images/banner_app.png'))
-                    ],
+    final double height = MediaQuery.of(context).size.height;
+    return RefreshIndicator(
+      onRefresh: widget.onRefresh!,
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          Stack(
+            children: listBankAccount.map(
+              (item) {
+                int index = listBankAccount.indexOf(item);
+                return Padding(
+                  padding: EdgeInsets.only(top: index * 97),
+                  child: _buildCardItem(
+                    context: context,
+                    index: index,
+                    maxLengthList: listBankAccount.length,
+                    dto: item,
+                    getListBank: widget.getListBank,
                   ),
-                ),
-              )
-            : (widget.sizeBox <= widget.height)
-                ? ClipRRect(
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(15),
-                    ),
-                    child: SizedBox(
-                      height: widget.height,
-                      child: RefreshIndicator(
-                        onRefresh: widget.onRefresh!,
-                        // controller: refreshController,
-                        // scrollController: widget.scrollController,
-                        child: CustomScrollView(
-                          slivers: widget.list.map(
-                            (item) {
-                              int index = widget.list.indexOf(item);
-                              return StackedListChild(
-                                key: Key(const Uuid().v1()),
-                                minHeight: _minHeight,
-                                maxHeight: widget.list.indexOf(item) ==
-                                        widget.list.length - 1
-                                    ? MediaQuery.of(context).size.height
-                                    : _maxHeight,
-                                pinned: isPinned,
-                                floating: true,
-                                child: _buildCardItem(
-                                  context: context,
-                                  index: index,
-                                  dto: widget.list[index],
-                                  getListBank: widget.getListBank,
-                                ),
-                              );
-                            },
-                          ).toList(),
-                        ),
-                      ),
-                    ),
-                  )
-                : Expanded(
-                    child: (widget.list.isEmpty)
-                        ? ClipRRect(
-                            borderRadius: const BorderRadius.vertical(
-                              top: Radius.circular(15),
-                            ),
-                            child: Container(
-                              width: width,
-                              height: _maxHeight,
-                              color: Theme.of(context).cardColor,
-                              alignment: Alignment.center,
-                              child: Column(children: [
-                                SizedBox(
-                                  width: 150,
-                                  height: 100,
-                                  child: Image.asset(
-                                    'assets/images/ic-card.png',
-                                  ),
-                                ),
-                                const Text(
-                                    'Chưa có tài khoản ngân hàng được thêm.'),
-                              ]),
-                            ),
-                          )
-                        : ClipRRect(
-                            borderRadius: const BorderRadius.vertical(
-                              top: Radius.circular(15),
-                            ),
-                            child: SizedBox(
-                              height: widget.height,
-                              child: RefreshIndicator(
-                                onRefresh: widget.onRefresh!,
-                                // controller: refreshController,
-                                // scrollController: widget.scrollController,
-                                child: CustomScrollView(
-                                  controller: widget.scrollController,
-                                  slivers: widget.list.map(
-                                    (item) {
-                                      int index = widget.list.indexOf(item);
-                                      return StackedListChild(
-                                        key: Key(const Uuid().v1()),
-                                        minHeight: _minHeight,
-                                        maxHeight: widget.list.indexOf(item) ==
-                                                widget.list.length - 1
-                                            ? MediaQuery.of(context).size.height
-                                            : _maxHeight,
-                                        pinned: isPinned,
-                                        floating: true,
-                                        child: _buildCardItem(
-                                          context: context,
-                                          index: index,
-                                          dto: widget.list[index],
-                                          getListBank: widget.getListBank,
-                                        ),
-                                      );
-                                    },
-                                  ).toList(),
-                                ),
-                              ),
-                            ),
-                          ),
-                  ),
-        const Padding(padding: EdgeInsets.only(top: 10)),
-        InkWell(
-          onTap: () async {
-            final data =
-                await Navigator.pushNamed(context, Routes.ADD_BANK_CARD);
-
-            if (data is bool) {
-              if (!mounted) return;
-              Fluttertoast.showToast(
-                msg: 'Đăng ký thành công',
-                toastLength: Toast.LENGTH_SHORT,
-                gravity: ToastGravity.CENTER,
-                backgroundColor: Theme.of(context).cardColor,
-                textColor: Theme.of(context).hintColor,
-                fontSize: 15,
-              );
-              widget.getListBank();
-            }
-          },
-          child: Row(
-            children: [
-              BoxLayout(
-                width: width / 2 - 15,
-                height: 40,
-                bgColor: Theme.of(context).buttonColor,
-                borderRadius: 5,
-                enableShadow: true,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Icon(
-                      Icons.add_rounded,
-                      size: 15,
-                      color: AppColor.GREEN,
-                    ),
-                    Padding(padding: EdgeInsets.only(left: 5)),
-                    Text(
-                      'TK ngân hàng',
-                      style: TextStyle(
-                        color: AppColor.GREEN,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              const Spacer(),
-              BoxLayout(
-                width: width / 2 - 15,
-                height: 40,
-                bgColor: Theme.of(context).buttonColor,
-                borderRadius: 5,
-                enableShadow: true,
-                child: InkWell(
-                  onTap: () async {
-                    if (QRScannerHelper.instance.getQrIntro()) {
-                      // Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
-                      startBarcodeScanStream(context);
-                    } else {
-                      await DialogWidget.instance.showFullModalBottomContent(
-                        widget: const QRScanWidget(),
-                        color: AppColor.BLACK,
-                      );
-                      if (!mounted) return;
-                      startBarcodeScanStream(context);
-                    }
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(
-                        Icons.qr_code_scanner_rounded,
-                        size: 15,
-                        color: AppColor.BLUE_TEXT,
-                      ),
-                      Padding(padding: EdgeInsets.only(left: 5)),
-                      Text(
-                        'Quét mã QR',
-                        style: TextStyle(
-                          color: AppColor.BLUE_TEXT,
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
+                );
+              },
+            ).toList(),
+          )
+        ],
+      ),
     );
   }
 
-  Widget _buildCardItem({
-    required BuildContext context,
-    required int index,
-    required BankAccountDTO dto,
-    required Function getListBank,
-  }) {
+  Widget _buildCardItem(
+      {required BuildContext context,
+      required int index,
+      required BankAccountDTO dto,
+      required Function getListBank,
+      int maxLengthList = 0}) {
     String userId = UserInformationHelper.instance.getUserId();
     final double width = MediaQuery.of(context).size.width;
     ScrollController scrollController = ScrollController();
@@ -816,200 +743,405 @@ class _StackedList extends State<StackedList> {
       }
     });
 
+    if (index == 0) {
+      return _buildCardWallet();
+    } else if (index == maxLengthList - 1) {
+      return _buildAddBankCard(width);
+    }
     return (dto.id.isNotEmpty)
         ? InkWell(
             onTap: () async {
-              await Navigator.pushNamed(
-                context,
-                Routes.BANK_CARD_DETAIL_VEW,
-                arguments: {
-                  'bankId': dto.id,
-                },
+              await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) =>
+                      BankCardDetailScreen(bankId: dto.id ?? ''),
+                  settings: const RouteSettings(
+                    name: Routes.BANK_CARD_DETAIL_VEW,
+                  ),
+                ),
               );
 
               getListBank();
             },
             child: Container(
-              padding: const EdgeInsets.all(0),
+              width: width,
+              height: 120,
+              padding: EdgeInsets.zero,
               decoration: BoxDecoration(
-                color: widget.colors[index],
-                border: Border(
-                  top: BorderSide(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    width: 0.5,
-                  ),
+                color: Theme.of(context).scaffoldBackgroundColor,
+                borderRadius: BorderRadius.circular(26),
+                border: Border.all(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  width: 14,
                 ),
               ),
-              child: SizedBox(
-                width: width,
-                height: 60,
-                child: ListView(
-                  shrinkWrap: true,
-                  padding: const EdgeInsets.all(0),
-                  physics: const NeverScrollableScrollPhysics(),
-                  key: Key('card$index'),
-                  controller: scrollController,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: listColor[index],
+                  borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20)),
+                ),
+                child: Column(
                   children: [
-                    Container(
-                      height: 60,
-                      width: width,
-                      padding: const EdgeInsets.only(
-                        left: 20,
-                        right: 20,
-                        top: 20,
-                      ),
-                      child: Row(
-                        children: [
-                          UnconstrainedBox(
-                            child: Container(
-                              width: 60,
-                              height: 30,
-                              decoration: BoxDecoration(
-                                color: AppColor.WHITE,
-                                borderRadius: BorderRadius.circular(5),
-                                image: DecorationImage(
-                                  image: ImageUtils.instance.getImageNetWork(
-                                    dto.imgId,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const Padding(padding: EdgeInsets.only(left: 10)),
-                          Expanded(
-                            child: Text(
-                              '${dto.bankCode} - ${dto.bankAccount}\n${dto.bankName}',
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                color: AppColor.WHITE,
-                              ),
-                            ),
-                          ),
-                          if (dto.isAuthenticated)
-                            Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                borderRadius:
-                                    const BorderRadius.all(Radius.circular(25)),
-                                color: dto.userId == userId
-                                    ? AppColor.GREEN
-                                    : AppColor.ORANGE,
-                              ),
-                              child: const Icon(
-                                Icons.check,
-                                color: AppColor.WHITE,
-                                size: 14,
-                              ),
-                            )
-                        ],
-                      ),
-                    ),
-                    const Padding(padding: EdgeInsets.only(top: 20)),
-                    SizedBox(
-                      width: width,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          const Padding(padding: EdgeInsets.only(left: 20)),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  dto.userBankName.toUpperCase(),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    color: AppColor.WHITE,
-                                    fontSize: 18,
-                                  ),
-                                ),
-                                Text(
-                                  (dto.isAuthenticated)
-                                      ? 'Trạng thái: Đã liên kết'
-                                      : 'Trạng thái: Chưa liên kết',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    color: AppColor.WHITE,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                    _buildTitleCard(dto, userId),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const Spacer(),
+                        if ((!dto.isAuthenticated &&
+                            dto.bankCode == 'MB' &&
+                            dto.userId == userId))
                           InkWell(
                             onTap: () {
-                              BankAccountDTO bankAccountDTO = BankAccountDTO(
-                                id: dto.id,
-                                bankAccount: dto.bankAccount,
-                                userBankName: dto.userBankName,
-                                bankCode: dto.bankCode,
-                                bankName: dto.bankName,
-                                imgId: dto.imgId,
-                                type: dto.type,
-                                branchId:
-                                    (dto.branchId.isEmpty) ? '' : dto.branchId,
-                                businessId: (dto.businessId.isEmpty)
-                                    ? ''
-                                    : dto.businessId,
-                                branchName: (dto.branchName.isEmpty)
-                                    ? ''
-                                    : dto.branchName,
-                                businessName: (dto.businessName.isEmpty)
-                                    ? ''
-                                    : dto.businessName,
-                                isAuthenticated: dto.isAuthenticated,
+                              Provider.of<AddBankProvider>(context,
+                                      listen: false)
+                                  .updateBankId(dto.id);
+                              Provider.of<AddBankProvider>(context,
+                                      listen: false)
+                                  .updateSelect(2);
+                              Provider.of<AddBankProvider>(context,
+                                      listen: false)
+                                  .updateRegisterAuthentication(true);
+                              Provider.of<AddBankProvider>(context,
+                                      listen: false)
+                                  .resetValidate();
+                              Navigator.pushNamed(
+                                context,
+                                Routes.ADD_BANK_CARD,
+                                arguments: {
+                                  'pageIndex': 3,
+                                  'bankAccount': dto.bankAccount,
+                                  'name': dto.userBankName,
+                                },
                               );
-                              Navigator.of(context)
-                                  .push(
-                                MaterialPageRoute(
-                                  builder: (context) => CreateQR(
-                                    bankAccountDTO: bankAccountDTO,
-                                  ),
-                                ),
-                              )
-                                  .then((value) {
-                                //
-                              });
                             },
                             child: BoxLayout(
-                              width: 110,
-                              borderRadius: 5,
+                              width: 95,
+                              height: 30,
+                              borderRadius: 6,
                               alignment: Alignment.center,
+                              padding: EdgeInsets.zero,
                               bgColor:
                                   Theme.of(context).cardColor.withOpacity(0.3),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
-                                  Icon(
-                                    Icons.add_rounded,
-                                    color: AppColor.WHITE,
-                                    size: 15,
+                                children: [
+                                  Image.asset(
+                                    'assets/images/ic-linked-white.png',
+                                    height: 28,
+                                    width: 28,
                                   ),
-                                  Padding(padding: EdgeInsets.only(left: 5)),
-                                  Text(
-                                    'Tạo QR',
+                                  const Text(
+                                    'Liên kết',
                                     style: TextStyle(
-                                      fontSize: 12,
+                                      fontSize: 11,
                                       color: AppColor.WHITE,
                                     ),
                                   ),
+                                  const SizedBox(
+                                    width: 5,
+                                  )
                                 ],
                               ),
                             ),
                           ),
-                          const Padding(padding: EdgeInsets.only(left: 20)),
-                        ],
-                      ),
+                        const Padding(padding: EdgeInsets.only(left: 10)),
+                        InkWell(
+                          onTap: () {
+                            BankAccountDTO bankAccountDTO = BankAccountDTO(
+                              id: dto.id,
+                              bankAccount: dto.bankAccount,
+                              userBankName: dto.userBankName,
+                              bankCode: dto.bankCode,
+                              bankName: dto.bankName,
+                              imgId: dto.imgId,
+                              type: dto.type,
+                              branchId:
+                                  (dto.branchId.isEmpty) ? '' : dto.branchId,
+                              businessId: (dto.businessId.isEmpty)
+                                  ? ''
+                                  : dto.businessId,
+                              branchName: (dto.branchName.isEmpty)
+                                  ? ''
+                                  : dto.branchName,
+                              businessName: (dto.businessName.isEmpty)
+                                  ? ''
+                                  : dto.businessName,
+                              isAuthenticated: dto.isAuthenticated,
+                            );
+                            Navigator.of(context)
+                                .push(
+                              MaterialPageRoute(
+                                builder: (context) => CreateQR(
+                                  bankAccountDTO: bankAccountDTO,
+                                ),
+                              ),
+                            )
+                                .then((value) {
+                              //
+                            });
+                          },
+                          child: BoxLayout(
+                            width: 95,
+                            height: 30,
+                            borderRadius: 6,
+                            alignment: Alignment.center,
+                            padding: EdgeInsets.zero,
+                            bgColor:
+                                Theme.of(context).cardColor.withOpacity(0.3),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  'assets/images/ic-qr-white.png',
+                                  height: 20,
+                                  width: 20,
+                                ),
+                                const Text(
+                                  'Tạo QR',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: AppColor.WHITE,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 5,
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                        const Padding(padding: EdgeInsets.only(left: 20)),
+                      ],
                     ),
-                    const Padding(padding: EdgeInsets.only(bottom: 20)),
                   ],
                 ),
               ),
             ),
           )
         : const SizedBox();
+  }
+
+  Widget _buildTitleCard(BankAccountDTO dto, String userId) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 12, left: 12, right: 12),
+      child: SizedBox(
+        height: 35,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 35,
+                  height: 35,
+                  decoration: BoxDecoration(
+                    color: AppColor.WHITE,
+                    borderRadius: BorderRadius.circular(40),
+                    image: DecorationImage(
+                      image: ImageUtils.instance.getImageNetWork(
+                        dto.imgId,
+                      ),
+                    ),
+                  ),
+                ),
+                const Padding(padding: EdgeInsets.only(left: 10)),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${dto.bankCode} - ${dto.bankAccount}',
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          color: AppColor.WHITE, fontWeight: FontWeight.w600),
+                    ),
+                    Text(
+                      dto.userBankName.toUpperCase(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: AppColor.WHITE,
+                        fontSize: 10,
+                      ),
+                    ),
+                  ],
+                ),
+                if (dto.isAuthenticated)
+                  Container(
+                    padding: const EdgeInsets.all(4),
+                    margin: const EdgeInsets.only(top: 4, left: 2),
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.all(Radius.circular(25)),
+                      color: dto.userId == userId
+                          ? AppColor.GREEN
+                          : AppColor.ORANGE,
+                    ),
+                    child: const Icon(
+                      Icons.check,
+                      color: AppColor.WHITE,
+                      size: 8,
+                    ),
+                  )
+              ],
+            ),
+            const Spacer(),
+            const Padding(
+              padding: EdgeInsets.only(top: 10, right: 6),
+              child: Icon(
+                Icons.arrow_forward_ios,
+                color: AppColor.WHITE,
+                size: 12,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCardWallet() {
+    return Container(
+      height: 120,
+      margin: const EdgeInsets.only(top: 16, left: 12, right: 12),
+      padding: const EdgeInsets.only(top: 12, left: 12, right: 12),
+      decoration: BoxDecoration(
+          color: AppColor.BLUE_TEXT, borderRadius: BorderRadius.circular(22)),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                    color: AppColor.WHITE,
+                    borderRadius: BorderRadius.circular(40),
+                    image: const DecorationImage(
+                        image:
+                            AssetImage('assets/images/ic-viet-qr-small.png'))),
+              ),
+              const Padding(padding: EdgeInsets.only(left: 10)),
+              BlocConsumer<AccountBloc, AccountState>(
+                  listener: (context, state) {},
+                  builder: (context, state) {
+                    if (state.status == BlocStatus.SUCCESS) {
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Padding(padding: EdgeInsets.only(top: 5)),
+                          const Text(
+                            'VietQR',
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                fontSize: 15,
+                                color: AppColor.WHITE,
+                                fontWeight: FontWeight.w600),
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                'Số dư : ${CurrencyUtils.instance.getCurrencyFormatted(state.introduceDTO!.amount ?? '0')} VND - Điểm thưởng: ${state.introduceDTO!.point ?? '0'} ',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  color: AppColor.WHITE,
+                                  fontSize: 13,
+                                ),
+                              ),
+                              Image.asset(
+                                'assets/images/ic_point.png',
+                                height: 16,
+                                color: AppColor.WHITE,
+                              )
+                            ],
+                          ),
+                        ],
+                      );
+                    }
+                    return const SizedBox(
+                      width: 30,
+                      height: 30,
+                      child: CircularProgressIndicator(
+                        color: AppColor.WHITE,
+                      ),
+                    );
+                  }),
+            ],
+          ),
+          const Spacer(),
+          // const Padding(
+          //   padding: EdgeInsets.only(top: 10, right: 6),
+          //   child: Icon(
+          //     Icons.arrow_forward_ios,
+          //     color: AppColor.WHITE,
+          //     size: 12,
+          //   ),
+          // ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAddBankCard(double width) {
+    return GestureDetector(
+      onTap: () async {
+        await Navigator.pushNamed(context, Routes.ADD_BANK_CARD);
+
+        widget.getListBank();
+      },
+      child: Container(
+        width: width - 20,
+        height: 120,
+        padding: EdgeInsets.zero,
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          borderRadius: BorderRadius.circular(26),
+          border: Border.all(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            width: 14,
+          ),
+        ),
+        child: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage('assets/images/bg-member-card.png'),
+                fit: BoxFit.cover),
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'assets/images/ic-card-grey.png',
+                    height: 35,
+                  ),
+                  const Padding(padding: EdgeInsets.only(left: 5)),
+                  const Text(
+                    'Thêm tài khoản ngân hàng',
+                    style: TextStyle(
+                      decoration: TextDecoration.underline,
+                      fontSize: 15,
+                      color: AppColor.GREY_TEXT,
+                    ),
+                  )
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 

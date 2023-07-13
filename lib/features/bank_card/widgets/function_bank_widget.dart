@@ -8,6 +8,7 @@ import 'package:vierqr/commons/utils/printer_utils.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
+import 'package:vierqr/features/bank_card/bank_card_detail_screen.dart';
 import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
 import 'package:vierqr/features/business/events/business_information_event.dart';
 import 'package:vierqr/features/generate_qr/views/create_qr.dart';
@@ -155,14 +156,16 @@ class FunctionBankWidget extends StatelessWidget {
           height: 40,
           icon: Icons.info_outline_rounded,
           title: 'Chi tiết',
-          function: () {
+          function: () async {
             Navigator.pop(context);
-            Navigator.pushNamed(
-              context,
-              Routes.BANK_CARD_DETAIL_VEW,
-              arguments: {
-                'bankId': bankAccountDTO.id,
-              },
+            await Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) =>
+                    BankCardDetailScreen(bankId: bankAccountDTO.id),
+                settings: const RouteSettings(
+                  name: Routes.BANK_CARD_DETAIL_VEW,
+                ),
+              ),
             );
           },
           bgColor: Theme.of(context).canvasColor,
@@ -181,7 +184,7 @@ class FunctionBankWidget extends StatelessWidget {
             Navigator.of(context)
                 .push(
               MaterialPageRoute(
-                builder: (context) => CreateQR(
+                builder: (context) => CreateQRScreen(
                   bankAccountDTO: bankAccountDTO,
                 ),
               ),

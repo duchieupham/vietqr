@@ -10,8 +10,10 @@ import 'package:vierqr/commons/widgets/phone_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_custom.dart';
 import 'package:vierqr/commons/widgets/textfield_widget.dart';
 import 'package:vierqr/features/register/blocs/register_bloc.dart';
+import 'package:vierqr/features/register/events/register_event.dart';
 import 'package:vierqr/features/register/frame/register_frame.dart';
 import 'package:vierqr/features/register/states/register_state.dart';
+import 'package:vierqr/features/register/views/dialog_register.dart';
 import 'package:vierqr/layouts/border_layout.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/account_login_dto.dart';
@@ -20,7 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
-import 'pin_code_input.dart';
+import '../../../layouts/pin_code_input.dart';
 
 class Register extends StatelessWidget {
   final String phoneNo;
@@ -67,13 +69,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (StringUtils.instance.isNumeric(widget.phoneNo)) {
       Provider.of<RegisterProvider>(context, listen: false)
           .updatePhone(widget.phoneNo);
+      _phoneNoController.value =
+          _phoneNoController.value.copyWith(text: widget.phoneNo);
     }
   }
 
   @override
   void initState() {
     super.initState();
-    initialServices(context);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      initialServices(context);
+    });
   }
 
   @override
@@ -96,6 +102,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         }
         if (state is RegisterSuccessState) {
           //pop loading dialog
+          Navigator.of(context).pop();
           Navigator.of(context).pop();
           //pop to login page
           backToPreviousPage(context, true);
@@ -126,6 +133,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   onChanged: (value) {
                                     provider.updatePhone(value);
                                   },
+                                  phoneController: _phoneNoController,
                                 ),
                                 Visibility(
                                   visible: provider.phoneErr,
@@ -204,22 +212,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   inputType: TextInputType.text,
                                   keyboardAction: TextInputAction.next,
                                   onChange: (value) {
-                                    provider.updateRePass(value);
+                                    provider.updateIntroduce(value);
                                   },
                                 ),
                               ],
-                            ),
-                            Visibility(
-                              visible: provider.confirmPassErr,
-                              child: const Padding(
-                                padding: EdgeInsets.only(
-                                    left: 10, top: 5, right: 30),
-                                child: Text(
-                                  'Xác nhận Mật khẩu không trùng khớp.',
-                                  style: TextStyle(
-                                      color: AppColor.RED_TEXT, fontSize: 13),
-                                ),
-                              ),
                             ),
                           ],
                         ),
@@ -396,19 +392,52 @@ class _RegisterScreenState extends State<RegisterScreen> {
           confirmPassErr: !StringUtils.instance
               .isValidConfirmText(password, confirmPassword),
         );
-        if (Provider.of<RegisterProvider>(context, listen: false)
-            .isValidValidation()) {
-          String userIP = await UserInformationUtils.instance.getIPAddress();
-          AccountLoginDTO dto = AccountLoginDTO(
-            phoneNo: phone,
-            password: EncryptUtils.instance.encrypted(phone, password),
-            device: userIP,
-            fcmToken: '',
-            platform:
-                PlatformUtils.instance.isIOsApp() ? 'MOBILE' : 'MOBILE_ADR',
+
+        if (Provider.of<RegisterProvider>(context, listen: false).isValid()) {
+          await showGeneralDialog(
+            context: context,
+            barrierLabel: "Barrier",
+            barrierDismissible: true,
+            barrierColor: Colors.black.withOpacity(0.5),
+            transitionDuration: const Duration(milliseconds: 700),
+            pageBuilder: (_, __, ___) {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  DialogRegister(
+                    passController:
+                        Provider.of<RegisterProvider>(context, listen: false)
+                            .passwordController,
+                    onChanged: (value) {
+                      Provider.of<RegisterProvider>(context, listen: false)
+                          .updateRePass(value);
+                    },
+                    onTap: () async {
+                      if (Provider.of<RegisterProvider>(context, listen: false)
+                          .isValidValidation()) {
+                        String userIP =
+                            await UserInformationUtils.instance.getIPAddress();
+                        AccountLoginDTO dto = AccountLoginDTO(
+                          phoneNo: phone,
+                          password:
+                              EncryptUtils.instance.encrypted(phone, password),
+                          device: userIP,
+                          fcmToken: '',
+                          platform: PlatformUtils.instance.isIOsApp()
+                              ? 'MOBILE'
+                              : 'MOBILE_ADR',
+                        );
+                        if (!mounted) return;
+                        context
+                            .read<RegisterBloc>()
+                            .add(RegisterEventSubmit(dto: dto));
+                      }
+                    },
+                  ),
+                ],
+              );
+            },
           );
-          if (!mounted) return;
-          // context.read<RegisterBloc>().add(RegisterEventSubmit(dto: dto));
         }
       },
     );

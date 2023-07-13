@@ -1,4 +1,4 @@
-import 'package:vierqr/commons/enums/check_type.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/models/account_login_dto.dart';
 import 'package:equatable/equatable.dart';
 

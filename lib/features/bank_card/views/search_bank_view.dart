@@ -363,15 +363,13 @@ class SearchBankView extends StatelessWidget {
                               );
                               Navigator.of(context)
                                   .push(
-                                MaterialPageRoute(
-                                  builder: (context) => CreateQR(
-                                    bankAccountDTO: bankAccountDTO,
-                                  ),
-                                ),
-                              )
-                                  .then((value) {
-                                //
-                              });
+                                    MaterialPageRoute(
+                                      builder: (context) => CreateQRScreen(
+                                        bankAccountDTO: bankAccountDTO,
+                                      ),
+                                    ),
+                                  )
+                                  .then((value) {});
                             },
                             child: BoxLayout(
                               width: 110,

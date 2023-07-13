@@ -3,7 +3,25 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/layouts/button_widget.dart';
 
-class PolicyView extends StatelessWidget {
+class PolicyView extends StatefulWidget {
+  final GestureTapCallback? onTap;
+  final ValueChanged<bool?>? onSelectPolicy;
+  final bool? isAgreeWithPolicy;
+
+  const PolicyView({
+    super.key,
+    this.onTap,
+    this.onSelectPolicy,
+    this.isAgreeWithPolicy = false,
+  });
+
+  @override
+  State<PolicyView> createState() => _PolicyViewState();
+}
+
+class _PolicyViewState extends State<PolicyView> {
+  bool isAgreeWithPolicy = false;
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -31,9 +49,9 @@ class PolicyView extends StatelessWidget {
               child: Column(
                 children: [
                   Row(
-                    children: const [
-                      Icon(Icons.clear, color: Colors.transparent),
-                      Expanded(
+                    children: [
+                      const Icon(Icons.clear, color: Colors.transparent),
+                      const Expanded(
                         child: DefaultTextStyle(
                           textAlign: TextAlign.center,
                           style: TextStyle(
@@ -46,7 +64,12 @@ class PolicyView extends StatelessWidget {
                           ),
                         ),
                       ),
-                      Icon(Icons.clear)
+                      GestureDetector(
+                        child: const Icon(Icons.clear),
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                      )
                     ],
                   ),
                   const SizedBox(height: 8),
@@ -135,8 +158,13 @@ class PolicyView extends StatelessWidget {
                   Row(
                     children: [
                       Checkbox(
-                        value: true,
-                        onChanged: (value) {},
+                        value: isAgreeWithPolicy,
+                        onChanged: (value) {
+                          widget.onSelectPolicy!(value);
+                          setState(() {
+                            isAgreeWithPolicy = value!;
+                          });
+                        },
                       ),
                       const DefaultTextStyle(
                         textAlign: TextAlign.center,
@@ -157,7 +185,7 @@ class PolicyView extends StatelessWidget {
                     colorEnableBgr: AppColor.BLUE_TEXT,
                     colorEnableText: AppColor.WHITE,
                     margin: const EdgeInsets.only(left: 20, right: 20),
-                    onTap: () {},
+                    onTap: widget.onTap,
                   ),
                 ],
               ),

@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/sub_header_widget.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_card_bloc.dart';
+import 'package:vierqr/features/generate_qr/blocs/qr_blocs.dart';
 import 'package:vierqr/features/generate_qr/widgets/input_content_widget.dart';
 import 'package:vierqr/features/generate_qr/widgets/input_ta_widget.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
@@ -10,6 +11,20 @@ import 'package:vierqr/services/providers/create_qr_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/services/providers/search_clear_provider.dart';
+
+class CreateQRScreen extends StatelessWidget {
+  final BankAccountDTO bankAccountDTO;
+
+  const CreateQRScreen({super.key, required this.bankAccountDTO});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider<QRBloc>(
+      create: (BuildContext context) => QRBloc(),
+      child: CreateQR(bankAccountDTO: bankAccountDTO),
+    );
+  }
+}
 
 class CreateQR extends StatefulWidget {
   final BankAccountDTO bankAccountDTO;
@@ -29,14 +44,11 @@ class _CreateQR extends State<CreateQR> {
     keepPage: true,
   );
 
-  late BankCardBloc? bankCardBloc;
-
   final List<Widget> _pages = [];
 
   @override
   void initState() {
     super.initState();
-    bankCardBloc = BlocProvider.of(context);
     Provider.of<CreateQRProvider>(context, listen: false).reset();
     Provider.of<CreateQRPageSelectProvider>(context, listen: false).reset();
     _pages.addAll([
@@ -50,7 +62,7 @@ class _CreateQR extends State<CreateQR> {
       InputContentWidget(
         key: const PageStorageKey('INPUT_CONTENT_PAGE'),
         bankAccountDTO: widget.bankAccountDTO,
-        bankCardBloc: bankCardBloc,
+        // bankCardBloc: bankCardBloc,
       ),
     ]);
   }

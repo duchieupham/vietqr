@@ -4,24 +4,28 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/commons/enums/check_type.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_custom.dart';
 import 'package:vierqr/features/add_bank/blocs/add_bank_bloc.dart';
 import 'package:vierqr/features/add_bank/blocs/add_bank_provider.dart';
 import 'package:vierqr/features/add_bank/events/add_bank_event.dart';
 import 'package:vierqr/features/add_bank/states/add_bank_state.dart';
 import 'package:vierqr/features/add_bank/views/account_link_view.dart';
+import 'package:vierqr/features/add_bank/views/confirm_otp_view.dart';
 import 'package:vierqr/features/add_bank/views/policy_view.dart';
 import 'package:vierqr/layouts/button_widget.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
+import 'package:vierqr/models/bank_card_insert_dto.dart';
 import 'package:vierqr/models/bank_card_insert_unauthenticated.dart';
+import 'package:vierqr/models/bank_card_request_otp.dart';
 import 'package:vierqr/models/bank_name_search_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
+import 'package:vierqr/models/confirm_otp_bank_dto.dart';
+import 'package:vierqr/models/register_authentication_dto.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 import 'views/bank_input_widget.dart';
@@ -56,25 +60,65 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
   final nameController = TextEditingController();
   final phoneController = TextEditingController();
   final cmtController = TextEditingController();
+  final otpController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _bloc = BlocProvider.of(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _bloc.add(LoadDataBankEvent());
+      initData(context);
       focusAccount.addListener(() {
         if (!focusAccount.hasFocus) {
           _onSearch();
         }
       });
-      focusName.addListener(() {});
     });
   }
 
+  void initData(BuildContext context) {
+    if (ModalRoute.of(context)!.settings.arguments != null) {
+      _bloc.add(const LoadDataBankEvent(isLoading: false));
+      final args = ModalRoute.of(context)!.settings.arguments as Map;
+      int step = args['step'] ?? 0;
+      String bankAccount = args['bankAccount'] ?? '';
+      String userName = args['name'] ?? '';
+      BankTypeDTO? bankTypeDTO = args['bankDTO'];
+      String? bankId = args['bankId'];
+
+      Provider.of<AddBankProvider>(context, listen: false).updateEdit(false);
+
+      if (bankId != null) {
+        Provider.of<AddBankProvider>(context, listen: false)
+            .updateBankId(bankId);
+      }
+
+      if (bankAccount.isNotEmpty) {
+        bankAccountController.value =
+            bankAccountController.value.copyWith(text: bankAccount);
+      }
+      if (userName.isNotEmpty) {
+        nameController.value = nameController.value.copyWith(text: userName);
+      }
+
+      if (step != 0) {
+        Provider.of<AddBankProvider>(context, listen: false).updateStep(step);
+      }
+
+      if (bankTypeDTO != null) {
+        Provider.of<AddBankProvider>(context, listen: false)
+            .updateSelectBankType(bankTypeDTO, update: true);
+      }
+    } else {
+      _bloc.add(const LoadDataBankEvent());
+    }
+  }
+
   void _onSearch() {
+    bool isEdit = Provider.of<AddBankProvider>(context, listen: false).isEdit;
     if (bankAccountController.text.isNotEmpty &&
-        bankAccountController.text.length > 5) {
+        bankAccountController.text.length > 5 &&
+        isEdit) {
       String transferType = '';
       String bankCode = '';
       BankTypeDTO? bankTypeDTO =
@@ -122,7 +166,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
               Navigator.pop(context);
             }
 
-            if (state.request == BlocRequest.SEARCH) {
+            if (state.request == AddBankType.SEARCH_BANK) {
               nameController.clear();
               nameController.value = nameController.value
                   .copyWith(text: state.informationDTO?.accountName ?? '');
@@ -134,7 +178,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
               }
             }
 
-            if (state.request == BlocRequest.INSERT) {
+            if (state.request == AddBankType.EXIST_BANK) {
               if (Provider.of<AddBankProvider>(context, listen: false)
                   .isLinkBank) {
                 Provider.of<AddBankProvider>(context, listen: false)
@@ -159,13 +203,16 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
               }
             }
 
-            if (state.request == BlocRequest.DONE) {
+            if (state.request == AddBankType.INSERT_BANK) {
               if (!mounted) return;
               Navigator.of(context).pop(true);
             }
 
-            if (state.request == BlocRequest.ERROR) {
-              nameController.clear();
+            if (state.request == AddBankType.ERROR) {
+              if (Provider.of<AddBankProvider>(context, listen: false).step ==
+                  0) {
+                nameController.clear();
+              }
               await DialogWidget.instance.openMsgDialog(
                   title: 'Không thể thêm TK', msg: state.msg ?? '');
               if (!mounted) return;
@@ -173,8 +220,53 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                   .updateEnableName(true);
             }
 
+            if (state.request == AddBankType.REQUEST_BANK) {
+              if (!mounted) return;
+              Navigator.of(context).pop();
+              Provider.of<AddBankProvider>(context, listen: false)
+                  .updateStep(2);
+            }
+
+            if (state.request == AddBankType.OTP_BANK) {
+              if (!mounted) return;
+              String bankId =
+                  Provider.of<AddBankProvider>(context, listen: false).bankId;
+              if (bankId.trim().isNotEmpty) {
+                final dto = RegisterAuthenticationDTO(
+                  bankId: bankId,
+                  nationalId: cmtController.text,
+                  phoneAuthenticated: phoneController.text,
+                  bankAccountName: nameController.text,
+                  bankAccount: bankAccountController.text,
+                );
+
+                _bloc.add(BankCardEventRegisterAuthentication(dto: dto));
+              } else {
+                String bankTypeId =
+                    Provider.of<AddBankProvider>(context, listen: false)
+                        .bankTypeDTO!
+                        .id;
+                String userId = UserInformationHelper.instance.getUserId();
+                String formattedName = StringUtils.instance.removeDiacritic(
+                    StringUtils.instance
+                        .capitalFirstCharacter(nameController.text));
+                BankCardInsertDTO dto = BankCardInsertDTO(
+                  bankTypeId: bankTypeId,
+                  userId: userId,
+                  userBankName: formattedName,
+                  bankAccount: bankAccountController.text,
+                  type:
+                      Provider.of<AddBankProvider>(context, listen: false).type,
+                  branchId: '',
+                  nationalId: cmtController.text,
+                  phoneAuthenticated: phoneController.text,
+                );
+                _bloc.add(BankCardEventInsert(dto: dto));
+              }
+            }
+
             if (state.status != BlocStatus.NONE ||
-                state.request != BlocRequest.NONE) {
+                state.request != AddBankType.NONE) {
               _bloc.add(UpdateAddBankEvent());
             }
           },
@@ -215,10 +307,18 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                               phoneController.clear();
                               cmtController.clear();
                               provider.updateStep(0);
+                              provider.updateEdit(false);
                             },
                           );
                         } else if (provider.step == 2) {
-                          return const SizedBox();
+                          return ConfirmOTPView(
+                            phone: phoneController.text,
+                            otpController: otpController,
+                            onChangeOTP: (value) {},
+                            onResend: () {
+                              // _bloc.add();
+                            },
+                          );
                         }
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -301,7 +401,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                                 ),
                               ),
                             ),
-                            //
+//
                             const SizedBox(height: 30),
                             TextFieldCustom(
                               isObscureText: false,
@@ -315,7 +415,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                               title: 'Số tài khoản',
                               focusNode: focusAccount,
                               hintText: 'Nhập số tài khoản',
-                              // controller: provider.introduceController,
+// controller: provider.introduceController,
                               inputType: TextInputType.number,
                               keyboardAction: TextInputAction.next,
                               onChange: provider.updateValidBankAccount,
@@ -335,7 +435,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                                 ),
                               ),
                             ),
-                            //
+//
                             const SizedBox(height: 30),
                             TextFieldCustom(
                               key: provider.keyAccount,
@@ -388,7 +488,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
               bottomSheet: Consumer<AddBankProvider>(
                 builder: (context, provider, child) {
                   return (provider.bankTypeDTO?.status == 1)
-                      ? _buildButton(provider)
+                      ? _buildButton(provider, state.requestId ?? '')
                       : MButtonWidget(
                           title: 'Lưu tài khoản',
                           isEnable: provider.isEnableButton,
@@ -409,7 +509,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
     );
   }
 
-  Widget _buildButton(AddBankProvider provider) {
+  Widget _buildButton(AddBankProvider provider, String requestId) {
     final buttonStepFirst = _BuildButton(
       onTapSave: () {
         FocusManager.instance.primaryFocus?.unfocus();
@@ -430,10 +530,9 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
     final buttonStepSecond = MButtonWidget(
       title: 'Liên kết',
       isEnable: provider.isValidForm(),
-      onTap: () {
-        // provider.updateStep(2);
+      onTap: () async {
         FocusManager.instance.primaryFocus?.unfocus();
-        showGeneralDialog(
+        final data = await showGeneralDialog(
           context: context,
           barrierDismissible: true,
           barrierLabel:
@@ -442,13 +541,51 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
           transitionDuration: const Duration(milliseconds: 200),
           pageBuilder: (BuildContext buildContext, Animation animation,
               Animation secondaryAnimation) {
-            return PolicyView();
+            return PolicyView(
+              onSelectPolicy: provider.updatePolicy,
+              isAgreeWithPolicy: provider.isAgreeWithPolicy,
+              onTap: () {
+                if (provider.isAgreeWithPolicy) {
+                  String formattedName = StringUtils.instance.removeDiacritic(
+                      StringUtils.instance
+                          .capitalFirstCharacter(nameController.text));
+                  BankCardRequestOTP dto = BankCardRequestOTP(
+                    nationalId: cmtController.text,
+                    accountNumber: bankAccountController.text,
+                    accountName: formattedName,
+                    applicationType: 'MOBILE',
+                    phoneNumber: phoneController.text,
+                  );
+                  context
+                      .read<AddBankBloc>()
+                      .add(BankCardEventRequestOTP(dto: dto));
+                }
+              },
+            );
           },
         );
       },
     );
 
-    return provider.step == 0 ? buttonStepFirst : buttonStepSecond;
+    final buttonStepThree = MButtonWidget(
+      title: 'Xác thực',
+      isEnable: provider.isValidForm(),
+      onTap: () async {
+        FocusManager.instance.primaryFocus?.unfocus();
+        ConfirmOTPBankDTO confirmDTO = ConfirmOTPBankDTO(
+          requestId: requestId,
+          otpValue: otpController.text,
+          applicationType: 'MOBILE',
+        );
+        _bloc.add(BankCardEventConfirmOTP(dto: confirmDTO));
+      },
+    );
+
+    return provider.step == 0
+        ? buttonStepFirst
+        : provider.step == 1
+            ? buttonStepSecond
+            : buttonStepThree;
   }
 
   void _navigateBack(BuildContext context) {}

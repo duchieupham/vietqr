@@ -8,11 +8,12 @@ class ButtonIconWidget extends StatelessWidget {
   final Color bgColor;
   final Color textColor;
   final double? height;
-  final double? textSize;
+  final double? textSize, iconSize;
   final bool? autoFocus;
   final double? borderRadius;
   final FocusNode? focusNode;
   final Alignment? alignment;
+  final EdgeInsets contentPadding;
 
   const ButtonIconWidget({
     super.key,
@@ -28,6 +29,9 @@ class ButtonIconWidget extends StatelessWidget {
     this.borderRadius,
     this.focusNode,
     this.alignment,
+    this.iconSize,
+    this.contentPadding =
+        const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
   });
 
   @override
@@ -39,7 +43,7 @@ class ButtonIconWidget extends StatelessWidget {
       child: Container(
         width: width,
         height: height,
-        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+        padding: contentPadding,
         alignment: alignment,
         decoration: BoxDecoration(
           color: bgColor,
@@ -54,7 +58,7 @@ class ButtonIconWidget extends StatelessWidget {
             Icon(
               icon,
               color: textColor,
-              size: (textSize != null) ? textSize : 15,
+              size: iconSize ?? 15,
             ),
             if (title.isNotEmpty) ...[
               const Padding(padding: EdgeInsets.only(left: 5)),

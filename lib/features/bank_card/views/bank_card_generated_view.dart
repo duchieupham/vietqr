@@ -10,6 +10,7 @@ import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/widgets/bank_card_widget.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
+import 'package:vierqr/commons/widgets/viet_qr.dart';
 import 'package:vierqr/commons/widgets/viet_qr_widget.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
@@ -95,8 +96,7 @@ class _BankCardGeneratedView extends State<BankCardGeneratedView> {
                     duration: const Duration(
                       milliseconds: 800,
                     ),
-                    child: VietQRWidget(
-                      width: width,
+                    child: VietQr(
                       qrGeneratedDTO: qrGeneratedDTO,
                       content: '',
                       isSmallWidget: (height <= 800),

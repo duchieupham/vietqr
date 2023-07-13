@@ -1,5 +1,5 @@
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
-import 'package:vierqr/commons/enums/check_type.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/error_utils.dart';
 import 'package:vierqr/features/register/events/register_event.dart';
 import 'package:vierqr/features/register/repositories/register_repository.dart';

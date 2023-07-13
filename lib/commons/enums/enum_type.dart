@@ -12,16 +12,7 @@ enum BlocStatus {
   DONE,
 }
 
-enum BlocRequest {
-  NONE,
-  ERROR,
-  AWAIT,
-  SUCCESS,
-  DELETE,
-  INSERT,
-  SEARCH,
-  DONE,
-}
+enum StepType { first_screen, second_screen, three_screen }
 
 enum TypeSelect {
   BANK,

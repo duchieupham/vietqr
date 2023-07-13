@@ -21,6 +21,8 @@ class AddBankProvider with ChangeNotifier {
 
   get type => _type;
 
+  bool isEdit = true;
+
   bool _isInvalidBankAccount = false;
   bool _isInvalidUserBankName = false;
   bool _isInValidNationalId = false;
@@ -32,7 +34,26 @@ class AddBankProvider with ChangeNotifier {
   String? errorCMT;
   String? errorSDT;
 
+  String bankId = '';
+
   get isLinkBank => _isLinkBank;
+
+  get isAgreeWithPolicy => _isAgreeWithPolicy;
+
+  void updatePolicy(value) {
+    _isAgreeWithPolicy = value;
+    notifyListeners();
+  }
+
+  void updateEdit(value) {
+    isEdit = value;
+    notifyListeners();
+  }
+
+  void updateBankId(value) {
+    bankId = value;
+    notifyListeners();
+  }
 
   void updateStep(value) {
     step = value;
@@ -49,10 +70,14 @@ class AddBankProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void updateSelectBankType(BankTypeDTO dto) {
+  void updateSelectBankType(BankTypeDTO dto, {bool update = false}) {
     _bankTypeDTO = dto;
     isEnableName = false;
     isEnableButton = false;
+    if (update) {
+      _isInvalidBankAccount = update;
+      _isInvalidUserBankName = update;
+    }
     notifyListeners();
   }
 

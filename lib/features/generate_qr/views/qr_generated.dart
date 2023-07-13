@@ -13,6 +13,7 @@ import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
+import 'package:vierqr/commons/widgets/viet_qr.dart';
 import 'package:vierqr/commons/widgets/viet_qr_widget.dart';
 import 'package:vierqr/features/printer/views/printing_view.dart';
 import 'package:vierqr/models/bluetooth_printer_dto.dart';
@@ -248,11 +249,13 @@ class _QRGenerated extends State<QRGenerated> {
                 if (height > 700)
                   const Padding(padding: EdgeInsets.only(top: 20)),
                 const Padding(padding: EdgeInsets.only(top: 30)),
-                VietQRWidget(
-                  width: width,
-                  qrGeneratedDTO: dto,
-                  content: dto.content,
-                  isSmallWidget: height <= 800,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: VietQr(
+                    qrGeneratedDTO: dto,
+                    content: dto.content,
+                    isSmallWidget: height <= 800,
+                  ),
                 ),
                 ValueListenableBuilder(
                   valueListenable: _waterMarkProvider,

@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:vierqr/commons/enums/check_type.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 
 class BankTypeState extends Equatable {

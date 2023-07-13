@@ -1,8 +1,9 @@
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
-import 'package:vierqr/commons/enums/check_type.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
+import 'package:vierqr/commons/widgets/ambient_avatar_widget.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/bank_card/bank_screen.dart';
@@ -25,6 +26,7 @@ import 'package:vierqr/main.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/services/providers/account_balance_home_provider.dart';
 import 'package:vierqr/services/providers/add_bank_provider.dart';
+import 'package:vierqr/services/providers/avatar_provider.dart';
 import 'package:vierqr/services/providers/bank_card_select_provider.dart';
 import 'package:vierqr/services/providers/page_select_provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
@@ -324,100 +326,109 @@ class _HomeScreen extends State<HomeScreen>
             );
           }
         },
-        child: Consumer<PageSelectProvider>(builder: (context, page, child) {
-          return Scaffold(
-            appBar: page.indexSelected != 3
-                ? CustomAppBarWidget(
-                    child: _buildAppBar(),
-                  )
-                : null,
-            body: SafeArea(
-              child: Stack(
-                children: [
-                  Listener(
-                    onPointerMove: (moveEvent) {
-                      if (moveEvent.delta.dx > 0) {
-                        Provider.of<PageSelectProvider>(context, listen: false)
-                            .updateMoveEvent(TypeMoveEvent.RIGHT);
-                      } else {
-                        Provider.of<PageSelectProvider>(context, listen: false)
-                            .updateMoveEvent(TypeMoveEvent.LEFT);
-                      }
-                    },
-                    child: PageView(
-                      key: const PageStorageKey('PAGE_VIEW'),
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      controller: _pageController,
-                      onPageChanged: (index) async {
-                        Provider.of<PageSelectProvider>(context, listen: false)
-                            .updateIndex(index);
-                      },
-                      children: _homeScreens,
+        child: Scaffold(
+          body: Stack(
+            children: [
+              _buildAppBar(),
+              Consumer<PageSelectProvider>(builder: (context, page, child) {
+                return Stack(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 120),
+                      child: SizedBox(
+                        height: MediaQuery.of(context).size.height - 120,
+                        child: Listener(
+                          onPointerMove: (moveEvent) {
+                            if (moveEvent.delta.dx > 0) {
+                              Provider.of<PageSelectProvider>(context,
+                                      listen: false)
+                                  .updateMoveEvent(TypeMoveEvent.RIGHT);
+                            } else {
+                              Provider.of<PageSelectProvider>(context,
+                                      listen: false)
+                                  .updateMoveEvent(TypeMoveEvent.LEFT);
+                            }
+                          },
+                          child: PageView(
+                            key: const PageStorageKey('PAGE_VIEW'),
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            controller: _pageController,
+                            onPageChanged: (index) async {
+                              Provider.of<PageSelectProvider>(context,
+                                      listen: false)
+                                  .updateIndex(index);
+                            },
+                            children: _homeScreens,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      margin: (PlatformUtils.instance.isAndroidApp())
-                          ? const EdgeInsets.only(bottom: 5)
-                          : null,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ClipRRect(
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(20)),
-                            child: BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                              child: Container(
-                                alignment: Alignment.center,
-                                height: 60,
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context)
-                                      .cardColor
-                                      .withOpacity(0.5),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color:
-                                          AppColor.GREY_VIEW.withOpacity(0.5),
-                                      spreadRadius: 2,
-                                      blurRadius: 3,
-                                      offset: const Offset(2, 2),
-                                    ),
-                                  ],
-                                ),
-                                child: Stack(
-                                  children: [
-                                    Row(
-                                      children: List.generate(
-                                          page.listItem.length, (index) {
-                                        var item = page.listItem.elementAt(index);
+                    Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                        margin: (PlatformUtils.instance.isAndroidApp())
+                            ? const EdgeInsets.only(bottom: 5)
+                            : null,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ClipRRect(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(20)),
+                              child: BackdropFilter(
+                                filter:
+                                    ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  height: 60,
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(context)
+                                        .cardColor
+                                        .withOpacity(0.5),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: AppColor.GREY_VIEW
+                                            .withOpacity(0.5),
+                                        spreadRadius: 2,
+                                        blurRadius: 3,
+                                        offset: const Offset(2, 2),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Stack(
+                                    children: [
+                                      Row(
+                                        children: List.generate(
+                                            page.listItem.length, (index) {
+                                          var item =
+                                              page.listItem.elementAt(index);
 
-                                        String url =
-                                            (item.index == page.indexSelected)
-                                                ? item.assetsActive
-                                                : item.assetsUnActive;
+                                          String url =
+                                              (item.index == page.indexSelected)
+                                                  ? item.assetsActive
+                                                  : item.assetsUnActive;
 
-                                        return _buildShortcut(
-                                            item.index, url, context);
-                                      }).toList(),
-                                    ),
-                                  ],
+                                          return _buildShortcut(
+                                              item.index, url, context);
+                                        }).toList(),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }),
+                  ],
+                );
+              }),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -485,58 +496,21 @@ class _HomeScreen extends State<HomeScreen>
     if (indexSelected == 0) {
       titleWidget =
           Consumer<BankCardSelectProvider>(builder: (context, provider, child) {
-        return RichText(
-          textAlign: TextAlign.left,
-          text: TextSpan(
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: Theme.of(context).hintColor,
-              letterSpacing: 0.2,
-            ),
-            children: [
-              const TextSpan(
-                text: 'TK ngân hàng',
-                style: TextStyle(
-                  fontFamily: 'NewYork',
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.2,
-                ),
-              ),
-              if (provider.totalBanks != 0) ...[
-                WidgetSpan(
-                  child: Container(
-                    width: 20,
-                    height: 20,
-                    alignment: Alignment.center,
-                    margin: const EdgeInsets.only(left: 5),
-                    decoration: BoxDecoration(
-                      color: AppColor.PURPLE_NEON.withOpacity(0.3),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      provider.totalBanks.toString(),
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Theme.of(context).hintColor,
-                        fontSize: 10,
-                      ),
-                    ),
-                  ),
-                ),
-              ]
-
-              // TextSpan(
-              //   text: '\n${provider.totalBanks} TK ngân hàng được thêm',
-              //   style: const TextStyle(
-              //     fontSize: 12,
-              //     fontWeight: FontWeight.normal,
-              //     color: DefaultTheme.PURPLE_NEON,
-              //   ),
-              // ),
-            ],
-          ),
+        return ButtonIconWidget(
+          width: double.infinity,
+          height: 40,
+          borderRadius: 40,
+          icon: Icons.search_rounded,
+          iconSize: 18,
+          contentPadding: const EdgeInsets.only(left: 16),
+          alignment: Alignment.centerLeft,
+          title: 'Tài khoản ngân hàng',
+          textSize: 13,
+          function: () {
+            Navigator.pushNamed(context, Routes.SEARCH_BANK);
+          },
+          bgColor: Theme.of(context).cardColor,
+          textColor: Theme.of(context).hintColor,
         );
       });
     }
@@ -625,133 +599,148 @@ class _HomeScreen extends State<HomeScreen>
 
 //header
   Widget _buildAppBar() {
-    return SizedBox(
+    double paddingTop = MediaQuery.of(context).viewPadding.top;
+
+    return Container(
       width: MediaQuery.of(context).size.width,
-      child: ClipRRect(
-        child: BackdropFilter(
-          filter: ImageFilter.blur(
-            sigmaX: 25,
-            sigmaY: 25,
-          ),
-          child: Container(
-            padding: const EdgeInsets.only(left: 20, right: 10, top: 0),
-            decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.6),
+      height: 230,
+      padding: EdgeInsets.only(top: paddingTop + 12),
+      alignment: Alignment.topCenter,
+      decoration: const BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage('assets/images/bg-admin-card.png'),
+              fit: BoxFit.fitWidth)),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 25),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              width: 60,
+              height: 30,
+              decoration: BoxDecoration(
+                //color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Image.asset(
+                'assets/images/ic-viet-qr.png',
+                width: 50,
+              ),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Consumer<PageSelectProvider>(
-                  builder: (context, page, child) {
-                    return _getTitlePaqe(context, page.indexSelected);
+            Expanded(
+              child: Consumer<PageSelectProvider>(
+                builder: (context, page, child) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: _getTitlePaqe(context, page.indexSelected),
+                  );
+                },
+              ),
+            ),
+            SizedBox(
+                width: 50,
+                height: 60,
+                child: BlocConsumer<NotificationBloc, NotificationState>(
+                  listener: (context, state) {
+                    //
                   },
-                ),
-                const Spacer(),
-                ButtonIconWidget(
-                  width: 35,
-                  height: 35,
-                  borderRadius: 40,
-                  icon: Icons.search_rounded,
-                  title: '',
-                  function: () {
-                    Navigator.pushNamed(context, Routes.SEARCH_BANK);
-                  },
-                  bgColor: Theme.of(context).cardColor.withOpacity(0.3),
-                  textColor: Theme.of(context).hintColor,
-                ),
-                const Padding(padding: EdgeInsets.only(left: 5)),
-                SizedBox(
-                    width: 50,
-                    height: 60,
-                    child: BlocConsumer<NotificationBloc, NotificationState>(
-                      listener: (context, state) {
-                        //
-                      },
-                      builder: (context, state) {
-                        if (state is NotificationCountSuccessState) {
-                          _notificationCount = state.count;
-                        }
-                        if (state is NotificationUpdateStatusSuccessState) {
-                          _notificationCount = 0;
-                        }
-                        return Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            ButtonIconWidget(
-                              width: 35,
-                              height: 35,
-                              borderRadius: 40,
-                              icon: Icons.notifications_outlined,
-                              title: '',
-                              function: () {
-                                Navigator.pushNamed(
-                                  context,
-                                  Routes.NOTIFICATION_VIEW,
-                                  arguments: {
-                                    'notificationBloc': _notificationBloc,
-                                  },
-                                ).then((value) {
-                                  _notificationBloc.add(
-                                    NotificationUpdateStatusEvent(
-                                      userId: UserInformationHelper.instance
-                                          .getUserId(),
-                                    ),
-                                  );
-                                });
+                  builder: (context, state) {
+                    if (state is NotificationCountSuccessState) {
+                      _notificationCount = state.count;
+                    }
+                    if (state is NotificationUpdateStatusSuccessState) {
+                      _notificationCount = 0;
+                    }
+                    return Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        ButtonIconWidget(
+                          width: 45,
+                          height: 45,
+                          borderRadius: 40,
+                          icon: Icons.notifications_outlined,
+                          title: '',
+                          function: () {
+                            Navigator.pushNamed(
+                              context,
+                              Routes.NOTIFICATION_VIEW,
+                              arguments: {
+                                'notificationBloc': _notificationBloc,
                               },
-                              bgColor:
-                                  Theme.of(context).cardColor.withOpacity(0.3),
-                              textColor: Theme.of(context).hintColor,
-                            ),
-                            if (_notificationCount != 0)
-                              Positioned(
-                                top: 5,
-                                right: 0,
-                                child: Container(
-                                  width: 20,
-                                  height: 20,
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(30),
-                                    color: AppColor.RED_CALENDAR,
-                                  ),
-                                  child: Text(
-                                    _notificationCount.toString(),
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: (_notificationCount
-                                                  .toString()
-                                                  .length >=
+                            ).then((value) {
+                              _notificationBloc.add(
+                                NotificationUpdateStatusEvent(
+                                  userId: UserInformationHelper.instance
+                                      .getUserId(),
+                                ),
+                              );
+                            });
+                          },
+                          bgColor: Theme.of(context).cardColor,
+                          textColor: Theme.of(context).hintColor,
+                        ),
+                        if (_notificationCount != 0)
+                          Positioned(
+                            top: 5,
+                            right: 0,
+                            child: Container(
+                              width: 20,
+                              height: 20,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30),
+                                color: AppColor.RED_CALENDAR,
+                              ),
+                              child: Text(
+                                _notificationCount.toString(),
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize:
+                                      (_notificationCount.toString().length >=
                                               3)
                                           ? 8
                                           : 10,
-                                      color: AppColor.WHITE,
-                                    ),
-                                  ),
+                                  color: AppColor.WHITE,
                                 ),
                               ),
-                          ],
-                        );
-                      },
-                    )),
-                const Padding(padding: EdgeInsets.only(left: 5)),
-                Container(
-                  width: 60,
-                  height: 30,
-                  decoration: BoxDecoration(
-                    //color: Theme.of(context).cardColor,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Image.asset(
-                    'assets/images/ic-viet-qr.png',
-                    width: 50,
-                  ),
-                ),
-              ],
-            ),
-          ),
+                            ),
+                          ),
+                      ],
+                    );
+                  },
+                )),
+            const Padding(padding: EdgeInsets.only(left: 5)),
+            GestureDetector(
+                onTap: () {
+                  Provider.of<PageSelectProvider>(context, listen: false)
+                      .updateIndex(4);
+
+                  _animatedToPage(4);
+                },
+                child: _buildAvatarWidget(context)),
+          ],
         ),
       ),
+    );
+  }
+
+  Widget _buildAvatarWidget(BuildContext context) {
+    double size = 45;
+    String imgId = UserInformationHelper.instance.getAccountInformation().imgId;
+    return Consumer<AvatarProvider>(
+      builder: (context, provider, child) => (imgId.isEmpty)
+          ? ClipOval(
+              child: SizedBox(
+                width: size,
+                height: size,
+                child: Image.asset('assets/images/ic-avatar.png'),
+              ),
+            )
+          : AmbientAvatarWidget(
+              imgId: imgId,
+              size: size,
+              onlyImage: true,
+            ),
     );
   }
 }

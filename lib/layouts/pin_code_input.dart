@@ -15,6 +15,8 @@ class PinCodeInput extends StatelessWidget {
     this.clBorderErr,
     this.error = false,
     this.autoFocus = false,
+    this.textStyle,
+    this.length,
   }) : super(key: key);
 
   final ValueChanged<String>? onChanged;
@@ -26,12 +28,14 @@ class PinCodeInput extends StatelessWidget {
   final Color? clBorderErr;
   final bool error;
   final bool autoFocus;
+  final TextStyle? textStyle;
+  final int? length;
 
   @override
   Widget build(BuildContext context) {
     return PinCodeTextField(
       appContext: context,
-      length: 6,
+      length: length ?? 6,
       autoFocus: autoFocus,
       focusNode: focusNode,
       obscureText: obscureText,
@@ -44,7 +48,7 @@ class PinCodeInput extends StatelessWidget {
       cursorColor: cursorColor,
       scrollPadding: EdgeInsets.zero,
       obscuringCharacter: '⬤',
-      textStyle: textStyle,
+      textStyle: textStyle ?? _textStyle,
       backgroundColor: Colors.transparent,
       cursorHeight: 18,
       showCursor: true,
@@ -70,7 +74,7 @@ class PinCodeInput extends StatelessWidget {
     );
   }
 
-  TextStyle get textStyle {
+  TextStyle get _textStyle {
     if (obscureText) {
       return Styles.copyStyle(
         fontSize: 16,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vierqr/commons/enums/check_type.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/base_manager.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/bank_type/events/bank_type_event.dart';

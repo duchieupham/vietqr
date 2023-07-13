@@ -44,7 +44,6 @@ class LogoutRepository {
     Provider.of<CreateQRPageSelectProvider>(context, listen: false).reset();
     Provider.of<BankAccountProvider>(context, listen: false).reset();
     Provider.of<UserEditProvider>(context, listen: false).reset();
-    Provider.of<RegisterProvider>(context, listen: false).reset();
     Provider.of<SuggestionWidgetProvider>(context, listen: false).reset();
     await EventBlocHelper.instance.updateLogoutBefore(true);
     await UserInformationHelper.instance.initialUserInformationHelper();

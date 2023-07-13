@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vierqr/commons/enums/check_type.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/models/branch_filter_dto.dart';
 import 'package:vierqr/models/business_detail_dto.dart';
 import 'package:vierqr/models/business_item_dto.dart';

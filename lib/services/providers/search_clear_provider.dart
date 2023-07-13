@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vierqr/commons/enums/check_type.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/models/business_member_dto.dart';
 
 class SearchClearProvider extends ValueNotifier {

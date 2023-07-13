@@ -4,7 +4,6 @@ import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
-import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
@@ -79,12 +78,7 @@ class _InputContentWidgetState extends State<InputContentWidget> {
             arguments: {
               'qrGeneratedDTO': state.dto,
             },
-          ).then((value) {
-            if (widget.bankCardBloc != null) {
-              widget.bankCardBloc!.add(
-                  BankCardGetDetailEvent(bankId: widget.bankAccountDTO.id));
-            }
-          });
+          ).then((value) {});
         }
       },
       child: GestureDetector(

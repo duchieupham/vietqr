@@ -3,8 +3,9 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 
 class PhoneWidget extends StatefulWidget {
   final ValueChanged<String>? onChanged;
+  final TextEditingController phoneController;
 
-  const PhoneWidget({super.key, this.onChanged});
+  const PhoneWidget({super.key, this.onChanged, required this.phoneController});
 
   @override
   _PhoneWidgetState createState() => _PhoneWidgetState();
@@ -95,6 +96,7 @@ class _PhoneWidgetState extends State<PhoneWidget> {
                 child: TextFormField(
                   keyboardType: TextInputType.number,
                   textInputAction: TextInputAction.next,
+                  controller: widget.phoneController,
                   onChanged: widget.onChanged,
                   decoration: const InputDecoration(
                     contentPadding: EdgeInsets.symmetric(horizontal: 16),

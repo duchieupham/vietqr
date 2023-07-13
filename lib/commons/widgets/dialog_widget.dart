@@ -582,7 +582,10 @@ class DialogWidget {
   }
 
   openMsgDialog(
-      {required String title, required String msg, VoidCallback? function}) {
+      {required String title,
+      String? button,
+      required String msg,
+      VoidCallback? function}) {
     return showDialog(
         barrierDismissible: false,
         context: NavigationService.navigatorKey.currentContext!,
@@ -638,7 +641,7 @@ class DialogWidget {
                   ButtonWidget(
                     width: 250,
                     height: 40,
-                    text: 'Đóng',
+                    text: button ?? 'Đóng',
                     textColor: AppColor.WHITE,
                     bgColor: AppColor.GREEN,
                     borderRadius: 5,

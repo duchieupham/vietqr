@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vierqr/commons/enums/check_type.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/account/events/account_event.dart';
 import 'package:vierqr/features/account/repositories/account_res.dart';

@@ -108,7 +108,7 @@ class TransactionDetailView extends StatelessWidget {
                 if (args['bankCardBloc'] != null) {
                   String bankId = args['bankId'];
                   BankCardBloc bloc = args['bankCardBloc'];
-                  bloc.add(BankCardGetDetailEvent(bankId: bankId));
+                  // bloc.add(BankCardGetDetailEvent(bankId: bankId));
                 }
                 //refresh notification list
                 if (args['notificationBloc'] != null) {

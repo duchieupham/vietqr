@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vierqr/commons/enums/check_type.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 
 class RegisterProvider with ChangeNotifier {
   //error handler
@@ -47,13 +47,23 @@ class RegisterProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void updatePhone(value) {
-    phoneNoController.value = phoneNoController.value.copyWith(text: value);
+  void updatePhone(String value) {
+    if (value.isNotEmpty) {
+      phoneNoController.value = phoneNoController.value.copyWith(text: value);
+      _isPhoneErr = false;
+    } else {
+      _isPhoneErr = true;
+    }
     notifyListeners();
   }
 
-  void updatePassword(value) {
-    passwordController.value = passwordController.value.copyWith(text: value);
+  void updatePassword(String value) {
+    if (value.isNotEmpty) {
+      passwordController.value = passwordController.value.copyWith(text: value);
+      _isPasswordErr = false;
+    } else {
+      _isPasswordErr = true;
+    }
     notifyListeners();
   }
 
@@ -72,6 +82,10 @@ class RegisterProvider with ChangeNotifier {
     return !_isPhoneErr && !_isPasswordErr && !_isConfirmPassErr;
   }
 
+  bool isValid() {
+    return !_isPhoneErr && !_isPasswordErr;
+  }
+
   void reset() {
     _isPhoneErr = false;
     _isPasswordErr = false;
@@ -80,8 +94,18 @@ class RegisterProvider with ChangeNotifier {
   }
 
   void updateRePass(String value) {
-    confirmPassController.value =
-        confirmPassController.value.copyWith(text: value);
+    if (value.isNotEmpty) {
+      confirmPassController.value =
+          confirmPassController.value.copyWith(text: value);
+      if (value != passwordController.text) {
+        _isConfirmPassErr = true;
+      } else {
+        _isConfirmPassErr = false;
+      }
+    } else {
+      _isConfirmPassErr = true;
+    }
+
     notifyListeners();
   }
 

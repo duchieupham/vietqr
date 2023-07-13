@@ -18,7 +18,7 @@ import 'package:vierqr/features/account/blocs/account_bloc.dart';
 import 'package:vierqr/features/add_bank/add_bank_screen.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_card_bloc.dart';
-import 'package:vierqr/features/bank_card/views/bank_card_detail_view.dart';
+import 'package:vierqr/features/bank_card/bank_card_detail_screen.dart';
 import 'package:vierqr/features/bank_card/views/bank_card_generated_view.dart';
 import 'package:vierqr/features/bank_card/views/search_bank_view.dart';
 import 'package:vierqr/features/bank_member/blocs/bank_member_bloc.dart';
@@ -46,11 +46,9 @@ import 'package:vierqr/features/printer/views/printer_setting_view.dart';
 import 'package:vierqr/features/transaction/blocs/transaction_bloc.dart';
 import 'package:vierqr/features/logout/blocs/log_out_bloc.dart';
 import 'package:vierqr/features/notification/blocs/notification_bloc.dart';
-import 'package:vierqr/features/login/blocs/login_bloc.dart';
 import 'package:vierqr/features/login/views/login.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_manage_bloc.dart';
 import 'package:vierqr/features/personal/blocs/user_edit_bloc.dart';
-import 'package:vierqr/features/bank_card/views/add_bank_card_view.dart';
 import 'package:vierqr/features/personal/views/user_edit_view.dart';
 import 'package:vierqr/features/personal/views/user_update_password_view.dart';
 import 'package:vierqr/features/scan_qr/blocs/scan_qr_bloc.dart';
@@ -62,7 +60,6 @@ import 'package:vierqr/features/transaction/widgets/transaction_sucess_widget.da
 import 'package:vierqr/models/notification_transaction_success_dto.dart';
 import 'package:vierqr/services/local_notification/notification_service.dart';
 import 'package:vierqr/services/providers/action_share_provider.dart';
-import 'package:vierqr/services/providers/add_bank_provider.dart';
 import 'package:vierqr/services/providers/add_business_provider.dart';
 import 'package:vierqr/services/providers/avatar_provider.dart';
 import 'package:vierqr/services/providers/bank_%20arrangement_provider.dart';
@@ -247,14 +244,8 @@ class _VietQRApp extends State<VietQRApp> {
           BlocProvider<TokenBloc>(
             create: (BuildContext context) => TokenBloc(),
           ),
-          BlocProvider<BankCardBloc>(
-            create: (BuildContext context) => BankCardBloc(),
-          ),
           BlocProvider<BankMemberBloc>(
             create: (BuildContext context) => BankMemberBloc(),
-          ),
-          BlocProvider<QRBloc>(
-            create: (BuildContext context) => QRBloc(),
           ),
           BlocProvider<LogoutBloc>(
             create: (BuildContext context) => LogoutBloc(),
@@ -276,9 +267,6 @@ class _VietQRApp extends State<VietQRApp> {
           ),
           BlocProvider<AccountBloc>(
             create: (BuildContext context) => AccountBloc(),
-          ),
-          BlocProvider<BankBloc>(
-            create: (BuildContext context) => BankBloc(),
           ),
         ],
         child: MultiProvider(
@@ -349,8 +337,8 @@ class _VietQRApp extends State<VietQRApp> {
                       const BusinessInformationView(),
                   Routes.ADD_BUSINESS_VIEW: (context) =>
                       const AddBusinessView(),
-                  Routes.BANK_CARD_DETAIL_VEW: (context) =>
-                      const BankCardDetailView(),
+                  // Routes.BANK_CARD_DETAIL_VEW: (context) =>
+                  //     const BankCardDetailScreen(),
                   Routes.TRANSACTION_HISTORY_VIEW: (context) =>
                       const TransactionHistoryView(),
                   Routes.SCAN_QR_VIEW: (context) => const QRScanView(),
