@@ -13,8 +13,6 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
 import 'package:vierqr/commons/widgets/sub_header_widget.dart';
-import 'package:vierqr/features/bank_card/blocs/bank_card_bloc.dart';
-import 'package:vierqr/features/bank_card/events/bank_card_event.dart';
 import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
 import 'package:vierqr/features/business/events/business_information_event.dart';
 import 'package:vierqr/features/generate_qr/blocs/qr_blocs.dart';
@@ -105,11 +103,7 @@ class TransactionDetailView extends StatelessWidget {
                   bloc.add(TransactionEventGetList(dto: transactionInputDTO));
                 }
                 //refresh bank detail
-                if (args['bankCardBloc'] != null) {
-                  String bankId = args['bankId'];
-                  BankCardBloc bloc = args['bankCardBloc'];
-                  // bloc.add(BankCardGetDetailEvent(bankId: bankId));
-                }
+                if (args['bankCardBloc'] != null) {}
                 //refresh notification list
                 if (args['notificationBloc'] != null) {
                   String userId = args['userId'];
@@ -418,8 +412,7 @@ class TransactionDetailView extends StatelessWidget {
                                                 TextSpan(
                                                   text: 'vietqr.vn',
                                                   style: TextStyle(
-                                                    color:
-                                                        AppColor.BLUE_TEXT,
+                                                    color: AppColor.BLUE_TEXT,
                                                     fontSize: 12,
                                                   ),
                                                 ),
@@ -428,8 +421,7 @@ class TransactionDetailView extends StatelessWidget {
                                                 TextSpan(
                                                   text: '19006234',
                                                   style: TextStyle(
-                                                    color:
-                                                        AppColor.BLUE_TEXT,
+                                                    color: AppColor.BLUE_TEXT,
                                                     fontSize: 12,
                                                   ),
                                                 ),

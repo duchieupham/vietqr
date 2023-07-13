@@ -9,7 +9,6 @@ import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/features/branch/blocs/branch_bloc.dart';
-import 'package:vierqr/features/branch/events/branch_event.dart';
 import 'package:vierqr/features/branch/repositories/branch_repository.dart';
 import 'package:vierqr/features/branch/states/branch_state.dart';
 import 'package:vierqr/layouts/box_layout.dart';

@@ -66,7 +66,6 @@ class _AccountScreenState extends State<AccountScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final double width = MediaQuery.of(context).size.width;
     return BlocConsumer<AccountBloc, AccountState>(
       listener: (context, state) {},
       builder: (context, state) {

@@ -28,9 +28,9 @@ class NationalScannerDTO {
     return '';
   }
 
-  String get getBirth => convertDate(birthdate ?? '');
+  String get getBirth => convertDate(birthdate);
 
-  String get getDateValid => convertDate(dateValid ?? '');
+  String get getDateValid => convertDate(dateValid);
 
   factory NationalScannerDTO.fromJson(list) {
     return NationalScannerDTO(

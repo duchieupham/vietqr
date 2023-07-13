@@ -29,7 +29,6 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
         }
       }
     } catch (e) {
-      print('Error at register - RegisterBloc: $e');
       emit(const RegisterFailedState(
           msg: 'Không thể đăng ký. Vui lòng kiểm tra lại kết nối.'));
     }
@@ -47,7 +46,6 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
         }
       }
     } catch (e) {
-      print('Error at register - RegisterBloc: $e');
       emit(const RegisterSentOTPFailedState(
           msg: 'Có lỗi xảy ra. Vui lòng kiểm tra lại kết nối.'));
     }

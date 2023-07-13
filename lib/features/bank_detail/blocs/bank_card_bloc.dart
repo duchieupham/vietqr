@@ -6,9 +6,9 @@ import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/check_utils.dart';
 import 'package:vierqr/commons/utils/error_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
-import 'package:vierqr/features/bank_card/events/bank_card_event.dart';
-import 'package:vierqr/features/bank_card/repositories/bank_card_repository.dart';
-import 'package:vierqr/features/bank_card/states/bank_card_state.dart';
+import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
+import 'package:vierqr/features/bank_detail/repositories/bank_card_repository.dart';
+import 'package:vierqr/features/bank_detail/states/bank_card_state.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 

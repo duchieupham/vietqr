@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/sub_header_widget.dart';
-import 'package:vierqr/features/bank_card/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/generate_qr/blocs/qr_blocs.dart';
+import 'package:vierqr/features/generate_qr/states/qr_state.dart';
 import 'package:vierqr/features/generate_qr/widgets/input_content_widget.dart';
 import 'package:vierqr/features/generate_qr/widgets/input_ta_widget.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
@@ -39,10 +39,7 @@ class CreateQR extends StatefulWidget {
 }
 
 class _CreateQR extends State<CreateQR> {
-  static final PageController _pageController = PageController(
-    initialPage: 0,
-    keepPage: true,
-  );
+  late PageController _pageController;
 
   final List<Widget> _pages = [];
 
@@ -51,6 +48,7 @@ class _CreateQR extends State<CreateQR> {
     super.initState();
     Provider.of<CreateQRProvider>(context, listen: false).reset();
     Provider.of<CreateQRPageSelectProvider>(context, listen: false).reset();
+    _pageController = PageController(initialPage: 0, keepPage: true);
     _pages.addAll([
       InputTAWidget(
         key: const PageStorageKey('INPUT_TA_PAGE'),
@@ -62,7 +60,6 @@ class _CreateQR extends State<CreateQR> {
       InputContentWidget(
         key: const PageStorageKey('INPUT_CONTENT_PAGE'),
         bankAccountDTO: widget.bankAccountDTO,
-        // bankCardBloc: bankCardBloc,
       ),
     ]);
   }
@@ -84,19 +81,24 @@ class _CreateQR extends State<CreateQR> {
                 _navigateBack(context);
               },
             ),
-            Expanded(
-              child: PageView(
-                key: const PageStorageKey('PAGE_CREATE_QR_VIEW'),
-                allowImplicitScrolling: true,
-                physics: const NeverScrollableScrollPhysics(),
-                controller: _pageController,
-                onPageChanged: (index) {
-                  Provider.of<CreateQRPageSelectProvider>(context,
-                          listen: false)
-                      .updateIndex(index);
-                },
-                children: _pages,
-              ),
+            BlocConsumer<QRBloc, QRState>(
+              listener: (context, state) {},
+              builder: (context, state) {
+                return Expanded(
+                  child: PageView(
+                    key: const PageStorageKey('PAGE_CREATE_QR_VIEW'),
+                    allowImplicitScrolling: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    controller: _pageController,
+                    onPageChanged: (index) {
+                      Provider.of<CreateQRPageSelectProvider>(context,
+                              listen: false)
+                          .updateIndex(index);
+                    },
+                    children: _pages,
+                  ),
+                );
+              },
             ),
           ],
         ),

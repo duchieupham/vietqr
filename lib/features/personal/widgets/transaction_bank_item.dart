@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/models/transaction_bank_dto.dart';
-import 'package:vierqr/models/transaction_dto.dart';
 
 class TransactionBankItem extends StatelessWidget {
   final TransactionBankDTO transactionDTO;

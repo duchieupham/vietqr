@@ -60,7 +60,7 @@ class NotificationView extends StatelessWidget {
       appBar: AppBar(toolbarHeight: 0),
       body: Column(
         children: [
-          SubHeader(title: 'Thông báo'),
+          const SubHeader(title: 'Thông báo'),
           const Padding(padding: EdgeInsets.only(top: 10)),
           Expanded(
             child: RefreshIndicator(

@@ -8,7 +8,7 @@ import 'package:vierqr/commons/utils/error_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/add_bank/events/add_bank_event.dart';
 import 'package:vierqr/features/add_bank/states/add_bank_state.dart';
-import 'package:vierqr/features/bank_card/repositories/bank_card_repository.dart';
+import 'package:vierqr/features/bank_detail/repositories/bank_card_repository.dart';
 import 'package:vierqr/features/bank_type/repositories/bank_type_repository.dart';
 import 'package:vierqr/models/bank_name_information_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
@@ -64,7 +64,8 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
   void _searchBankName(AddBankEvent event, Emitter emit) async {
     try {
       if (event is BankCardEventSearchName) {
-        emit(state.copyWith(status: BlocStatus.LOADING));
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, request: AddBankType.NONE));
         BankNameInformationDTO dto =
             await bankCardRepository.searchBankName(event.dto);
         if (dto.accountName.trim().isNotEmpty) {
@@ -95,7 +96,8 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
   void _checkExistedBank(AddBankEvent event, Emitter emit) async {
     try {
       if (event is BankCardCheckExistedEvent) {
-        emit(state.copyWith(status: BlocStatus.LOADING));
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, request: AddBankType.NONE));
         final ResponseMessageDTO result = await bankCardRepository
             .checkExistedBank(event.bankAccount, event.bankTypeId);
         if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
@@ -166,7 +168,8 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
   void _requestOTP(AddBankEvent event, Emitter emit) async {
     try {
       if (event is BankCardEventRequestOTP) {
-        emit(state.copyWith(status: BlocStatus.LOADING));
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, request: AddBankType.NONE));
         final ResponseMessageDTO responseMessageDTO =
             await bankCardRepository.requestOTP(event.dto);
         if (responseMessageDTO.status == Stringify.RESPONSE_STATUS_SUCCESS) {
@@ -204,7 +207,8 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
   void _confirmOTP(AddBankEvent event, Emitter emit) async {
     try {
       if (event is BankCardEventConfirmOTP) {
-        emit(state.copyWith(status: BlocStatus.LOADING));
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, request: AddBankType.NONE));
         final ResponseMessageDTO responseMessageDTO =
             await bankCardRepository.confirmOTP(event.dto);
         if (responseMessageDTO.status == Stringify.RESPONSE_STATUS_SUCCESS) {

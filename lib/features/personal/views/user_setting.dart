@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive/hive.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
@@ -9,7 +8,6 @@ import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/widgets/ambient_avatar_widget.dart';
 import 'package:vierqr/commons/widgets/button_text_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/features/login/blocs/login_bloc.dart';
 import 'package:vierqr/features/logout/blocs/log_out_bloc.dart';
 import 'package:vierqr/features/logout/events/log_out_event.dart';
 import 'package:vierqr/features/logout/states/log_out_state.dart';
@@ -17,7 +15,6 @@ import 'package:vierqr/services/providers/avatar_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 import 'package:flutter/material.dart';
 
-import 'introduce_bottom_sheet.dart';
 
 class UserSetting extends StatefulWidget {
   const UserSetting({Key? key, this.voidCallback}) : super(key: key);
@@ -42,7 +39,6 @@ class _UserSetting extends State<UserSetting>
   Widget build(BuildContext context) {
     super.build(context);
     final double width = MediaQuery.of(context).size.width;
-    final double height = MediaQuery.of(context).size.height;
     Alignment buttonTextAlignment = Alignment.centerLeft;
     return BlocListener<LogoutBloc, LogoutState>(
       listener: (context, state) {

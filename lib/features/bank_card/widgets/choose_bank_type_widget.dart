@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/layouts/box_layout.dart';
-import 'package:vierqr/services/providers/add_bank_provider.dart';
 
 class ChooseBankTypeWidget extends StatelessWidget {
   const ChooseBankTypeWidget({super.key});

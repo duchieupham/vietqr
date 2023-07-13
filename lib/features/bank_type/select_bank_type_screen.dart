@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
@@ -13,7 +12,6 @@ import 'package:vierqr/features/bank_type/states/bank_type_state.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
-import 'package:vierqr/services/providers/add_bank_provider.dart';
 import 'package:vierqr/services/providers/search_clear_provider.dart';
 
 class SelectBankTypeScreen extends StatelessWidget {

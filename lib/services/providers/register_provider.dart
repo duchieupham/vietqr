@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:vierqr/commons/enums/enum_type.dart';
 
 class RegisterProvider with ChangeNotifier {
   //error handler
@@ -14,10 +13,6 @@ class RegisterProvider with ChangeNotifier {
   final confirmPassController = TextEditingController();
 
   final introduceController = TextEditingController();
-
-  bool _isChangePhone = false;
-
-  bool _isChangePass = false;
 
   get phoneErr => _isPhoneErr;
 

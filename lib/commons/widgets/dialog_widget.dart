@@ -1,27 +1,19 @@
 import 'dart:async';
 import 'dart:ui';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/numeral.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/bank_information_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/utils/sms_information_utils.dart';
-import 'package:vierqr/commons/widgets/bank_card_widget.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/pin_widget.dart';
-import 'package:vierqr/features/bank_card/blocs/bank_card_bloc.dart';
-import 'package:vierqr/features/bank_card/events/bank_card_event.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/main.dart';
-import 'package:vierqr/models/bank_account_dto.dart';
-import 'package:vierqr/models/bank_account_remove_dto.dart';
 import 'package:vierqr/models/bank_information_dto.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:vierqr/services/providers/bank_card_position_provider.dart';
 import 'package:vierqr/services/providers/pin_provider.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class DialogWidget {
   //
@@ -724,7 +716,7 @@ class DialogWidget {
   }
 
   openTransactionDialog(String address, String body) {
-    final ScrollController _scrollContoller = ScrollController();
+    final ScrollController scrollController = ScrollController();
     return showDialog(
       barrierDismissible: false,
       context: NavigationService.navigatorKey.currentContext!,
@@ -802,7 +794,7 @@ class DialogWidget {
                           width: 220,
                           height: 250,
                           child: SingleChildScrollView(
-                            controller: _scrollContoller,
+                            controller: scrollController,
                             child: Text(
                               body,
                               style: const TextStyle(fontSize: 15),

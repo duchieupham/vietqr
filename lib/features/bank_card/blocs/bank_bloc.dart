@@ -7,7 +7,7 @@ import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/features/bank_card/events/bank_event.dart';
-import 'package:vierqr/features/bank_card/repositories/bank_card_repository.dart';
+import 'package:vierqr/features/bank_detail/repositories/bank_card_repository.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
 import 'package:vierqr/features/home/blocs/home_bloc.dart';
 import 'package:vierqr/main.dart';
@@ -48,6 +48,7 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
   void _getBankTypeQR(BankEvent event, Emitter emit) async {
     try {
       if (event is ScanQrEventGetBankType) {
+        emit(state.copyWith(request: BankType.NONE));
         VietQRScannedDTO vietQRScannedDTO =
             QRScannerUtils.instance.getBankAccountFromQR(event.code);
 
@@ -107,12 +108,16 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
             if (paletteGenerator.dominantColor != null) {
               colors.add(paletteGenerator.dominantColor!.color);
             } else {
+              if (!mounted) return;
               colors.add(Theme.of(context).cardColor);
             }
           }
         }
         emit(state.copyWith(
-            status: BlocStatus.SUCCESS, listBanks: list, colors: colors));
+            request: BankType.BANK,
+            listBanks: list,
+            colors: colors,
+            status: BlocStatus.UNLOADING));
       }
     } catch (e) {
       LOG.error(e.toString());

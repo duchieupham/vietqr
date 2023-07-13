@@ -202,7 +202,7 @@ class AccountLinkView extends StatelessWidget {
                 decoration: BoxDecoration(
                   image: DecorationImage(
                       image: ImageUtils.instance
-                          .getImageNetWork(bankTypeDTO.imageId ?? '')),
+                          .getImageNetWork(bankTypeDTO.imageId)),
                 ),
               ),
               const SizedBox(width: 4),

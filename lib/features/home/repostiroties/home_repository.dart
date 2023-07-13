@@ -49,7 +49,6 @@ class HomeRepository {
       // result['sms'] = smsPermission;
       result['camera'] = cameraPermission;
     } catch (e) {
-      print('Error at checkPermissions - PermissionRepository: $e');
     }
     return result;
   }

@@ -51,7 +51,6 @@ class TransactionHistoryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double width = MediaQuery.of(context).size.width;
     final arg = ModalRoute.of(context)!.settings.arguments as Map;
     bankId = arg['bankId'] ?? '';
     initialServices(context, bankId);

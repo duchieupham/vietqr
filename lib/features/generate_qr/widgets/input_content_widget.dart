@@ -8,8 +8,6 @@ import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_widget.dart';
-import 'package:vierqr/features/bank_card/blocs/bank_card_bloc.dart';
-import 'package:vierqr/features/bank_card/events/bank_card_event.dart';
 import 'package:vierqr/features/generate_qr/blocs/qr_blocs.dart';
 import 'package:vierqr/features/generate_qr/events/qr_event.dart';
 import 'package:vierqr/features/generate_qr/states/qr_state.dart';
@@ -20,14 +18,23 @@ import 'package:vierqr/services/providers/create_qr_provider.dart';
 import 'package:vierqr/services/providers/search_clear_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
+class InputContentView extends StatelessWidget {
+  final BankAccountDTO bankAccountDTO;
+
+  const InputContentView({super.key, required this.bankAccountDTO});
+
+  @override
+  Widget build(BuildContext context) {
+    return InputContentWidget(bankAccountDTO: bankAccountDTO);
+  }
+}
+
 class InputContentWidget extends StatefulWidget {
-  final BankCardBloc? bankCardBloc;
   final BankAccountDTO bankAccountDTO;
 
   const InputContentWidget({
     Key? key,
     required this.bankAccountDTO,
-    this.bankCardBloc,
   }) : super(key: key);
 
   @override

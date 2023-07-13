@@ -19,7 +19,6 @@ import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/models/business_detail_dto.dart';
 import 'package:vierqr/models/business_item_dto.dart';
 import 'package:vierqr/models/related_transaction_receive_dto.dart';
-import 'package:vierqr/services/providers/add_bank_provider.dart';
 import 'package:vierqr/services/providers/bank_account_provider.dart';
 import 'package:vierqr/services/providers/shortcut_provider.dart';
 import 'package:vierqr/services/providers/suggestion_widget_provider.dart';
@@ -571,10 +570,8 @@ class _DashboardScreenState extends State<DashboardScreen>
                           icon: Icons.credit_card_rounded,
                           color: AppColor.PURPLE_NEON,
                           function: () {
-                            Provider.of<AddBankProvider>(context, listen: false)
-                                .updateSelect(1);
-                            Navigator.pushNamed(context, Routes.ADD_BANK_CARD,
-                                arguments: {'pageIndex': 1}).then(
+                            Navigator.pushNamed(context, Routes.ADD_BANK_CARD)
+                                .then(
                               (value) {
                                 Provider.of<BankAccountProvider>(context,
                                         listen: false)

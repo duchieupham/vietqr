@@ -33,7 +33,7 @@ class ShareUtils {
         final pngBytes = byteData.buffer.asUint8List();
         File('$tempPath/imgshare.png').writeAsBytesSync(pngBytes);
         XFile xFile = XFile('$tempPath/imgshare.png');
-        List<XFile> files = []..add(xFile);
+        List<XFile> files = [xFile];
         await Share.shareXFiles(files, text: textSharing).then((value) async {
           File file = File('$tempPath/imgshare.png');
           await file.delete();
@@ -41,7 +41,9 @@ class ShareUtils {
         });
       }
     } catch (e) {
-      print('Error at saveWidgetToImage - ShareUtils: $e');
+      if (kDebugMode) {
+        print('Error at saveWidgetToImage - ShareUtils: $e');
+      }
       LOG.error(e.toString());
     }
     return result;

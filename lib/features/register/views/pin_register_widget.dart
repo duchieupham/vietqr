@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/services/providers/pin_provider.dart';
 
 class PinRegisterWidget extends StatefulWidget {
   final double pinSize;
@@ -98,7 +96,6 @@ class _PinRegisterWidgetState extends State<PinRegisterWidget> {
                 keyboardType: TextInputType.number,
                 onChanged: ((text) {
                   setState(() {
-                    print(text);
                     for (int i = 0; i < widget.pinLength; i++) {
                       if (i < text.length) {
                         listValue[i] = text[i];

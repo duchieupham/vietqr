@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
-import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/services/providers/checker_provider.dart';
 import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
 

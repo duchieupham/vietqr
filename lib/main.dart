@@ -16,14 +16,9 @@ import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/account/blocs/account_bloc.dart';
 import 'package:vierqr/features/add_bank/add_bank_screen.dart';
-import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
-import 'package:vierqr/features/bank_card/blocs/bank_card_bloc.dart';
-import 'package:vierqr/features/bank_card/bank_card_detail_screen.dart';
-import 'package:vierqr/features/bank_card/views/bank_card_generated_view.dart';
 import 'package:vierqr/features/bank_card/views/search_bank_view.dart';
 import 'package:vierqr/features/bank_member/blocs/bank_member_bloc.dart';
 import 'package:vierqr/features/bank_member/views/bank_member_view.dart';
-import 'package:vierqr/features/bank_type/blocs/bank_type_bloc.dart';
 import 'package:vierqr/features/bank_type/select_bank_type_screen.dart';
 import 'package:vierqr/features/branch/blocs/branch_bloc.dart';
 import 'package:vierqr/features/branch/views/branch_detail_view.dart';
@@ -33,7 +28,6 @@ import 'package:vierqr/features/business/views/add_business_view.dart';
 import 'package:vierqr/features/business/views/business_information_view.dart';
 import 'package:vierqr/features/business/views/business_transaction_view.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
-import 'package:vierqr/features/generate_qr/blocs/qr_blocs.dart';
 import 'package:vierqr/features/generate_qr/views/qr_generated.dart';
 import 'package:vierqr/features/generate_qr/views/qr_share_view.dart';
 import 'package:vierqr/features/home/blocs/home_bloc.dart';
@@ -328,8 +322,6 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.ADD_BANK_CARD: (context) => const AddBankScreen(),
                   Routes.SELECT_BANK_TYPE: (context) =>
                       const SelectBankTypeScreen(),
-                  Routes.BANK_CARD_GENERATED_VIEW: (context) =>
-                      const BankCardGeneratedView(),
                   Routes.BANK_MEMBER_VIEW: (context) => const BankMemberView(),
                   Routes.QR_SHARE_VIEW: (context) => QRShareView(),
                   Routes.QR_GENERATED: (context) => const QRGenerated(),

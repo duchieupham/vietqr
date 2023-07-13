@@ -50,7 +50,6 @@ class _BranchDetailViewState extends State<BranchDetailView> {
 
   late BranchBloc branchBloc;
 
-  final _formModalKey = GlobalKey<FormState>();
 
   void initialServices(BuildContext context) {
     String userId = UserInformationHelper.instance.getUserId();

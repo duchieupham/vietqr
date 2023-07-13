@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -29,9 +28,7 @@ import 'package:vierqr/features/personal/events/user_edit_event.dart';
 import 'package:vierqr/features/personal/frames/user_edit_frame.dart';
 import 'package:vierqr/features/personal/states/user_edit_state.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
-import 'package:vierqr/layouts/border_layout.dart';
 import 'package:vierqr/layouts/box_layout.dart';
-import 'package:vierqr/main.dart';
 import 'package:vierqr/models/account_information_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/services/providers/add_business_provider.dart';
@@ -313,7 +310,6 @@ class UserEditView extends StatelessWidget {
                                   widget: const QRScanWidget(),
                                   color: AppColor.BLACK,
                                 );
-
                                 startBarcodeScanStream(context);
                               }
                             },

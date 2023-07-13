@@ -47,7 +47,7 @@ class _TransactionHistory extends State<TransactionHistory> {
       appBar: AppBar(toolbarHeight: 0),
       body: Column(
         children: [
-          SubHeader(title: 'Giao dịch'),
+          const SubHeader(title: 'Giao dịch'),
           Expanded(
             child: ListView(
               children: [

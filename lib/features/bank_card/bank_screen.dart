@@ -7,7 +7,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
 // import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:uuid/uuid.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'dart:math' as math;
 
@@ -22,7 +21,7 @@ import 'package:vierqr/commons/widgets/viet_qr_widget.dart';
 import 'package:vierqr/features/account/blocs/account_bloc.dart';
 import 'package:vierqr/features/account/events/account_event.dart';
 import 'package:vierqr/features/account/states/account_state.dart';
-import 'package:vierqr/features/bank_card/bank_card_detail_screen.dart';
+import 'package:vierqr/features/bank_detail/bank_card_detail_screen.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
@@ -35,15 +34,11 @@ import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/models/qr_create_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
-import 'package:vierqr/services/providers/add_bank_provider.dart';
 import 'package:vierqr/services/providers/bank_%20arrangement_provider.dart';
 import 'package:vierqr/services/providers/bank_account_provider.dart';
 import 'package:vierqr/services/providers/bank_card_select_provider.dart';
 import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
-
-const double _minHeight = 60;
-const double _maxHeight = 150;
 
 class BankScreen extends StatelessWidget {
   const BankScreen({super.key});
@@ -142,7 +137,6 @@ class _BankScreenState extends State<_BankScreen>
     final double maxListHeight = MediaQuery.of(context).size.height - 200;
     final double height = MediaQuery.of(context).size.height;
     double sizedBox = 0;
-    double listHeight = 0;
     return Consumer<BankArrangementProvider>(
       builder: (context, provider, child) {
         return (provider.type == 0)
@@ -187,7 +181,7 @@ class _BankScreenState extends State<_BankScreen>
                       child: BlocConsumer<BankBloc, BankState>(
                         listener: (context, state) async {
                           if (state.request == BankType.SCAN) {
-                            await Navigator.pushNamed(
+                            Navigator.pushNamed(
                               context,
                               Routes.ADD_BANK_CARD,
                               arguments: {
@@ -197,11 +191,9 @@ class _BankScreenState extends State<_BankScreen>
                                 'name': ''
                               },
                             );
-
-                            _bloc.add(UpdateEvent());
                           }
 
-                          if (state.status == BlocStatus.SUCCESS) {
+                          if (state.request == BankType.BANK) {
                             if (scrollController.hasClients) {
                               scrollController.jumpTo(0);
                             }
@@ -481,10 +473,7 @@ class _BankScreenState extends State<_BankScreen>
               icon: Icons.add_rounded,
               title: 'Thêm TK ngân hàng',
               function: () {
-                Provider.of<AddBankProvider>(context, listen: false)
-                    .updateSelect(1);
-                Navigator.pushNamed(context, Routes.ADD_BANK_CARD,
-                    arguments: {'pageIndex': 1}).then(
+                Navigator.pushNamed(context, Routes.ADD_BANK_CARD).then(
                   (value) {
                     Provider.of<BankAccountProvider>(context, listen: false)
                         .reset();
@@ -523,10 +512,7 @@ class _BankScreenState extends State<_BankScreen>
   }
 
   void getListBank(BuildContext context) {
-    String userId = UserInformationHelper.instance.getUserId();
-    _bloc.add(
-      BankCardEventGetList(),
-    );
+    _bloc.add(BankCardEventGetList());
   }
 
   void getListQR(BuildContext context, List<QRCreateDTO> list) {
@@ -668,7 +654,6 @@ class _StackedList extends State<StackedList> {
       listBankAccount = [...listBankAccount, otd2];
     } else {
       listBankAccount = [otd, otd2];
-      print('----------------------------${listBankAccount.length} ');
     }
 
     listColor = widget.colors;
@@ -682,8 +667,6 @@ class _StackedList extends State<StackedList> {
 
   @override
   Widget build(BuildContext context) {
-    final double width = MediaQuery.of(context).size.width;
-    final double height = MediaQuery.of(context).size.height;
     return RefreshIndicator(
       onRefresh: widget.onRefresh!,
       child: ListView(
@@ -736,8 +719,7 @@ class _StackedList extends State<StackedList> {
             onTap: () async {
               await Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) =>
-                      BankCardDetailScreen(bankId: dto.id ?? ''),
+                  builder: (context) => BankCardDetailScreen(bankId: dto.id),
                   settings: const RouteSettings(
                     name: Routes.BANK_CARD_DETAIL_VEW,
                   ),
@@ -777,25 +759,13 @@ class _StackedList extends State<StackedList> {
                             dto.userId == userId))
                           InkWell(
                             onTap: () {
-                              Provider.of<AddBankProvider>(context,
-                                      listen: false)
-                                  .updateBankId(dto.id);
-                              Provider.of<AddBankProvider>(context,
-                                      listen: false)
-                                  .updateSelect(2);
-                              Provider.of<AddBankProvider>(context,
-                                      listen: false)
-                                  .updateRegisterAuthentication(true);
-                              Provider.of<AddBankProvider>(context,
-                                      listen: false)
-                                  .resetValidate();
                               Navigator.pushNamed(
                                 context,
                                 Routes.ADD_BANK_CARD,
                                 arguments: {
                                   'pageIndex': 3,
                                   'bankAccount': dto.bankAccount,
-                                  'name': dto.userBankName,
+                                  'name': dto.userBankName
                                 },
                               );
                             },
@@ -855,15 +825,13 @@ class _StackedList extends State<StackedList> {
                             );
                             Navigator.of(context)
                                 .push(
-                              MaterialPageRoute(
-                                builder: (context) => CreateQR(
-                                  bankAccountDTO: bankAccountDTO,
-                                ),
-                              ),
-                            )
-                                .then((value) {
-                              //
-                            });
+                                  MaterialPageRoute(
+                                    builder: (context) => CreateQRScreen(
+                                      bankAccountDTO: bankAccountDTO,
+                                    ),
+                                  ),
+                                )
+                                .then((value) {});
                           },
                           child: BoxLayout(
                             width: 95,

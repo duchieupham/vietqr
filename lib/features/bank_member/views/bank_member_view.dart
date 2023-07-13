@@ -18,7 +18,6 @@ import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_member_dto.dart';
 import 'package:vierqr/models/bank_member_insert_dto.dart';
 import 'package:vierqr/services/providers/search_clear_provider.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class BankMemberView extends StatelessWidget {
   static final TextEditingController phoneController = TextEditingController();

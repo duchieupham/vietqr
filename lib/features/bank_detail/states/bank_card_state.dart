@@ -6,7 +6,6 @@ import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_card_request_otp.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
-import 'package:vierqr/models/qr_create_dto.dart';
 
 enum BankDetailType { NONE, SUCCESS, DELETE, ERROR }
 

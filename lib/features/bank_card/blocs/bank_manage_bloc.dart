@@ -23,7 +23,6 @@ class BankManageBloc extends Bloc<BankManageEvent, BankManageState> {
         // emit(BankManageGetDTOSuccessfulState(bankAccountDTO: dto));
       }
     } catch (e) {
-      print('Error at _getBankAccount - BankManageBloc: $e');
       emit(BankManageGetDTOFailedState());
     }
   }

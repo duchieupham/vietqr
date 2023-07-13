@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
@@ -11,8 +9,6 @@ import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_widget.dart';
 import 'package:vierqr/features/branch/blocs/branch_bloc.dart';
-import 'package:vierqr/features/branch/events/branch_event.dart';
-import 'package:vierqr/features/branch/states/branch_state.dart';
 import 'package:vierqr/layouts/border_layout.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/models/branch_member_insert_dto.dart';

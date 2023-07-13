@@ -61,9 +61,6 @@ class BusinessInformationProvider extends ChangeNotifier {
   void updateElementAtBusinessMember(index, bool value) {
     if (index < 0) {
       _businessMembers.map((e) => e.isDelete = false).toList();
-      for (var element in _businessMembers) {
-        print(element.isDelete);
-      }
     } else {
       BusinessMemberDTO businessMemberDTO = _businessMembers.elementAt(index);
       businessMemberDTO.isDelete = value;
