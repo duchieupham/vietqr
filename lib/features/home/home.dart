@@ -608,7 +608,7 @@ class _HomeScreen extends State<HomeScreen>
       alignment: Alignment.topCenter,
       decoration: const BoxDecoration(
           image: DecorationImage(
-              image: AssetImage('assets/images/bg-admin-card.png'),
+              image: AssetImage('assets/images/bgr-header.png'),
               fit: BoxFit.fitWidth)),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 25),

@@ -41,7 +41,7 @@ class BankCardWidget extends StatelessWidget {
               : DecorationImage(
                   image: AssetImage(
                     (dto.type == Stringify.CARD_TYPE_BUSINESS)
-                        ? 'assets/images/bg-admin-card.png'
+                        ? 'assets/images/bgr-header-card.png'
                         : 'assets/images/bg-member-card.png',
                   ),
                 ),

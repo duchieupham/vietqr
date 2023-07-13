@@ -28,8 +28,6 @@ import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
 import 'package:vierqr/features/bank_card/widgets/function_bank_widget.dart';
 import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
-import 'package:vierqr/features/generate_qr/blocs/qr_blocs.dart';
-import 'package:vierqr/features/generate_qr/states/qr_state.dart';
 import 'package:vierqr/features/generate_qr/views/create_qr.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
 import 'package:vierqr/layouts/box_layout.dart';
