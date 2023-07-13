@@ -484,7 +484,7 @@ class _HomeScreen extends State<HomeScreen>
           contentPadding: const EdgeInsets.only(left: 16),
           alignment: Alignment.centerLeft,
           title: 'Tài khoản ngân hàng',
-          textSize: 13,
+          textSize: 11,
           function: () {
             Navigator.pushNamed(context, Routes.SEARCH_BANK);
           },

@@ -377,7 +377,7 @@ class _BankScreenState extends State<_BankScreen>
           }
         },
             title: 'Copy mã QR',
-            des: 'Quét QRmã QR để thêm/liên kết Tk ngân hàng'),
+            des: 'Quét mã VietQR để thêm/Liên kết TK ngân hàng'),
       ],
     );
   }
