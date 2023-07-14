@@ -111,9 +111,6 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
 
   void _getBankAccounts(BankEvent event, Emitter emit) async {
     try {
-      if (banks.isNotEmpty && state.listBankTypeDTO.isEmpty) {
-        emit(state.copyWith(listBankTypeDTO: banks));
-      }
       if (event is BankCardEventGetList) {
         if (state.status == BlocStatus.NONE) {
           emit(state.copyWith(status: BlocStatus.LOADING));

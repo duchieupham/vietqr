@@ -98,7 +98,7 @@ class TransactionHistoryView extends StatelessWidget {
                                     width: 50,
                                     height: 50,
                                     child: CircularProgressIndicator(
-                                      color: AppColor.GREEN,
+                                      color: AppColor.BLUE_TEXT,
                                     ),
                                   ),
                                 )

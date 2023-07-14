@@ -321,7 +321,7 @@ class _BranchDetailViewState extends State<BranchDetailView> {
                                                               id: branchId));
                                                     }
                                                   },
-                                                  bgColor: AppColor.GREEN,
+                                                  bgColor: AppColor.BLUE_TEXT,
                                                   textColor: AppColor.WHITE,
                                                 )
                                               : const SizedBox();
@@ -372,7 +372,7 @@ class _BranchDetailViewState extends State<BranchDetailView> {
                                   width: 36,
                                   height: 36,
                                   child: const CircularProgressIndicator(
-                                    color: AppColor.GREEN,
+                                    color: AppColor.BLUE_TEXT,
                                   ),
                                 )
                               else
@@ -581,7 +581,7 @@ class _BranchDetailViewState extends State<BranchDetailView> {
                       height: 16,
                       child: const Center(
                         child: CircularProgressIndicator(
-                          color: AppColor.GREEN,
+                          color: AppColor.BLUE_TEXT,
                         ),
                       ),
                     )

@@ -111,7 +111,7 @@ class _DashboardScreenState extends State<DashboardScreen>
             height: 200,
             child: const Center(
               child: CircularProgressIndicator(
-                color: AppColor.GREEN,
+                color: AppColor.BLUE_TEXT,
               ),
             ),
           );

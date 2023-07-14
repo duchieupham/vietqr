@@ -5,6 +5,7 @@ import 'package:vierqr/features/generate_qr/blocs/qr_blocs.dart';
 import 'package:vierqr/features/generate_qr/states/qr_state.dart';
 import 'package:vierqr/features/generate_qr/widgets/input_content_widget.dart';
 import 'package:vierqr/features/generate_qr/widgets/input_ta_widget.dart';
+import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/services/providers/create_qr_page_select_provider.dart';
 import 'package:vierqr/services/providers/create_qr_provider.dart';
@@ -72,15 +73,9 @@ class _CreateQR extends State<CreateQR> {
         return false;
       },
       child: Scaffold(
-        appBar: AppBar(toolbarHeight: 0),
+        appBar: const MAppBar(title: 'Tạo QR giao dịch'),
         body: Column(
           children: [
-            SubHeader(
-              title: 'Tạo QR giao dịch',
-              function: () {
-                _navigateBack(context);
-              },
-            ),
             BlocConsumer<QRBloc, QRState>(
               listener: (context, state) {},
               builder: (context, state) {

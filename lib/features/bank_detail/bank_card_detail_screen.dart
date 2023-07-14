@@ -539,7 +539,7 @@ class _BankCardDetailState extends State<BankCardDetailState> {
               );
             },
             textColor: AppColor.WHITE,
-            bgColor: AppColor.GREEN,
+            bgColor: AppColor.BLUE_TEXT,
           ),
           Padding(
               padding: EdgeInsets.only(
