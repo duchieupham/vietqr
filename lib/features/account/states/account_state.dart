@@ -5,6 +5,7 @@ import 'package:vierqr/models/introduce_dto.dart';
 enum AccountType {
   NONE,
   LOG_OUT,
+  PONIT,
 }
 
 class AccountState extends Equatable {

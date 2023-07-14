@@ -979,51 +979,52 @@ class _StackedList extends State<StackedList> {
               ),
               const Padding(padding: EdgeInsets.only(left: 10)),
               BlocConsumer<AccountBloc, AccountState>(
-                  listener: (context, state) {},
-                  builder: (context, state) {
-                    if (state.status == BlocStatus.SUCCESS) {
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Padding(padding: EdgeInsets.only(top: 5)),
-                          const Text(
-                            'VietQR',
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                                fontSize: 15,
+                listener: (context, state) {},
+                builder: (context, state) {
+                  if (state.request == AccountType.PONIT) {
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Padding(padding: EdgeInsets.only(top: 5)),
+                        const Text(
+                          'VietQR',
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              fontSize: 15,
+                              color: AppColor.WHITE,
+                              fontWeight: FontWeight.w600),
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'Số dư : ${CurrencyUtils.instance.getCurrencyFormatted(state.introduceDTO!.amount ?? '0')} VND - Điểm thưởng: ${state.introduceDTO!.point ?? '0'} ',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
                                 color: AppColor.WHITE,
-                                fontWeight: FontWeight.w600),
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                'Số dư : ${CurrencyUtils.instance.getCurrencyFormatted(state.introduceDTO!.amount ?? '0')} VND - Điểm thưởng: ${state.introduceDTO!.point ?? '0'} ',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  color: AppColor.WHITE,
-                                  fontSize: 13,
-                                ),
+                                fontSize: 13,
                               ),
-                              Image.asset(
-                                'assets/images/ic_point.png',
-                                height: 16,
-                                color: AppColor.WHITE,
-                              )
-                            ],
-                          ),
-                        ],
-                      );
-                    }
-                    return const SizedBox(
-                      width: 30,
-                      height: 30,
-                      child: CircularProgressIndicator(
-                        color: AppColor.WHITE,
-                      ),
+                            ),
+                            Image.asset(
+                              'assets/images/ic_point.png',
+                              height: 16,
+                              color: AppColor.WHITE,
+                            )
+                          ],
+                        ),
+                      ],
                     );
-                  }),
+                  }
+                  return const SizedBox(
+                    width: 30,
+                    height: 30,
+                    child: CircularProgressIndicator(
+                      color: AppColor.WHITE,
+                    ),
+                  );
+                },
+              ),
             ],
           ),
           const Spacer(),
