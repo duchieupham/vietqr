@@ -142,7 +142,7 @@ class DefaultThemeData {
     return ThemeData(
       brightness: Brightness.light,
       scaffoldBackgroundColor: AppColor.GREY_BG,
-      colorScheme: const ColorScheme.light(primary: AppColor.GREEN),
+      colorScheme: const ColorScheme.light(primary: AppColor.BLUE_TEXT),
       canvasColor: AppColor.GREY_BG,
       buttonColor: AppColor.GREY_VIEW,
       primaryColor: AppColor.WHITE,

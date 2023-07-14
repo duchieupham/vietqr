@@ -541,7 +541,7 @@ class DialogWidget {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: const [
                             CircularProgressIndicator(
-                              color: AppColor.GREEN,
+                              color: AppColor.BLUE_TEXT,
                             ),
                             Padding(padding: EdgeInsets.only(top: 30)),
                             Text(
@@ -564,7 +564,7 @@ class DialogWidget {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: const CircularProgressIndicator(
-                          color: AppColor.GREEN,
+                          color: AppColor.BLUE_TEXT,
                         ),
                       ),
               ),

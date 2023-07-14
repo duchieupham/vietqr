@@ -216,7 +216,7 @@ class _BankScreenState extends State<_BankScreen>
                                 width: 30,
                                 height: 30,
                                 child: CircularProgressIndicator(
-                                  color: AppColor.GREEN,
+                                  color: AppColor.BLUE_TEXT,
                                 ),
                               ),
                             );
@@ -1032,7 +1032,7 @@ class _StackedList extends State<StackedList> {
                     width: 30,
                     height: 30,
                     child: CircularProgressIndicator(
-                      color: AppColor.WHITE,
+                      color: AppColor.BLUE_TEXT,
                     ),
                   );
                 },

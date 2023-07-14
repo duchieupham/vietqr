@@ -85,15 +85,15 @@ class _DashboardScreenState extends State<DashboardScreen>
       child: SizedBox(
         width: width,
         height: height,
-        child: ListView(
-          shrinkWrap: true,
-          physics: const AlwaysScrollableScrollPhysics(),
-          children: [
-            _buildSuggestion(context),
-            _buildShortcut(context),
-            _buildBusinessWidget(context),
-            const Padding(padding: EdgeInsets.only(bottom: 100)),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              _buildSuggestion(context),
+              _buildShortcut(context),
+              _buildBusinessWidget(context),
+              const Padding(padding: EdgeInsets.only(bottom: 100)),
+            ],
+          ),
         ),
       ),
     );
@@ -111,7 +111,7 @@ class _DashboardScreenState extends State<DashboardScreen>
             height: 200,
             child: const Center(
               child: CircularProgressIndicator(
-                color: AppColor.GREEN,
+                color: AppColor.BLUE_TEXT,
               ),
             ),
           );
@@ -129,17 +129,14 @@ class _DashboardScreenState extends State<DashboardScreen>
                 ),
               ),
               const SizedBox(height: 16),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: state.list.length,
-                itemBuilder: (context, index) {
+              Column(
+                children: List.generate(state.list.length, (index) {
                   return _buildBusinessItem(
                     context: context,
                     dto: state.list[index],
                   );
-                },
-              ),
+                }).toList(),
+              )
             ],
           ),
         );
