@@ -48,8 +48,7 @@ class HomeRepository {
       PermissionStatus cameraPermission = await Permission.camera.status;
       // result['sms'] = smsPermission;
       result['camera'] = cameraPermission;
-    } catch (e) {
-    }
+    } catch (e) {}
     return result;
   }
 

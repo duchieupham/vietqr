@@ -9,7 +9,7 @@ import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/models/qr_create_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 
-enum BankType { QR, NONE, SCAN, BANK }
+enum BankType { QR, NONE, SCAN, BANK, GET_BANK }
 
 class BankState extends Equatable {
   final String? msg;
@@ -24,6 +24,7 @@ class BankState extends Equatable {
   final TypePermission type;
   final List<QRCreateDTO>? listQR;
   final List<QRGeneratedDTO> listGeneratedQR;
+  final List<BankTypeDTO> listBankTypeDTO;
   final BankTypeDTO? bankTypeDTO;
 
   const BankState({
@@ -37,9 +38,10 @@ class BankState extends Equatable {
     this.dto,
     this.type = TypePermission.None,
     this.bankAccount,
-    this.bankTypeDTO,
+    required this.listBankTypeDTO,
     this.listQR,
     required this.listGeneratedQR,
+    this.bankTypeDTO,
   });
 
   BankState copyWith({
@@ -56,6 +58,7 @@ class BankState extends Equatable {
     TypePermission? type,
     NationalScannerDTO? nationalScannerDTO,
     String? bankAccount,
+    List<BankTypeDTO>? listBankTypeDTO,
     BankTypeDTO? bankTypeDTO,
     List<QRCreateDTO>? listQR,
     List<QRGeneratedDTO>? listGeneratedQR,
@@ -73,6 +76,7 @@ class BankState extends Equatable {
       listQR: listQR ?? this.listQR,
       listGeneratedQR: listGeneratedQR ?? this.listGeneratedQR,
       bankAccount: bankAccount ?? this.bankAccount,
+      listBankTypeDTO: listBankTypeDTO ?? this.listBankTypeDTO,
       bankTypeDTO: bankTypeDTO ?? this.bankTypeDTO,
     );
   }
@@ -89,7 +93,7 @@ class BankState extends Equatable {
         dto,
         type,
         bankAccount,
-        bankTypeDTO,
+        listBankTypeDTO,
         listQR,
         listGeneratedQR,
       ];

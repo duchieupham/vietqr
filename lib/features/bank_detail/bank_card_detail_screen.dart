@@ -25,6 +25,7 @@ import 'package:vierqr/features/generate_qr/views/create_qr.dart';
 import 'package:vierqr/features/home/widgets/custom_app_bar_widget.dart';
 import 'package:vierqr/features/printer/views/printing_view.dart';
 import 'package:vierqr/layouts/box_layout.dart';
+import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
@@ -62,6 +63,8 @@ class BankCardDetailState extends StatefulWidget {
 
 class _BankCardDetailState extends State<BankCardDetailState> {
   late BankCardBloc bankCardBloc;
+
+  String userId = UserInformationHelper.instance.getUserId();
 
   QRGeneratedDTO qrGeneratedDTO = const QRGeneratedDTO(
       bankCode: '',
@@ -115,9 +118,7 @@ class _BankCardDetailState extends State<BankCardDetailState> {
     final double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      appBar: const CustomAppBarWidget(
-        child: SubHeader(title: 'Chi tiết TK ngân hàng'),
-      ),
+      appBar: const MAppBar(title: 'Chi tiết ngân hàng'),
       body: Column(
         children: [
           Expanded(
@@ -183,205 +184,204 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                       }
                     },
                     builder: (context, state) {
-                      return ListView(
-                        shrinkWrap: true,
+                      return SingleChildScrollView(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
-                        children: [
-                          VietQr(qrGeneratedDTO: qrGeneratedDTO),
-                          const Padding(padding: EdgeInsets.only(top: 30)),
-                          BoxLayout(
-                            width: width,
-                            padding: EdgeInsets.only(
-                              left: 20,
-                              right: 20,
-                              top: 20,
-                              bottom: (state.bankDetailDTO?.authenticated ??
-                                      false ||
-                                          state.bankDetailDTO?.bankCode
-                                                  .trim()
-                                                  .toUpperCase() !=
-                                              'MB')
-                                  ? 20
-                                  : 0,
-                            ),
-                            child: Column(
-                              children: [
-                                _buildElement(
-                                  context: context,
-                                  width: width,
-                                  title: 'Trạng thái',
-                                  isAuthenticated: dto.authenticated,
-                                  description: (dto.authenticated)
-                                      ? 'Đã liên kết'
-                                      : 'Chưa liên kết',
-                                ),
-                                if (!dto.authenticated) ...[
-                                  const Padding(
-                                      padding: EdgeInsets.only(top: 10)),
-                                  const Text(
-                                    'Liên kết TK ngân hàng để nhận thông báo biến động số dư',
-                                    style: TextStyle(
-                                      // fontSize: 12,
-                                      color: AppColor.GREY_TEXT,
+                        child: Column(
+                          children: [
+                            VietQr(qrGeneratedDTO: qrGeneratedDTO),
+                            const Padding(padding: EdgeInsets.only(top: 30)),
+                            BoxLayout(
+                              width: width,
+                              padding: EdgeInsets.only(
+                                left: 20,
+                                right: 20,
+                                top: 20,
+                                bottom: (state.bankDetailDTO?.authenticated ??
+                                        false ||
+                                            state.bankDetailDTO?.bankCode
+                                                    .trim()
+                                                    .toUpperCase() !=
+                                                'MB')
+                                    ? 20
+                                    : 0,
+                              ),
+                              child: Column(
+                                children: [
+                                  _buildElement(
+                                    context: context,
+                                    width: width,
+                                    title: 'Trạng thái',
+                                    isAuthenticated: dto.authenticated,
+                                    description: (dto.authenticated)
+                                        ? 'Đã liên kết'
+                                        : 'Chưa liên kết',
+                                  ),
+                                  if (!dto.authenticated) ...[
+                                    const Padding(
+                                        padding: EdgeInsets.only(top: 10)),
+                                    const Text(
+                                      'Liên kết TK ngân hàng để nhận thông báo biến động số dư',
+                                      style: TextStyle(
+                                        // fontSize: 12,
+                                        color: AppColor.GREY_TEXT,
+                                      ),
                                     ),
-                                  ),
-                                  const Padding(
-                                      padding: EdgeInsets.only(top: 10)),
-                                ],
-                                if (dto.nationalId.isNotEmpty) ...[
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 10, bottom: 10),
-                                    child: DividerWidget(width: width),
-                                  ),
-                                  _buildElement(
-                                    context: context,
-                                    width: width,
-                                    title: 'CCCD/CMT',
-                                    description: dto.nationalId,
-                                  ),
-                                ],
-                                if (dto.phoneAuthenticated.isNotEmpty) ...[
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 10, bottom: 10),
-                                    child: DividerWidget(width: width),
-                                  ),
-                                  _buildElement(
-                                    context: context,
-                                    width: width,
-                                    title: 'SĐT xác thực',
-                                    description: dto.phoneAuthenticated,
-                                  ),
-                                ],
-                                const SizedBox(height: 10),
-                                if (!dto.authenticated &&
-                                    dto.bankCode.trim().toUpperCase() ==
-                                        'MB') ...[
-                                  DividerWidget(width: width),
+                                    const Padding(
+                                        padding: EdgeInsets.only(top: 10)),
+                                  ],
+                                  if (dto.nationalId.isNotEmpty) ...[
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 10, bottom: 10),
+                                      child: DividerWidget(width: width),
+                                    ),
+                                    _buildElement(
+                                      context: context,
+                                      width: width,
+                                      title: 'CCCD/CMT',
+                                      description: dto.nationalId,
+                                    ),
+                                  ],
+                                  if (dto.phoneAuthenticated.isNotEmpty) ...[
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 10, bottom: 10),
+                                      child: DividerWidget(width: width),
+                                    ),
+                                    _buildElement(
+                                      context: context,
+                                      width: width,
+                                      title: 'SĐT xác thực',
+                                      description: dto.phoneAuthenticated,
+                                    ),
+                                  ],
                                   const SizedBox(height: 10),
-                                  ButtonIconWidget(
-                                    width: width,
-                                    icon: Icons.link_rounded,
-                                    title: 'Liên kết ngay',
-                                    function: () {
-                                      BankTypeDTO bankTypeDTO = BankTypeDTO(
-                                          id: dto.bankTypeId,
-                                          bankCode: dto.bankCode,
-                                          bankName: dto.bankName,
-                                          imageId: dto.imgId,
-                                          bankShortName: dto.bankCode,
-                                          status: dto.bankTypeStatus,
-                                          caiValue: dto.caiValue);
-                                      Navigator.pushNamed(
-                                        context,
-                                        Routes.ADD_BANK_CARD,
-                                        arguments: {
-                                          'step': 1,
-                                          'bankAccount': dto.bankAccount,
-                                          'name': dto.userBankName,
-                                          'bankDTO': bankTypeDTO,
-                                        },
-                                      ).then((value) {
-                                        if (value is bool) {
-                                          bankCardBloc
-                                              .add(BankCardGetDetailEvent());
-                                        }
-                                      });
-                                    },
-                                    bgColor: AppColor.TRANSPARENT,
-                                    textColor: AppColor.GREEN,
-                                  ),
+                                  if (!dto.authenticated &&
+                                      dto.bankCode.trim().toUpperCase() ==
+                                          'MB') ...[
+                                    DividerWidget(width: width),
+                                    const SizedBox(height: 10),
+                                    ButtonIconWidget(
+                                      width: width,
+                                      icon: Icons.link_rounded,
+                                      title: 'Liên kết ngay',
+                                      function: () {
+                                        BankTypeDTO bankTypeDTO = BankTypeDTO(
+                                            id: dto.bankTypeId,
+                                            bankCode: dto.bankCode,
+                                            bankName: dto.bankName,
+                                            imageId: dto.imgId,
+                                            bankShortName: dto.bankCode,
+                                            status: dto.bankTypeStatus,
+                                            caiValue: dto.caiValue);
+                                        Navigator.pushNamed(
+                                          context,
+                                          Routes.ADD_BANK_CARD,
+                                          arguments: {
+                                            'step': 1,
+                                            'bankAccount': dto.bankAccount,
+                                            'name': dto.userBankName,
+                                            'bankDTO': bankTypeDTO,
+                                          },
+                                        ).then((value) {
+                                          if (value is bool) {
+                                            bankCardBloc
+                                                .add(BankCardGetDetailEvent());
+                                          }
+                                        });
+                                      },
+                                      bgColor: AppColor.TRANSPARENT,
+                                      textColor: AppColor.GREEN,
+                                    ),
+                                  ],
+                                  const SizedBox(height: 10),
                                 ],
-                                const SizedBox(height: 10),
-                              ],
+                              ),
                             ),
-                          ),
-                          const Padding(padding: EdgeInsets.only(top: 30)),
-                          if (dto.transactions.isNotEmpty) ...[
-                            _buildTitle(title: 'Giao dịch gần dây'),
-                            _buildRelatedTransaction(
-                                context, dto.transactions, state.bankId ?? ''),
-                            const Padding(padding: EdgeInsets.only(top: 10)),
-                            InkWell(
-                              onTap: () {
-                                Navigator.pushNamed(
-                                  context,
-                                  Routes.TRANSACTION_HISTORY_VIEW,
-                                  arguments: {'bankId': state.bankId ?? ''},
-                                );
-                              },
-                              child: BoxLayout(
-                                width: width,
-                                height: 40,
-                                alignment: Alignment.center,
-                                padding: const EdgeInsets.all(0),
-                                bgColor: AppColor.TRANSPARENT,
-                                child: const Text(
-                                  'Xem thêm',
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    color: AppColor.GREEN,
-                                    decoration: TextDecoration.underline,
+                            const Padding(padding: EdgeInsets.only(top: 30)),
+                            if (dto.transactions.isNotEmpty) ...[
+                              _buildTitle(title: 'Giao dịch gần dây'),
+                              _buildRelatedTransaction(context,
+                                  dto.transactions, state.bankId ?? ''),
+                              const Padding(padding: EdgeInsets.only(top: 10)),
+                              InkWell(
+                                onTap: () {
+                                  Navigator.pushNamed(
+                                    context,
+                                    Routes.TRANSACTION_HISTORY_VIEW,
+                                    arguments: {'bankId': state.bankId ?? ''},
+                                  );
+                                },
+                                child: BoxLayout(
+                                  width: width,
+                                  height: 40,
+                                  alignment: Alignment.center,
+                                  padding: const EdgeInsets.all(0),
+                                  bgColor: AppColor.TRANSPARENT,
+                                  child: const Text(
+                                    'Xem thêm',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      color: AppColor.GREEN,
+                                      decoration: TextDecoration.underline,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
+                            ],
+                            if (dto.authenticated) ...[
+                              const Padding(padding: EdgeInsets.only(top: 30)),
+                              _buildTitle(title: 'Doanh nghiệp'),
+                              _buildBusinessInformation(
+                                  context, dto.businessDetails),
+                            ],
+                            const Padding(padding: EdgeInsets.only(bottom: 50)),
+                            if (dto.authenticated &&
+                                (userId == dto.userId)) ...[
+                              DividerWidget(width: width),
+                              ButtonIconWidget(
+                                width: width,
+                                height: 40,
+                                bgColor: AppColor.TRANSPARENT,
+                                textColor: AppColor.RED_TEXT,
+                                icon: Icons.remove_circle_rounded,
+                                alignment: Alignment.centerLeft,
+                                title: 'Huỷ liên kết TK ngân hàng',
+                                function: () {
+                                  DialogWidget.instance.openMsgDialog(
+                                    title: 'Bảo trì',
+                                    msg:
+                                        'Tính năng đang bảo trì, vui lòng thử lại sau',
+                                  );
+                                },
+                              ),
+                            ],
+                            if (userId == dto.userId) ...[
+                              DividerWidget(width: width),
+                              ButtonIconWidget(
+                                width: width,
+                                height: 40,
+                                bgColor: AppColor.TRANSPARENT,
+                                textColor: AppColor.RED_TEXT,
+                                icon: Icons.delete_rounded,
+                                alignment: Alignment.centerLeft,
+                                title: 'Xoá TK ngân hàng',
+                                function: () {
+                                  BankAccountRemoveDTO bankAccountRemoveDTO =
+                                      BankAccountRemoveDTO(
+                                    bankId: state.bankId ?? '',
+                                    type: dto.type,
+                                    isAuthenticated: dto.authenticated,
+                                  );
+                                  bankCardBloc.add(BankCardEventRemove(
+                                      dto: bankAccountRemoveDTO));
+                                },
+                              ),
+                              DividerWidget(width: width),
+                            ],
+                            const Padding(padding: EdgeInsets.only(bottom: 50)),
                           ],
-                          if (dto.authenticated) ...[
-                            const Padding(padding: EdgeInsets.only(top: 30)),
-                            _buildTitle(title: 'Doanh nghiệp'),
-                            _buildBusinessInformation(
-                                context, dto.businessDetails),
-                          ],
-                          const Padding(padding: EdgeInsets.only(bottom: 50)),
-                          if (dto.authenticated &&
-                              (UserInformationHelper.instance.getUserId() ==
-                                  dto.userId)) ...[
-                            DividerWidget(width: width),
-                            ButtonIconWidget(
-                              width: width,
-                              height: 40,
-                              bgColor: AppColor.TRANSPARENT,
-                              textColor: AppColor.RED_TEXT,
-                              icon: Icons.remove_circle_rounded,
-                              alignment: Alignment.centerLeft,
-                              title: 'Huỷ liên kết TK ngân hàng',
-                              function: () {
-                                DialogWidget.instance.openMsgDialog(
-                                  title: 'Bảo trì',
-                                  msg:
-                                      'Tính năng đang bảo trì, vui lòng thử lại sau',
-                                );
-                              },
-                            ),
-                          ],
-                          if (UserInformationHelper.instance.getUserId() ==
-                              dto.userId) ...[
-                            DividerWidget(width: width),
-                            ButtonIconWidget(
-                              width: width,
-                              height: 40,
-                              bgColor: AppColor.TRANSPARENT,
-                              textColor: AppColor.RED_TEXT,
-                              icon: Icons.delete_rounded,
-                              alignment: Alignment.centerLeft,
-                              title: 'Xoá TK ngân hàng',
-                              function: () {
-                                BankAccountRemoveDTO bankAccountRemoveDTO =
-                                    BankAccountRemoveDTO(
-                                  bankId: state.bankId ?? '',
-                                  type: dto.type,
-                                  isAuthenticated: dto.authenticated,
-                                );
-                                bankCardBloc.add(BankCardEventRemove(
-                                    dto: bankAccountRemoveDTO));
-                              },
-                            ),
-                            DividerWidget(width: width),
-                          ],
-                          const Padding(padding: EdgeInsets.only(bottom: 50)),
-                        ],
+                        ),
                       );
                     },
                   );
@@ -402,7 +402,6 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                   icon: Icons.print_rounded,
                   title: '',
                   function: () async {
-                    String userId = UserInformationHelper.instance.getUserId();
                     BluetoothPrinterDTO bluetoothPrinterDTO =
                         await LocalDatabase.instance
                             .getBluetoothPrinter(userId);
@@ -553,6 +552,145 @@ class _BankCardDetailState extends State<BankCardDetailState> {
   Widget _buildBusinessInformation(
       BuildContext context, List<BusinessDetails> list) {
     final double width = MediaQuery.of(context).size.width;
+    return Column(
+      children: List.generate(list.length, (index) {
+        String heroId = list[index].businessId;
+        return BoxLayout(
+          width: width,
+          padding: const EdgeInsets.only(left: 10, right: 10, top: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: width,
+                child: Row(
+                  children: [
+                    Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).cardColor,
+                        borderRadius: BorderRadius.circular(50),
+                        image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: (list[index].imgId.isNotEmpty)
+                                ? ImageUtils.instance
+                                    .getImageNetWork(list[index].imgId)
+                                : Image.asset(
+                                    'assets/images/ic-avatar-business.png',
+                                    fit: BoxFit.cover,
+                                    width: 50,
+                                    height: 50,
+                                  ).image),
+                      ),
+                    ),
+                    const Padding(padding: EdgeInsets.only(left: 10)),
+                    Expanded(
+                      child: Text(
+                        list[index].businessName,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Padding(padding: EdgeInsets.only(top: 20)),
+              Column(
+                children:
+                    List.generate(list[index].branchDetails.length, (index2) {
+                  return BoxLayout(
+                    width: width,
+                    borderRadius: 10,
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 15),
+                    bgColor: Theme.of(context).canvasColor,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const SizedBox(
+                              width: 100,
+                              child: Text('Chi nhánh'),
+                            ),
+                            Expanded(
+                              child: Text(
+                                list[index].branchDetails[index2].branchName,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Padding(padding: EdgeInsets.only(top: 10)),
+                        Row(
+                          children: [
+                            const SizedBox(
+                              width: 100,
+                              child: Text('Địa chỉ'),
+                            ),
+                            Expanded(
+                              child: Text(
+                                list[index].branchDetails[index2].address,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+              ),
+              const Padding(padding: EdgeInsets.only(top: 20)),
+              DividerWidget(width: width),
+              ButtonWidget(
+                width: width,
+                height: 40,
+                text: 'Chi tiết doanh nghiệp',
+                textColor: AppColor.GREEN,
+                bgColor: AppColor.TRANSPARENT,
+                function: () {
+                  BusinessItemDTO businessItemDTO = BusinessItemDTO(
+                    businessId: list[index].businessId,
+                    code: '',
+                    role: 0,
+                    imgId: list[index].imgId,
+                    coverImgId: list[index].coverImgId,
+                    name: list[index].businessName,
+                    address: '',
+                    taxCode: '',
+                    transactions: [],
+                    totalMember: 0,
+                    totalBranch: 0,
+                    branchs: [],
+                  );
+                  Navigator.pushNamed(
+                    context,
+                    Routes.BUSINESS_INFORMATION_VIEW,
+                    arguments: {
+                      'heroId': heroId,
+                      'img': list[index].coverImgId,
+                      'businessItem': businessItemDTO,
+                    },
+                  ).then((value) {
+                    bankCardBloc
+                        .add(const BankCardGetDetailEvent(isLoading: false));
+                  });
+                },
+              )
+            ],
+          ),
+        );
+      }).toList(),
+    );
+
     return ListView.builder(
       itemCount: list.length,
       shrinkWrap: true,
@@ -620,54 +758,6 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Text(
-                            //   list[index].branchDetails[index2].branchName,
-                            //   maxLines: 1,
-                            //   overflow: TextOverflow.ellipsis,
-                            //   style: const TextStyle(fontSize: 18),
-                            // ),
-                            // const Padding(padding: EdgeInsets.only(top: 10)),
-                            // Row(
-                            //   children: [
-                            //     const SizedBox(
-                            //       width: 100,
-                            //       child: Text('Code'),
-                            //     ),
-                            //     Expanded(
-                            //       child: Text(
-                            //         list[index].branchDetails[index2].code,
-                            //         maxLines: 1,
-                            //         overflow: TextOverflow.ellipsis,
-                            //       ),
-                            //     ),
-                            //     InkWell(
-                            //       onTap: () async {
-                            //         await FlutterClipboard.copy(list[index]
-                            //                 .branchDetails[index2]
-                            //                 .code)
-                            //             .then(
-                            //           (value) => Fluttertoast.showToast(
-                            //             msg: 'Đã sao chép',
-                            //             toastLength: Toast.LENGTH_SHORT,
-                            //             gravity: ToastGravity.CENTER,
-                            //             timeInSecForIosWeb: 1,
-                            //             backgroundColor:
-                            //                 Theme.of(context).primaryColor,
-                            //             textColor: Theme.of(context).hintColor,
-                            //             fontSize: 15,
-                            //             webBgColor: 'rgba(255, 255, 255)',
-                            //             webPosition: 'center',
-                            //           ),
-                            //         );
-                            //       },
-                            //       child: const Icon(
-                            //         Icons.copy_rounded,
-                            //         color: DefaultTheme.GREY_TEXT,
-                            //         size: 15,
-                            //       ),
-                            //     ),
-                            //   ],
-                            // ),
                             Row(
                               children: [
                                 const SizedBox(

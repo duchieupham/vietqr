@@ -29,3 +29,5 @@ class ScanQrEventGetBankType extends HomeEvent {
   @override
   List<Object?> get props => [code];
 }
+
+

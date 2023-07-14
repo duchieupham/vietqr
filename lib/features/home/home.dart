@@ -80,14 +80,29 @@ class _HomeScreen extends State<HomeScreen>
     _homeBloc = BlocProvider.of(context);
     _tokenBloc = BlocProvider.of(context);
     _notificationBloc = BlocProvider.of(context);
-    String userId = UserInformationHelper.instance.getUserId();
-    initialServices(context, userId);
     _pageController = PageController(
       initialPage:
           Provider.of<PageSelectProvider>(context, listen: false).indexSelected,
       keepPage: true,
     );
-    listenNewNotification(userId);
+    _homeScreens.addAll(
+      [
+        // const BankCardSelectView(key: PageStorageKey('QR_GENERATOR_PAGE')),
+        const BankScreen(key: PageStorageKey('QR_GENERATOR_PAGE')),
+        const DashboardScreen(key: PageStorageKey('SMS_LIST_PAGE')),
+        if (PlatformUtils.instance.isAndroidApp()) const IntroduceScreen(),
+        AccountScreen(
+          key: const PageStorageKey('USER_SETTING_PAGE'),
+          voidCallback: () {
+            _animatedToPage(0);
+          },
+        ),
+      ],
+    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      initialServices(context);
+      listenNewNotification();
+    });
   }
 
   Future<void> startBarcodeScanStream() async {
@@ -125,33 +140,19 @@ class _HomeScreen extends State<HomeScreen>
     }
   }
 
-  void initialServices(BuildContext context, String userId) {
+  void initialServices(BuildContext context) {
     checkUserInformation();
     _tokenBloc.add(const TokenEventCheckValid());
     _homeBloc.add(const PermissionEventRequest());
-    _notificationBloc.add(NotificationGetCounterEvent(userId: userId));
-    _homeScreens.addAll(
-      [
-        // const BankCardSelectView(key: PageStorageKey('QR_GENERATOR_PAGE')),
-        const BankScreen(key: PageStorageKey('QR_GENERATOR_PAGE')),
-        const DashboardScreen(key: PageStorageKey('SMS_LIST_PAGE')),
-        if (PlatformUtils.instance.isAndroidApp()) const IntroduceScreen(),
-        AccountScreen(
-          key:const PageStorageKey('USER_SETTING_PAGE'),
-          voidCallback: () {
-            _animatedToPage(0);
-          },
-        ),
-      ],
-    );
+    _notificationBloc.add(NotificationGetCounterEvent());
   }
 
-  void listenNewNotification(String userId) {
+  void listenNewNotification() {
     notificationController.listen((isNotificationPushed) {
       if (isNotificationPushed) {
         notificationController.sink.add(false);
         Future.delayed(const Duration(milliseconds: 1000), () {
-          _notificationBloc.add(NotificationGetCounterEvent(userId: userId));
+          _notificationBloc.add(NotificationGetCounterEvent());
         });
       }
     });
@@ -646,10 +647,7 @@ class _HomeScreen extends State<HomeScreen>
                               },
                             ).then((value) {
                               _notificationBloc.add(
-                                NotificationUpdateStatusEvent(
-                                  userId: UserInformationHelper.instance
-                                      .getUserId(),
-                                ),
+                                NotificationUpdateStatusEvent(),
                               );
                             });
                           },

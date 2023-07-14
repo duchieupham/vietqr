@@ -29,3 +29,5 @@ class QREventGenerateList extends BankEvent {
 }
 
 class UpdateEvent extends BankEvent {}
+
+class LoadDataBankEvent extends BankEvent {}

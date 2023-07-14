@@ -22,11 +22,16 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
   final BuildContext context;
 
   BankBloc(this.context)
-      : super(const BankState(listBanks: [], colors: [], listGeneratedQR: [])) {
+      : super(const BankState(
+            listBanks: [],
+            colors: [],
+            listGeneratedQR: [],
+            listBankTypeDTO: [])) {
     on<BankCardEventGetList>(_getBankAccounts);
     on<UpdateEvent>(_updateEvent);
     on<QREventGenerateList>(_generateQRList);
     on<ScanQrEventGetBankType>(_getBankTypeQR);
+    on<LoadDataBankEvent>(_getListBankTypes);
   }
 
   final bankCardRepository = const BankCardRepository();
@@ -83,8 +88,32 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
     }
   }
 
+  Future _getListBankTypes(BankEvent event, Emitter emit) async {
+    if (banks.isEmpty) {
+      try {
+        if (event is LoadDataBankEvent) {
+          List<BankTypeDTO> list = await bankCardRepository.getBankTypes();
+          banks = list;
+          emit(
+            state.copyWith(listBankTypeDTO: list, request: BankType.GET_BANK),
+          );
+        }
+      } catch (e) {
+        LOG.error(e.toString());
+        emit(state.copyWith(status: BlocStatus.ERROR));
+      }
+    } else if (state.listBankTypeDTO.isEmpty) {
+      emit(
+        state.copyWith(listBankTypeDTO: banks, request: BankType.GET_BANK),
+      );
+    }
+  }
+
   void _getBankAccounts(BankEvent event, Emitter emit) async {
     try {
+      if (banks.isNotEmpty && state.listBankTypeDTO.isEmpty) {
+        emit(state.copyWith(listBankTypeDTO: banks));
+      }
       if (event is BankCardEventGetList) {
         if (state.status == BlocStatus.NONE) {
           emit(state.copyWith(status: BlocStatus.LOADING));

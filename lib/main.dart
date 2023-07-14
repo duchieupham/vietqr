@@ -227,7 +227,7 @@ class _VietQRApp extends State<VietQRApp> {
             create: (BuildContext context) => TransactionBloc(),
           ),
           BlocProvider<NotificationBloc>(
-            create: (BuildContext context) => NotificationBloc(),
+            create: (BuildContext context) => NotificationBloc(context),
           ),
           BlocProvider<HomeBloc>(
             create: (BuildContext context) => HomeBloc(context),
@@ -339,7 +339,7 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.NOTIFICATION_VIEW: (context) =>
                       const NotificationView(),
                   Routes.TRANSACTION_DETAIL: (context) =>
-                      TransactionDetailView(),
+                      TransactionDetailScreen(),
                   Routes.NATIONAL_INFORMATION: (context) =>
                       const NationalInformationView(),
                   Routes.BUSINESS_TRANSACTION: (context) =>
