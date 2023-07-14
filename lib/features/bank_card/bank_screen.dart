@@ -145,6 +145,7 @@ class _BankScreenState extends State<_BankScreen>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const SizedBox(height: 10),
                     const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16),
                       child: Text(
@@ -177,7 +178,7 @@ class _BankScreenState extends State<_BankScreen>
                         ],
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    // const SizedBox(height: 10),
                     Expanded(
                       child: BlocConsumer<BankBloc, BankState>(
                         listener: (context, state) async {
@@ -1048,7 +1049,7 @@ class _StackedList extends State<StackedList> {
         widget.getListBank();
       },
       child: Container(
-        width: width - 20,
+        width: width,
         height: 120,
         padding: EdgeInsets.zero,
         decoration: BoxDecoration(
