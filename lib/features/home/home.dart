@@ -313,32 +313,40 @@ class _HomeScreen extends State<HomeScreen>
             return Scaffold(
               body: Stack(
                 children: [
+                  if (page.indexSelected != 3) _buildAppBar(),
                   Column(
                     children: [
-                      if (page.indexSelected != 3) _buildAppBar(),
                       Expanded(
-                        child: Listener(
-                          onPointerMove: (moveEvent) {
-                            if (moveEvent.delta.dx > 0) {
-                              Provider.of<PageSelectProvider>(context,
-                                      listen: false)
-                                  .updateMoveEvent(TypeMoveEvent.RIGHT);
-                            } else {
-                              Provider.of<PageSelectProvider>(context,
-                                      listen: false)
-                                  .updateMoveEvent(TypeMoveEvent.LEFT);
-                            }
-                          },
-                          child: PageView(
-                            key: const PageStorageKey('PAGE_VIEW'),
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            controller: _pageController,
-                            onPageChanged: (index) async {
-                              Provider.of<PageSelectProvider>(context,
-                                      listen: false)
-                                  .updateIndex(index);
-                            },
-                            children: _homeScreens,
+                        child: Padding(
+                          padding: (page.indexSelected != 3)
+                              ? const EdgeInsets.only(top: 130)
+                              : EdgeInsets.zero,
+                          child: SizedBox(
+                            height: MediaQuery.of(context).size.height - 130,
+                            child: Listener(
+                              onPointerMove: (moveEvent) {
+                                if (moveEvent.delta.dx > 0) {
+                                  Provider.of<PageSelectProvider>(context,
+                                          listen: false)
+                                      .updateMoveEvent(TypeMoveEvent.RIGHT);
+                                } else {
+                                  Provider.of<PageSelectProvider>(context,
+                                          listen: false)
+                                      .updateMoveEvent(TypeMoveEvent.LEFT);
+                                }
+                              },
+                              child: PageView(
+                                key: const PageStorageKey('PAGE_VIEW'),
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                controller: _pageController,
+                                onPageChanged: (index) async {
+                                  Provider.of<PageSelectProvider>(context,
+                                          listen: false)
+                                      .updateIndex(index);
+                                },
+                                children: _homeScreens,
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -473,25 +481,26 @@ class _HomeScreen extends State<HomeScreen>
   Widget _getTitlePaqe(BuildContext context, int indexSelected) {
     Widget titleWidget = const SizedBox();
     if (indexSelected == 0) {
-      titleWidget =
-          Consumer<BankCardSelectProvider>(builder: (context, provider, child) {
-        return ButtonIconWidget(
-          width: double.infinity,
-          height: 40,
-          borderRadius: 40,
-          icon: Icons.search_rounded,
-          iconSize: 18,
-          contentPadding: const EdgeInsets.only(left: 16),
-          alignment: Alignment.centerLeft,
-          title: 'Tài khoản ngân hàng',
-          textSize: 11,
-          function: () {
-            Navigator.pushNamed(context, Routes.SEARCH_BANK);
-          },
-          bgColor: Theme.of(context).cardColor,
-          textColor: Theme.of(context).hintColor,
-        );
-      });
+      titleWidget = Consumer<BankCardSelectProvider>(
+        builder: (context, provider, child) {
+          return ButtonIconWidget(
+            width: double.infinity,
+            height: 40,
+            borderRadius: 40,
+            icon: Icons.search_rounded,
+            iconSize: 18,
+            contentPadding: const EdgeInsets.only(left: 16),
+            alignment: Alignment.centerLeft,
+            title: 'Tài khoản ngân hàng',
+            textSize: 11,
+            function: () {
+              Navigator.pushNamed(context, Routes.SEARCH_BANK);
+            },
+            bgColor: Theme.of(context).cardColor,
+            textColor: Theme.of(context).hintColor,
+          );
+        },
+      );
     }
 
     if (indexSelected == 1) {
@@ -581,6 +590,7 @@ class _HomeScreen extends State<HomeScreen>
     double paddingTop = MediaQuery.of(context).viewPadding.top;
 
     return Container(
+      height: 230,
       width: MediaQuery.of(context).size.width,
       padding: EdgeInsets.only(top: paddingTop + 12),
       alignment: Alignment.topCenter,
