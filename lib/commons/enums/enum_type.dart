@@ -7,7 +7,7 @@ enum BlocStatus {
   ERROR,
   AWAIT,
   SUCCESS,
-  DELETE,
+  DELETED,
   INSERT,
   DONE,
 }

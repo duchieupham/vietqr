@@ -54,7 +54,7 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
         final ResponseMessageDTO responseMessageDTO =
             await bankCardRepository.removeBankAccount(event.dto);
         if (responseMessageDTO.status == Stringify.RESPONSE_STATUS_SUCCESS) {
-          emit(state.copyWith(status: BlocStatus.UNLOADING));
+          emit(state.copyWith(status: BlocStatus.DELETED));
         } else if (responseMessageDTO.status ==
             Stringify.RESPONSE_STATUS_CHECK) {
           String message =

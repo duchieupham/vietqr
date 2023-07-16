@@ -7,7 +7,7 @@ import 'package:vierqr/models/bank_card_request_otp.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 
-enum BankDetailType { NONE, SUCCESS, DELETE, ERROR }
+enum BankDetailType { NONE, SUCCESS, DELETED, ERROR }
 
 class BankCardState extends Equatable {
   final String? msg;

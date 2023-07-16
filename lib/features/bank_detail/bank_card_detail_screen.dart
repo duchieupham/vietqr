@@ -142,7 +142,7 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                         Navigator.pop(context);
                       }
 
-                      if (state.request == BankDetailType.DELETE) {
+                      if (state.status == BlocStatus.DELETED) {
                         Fluttertoast.showToast(
                           msg: 'Đã xoá TK ngân hàng',
                           toastLength: Toast.LENGTH_SHORT,
@@ -152,9 +152,8 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                           fontSize: 15,
                         );
 
-                        if (Navigator.canPop(context)) {
-                          Navigator.pop(context, true);
-                        }
+                        Navigator.pop(context, true);
+                        Navigator.pop(context, true);
                       }
 
                       if (state.request == BankDetailType.SUCCESS) {
@@ -367,14 +366,21 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                                 alignment: Alignment.centerLeft,
                                 title: 'Xoá TK ngân hàng',
                                 function: () {
-                                  BankAccountRemoveDTO bankAccountRemoveDTO =
-                                      BankAccountRemoveDTO(
-                                    bankId: state.bankId ?? '',
-                                    type: dto.type,
-                                    isAuthenticated: dto.authenticated,
-                                  );
-                                  bankCardBloc.add(BankCardEventRemove(
-                                      dto: bankAccountRemoveDTO));
+                                  if (dto.authenticated) {
+                                    DialogWidget.instance.openMsgDialog(
+                                      title: 'Cảnh báo',
+                                      msg: 'Bạn phải huỷ liên kết Tk ngân hàng này trước khi xoá',
+                                    );
+                                  } else {
+                                    BankAccountRemoveDTO bankAccountRemoveDTO =
+                                        BankAccountRemoveDTO(
+                                      bankId: state.bankId ?? '',
+                                      type: dto.type,
+                                      isAuthenticated: dto.authenticated,
+                                    );
+                                    bankCardBloc.add(BankCardEventRemove(
+                                        dto: bankAccountRemoveDTO));
+                                  }
                                 },
                               ),
                               DividerWidget(width: width),
