@@ -9,12 +9,12 @@ class ProdEnv implements Env {
 
   @override
   String getBaseUrl() {
-    return 'https://api.vietqr.org/vqr/api/';
+    return 'http://112.78.1.209:8084/vqr/api/';
   }
 
   @override
   String getUrl() {
-    return 'https://api.vietqr.org/vqr/';
+    return 'http://112.78.1.209:8084/vqr/';
   }
 
   @override
