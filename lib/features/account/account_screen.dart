@@ -68,7 +68,7 @@ class _AccountScreenState extends State<AccountScreen>
     });
   }
 
-  Future<void> _onRefresh()async {
+  Future<void> _onRefresh() async {
     _accountBloc.add(InitAccountEvent());
   }
 
@@ -77,13 +77,13 @@ class _AccountScreenState extends State<AccountScreen>
     super.build(context);
     return BlocConsumer<AccountBloc, AccountState>(
       listener: (context, state) {
-        if (state.status == BlocStatus.LOADING) {
-          DialogWidget.instance.openLoadingDialog();
-        }
-
-        if (state.status == BlocStatus.UNLOADING) {
-          Navigator.pop(context);
-        }
+        // if (state.status == BlocStatus.LOADING) {
+        //   DialogWidget.instance.openLoadingDialog();
+        // }
+        //
+        // if (state.status == BlocStatus.UNLOADING) {
+        //   Navigator.pop(context);
+        // }
         if (state.request == AccountType.LOG_OUT) {
           if (Navigator.canPop(context)) {
             Navigator.pop(context);
@@ -161,26 +161,25 @@ class _AccountScreenState extends State<AccountScreen>
   @override
   // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
-
-
 }
 
 class _BannerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 200,
+      height: 220,
       width: MediaQuery.of(context).size.width,
       decoration: const BoxDecoration(
         image: DecorationImage(
           image: AssetImage('assets/images/bg-qr.png'),
-          fit: BoxFit.fill,
+          fit: BoxFit.cover,
         ),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          const SizedBox(height: 16),
           _buildAvatarWidget(context),
           const SizedBox(height: 16),
           Text(
@@ -286,7 +285,7 @@ class _FeatureWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: List.generate(listIcon.length, (index) {
         return GestureDetector(
           onTap: () {

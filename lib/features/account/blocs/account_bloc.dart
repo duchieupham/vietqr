@@ -22,7 +22,11 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
           status: BlocStatus.LOADING, request: AccountType.NONE));
       if (event is InitAccountEvent) {
         final result = await accRepository.getPointAccount(userId);
-        emit(state.copyWith(introduceDTO: result, status: BlocStatus.SUCCESS));
+        emit(state.copyWith(
+          introduceDTO: result,
+          status: BlocStatus.UNLOADING,
+          request: AccountType.PONIT,
+        ));
       }
     } catch (e) {
       LOG.error('Error at _getPointAccount: $e');
