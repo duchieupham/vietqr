@@ -269,7 +269,6 @@ class _VietQRApp extends State<VietQRApp> {
             ChangeNotifierProvider(create: (context) => PageSelectProvider()),
             ChangeNotifierProvider(
                 create: (context) => CreateQRPageSelectProvider()),
-            ChangeNotifierProvider(create: (context) => CreateQRProvider()),
             ChangeNotifierProvider(create: (context) => BankAccountProvider()),
             ChangeNotifierProvider(create: (context) => BankSelectProvider()),
             ChangeNotifierProvider(create: (context) => PinProvider()),

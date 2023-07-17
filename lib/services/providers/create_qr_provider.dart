@@ -1,7 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:vierqr/commons/utils/string_utils.dart';
 
 class CreateQRProvider with ChangeNotifier {
+  final moneyController = TextEditingController();
+  final contentController = TextEditingController();
+
+  final List<String> listSuggest = [
+    'Thanh toán bữa ăn trưa',
+    'Chuyển khoản',
+  ];
+
+  String money = StringUtils.formatMoney(0.toString());
+
   String _transactionAmount = '0';
   String _currencyFormatted = '0';
 
@@ -13,13 +24,18 @@ class CreateQRProvider with ChangeNotifier {
 
   final NumberFormat numberFormat = NumberFormat("##,#0", "en_US");
   static const _locale = 'en';
+
   String _formatNumber(String s) =>
       NumberFormat.decimalPattern(_locale).format(int.tryParse(s) ?? '0');
 
   get transactionAmount => _transactionAmount;
+
   get currencyFormatted => _currencyFormatted;
+
   get amountErr => _isAmountErr;
+
   get qrGenerated => _isQRGenerated;
+
   bool get contentErr => _isContentErr;
 
   void reset() {
@@ -43,7 +59,7 @@ class CreateQRProvider with ChangeNotifier {
   void updateTransactionAmount(String value) {
     if (_transactionAmount.length <= 9) {
       _transactionAmount += value;
-      updateCurrencyFormat(_transactionAmount);
+      updateMoney(_transactionAmount);
       notifyListeners();
     }
   }
@@ -61,25 +77,34 @@ class CreateQRProvider with ChangeNotifier {
     } else {
       _transactionAmount =
           _transactionAmount.substring(0, _transactionAmount.length - 1);
-      updateCurrencyFormat(_transactionAmount);
+      updateMoney(_transactionAmount);
     }
 
     notifyListeners();
   }
 
-  void updateCurrencyFormat(String value) {
-    if (value.isNotEmpty && value.characters.first == '0') {
-      value = value.substring(1);
-      _transactionAmount = _transactionAmount.substring(1);
-    }
-    if (value.isEmpty) {
-      _currencyFormatted = '0';
-    } else if (value.length > 3) {
-      _currencyFormatted = _formatNumber(value.replaceAll(',', ''));
-    } else {
-      _currencyFormatted = value;
-    }
+  String _format(String s) =>
+      NumberFormat.decimalPattern(_locale).format(int.parse(s));
 
+  String get _currency =>
+      NumberFormat.compactSimpleCurrency(locale: _locale).currencySymbol;
+
+  void updateMoney(String value) {
+    money = StringUtils.formatMoney(value);
+
+    value = _formatNumber(value.replaceAll(',', ''));
+
+    moneyController.value = TextEditingValue(
+      text: value,
+      selection: TextSelection.collapsed(offset: value.length),
+    );
+
+    notifyListeners();
+  }
+
+  void updateSuggest(index) {
+    contentController.value =
+        contentController.value.copyWith(text: listSuggest[index]);
     notifyListeners();
   }
 }
