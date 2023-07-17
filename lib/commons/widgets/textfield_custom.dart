@@ -16,6 +16,7 @@ class TextFieldCustom extends StatefulWidget {
   final double? fontSize;
   final TextfieldType? textFieldType;
   final String? title;
+  final String? unTitle;
   final bool? autoFocus;
   final bool? enable;
   final FocusNode? focusNode;
@@ -47,6 +48,7 @@ class TextFieldCustom extends StatefulWidget {
     this.fontSize,
     this.textFieldType,
     this.title,
+    this.unTitle,
     this.autoFocus,
     this.focusNode,
     this.maxLines,
@@ -113,7 +115,7 @@ class _TextFieldWidgetState extends State<TextFieldCustom> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (widget.textFieldType != null &&
-            widget.textFieldType == TextfieldType.LABEL)
+            widget.textFieldType == TextfieldType.LABEL) ...[
           Row(
             children: [
               SizedBox(
@@ -137,6 +139,18 @@ class _TextFieldWidgetState extends State<TextFieldCustom> {
                 ),
             ],
           ),
+          if (widget.unTitle != null) ...[
+            const SizedBox(height: 4),
+            Text(
+              widget.unTitle ?? '',
+              style: const TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w400,
+                height: 1.4,
+              ),
+            ),
+          ]
+        ],
         const SizedBox(height: 8),
         Container(
           alignment: Alignment.centerLeft,

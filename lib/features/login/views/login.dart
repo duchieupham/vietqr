@@ -242,6 +242,7 @@ class _LoginState extends State<_Login> {
                                 child: PinCodeInput(
                                   obscureText: true,
                                   controller: passController,
+                                  autoFocus: true,
                                   onChanged: provider.onChangePin,
                                   onCompleted: (value) {
                                     AccountLoginDTO dto = AccountLoginDTO(
@@ -348,6 +349,7 @@ class _LoginState extends State<_Login> {
                   title: 'Tiếp tục',
                   isEnable: provider.isEnableButton,
                   onTap: () {
+                    FocusManager.instance.primaryFocus?.unfocus();
                     _bloc.add(CheckExitsPhoneEvent(phone: provider.phone));
                   },
                 ),

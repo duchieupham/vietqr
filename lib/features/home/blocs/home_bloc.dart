@@ -66,6 +66,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with BaseManager {
   void _getBankType(HomeEvent event, Emitter emit) async {
     try {
       if (event is ScanQrEventGetBankType) {
+        state.copyWith(typeQR: TypeQR.NONE, request: HomeType.NONE);
         VietQRScannedDTO vietQRScannedDTO =
             QRScannerUtils.instance.getBankAccountFromQR(event.code);
         if (vietQRScannedDTO.caiValue.isNotEmpty &&
@@ -75,27 +76,37 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with BaseManager {
           if (dto.id.isNotEmpty) {
             emit(
               state.copyWith(
-                bankTypeDTO: dto,
-                bankAccount: vietQRScannedDTO.bankAccount,
-                type: TypePermission.ScanSuccess,
-              ),
+                  bankTypeDTO: dto,
+                  bankAccount: vietQRScannedDTO.bankAccount,
+                  typeQR: TypeQR.QR_BANK,
+                  request: HomeType.SCAN),
             );
           } else {
-            emit(state.copyWith(type: TypePermission.ScanError));
+            emit(state.copyWith(request: HomeType.SCAN_ERROR));
           }
         } else {
           NationalScannerDTO nationalScannerDTO =
               homeRepository.getNationalInformation(event.code);
           if (nationalScannerDTO.nationalId.trim().isNotEmpty) {
-            emit(state.copyWith(nationalScannerDTO: nationalScannerDTO));
+            emit(state.copyWith(
+              nationalScannerDTO: nationalScannerDTO,
+              request: HomeType.SCAN,
+              typeQR: TypeQR.QR_CMT,
+            ));
+          } else if (event.code.isNotEmpty) {
+            emit(state.copyWith(
+              barCode: event.code,
+              request: HomeType.SCAN,
+              typeQR: TypeQR.QR_BARCODE,
+            ));
           } else {
-            emit(state.copyWith(type: TypePermission.ScanNotFound));
+            emit(state.copyWith(request: HomeType.SCAN_NOT_FOUND));
           }
         }
       }
     } catch (e) {
       LOG.error(e.toString());
-      emit(state.copyWith(type: TypePermission.ScanError));
+      emit(state.copyWith(request: HomeType.SCAN_NOT_FOUND));
     }
   }
 }

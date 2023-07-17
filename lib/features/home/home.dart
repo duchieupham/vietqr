@@ -107,7 +107,7 @@ class _HomeScreen extends State<HomeScreen>
 
   Future<void> startBarcodeScanStream() async {
     String data = await FlutterBarcodeScanner.scanBarcode(
-        '#ff6666', 'Cancel', true, ScanMode.QR);
+        '#ff6666', 'Cancel', true, ScanMode.DEFAULT);
     if (data.isNotEmpty) {
       if (data == TypeQR.NEGATIVE_ONE.value) {
       } else if (data == TypeQR.NEGATIVE_TWO.value) {
@@ -247,29 +247,29 @@ class _HomeScreen extends State<HomeScreen>
       },
       child: BlocListener<HomeBloc, HomeState>(
         listener: (context, state) {
-          if (state.type == TypePermission.Request) {
+          if (state.typePermission == TypePermission.Request) {
             _homeBloc.add(const PermissionEventGetStatus());
           }
-          if (state.type == TypePermission.CameraDenied) {
+          if (state.typePermission == TypePermission.CameraDenied) {
             Future.delayed(const Duration(milliseconds: 0), () {
               Provider.of<SuggestionWidgetProvider>(context, listen: false)
                   .updateCameraSuggestion(true);
             });
           }
-          if (state.type == TypePermission.CameraAllow) {
+          if (state.typePermission == TypePermission.CameraAllow) {
             Future.delayed(const Duration(milliseconds: 0), () {
               Provider.of<SuggestionWidgetProvider>(context, listen: false)
                   .updateCameraSuggestion(false);
             });
           }
-          if (state.type == TypePermission.Allow) {
+          if (state.typePermission == TypePermission.Allow) {
             Future.delayed(const Duration(milliseconds: 0), () {
               Provider.of<SuggestionWidgetProvider>(context, listen: false)
                   .updateCameraSuggestion(false);
             });
           }
 
-          if (state.type == TypePermission.ScanNotFound) {
+          if (state.request == HomeType.SCAN_NOT_FOUND) {
             DialogWidget.instance.openMsgDialog(
               title: 'Không thể xác nhận mã QR',
               msg:
@@ -282,7 +282,7 @@ class _HomeScreen extends State<HomeScreen>
               },
             );
           }
-          if (state.type == TypePermission.ScanError) {
+          if (state.request == HomeType.SCAN_ERROR) {
             DialogWidget.instance.openMsgDialog(
               title: 'Không tìm thấy thông tin',
               msg:
@@ -295,17 +295,31 @@ class _HomeScreen extends State<HomeScreen>
               },
             );
           }
-          if (state.type == TypePermission.ScanSuccess) {
-            Navigator.pushNamed(
-              context,
-              Routes.ADD_BANK_CARD,
-              arguments: {
-                'step': 0,
-                'bankDTO': state.bankTypeDTO,
-                'bankAccount': state.bankAccount,
-                'name': ''
-              },
-            );
+          if (state.request == HomeType.SCAN) {
+            if (state.typeQR == TypeQR.QR_BANK) {
+              Navigator.pushNamed(
+                context,
+                Routes.ADD_BANK_CARD,
+                arguments: {
+                  'step': 0,
+                  'bankDTO': state.bankTypeDTO,
+                  'bankAccount': state.bankAccount,
+                  'name': ''
+                },
+              );
+            } else if (state.typeQR == TypeQR.QR_BARCODE) {
+              DialogWidget.instance.openMsgDialog(
+                title: 'Không thể xác nhận mã QR',
+                msg:
+                    'Không tìm thấy thông tin trong đoạn mã QR. Vui lòng kiểm tra lại thông tin.',
+                function: () {
+                  Navigator.pop(context);
+                  if (Navigator.canPop(context)) {
+                    Navigator.pop(context);
+                  }
+                },
+              );
+            }
           }
         },
         child: Consumer<PageSelectProvider>(

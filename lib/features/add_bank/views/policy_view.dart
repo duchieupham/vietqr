@@ -1,4 +1,6 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/layouts/button_widget.dart';
@@ -80,42 +82,43 @@ class _PolicyViewState extends State<PolicyView> {
                   Expanded(
                     child: RichText(
                       textAlign: TextAlign.left,
-                      text: const TextSpan(
-                        style: TextStyle(
+                      text: TextSpan(
+                        style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
                           color: AppColor.BLACK,
                           height: 1.4,
                         ),
                         children: [
-                          TextSpan(
+                          const TextSpan(
                             text: 'Kính gửi Quý Khách hàng\n',
                           ),
                           //
-                          TextSpan(
+                          const TextSpan(
                             text: 'MB Bank và BLUECOM (',
                           ),
-                          TextSpan(
+                          const TextSpan(
                             text: 'VietQR VN',
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w400,
                               color: AppColor.BLUE_TEXT,
                               height: 1.4,
+                              decoration: TextDecoration.underline,
                             ),
                           ),
-                          TextSpan(
+                          const TextSpan(
                             text: ') ',
                           ),
-                          TextSpan(
+                          const TextSpan(
                             text: 'xin gửi đến Quý Khách\n',
                           ),
                           //
-                          TextSpan(
+                          const TextSpan(
                             text:
                                 'Điều khoản và điều kiện sử dụng dịch vụ nhận biến động số dư trên tài khoản số “',
                           ),
-                          TextSpan(
+                          const TextSpan(
                             text: '1123355589',
                             style: TextStyle(
                               fontSize: 14,
@@ -124,30 +127,38 @@ class _PolicyViewState extends State<PolicyView> {
                               height: 1.4,
                             ),
                           ),
-                          TextSpan(
+                          const TextSpan(
                             text: '” của Quý Khách mở tại ngân hàng MB Bank.\n',
                           ),
-                          TextSpan(
+                          const TextSpan(
                             text:
                                 'Căn cứ theo hợp đồng Hợp tác số 01/2023/HĐDV/MB-BLUECOM ký ngày 09 tháng 03 năm 2023.\n',
                           ),
-                          TextSpan(
+                          const TextSpan(
                             text: 'Chi tiết tại đường link: ',
                           ),
                           TextSpan(
                             text: 'https://vietqr.vn/mbbank-dkdv\n\n',
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w400,
                               color: AppColor.BLUE_TEXT,
                               height: 1.4,
+                              decoration: TextDecoration.underline,
                             ),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () async {
+                                await launch(
+                                  'https://vietqr.vn/mbbank-dkdv',
+                                  forceSafariVC: false,
+                                );
+                              },
                           ),
-                          TextSpan(
+                          const TextSpan(
                             text:
                                 'Quý Khách vui lòng xác nhận đã đọc, hiểu và đồng ý sử dụng dịch vụ bằng cách nhập mã OTP do ngân hàng TMCP Quân Đội gửi đến số điện thoại của Quý Khách.\n\n',
                           ),
-                          TextSpan(
+                          const TextSpan(
                             text:
                                 'Xin cảm ơn Quý khách đã sử dụng dịch vụ của chúng tôi.',
                           ),
@@ -158,6 +169,17 @@ class _PolicyViewState extends State<PolicyView> {
                   Row(
                     children: [
                       Checkbox(
+                        checkColor: AppColor.BLUE_TEXT,
+                        activeColor: AppColor.BLUE_TEXT.withOpacity(0.3),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(2.0),
+                        ),
+                        side: MaterialStateBorderSide.resolveWith(
+                          (states) => const BorderSide(
+                            width: 1.0,
+                            color: AppColor.BLUE_TEXT,
+                          ),
+                        ),
                         value: isAgreeWithPolicy,
                         onChanged: (value) {
                           widget.onSelectPolicy!(value);
