@@ -173,7 +173,8 @@ class UserUpdatePassword extends StatelessWidget {
               width: width - 40,
               text: 'Cập nhật',
               textColor: AppColor.WHITE,
-              bgColor: AppColor.GREEN,
+              bgColor: AppColor.BLUE_TEXT,
+              borderRadius: 8,
               function: () {
                 Provider.of<UserEditProvider>(context, listen: false)
                     .updatePasswordErrs(

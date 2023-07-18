@@ -422,7 +422,7 @@ class PrinterSettingView extends StatelessWidget {
                       height: 40,
                       title: 'Quét thiết bị',
                       icon: Icons.bluetooth_searching_rounded,
-                      textColor: AppColor.GREEN,
+                      textColor: AppColor.BLUE_TEXT,
                       bgColor: Theme.of(context).cardColor,
                       function: () {
                         _printerBloc

@@ -87,8 +87,14 @@ class QRShareView extends StatelessWidget {
             top: (height > 700 && PlatformUtils.instance.isIOsApp()) ? 20 : 0,
             child: Container(
               width: width,
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              height: 65,
+              padding: const EdgeInsets.only(left: 10, bottom: 20),
+              height: 80,
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/images/bgr-header.png'),
+                  fit: BoxFit.fill,
+                ),
+              ),
               alignment: Alignment.bottomLeft,
               child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
                 InkWell(
@@ -101,7 +107,7 @@ class QRShareView extends StatelessWidget {
                     child: Icon(
                       Icons.arrow_back_ios_rounded,
                       size: 20,
-                      color: AppColor.WHITE,
+                      color: AppColor.BLACK,
                     ),
                   ),
                 ),
@@ -110,7 +116,7 @@ class QRShareView extends StatelessWidget {
                   'Chia sẻ mã QR',
                   style: TextStyle(
                     fontSize: 20,
-                    color: AppColor.WHITE,
+                    color: AppColor.BLACK,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -199,62 +205,53 @@ class QRShareView extends StatelessWidget {
     return RepaintBoundaryWidget(
         globalKey: globalKey,
         builder: (key) {
-          return Container(
-            width: width,
-            height: height,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                  fit: BoxFit.fitHeight,
-                  image: Image.asset('assets/images/bg-qr.png').image),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                VietQr(
-                  qrGeneratedDTO: dto,
-                  content: dto.content,
-                ),
-                ValueListenableBuilder(
-                  valueListenable: _waterMarkProvider,
-                  builder: (_, provider, child) {
-                    return Visibility(
-                      visible: provider == true,
-                      child: Container(
-                        width: width,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 10,
-                        ),
-                        child: RichText(
-                          textAlign: TextAlign.right,
-                          text: const TextSpan(
-                            style: TextStyle(
-                              color: AppColor.WHITE,
-                              fontSize: 12,
-                            ),
-                            children: [
-                              TextSpan(text: 'Được tạo bởi '),
-                              TextSpan(
-                                text: 'vietqr.vn',
-                                style: TextStyle(
-                                    decoration: TextDecoration.underline),
-                              ),
-                              TextSpan(text: ' - '),
-                              TextSpan(text: 'Hotline '),
-                              TextSpan(
-                                text: '19006234',
-                                style: TextStyle(
-                                    decoration: TextDecoration.underline),
-                              ),
-                            ],
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              VietQr(
+                qrGeneratedDTO: dto,
+                content: dto.content,
+              ),
+              ValueListenableBuilder(
+                valueListenable: _waterMarkProvider,
+                builder: (_, provider, child) {
+                  return Visibility(
+                    visible: provider == true,
+                    child: Container(
+                      width: width,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 10,
+                      ),
+                      child: RichText(
+                        textAlign: TextAlign.right,
+                        text: const TextSpan(
+                          style: TextStyle(
+                            color: AppColor.WHITE,
+                            fontSize: 12,
                           ),
+                          children: [
+                            TextSpan(text: 'Được tạo bởi '),
+                            TextSpan(
+                              text: 'vietqr.vn',
+                              style: TextStyle(
+                                  decoration: TextDecoration.underline),
+                            ),
+                            TextSpan(text: ' - '),
+                            TextSpan(text: 'Hotline '),
+                            TextSpan(
+                              text: '19006234',
+                              style: TextStyle(
+                                  decoration: TextDecoration.underline),
+                            ),
+                          ],
                         ),
                       ),
-                    );
-                  },
-                ),
-              ],
-            ),
+                    ),
+                  );
+                },
+              ),
+            ],
           );
         });
   }

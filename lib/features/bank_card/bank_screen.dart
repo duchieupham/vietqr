@@ -221,7 +221,12 @@ class _BankScreenState extends State<_BankScreen>
                               ),
                             );
                           }
-
+                          Provider.of<BankCardSelectProvider>(context,
+                                  listen: false)
+                              .updateBanks(state.listBanks);
+                          Provider.of<BankCardSelectProvider>(context,
+                                  listen: false)
+                              .updateColors(state.colors);
                           return buildList(
                             maxListHeight,
                             state.listBanks,
@@ -254,6 +259,9 @@ class _BankScreenState extends State<_BankScreen>
                     BlocConsumer<BankBloc, BankState>(
                       listener: (context, state) {
                         if (state.status == BlocStatus.SUCCESS) {
+                          Provider.of<BankCardSelectProvider>(context,
+                                  listen: false)
+                              .updateBanks(state.listBanks);
                           List<QRCreateDTO> qrCreateDTOs = [];
                           if (state.listBanks.isNotEmpty) {
                             for (BankAccountDTO bankAccountDTO
@@ -940,7 +948,7 @@ class _StackedList extends State<StackedList> {
                     decoration: BoxDecoration(
                       borderRadius: const BorderRadius.all(Radius.circular(25)),
                       color: dto.userId == userId
-                          ? AppColor.GREEN
+                          ? AppColor.BLUE_TEXT
                           : AppColor.ORANGE,
                     ),
                     child: const Icon(
