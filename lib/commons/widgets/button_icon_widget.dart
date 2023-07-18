@@ -14,11 +14,13 @@ class ButtonIconWidget extends StatelessWidget {
   final FocusNode? focusNode;
   final Alignment? alignment;
   final EdgeInsets contentPadding;
+  final bool enableShadow;
+  final String pathIcon;
 
   const ButtonIconWidget({
     super.key,
     required this.width,
-    required this.icon,
+    this.icon = Icons.add,
     required this.title,
     required this.function,
     required this.bgColor,
@@ -30,8 +32,10 @@ class ButtonIconWidget extends StatelessWidget {
     this.focusNode,
     this.alignment,
     this.iconSize,
+    this.pathIcon = '',
     this.contentPadding =
         const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+    this.enableShadow = false,
   });
 
   @override
@@ -47,6 +51,16 @@ class ButtonIconWidget extends StatelessWidget {
         alignment: alignment,
         decoration: BoxDecoration(
           color: bgColor,
+          boxShadow: enableShadow
+              ? [
+                  BoxShadow(
+                    color: Theme.of(context).shadowColor.withOpacity(0.3),
+                    spreadRadius: 3,
+                    blurRadius: 5,
+                    offset: const Offset(1, 2),
+                  ),
+                ]
+              : null,
           borderRadius:
               BorderRadius.circular((borderRadius != null) ? borderRadius! : 5),
         ),
@@ -55,13 +69,20 @@ class ButtonIconWidget extends StatelessWidget {
               ? MainAxisAlignment.start
               : MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              color: textColor,
-              size: iconSize ?? 15,
-            ),
+            if (pathIcon.isNotEmpty)
+              Image.asset(
+                pathIcon,
+                width: iconSize,
+              )
+            else
+              Icon(
+                icon,
+                color: textColor,
+                size: iconSize ?? 15,
+              ),
             if (title.isNotEmpty) ...[
-              const Padding(padding: EdgeInsets.only(left: 5)),
+              if (pathIcon.isEmpty)
+                const Padding(padding: EdgeInsets.only(left: 5)),
               Text(
                 title,
                 style: TextStyle(

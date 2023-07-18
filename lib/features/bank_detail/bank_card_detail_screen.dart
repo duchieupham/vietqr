@@ -321,7 +321,7 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                                     'Xem thêm',
                                     style: TextStyle(
                                       fontSize: 15,
-                                      color: AppColor.GREEN,
+                                      color: AppColor.BLUE_TEXT,
                                       decoration: TextDecoration.underline,
                                     ),
                                   ),
@@ -369,7 +369,8 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                                   if (dto.authenticated) {
                                     DialogWidget.instance.openMsgDialog(
                                       title: 'Cảnh báo',
-                                      msg: 'Bạn phải huỷ liên kết Tk ngân hàng này trước khi xoá',
+                                      msg:
+                                          'Bạn phải huỷ liên kết Tk ngân hàng này trước khi xoá',
                                     );
                                   } else {
                                     BankAccountRemoveDTO bankAccountRemoveDTO =
@@ -985,7 +986,7 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                   ? Icons.check_rounded
                   : Icons.pending_actions_rounded,
               size: 18,
-              color: (isAuthenticated) ? AppColor.GREEN : AppColor.ORANGE,
+              color: (isAuthenticated) ? AppColor.BLUE_TEXT : AppColor.ORANGE,
             ),
             const Padding(padding: EdgeInsets.only(left: 10)),
           ],
@@ -995,7 +996,7 @@ class _BankCardDetailState extends State<BankCardDetailState> {
             style: TextStyle(
               fontSize: 15,
               color: (isAuthenticated != null && isAuthenticated)
-                  ? AppColor.GREEN
+                  ? AppColor.BLUE_TEXT
                   : (isAuthenticated != null && !isAuthenticated)
                       ? AppColor.ORANGE
                       : Theme.of(context).hintColor,

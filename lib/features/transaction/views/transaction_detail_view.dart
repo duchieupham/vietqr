@@ -532,7 +532,7 @@ class TransactionDetailView extends StatelessWidget {
                                 qrBloc
                                     .add(QREventRegenerate(dto: qrRecreateDTO));
                               },
-                              bgColor: AppColor.GREEN,
+                              bgColor: AppColor.BLUE_TEXT,
                               textColor: AppColor.WHITE,
                             ),
                           const Padding(padding: EdgeInsets.only(left: 10)),

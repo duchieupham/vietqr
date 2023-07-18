@@ -136,7 +136,7 @@ class ThemeSettingView extends StatelessWidget {
                             scale: 0.8,
                             child: CupertinoSwitch(
                               value: provider.enableShortcut,
-                              activeColor: AppColor.GREEN,
+                              activeColor: AppColor.BLUE_TEXT,
                               onChanged: ((_) {
                                 provider.updateEnableShortcut(
                                     !provider.enableShortcut);

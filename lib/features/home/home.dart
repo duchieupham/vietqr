@@ -10,14 +10,13 @@ import 'package:vierqr/features/account/account_screen.dart';
 import 'package:vierqr/features/bank_card/bank_screen.dart';
 import 'package:vierqr/features/dashboard/dashboard_screen.dart';
 import 'package:vierqr/features/home/states/home_state.dart';
-import 'package:vierqr/features/home/widgets/custom_app_bar_widget.dart';
+import 'package:vierqr/features/home/widgets/background_app_bar_home.dart';
 import 'package:vierqr/features/home/widgets/disconnect_widget.dart';
 import 'package:vierqr/features/home/widgets/maintain_widget.dart';
 import 'package:vierqr/features/introduce/views/introduce_screen.dart';
 import 'package:vierqr/features/notification/blocs/notification_bloc.dart';
 import 'package:vierqr/features/notification/events/notification_event.dart';
 import 'package:vierqr/features/notification/states/notification_state.dart';
-import 'package:vierqr/features/personal/views/user_setting.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
@@ -588,16 +587,7 @@ class _HomeScreen extends State<HomeScreen>
 //header
   Widget _buildAppBar() {
     double paddingTop = MediaQuery.of(context).viewPadding.top;
-
-    return Container(
-      height: 230,
-      width: MediaQuery.of(context).size.width,
-      padding: EdgeInsets.only(top: paddingTop + 12),
-      alignment: Alignment.topCenter,
-      decoration: const BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage('assets/images/bgr-header.png'),
-              fit: BoxFit.fitWidth)),
+    return BackgroundAppBarHome(
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 25),
         child: Row(
