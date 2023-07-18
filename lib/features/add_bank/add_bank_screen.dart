@@ -27,7 +27,6 @@ import 'package:vierqr/models/bank_card_request_otp.dart';
 import 'package:vierqr/models/bank_name_search_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/confirm_otp_bank_dto.dart';
-import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/models/register_authentication_dto.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
@@ -245,7 +244,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                   bankAccount: bankAccountController.text,
                 );
 
-                _bloc.add(BankCardEventRegisterAuthentication(dto: dto));
+                _bloc.add(BankCardEventRegisterLinkBank(dto: dto));
               } else {
                 String bankTypeId =
                     Provider.of<AddBankProvider>(context, listen: false)
@@ -361,7 +360,19 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                                   otpController: otpController,
                                   onChangeOTP: (value) {},
                                   onResend: () {
-                                    // _bloc.add();
+                                    String formattedName = StringUtils.instance
+                                        .removeDiacritic(StringUtils.instance
+                                            .capitalFirstCharacter(
+                                                nameController.text));
+                                    BankCardRequestOTP dto = BankCardRequestOTP(
+                                      nationalId: cmtController.text,
+                                      accountNumber: bankAccountController.text,
+                                      accountName: formattedName,
+                                      applicationType: 'MOBILE',
+                                      phoneNumber: phoneController.text,
+                                    );
+                                    _bloc
+                                        .add(BankCardEventRequestOTP(dto: dto));
                                   },
                                 );
                               }

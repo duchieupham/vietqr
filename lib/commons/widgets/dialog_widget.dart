@@ -573,11 +573,15 @@ class DialogWidget {
     }
   }
 
-  openMsgDialog(
-      {required String title,
-      String? button,
-      required String msg,
-      VoidCallback? function}) {
+  openMsgDialog({
+    required String title,
+    String? buttonExit,
+    String? buttonConfirm,
+    required String msg,
+    VoidCallback? function,
+    VoidCallback? functionConfirm,
+    bool isSecondBT = false,
+  }) {
     return showDialog(
         barrierDismissible: false,
         context: NavigationService.navigatorKey.currentContext!,
@@ -585,106 +589,128 @@ class DialogWidget {
           return Material(
             color: AppColor.TRANSPARENT,
             child: Center(
-                child:
-                    // (PlatformUtils.instance.isWeb())
-                    //     ?
-                    Container(
-              width: 300,
-              height: 300,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-              decoration: BoxDecoration(
-                color: Theme.of(context).cardColor,
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    'assets/images/ic-warning.png',
-                    width: 80,
-                    height: 80,
-                  ),
-                  const Padding(padding: EdgeInsets.only(top: 10)),
-                  Text(
-                    title,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+              child: Container(
+                width: 300,
+                height: 300,
+                alignment: Alignment.center,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).cardColor,
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      'assets/images/ic-warning.png',
+                      width: 80,
+                      height: 80,
                     ),
-                  ),
-                  const Padding(padding: EdgeInsets.only(top: 10)),
-                  SizedBox(
-                    width: 250,
-                    height: 60,
-                    child: Text(
-                      msg,
+                    const Padding(padding: EdgeInsets.only(top: 10)),
+                    Text(
+                      title,
                       textAlign: TextAlign.center,
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                        fontSize: 13,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ),
-                  const Padding(padding: EdgeInsets.only(top: 30)),
-                  ButtonWidget(
-                    width: 250,
-                    height: 40,
-                    text: button ?? 'Đóng',
-                    textColor: AppColor.WHITE,
-                    bgColor: AppColor.BLUE_TEXT,
-                    borderRadius: 5,
-                    function: (function != null)
-                        ? function
-                        : () {
-                            Navigator.pop(context);
-                          },
-                  ),
-                  // const Padding(padding: EdgeInsets.only(top: 10)),
-                ],
-              ),
-            )
-                // : Container(
-                //     width: 300,
-                //     height: 250,
-                //     alignment: Alignment.center,
-                //     padding: const EdgeInsets.symmetric(horizontal: 40),
-                //     decoration: BoxDecoration(
-                //       color: Theme.of(context).cardColor,
-                //       borderRadius: BorderRadius.circular(20),
-                //     ),
-                //     child: Column(
-                //       mainAxisAlignment: MainAxisAlignment.center,
-                //       crossAxisAlignment: CrossAxisAlignment.center,
-                //       children: [
-                //         const Spacer(),
-                //         Text(
-                //           msg,
-                //           textAlign: TextAlign.center,
-                //           style: const TextStyle(
-                //             fontSize: 16,
-                //           ),
-                //         ),
-                //         const Spacer(),
-                //         ButtonWidget(
-                //           width: 230,
-                //           text: 'OK',
-                //           textColor: DefaultTheme.WHITE,
-                //           bgColor: DefaultTheme.GREEN,
-                //           function: (function != null)
-                //               ? function
-                //               : () {
-                //                   Navigator.pop(context);
-                //                 },
-                //         ),
-                //         const Padding(padding: EdgeInsets.only(bottom: 20)),
-                //       ],
-                //     ),
-                //   ),
+                    const Padding(padding: EdgeInsets.only(top: 10)),
+                    SizedBox(
+                      width: 250,
+                      height: 60,
+                      child: Text(
+                        msg,
+                        textAlign: TextAlign.center,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                    const Padding(padding: EdgeInsets.only(top: 30)),
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: ButtonWidget(
+                              height: 40,
+                              text: buttonExit ?? 'Đóng',
+                              textColor: AppColor.WHITE,
+                              bgColor: isSecondBT
+                                  ? AppColor.GREY_TEXT
+                                  : AppColor.BLUE_TEXT,
+                              borderRadius: 5,
+                              function: (function != null)
+                                  ? function
+                                  : () {
+                                      Navigator.pop(context);
+                                    },
+                            ),
+                          ),
+                          if (isSecondBT) ...[
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: ButtonWidget(
+                                height: 40,
+                                text: buttonConfirm ?? 'Xác nhận',
+                                textColor: AppColor.WHITE,
+                                bgColor: AppColor.BLUE_TEXT,
+                                borderRadius: 5,
+                                function: functionConfirm!,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                    // const Padding(padding: EdgeInsets.only(top: 10)),
+                  ],
                 ),
+              ),
+              // : Container(
+              //     width: 300,
+              //     height: 250,
+              //     alignment: Alignment.center,
+              //     padding: const EdgeInsets.symmetric(horizontal: 40),
+              //     decoration: BoxDecoration(
+              //       color: Theme.of(context).cardColor,
+              //       borderRadius: BorderRadius.circular(20),
+              //     ),
+              //     child: Column(
+              //       mainAxisAlignment: MainAxisAlignment.center,
+              //       crossAxisAlignment: CrossAxisAlignment.center,
+              //       children: [
+              //         const Spacer(),
+              //         Text(
+              //           msg,
+              //           textAlign: TextAlign.center,
+              //           style: const TextStyle(
+              //             fontSize: 16,
+              //           ),
+              //         ),
+              //         const Spacer(),
+              //         ButtonWidget(
+              //           width: 230,
+              //           text: 'OK',
+              //           textColor: DefaultTheme.WHITE,
+              //           bgColor: DefaultTheme.GREEN,
+              //           function: (function != null)
+              //               ? function
+              //               : () {
+              //                   Navigator.pop(context);
+              //                 },
+              //         ),
+              //         const Padding(padding: EdgeInsets.only(bottom: 20)),
+              //       ],
+              //     ),
+              //   ),
+            ),
           );
         });
   }

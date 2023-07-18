@@ -223,20 +223,20 @@ class CalKeyboardWidget extends StatelessWidget {
       }
     }
     if (value.length <= 9) {
-      Provider.of<CreateQRProvider>(context, listen: false)
-          .updateTransactionAmount(value);
+      // Provider.of<CreateQRProvider>(context, listen: false)
+      //     .updateTransactionAmount(value);
     }
   }
 
   void clearText(BuildContext context) {
-    Provider.of<CreateQRProvider>(context, listen: false)
-        .clearTransactionAmount();
+    // Provider.of<CreateQRProvider>(context, listen: false)
+    //     .clearTransactionAmount();
   }
 
   void removeText(String currentValue, BuildContext context) {
     if (currentValue.isNotEmpty) {
-      Provider.of<CreateQRProvider>(context, listen: false)
-          .removeTransactionAmount();
+      // Provider.of<CreateQRProvider>(context, listen: false)
+      //     .removeTransactionAmount();
     }
   }
 }

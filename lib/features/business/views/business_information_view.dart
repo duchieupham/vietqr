@@ -260,7 +260,7 @@ class _BusinessInformationView extends State<BusinessInformationView>
                           title: 'Chi nhánh',
                           label:
                               '${businessDetailDTO.branchs.length} chi nhánh',
-                          color: AppColor.GREEN,
+                          color: AppColor.BLUE_TEXT,
                           icon: Icons.business_rounded,
                         ),
                         SizedBox(
@@ -318,8 +318,7 @@ class _BusinessInformationView extends State<BusinessInformationView>
                                                     Routes.BUSINESS_TRANSACTION,
                                                   );
                                                 },
-                                                bgColor:
-                                                    AppColor.TRANSPARENT,
+                                                bgColor: AppColor.TRANSPARENT,
                                                 textColor: AppColor.GREEN,
                                               ),
                                             )
@@ -737,7 +736,7 @@ class _BusinessInformationView extends State<BusinessInformationView>
               initData(context);
             },
             bgColor: AppColor.TRANSPARENT,
-            textColor: AppColor.GREEN,
+            textColor: AppColor.BLUE_TEXT,
           ),
         ],
       ),

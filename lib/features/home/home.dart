@@ -10,14 +10,13 @@ import 'package:vierqr/features/account/account_screen.dart';
 import 'package:vierqr/features/bank_card/bank_screen.dart';
 import 'package:vierqr/features/dashboard/dashboard_screen.dart';
 import 'package:vierqr/features/home/states/home_state.dart';
-import 'package:vierqr/features/home/widgets/custom_app_bar_widget.dart';
+import 'package:vierqr/features/home/widgets/background_app_bar_home.dart';
 import 'package:vierqr/features/home/widgets/disconnect_widget.dart';
 import 'package:vierqr/features/home/widgets/maintain_widget.dart';
 import 'package:vierqr/features/introduce/views/introduce_screen.dart';
 import 'package:vierqr/features/notification/blocs/notification_bloc.dart';
 import 'package:vierqr/features/notification/events/notification_event.dart';
 import 'package:vierqr/features/notification/states/notification_state.dart';
-import 'package:vierqr/features/personal/views/user_setting.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
@@ -336,7 +335,7 @@ class _HomeScreen extends State<HomeScreen>
                               ? const EdgeInsets.only(top: 130)
                               : EdgeInsets.zero,
                           child: SizedBox(
-                            height: MediaQuery.of(context).size.height - 130,
+                            height: MediaQuery.of(context).size.height,
                             child: Listener(
                               onPointerMove: (moveEvent) {
                                 if (moveEvent.delta.dx > 0) {
@@ -366,66 +365,34 @@ class _HomeScreen extends State<HomeScreen>
                       ),
                     ],
                   ),
-                  Positioned(
-                    bottom: 10,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      margin: (PlatformUtils.instance.isAndroidApp())
-                          ? const EdgeInsets.only(bottom: 5)
-                          : null,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ClipRRect(
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(20)),
-                            child: BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                              child: Container(
-                                alignment: Alignment.center,
-                                height: 60,
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context)
-                                      .cardColor
-                                      .withOpacity(0.5),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color:
-                                          AppColor.GREY_VIEW.withOpacity(0.5),
-                                      spreadRadius: 2,
-                                      blurRadius: 3,
-                                      offset: const Offset(2, 2),
-                                    ),
-                                  ],
-                                ),
-                                child: Stack(
-                                  children: [
-                                    Row(
-                                      children: List.generate(
-                                          page.listItem.length, (index) {
-                                        var item =
-                                            page.listItem.elementAt(index);
-
-                                        String url =
-                                            (item.index == page.indexSelected)
-                                                ? item.assetsActive
-                                                : item.assetsUnActive;
-
-                                        return _buildShortcut(
-                                            item.index, url, context);
-                                      }).toList(),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
                 ],
+              ),
+              bottomNavigationBar: Container(
+                decoration: const BoxDecoration(
+                  border:
+                      Border(top: BorderSide(color: AppColor.GREY_TOP_TAB_BAR)),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: List.generate(
+                    page.listItem.length,
+                    (index) {
+                      var item = page.listItem.elementAt(index);
+
+                      String url = (item.index == page.indexSelected)
+                          ? item.assetsActive
+                          : item.assetsUnActive;
+
+                      return _buildShortcut(
+                        index: item.index,
+                        url: url,
+                        label: item.label,
+                        context: context,
+                        select: item.index == page.indexSelected,
+                      );
+                    },
+                  ).toList(),
+                ),
               ),
             );
           },
@@ -435,7 +402,13 @@ class _HomeScreen extends State<HomeScreen>
   }
 
   //build shorcuts in bottom bar
-  Widget _buildShortcut(int index, String url, BuildContext context) {
+  Widget _buildShortcut({
+    required int index,
+    required String url,
+    required String label,
+    bool select = false,
+    required BuildContext context,
+  }) {
     return GestureDetector(
       onTap: () async {
         if (index != -1) {
@@ -456,18 +429,28 @@ class _HomeScreen extends State<HomeScreen>
       child: Container(
         padding: const EdgeInsets.all(5),
         margin: const EdgeInsets.symmetric(horizontal: 8),
-        width: 45,
-        height: 45,
+        height: 80,
         decoration: BoxDecoration(
-          color: (index == -1)
-              ? AppColor.PURPLE_NEON.withOpacity(0.8)
-              : AppColor.TRANSPARENT,
+          color: AppColor.TRANSPARENT,
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Image.asset(
-          url,
-          width: 35,
-          height: 35,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              url,
+              width: 42,
+              height: 36,
+              fit: BoxFit.cover,
+            ),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                color: select ? AppColor.BLUE_TEXT : AppColor.BLACK,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -542,18 +525,9 @@ class _HomeScreen extends State<HomeScreen>
             TextSpan(
               text: 'VietQR',
             ),
-            // TextSpan(
-            //   text: 'QR không chứa số tiền và nội dung.',
-            //   style: TextStyle(
-            //     fontSize: 15,
-            //     fontWeight: FontWeight.normal,
-            //   ),
-            // ),
           ],
         ),
       );
-      /* title =
-          '${TimeUtils.instance.getCurrentDateInWeek()}\n${TimeUtils.instance.getCurentDate()}';*/
     }
     if (indexSelected == 3) {
       titleWidget = RichText(
@@ -602,16 +576,7 @@ class _HomeScreen extends State<HomeScreen>
 //header
   Widget _buildAppBar() {
     double paddingTop = MediaQuery.of(context).viewPadding.top;
-
-    return Container(
-      height: 230,
-      width: MediaQuery.of(context).size.width,
-      padding: EdgeInsets.only(top: paddingTop + 12),
-      alignment: Alignment.topCenter,
-      decoration: const BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage('assets/images/bgr-header.png'),
-              fit: BoxFit.fitWidth)),
+    return BackgroundAppBarHome(
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 25),
         child: Row(

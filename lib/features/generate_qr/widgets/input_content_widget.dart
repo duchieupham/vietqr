@@ -155,7 +155,7 @@ class _InputContentWidgetState extends State<InputContentWidget> {
                             title: 'Số tiền',
                             description: Provider.of<CreateQRProvider>(context)
                                 .currencyFormatted,
-                            descriptionColor: AppColor.GREEN,
+                            descriptionColor: AppColor.BLUE_TEXT,
                             unit: 'VND',
                           ),
                         ],

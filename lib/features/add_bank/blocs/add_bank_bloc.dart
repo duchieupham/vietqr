@@ -28,7 +28,7 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
     on<BankCardEventRequestOTP>(_requestOTP);
     on<BankCardEventConfirmOTP>(_confirmOTP);
     on<BankCardEventInsert>(_insertBankCard);
-    on<BankCardEventRegisterAuthentication>(_registerAuthentication);
+    on<BankCardEventRegisterLinkBank>(_registerLinkBank);
     on<ScanQrEventGetBankType>(_getDataScan);
     on<UpdateAddBankEvent>(_updateEvent);
   }
@@ -289,9 +289,9 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
     }
   }
 
-  void _registerAuthentication(AddBankEvent event, Emitter emit) async {
+  void _registerLinkBank(AddBankEvent event, Emitter emit) async {
     try {
-      if (event is BankCardEventRegisterAuthentication) {
+      if (event is BankCardEventRegisterLinkBank) {
         emit(state.copyWith(
             status: BlocStatus.LOADING, request: AddBankType.NONE));
         final ResponseMessageDTO responseMessageDTO = await bankCardRepository

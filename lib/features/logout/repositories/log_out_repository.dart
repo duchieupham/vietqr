@@ -40,7 +40,6 @@ class LogoutRepository {
 
   Future<void> _resetServices() async {
     BuildContext context = NavigationService.navigatorKey.currentContext!;
-    Provider.of<CreateQRProvider>(context, listen: false).reset();
     Provider.of<CreateQRPageSelectProvider>(context, listen: false).reset();
     Provider.of<BankAccountProvider>(context, listen: false).reset();
     Provider.of<UserEditProvider>(context, listen: false).reset();

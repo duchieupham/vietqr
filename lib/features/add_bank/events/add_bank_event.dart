@@ -97,10 +97,10 @@ class BankCardEventInsert extends AddBankEvent {
   List<Object?> get props => [dto];
 }
 
-class BankCardEventRegisterAuthentication extends AddBankEvent {
+class BankCardEventRegisterLinkBank extends AddBankEvent {
   final RegisterAuthenticationDTO dto;
 
-  const BankCardEventRegisterAuthentication({
+  const BankCardEventRegisterLinkBank({
     required this.dto,
   });
 

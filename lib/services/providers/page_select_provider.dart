@@ -28,33 +28,38 @@ class PageSelectProvider with ChangeNotifier {
   final _listBottomNavigation = [
     const NavigationDTO(
       name: 'TK ngân hàng',
-      assetsActive: 'assets/images/ic-card-selected.png',
-      assetsUnActive: 'assets/images/ic-card-unselect.png',
+      label: 'Tài khoản',
+      assetsActive: 'assets/images/ic-tb-card-selected.png',
+      assetsUnActive: 'assets/images/ic-tb-card.png',
       index: 0,
     ),
     const NavigationDTO(
       name: 'Trang chủ\n',
-      assetsActive: 'assets/images/ic-dashboard.png',
-      assetsUnActive: 'assets/images/ic-dashboard-unselect.png',
+      label: 'Trang chủ',
+      assetsActive: 'assets/images/ic-tb-dashboard-selected.png',
+      assetsUnActive: 'assets/images/ic-tb-dashboard.png',
       index: 1,
     ),
     const NavigationDTO(
       name: '',
-      assetsActive: 'assets/images/ic-qr-scanning.png',
-      assetsUnActive: 'assets/images/ic-qr-scanning.png',
+      label: 'Quét QR',
+      assetsActive: 'assets/images/ic-tb-qr.png',
+      assetsUnActive: 'assets/images/ic-tb-qr.png',
       index: -1,
     ),
     if (PlatformUtils.instance.isAndroidApp())
       const NavigationDTO(
         name: 'Mở tài khoản MB',
+        label: 'Doanh nghiệp',
         assetsActive: 'assets/images/ic-linked.png',
         assetsUnActive: 'assets/images/ic-linked-unselect.png',
         index: 2,
       ),
     NavigationDTO(
       name: 'Cá nhân',
-      assetsActive: 'assets/images/ic-user.png',
-      assetsUnActive: 'assets/images/ic-user-unselect.png',
+      label: 'Cá nhân',
+      assetsActive: 'assets/images/ic-tb-personal-selected.png',
+      assetsUnActive: 'assets/images/ic-tb-personal.png',
       index: (PlatformUtils.instance.isAndroidApp()) ? 3 : 2,
     ),
   ];

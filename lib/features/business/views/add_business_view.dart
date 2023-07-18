@@ -246,7 +246,7 @@ class AddBusinessView extends StatelessWidget {
                       height: 40,
                       borderRadius: 10,
                       text: 'Cập nhật ảnh bìa',
-                      textColor: AppColor.GREEN,
+                      textColor: AppColor.BLUE_TEXT,
                       bgColor: Theme.of(context).cardColor,
                       function: () async {
                         await Permission.mediaLibrary.request();
@@ -274,7 +274,7 @@ class AddBusinessView extends StatelessWidget {
                       height: 40,
                       borderRadius: 10,
                       text: 'Cập nhật ảnh đại diện',
-                      textColor: AppColor.GREEN,
+                      textColor: AppColor.BLUE_TEXT,
                       bgColor: Theme.of(context).cardColor,
                       function: () async {
                         await Permission.mediaLibrary.request();
@@ -480,7 +480,8 @@ class AddBusinessView extends StatelessWidget {
               width: width - 40,
               text: 'Lưu',
               textColor: AppColor.WHITE,
-              bgColor: AppColor.GREEN,
+              bgColor: AppColor.BLUE_TEXT,
+              borderRadius: 8,
               function: () {
                 SystemChannels.textInput.invokeMethod('TextInput.hide');
                 if (isValidForm(context: context)) {

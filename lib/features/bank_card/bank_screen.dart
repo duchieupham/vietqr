@@ -37,7 +37,6 @@ import 'package:vierqr/models/qr_create_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/services/providers/bank_account_provider.dart';
 import 'package:vierqr/services/providers/bank_card_select_provider.dart';
-import 'package:vierqr/services/providers/theme_provider.dart';
 import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
@@ -140,21 +139,15 @@ class _BankScreenState extends State<_BankScreen>
     final double height = MediaQuery.of(context).size.height;
     double sizedBox = 0;
     return Padding(
-      padding: const EdgeInsets.only(bottom: 80),
+      padding: const EdgeInsets.only(bottom: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          GestureDetector(
-            onTap: () {
-              Provider.of<ThemeProvider>(context, listen: false)
-                  .updateBankArr(1);
-            },
-            child: const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                'Tài khoản',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-              ),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              'Tài khoản',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
           ),
           Padding(
@@ -185,55 +178,14 @@ class _BankScreenState extends State<_BankScreen>
             child: BlocConsumer<BankBloc, BankState>(
               listener: (context, state) async {
                 if (state.request == BankType.SCAN) {
-                  if (state.typeQR == TypeQR.QR_BANK) {
-                    Navigator.pushNamed(
-                      context,
-                      Routes.ADD_BANK_CARD,
-                      arguments: {
-                        'step': 0,
-                        'bankDTO': state.bankTypeDTO,
-                        'bankAccount': state.bankAccount,
-                        'name': ''
-                      },
-                    );
-                  } else if (state.typeQR == TypeQR.QR_BARCODE) {
-                    DialogWidget.instance.openMsgDialog(
-                      title: 'Không thể xác nhận mã QR',
-                      msg:
-                          'Không tìm thấy thông tin trong đoạn mã QR. Vui lòng kiểm tra lại thông tin.',
-                      function: () {
-                        Navigator.pop(context);
-                        if (Navigator.canPop(context)) {
-                          Navigator.pop(context);
-                        }
-                      },
-                    );
-                  }
-                }
-                if (state.request == BankType.SCAN_NOT_FOUND) {
-                  DialogWidget.instance.openMsgDialog(
-                    title: 'Không thể xác nhận mã QR',
-                    msg:
-                        'Không tìm thấy thông tin trong đoạn mã QR. Vui lòng kiểm tra lại thông tin.',
-                    function: () {
-                      Navigator.pop(context);
-                      if (Navigator.canPop(context)) {
-                        Navigator.pop(context);
-                      }
-                    },
-                  );
-                }
-
-                if (state.request == BankType.SCAN_ERROR) {
-                  DialogWidget.instance.openMsgDialog(
-                    title: 'Không tìm thấy thông tin',
-                    msg:
-                        'Không tìm thấy thông tin ngân hàng tương ứng. Vui lòng thử lại sau.',
-                    function: () {
-                      Navigator.pop(context);
-                      if (Navigator.canPop(context)) {
-                        Navigator.pop(context);
-                      }
+                  Navigator.pushNamed(
+                    context,
+                    Routes.ADD_BANK_CARD,
+                    arguments: {
+                      'step': 0,
+                      'bankDTO': state.bankTypeDTO,
+                      'bankAccount': state.bankAccount,
+                      'name': ''
                     },
                   );
                 }
@@ -256,6 +208,10 @@ class _BankScreenState extends State<_BankScreen>
                     ),
                   );
                 }
+                Provider.of<BankCardSelectProvider>(context, listen: false)
+                    .updateBanks(state.listBanks);
+                Provider.of<BankCardSelectProvider>(context, listen: false)
+                    .updateColors(state.colors);
                 return buildList(
                   maxListHeight,
                   state.listBanks,
@@ -469,6 +425,10 @@ class _BankScreenState extends State<_BankScreen>
 
   void getListBank(BuildContext context) {
     _bloc.add(BankCardEventGetList());
+  }
+
+  void getListQR(BuildContext context, List<QRCreateDTO> list) {
+    _bloc.add(QREventGenerateList(list: list));
   }
 
   void addQRWidget(double width, double height, List<QRGeneratedDTO> list,
@@ -759,37 +719,6 @@ class _StackedList extends State<StackedList> {
                         const Padding(padding: EdgeInsets.only(left: 10)),
                         InkWell(
                           onTap: () {
-                            // BankAccountDTO bankAccountDTO = BankAccountDTO(
-                            //   id: dto.id,
-                            //   bankAccount: dto.bankAccount,
-                            //   userBankName: dto.userBankName,
-                            //   bankCode: dto.bankCode,
-                            //   bankName: dto.bankName,
-                            //   imgId: dto.imgId,
-                            //   type: dto.type,
-                            //   branchId:
-                            //       (dto.branchId.isEmpty) ? '' : dto.branchId,
-                            //   businessId: (dto.businessId.isEmpty)
-                            //       ? ''
-                            //       : dto.businessId,
-                            //   branchName: (dto.branchName.isEmpty)
-                            //       ? ''
-                            //       : dto.branchName,
-                            //   businessName: (dto.businessName.isEmpty)
-                            //       ? ''
-                            //       : dto.businessName,
-                            //   isAuthenticated: dto.isAuthenticated,
-                            // );
-                            // Navigator.of(context)
-                            //     .push(
-                            //       MaterialPageRoute(
-                            //         builder: (context) => CreateQRScreen(
-                            //           bankAccountDTO: bankAccountDTO,
-                            //         ),
-                            //       ),
-                            //     )
-                            //     .then((value) {});
-
                             Navigator.pushNamed(
                               context,
                               Routes.CREATE_QR,
@@ -892,7 +821,7 @@ class _StackedList extends State<StackedList> {
                     decoration: BoxDecoration(
                       borderRadius: const BorderRadius.all(Radius.circular(25)),
                       color: dto.userId == userId
-                          ? AppColor.GREEN
+                          ? AppColor.BLUE_TEXT
                           : AppColor.ORANGE,
                     ),
                     child: const Icon(
@@ -1118,88 +1047,3 @@ class _StackedListDelegate extends SliverPersistentHeaderDelegate {
         child != oldDelegate.child;
   }
 }
-
-//     : Container(
-// width: width,
-// decoration: const BoxDecoration(
-// image: DecorationImage(
-// image: AssetImage('assets/images/bg-qr.png'),
-// fit: BoxFit.fitHeight,
-// ),
-// ),
-// child: Column(
-// children: [
-// BlocConsumer<BankBloc, BankState>(
-// listener: (context, state) {
-// if (state.status == BlocStatus.SUCCESS) {
-// List<QRCreateDTO> qrCreateDTOs = [];
-// if (state.listBanks.isNotEmpty) {
-// for (BankAccountDTO bankAccountDTO
-// in state.listBanks) {
-// QRCreateDTO qrCreateDTO = QRCreateDTO(
-// bankId: bankAccountDTO.id,
-// amount: '',
-// content: '',
-// branchId: '',
-// businessId: '',
-// userId: '',
-// );
-// qrCreateDTOs.add(qrCreateDTO);
-// }
-// getListQR(context, qrCreateDTOs);
-// }
-// }
-// // if (state.status == BlocStatus.INSERT ||
-// //     state.status == BlocStatus.DELETE) {
-// //   getListBank(context);
-// // }
-// },
-// builder: (context, state) {
-// return Expanded(
-// child: (state.listGeneratedQR.isEmpty)
-// ? _buildEmptyList(width)
-//     : Column(
-// children: [
-// CarouselSlider(
-// carouselController: carouselController,
-// items: cardWidgets,
-// options: CarouselOptions(
-// viewportFraction: 1,
-// aspectRatio:
-// width / (width + width * 0.25),
-// disableCenter: true,
-// onPageChanged: ((index, reason) {
-// Provider.of<BankAccountProvider>(
-// context,
-// listen: false)
-//     .updateIndex(index);
-// }),
-// ),
-// ),
-// const Spacer(),
-// Container(
-// width: width,
-// height: 10,
-// alignment: Alignment.center,
-// child: Consumer<BankAccountProvider>(
-// builder: (context, page, child) {
-// return ListView.builder(
-// shrinkWrap: true,
-// scrollDirection: Axis.horizontal,
-// physics:
-// const NeverScrollableScrollPhysics(),
-// itemCount:
-// state.listGeneratedQR.length,
-// itemBuilder: ((context, index) =>
-// _buildDot((index ==
-// page.indexSelected))));
-// }),
-// ),
-// ],
-// ),
-// );
-// },
-// ),
-// ],
-// ),
-// );

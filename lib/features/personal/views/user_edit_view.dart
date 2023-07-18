@@ -245,7 +245,7 @@ class UserEditView extends StatelessWidget {
                           ButtonWidget(
                             width: width - 40,
                             text: 'Cập nhật ảnh đại diện',
-                            textColor: AppColor.GREEN,
+                            textColor: AppColor.BLUE_TEXT,
                             bgColor: Theme.of(context).cardColor,
                             function: () async {
                               await Permission.mediaLibrary.request();
@@ -285,7 +285,7 @@ class UserEditView extends StatelessWidget {
                           ButtonWidget(
                             width: width - 40,
                             text: 'Đổi mật khẩu',
-                            textColor: AppColor.GREEN,
+                            textColor: AppColor.BLUE_TEXT,
                             bgColor: Theme.of(context).cardColor,
                             function: () {
                               Navigator.of(context)
@@ -296,7 +296,7 @@ class UserEditView extends StatelessWidget {
                           ButtonWidget(
                             width: width - 40,
                             text: 'Cập nhật thông tin qua CCCD',
-                            textColor: AppColor.GREEN,
+                            textColor: AppColor.BLUE_TEXT,
                             bgColor: Theme.of(context).cardColor,
                             function: () async {
                               // Navigator.pop(context);

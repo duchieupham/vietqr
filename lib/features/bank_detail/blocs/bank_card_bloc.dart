@@ -18,6 +18,8 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
   BankCardBloc(this.bankId) : super(BankCardState(bankId: bankId)) {
     on<BankCardEventRemove>(_removeBankAccount);
     on<BankCardGetDetailEvent>(_getDetail);
+    on<BankCardEventUnlink>(_unlinkBankAccount);
+    on<BankCardEventUnConfirmOTP>(_unConfirmOTP);
     on<UpdateEvent>(_updateEvent);
   }
 
@@ -47,16 +49,103 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
   void _removeBankAccount(BankCardEvent event, Emitter emit) async {
     try {
       if (event is BankCardEventRemove) {
-        emit(state.copyWith(status: BlocStatus.LOADING));
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, request: BankDetailType.NONE));
         final ResponseMessageDTO responseMessageDTO =
             await bankCardRepository.removeBankAccount(event.dto);
         if (responseMessageDTO.status == Stringify.RESPONSE_STATUS_SUCCESS) {
-          emit(state.copyWith(status: BlocStatus.DELETED));
+          emit(state.copyWith(
+              request: BankDetailType.DELETED, status: BlocStatus.UNLOADING));
         } else if (responseMessageDTO.status ==
             Stringify.RESPONSE_STATUS_CHECK) {
           String message =
               CheckUtils.instance.getCheckMessage(responseMessageDTO.message);
-          emit(state.copyWith(msg: message, status: BlocStatus.ERROR));
+          emit(state.copyWith(
+              msg: message,
+              request: BankDetailType.ERROR,
+              status: BlocStatus.UNLOADING));
+        } else {
+          String message =
+              ErrorUtils.instance.getErrorMessage(responseMessageDTO.message);
+          emit(state.copyWith(
+            msg: message,
+            status: BlocStatus.UNLOADING,
+            request: BankDetailType.ERROR,
+          ));
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+        msg: 'Không thể huỷ liên kết. Vui lòng kiểm tra lại kết nối',
+        status: BlocStatus.UNLOADING,
+        request: BankDetailType.ERROR,
+      ));
+    }
+  }
+
+  void _unlinkBankAccount(BankCardEvent event, Emitter emit) async {
+    try {
+      if (event is BankCardEventUnlink) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, request: BankDetailType.NONE));
+        final ResponseMessageDTO responseMessageDTO = await bankCardRepository
+            .unRequestOTP({
+          "accountNumber": event.accountNumber,
+          "applicationType": "MOBILE"
+        });
+        if (responseMessageDTO.status == Stringify.RESPONSE_STATUS_SUCCESS) {
+          emit(state.copyWith(
+            request: BankDetailType.UN_LINK,
+            status: BlocStatus.UNLOADING,
+            requestId: responseMessageDTO.message,
+          ));
+        } else if (responseMessageDTO.status ==
+            Stringify.RESPONSE_STATUS_CHECK) {
+          String message =
+              CheckUtils.instance.getCheckMessage(responseMessageDTO.message);
+          emit(state.copyWith(
+              msg: message,
+              request: BankDetailType.ERROR,
+              status: BlocStatus.UNLOADING));
+        } else {
+          String message =
+              ErrorUtils.instance.getErrorMessage(responseMessageDTO.message);
+          emit(state.copyWith(
+            msg: message,
+            status: BlocStatus.UNLOADING,
+            request: BankDetailType.ERROR,
+          ));
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+        msg: 'Không thể huỷ liên kết. Vui lòng kiểm tra lại kết nối',
+        status: BlocStatus.UNLOADING,
+        request: BankDetailType.ERROR,
+      ));
+    }
+  }
+
+  void _unConfirmOTP(BankCardEvent event, Emitter emit) async {
+    try {
+      if (event is BankCardEventUnConfirmOTP) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, request: BankDetailType.NONE));
+        final ResponseMessageDTO responseMessageDTO =
+            await bankCardRepository.unConfirmOTP(event.dto);
+        if (responseMessageDTO.status == Stringify.RESPONSE_STATUS_SUCCESS) {
+          emit(state.copyWith(
+              request: BankDetailType.OTP, status: BlocStatus.UNLOADING));
+        } else if (responseMessageDTO.status ==
+            Stringify.RESPONSE_STATUS_CHECK) {
+          String message =
+              CheckUtils.instance.getCheckMessage(responseMessageDTO.message);
+          emit(state.copyWith(
+              msg: message,
+              request: BankDetailType.ERROR,
+              status: BlocStatus.UNLOADING));
         } else {
           String message =
               ErrorUtils.instance.getErrorMessage(responseMessageDTO.message);

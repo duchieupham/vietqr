@@ -324,7 +324,7 @@ class _VietQRApp extends State<VietQRApp> {
                       const SelectBankTypeScreen(),
                   Routes.BANK_MEMBER_VIEW: (context) => const BankMemberView(),
                   Routes.QR_SHARE_VIEW: (context) => QRShareView(),
-                  Routes.QR_GENERATED: (context) => const QRGenerated(),
+                  // Routes.QR_GENERATED: (context) => const QRGenerated(),
                   Routes.BUSINESS_INFORMATION_VIEW: (context) =>
                       const BusinessInformationView(),
                   Routes.ADD_BUSINESS_VIEW: (context) =>

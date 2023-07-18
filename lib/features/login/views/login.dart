@@ -7,7 +7,6 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/encrypt_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
-import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
