@@ -106,7 +106,7 @@ class _HomeScreen extends State<HomeScreen>
 
   Future<void> startBarcodeScanStream() async {
     String data = await FlutterBarcodeScanner.scanBarcode(
-        '#ff6666', 'Cancel', true, ScanMode.QR);
+        '#ff6666', 'Cancel', true, ScanMode.DEFAULT);
     if (data.isNotEmpty) {
       if (data == TypeQR.NEGATIVE_ONE.value) {
       } else if (data == TypeQR.NEGATIVE_TWO.value) {
@@ -246,29 +246,29 @@ class _HomeScreen extends State<HomeScreen>
       },
       child: BlocListener<HomeBloc, HomeState>(
         listener: (context, state) {
-          if (state.type == TypePermission.Request) {
+          if (state.typePermission == TypePermission.Request) {
             _homeBloc.add(const PermissionEventGetStatus());
           }
-          if (state.type == TypePermission.CameraDenied) {
+          if (state.typePermission == TypePermission.CameraDenied) {
             Future.delayed(const Duration(milliseconds: 0), () {
               Provider.of<SuggestionWidgetProvider>(context, listen: false)
                   .updateCameraSuggestion(true);
             });
           }
-          if (state.type == TypePermission.CameraAllow) {
+          if (state.typePermission == TypePermission.CameraAllow) {
             Future.delayed(const Duration(milliseconds: 0), () {
               Provider.of<SuggestionWidgetProvider>(context, listen: false)
                   .updateCameraSuggestion(false);
             });
           }
-          if (state.type == TypePermission.Allow) {
+          if (state.typePermission == TypePermission.Allow) {
             Future.delayed(const Duration(milliseconds: 0), () {
               Provider.of<SuggestionWidgetProvider>(context, listen: false)
                   .updateCameraSuggestion(false);
             });
           }
 
-          if (state.type == TypePermission.ScanNotFound) {
+          if (state.request == HomeType.SCAN_NOT_FOUND) {
             DialogWidget.instance.openMsgDialog(
               title: 'Không thể xác nhận mã QR',
               msg:
@@ -281,7 +281,7 @@ class _HomeScreen extends State<HomeScreen>
               },
             );
           }
-          if (state.type == TypePermission.ScanError) {
+          if (state.request == HomeType.SCAN_ERROR) {
             DialogWidget.instance.openMsgDialog(
               title: 'Không tìm thấy thông tin',
               msg:
@@ -294,17 +294,31 @@ class _HomeScreen extends State<HomeScreen>
               },
             );
           }
-          if (state.type == TypePermission.ScanSuccess) {
-            Navigator.pushNamed(
-              context,
-              Routes.ADD_BANK_CARD,
-              arguments: {
-                'step': 0,
-                'bankDTO': state.bankTypeDTO,
-                'bankAccount': state.bankAccount,
-                'name': ''
-              },
-            );
+          if (state.request == HomeType.SCAN) {
+            if (state.typeQR == TypeQR.QR_BANK) {
+              Navigator.pushNamed(
+                context,
+                Routes.ADD_BANK_CARD,
+                arguments: {
+                  'step': 0,
+                  'bankDTO': state.bankTypeDTO,
+                  'bankAccount': state.bankAccount,
+                  'name': ''
+                },
+              );
+            } else if (state.typeQR == TypeQR.QR_BARCODE) {
+              DialogWidget.instance.openMsgDialog(
+                title: 'Không thể xác nhận mã QR',
+                msg:
+                    'Không tìm thấy thông tin trong đoạn mã QR. Vui lòng kiểm tra lại thông tin.',
+                function: () {
+                  Navigator.pop(context);
+                  if (Navigator.canPop(context)) {
+                    Navigator.pop(context);
+                  }
+                },
+              );
+            }
           }
         },
         child: Consumer<PageSelectProvider>(
@@ -321,7 +335,7 @@ class _HomeScreen extends State<HomeScreen>
                               ? const EdgeInsets.only(top: 130)
                               : EdgeInsets.zero,
                           child: SizedBox(
-                            height: MediaQuery.of(context).size.height - 130,
+                            height: MediaQuery.of(context).size.height,
                             child: Listener(
                               onPointerMove: (moveEvent) {
                                 if (moveEvent.delta.dx > 0) {
@@ -351,66 +365,34 @@ class _HomeScreen extends State<HomeScreen>
                       ),
                     ],
                   ),
-                  Positioned(
-                    bottom: 10,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      margin: (PlatformUtils.instance.isAndroidApp())
-                          ? const EdgeInsets.only(bottom: 5)
-                          : null,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ClipRRect(
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(20)),
-                            child: BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                              child: Container(
-                                alignment: Alignment.center,
-                                height: 60,
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context)
-                                      .cardColor
-                                      .withOpacity(0.5),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color:
-                                          AppColor.GREY_VIEW.withOpacity(0.5),
-                                      spreadRadius: 2,
-                                      blurRadius: 3,
-                                      offset: const Offset(2, 2),
-                                    ),
-                                  ],
-                                ),
-                                child: Stack(
-                                  children: [
-                                    Row(
-                                      children: List.generate(
-                                          page.listItem.length, (index) {
-                                        var item =
-                                            page.listItem.elementAt(index);
-
-                                        String url =
-                                            (item.index == page.indexSelected)
-                                                ? item.assetsActive
-                                                : item.assetsUnActive;
-
-                                        return _buildShortcut(
-                                            item.index, url, context);
-                                      }).toList(),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
                 ],
+              ),
+              bottomNavigationBar: Container(
+                decoration: const BoxDecoration(
+                  border:
+                      Border(top: BorderSide(color: AppColor.GREY_TOP_TAB_BAR)),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: List.generate(
+                    page.listItem.length,
+                    (index) {
+                      var item = page.listItem.elementAt(index);
+
+                      String url = (item.index == page.indexSelected)
+                          ? item.assetsActive
+                          : item.assetsUnActive;
+
+                      return _buildShortcut(
+                        index: item.index,
+                        url: url,
+                        label: item.label,
+                        context: context,
+                        select: item.index == page.indexSelected,
+                      );
+                    },
+                  ).toList(),
+                ),
               ),
             );
           },
@@ -420,7 +402,13 @@ class _HomeScreen extends State<HomeScreen>
   }
 
   //build shorcuts in bottom bar
-  Widget _buildShortcut(int index, String url, BuildContext context) {
+  Widget _buildShortcut({
+    required int index,
+    required String url,
+    required String label,
+    bool select = false,
+    required BuildContext context,
+  }) {
     return GestureDetector(
       onTap: () async {
         if (index != -1) {
@@ -441,18 +429,28 @@ class _HomeScreen extends State<HomeScreen>
       child: Container(
         padding: const EdgeInsets.all(5),
         margin: const EdgeInsets.symmetric(horizontal: 8),
-        width: 45,
-        height: 45,
+        height: 80,
         decoration: BoxDecoration(
-          color: (index == -1)
-              ? AppColor.PURPLE_NEON.withOpacity(0.8)
-              : AppColor.TRANSPARENT,
+          color: AppColor.TRANSPARENT,
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Image.asset(
-          url,
-          width: 35,
-          height: 35,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              url,
+              width: 42,
+              height: 36,
+              fit: BoxFit.cover,
+            ),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                color: select ? AppColor.BLUE_TEXT : AppColor.BLACK,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -527,18 +525,9 @@ class _HomeScreen extends State<HomeScreen>
             TextSpan(
               text: 'VietQR',
             ),
-            // TextSpan(
-            //   text: 'QR không chứa số tiền và nội dung.',
-            //   style: TextStyle(
-            //     fontSize: 15,
-            //     fontWeight: FontWeight.normal,
-            //   ),
-            // ),
           ],
         ),
       );
-      /* title =
-          '${TimeUtils.instance.getCurrentDateInWeek()}\n${TimeUtils.instance.getCurentDate()}';*/
     }
     if (indexSelected == 3) {
       titleWidget = RichText(

@@ -27,6 +27,7 @@ import 'package:vierqr/features/business/blocs/business_member_bloc.dart';
 import 'package:vierqr/features/business/views/add_business_view.dart';
 import 'package:vierqr/features/business/views/business_information_view.dart';
 import 'package:vierqr/features/business/views/business_transaction_view.dart';
+import 'package:vierqr/features/create_qr/create_qr_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/generate_qr/views/qr_generated.dart';
 import 'package:vierqr/features/generate_qr/views/qr_share_view.dart';
@@ -56,7 +57,6 @@ import 'package:vierqr/services/local_notification/notification_service.dart';
 import 'package:vierqr/services/providers/action_share_provider.dart';
 import 'package:vierqr/services/providers/add_business_provider.dart';
 import 'package:vierqr/services/providers/avatar_provider.dart';
-import 'package:vierqr/services/providers/bank_%20arrangement_provider.dart';
 import 'package:vierqr/services/providers/bank_account_provider.dart';
 import 'package:vierqr/services/providers/bank_card_select_provider.dart';
 import 'package:vierqr/services/providers/bank_select_provider.dart';
@@ -269,7 +269,6 @@ class _VietQRApp extends State<VietQRApp> {
             ChangeNotifierProvider(create: (context) => PageSelectProvider()),
             ChangeNotifierProvider(
                 create: (context) => CreateQRPageSelectProvider()),
-            ChangeNotifierProvider(create: (context) => CreateQRProvider()),
             ChangeNotifierProvider(create: (context) => BankAccountProvider()),
             ChangeNotifierProvider(create: (context) => BankSelectProvider()),
             ChangeNotifierProvider(create: (context) => PinProvider()),
@@ -285,8 +284,6 @@ class _VietQRApp extends State<VietQRApp> {
                 create: (context) => BusinessInformationProvider()),
             ChangeNotifierProvider(
                 create: (context) => BankCardSelectProvider()),
-            ChangeNotifierProvider(
-                create: (context) => BankArrangementProvider()),
             ChangeNotifierProvider(create: (context) => ActionShareProvider()),
             ChangeNotifierProvider(create: (context) => AvatarProvider()),
             ChangeNotifierProvider(create: (context) => ValidProvider()),
@@ -295,6 +292,9 @@ class _VietQRApp extends State<VietQRApp> {
           ],
           child: Consumer<ThemeProvider>(
             builder: (context, themeSelect, child) {
+              if (themeSelect.typeBankArr != 0) {
+                themeSelect.updateBankArr(0);
+              }
               return MaterialApp(
                 navigatorKey: NavigationService.navigatorKey,
                 debugShowCheckedModeBanner: false,
@@ -324,7 +324,7 @@ class _VietQRApp extends State<VietQRApp> {
                       const SelectBankTypeScreen(),
                   Routes.BANK_MEMBER_VIEW: (context) => const BankMemberView(),
                   Routes.QR_SHARE_VIEW: (context) => QRShareView(),
-                  Routes.QR_GENERATED: (context) => const QRGenerated(),
+                  // Routes.QR_GENERATED: (context) => const QRGenerated(),
                   Routes.BUSINESS_INFORMATION_VIEW: (context) =>
                       const BusinessInformationView(),
                   Routes.ADD_BUSINESS_VIEW: (context) =>
@@ -339,12 +339,13 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.NOTIFICATION_VIEW: (context) =>
                       const NotificationView(),
                   Routes.TRANSACTION_DETAIL: (context) =>
-                      TransactionDetailScreen(),
+                      const TransactionDetailScreen(),
                   Routes.NATIONAL_INFORMATION: (context) =>
                       const NationalInformationView(),
                   Routes.BUSINESS_TRANSACTION: (context) =>
                       BusinessTransactionView(),
                   Routes.BRANCH_DETAIL: (context) => const BranchDetailView(),
+                  Routes.CREATE_QR: (context) => const CreateQrScreen(),
                 },
                 onGenerateRoute: (settings) {
                   if (settings.name == Routes.BUSINESS_INFORMATION_VIEW) {

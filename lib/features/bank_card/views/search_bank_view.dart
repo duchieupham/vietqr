@@ -5,7 +5,6 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/widgets/sub_header_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_widget.dart';
-import 'package:vierqr/features/generate_qr/views/create_qr.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/services/providers/bank_card_select_provider.dart';
@@ -361,15 +360,11 @@ class SearchBankView extends StatelessWidget {
                                     : dto.businessName,
                                 isAuthenticated: dto.isAuthenticated,
                               );
-                              Navigator.of(context)
-                                  .push(
-                                    MaterialPageRoute(
-                                      builder: (context) => CreateQRScreen(
-                                        bankAccountDTO: bankAccountDTO,
-                                      ),
-                                    ),
-                                  )
-                                  .then((value) {});
+                              Navigator.pushNamed(
+                                context,
+                                Routes.CREATE_QR,
+                                arguments: {'bankInfo': bankAccountDTO},
+                              );
                             },
                             child: BoxLayout(
                               width: 110,

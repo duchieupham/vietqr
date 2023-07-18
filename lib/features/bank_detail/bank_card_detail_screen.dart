@@ -17,12 +17,10 @@ import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
-import 'package:vierqr/commons/widgets/sub_header_widget.dart';
 import 'package:vierqr/commons/widgets/viet_qr.dart';
 import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
-import 'package:vierqr/features/generate_qr/views/create_qr.dart';
-import 'package:vierqr/features/home/widgets/custom_app_bar_widget.dart';
+import 'package:vierqr/features/bank_detail/views/dialog_otp.dart';
 import 'package:vierqr/features/printer/views/printing_view.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
@@ -33,6 +31,7 @@ import 'package:vierqr/models/bank_account_remove_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/bluetooth_printer_dto.dart';
 import 'package:vierqr/models/business_item_dto.dart';
+import 'package:vierqr/models/confirm_otp_bank_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/services/providers/action_share_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
@@ -63,6 +62,8 @@ class BankCardDetailState extends StatefulWidget {
 
 class _BankCardDetailState extends State<BankCardDetailState> {
   late BankCardBloc bankCardBloc;
+
+  final otpController = TextEditingController();
 
   String userId = UserInformationHelper.instance.getUserId();
 
@@ -97,11 +98,11 @@ class _BankCardDetailState extends State<BankCardDetailState> {
   );
 
   void initData(BuildContext context) {
-    bankCardBloc.add(BankCardGetDetailEvent());
+    bankCardBloc.add(const BankCardGetDetailEvent());
   }
 
   Future<void> _refresh() async {
-    bankCardBloc.add(BankCardGetDetailEvent());
+    bankCardBloc.add(const BankCardGetDetailEvent());
   }
 
   @override
@@ -129,7 +130,7 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                 builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
                   if (snapshot.hasData) {
                     if (snapshot.data == true) {
-                      bankCardBloc.add(BankCardGetDetailEvent());
+                      bankCardBloc.add(const BankCardGetDetailEvent());
                     }
                   }
                   return BlocConsumer<BankCardBloc, BankCardState>(
@@ -142,7 +143,44 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                         Navigator.pop(context);
                       }
 
-                      if (state.status == BlocStatus.DELETED) {
+                      if (state.request == BankDetailType.UN_LINK) {
+                        showDialog(
+                          barrierDismissible: false,
+                          context:
+                              NavigationService.navigatorKey.currentContext!,
+                          builder: (BuildContext context) {
+                            return DialogOTPView(
+                              phone: dto.phoneAuthenticated,
+                              onResend: () {
+                                bankCardBloc.add(BankCardEventUnlink(
+                                    accountNumber: dto.bankAccount));
+                              },
+                              onChangeOTP: (value) {
+                                otpController.value =
+                                    otpController.value.copyWith(text: value);
+                              },
+                              onTap: () {
+                                ConfirmOTPBankDTO confirmDTO =
+                                    ConfirmOTPBankDTO(
+                                  requestId: state.requestId ?? '',
+                                  otpValue: otpController.text,
+                                  applicationType: 'MOBILE',
+                                  bankAccount: state.bankDetailDTO?.bankAccount,
+                                );
+                                bankCardBloc.add(
+                                    BankCardEventUnConfirmOTP(dto: confirmDTO));
+                              },
+                            );
+                          },
+                        );
+                      }
+
+                      if (state.request == BankDetailType.OTP) {
+                        Navigator.of(context).pop();
+                        bankCardBloc.add(const BankCardGetDetailEvent());
+                      }
+
+                      if (state.request == BankDetailType.DELETED) {
                         Fluttertoast.showToast(
                           msg: 'Đã xoá TK ngân hàng',
                           toastLength: Toast.LENGTH_SHORT,
@@ -153,7 +191,6 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                         );
 
                         Navigator.pop(context, true);
-                        Navigator.pop(context, true);
                       }
 
                       if (state.request == BankDetailType.SUCCESS) {
@@ -161,14 +198,15 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                           dto = state.bankDetailDTO!;
                         }
                         qrGeneratedDTO = QRGeneratedDTO(
-                            bankCode: dto.bankCode,
-                            bankName: dto.bankName,
-                            bankAccount: dto.bankAccount,
-                            userBankName: dto.userBankName,
-                            amount: '',
-                            content: '',
-                            qrCode: dto.qrCode,
-                            imgId: dto.imgId);
+                          bankCode: dto.bankCode,
+                          bankName: dto.bankName,
+                          bankAccount: dto.bankAccount,
+                          userBankName: dto.userBankName,
+                          amount: '',
+                          content: '',
+                          qrCode: dto.qrCode,
+                          imgId: dto.imgId,
+                        );
                       }
                       if (state.request == BankDetailType.ERROR) {
                         await DialogWidget.instance.openMsgDialog(
@@ -281,11 +319,12 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                                             'bankAccount': dto.bankAccount,
                                             'name': dto.userBankName,
                                             'bankDTO': bankTypeDTO,
+                                            'bankId': dto.id,
                                           },
                                         ).then((value) {
                                           if (value is bool) {
-                                            bankCardBloc
-                                                .add(BankCardGetDetailEvent());
+                                            bankCardBloc.add(
+                                                const BankCardGetDetailEvent());
                                           }
                                         });
                                       },
@@ -328,13 +367,14 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                                 ),
                               ),
                             ],
-                            if (dto.authenticated) ...[
-                              const Padding(padding: EdgeInsets.only(top: 30)),
+                            if (dto.authenticated &&
+                                dto.businessDetails.isNotEmpty) ...[
+                              const Padding(padding: EdgeInsets.only(top: 24)),
                               _buildTitle(title: 'Doanh nghiệp'),
                               _buildBusinessInformation(
                                   context, dto.businessDetails),
                             ],
-                            const Padding(padding: EdgeInsets.only(bottom: 50)),
+                            const Padding(padding: EdgeInsets.only(bottom: 16)),
                             if (dto.authenticated &&
                                 (userId == dto.userId)) ...[
                               DividerWidget(width: width),
@@ -348,9 +388,16 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                                 title: 'Huỷ liên kết TK ngân hàng',
                                 function: () {
                                   DialogWidget.instance.openMsgDialog(
-                                    title: 'Bảo trì',
-                                    msg:
-                                        'Tính năng đang bảo trì, vui lòng thử lại sau',
+                                    title: 'Huỷ liên kết',
+                                    msg: 'Bạn có chắc chắn muốn huỷ liên kết?',
+                                    isSecondBT: true,
+                                    functionConfirm: () {
+                                      Navigator.of(context).pop();
+                                      bankCardBloc.add(
+                                        BankCardEventUnlink(
+                                            accountNumber: dto.bankAccount),
+                                      );
+                                    },
                                   );
                                 },
                               ),
@@ -537,12 +584,10 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                     : dto.businessDetails.first.businessName,
                 isAuthenticated: dto.authenticated,
               );
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => CreateQRScreen(
-                    bankAccountDTO: bankAccountDTO,
-                  ),
-                ),
+              Navigator.pushNamed(
+                context,
+                Routes.CREATE_QR,
+                arguments: {'bankInfo': bankAccountDTO},
               );
             },
             textColor: AppColor.WHITE,
@@ -696,157 +741,6 @@ class _BankCardDetailState extends State<BankCardDetailState> {
           ),
         );
       }).toList(),
-    );
-
-    return ListView.builder(
-      itemCount: list.length,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemBuilder: (context, index) {
-        String heroId = list[index].businessId;
-        return Hero(
-          tag: heroId,
-          child: BoxLayout(
-            width: width,
-            padding: const EdgeInsets.only(left: 10, right: 10, top: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  width: width,
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).cardColor,
-                          borderRadius: BorderRadius.circular(50),
-                          image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: (list[index].imgId.isNotEmpty)
-                                  ? ImageUtils.instance
-                                      .getImageNetWork(list[index].imgId)
-                                  : Image.asset(
-                                      'assets/images/ic-avatar-business.png',
-                                      fit: BoxFit.cover,
-                                      width: 50,
-                                      height: 50,
-                                    ).image),
-                        ),
-                      ),
-                      const Padding(padding: EdgeInsets.only(left: 10)),
-                      Expanded(
-                        child: Text(
-                          list[index].businessName,
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const Padding(padding: EdgeInsets.only(top: 20)),
-                ListView.separated(
-                  itemCount: list[index].branchDetails.length,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemBuilder: (context, index2) {
-                    return BoxLayout(
-                        width: width,
-                        borderRadius: 10,
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 5),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 15),
-                        bgColor: Theme.of(context).canvasColor,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                const SizedBox(
-                                  width: 100,
-                                  child: Text('Chi nhánh'),
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    list[index]
-                                        .branchDetails[index2]
-                                        .branchName,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const Padding(padding: EdgeInsets.only(top: 10)),
-                            Row(
-                              children: [
-                                const SizedBox(
-                                  width: 100,
-                                  child: Text('Địa chỉ'),
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    list[index].branchDetails[index2].address,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ));
-                  },
-                  separatorBuilder: (context, index2) {
-                    return DividerWidget(width: width);
-                  },
-                ),
-                const Padding(padding: EdgeInsets.only(top: 20)),
-                DividerWidget(width: width),
-                ButtonWidget(
-                  width: width,
-                  height: 40,
-                  text: 'Chi tiết doanh nghiệp',
-                  textColor: AppColor.GREEN,
-                  bgColor: AppColor.TRANSPARENT,
-                  function: () {
-                    BusinessItemDTO businessItemDTO = BusinessItemDTO(
-                      businessId: list[index].businessId,
-                      code: '',
-                      role: 0,
-                      imgId: list[index].imgId,
-                      coverImgId: list[index].coverImgId,
-                      name: list[index].businessName,
-                      address: '',
-                      taxCode: '',
-                      transactions: [],
-                      totalMember: 0,
-                      totalBranch: 0,
-                      branchs: [],
-                    );
-                    Navigator.pushNamed(
-                      context,
-                      Routes.BUSINESS_INFORMATION_VIEW,
-                      arguments: {
-                        'heroId': heroId,
-                        'img': list[index].coverImgId,
-                        'businessItem': businessItemDTO,
-                      },
-                    ).then((value) {
-                      heroId = value.toString();
-                      bankCardBloc.add(BankCardGetDetailEvent());
-                    });
-                  },
-                )
-              ],
-            ),
-          ),
-        );
-      },
     );
   }
 

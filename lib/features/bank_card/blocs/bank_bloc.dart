@@ -14,7 +14,6 @@ import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
-import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/viet_qr_scanned_dto.dart';
 
 class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
@@ -22,33 +21,14 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
   final BuildContext context;
 
   BankBloc(this.context)
-      : super(const BankState(
-            listBanks: [],
-            colors: [],
-            listGeneratedQR: [],
-            listBankTypeDTO: [])) {
+      : super(const BankState(listBanks: [], colors: [], listBankTypeDTO: [])) {
     on<BankCardEventGetList>(_getBankAccounts);
     on<UpdateEvent>(_updateEvent);
-    on<QREventGenerateList>(_generateQRList);
     on<ScanQrEventGetBankType>(_getBankTypeQR);
     on<LoadDataBankEvent>(_getListBankTypes);
   }
 
   final bankCardRepository = const BankCardRepository();
-
-  void _generateQRList(BankEvent event, Emitter emit) async {
-    try {
-      if (event is QREventGenerateList) {
-        emit(state.copyWith(status: BlocStatus.LOADING));
-        final List<QRGeneratedDTO> list =
-            await bankCardRepository.generateQRList(event.list);
-        emit(state.copyWith(listGeneratedQR: list, request: BankType.QR));
-      }
-    } catch (e) {
-      LOG.error(e.toString());
-      emit(state.copyWith(status: BlocStatus.ERROR));
-    }
-  }
 
   void _getBankTypeQR(BankEvent event, Emitter emit) async {
     try {
@@ -65,26 +45,36 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
             emit(
               state.copyWith(
                 request: BankType.SCAN,
+                typeQR: TypeQR.QR_BANK,
                 bankTypeDTO: dto,
                 bankAccount: vietQRScannedDTO.bankAccount,
               ),
             );
           } else {
-            emit(state.copyWith(request: BankType.NONE));
+            emit(state.copyWith(request: BankType.SCAN_ERROR));
           }
         } else {
           NationalScannerDTO nationalScannerDTO =
               homeRepository.getNationalInformation(event.code);
           if (nationalScannerDTO.nationalId.trim().isNotEmpty) {
-            emit(state.copyWith(nationalScannerDTO: nationalScannerDTO));
+            emit(state.copyWith(
+              nationalScannerDTO: nationalScannerDTO,
+              typeQR: TypeQR.QR_CMT,
+            ));
+          } else if (event.code.isNotEmpty) {
+            emit(state.copyWith(
+              barCode: event.code,
+              typeQR: TypeQR.QR_BARCODE,
+              request: BankType.SCAN,
+            ));
           } else {
-            emit(state.copyWith(request: BankType.NONE));
+            emit(state.copyWith(request: BankType.SCAN_NOT_FOUND));
           }
         }
       }
     } catch (e) {
       LOG.error(e.toString());
-      emit(state.copyWith(status: BlocStatus.ERROR));
+      emit(state.copyWith(request: BankType.SCAN_NOT_FOUND));
     }
   }
 
@@ -154,6 +144,6 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
   }
 
   void _updateEvent(BankEvent event, Emitter emit) {
-    emit(state.copyWith(type: TypePermission.None, status: BlocStatus.DONE));
+    emit(state.copyWith(status: BlocStatus.DONE));
   }
 }

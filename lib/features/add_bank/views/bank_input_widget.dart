@@ -71,6 +71,7 @@ class _BodyWidget extends State<ModelBottomSheetView> {
                 },
                 child: Container(
                   width: double.infinity,
+                  color: Colors.transparent,
                   margin: const EdgeInsets.only(bottom: 16),
                   child: Row(
                     children: [

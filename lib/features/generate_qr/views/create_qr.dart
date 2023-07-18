@@ -127,8 +127,8 @@ class _CreateQR extends State<CreateQR> {
         .transactionAmount
         .toString()
         .isEmpty) {
-      Provider.of<CreateQRProvider>(context, listen: false)
-          .updateTransactionAmount('0');
+      // Provider.of<CreateQRProvider>(context, listen: false)
+      //     .updateTransactionAmount('0');
     }
     if (Provider.of<CreateQRProvider>(context, listen: false)
             .transactionAmount

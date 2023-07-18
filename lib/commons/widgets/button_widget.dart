@@ -12,6 +12,8 @@ class ButtonWidget extends StatelessWidget {
   final double? borderRadius;
   final double? fontSize;
   final bool enableShadow;
+  final EdgeInsetsGeometry? margin;
+
   const ButtonWidget({
     Key? key,
     this.width,
@@ -22,6 +24,7 @@ class ButtonWidget extends StatelessWidget {
     this.height,
     this.borderRadius,
     this.fontSize,
+    this.margin,
     this.enableShadow = false,
   }) : super(key: key);
 
@@ -32,6 +35,7 @@ class ButtonWidget extends StatelessWidget {
       child: Container(
         width: width,
         height: (height != null) ? height : 50,
+        margin: margin,
         alignment: Alignment.center,
         decoration: BoxDecoration(
           boxShadow: enableShadow

@@ -149,24 +149,6 @@ class TransactionDetailView extends StatelessWidget {
                     ),
                   );
                 }
-                //refresh business transaction history
-                // if (args['businessTransactionBloc'] != null) {
-                //   TransactionBloc bloc = args['businessTransactionBloc'];
-                //   Future.delayed(const Duration(milliseconds: 200), () {
-                //     bloc.add(
-                //       TransactionEventGetListBranch(
-                //         dto: TransactionBranchInputDTO(
-                //             businessId:
-                //                 Provider.of<BusinessInformationProvider>(
-                //                         context,
-                //                         listen: false)
-                //                     .businessId,
-                //             branchId: 'all',
-                //             offset: 0),
-                //       ),
-                //     );
-                //   });
-                // }
               });
             } else {
               Navigator.pushNamed(

@@ -1,5 +1,4 @@
 import 'package:dudv_base/dudv_base.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
@@ -17,6 +16,7 @@ class AccountLinkView extends StatelessWidget {
   final TextEditingController phone;
   final TextEditingController cmt;
   final GestureTapCallback? onEdit;
+  final GestureTapCallback? onScan;
   final String? errorPhone;
   final String? errorCMT;
 
@@ -26,6 +26,7 @@ class AccountLinkView extends StatelessWidget {
     required this.bankAccount,
     required this.bankUserName,
     this.onTap,
+    this.onScan,
     this.onChangePhone,
     this.onChangeCMT,
     required this.phone,
@@ -38,65 +39,38 @@ class AccountLinkView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            const Text(
-              'Gợi ý: ',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                height: 1.4,
-              ),
-            ),
-            const SizedBox(width: 4),
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                border: Border.all(color: AppColor.BLUE_TEXT),
-                color: AppColor.BLUE_TEXT.withOpacity(0.3),
-              ),
-              child: const Text(
-                'Số điện thoại: 0931865469',
-                style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w400,
-                  height: 1.4,
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                border: Border.all(color: AppColor.BLUE_TEXT),
-                color: AppColor.BLUE_TEXT.withOpacity(0.3),
-              ),
-              child: const Text(
-                'CCCD: 272550553',
-                style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w400,
-                  height: 1.4,
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 30),
         TextFieldCustom(
           isObscureText: false,
           maxLines: 1,
           controller: phone,
           textFieldType: TextfieldType.LABEL,
           title: 'Số điện thoại xác thực',
+          unTitle:
+              'Số điện thoại phải trùng khớp với thông tin đăng ký tài khoản ngân hàng',
           isRequired: true,
           hintText: 'Nhập số điện thoại xác thực',
           inputType: TextInputType.number,
           keyboardAction: TextInputAction.next,
           onChange: onChangePhone,
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+          margin: const EdgeInsets.only(top: 6),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+            border: Border.all(color: AppColor.BLUE_TEXT),
+            color: AppColor.BLUE_TEXT.withOpacity(0.3),
+          ),
+          child: const Text(
+            '0931865469',
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w400,
+              height: 1.4,
+            ),
+          ),
         ),
         Visibility(
           visible: errorPhone != null,
@@ -113,28 +87,46 @@ class AccountLinkView extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: 8),
-        const Text(
-          'Số điện thoại phải trùng khớp với thông tin đăng ký tài khoản ngân hàng',
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w400,
-            height: 1.4,
-          ),
-        ),
         const SizedBox(height: 30),
         TextFieldCustom(
           isObscureText: false,
           maxLines: 1,
           controller: cmt,
           textFieldType: TextfieldType.LABEL,
-          title: 'CCCD/CMT hoặc Giấy phép kinh doanh',
+          title: 'CCCD/MST',
+          unTitle:
+              'CCCD (Căn cước công dân)/MST (Mã số thuế) phải trùng khớp với thông tin đăng ký tài khoản ngân hàng',
           isRequired: true,
-          hintText: 'Nhập chứng minh thư hoặc giấy phép kinh doanh',
+          hintText: 'Nhập chứng minh thư hoặc mã số thuế',
           // controller: provider.introduceController,
           inputType: TextInputType.number,
           keyboardAction: TextInputAction.next,
+          suffixIcon: GestureDetector(
+            onTap: onScan,
+            child: Image.asset(
+              'assets/images/ic-barcode.png',
+              width: 24,
+              height: 24,
+            ),
+          ),
           onChange: onChangeCMT,
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+          margin: const EdgeInsets.only(top: 6),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+            border: Border.all(color: AppColor.BLUE_TEXT),
+            color: AppColor.BLUE_TEXT.withOpacity(0.3),
+          ),
+          child: const Text(
+            '272550553',
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w400,
+              height: 1.4,
+            ),
+          ),
         ),
         Visibility(
           visible: errorCMT != null,
@@ -149,15 +141,6 @@ class AccountLinkView extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: Styles.errorStyle(fontSize: 12),
             ),
-          ),
-        ),
-        const SizedBox(height: 8),
-        const Text(
-          'CCCD/CMT hoặc giấy phép kinh doanh phải trùng khớp với thông tin đăng ký tài khoản ngân hàng',
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w400,
-            height: 1.4,
           ),
         ),
         const SizedBox(height: 30),

@@ -119,4 +119,22 @@ class StringUtils {
     }
     return false;
   }
+
+  static String formatMoney(String money) {
+    if (money.length > 2) {
+      var value = money;
+      value = value.replaceAll(RegExp(r'\D'), '');
+      value = value.replaceAll(RegExp(r'\B(?=(\d{3})+(?!\d))'), '.');
+      return value;
+    }
+    return money;
+  }
+
+  static String formatNumber(dynamic value) {
+    if (value == null) {
+      return '0';
+    }
+    var numberFormat = NumberFormat.decimalPattern('vi-VI');
+    return numberFormat.format(value);
+  }
 }

@@ -152,23 +152,29 @@ class AddBankProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  onChangePhone(String value) {
+  onChangePhone(String value, {String? cmt}) {
     errorSDT = null;
     if (value.isEmpty) {
       errorSDT = 'Số điện thoại xác thực không hợp lệ';
       _isInValidPhoneAuthenticated = false;
     } else {
+      if (cmt != null && cmt.isNotEmpty) {
+        _isInValidNationalId = true;
+      }
       _isInValidPhoneAuthenticated = true;
     }
     notifyListeners();
   }
 
-  void onChangeCMT(String value) {
+  void onChangeCMT(String value, {String? phone}) {
     errorCMT = null;
     if (value.isEmpty) {
       errorCMT = 'CCCD/CMT không hợp lệ';
       _isInValidNationalId = false;
     } else {
+      if (phone != null && phone.isNotEmpty) {
+        _isInValidPhoneAuthenticated = true;
+      }
       _isInValidNationalId = true;
     }
     notifyListeners();

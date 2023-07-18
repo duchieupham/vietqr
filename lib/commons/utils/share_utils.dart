@@ -16,6 +16,7 @@ class ShareUtils {
   const ShareUtils._privateConsrtructor();
 
   static const ShareUtils _instance = ShareUtils._privateConsrtructor();
+
   static ShareUtils get instance => _instance;
 
   Future<bool> shareImage(

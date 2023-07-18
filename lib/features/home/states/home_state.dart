@@ -3,15 +3,28 @@ import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 
-enum HomeType { GET_BANK, NONE }
+enum HomeType { GET_BANK, NONE, SCAN_ERROR, SCAN_NOT_FOUND, SCAN }
+
+enum TypePermission {
+  None,
+  CameraDenied,
+  CameraAllow,
+  CameraRequest,
+  Allow,
+  Request,
+  Denied,
+  Error,
+}
 
 class HomeState extends Equatable {
   final String? msg;
   final BlocStatus status;
   final HomeType request;
-  final TypePermission type;
+  final TypeQR typeQR;
+  final TypePermission typePermission;
   final NationalScannerDTO? nationalScannerDTO;
   final String? codeQR;
+  final String? barCode;
   final BankTypeDTO? bankTypeDTO;
   final String bankAccount;
   final List<BankTypeDTO>? listBanks;
@@ -20,9 +33,11 @@ class HomeState extends Equatable {
     this.msg,
     this.status = BlocStatus.NONE,
     this.request = HomeType.NONE,
-    this.type = TypePermission.None,
+    this.typePermission = TypePermission.None,
+    this.typeQR = TypeQR.NONE,
     this.nationalScannerDTO,
     this.codeQR,
+    this.barCode,
     this.listBanks,
     this.bankTypeDTO,
     this.bankAccount = '',
@@ -34,17 +49,21 @@ class HomeState extends Equatable {
     TypePermission? type,
     NationalScannerDTO? nationalScannerDTO,
     String? codeQR,
+    String? barCode,
     BankTypeDTO? bankTypeDTO,
     String? bankAccount,
     HomeType? request,
     List<BankTypeDTO>? listBanks,
+    TypeQR? typeQR,
   }) {
     return HomeState(
       status: status ?? this.status,
       msg: msg ?? this.msg,
-      type: type ?? this.type,
+      typePermission: type ?? this.typePermission,
+      typeQR: typeQR ?? this.typeQR,
       nationalScannerDTO: nationalScannerDTO ?? this.nationalScannerDTO,
       codeQR: codeQR ?? this.codeQR,
+      barCode: barCode ?? this.barCode,
       bankTypeDTO: bankTypeDTO ?? this.bankTypeDTO,
       bankAccount: bankAccount ?? this.bankAccount,
       request: request ?? this.request,
@@ -56,9 +75,11 @@ class HomeState extends Equatable {
   List<Object?> get props => [
         status,
         msg,
-        type,
+        typePermission,
+        typeQR,
         nationalScannerDTO,
         codeQR,
+        barCode,
         bankTypeDTO,
         bankAccount,
         request,
