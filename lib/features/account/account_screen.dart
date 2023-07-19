@@ -68,7 +68,7 @@ class _AccountScreenState extends State<AccountScreen>
     });
   }
 
-  Future<void> _onRefresh()async {
+  Future<void> _onRefresh() async {
     _accountBloc.add(InitAccountEvent());
   }
 
@@ -161,8 +161,6 @@ class _AccountScreenState extends State<AccountScreen>
   @override
   // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
-
-
 }
 
 class _BannerWidget extends StatelessWidget {
@@ -174,7 +172,7 @@ class _BannerWidget extends StatelessWidget {
       decoration: const BoxDecoration(
         image: DecorationImage(
           image: AssetImage('assets/images/bg-qr.png'),
-          fit: BoxFit.fill,
+          fit: BoxFit.cover,
         ),
       ),
       child: Column(
@@ -287,7 +285,7 @@ class _FeatureWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: List.generate(listIcon.length, (index) {
         return GestureDetector(
           onTap: () {
