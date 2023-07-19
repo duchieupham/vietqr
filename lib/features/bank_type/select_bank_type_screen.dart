@@ -73,7 +73,7 @@ class _SelectBankTypeScreenStateState
             height: 200,
             child: const Center(
               child: CircularProgressIndicator(
-                color: AppColor.GREEN,
+                color: AppColor.BLUE_TEXT,
               ),
             ),
           );

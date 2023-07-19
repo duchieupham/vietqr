@@ -420,7 +420,7 @@ class _BottomSheetWidget extends StatelessWidget {
                     );
                   }
                 },
-                bgColor: AppColor.GREEN,
+                bgColor: AppColor.BLUE_TEXT,
                 textColor: AppColor.WHITE,
               ),
             ],

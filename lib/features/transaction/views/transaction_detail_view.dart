@@ -24,12 +24,25 @@ import 'package:vierqr/features/transaction/blocs/transaction_bloc.dart';
 import 'package:vierqr/features/transaction/events/transaction_event.dart';
 import 'package:vierqr/features/transaction/states/transaction_state.dart';
 import 'package:vierqr/layouts/box_layout.dart';
+import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/notification_input_dto.dart';
 import 'package:vierqr/models/qr_recreate_dto.dart';
 import 'package:vierqr/models/transaction_input_dto.dart';
 import 'package:vierqr/models/transaction_receive_dto.dart';
 import 'package:vierqr/services/providers/water_mark_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
+
+class TransactionDetailScreen extends StatelessWidget {
+  const TransactionDetailScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider<QRBloc>(
+      create: (BuildContext context) => QRBloc(),
+      child: TransactionDetailView(),
+    );
+  }
+}
 
 class TransactionDetailView extends StatelessWidget {
   final GlobalKey globalKey = GlobalKey();
@@ -75,7 +88,7 @@ class TransactionDetailView extends StatelessWidget {
 
     initialServices(context, transactionId);
     return Scaffold(
-      appBar: AppBar(toolbarHeight: 0),
+      appBar: const MAppBar(title: 'Chi tiết giao dịch'),
       body: BlocConsumer<QRBloc, QRState>(
         listener: (context, state) {
           if (state is QRRegenerateLoadingState) {
@@ -202,7 +215,6 @@ class TransactionDetailView extends StatelessWidget {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const SubHeader(title: 'Chi tiết giao dịch'),
                   Expanded(
                     child: RefreshIndicator(
                       onRefresh: () async {

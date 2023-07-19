@@ -59,7 +59,14 @@ class BankCardEventConfirmOTP extends BankCardEvent {
   List<Object?> get props => [dto];
 }
 
-class BankCardGetDetailEvent extends BankCardEvent {}
+class BankCardGetDetailEvent extends BankCardEvent {
+  final bool isLoading;
+
+  const BankCardGetDetailEvent({this.isLoading = true});
+
+  @override
+  List<Object?> get props => [isLoading];
+}
 
 class BankCardCheckExistedEvent extends BankCardEvent {
   final String bankAccount;

@@ -281,7 +281,7 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
                       height: 24,
                       child: const Center(
                         child: CircularProgressIndicator(
-                          color: AppColor.GREEN,
+                          color: AppColor.BLUE_TEXT,
                         ),
                       ),
                     )

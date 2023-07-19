@@ -190,7 +190,7 @@ class _QRGenerated extends State<QRGenerated> {
                 function: () {
                   Navigator.of(context).popUntil((route) => route.isFirst);
                 },
-                bgColor: AppColor.GREEN,
+                bgColor: AppColor.BLUE_TEXT,
                 textColor: AppColor.WHITE,
               ),
             ),
@@ -237,12 +237,8 @@ class _QRGenerated extends State<QRGenerated> {
           return Container(
             width: width,
             height: height,
+            color: AppColor.GREY_BG,
             padding: const EdgeInsets.only(top: 24),
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                  fit: BoxFit.fitHeight,
-                  image: Image.asset('assets/images/bg-qr.png').image),
-            ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [

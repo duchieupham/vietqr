@@ -80,14 +80,29 @@ class _HomeScreen extends State<HomeScreen>
     _homeBloc = BlocProvider.of(context);
     _tokenBloc = BlocProvider.of(context);
     _notificationBloc = BlocProvider.of(context);
-    String userId = UserInformationHelper.instance.getUserId();
-    initialServices(context, userId);
     _pageController = PageController(
       initialPage:
           Provider.of<PageSelectProvider>(context, listen: false).indexSelected,
       keepPage: true,
     );
-    listenNewNotification(userId);
+    _homeScreens.addAll(
+      [
+        // const BankCardSelectView(key: PageStorageKey('QR_GENERATOR_PAGE')),
+        const BankScreen(key: PageStorageKey('QR_GENERATOR_PAGE')),
+        const DashboardScreen(key: PageStorageKey('SMS_LIST_PAGE')),
+        if (PlatformUtils.instance.isAndroidApp()) const IntroduceScreen(),
+        AccountScreen(
+          key: const PageStorageKey('USER_SETTING_PAGE'),
+          voidCallback: () {
+            _animatedToPage(0);
+          },
+        ),
+      ],
+    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      initialServices(context);
+      listenNewNotification();
+    });
   }
 
   Future<void> startBarcodeScanStream() async {
@@ -125,33 +140,19 @@ class _HomeScreen extends State<HomeScreen>
     }
   }
 
-  void initialServices(BuildContext context, String userId) {
+  void initialServices(BuildContext context) {
     checkUserInformation();
     _tokenBloc.add(const TokenEventCheckValid());
     _homeBloc.add(const PermissionEventRequest());
-    _notificationBloc.add(NotificationGetCounterEvent(userId: userId));
-    _homeScreens.addAll(
-      [
-        // const BankCardSelectView(key: PageStorageKey('QR_GENERATOR_PAGE')),
-        const BankScreen(key: PageStorageKey('QR_GENERATOR_PAGE')),
-        const DashboardScreen(key: PageStorageKey('SMS_LIST_PAGE')),
-        if (PlatformUtils.instance.isAndroidApp()) const IntroduceScreen(),
-        AccountScreen(
-          key:const PageStorageKey('USER_SETTING_PAGE'),
-          voidCallback: () {
-            _animatedToPage(0);
-          },
-        ),
-      ],
-    );
+    _notificationBloc.add(NotificationGetCounterEvent());
   }
 
-  void listenNewNotification(String userId) {
+  void listenNewNotification() {
     notificationController.listen((isNotificationPushed) {
       if (isNotificationPushed) {
         notificationController.sink.add(false);
         Future.delayed(const Duration(milliseconds: 1000), () {
-          _notificationBloc.add(NotificationGetCounterEvent(userId: userId));
+          _notificationBloc.add(NotificationGetCounterEvent());
         });
       }
     });
@@ -312,32 +313,40 @@ class _HomeScreen extends State<HomeScreen>
             return Scaffold(
               body: Stack(
                 children: [
+                  if (page.indexSelected != 3) _buildAppBar(),
                   Column(
                     children: [
-                      if (page.indexSelected != 3) _buildAppBar(),
                       Expanded(
-                        child: Listener(
-                          onPointerMove: (moveEvent) {
-                            if (moveEvent.delta.dx > 0) {
-                              Provider.of<PageSelectProvider>(context,
-                                      listen: false)
-                                  .updateMoveEvent(TypeMoveEvent.RIGHT);
-                            } else {
-                              Provider.of<PageSelectProvider>(context,
-                                      listen: false)
-                                  .updateMoveEvent(TypeMoveEvent.LEFT);
-                            }
-                          },
-                          child: PageView(
-                            key: const PageStorageKey('PAGE_VIEW'),
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            controller: _pageController,
-                            onPageChanged: (index) async {
-                              Provider.of<PageSelectProvider>(context,
-                                      listen: false)
-                                  .updateIndex(index);
-                            },
-                            children: _homeScreens,
+                        child: Padding(
+                          padding: (page.indexSelected != 3)
+                              ? const EdgeInsets.only(top: 130)
+                              : EdgeInsets.zero,
+                          child: SizedBox(
+                            height: MediaQuery.of(context).size.height - 130,
+                            child: Listener(
+                              onPointerMove: (moveEvent) {
+                                if (moveEvent.delta.dx > 0) {
+                                  Provider.of<PageSelectProvider>(context,
+                                          listen: false)
+                                      .updateMoveEvent(TypeMoveEvent.RIGHT);
+                                } else {
+                                  Provider.of<PageSelectProvider>(context,
+                                          listen: false)
+                                      .updateMoveEvent(TypeMoveEvent.LEFT);
+                                }
+                              },
+                              child: PageView(
+                                key: const PageStorageKey('PAGE_VIEW'),
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                controller: _pageController,
+                                onPageChanged: (index) async {
+                                  Provider.of<PageSelectProvider>(context,
+                                          listen: false)
+                                      .updateIndex(index);
+                                },
+                                children: _homeScreens,
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -472,25 +481,26 @@ class _HomeScreen extends State<HomeScreen>
   Widget _getTitlePaqe(BuildContext context, int indexSelected) {
     Widget titleWidget = const SizedBox();
     if (indexSelected == 0) {
-      titleWidget =
-          Consumer<BankCardSelectProvider>(builder: (context, provider, child) {
-        return ButtonIconWidget(
-          width: double.infinity,
-          height: 40,
-          borderRadius: 40,
-          icon: Icons.search_rounded,
-          iconSize: 18,
-          contentPadding: const EdgeInsets.only(left: 16),
-          alignment: Alignment.centerLeft,
-          title: 'Tài khoản ngân hàng',
-          textSize: 11,
-          function: () {
-            Navigator.pushNamed(context, Routes.SEARCH_BANK);
-          },
-          bgColor: Theme.of(context).cardColor,
-          textColor: Theme.of(context).hintColor,
-        );
-      });
+      titleWidget = Consumer<BankCardSelectProvider>(
+        builder: (context, provider, child) {
+          return ButtonIconWidget(
+            width: double.infinity,
+            height: 40,
+            borderRadius: 40,
+            icon: Icons.search_rounded,
+            iconSize: 18,
+            contentPadding: const EdgeInsets.only(left: 16),
+            alignment: Alignment.centerLeft,
+            title: 'Tài khoản ngân hàng',
+            textSize: 11,
+            function: () {
+              Navigator.pushNamed(context, Routes.SEARCH_BANK);
+            },
+            bgColor: Theme.of(context).cardColor,
+            textColor: Theme.of(context).hintColor,
+          );
+        },
+      );
     }
 
     if (indexSelected == 1) {
@@ -580,6 +590,7 @@ class _HomeScreen extends State<HomeScreen>
     double paddingTop = MediaQuery.of(context).viewPadding.top;
 
     return Container(
+      height: 230,
       width: MediaQuery.of(context).size.width,
       padding: EdgeInsets.only(top: paddingTop + 12),
       alignment: Alignment.topCenter,
@@ -646,10 +657,7 @@ class _HomeScreen extends State<HomeScreen>
                               },
                             ).then((value) {
                               _notificationBloc.add(
-                                NotificationUpdateStatusEvent(
-                                  userId: UserInformationHelper.instance
-                                      .getUserId(),
-                                ),
+                                NotificationUpdateStatusEvent(),
                               );
                             });
                           },

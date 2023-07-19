@@ -30,24 +30,6 @@ class NotificationFetchEvent extends NotificationEvent {
   List<Object?> get props => [dto];
 }
 
-class NotificationUpdateStatusEvent extends NotificationEvent {
-  final String userId;
+class NotificationUpdateStatusEvent extends NotificationEvent {}
 
-  const NotificationUpdateStatusEvent({
-    required this.userId,
-  });
-
-  @override
-  List<Object?> get props => [userId];
-}
-
-class NotificationGetCounterEvent extends NotificationEvent {
-  final String userId;
-
-  const NotificationGetCounterEvent({
-    required this.userId,
-  });
-
-  @override
-  List<Object?> get props => [userId];
-}
+class NotificationGetCounterEvent extends NotificationEvent {}

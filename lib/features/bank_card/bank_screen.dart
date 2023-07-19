@@ -31,6 +31,7 @@ import 'package:vierqr/features/generate_qr/views/create_qr.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
+import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/models/qr_create_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
@@ -80,6 +81,7 @@ class _BankScreenState extends State<_BankScreen>
 
   initData() {
     _bloc.add(BankCardEventGetList());
+    _bloc.add(LoadDataBankEvent());
   }
 
   @override
@@ -215,19 +217,21 @@ class _BankScreenState extends State<_BankScreen>
                                 width: 30,
                                 height: 30,
                                 child: CircularProgressIndicator(
-                                  color: AppColor.GREEN,
+                                  color: AppColor.BLUE_TEXT,
                                 ),
                               ),
                             );
                           }
 
                           return buildList(
-                              maxListHeight,
-                              fillListBankAccount(state.listBanks),
-                              fillListListColor(state.colors),
-                              height - 280,
-                              sizedBox,
-                              _refresh);
+                            maxListHeight,
+                            state.listBanks,
+                            state.colors,
+                            height - 280,
+                            sizedBox,
+                            _refresh,
+                            state.listBankTypeDTO,
+                          );
                         },
                       ),
                     ),
@@ -493,12 +497,14 @@ class _BankScreenState extends State<_BankScreen>
   }
 
   Widget buildList(
-      double maxListHeight,
-      List<BankAccountDTO> banks,
-      List<Color> colors,
-      double listHeight,
-      double sizeBox,
-      RefreshCallback? onRefresh) {
+    double maxListHeight,
+    List<BankAccountDTO> banks,
+    List<Color> colors,
+    double listHeight,
+    double sizeBox,
+    RefreshCallback? onRefresh,
+    List<BankTypeDTO> listBanks,
+  ) {
     return StackedList(
       maxListHeight: maxListHeight,
       list: banks,
@@ -507,6 +513,7 @@ class _BankScreenState extends State<_BankScreen>
       height: listHeight,
       sizeBox: sizeBox,
       onRefresh: onRefresh,
+      listBanks: listBanks,
       getListBank: () {
         getListBank(context);
       },
@@ -592,6 +599,7 @@ class StackedList extends StatefulWidget {
   final double height;
   final RefreshCallback? onRefresh;
   final Function getListBank;
+  final List<BankTypeDTO> listBanks;
 
   const StackedList({
     super.key,
@@ -603,6 +611,7 @@ class StackedList extends StatefulWidget {
     required this.height,
     this.onRefresh,
     required this.getListBank,
+    required this.listBanks,
   });
 
   @override
@@ -611,19 +620,25 @@ class StackedList extends StatefulWidget {
 
 class _StackedList extends State<StackedList> {
   // final refreshController = RefreshController(initialRefresh: false);
-  List<BankAccountDTO> listBankAccount = [];
-  List<Color> listColor = [];
+
   late AccountBloc _accountBloc;
+
+  _StackedList();
 
   @override
   void initState() {
     super.initState();
     _accountBloc = BlocProvider.of(context);
-    addElementInList();
     _accountBloc.add(InitAccountEvent());
   }
 
-  addElementInList() {
+  List<Color> fillListColor(List<Color> colors) {
+    List<Color> listColor = [];
+    listColor = [Colors.white, ...colors, Colors.black26];
+    return listColor;
+  }
+
+  List<BankAccountDTO> fillListBankAccount(List<BankAccountDTO> listBank) {
     BankAccountDTO otd = const BankAccountDTO(
         id: '',
         bankAccount: '',
@@ -650,21 +665,12 @@ class _StackedList extends State<StackedList> {
         branchName: '',
         isAuthenticated: false,
         businessName: '');
-    listBankAccount = widget.list;
-    if (listBankAccount.isNotEmpty) {
-      listBankAccount.insert(0, otd);
-      listBankAccount = [...listBankAccount, otd2];
-    } else {
-      listBankAccount = [otd, otd2];
-    }
 
-    listColor = widget.colors;
-    if (listColor.isNotEmpty) {
-      listColor.insert(0, Colors.white);
-      listColor = [...listColor, Colors.black26];
-    } else {
-      listColor = [Colors.white, Colors.black26];
-    }
+    List<BankAccountDTO> listBankAccount = [];
+
+    listBankAccount = [otd, ...listBank, otd2];
+
+    return listBankAccount;
   }
 
   @override
@@ -675,18 +681,17 @@ class _StackedList extends State<StackedList> {
         padding: EdgeInsets.zero,
         children: [
           Stack(
-            children: listBankAccount.map(
+            children: fillListBankAccount(widget.list).map(
               (item) {
-                int index = listBankAccount.indexOf(item);
+                int index = fillListBankAccount(widget.list).indexOf(item);
                 return Padding(
                   padding: EdgeInsets.only(top: index * 97),
                   child: _buildCardItem(
-                    context: context,
-                    index: index,
-                    maxLengthList: listBankAccount.length,
-                    dto: item,
-                    getListBank: widget.getListBank,
-                  ),
+                      context: context,
+                      index: index,
+                      maxLengthList: fillListBankAccount(widget.list).length,
+                      dto: item,
+                      getListBank: widget.getListBank),
                 );
               },
             ).toList(),
@@ -744,7 +749,7 @@ class _StackedList extends State<StackedList> {
               ),
               child: Container(
                 decoration: BoxDecoration(
-                  color: listColor[index],
+                  color: fillListColor(widget.colors)[index],
                   borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(20),
                       topRight: Radius.circular(20)),
@@ -761,13 +766,20 @@ class _StackedList extends State<StackedList> {
                             dto.userId == userId))
                           InkWell(
                             onTap: () {
+                              BankTypeDTO bankTypeDTO;
+
+                              bankTypeDTO = widget.listBanks.where((element) {
+                                return element.bankCode == 'MB';
+                              }).first;
+
                               Navigator.pushNamed(
                                 context,
                                 Routes.ADD_BANK_CARD,
                                 arguments: {
-                                  'pageIndex': 3,
+                                  'step': 1,
                                   'bankAccount': dto.bankAccount,
-                                  'name': dto.userBankName
+                                  'name': dto.userBankName,
+                                  'bankDTO': bankTypeDTO,
                                 },
                               );
                             },
@@ -1021,7 +1033,7 @@ class _StackedList extends State<StackedList> {
                     width: 30,
                     height: 30,
                     child: CircularProgressIndicator(
-                      color: AppColor.WHITE,
+                      color: AppColor.BLUE_TEXT,
                     ),
                   );
                 },
@@ -1046,7 +1058,6 @@ class _StackedList extends State<StackedList> {
     return GestureDetector(
       onTap: () async {
         await Navigator.pushNamed(context, Routes.ADD_BANK_CARD);
-
         widget.getListBank();
       },
       child: Container(

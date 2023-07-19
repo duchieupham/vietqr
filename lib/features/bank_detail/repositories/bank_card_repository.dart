@@ -12,6 +12,7 @@ import 'package:vierqr/models/bank_card_insert_unauthenticated.dart';
 import 'package:vierqr/models/bank_card_request_otp.dart';
 import 'package:vierqr/models/bank_name_information_dto.dart';
 import 'package:vierqr/models/bank_name_search_dto.dart';
+import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/confirm_otp_bank_dto.dart';
 import 'package:vierqr/models/qr_create_dto.dart';
 import 'package:vierqr/models/qr_create_list_dto.dart';
@@ -21,6 +22,29 @@ import 'package:vierqr/models/response_message_dto.dart';
 
 class BankCardRepository {
   const BankCardRepository();
+
+  Future<List<BankTypeDTO>> getBankTypes() async {
+    List<BankTypeDTO> listBanks = [];
+
+    try {
+      String url = '${EnvConfig.getBaseUrl()}bank-type';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        if (data != null) {
+          listBanks = data
+              .map<BankTypeDTO>((json) => BankTypeDTO.fromJson(json))
+              .toList();
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return listBanks;
+  }
 
   Future<List<QRGeneratedDTO>> generateQRList(List<QRCreateDTO> list) async {
     List<QRGeneratedDTO> result = [];
@@ -184,6 +208,7 @@ class BankCardRepository {
     }
     return result;
   }
+
   //
 
   //request OTP
