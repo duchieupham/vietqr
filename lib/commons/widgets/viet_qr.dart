@@ -81,11 +81,14 @@ class VietQr extends StatelessWidget {
                       ),
                     ),
                     if (qrGeneratedDTO.imgId.isNotEmpty)
-                      Image(
-                        image: ImageUtils.instance
-                            .getImageNetWork(qrGeneratedDTO.imgId),
-                        width: width / 2 * 0.5,
-                        fit: BoxFit.fill,
+                      Padding(
+                        padding: const EdgeInsets.only(right: 12),
+                        child: Image(
+                          image: ImageUtils.instance
+                              .getImageNetWork(qrGeneratedDTO.imgId),
+                          width: width / 2 * 0.5,
+                          fit: BoxFit.fill,
+                        ),
                       )
                     else
                       SizedBox(width: width / 2 * 0.5),
@@ -107,42 +110,51 @@ class VietQr extends StatelessWidget {
             ),
           ],
           const SizedBox(height: 10),
-          Column(
-            children: [
-              Text(
-                qrGeneratedDTO.userBankName.toUpperCase(),
-                style: TextStyle(
-                  fontSize: (isSmallWidget != null && isSmallWidget!) ? 12 : 15,
-                  fontWeight: FontWeight.normal,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Column(
+              children: [
+                Text(
+                  qrGeneratedDTO.userBankName.toUpperCase(),
+                  style: TextStyle(
+                    fontSize:
+                        (isSmallWidget != null && isSmallWidget!) ? 12 : 15,
+                    fontWeight: FontWeight.normal,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                qrGeneratedDTO.bankAccount,
-                style: TextStyle(
-                  fontSize: (isSmallWidget != null && isSmallWidget!) ? 12 : 15,
-                  fontWeight: FontWeight.w500,
+                const SizedBox(height: 4),
+                Text(
+                  qrGeneratedDTO.bankAccount,
+                  style: TextStyle(
+                    fontSize:
+                        (isSmallWidget != null && isSmallWidget!) ? 12 : 15,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                qrGeneratedDTO.bankName,
-                style: TextStyle(
-                  fontSize: (isSmallWidget != null && isSmallWidget!) ? 12 : 15,
-                  fontWeight: FontWeight.normal,
+                const SizedBox(height: 4),
+                Text(
+                  qrGeneratedDTO.bankName,
+                  style: TextStyle(
+                    fontSize:
+                        (isSmallWidget != null && isSmallWidget!) ? 12 : 15,
+                    fontWeight: FontWeight.normal,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           const SizedBox(height: 10),
           if (qrGeneratedDTO.content.isNotEmpty) ...[
-            Text(
-              qrGeneratedDTO.content,
-              maxLines: 2,
-              textAlign: TextAlign.center,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: (isSmallWidget != null && isSmallWidget!) ? 12 : 15,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Text(
+                qrGeneratedDTO.content,
+                maxLines: 2,
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: (isSmallWidget != null && isSmallWidget!) ? 12 : 15,
+                ),
               ),
             ),
           ],

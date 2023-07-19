@@ -341,4 +341,48 @@ class BankCardRepository {
     }
     return result;
   }
+
+  Future<ResponseMessageDTO> unRequestOTP(body) async {
+    ResponseMessageDTO result =
+        const ResponseMessageDTO(status: '', message: '');
+    try {
+      final String url = '${EnvConfig.getUrl()}bank/api/unregister_request';
+      final response = await BaseAPIClient.postAPI(
+        url: url,
+        body: body,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200 || response.statusCode == 400) {
+        var data = jsonDecode(response.body);
+        result = ResponseMessageDTO.fromJson(data);
+      } else {
+        result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return result;
+  }
+
+  Future<ResponseMessageDTO> unConfirmOTP(ConfirmOTPBankDTO dto) async {
+    ResponseMessageDTO result =
+        const ResponseMessageDTO(status: '', message: '');
+    try {
+      final String url = '${EnvConfig.getUrl()}bank/api/unregister_confirm';
+      final response = await BaseAPIClient.postAPI(
+        url: url,
+        body: dto.toJson(),
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200 || response.statusCode == 400) {
+        var data = jsonDecode(response.body);
+        result = ResponseMessageDTO.fromJson(data);
+      } else {
+        result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return result;
+  }
 }

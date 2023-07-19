@@ -7,7 +7,7 @@ import 'package:vierqr/models/bank_card_request_otp.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 
-enum BankDetailType { NONE, SUCCESS, DELETED, ERROR }
+enum BankDetailType { NONE, SUCCESS, DELETED, ERROR, UN_LINK, OTP }
 
 class BankCardState extends Equatable {
   final String? msg;
@@ -18,7 +18,6 @@ class BankCardState extends Equatable {
   final BankCardRequestOTP? dto;
   final String? requestId;
   final AccountBankDetailDTO? bankDetailDTO;
-  final TypePermission type;
   final NationalScannerDTO? nationalScannerDTO;
   final String? bankAccount;
   final BankTypeDTO? bankTypeDTO;
@@ -32,7 +31,6 @@ class BankCardState extends Equatable {
     this.dto,
     this.requestId,
     this.bankDetailDTO,
-    this.type = TypePermission.None,
     this.nationalScannerDTO,
     this.bankAccount,
     this.bankTypeDTO,
@@ -49,7 +47,6 @@ class BankCardState extends Equatable {
     BankCardRequestOTP? dto,
     String? requestId,
     AccountBankDetailDTO? bankDetailDTO,
-    TypePermission? type,
     NationalScannerDTO? nationalScannerDTO,
     String? bankAccount,
     BankTypeDTO? bankTypeDTO,
@@ -63,7 +60,6 @@ class BankCardState extends Equatable {
       dto: dto ?? this.dto,
       requestId: requestId ?? this.requestId,
       bankDetailDTO: bankDetailDTO ?? this.bankDetailDTO,
-      type: type ?? this.type,
       nationalScannerDTO: nationalScannerDTO ?? this.nationalScannerDTO,
       bankAccount: bankAccount ?? this.bankAccount,
       bankTypeDTO: bankTypeDTO ?? this.bankTypeDTO,
@@ -79,7 +75,6 @@ class BankCardState extends Equatable {
         dto,
         requestId,
         bankDetailDTO,
-        type,
         nationalScannerDTO,
         bankAccount,
         bankTypeDTO,

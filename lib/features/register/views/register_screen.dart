@@ -181,6 +181,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 SizedBox(
                                   height: 40,
                                   child: PinCodeInput(
+                                    autoFocus: true,
                                     obscureText: true,
                                     onChanged: (value) {
                                       provider.updatePassword(value);

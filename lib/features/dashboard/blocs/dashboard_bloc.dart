@@ -6,6 +6,7 @@ import 'package:vierqr/features/business/repositories/business_information_repos
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
 import 'package:vierqr/models/business_item_dto.dart';
+import 'package:vierqr/models/response_message_dto.dart';
 
 class DashboardBloc extends Bloc<DashboardEvent, DashboardState>
     with BaseManager {
@@ -14,6 +15,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState>
 
   DashboardBloc(this.context) : super(const DashboardState()) {
     on<DashboardInitEvent>(_initData);
+    on<DashboardRemoveBusinessEvent>(_removeBusiness);
   }
 
   void _initData(DashboardEvent event, Emitter emit) async {
@@ -29,6 +31,24 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState>
       }
     } catch (e) {
       emit(state.copyWith(status: BlocStatus.ERROR, msg: e.toString()));
+    }
+  }
+
+  void _removeBusiness(DashboardEvent event, Emitter emit) async {
+    try {
+      if (event is DashboardRemoveBusinessEvent) {
+        emit(state.copyWith(status: BlocStatus.LOADING));
+        ResponseMessageDTO result = await businessInformationRepository
+            .removeBusinessItems(event.businessId);
+        if (result.status == 'SUCCESS') {
+          emit(state.copyWith(status: BlocStatus.DELETED));
+        } else {
+          emit(state.copyWith(
+              status: BlocStatus.DELETED_ERROR, msg: result.message));
+        }
+      }
+    } catch (e) {
+      emit(state.copyWith(status: BlocStatus.DELETED_ERROR, msg: e.toString()));
     }
   }
 }

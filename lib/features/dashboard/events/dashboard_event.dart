@@ -26,3 +26,12 @@ class DashboardFailedEvent extends DashboardEvent {
   @override
   List<Object?> get props => [msg];
 }
+
+class DashboardRemoveBusinessEvent extends DashboardEvent {
+  final String businessId;
+
+  DashboardRemoveBusinessEvent({this.businessId = ''});
+
+  @override
+  List<Object?> get props => [businessId];
+}

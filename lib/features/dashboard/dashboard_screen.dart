@@ -86,7 +86,18 @@ class _DashboardScreenState extends State<DashboardScreen>
       create: (_) => DashboardProvider(),
       child: BlocConsumer<DashboardBloc, DashboardState>(
           bloc: context.read<DashboardBloc>(),
-          listener: (context, state) {},
+          listener: (context, state) {
+            if (state.status == BlocStatus.DELETED) {
+              _refresh();
+            }
+            if (state.status == BlocStatus.DELETED_ERROR) {
+              DialogWidget.instance.openMsgDialog(
+                title: 'Xoá thất bại',
+                msg: 'Đã có lỗi xảy ra, bạn vui lòng thử lại sau.',
+                isSecondBT: false,
+              );
+            }
+          },
           builder: (context, state) {
             if (state.status == BlocStatus.SUCCESS) {
               Provider.of<DashboardProvider>(context, listen: false)
@@ -100,7 +111,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                 width: width,
                 height: height,
                 child: Padding(
-                  padding: const EdgeInsets.only(bottom: 100),
+                  padding: const EdgeInsets.only(bottom: 40),
                   child: Stack(
                     children: [
                       Align(
@@ -180,7 +191,7 @@ class _DashboardScreenState extends State<DashboardScreen>
           return Container(
             height: 10,
             width: 10,
-            margin: const EdgeInsets.only(left: 8),
+            margin: const EdgeInsets.only(right: 8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               color: AppColor.GREY_BG,
@@ -249,27 +260,28 @@ class _DashboardScreenState extends State<DashboardScreen>
                               context, Routes.ADD_BUSINESS_VIEW);
                         },
                       ),
-                      Expanded(
-                        child: UnconstrainedBox(
-                          child: ButtonIconWidget(
-                            width: 40,
-                            height: 40,
-                            icon: Icons.question_mark_sharp,
-                            title: '',
-                            function: () async {},
-                            bgColor: Theme.of(context).cardColor,
-                            textColor: AppColor.BLUE_TEXT,
-                            borderRadius: 30,
-                            enableShadow: true,
-                          ),
-                        ),
-                      )
+                      // Expanded(
+                      //   child: UnconstrainedBox(
+                      //     child: ButtonIconWidget(
+                      //       width: 40,
+                      //       height: 40,
+                      //       icon: Icons.question_mark_sharp,
+                      //       title: '',
+                      //       function: () async {},
+                      //       bgColor: Theme.of(context).cardColor,
+                      //       textColor: AppColor.BLUE_TEXT,
+                      //       borderRadius: 30,
+                      //       enableShadow: true,
+                      //     ),
+                      //   ),
+                      // )
+                      const Spacer(),
                     ],
                   ))
             ],
           ),
           const SizedBox(
-            height: 100,
+            height: 40,
           ),
         ],
       ),
@@ -351,9 +363,9 @@ class _DashboardScreenState extends State<DashboardScreen>
               borderRadius: const BorderRadius.all(Radius.circular(8)),
               boxShadow: <BoxShadow>[
                 BoxShadow(
-                  color: Theme.of(context).shadowColor.withOpacity(0.3),
-                  spreadRadius: 3,
-                  blurRadius: 5,
+                  color: Theme.of(context).shadowColor.withOpacity(0.2),
+                  spreadRadius: 2,
+                  blurRadius: 4,
                   offset: const Offset(1, 2),
                 ),
               ],
@@ -370,69 +382,61 @@ class _DashboardScreenState extends State<DashboardScreen>
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildChip(
-                            context: context,
-                            icon: Icons.people_rounded,
-                            text: '${dto.totalMember} thành viên',
-                            color: AppColor.GREY_TEXT,
+                          SizedBox(
+                            width: 100,
+                            child: _buildChip(
+                              context: context,
+                              icon: Icons.people_rounded,
+                              text: '${dto.totalMember} thành viên',
+                              color: AppColor.GREY_TEXT,
+                            ),
                           ),
                           const SizedBox(width: 16),
-                          _buildChip(
-                            context: context,
-                            icon: Icons.business_rounded,
-                            color: AppColor.GREY_TEXT,
-                            text: '${dto.totalBranch} chi nhánh',
+                          Expanded(
+                            child: _buildChip(
+                              context: context,
+                              icon: Icons.business_rounded,
+                              color: AppColor.GREY_TEXT,
+                              text: '${dto.totalBranch} chi nhánh',
+                            ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 4),
                       if (dto.address.isNotEmpty)
-                        _buildChip(
-                          context: context,
-                          icon: Icons.location_on_outlined,
-                          color: AppColor.GREY_TEXT,
-                          text: dto.address,
+                        SizedBox(
+                          width: width - 40,
+                          child: _buildChip(
+                            context: context,
+                            icon: Icons.location_on_outlined,
+                            color: AppColor.GREY_TEXT,
+                            text: dto.address,
+                          ),
                         ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 24),
                 SizedBox(
-                  height: 180,
+                  height: 120,
                   child: (dto.transactions.isEmpty)
                       ? const Text('Không có giao dịch nào')
                       : ListView.separated(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           padding: const EdgeInsets.all(0),
-                          itemCount: businessDetailDTO.transactions.length + 1,
+                          itemCount: dto.transactions.length,
                           itemBuilder: (context, index) {
-                            return (index ==
-                                    businessDetailDTO.transactions.length)
-                                ? Padding(
-                                    padding: const EdgeInsets.only(top: 10),
-                                    child: ButtonIconWidget(
-                                      width: width,
-                                      icon: Icons.more_horiz_rounded,
-                                      title: 'Xem thêm',
-                                      function: () {
-                                        Navigator.pushNamed(
-                                          context,
-                                          Routes.BUSINESS_TRANSACTION,
-                                        );
-                                      },
-                                      bgColor: AppColor.TRANSPARENT,
-                                      textColor: AppColor.GREEN,
-                                    ),
-                                  )
-                                : _buildTransactionItem(
-                                    context: context,
-                                    dto: businessDetailDTO.transactions[index],
-                                    businessId: dto.businessId,
-                                  );
+                            return _buildTransactionItem(
+                              context: context,
+                              dto: dto.transactions[index],
+                              businessId: dto.businessId,
+                            );
                           },
                           separatorBuilder: (context, index) {
-                            return DividerWidget(width: width);
+                            return const SizedBox(
+                              height: 10,
+                            );
                           },
                         ),
                 )
@@ -538,7 +542,18 @@ class _DashboardScreenState extends State<DashboardScreen>
                   pathIcon: 'assets/images/ic-trash.png',
                   title: '',
                   iconSize: 30,
-                  function: () async {},
+                  function: () async {
+                    DialogWidget.instance.openMsgDialog(
+                      title: 'Xoá doanh nghiệp',
+                      msg: 'Bạn có chắc chắn muốn xoá doanh nghiệp này?',
+                      isSecondBT: true,
+                      functionConfirm: () {
+                        Navigator.of(context).pop();
+                        _dashboardBloc.add(DashboardRemoveBusinessEvent(
+                            businessId: dto.businessId));
+                      },
+                    );
+                  },
                   bgColor: Theme.of(context).cardColor,
                   textColor: AppColor.RED_TEXT,
                   borderRadius: 30,
@@ -559,7 +574,7 @@ class _DashboardScreenState extends State<DashboardScreen>
     return Stack(
       children: [
         Container(
-          height: 64,
+          height: 80,
           padding: const EdgeInsets.fromLTRB(12, 16, 0, 8),
           decoration: BoxDecoration(
             color: Colors.black26,
@@ -591,7 +606,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                 end: Alignment.topCenter,
                 tileMode: TileMode.clamp),
           ),
-          padding: const EdgeInsets.fromLTRB(12, 16, 0, 8),
+          padding: const EdgeInsets.fromLTRB(12, 32, 0, 8),
           child: Row(
             children: [
               Container(
@@ -621,6 +636,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                   style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
+                      overflow: TextOverflow.ellipsis,
                       color: AppColor.WHITE),
                 ),
               ),
@@ -633,7 +649,7 @@ class _DashboardScreenState extends State<DashboardScreen>
 
   Widget _buildTransactionItem({
     required BuildContext context,
-    required BusinessTransactionDTO dto,
+    required RelatedTransactionReceiveDTO dto,
     required String businessId,
   }) {
     final double width = MediaQuery.of(context).size.width;
@@ -641,7 +657,7 @@ class _DashboardScreenState extends State<DashboardScreen>
       onTap: () {},
       child: Container(
         width: width,
-        padding: const EdgeInsets.symmetric(vertical: 15),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -651,11 +667,11 @@ class _DashboardScreenState extends State<DashboardScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '${TransactionUtils.instance.getTransType(dto.tranStype)} ${CurrencyUtils.instance.getCurrencyFormatted(dto.amount)}',
+                    '${TransactionUtils.instance.getTransType(dto.transType)} ${CurrencyUtils.instance.getCurrencyFormatted(dto.amount)} VND',
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 12,
                       color: TransactionUtils.instance
-                          .getColorStatus(dto.status, dto.type, dto.tranStype),
+                          .getColorStatus(dto.status, dto.type, dto.transType),
                     ),
                   ),
                 ],
@@ -664,10 +680,10 @@ class _DashboardScreenState extends State<DashboardScreen>
             Align(
               alignment: Alignment.topRight,
               child: Text(
-                TimeUtils.instance.formatDateFromInt(dto.time, true),
+                TimeUtils.instance.formatTimeDateFromInt(dto.time),
                 textAlign: TextAlign.right,
                 style: const TextStyle(
-                  fontSize: 13,
+                  fontSize: 12,
                 ),
               ),
             ),
@@ -684,6 +700,7 @@ class _DashboardScreenState extends State<DashboardScreen>
     required Color color,
   }) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Icon(
           icon,
@@ -691,7 +708,12 @@ class _DashboardScreenState extends State<DashboardScreen>
           color: color,
         ),
         const SizedBox(width: 4),
-        Text(text),
+        Expanded(
+          child: Text(
+            text,
+            maxLines: 2,
+          ),
+        ),
       ],
     );
   }

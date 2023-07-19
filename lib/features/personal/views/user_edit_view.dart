@@ -62,6 +62,8 @@ class UserEditView extends StatelessWidget {
 
   void initialServices(BuildContext context) {
     _userEditBloc = BlocProvider.of(context);
+    _userEditBloc.add(GetInformationUserEvent(
+        userId: UserInformationHelper.instance.getUserId()));
     // final AccountInformationDTO accountInformationDTO =
     //     UserInformationHelper.instance.getUserInformation();
     final AccountInformationDTO accountInformationDTO =
@@ -85,7 +87,7 @@ class UserEditView extends StatelessWidget {
     if (accountInformationDTO.nationalDate.isEmpty) {
       _nationalDate = '01/01/1970';
     } else {
-      _nationalDate = accountInformationDTO.birthDate;
+      _nationalDate = accountInformationDTO.nationalDate;
     }
 
     if (accountInformationDTO.address.isNotEmpty &&

@@ -17,6 +17,7 @@ class PinCodeInput extends StatelessWidget {
     this.autoFocus = false,
     this.textStyle,
     this.length,
+    this.size,
   }) : super(key: key);
 
   final ValueChanged<String>? onChanged;
@@ -30,6 +31,7 @@ class PinCodeInput extends StatelessWidget {
   final bool autoFocus;
   final TextStyle? textStyle;
   final int? length;
+  final double? size;
 
   @override
   Widget build(BuildContext context) {
@@ -57,9 +59,9 @@ class PinCodeInput extends StatelessWidget {
       pinTheme: PinTheme(
         borderWidth: borderWidth,
         shape: shape,
-        fieldHeight: size,
+        fieldHeight: size ?? _size,
         fieldOuterPadding: EdgeInsets.zero,
-        fieldWidth: size,
+        fieldWidth: size ?? _size,
         activeColor: clBorderErr ?? activeColor,
         borderRadius: BorderRadius.circular(5),
         activeFillColor: activeFillColor,
@@ -128,7 +130,7 @@ class PinCodeInput extends StatelessWidget {
 
 // Size
 
-  double get size {
+  double get _size {
     if (themeKey) {
       return sizeDark;
     }

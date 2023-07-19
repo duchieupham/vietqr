@@ -46,6 +46,7 @@ class _DialogRegisterState extends State<DialogRegister> {
               child: SizedBox(
                 height: 40,
                 child: PinCodeInput(
+                  autoFocus: true,
                   obscureText: true,
                   onChanged: (value) {
                     widget.onChanged!(value);

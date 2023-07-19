@@ -51,6 +51,36 @@ class UserEditRepository {
     return result;
   }
 
+  Future<AccountInformationDTO> getUserInformation(String userId) async {
+    AccountInformationDTO accountInformationDTO = const AccountInformationDTO(
+      userId: '',
+      firstName: '',
+      middleName: '',
+      lastName: '',
+      birthDate: '',
+      gender: 0,
+      address: '',
+      email: '',
+      imgId: '',
+    );
+    try {
+      final String url = '${EnvConfig.getBaseUrl()}user/information/$userId';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        accountInformationDTO = AccountInformationDTO.fromJson(data);
+        UserInformationHelper.instance
+            .setAccountInformation(accountInformationDTO);
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return accountInformationDTO;
+  }
+
   Future<Map<String, dynamic>> updatePassword(PasswordUpdateDTO dto) async {
     Map<String, dynamic> result = {'check': false, 'msg': ''};
     try {

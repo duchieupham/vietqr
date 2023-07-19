@@ -10,6 +10,7 @@ enum BlocStatus {
   DELETED,
   INSERT,
   DONE,
+  DELETED_ERROR,
 }
 
 enum StepType { first_screen, second_screen, three_screen }
@@ -71,8 +72,10 @@ extension TypeRoleExt on TypeRole {
 }
 
 enum TypeQR {
+  NONE,
   QR_CMT,
   QR_BANK,
+  QR_BARCODE,
   NEGATIVE_TWO,
   NEGATIVE_ONE,
 }
@@ -90,18 +93,4 @@ extension TypeQRExt on TypeQR {
         return '0';
     }
   }
-}
-
-enum TypePermission {
-  None,
-  CameraDenied,
-  CameraAllow,
-  CameraRequest,
-  Allow,
-  Request,
-  Denied,
-  Error,
-  ScanError,
-  ScanNotFound,
-  ScanSuccess,
 }

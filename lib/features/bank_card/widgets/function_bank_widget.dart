@@ -10,8 +10,6 @@ import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/bank_detail/bank_card_detail_screen.dart';
 import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
-import 'package:vierqr/features/business/events/business_information_event.dart';
-import 'package:vierqr/features/generate_qr/views/create_qr.dart';
 import 'package:vierqr/features/printer/views/printing_view.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bluetooth_printer_dto.dart';
@@ -180,20 +178,20 @@ class FunctionBankWidget extends StatelessWidget {
           title: 'Tạo QR thanh toán',
           function: () {
             Navigator.pop(context);
-            Navigator.of(context)
-                .push(
-              MaterialPageRoute(
-                builder: (context) => CreateQRScreen(
-                  bankAccountDTO: bankAccountDTO,
-                ),
-              ),
-            )
-                .then((value) {
-              String userId = UserInformationHelper.instance.getUserId();
-              businessInformationBloc.add(
-                BusinessInformationEventGetList(userId: userId),
-              );
-            });
+            // Navigator.of(context)
+            //     .push(
+            //   MaterialPageRoute(
+            //     builder: (context) => CreateQRScreen(
+            //       bankAccountDTO: bankAccountDTO,
+            //     ),
+            //   ),
+            // )
+            //     .then((value) {
+            //   String userId = UserInformationHelper.instance.getUserId();
+            //   businessInformationBloc.add(
+            //     BusinessInformationEventGetList(userId: userId),
+            //   );
+            // });
           },
           bgColor: Theme.of(context).canvasColor,
           textColor: Theme.of(context).hintColor,
