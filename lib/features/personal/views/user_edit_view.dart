@@ -48,7 +48,12 @@ class UserEditView extends StatelessWidget {
   static final TextEditingController _addressController =
       TextEditingController();
   static final TextEditingController _emailController = TextEditingController();
+  static final TextEditingController _nationalIdController =
+      TextEditingController(text: '');
+  static final TextEditingController _oldNationalIdController =
+      TextEditingController(text: '');
   static String _birthDate = '';
+  static String _nationalDate = '';
   static late UserEditBloc _userEditBloc;
   static final _formKey = GlobalKey<FormState>();
   static final ImagePicker imagePicker = ImagePicker();
@@ -77,6 +82,12 @@ class UserEditView extends StatelessWidget {
           .copyWith(text: accountInformationDTO.firstName);
     }
     _birthDate = accountInformationDTO.birthDate;
+    if (accountInformationDTO.nationalDate.isEmpty) {
+      _nationalDate = '01/01/1970';
+    } else {
+      _nationalDate = accountInformationDTO.birthDate;
+    }
+
     if (accountInformationDTO.address.isNotEmpty &&
         _addressController.text.isEmpty) {
       _addressController.value = _addressController.value
@@ -504,6 +515,90 @@ class UserEditView extends StatelessWidget {
                           const Padding(padding: EdgeInsets.only(top: 10)),
                           BoxLayout(
                             width: width,
+                            // height: 55,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 0),
+                            child: TextFieldWidget(
+                              width: width,
+                              textfieldType: TextfieldType.LABEL,
+                              isObscureText: false,
+                              title: 'CCCD',
+                              hintText: 'Nhập CCCD',
+                              controller: _nationalIdController,
+                              inputType: TextInputType.text,
+                              keyboardAction: TextInputAction.next,
+                              onChange: (vavlue) {
+                                provider.setAvailableUpdate(true);
+                              },
+                            ),
+                          ),
+                          const Padding(padding: EdgeInsets.only(top: 10)),
+                          BoxLayout(
+                            width: width,
+                            // height: 55,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 0),
+                            child: TextFieldWidget(
+                              width: width,
+                              textfieldType: TextfieldType.LABEL,
+                              isObscureText: false,
+                              title: 'CMND(cũ)',
+                              hintText: 'Nhập cmnd',
+                              controller: _oldNationalIdController,
+                              inputType: TextInputType.text,
+                              keyboardAction: TextInputAction.next,
+                              onChange: (vavlue) {
+                                provider.setAvailableUpdate(true);
+                              },
+                            ),
+                          ),
+                          const Padding(padding: EdgeInsets.only(top: 10)),
+                          BoxLayout(
+                            width: width,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const SizedBox(
+                                  width: 80,
+                                  child: Text(
+                                    'Ngày cấp CCCD',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: SizedBox(
+                                    height: 150,
+                                    child: CupertinoTheme(
+                                      data: CupertinoThemeData(
+                                        textTheme: CupertinoTextThemeData(
+                                          dateTimePickerTextStyle: TextStyle(
+                                            fontSize: 16,
+                                            color: Theme.of(context).hintColor,
+                                          ),
+                                        ),
+                                      ),
+                                      child: CupertinoDatePicker(
+                                        initialDateTime: TimeUtils.instance
+                                            .getDateFromString(_nationalDate),
+                                        maximumDate: DateTime.now(),
+                                        mode: CupertinoDatePickerMode.date,
+                                        onDateTimeChanged: ((time) {
+                                          provider.setAvailableUpdate(true);
+                                          _nationalDate = TimeUtils.instance
+                                              .formatDate(time.toString());
+                                        }),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Padding(padding: EdgeInsets.only(top: 10)),
+                          BoxLayout(
+                            width: width,
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 20, vertical: 20),
                             child: Row(
@@ -599,7 +694,8 @@ class UserEditView extends StatelessWidget {
                           width: width - 40,
                           text: 'Cập nhật',
                           textColor: AppColor.WHITE,
-                          bgColor: AppColor.GREEN,
+                          borderRadius: 8,
+                          bgColor: AppColor.BLUE_TEXT,
                           function: () {
                             FocusManager.instance.primaryFocus?.unfocus();
                             provider.updateErrors(
@@ -616,6 +712,9 @@ class UserEditView extends StatelessWidget {
                                 gender: provider.gender,
                                 address: _addressController.text,
                                 email: _emailController.text,
+                                nationalDate: _nationalDate,
+                                nationalId: _nationalIdController.text,
+                                oldNationalId: _oldNationalIdController.text,
                                 imgId: UserInformationHelper.instance
                                     .getAccountInformation()
                                     .imgId,
