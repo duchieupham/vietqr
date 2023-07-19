@@ -35,7 +35,6 @@ import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/models/qr_create_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
-import 'package:vierqr/services/providers/bank_%20arrangement_provider.dart';
 import 'package:vierqr/services/providers/bank_account_provider.dart';
 import 'package:vierqr/services/providers/bank_card_select_provider.dart';
 import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
@@ -139,194 +138,98 @@ class _BankScreenState extends State<_BankScreen>
     final double maxListHeight = MediaQuery.of(context).size.height - 200;
     final double height = MediaQuery.of(context).size.height;
     double sizedBox = 0;
-    return Consumer<BankArrangementProvider>(
-      builder: (context, provider, child) {
-        return (provider.type == 0)
-            ? Padding(
-                padding: const EdgeInsets.only(bottom: 80),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 10),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                      child: Text(
-                        'Tài khoản',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w600),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [
-                          Text(
-                            'Sử dụng tạo mã QR, đối soát giao dịch',
-                            style: TextStyle(
-                                fontSize: 12, color: AppColor.GREY_TEXT),
-                          ),
-                          // GestureDetector(
-                          //   onTap: () {},
-                          //   child: const Text(
-                          //     'Tất cả',
-                          //     style: TextStyle(
-                          //       decoration: TextDecoration.underline,
-                          //       fontSize: 13,
-                          //       color: AppColor.BLUE_TEXT,
-                          //     ),
-                          //   ),
-                          // ),
-                        ],
-                      ),
-                    ),
-                    // const SizedBox(height: 10),
-                    Expanded(
-                      child: BlocConsumer<BankBloc, BankState>(
-                        listener: (context, state) async {
-                          if (state.request == BankType.SCAN) {
-                            Navigator.pushNamed(
-                              context,
-                              Routes.ADD_BANK_CARD,
-                              arguments: {
-                                'step': 0,
-                                'bankDTO': state.bankTypeDTO,
-                                'bankAccount': state.bankAccount,
-                                'name': ''
-                              },
-                            );
-                          }
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              'Tài khoản',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: const [
+                Text(
+                  'Sử dụng tạo mã QR, đối soát giao dịch',
+                  style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
+                ),
+                // GestureDetector(
+                //   onTap: () {},
+                //   child: const Text(
+                //     'Tất cả',
+                //     style: TextStyle(
+                //       decoration: TextDecoration.underline,
+                //       fontSize: 13,
+                //       color: AppColor.BLUE_TEXT,
+                //     ),
+                //   ),
+                // ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          Expanded(
+            child: BlocConsumer<BankBloc, BankState>(
+              listener: (context, state) async {
+                if (state.request == BankType.SCAN) {
+                  Navigator.pushNamed(
+                    context,
+                    Routes.ADD_BANK_CARD,
+                    arguments: {
+                      'step': 0,
+                      'bankDTO': state.bankTypeDTO,
+                      'bankAccount': state.bankAccount,
+                      'name': ''
+                    },
+                  );
+                }
 
-                          if (state.request == BankType.BANK) {
-                            if (scrollController.hasClients) {
-                              scrollController.jumpTo(0);
-                            }
-                          }
-                          // if (state.status == BlocStatus.INSERT ||
-                          //     state.status == BlocStatus.DELETE) {
-                          //   if (scrollController.hasClients) {
-                          //     scrollController.jumpTo(0);
-                          //   }
-                          //   getListBank(context);
-                          // }
-                        },
-                        builder: (context, state) {
-                          if (state.status == BlocStatus.LOADING) {
-                            return const Center(
-                              child: SizedBox(
-                                width: 30,
-                                height: 30,
-                                child: CircularProgressIndicator(
-                                  color: AppColor.BLUE_TEXT,
-                                ),
-                              ),
-                            );
-                          }
-
-                          return buildList(
-                            maxListHeight,
-                            state.listBanks,
-                            state.colors,
-                            height - 280,
-                            sizedBox,
-                            _refresh,
-                            state.listBankTypeDTO,
-                          );
-                        },
+                if (state.request == BankType.BANK) {
+                  if (scrollController.hasClients) {
+                    scrollController.jumpTo(0);
+                  }
+                }
+              },
+              builder: (context, state) {
+                if (state.status == BlocStatus.LOADING) {
+                  return const Center(
+                    child: SizedBox(
+                      width: 30,
+                      height: 30,
+                      child: CircularProgressIndicator(
+                        color: AppColor.BLUE_TEXT,
                       ),
                     ),
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    _buildListSection(),
-                  ],
-                ),
-              )
-            : Container(
-                width: width,
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage('assets/images/bg-qr.png'),
-                    fit: BoxFit.fitHeight,
-                  ),
-                ),
-                child: Column(
-                  children: [
-                    BlocConsumer<BankBloc, BankState>(
-                      listener: (context, state) {
-                        if (state.status == BlocStatus.SUCCESS) {
-                          List<QRCreateDTO> qrCreateDTOs = [];
-                          if (state.listBanks.isNotEmpty) {
-                            for (BankAccountDTO bankAccountDTO
-                                in state.listBanks) {
-                              QRCreateDTO qrCreateDTO = QRCreateDTO(
-                                bankId: bankAccountDTO.id,
-                                amount: '',
-                                content: '',
-                                branchId: '',
-                                businessId: '',
-                                userId: '',
-                              );
-                              qrCreateDTOs.add(qrCreateDTO);
-                            }
-                            getListQR(context, qrCreateDTOs);
-                          }
-                        }
-                        // if (state.status == BlocStatus.INSERT ||
-                        //     state.status == BlocStatus.DELETE) {
-                        //   getListBank(context);
-                        // }
-                      },
-                      builder: (context, state) {
-                        return Expanded(
-                          child: (state.listGeneratedQR.isEmpty)
-                              ? _buildEmptyList(width)
-                              : Column(
-                                  children: [
-                                    CarouselSlider(
-                                      carouselController: carouselController,
-                                      items: cardWidgets,
-                                      options: CarouselOptions(
-                                        viewportFraction: 1,
-                                        aspectRatio:
-                                            width / (width + width * 0.25),
-                                        disableCenter: true,
-                                        onPageChanged: ((index, reason) {
-                                          Provider.of<BankAccountProvider>(
-                                                  context,
-                                                  listen: false)
-                                              .updateIndex(index);
-                                        }),
-                                      ),
-                                    ),
-                                    const Spacer(),
-                                    Container(
-                                      width: width,
-                                      height: 10,
-                                      alignment: Alignment.center,
-                                      child: Consumer<BankAccountProvider>(
-                                          builder: (context, page, child) {
-                                        return ListView.builder(
-                                            shrinkWrap: true,
-                                            scrollDirection: Axis.horizontal,
-                                            physics:
-                                                const NeverScrollableScrollPhysics(),
-                                            itemCount:
-                                                state.listGeneratedQR.length,
-                                            itemBuilder: ((context, index) =>
-                                                _buildDot((index ==
-                                                    page.indexSelected))));
-                                      }),
-                                    ),
-                                  ],
-                                ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              );
-      },
+                  );
+                }
+                Provider.of<BankCardSelectProvider>(context, listen: false)
+                    .updateBanks(state.listBanks);
+                Provider.of<BankCardSelectProvider>(context, listen: false)
+                    .updateColors(state.colors);
+                return buildList(
+                  maxListHeight,
+                  state.listBanks,
+                  state.colors,
+                  height - 280,
+                  sizedBox,
+                  _refresh,
+                  state.listBankTypeDTO,
+                );
+              },
+            ),
+          ),
+          const SizedBox(
+            height: 16,
+          ),
+          _buildListSection(),
+        ],
+      ),
     );
   }
 
@@ -816,36 +719,13 @@ class _StackedList extends State<StackedList> {
                         const Padding(padding: EdgeInsets.only(left: 10)),
                         InkWell(
                           onTap: () {
-                            BankAccountDTO bankAccountDTO = BankAccountDTO(
-                              id: dto.id,
-                              bankAccount: dto.bankAccount,
-                              userBankName: dto.userBankName,
-                              bankCode: dto.bankCode,
-                              bankName: dto.bankName,
-                              imgId: dto.imgId,
-                              type: dto.type,
-                              branchId:
-                                  (dto.branchId.isEmpty) ? '' : dto.branchId,
-                              businessId: (dto.businessId.isEmpty)
-                                  ? ''
-                                  : dto.businessId,
-                              branchName: (dto.branchName.isEmpty)
-                                  ? ''
-                                  : dto.branchName,
-                              businessName: (dto.businessName.isEmpty)
-                                  ? ''
-                                  : dto.businessName,
-                              isAuthenticated: dto.isAuthenticated,
+                            Navigator.pushNamed(
+                              context,
+                              Routes.CREATE_QR,
+                              arguments: {
+                                'bankInfo': dto,
+                              },
                             );
-                            Navigator.of(context)
-                                .push(
-                                  MaterialPageRoute(
-                                    builder: (context) => CreateQRScreen(
-                                      bankAccountDTO: bankAccountDTO,
-                                    ),
-                                  ),
-                                )
-                                .then((value) {});
                           },
                           child: BoxLayout(
                             width: 95,
@@ -941,7 +821,7 @@ class _StackedList extends State<StackedList> {
                     decoration: BoxDecoration(
                       borderRadius: const BorderRadius.all(Radius.circular(25)),
                       color: dto.userId == userId
-                          ? AppColor.GREEN
+                          ? AppColor.BLUE_TEXT
                           : AppColor.ORANGE,
                     ),
                     child: const Icon(

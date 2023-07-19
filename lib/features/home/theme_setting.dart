@@ -3,7 +3,6 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/widgets/checkbox_widget.dart';
 import 'package:vierqr/commons/widgets/sub_header_widget.dart';
 import 'package:vierqr/layouts/box_layout.dart';
-import 'package:vierqr/services/providers/bank_%20arrangement_provider.dart';
 import 'package:vierqr/services/providers/shortcut_provider.dart';
 import 'package:vierqr/services/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
@@ -136,7 +135,7 @@ class ThemeSettingView extends StatelessWidget {
                             scale: 0.8,
                             child: CupertinoSwitch(
                               value: provider.enableShortcut,
-                              activeColor: AppColor.GREEN,
+                              activeColor: AppColor.BLUE_TEXT,
                               onChanged: ((_) {
                                 provider.updateEnableShortcut(
                                     !provider.enableShortcut);
@@ -149,49 +148,49 @@ class ThemeSettingView extends StatelessWidget {
                   ),
                 ),
                 const Padding(padding: EdgeInsets.only(top: 30)),
-                BoxLayout(
-                  width: width,
-                  margin: const EdgeInsets.symmetric(horizontal: 20),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('Hiển thị TK ngân hàng:'),
-                      const Padding(padding: EdgeInsets.only(bottom: 30)),
-                      Consumer<BankArrangementProvider>(
-                        builder: (context, provider, child) {
-                          return Row(
-                            children: [
-                              _buildElementBankArr(
-                                context: context,
-                                width: width / 2 - 50,
-                                text: 'Ngăn xếp',
-                                imageAsset: 'assets/images/ic-bank-stack.png',
-                                isSelected: provider.type == 0,
-                                function: () {
-                                  provider.updateBankArr(0);
-                                },
-                              ),
-                              const Padding(padding: EdgeInsets.only(left: 10)),
-                              _buildElementBankArr(
-                                context: context,
-                                width: width / 2 - 50,
-                                text: 'Trượt',
-                                imageAsset: 'assets/images/ic-bank-slide.png',
-                                isSelected: provider.type == 1,
-                                function: () {
-                                  provider.updateBankArr(1);
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                const Padding(padding: EdgeInsets.only(top: 30)),
+                // BoxLayout(
+                //   width: width,
+                //   margin: const EdgeInsets.symmetric(horizontal: 20),
+                //   padding:
+                //       const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                //   child: Column(
+                //     crossAxisAlignment: CrossAxisAlignment.start,
+                //     children: [
+                //       const Text('Hiển thị TK ngân hàng:'),
+                //       const Padding(padding: EdgeInsets.only(bottom: 30)),
+                //       Consumer<BankArrangementProvider>(
+                //         builder: (context, provider, child) {
+                //           return Row(
+                //             children: [
+                //               _buildElementBankArr(
+                //                 context: context,
+                //                 width: width / 2 - 50,
+                //                 text: 'Ngăn xếp',
+                //                 imageAsset: 'assets/images/ic-bank-stack.png',
+                //                 isSelected: provider.type == 0,
+                //                 function: () {
+                //                   provider.updateBankArr(0);
+                //                 },
+                //               ),
+                //               const Padding(padding: EdgeInsets.only(left: 10)),
+                //               _buildElementBankArr(
+                //                 context: context,
+                //                 width: width / 2 - 50,
+                //                 text: 'Trượt',
+                //                 imageAsset: 'assets/images/ic-bank-slide.png',
+                //                 isSelected: provider.type == 1,
+                //                 function: () {
+                //                   provider.updateBankArr(1);
+                //                 },
+                //               ),
+                //             ],
+                //           );
+                //         },
+                //       ),
+                //     ],
+                //   ),
+                // ),
+                // const Padding(padding: EdgeInsets.only(top: 30)),
               ],
             ),
           ),

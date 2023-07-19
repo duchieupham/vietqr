@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
@@ -8,21 +9,13 @@ import 'package:vierqr/models/qr_create_dto.dart';
 import 'package:vierqr/models/qr_create_list_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/qr_recreate_dto.dart';
+import 'package:vierqr/models/response_message_dto.dart';
+import 'package:http/http.dart' as http;
 
 class QRRepository {
   const QRRepository();
 
-  Future<QRGeneratedDTO> generateQR(QRCreateDTO dto) async {
-    QRGeneratedDTO result = const QRGeneratedDTO(
-      bankCode: '',
-      bankName: '',
-      bankAccount: '',
-      userBankName: '',
-      amount: '',
-      content: '',
-      qrCode: '',
-      imgId: '',
-    );
+  Future generateQR(QRCreateDTO dto) async {
     try {
       final String url = '${EnvConfig.getBaseUrl()}qr/generate';
       final response = await BaseAPIClient.postAPI(
@@ -32,12 +25,14 @@ class QRRepository {
       );
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
-        result = QRGeneratedDTO.fromJson(data);
+        return QRGeneratedDTO.fromJson(data);
+      } else {
+        return null;
       }
     } catch (e) {
       LOG.error(e.toString());
     }
-    return result;
+    return null;
   }
 
   Future<List<QRGeneratedDTO>> generateQRList(List<QRCreateDTO> list) async {
@@ -88,6 +83,39 @@ class QRRepository {
       }
     } catch (e) {
       LOG.error(e.toString());
+    }
+    return result;
+  }
+
+  Future<ResponseMessageDTO> uploadImage(
+      String? transactionId, File? file) async {
+    ResponseMessageDTO result =
+        const ResponseMessageDTO(status: '', message: '');
+    try {
+      final Map<String, dynamic> data = {
+        'transactionId': transactionId ?? '',
+      };
+      final String url = '${EnvConfig.getBaseUrl()}transaction/image';
+      final List<http.MultipartFile> files = [];
+      if (file != null) {
+        final imageFile = await http.MultipartFile.fromPath('image', file.path);
+        files.add(imageFile);
+        final response = await BaseAPIClient.postMultipartAPI(
+          url: url,
+          fields: data,
+          files: files,
+        );
+        if (response.statusCode == 200 || response.statusCode == 400) {
+          var data = jsonDecode(response.body);
+          result = ResponseMessageDTO.fromJson(data);
+          if (result.message.trim().isNotEmpty) {}
+        } else {
+          result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
     }
     return result;
   }

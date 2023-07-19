@@ -12,7 +12,9 @@ enum AddBankType {
   INSERT_BANK,
   EXIST_BANK,
   OTP_BANK,
-  INSERT_OTP_BANK
+  INSERT_OTP_BANK,
+  SCAN_QR,
+  SCAN_NOT_FOUND,
 }
 
 class AddBankState {
@@ -30,11 +32,14 @@ class AddBankState {
   final String? qr;
   final BankCardRequestOTP? dto;
   final String? requestId;
+  final String? barCode;
+  final TypeQR? typeQR;
 
   AddBankState({
     this.msg,
     this.status = BlocStatus.NONE,
     this.request = AddBankType.NONE,
+    this.typeQR = TypeQR.NONE,
     this.listBanks,
     this.bankSelected,
     this.errorAccount,
@@ -46,6 +51,7 @@ class AddBankState {
     this.qr,
     this.dto,
     this.requestId,
+    this.barCode,
   });
 
   AddBankState copyWith({
@@ -63,10 +69,13 @@ class AddBankState {
     String? qr,
     BankCardRequestOTP? dto,
     String? requestId,
+    String? barCode,
+    TypeQR? typeQR,
   }) {
     return AddBankState(
       status: status ?? this.status,
       request: request ?? this.request,
+      typeQR: typeQR ?? this.typeQR,
       msg: msg ?? this.msg,
       errorAccount: errorAccount ?? this.errorAccount,
       errorName: errorName ?? this.errorName,
@@ -79,6 +88,7 @@ class AddBankState {
       qr: qr ?? this.qr,
       dto: dto ?? this.dto,
       requestId: requestId ?? this.requestId,
+      barCode: barCode ?? this.barCode,
     );
   }
 
@@ -99,7 +109,9 @@ class AddBankState {
           qr == other.qr &&
           bankId == other.bankId &&
           dto == other.dto &&
+          typeQR == other.typeQR &&
           requestId == other.requestId &&
+          barCode == other.barCode &&
           errorName == other.errorName;
 
   @override
@@ -110,6 +122,8 @@ class AddBankState {
       listBanks.hashCode ^
       errorAccount.hashCode ^
       errorName.hashCode ^
+      typeQR.hashCode ^
+      barCode.hashCode ^
       informationDTO.hashCode ^
       bankAccount.hashCode ^
       bankTypeId.hashCode ^

@@ -26,7 +26,13 @@ class LoginProvider with ChangeNotifier {
 
   void updatePhone(String value) {
     phone = value;
-    errorPhone = StringUtils.instance.validatePhone(value);
+
+    if (phone.length == 9) {
+      if (phone[0] != '0') {
+        phone = '0$phone';
+      }
+    }
+    errorPhone = StringUtils.instance.validatePhone(phone);
     if (errorPhone != null || value.isEmpty) {
       isEnableButton = false;
     } else {

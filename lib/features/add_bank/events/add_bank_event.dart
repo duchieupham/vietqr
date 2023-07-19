@@ -97,13 +97,22 @@ class BankCardEventInsert extends AddBankEvent {
   List<Object?> get props => [dto];
 }
 
-class BankCardEventRegisterAuthentication extends AddBankEvent {
+class BankCardEventRegisterLinkBank extends AddBankEvent {
   final RegisterAuthenticationDTO dto;
 
-  const BankCardEventRegisterAuthentication({
+  const BankCardEventRegisterLinkBank({
     required this.dto,
   });
 
   @override
   List<Object?> get props => [dto];
+}
+
+class ScanQrEventGetBankType extends AddBankEvent {
+  final String code;
+
+  const ScanQrEventGetBankType({required this.code});
+
+  @override
+  List<Object?> get props => [code];
 }

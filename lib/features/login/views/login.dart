@@ -7,7 +7,6 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/encrypt_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
-import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
@@ -242,6 +241,7 @@ class _LoginState extends State<_Login> {
                                 child: PinCodeInput(
                                   obscureText: true,
                                   controller: passController,
+                                  autoFocus: true,
                                   onChanged: provider.onChangePin,
                                   onCompleted: (value) {
                                     AccountLoginDTO dto = AccountLoginDTO(
@@ -348,6 +348,7 @@ class _LoginState extends State<_Login> {
                   title: 'Tiếp tục',
                   isEnable: provider.isEnableButton,
                   onTap: () {
+                    FocusManager.instance.primaryFocus?.unfocus();
                     _bloc.add(CheckExitsPhoneEvent(phone: provider.phone));
                   },
                 ),

@@ -10,8 +10,10 @@ import 'package:vierqr/features/add_bank/events/add_bank_event.dart';
 import 'package:vierqr/features/add_bank/states/add_bank_state.dart';
 import 'package:vierqr/features/bank_detail/repositories/bank_card_repository.dart';
 import 'package:vierqr/features/bank_type/repositories/bank_type_repository.dart';
+import 'package:vierqr/features/home/blocs/home_bloc.dart';
 import 'package:vierqr/models/bank_name_information_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
+import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 
 class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
@@ -26,7 +28,8 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
     on<BankCardEventRequestOTP>(_requestOTP);
     on<BankCardEventConfirmOTP>(_confirmOTP);
     on<BankCardEventInsert>(_insertBankCard);
-    on<BankCardEventRegisterAuthentication>(_registerAuthentication);
+    on<BankCardEventRegisterLinkBank>(_registerLinkBank);
+    on<ScanQrEventGetBankType>(_getDataScan);
     on<UpdateAddBankEvent>(_updateEvent);
   }
 
@@ -286,9 +289,9 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
     }
   }
 
-  void _registerAuthentication(AddBankEvent event, Emitter emit) async {
+  void _registerLinkBank(AddBankEvent event, Emitter emit) async {
     try {
-      if (event is BankCardEventRegisterAuthentication) {
+      if (event is BankCardEventRegisterLinkBank) {
         emit(state.copyWith(
             status: BlocStatus.LOADING, request: AddBankType.NONE));
         final ResponseMessageDTO responseMessageDTO = await bankCardRepository
@@ -311,6 +314,35 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
       }
     } catch (e) {
       LOG.error(e.toString());
+    }
+  }
+
+  void _getDataScan(AddBankEvent event, Emitter emit) {
+    if (event is ScanQrEventGetBankType) {
+      emit(state.copyWith(
+          request: AddBankType.NONE, status: BlocStatus.LOADING));
+      NationalScannerDTO nationalScannerDTO =
+          homeRepository.getNationalInformation(event.code);
+      if (nationalScannerDTO.nationalId.trim().isNotEmpty) {
+        emit(
+          state.copyWith(
+            barCode: nationalScannerDTO.nationalId,
+            request: AddBankType.SCAN_QR,
+            status: BlocStatus.UNLOADING,
+          ),
+        );
+      } else if (event.code.isNotEmpty) {
+        emit(state.copyWith(
+          barCode: event.code,
+          request: AddBankType.SCAN_QR,
+          status: BlocStatus.UNLOADING,
+        ));
+      } else {
+        emit(state.copyWith(
+          request: AddBankType.SCAN_NOT_FOUND,
+          status: BlocStatus.UNLOADING,
+        ));
+      }
     }
   }
 

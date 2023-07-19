@@ -2,12 +2,14 @@ import 'package:equatable/equatable.dart';
 
 class NavigationDTO extends Equatable {
   final String name;
+  final String label;
   final String assetsActive;
   final String assetsUnActive;
   final int index;
 
   const NavigationDTO({
     required this.name,
+    required this.label,
     required this.assetsActive,
     required this.assetsUnActive,
     required this.index,
@@ -19,5 +21,6 @@ class NavigationDTO extends Equatable {
         assetsActive,
         assetsUnActive,
         index,
+        label,
       ];
 }

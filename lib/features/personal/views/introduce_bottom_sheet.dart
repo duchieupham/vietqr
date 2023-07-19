@@ -1,8 +1,11 @@
+import 'package:clipboard/clipboard.dart';
+import 'package:dudv_base/dudv_base.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/log.dart';
+import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/features/business/repositories/business_information_repository.dart';
 import 'package:vierqr/models/introduce_dto.dart';
@@ -109,8 +112,8 @@ class _IntroduceBottomSheetState extends State<IntroduceBottomSheet> {
                       SizedBox(width: 4),
                       Text(
                         'hoặc',
-                        style: TextStyle(
-                            fontSize: 14, color: AppColor.GREY_TEXT),
+                        style:
+                            TextStyle(fontSize: 14, color: AppColor.GREY_TEXT),
                       ),
                       SizedBox(width: 4),
                       Expanded(child: Divider()),
@@ -179,6 +182,7 @@ class _IntroduceBottomSheetState extends State<IntroduceBottomSheet> {
           Text(
             title,
             style: const TextStyle(fontSize: 14),
+            overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 12),
           Container(
@@ -190,18 +194,37 @@ class _IntroduceBottomSheetState extends State<IntroduceBottomSheet> {
             child: Row(
               children: [
                 Expanded(
-                  child: Text(
-                    data,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                        fontSize: 14, color: AppColor.GREY_TEXT),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Text(
+                      data,
+                      maxLines: 1,
+                      style: const TextStyle(
+                          fontSize: 14, color: AppColor.GREY_TEXT),
+                    ),
                   ),
                 ),
-                Image.asset(
-                  'assets/images/ic_copy.png',
-                  width: 28,
-                  height: 28,
+                GestureDetector(
+                  onTap: () async {
+                    await FlutterClipboard.copy(data).then(
+                      (value) => Fluttertoast.showToast(
+                        msg: 'Đã sao chép',
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.CENTER,
+                        timeInSecForIosWeb: 1,
+                        backgroundColor: Theme.of(context).cardColor,
+                        textColor: Theme.of(context).hintColor,
+                        fontSize: 15,
+                        webBgColor: 'rgba(255, 255, 255)',
+                        webPosition: 'center',
+                      ),
+                    );
+                  },
+                  child: Image.asset(
+                    'assets/images/ic_copy.png',
+                    width: 28,
+                    height: 28,
+                  ),
                 ),
               ],
             ),
