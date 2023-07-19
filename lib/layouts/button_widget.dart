@@ -10,6 +10,7 @@ class MButtonWidget extends StatelessWidget {
   final Color? colorDisableBgr;
   final Color? colorEnableText;
   final Color? colorDisableText;
+  final double? height;
 
   const MButtonWidget(
       {super.key,
@@ -20,6 +21,7 @@ class MButtonWidget extends StatelessWidget {
       this.colorEnableBgr,
       this.colorDisableBgr,
       this.colorEnableText,
+      this.height,
       this.colorDisableText});
 
   @override
@@ -33,7 +35,7 @@ class MButtonWidget extends StatelessWidget {
             alignment: Alignment.center,
             margin: margin ??
                 const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-            padding: const EdgeInsets.symmetric(vertical: 16),
+            height: height ?? 40,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
               color: isEnable

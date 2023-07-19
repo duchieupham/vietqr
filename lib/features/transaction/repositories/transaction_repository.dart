@@ -13,29 +13,6 @@ import 'package:vierqr/models/transaction_receive_dto.dart';
 class TransactionRepository {
   const TransactionRepository();
 
-  Future<List<BusinessTransactionDTO>> getTransactionByBranchId(
-      TransactionBranchInputDTO dto) async {
-    List<BusinessTransactionDTO> result = [];
-    try {
-      final String url = '${EnvConfig.getBaseUrl()}transaction-branch';
-      final response = await BaseAPIClient.postAPI(
-        url: url,
-        body: dto.toJson(),
-        type: AuthenticationType.SYSTEM,
-      );
-      if (response.statusCode == 200) {
-        var data = jsonDecode(response.body);
-        result = data
-            .map<BusinessTransactionDTO>(
-                (json) => BusinessTransactionDTO.fromJson(json))
-            .toList();
-      }
-    } catch (e) {
-      LOG.error(e.toString());
-    }
-    return result;
-  }
-
   Future<List<RelatedTransactionReceiveDTO>> getTransactionByBankId(
       TransactionInputDTO dto) async {
     List<RelatedTransactionReceiveDTO> result = [];
@@ -93,5 +70,21 @@ class TransactionRepository {
       LOG.error(e.toString());
     }
     return result;
+  }
+
+  loadImage(String transactionId) async {
+    try {
+      final String url =
+          '${EnvConfig.getBaseUrl()}transaction/image/$transactionId';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
   }
 }

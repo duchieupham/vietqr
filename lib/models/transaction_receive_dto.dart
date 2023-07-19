@@ -1,3 +1,6 @@
+import 'package:vierqr/commons/utils/currency_utils.dart';
+import 'package:vierqr/commons/utils/transaction_utils.dart';
+
 class TransactionReceiveDTO {
   final int time;
   final int status;
@@ -34,6 +37,16 @@ class TransactionReceiveDTO {
     required this.refId,
     required this.referenceNumber,
   });
+
+  String get getTransType => TransactionUtils.instance.getTransType(transType);
+
+  String get getPrefixBankAccount =>
+      TransactionUtils.instance.getPrefixBankAccount(transType);
+
+  String get getStatus => TransactionUtils.instance.getStatusString(status);
+
+  String get getAmount =>
+      CurrencyUtils.instance.getCurrencyFormatted(amount.toString());
 
   factory TransactionReceiveDTO.fromJson(Map<String, dynamic> json) {
     return TransactionReceiveDTO(

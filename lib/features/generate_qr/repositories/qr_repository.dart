@@ -5,6 +5,7 @@ import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
+import 'package:vierqr/models/notification_transaction_success_dto.dart';
 import 'package:vierqr/models/qr_create_dto.dart';
 import 'package:vierqr/models/qr_create_list_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
@@ -118,5 +119,23 @@ class QRRepository {
       result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
     }
     return result;
+  }
+
+  Future paid(String id) async {
+    try {
+      final String url = '${EnvConfig.getBaseUrl()}transaction/check/$id';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        return NotificationTransactionSuccessDTO.fromJson(data);
+      } else {
+        return null;
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
   }
 }
