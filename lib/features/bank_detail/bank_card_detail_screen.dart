@@ -224,6 +224,7 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                       return SingleChildScrollView(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             VietQr(qrGeneratedDTO: qrGeneratedDTO),
                             const Padding(padding: EdgeInsets.only(top: 30)),
@@ -548,7 +549,7 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                         arguments: {'qrGeneratedDTO': qrGeneratedDTO});
                   },
                   bgColor: Theme.of(context).cardColor,
-                  textColor: AppColor.GREEN,
+                  textColor: AppColor.BLUE_TEXT,
                 ),
               ],
             ),
@@ -706,7 +707,7 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                 width: width,
                 height: 40,
                 text: 'Chi tiết doanh nghiệp',
-                textColor: AppColor.GREEN,
+                textColor: AppColor.BLUE_TEXT,
                 bgColor: AppColor.TRANSPARENT,
                 function: () {
                   BusinessItemDTO businessItemDTO = BusinessItemDTO(

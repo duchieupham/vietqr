@@ -18,7 +18,6 @@ class BankCardSelectProvider with ChangeNotifier {
 
   void updateColors(List<Color> value) {
     _colors = value;
-    notifyListeners();
   }
 
   void updateSearchColors(List<Color> value) {
@@ -33,7 +32,6 @@ class BankCardSelectProvider with ChangeNotifier {
 
   void updateBanks(List<BankAccountDTO> value) {
     _banks = value;
-    notifyListeners();
   }
 
   void updateTotalBanks(int value) {

@@ -41,9 +41,9 @@ class ButtonWidget extends StatelessWidget {
           boxShadow: enableShadow
               ? [
                   BoxShadow(
-                    color: Theme.of(context).shadowColor.withOpacity(0.3),
-                    spreadRadius: 3,
-                    blurRadius: 5,
+                    color: Theme.of(context).shadowColor.withOpacity(0.2),
+                    spreadRadius: 2,
+                    blurRadius: 4,
                     offset: const Offset(1, 2),
                   ),
                 ]

@@ -42,7 +42,7 @@ class TransactionUtils {
         if (status == 0) {
           result = AppColor.ORANGE;
         } else if (status == 1) {
-          result = AppColor.GREEN;
+          result = AppColor.BLUE_TEXT;
         } else {
           result = AppColor.GREY_TEXT;
         }

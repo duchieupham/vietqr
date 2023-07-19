@@ -87,7 +87,6 @@ class _HomeScreen extends State<HomeScreen>
       [
         // const BankCardSelectView(key: PageStorageKey('QR_GENERATOR_PAGE')),
         const BankScreen(key: PageStorageKey('QR_GENERATOR_PAGE')),
-        const DashboardScreen(key: PageStorageKey('SMS_LIST_PAGE')),
         // if (PlatformUtils.instance.isAndroidApp()) const IntroduceScreen(),
         AccountScreen(
           key: const PageStorageKey('USER_SETTING_PAGE'),
@@ -320,81 +319,84 @@ class _HomeScreen extends State<HomeScreen>
             }
           }
         },
-        child: Consumer<PageSelectProvider>(
-          builder: (context, page, child) {
-            return Scaffold(
-              body: Stack(
+        child: Scaffold(
+          body: Stack(
+            children: [
+              _buildAppBar(),
+              Column(
                 children: [
-                  if (page.indexSelected != 2) _buildAppBar(),
-                  Column(
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: (page.indexSelected != 2)
-                              ? const EdgeInsets.only(top: 130)
-                              : EdgeInsets.zero,
-                          child: SizedBox(
-                            height: MediaQuery.of(context).size.height,
-                            child: Listener(
-                              onPointerMove: (moveEvent) {
-                                if (moveEvent.delta.dx > 0) {
-                                  Provider.of<PageSelectProvider>(context,
-                                          listen: false)
-                                      .updateMoveEvent(TypeMoveEvent.RIGHT);
-                                } else {
-                                  Provider.of<PageSelectProvider>(context,
-                                          listen: false)
-                                      .updateMoveEvent(TypeMoveEvent.LEFT);
-                                }
+                  Expanded(
+                    child: Consumer<PageSelectProvider>(
+                        builder: (context, page, child) {
+                      return Padding(
+                        padding:
+                            (page.indexSelected == 3 || page.indexSelected == 2)
+                                ? EdgeInsets.zero
+                                : const EdgeInsets.only(top: 110),
+                        child: SizedBox(
+                          height: MediaQuery.of(context).size.height,
+                          child: Listener(
+                            onPointerMove: (moveEvent) {
+                              if (moveEvent.delta.dx > 0) {
+                                Provider.of<PageSelectProvider>(context,
+                                        listen: false)
+                                    .updateMoveEvent(TypeMoveEvent.RIGHT);
+                              } else {
+                                Provider.of<PageSelectProvider>(context,
+                                        listen: false)
+                                    .updateMoveEvent(TypeMoveEvent.LEFT);
+                              }
+                            },
+                            child: PageView(
+                              key: const PageStorageKey('PAGE_VIEW'),
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              controller: _pageController,
+                              onPageChanged: (index) async {
+                                Provider.of<PageSelectProvider>(context,
+                                        listen: false)
+                                    .updateIndex(index);
                               },
-                              child: PageView(
-                                key: const PageStorageKey('PAGE_VIEW'),
-                                physics: const AlwaysScrollableScrollPhysics(),
-                                controller: _pageController,
-                                onPageChanged: (index) async {
-                                  Provider.of<PageSelectProvider>(context,
-                                          listen: false)
-                                      .updateIndex(index);
-                                },
-                                children: _homeScreens,
-                              ),
+                              children: _homeScreens,
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      );
+                    }),
                   ),
                 ],
               ),
-              bottomNavigationBar: Container(
-                decoration: const BoxDecoration(
-                  border:
-                      Border(top: BorderSide(color: AppColor.GREY_TOP_TAB_BAR)),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: List.generate(
-                    page.listItem.length,
-                    (index) {
-                      var item = page.listItem.elementAt(index);
+            ],
+          ),
+          bottomNavigationBar:
+              Consumer<PageSelectProvider>(builder: (context, page, child) {
+            return Container(
+              decoration: const BoxDecoration(
+                border:
+                    Border(top: BorderSide(color: AppColor.GREY_TOP_TAB_BAR)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: List.generate(
+                  page.listItem.length,
+                  (index) {
+                    var item = page.listItem.elementAt(index);
 
-                      String url = (item.index == page.indexSelected)
-                          ? item.assetsActive
-                          : item.assetsUnActive;
+                    String url = (item.index == page.indexSelected)
+                        ? item.assetsActive
+                        : item.assetsUnActive;
 
-                      return _buildShortcut(
-                        index: item.index,
-                        url: url,
-                        label: item.label,
-                        context: context,
-                        select: item.index == page.indexSelected,
-                      );
-                    },
-                  ).toList(),
-                ),
+                    return _buildShortcut(
+                      index: item.index,
+                      url: url,
+                      label: item.label,
+                      context: context,
+                      select: item.index == page.indexSelected,
+                    );
+                  },
+                ).toList(),
               ),
             );
-          },
+          }),
         ),
       ),
     );
@@ -621,8 +623,8 @@ class _HomeScreen extends State<HomeScreen>
                       alignment: Alignment.center,
                       children: [
                         ButtonIconWidget(
-                          width: 45,
-                          height: 45,
+                          width: 40,
+                          height: 40,
                           borderRadius: 40,
                           icon: Icons.notifications_outlined,
                           title: '',
@@ -688,7 +690,7 @@ class _HomeScreen extends State<HomeScreen>
   }
 
   Widget _buildAvatarWidget(BuildContext context) {
-    double size = 45;
+    double size = 40;
     String imgId = UserInformationHelper.instance.getAccountInformation().imgId;
     return Consumer<AvatarProvider>(
       builder: (context, provider, child) => (imgId.isEmpty)

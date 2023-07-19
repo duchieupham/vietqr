@@ -22,6 +22,7 @@ import 'package:vierqr/features/bank_member/views/bank_member_view.dart';
 import 'package:vierqr/features/bank_type/select_bank_type_screen.dart';
 import 'package:vierqr/features/branch/blocs/branch_bloc.dart';
 import 'package:vierqr/features/branch/views/branch_detail_view.dart';
+import 'package:vierqr/features/business/blocs/business_bloc.dart';
 import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
 import 'package:vierqr/features/business/blocs/business_member_bloc.dart';
 import 'package:vierqr/features/business/views/add_business_view.dart';
@@ -29,6 +30,7 @@ import 'package:vierqr/features/business/views/business_information_view.dart';
 import 'package:vierqr/features/business/views/business_transaction_view.dart';
 import 'package:vierqr/features/create_qr/create_qr_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
+import 'package:vierqr/features/dashboard/dashboard_screen.dart';
 import 'package:vierqr/features/generate_qr/views/qr_share_view.dart';
 import 'package:vierqr/features/home/blocs/home_bloc.dart';
 import 'package:vierqr/features/home/home.dart';
@@ -144,7 +146,7 @@ class VietQRApp extends StatefulWidget {
 }
 
 class _VietQRApp extends State<VietQRApp> {
-  static Widget _homeScreen = const Login();
+  static Widget _mainScreen = const Login();
 
   @override
   void initState() {
@@ -206,8 +208,8 @@ class _VietQRApp extends State<VietQRApp> {
 
   @override
   Widget build(BuildContext context) {
-    _homeScreen = (UserInformationHelper.instance.getUserId().trim().isNotEmpty)
-        ? const HomeScreen()
+    _mainScreen = (UserInformationHelper.instance.getUserId().trim().isNotEmpty)
+        ? const DashBoardScreen()
         : const Login();
     return GestureDetector(
       onTap: () {
@@ -227,8 +229,11 @@ class _VietQRApp extends State<VietQRApp> {
           BlocProvider<HomeBloc>(
             create: (BuildContext context) => HomeBloc(context),
           ),
-          BlocProvider<DashboardBloc>(
-            create: (BuildContext context) => DashboardBloc(context),
+          BlocProvider<DashBoardBloc>(
+            create: (BuildContext context) => DashBoardBloc(context),
+          ),
+          BlocProvider<BusinessBloc>(
+            create: (BuildContext context) => BusinessBloc(context),
           ),
           BlocProvider<TokenBloc>(
             create: (BuildContext context) => TokenBloc(),
@@ -306,7 +311,7 @@ class _VietQRApp extends State<VietQRApp> {
                 routes: {
                   Routes.APP: (context) => const VietQRApp(),
                   Routes.LOGIN: (context) => const Login(),
-                  Routes.HOME: (context) => const HomeScreen(),
+                  Routes.DASHBOARD: (context) => const DashBoardScreen(),
                   Routes.USER_EDIT: (context) => const UserEditView(),
                   Routes.UPDATE_PASSWORD: (context) =>
                       const UserUpdatePassword(),
@@ -372,7 +377,7 @@ class _VietQRApp extends State<VietQRApp> {
                 home: Title(
                   title: 'VietQR',
                   color: AppColor.BLACK,
-                  child: _homeScreen,
+                  child: _mainScreen,
                 ),
               );
             },

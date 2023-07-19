@@ -22,7 +22,7 @@ class VietQr extends StatelessWidget {
     return Container(
       width: width,
       margin: const EdgeInsets.symmetric(vertical: 16),
-      padding: const EdgeInsets.only(bottom: 40),
+      padding: const EdgeInsets.only(bottom: 30, left: 20, right: 20),
       decoration: const BoxDecoration(
         image: DecorationImage(
           image: AssetImage('assets/images/bg_napas_qr.png'),
@@ -35,7 +35,7 @@ class VietQr extends StatelessWidget {
         children: [
           Container(
             margin:
-                const EdgeInsets.only(left: 40, right: 40, top: 40, bottom: 24),
+                const EdgeInsets.only(left: 20, right: 20, top: 40, bottom: 24),
             decoration: BoxDecoration(
               color: AppColor.WHITE,
               borderRadius: const BorderRadius.all(Radius.circular(16)),

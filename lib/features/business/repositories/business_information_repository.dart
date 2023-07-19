@@ -149,4 +149,26 @@ class BusinessInformationRepository {
     }
     return result;
   }
+
+  Future<ResponseMessageDTO> removeBusinessItems(String businessId) async {
+    ResponseMessageDTO result =
+        const ResponseMessageDTO(status: '', message: '');
+    try {
+      final String url = '${EnvConfig.getBaseUrl()}business/remove/$businessId';
+      final response = await BaseAPIClient.deleteAPI(
+        url: url,
+        body: {},
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        result = ResponseMessageDTO.fromJson(data);
+      } else {
+        result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+      }
+    } catch (e) {
+      result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+    }
+    return result;
+  }
 }

@@ -94,7 +94,8 @@ class _LoginState extends State<_Login> {
           //pop loading dialog
           //navigate to home screen
           Navigator.of(context).popUntil((route) => route.isFirst);
-          Navigator.of(context).pushReplacementNamed(Routes.HOME, arguments: {
+          Navigator.of(context)
+              .pushReplacementNamed(Routes.DASHBOARD, arguments: {
             'isFromLogin': true,
             'isLogoutEnterHome': isLogoutEnterHome,
           });

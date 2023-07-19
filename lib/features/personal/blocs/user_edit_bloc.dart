@@ -5,6 +5,7 @@ import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/personal/events/user_edit_event.dart';
 import 'package:vierqr/features/personal/repositories/user_edit_repository.dart';
 import 'package:vierqr/features/personal/states/user_edit_state.dart';
+import 'package:vierqr/models/account_information_dto.dart';
 import 'package:vierqr/models/password_update_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 
@@ -14,6 +15,7 @@ class UserEditBloc extends Bloc<UserEditEvent, UserEditState> {
     on<UserEditPasswordEvent>(_updatePassword);
     on<UserEditAvatarEvent>(_updateAvatar);
     on<UserDeactiveEvent>(_deactiveUser);
+    on<GetInformationUserEvent>(_getInformationUser);
   }
 
   final UserEditRepository userEditRepository = const UserEditRepository();
@@ -110,6 +112,29 @@ class UserEditBloc extends Bloc<UserEditEvent, UserEditState> {
             ),
           );
         }
+      }
+    } catch (e) {
+      ResponseMessageDTO responseMessageDTO = const ResponseMessageDTO(
+        status: 'FAILED',
+        message: 'E05',
+      );
+      emit(
+        UserDeactiveFailedState(
+          message:
+              ErrorUtils.instance.getErrorMessage(responseMessageDTO.message),
+        ),
+      );
+      LOG.error(e.toString());
+    }
+  }
+
+  void _getInformationUser(UserEditEvent event, Emitter emit) async {
+    try {
+      if (event is GetInformationUserEvent) {
+        AccountInformationDTO accountInformationDTO =
+            await userEditRepository.getUserInformation(
+          event.userId,
+        );
       }
     } catch (e) {
       ResponseMessageDTO responseMessageDTO = const ResponseMessageDTO(

@@ -253,6 +253,21 @@ class TimeUtils {
     return result;
   }
 
+  String formatTimeDateFromInt(int time) {
+    String result = '';
+    try {
+      if (time != 0) {
+        DateTime timeConverted =
+            DateTime.fromMillisecondsSinceEpoch(time * 1000);
+        DateFormat format = DateFormat('HH:mm dd/MM/yyyy');
+        result = format.format(timeConverted).toString();
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return result;
+  }
+
   String formatTimeNotification(int timeInMillis) {
     final now = DateTime.now();
     final time = DateTime.fromMillisecondsSinceEpoch(timeInMillis * 1000);

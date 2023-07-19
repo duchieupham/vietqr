@@ -10,6 +10,7 @@ enum BlocStatus {
   DELETED,
   INSERT,
   DONE,
+  DELETED_ERROR,
 }
 
 enum StepType { first_screen, second_screen, three_screen }
