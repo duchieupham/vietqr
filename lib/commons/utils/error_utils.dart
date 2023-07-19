@@ -86,6 +86,9 @@ class ErrorUtils {
       case ErrorType.E23:
         result = 'TK đã đăng ký nhận BĐSD';
         break;
+      case ErrorType.C03:
+        result = 'Tài khoản này đã được thêm trước đó';
+        break;
       default:
         result = message;
     }

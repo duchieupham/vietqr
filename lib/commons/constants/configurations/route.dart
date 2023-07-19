@@ -4,7 +4,7 @@ class Routes {
   static const String APP = '/app';
   static const String LOGIN = '/login';
   static const String REGISTER = '/register';
-  static const String HOME = '/home';
+  static const String DASHBOARD = '/dashboard';
   static const String CREATE_QR = '/createQR';
   static const String QR_GENERATED = '/qrGenerated';
   static const String TRANSACTION_DETAIL = '/transactionDetail';

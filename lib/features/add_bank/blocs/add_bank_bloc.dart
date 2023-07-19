@@ -151,10 +151,13 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
             ),
           );
         } else {
-          emit(state.copyWith(
-            msg: ErrorUtils.instance.getErrorMessage(result.message),
-            status: BlocStatus.UNLOADING,
-          ));
+          emit(
+            state.copyWith(
+              msg: ErrorUtils.instance.getErrorMessage(result.message),
+              status: BlocStatus.UNLOADING,
+              request: AddBankType.ERROR,
+            ),
+          );
         }
       }
     } catch (e) {
@@ -164,6 +167,7 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
       emit(state.copyWith(
         msg: ErrorUtils.instance.getErrorMessage(dto.message),
         status: BlocStatus.UNLOADING,
+        request: AddBankType.ERROR,
       ));
     }
   }

@@ -659,7 +659,9 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
             : buttonStepThree;
   }
 
-  void _navigateBack(BuildContext context) {}
+  void _navigateBack(BuildContext context) {
+    Navigator.of(context).pop();
+  }
 
   void _hideKeyboardBack(BuildContext context, {bool isFirst = false}) {
     double bottom = WidgetsBinding.instance.window.viewInsets.bottom;

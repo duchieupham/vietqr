@@ -1,37 +1,31 @@
 import 'package:equatable/equatable.dart';
 
-class DashboardEvent extends Equatable {
+class DashBoardEvent extends Equatable {
+  const DashBoardEvent();
+
   @override
   List<Object?> get props => [];
 }
 
-class DashboardInitEvent extends DashboardEvent {
-  final bool isLoading;
-
-  DashboardInitEvent({this.isLoading = false});
+class PermissionEventRequest extends DashBoardEvent {
+  const PermissionEventRequest();
 
   @override
-  List<Object?> get props => [isLoading];
+  List<Object?> get props => [];
 }
 
-class DashboardLoadingEvent extends DashboardEvent {}
-
-class DashboardSuccessEvent extends DashboardEvent {}
-
-class DashboardFailedEvent extends DashboardEvent {
-  final String? msg;
-
-  DashboardFailedEvent({this.msg});
+class PermissionEventGetStatus extends DashBoardEvent {
+  const PermissionEventGetStatus();
 
   @override
-  List<Object?> get props => [msg];
+  List<Object?> get props => [];
 }
 
-class DashboardRemoveBusinessEvent extends DashboardEvent {
-  final String businessId;
+class ScanQrEventGetBankType extends DashBoardEvent {
+  final String code;
 
-  DashboardRemoveBusinessEvent({this.businessId = ''});
+  const ScanQrEventGetBankType({required this.code});
 
   @override
-  List<Object?> get props => [businessId];
+  List<Object?> get props => [code];
 }

@@ -22,6 +22,7 @@ import 'package:vierqr/features/bank_member/views/bank_member_view.dart';
 import 'package:vierqr/features/bank_type/select_bank_type_screen.dart';
 import 'package:vierqr/features/branch/blocs/branch_bloc.dart';
 import 'package:vierqr/features/branch/views/branch_detail_view.dart';
+import 'package:vierqr/features/business/blocs/business_bloc.dart';
 import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
 import 'package:vierqr/features/business/blocs/business_member_bloc.dart';
 import 'package:vierqr/features/business/views/add_business_view.dart';
@@ -29,7 +30,7 @@ import 'package:vierqr/features/business/views/business_information_view.dart';
 import 'package:vierqr/features/business/views/business_transaction_view.dart';
 import 'package:vierqr/features/create_qr/create_qr_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
-import 'package:vierqr/features/generate_qr/views/qr_generated.dart';
+import 'package:vierqr/features/dashboard/dashboard_screen.dart';
 import 'package:vierqr/features/generate_qr/views/qr_share_view.dart';
 import 'package:vierqr/features/home/blocs/home_bloc.dart';
 import 'package:vierqr/features/home/home.dart';
@@ -38,7 +39,6 @@ import 'package:vierqr/features/notification/views/notification_view.dart';
 import 'package:vierqr/features/personal/views/national_information_view.dart';
 import 'package:vierqr/features/printer/blocs/printer_bloc.dart';
 import 'package:vierqr/features/printer/views/printer_setting_view.dart';
-import 'package:vierqr/features/transaction/blocs/transaction_bloc.dart';
 import 'package:vierqr/features/logout/blocs/log_out_bloc.dart';
 import 'package:vierqr/features/notification/blocs/notification_bloc.dart';
 import 'package:vierqr/features/login/views/login.dart';
@@ -49,6 +49,7 @@ import 'package:vierqr/features/personal/views/user_update_password_view.dart';
 import 'package:vierqr/features/scan_qr/blocs/scan_qr_bloc.dart';
 import 'package:vierqr/features/scan_qr/views/qr_scan_view.dart';
 import 'package:vierqr/features/token/blocs/token_bloc.dart';
+import 'package:vierqr/features/transaction/transaction_detail_screen.dart';
 import 'package:vierqr/features/transaction/views/transaction_detail_view.dart';
 import 'package:vierqr/features/transaction/views/transaction_history_view.dart';
 import 'package:vierqr/features/transaction/widgets/transaction_sucess_widget.dart';
@@ -62,7 +63,6 @@ import 'package:vierqr/services/providers/bank_card_select_provider.dart';
 import 'package:vierqr/services/providers/bank_select_provider.dart';
 import 'package:vierqr/services/providers/business_inforamtion_provider.dart';
 import 'package:vierqr/services/providers/create_qr_page_select_provider.dart';
-import 'package:vierqr/services/providers/create_qr_provider.dart';
 import 'package:vierqr/services/providers/home_tab_provider.dart';
 import 'package:vierqr/services/providers/login_provider.dart';
 import 'package:vierqr/services/providers/memeber_manage_provider.dart';
@@ -146,7 +146,7 @@ class VietQRApp extends StatefulWidget {
 }
 
 class _VietQRApp extends State<VietQRApp> {
-  static Widget _homeScreen = const Login();
+  static Widget _mainScreen = const Login();
 
   @override
   void initState() {
@@ -208,8 +208,8 @@ class _VietQRApp extends State<VietQRApp> {
 
   @override
   Widget build(BuildContext context) {
-    _homeScreen = (UserInformationHelper.instance.getUserId().trim().isNotEmpty)
-        ? const HomeScreen()
+    _mainScreen = (UserInformationHelper.instance.getUserId().trim().isNotEmpty)
+        ? const DashBoardScreen()
         : const Login();
     return GestureDetector(
       onTap: () {
@@ -223,17 +223,17 @@ class _VietQRApp extends State<VietQRApp> {
           BlocProvider<UserEditBloc>(
             create: (BuildContext context) => UserEditBloc(),
           ),
-          BlocProvider<TransactionBloc>(
-            create: (BuildContext context) => TransactionBloc(),
-          ),
           BlocProvider<NotificationBloc>(
             create: (BuildContext context) => NotificationBloc(context),
           ),
           BlocProvider<HomeBloc>(
             create: (BuildContext context) => HomeBloc(context),
           ),
-          BlocProvider<DashboardBloc>(
-            create: (BuildContext context) => DashboardBloc(context),
+          BlocProvider<DashBoardBloc>(
+            create: (BuildContext context) => DashBoardBloc(context),
+          ),
+          BlocProvider<BusinessBloc>(
+            create: (BuildContext context) => BusinessBloc(context),
           ),
           BlocProvider<TokenBloc>(
             create: (BuildContext context) => TokenBloc(),
@@ -311,7 +311,7 @@ class _VietQRApp extends State<VietQRApp> {
                 routes: {
                   Routes.APP: (context) => const VietQRApp(),
                   Routes.LOGIN: (context) => const Login(),
-                  Routes.HOME: (context) => const HomeScreen(),
+                  Routes.DASHBOARD: (context) => const DashBoardScreen(),
                   Routes.USER_EDIT: (context) => const UserEditView(),
                   Routes.UPDATE_PASSWORD: (context) =>
                       const UserUpdatePassword(),
@@ -331,8 +331,8 @@ class _VietQRApp extends State<VietQRApp> {
                       const AddBusinessView(),
                   // Routes.BANK_CARD_DETAIL_VEW: (context) =>
                   //     const BankCardDetailScreen(),
-                  Routes.TRANSACTION_HISTORY_VIEW: (context) =>
-                      const TransactionHistoryView(),
+                  // Routes.TRANSACTION_HISTORY_VIEW: (context) =>
+                  //     const TransactionHistoryView(),
                   Routes.SCAN_QR_VIEW: (context) => const QRScanView(),
                   Routes.PRINTER_SETTING: (context) => PrinterSettingView(),
                   Routes.SEARCH_BANK: (context) => SearchBankView(),
@@ -377,7 +377,7 @@ class _VietQRApp extends State<VietQRApp> {
                 home: Title(
                   title: 'VietQR',
                   color: AppColor.BLACK,
-                  child: _homeScreen,
+                  child: _mainScreen,
                 ),
               );
             },

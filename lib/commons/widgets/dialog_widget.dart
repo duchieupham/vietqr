@@ -720,13 +720,13 @@ class DialogWidget {
     final double width = MediaQuery.of(context).size.width;
     final double height = MediaQuery.of(context).size.height;
     return showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (BuildContext context) {
-          return Material(
-            color: AppColor.TRANSPARENT,
-            child: Center(
-                child: Container(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return Material(
+          color: AppColor.TRANSPARENT,
+          child: Center(
+            child: Container(
               width: width - 20,
               height: height * 0.8,
               alignment: Alignment.center,
@@ -736,9 +736,11 @@ class DialogWidget {
                 borderRadius: BorderRadius.circular(15),
               ),
               child: child,
-            )),
-          );
-        });
+            ),
+          ),
+        );
+      },
+    );
   }
 
   openTransactionDialog(String address, String body) {

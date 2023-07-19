@@ -1,690 +1,464 @@
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
-import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
-import 'package:vierqr/commons/utils/currency_utils.dart';
-import 'package:vierqr/commons/utils/image_utils.dart';
-import 'package:vierqr/commons/utils/time_utils.dart';
-import 'package:vierqr/commons/utils/transaction_utils.dart';
-import 'package:flutter/material.dart';
+import 'package:vierqr/commons/utils/platform_utils.dart';
+import 'package:vierqr/commons/widgets/ambient_avatar_widget.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
-import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/commons/widgets/divider_widget.dart';
-import 'package:vierqr/features/branch/widgets/add_branch_member_widget.dart';
-import 'package:vierqr/features/branch/widgets/select_bank_connect_branch_widget.dart';
-import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
-import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
+import 'package:vierqr/features/account/account_screen.dart';
+import 'package:vierqr/features/bank_card/bank_screen.dart';
+import 'package:vierqr/features/business/views/business_screen.dart';
+import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
-import 'package:vierqr/layouts/box_layout.dart';
-import 'package:vierqr/models/business_detail_dto.dart';
-import 'package:vierqr/models/business_item_dto.dart';
-import 'package:vierqr/models/related_transaction_receive_dto.dart';
-import 'package:vierqr/services/providers/dashboard_provider.dart';
+import 'package:vierqr/features/home/widgets/background_app_bar_home.dart';
+import 'package:vierqr/features/home/widgets/disconnect_widget.dart';
+import 'package:vierqr/features/home/widgets/maintain_widget.dart';
+import 'package:vierqr/features/notification/blocs/notification_bloc.dart';
+import 'package:vierqr/features/notification/events/notification_event.dart';
+import 'package:vierqr/features/notification/states/notification_state.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
+import 'package:vierqr/features/token/blocs/token_bloc.dart';
+import 'package:vierqr/features/token/events/token_event.dart';
+import 'package:vierqr/features/token/states/token_state.dart';
+import 'package:vierqr/main.dart';
+import 'package:vierqr/models/national_scanner_dto.dart';
+import 'package:vierqr/services/providers/account_balance_home_provider.dart';
+import 'package:vierqr/services/providers/avatar_provider.dart';
+import 'package:vierqr/services/providers/bank_card_select_provider.dart';
+import 'package:vierqr/services/providers/page_select_provider.dart';
+import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/utils/time_utils.dart';
+import 'package:vierqr/services/providers/suggestion_widget_provider.dart';
+import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
+import 'dart:ui';
+
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
-import 'blocs/dashboard_bloc.dart';
-import 'widgets/select_branch_widget.dart';
+import 'events/dashboard_event.dart';
 
-class DashboardScreen extends StatefulWidget {
-  final AsyncCallback? voidCallback;
-
-  const DashboardScreen({
-    Key? key,
-    this.voidCallback,
-  }) : super(key: key);
+class DashBoardScreen extends StatefulWidget {
+  const DashBoardScreen({Key? key}) : super(key: key);
 
   @override
-  State<DashboardScreen> createState() => _DashboardScreenState();
+  State<DashBoardScreen> createState() => _DashBoardScreen();
 }
 
-class _DashboardScreenState extends State<DashboardScreen>
-    with AutomaticKeepAliveClientMixin {
-  late DashboardBloc _dashboardBloc;
-  final carouselController = CarouselController();
-  BusinessDetailDTO businessDetailDTO = const BusinessDetailDTO(
-    id: '',
-    name: '',
-    address: '',
-    code: '',
-    imgId: '',
-    coverImgId: '',
-    taxCode: '',
-    userRole: 0,
-    managers: [],
-    branchs: [],
-    transactions: [],
-    active: false,
-  );
+class _DashBoardScreen extends State<DashBoardScreen>
+    with WidgetsBindingObserver, AutomaticKeepAliveClientMixin {
+  //page controller
+  late PageController _pageController;
 
-  initialServices(BuildContext context) {
-    _dashboardBloc = BlocProvider.of(context);
-  }
+  //list page
+  final List<Widget> _listScreens = [];
 
-  Future<void> _refresh() async {
-    _dashboardBloc.add(DashboardInitEvent(isLoading: true));
-  }
+  //focus node
+  final FocusNode focusNode = FocusNode();
+
+  //blocs
+  late DashBoardBloc _dashBoardBloc;
+  late TokenBloc _tokenBloc;
+  late NotificationBloc _notificationBloc;
+
+  //notification count
+  int _notificationCount = 0;
+
+  NationalScannerDTO? identityDTO;
+
+  //providers
+  final AccountBalanceHomeProvider accountBalanceHomeProvider =
+      AccountBalanceHomeProvider('');
 
   @override
   void initState() {
     super.initState();
-    initialServices(context);
+    WidgetsBinding.instance.addObserver(this);
+    _dashBoardBloc = BlocProvider.of(context);
+    _tokenBloc = BlocProvider.of(context);
+    _notificationBloc = BlocProvider.of(context);
+    _pageController = PageController(
+      initialPage:
+          Provider.of<PageSelectProvider>(context, listen: false).indexSelected,
+      keepPage: true,
+    );
+    _listScreens.addAll(
+      [
+        // const BankCardSelectView(key: PageStorageKey('QR_GENERATOR_PAGE')),
+        const BankScreen(key: PageStorageKey('QR_GENERATOR_PAGE')),
+        const SizedBox(
+          child: Center(
+            child: Text('dâd'),
+          ),
+        ),
+        const BusinessScreen(key: PageStorageKey('SMS_LIST_PAGE')),
+        // if (PlatformUtils.instance.isAndroidApp()) const IntroduceScreen(),
+        AccountScreen(
+          key: const PageStorageKey('USER_SETTING_PAGE'),
+          voidCallback: () {
+            _animatedToPage(0);
+          },
+        ),
+      ],
+    );
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _dashboardBloc.add(DashboardInitEvent(isLoading: true));
+      initialServices(context);
+      listenNewNotification();
     });
+  }
+
+  Future<void> startBarcodeScanStream() async {
+    String data = await FlutterBarcodeScanner.scanBarcode(
+        '#ff6666', 'Cancel', true, ScanMode.DEFAULT);
+    if (data.isNotEmpty) {
+      if (data == TypeQR.NEGATIVE_ONE.value) {
+      } else if (data == TypeQR.NEGATIVE_TWO.value) {
+        DialogWidget.instance.openMsgDialog(
+          title: 'Không thể xác nhận mã QR',
+          msg: 'Ảnh QR không đúng định dạng, vui lòng chọn ảnh khác.',
+          function: () {
+            Navigator.pop(context);
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+          },
+        );
+      } else {
+        if (data.contains('|')) {
+          final list = data.split("|");
+          if (list.isNotEmpty) {
+            identityDTO = NationalScannerDTO.fromJson(list);
+            if (!mounted) return;
+            Navigator.pushNamed(
+              context,
+              Routes.NATIONAL_INFORMATION,
+              arguments: {'dto': identityDTO},
+            );
+          }
+        } else {
+          _dashBoardBloc.add(ScanQrEventGetBankType(code: data));
+        }
+      }
+    }
+  }
+
+  void initialServices(BuildContext context) {
+    checkUserInformation();
+    _tokenBloc.add(const TokenEventCheckValid());
+    _dashBoardBloc.add(const PermissionEventRequest());
+    _notificationBloc.add(NotificationGetCounterEvent());
+  }
+
+  void listenNewNotification() {
+    notificationController.listen((isNotificationPushed) {
+      if (isNotificationPushed) {
+        notificationController.sink.add(false);
+        Future.delayed(const Duration(milliseconds: 1000), () {
+          _notificationBloc.add(NotificationGetCounterEvent());
+        });
+      }
+    });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      if (!PlatformUtils.instance.isWeb()) {
+        _dashBoardBloc.add(const PermissionEventGetStatus());
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  //check user information is updated before or not
+  void checkUserInformation() {
+    String firstName =
+        UserInformationHelper.instance.getAccountInformation().firstName;
+    if (firstName != 'Undefined') {
+      Future.delayed(const Duration(milliseconds: 0), () {
+        Provider.of<SuggestionWidgetProvider>(context, listen: false)
+            .updateUserUpdating(false);
+      });
+    } else {
+      Future.delayed(const Duration(milliseconds: 0), () {
+        Provider.of<SuggestionWidgetProvider>(context, listen: false)
+            .updateUserUpdating(true);
+      });
+    }
+  }
+
+  void _updateFcmToken(bool isFromLogin) {
+    if (!isFromLogin) {
+      _tokenBloc.add(const TokenFcmUpdateEvent());
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
-    return ChangeNotifierProvider<DashboardProvider>(
-      create: (_) => DashboardProvider(),
-      child: BlocConsumer<DashboardBloc, DashboardState>(
-          bloc: context.read<DashboardBloc>(),
-          listener: (context, state) {
-            if (state.status == BlocStatus.DELETED) {
-              _refresh();
-            }
-            if (state.status == BlocStatus.DELETED_ERROR) {
-              DialogWidget.instance.openMsgDialog(
-                title: 'Xoá thất bại',
-                msg: 'Đã có lỗi xảy ra, bạn vui lòng thử lại sau.',
-                isSecondBT: false,
-              );
-            }
-          },
-          builder: (context, state) {
-            if (state.status == BlocStatus.SUCCESS) {
-              Provider.of<DashboardProvider>(context, listen: false)
-                  .updateBusinessLength(state.list.length);
-            }
+    bool isFromLogin = false;
+    if (ModalRoute.of(context)!.settings.arguments != null) {
+      final arg = ModalRoute.of(context)!.settings.arguments as Map;
+      isFromLogin = arg['isFromLogin'] ?? false;
+    }
 
-            if (state.list.isEmpty) {
-              return _buildListBlank();
-            } else {
-              return SizedBox(
-                width: width,
-                height: height,
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 40),
-                  child: Stack(
-                    children: [
-                      Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              bottom: 12, left: 16, right: 16),
-                          child: Image.asset(
-                            'assets/images/bg-business.png',
-                            width: width,
-                            fit: BoxFit.fitWidth,
-                          ),
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Container(
-                          height: height * 0.5,
-                          padding: const EdgeInsets.only(
-                              bottom: 12, left: 16, right: 16),
-                          width: width,
-                          color: Theme.of(context)
-                              .scaffoldBackgroundColor
-                              .withOpacity(0.6),
-                        ),
-                      ),
-                      Positioned(
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          child: Row(
-                            children: [
-                              const Spacer(),
-                              ButtonWidget(
-                                width: 170,
-                                height: 40,
-                                text: 'Tạo doanh nghiệp',
-                                textColor: AppColor.WHITE,
-                                bgColor: AppColor.BLUE_TEXT,
-                                borderRadius: 20,
-                                enableShadow: true,
-                                function: () {
-                                  Navigator.pushNamed(
-                                      context, Routes.ADD_BUSINESS_VIEW);
-                                },
-                              ),
-                              const Spacer(),
-                            ],
-                          )),
-                      // _buildSuggestion(context),
-                      Align(
-                          alignment: Alignment.center,
-                          child: Column(
-                            children: [
-                              SizedBox(
-                                height: height * 0.05,
-                              ),
-                              _buildBusinessWidget(context, state.list),
-                              _buildIndicatorDot()
-                            ],
-                          )),
-                      // const Padding(padding: EdgeInsets.only(bottom: 100)),
-                    ],
-                  ),
-                ),
-              );
-            }
-          }),
-    );
-  }
-
-  Widget _buildIndicatorDot() {
-    return Consumer<DashboardProvider>(builder: (context, provider, child) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: List.generate(provider.businessLength, (index) {
-          return Container(
-            height: 10,
-            width: 10,
-            margin: const EdgeInsets.only(right: 8),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: AppColor.GREY_BG,
-              border: Border.all(
-                  width: 1,
-                  color: index == provider.businessSelect
-                      ? AppColor.BLUE_TEXT
-                      : AppColor.GREY_BG),
-              boxShadow: <BoxShadow>[
-                BoxShadow(
-                  color: Theme.of(context).shadowColor.withOpacity(0.6),
-                  spreadRadius: 2,
-                  blurRadius: 2,
-                  offset: const Offset(0, 0),
-                ),
-              ],
+    return BlocListener<TokenBloc, TokenState>(
+      listener: (context, state) {
+        if (state is TokenValidState) {
+          _updateFcmToken(isFromLogin);
+        }
+        if (state is SystemMaintainState) {
+          DialogWidget.instance.showFullModalBottomContent(
+            isDissmiss: false,
+            widget: MaintainWidget(
+              tokenBloc: _tokenBloc,
             ),
           );
-        }).toList(),
-      );
-    });
-  }
+        }
+        if (state is SystemConnectionFailedState) {
+          DialogWidget.instance.showFullModalBottomContent(
+            isDissmiss: false,
+            widget: DisconnectWidget(
+              tokenBloc: _tokenBloc,
+            ),
+          );
+        }
+        if (state is TokenExpiredState) {
+          DialogWidget.instance.openMsgDialog(
+              title: 'Phiên đăng nhập hết hạn',
+              msg: 'Vui lòng đăng nhập lại ứng dụng',
+              function: () {
+                Navigator.pop(context);
+                _tokenBloc.add(TokenEventLogout());
+              });
+        }
+        if (state is TokenExpiredLogoutState) {
+          Navigator.of(context).pushReplacementNamed(Routes.LOGIN);
+        }
+        if (state is TokenLogoutFailedState) {
+          DialogWidget.instance.openMsgDialog(
+            title: 'Không thể đăng xuất',
+            msg: 'Vui lòng thử lại sau.',
+          );
+        }
+      },
+      child: BlocListener<DashBoardBloc, DashBoardState>(
+        listener: (context, state) {
+          if (state.typePermission == DashBoardTypePermission.Request) {
+            _dashBoardBloc.add(const PermissionEventGetStatus());
+          }
+          if (state.typePermission == DashBoardTypePermission.CameraDenied) {
+            Future.delayed(const Duration(milliseconds: 0), () {
+              Provider.of<SuggestionWidgetProvider>(context, listen: false)
+                  .updateCameraSuggestion(true);
+            });
+          }
+          if (state.typePermission == DashBoardTypePermission.CameraAllow) {
+            Future.delayed(const Duration(milliseconds: 0), () {
+              Provider.of<SuggestionWidgetProvider>(context, listen: false)
+                  .updateCameraSuggestion(false);
+            });
+          }
+          if (state.typePermission == DashBoardTypePermission.Allow) {
+            Future.delayed(const Duration(milliseconds: 0), () {
+              Provider.of<SuggestionWidgetProvider>(context, listen: false)
+                  .updateCameraSuggestion(false);
+            });
+          }
 
-  Widget _buildListBlank() {
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
-    return SizedBox(
-      width: width,
-      height: height,
-      child: Column(
-        children: [
-          const Expanded(
-              child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Padding(
-                    padding: EdgeInsets.only(bottom: 30),
-                    child: Text('Bạn chua thuộc doanh nghiệp nào'),
-                  ))),
-          Stack(
+          if (state.request == DashBoardType.SCAN_NOT_FOUND) {
+            DialogWidget.instance.openMsgDialog(
+              title: 'Không thể xác nhận mã QR',
+              msg:
+                  'Không tìm thấy thông tin trong đoạn mã QR. Vui lòng kiểm tra lại thông tin.',
+              function: () {
+                Navigator.pop(context);
+                if (Navigator.canPop(context)) {
+                  Navigator.pop(context);
+                }
+              },
+            );
+          }
+          if (state.request == DashBoardType.SCAN_ERROR) {
+            DialogWidget.instance.openMsgDialog(
+              title: 'Không tìm thấy thông tin',
+              msg:
+                  'Không tìm thấy thông tin ngân hàng tương ứng. Vui lòng thử lại sau.',
+              function: () {
+                Navigator.pop(context);
+                if (Navigator.canPop(context)) {
+                  Navigator.pop(context);
+                }
+              },
+            );
+          }
+          if (state.request == DashBoardType.SCAN) {
+            if (state.typeQR == TypeQR.QR_BANK) {
+              Navigator.pushNamed(
+                context,
+                Routes.ADD_BANK_CARD,
+                arguments: {
+                  'step': 0,
+                  'bankDTO': state.bankTypeDTO,
+                  'bankAccount': state.bankAccount,
+                  'name': ''
+                },
+              );
+            } else if (state.typeQR == TypeQR.QR_BARCODE) {
+              DialogWidget.instance.openMsgDialog(
+                title: 'Không thể xác nhận mã QR',
+                msg:
+                    'Không tìm thấy thông tin trong đoạn mã QR. Vui lòng kiểm tra lại thông tin.',
+                function: () {
+                  Navigator.pop(context);
+                  if (Navigator.canPop(context)) {
+                    Navigator.pop(context);
+                  }
+                },
+              );
+            }
+          }
+        },
+        child: Scaffold(
+          body: Stack(
             children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 12, left: 16, right: 16),
-                child: Image.asset(
-                  'assets/images/bg-business.png',
-                  width: width,
-                  fit: BoxFit.fitWidth,
-                ),
+              _buildAppBar(),
+              Column(
+                children: [
+                  Expanded(
+                    child: Consumer<PageSelectProvider>(
+                        builder: (context, page, child) {
+                      return Padding(
+                        padding: (page.indexSelected == 3)
+                            ? EdgeInsets.zero
+                            : const EdgeInsets.only(top: 110),
+                        child: SizedBox(
+                          height: MediaQuery.of(context).size.height,
+                          child: Listener(
+                            onPointerMove: (moveEvent) {
+                              if (moveEvent.delta.dx > 0) {
+                                Provider.of<PageSelectProvider>(context,
+                                        listen: false)
+                                    .updateMoveEvent(TypeMoveEvent.RIGHT);
+                              } else {
+                                Provider.of<PageSelectProvider>(context,
+                                        listen: false)
+                                    .updateMoveEvent(TypeMoveEvent.LEFT);
+                              }
+                            },
+                            child: PageView(
+                              key: const PageStorageKey('PAGE_VIEW'),
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              controller: _pageController,
+                              onPageChanged: (index) async {
+                                Provider.of<PageSelectProvider>(context,
+                                        listen: false)
+                                    .updateIndex(index);
+                              },
+                              children: _listScreens,
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+                ],
               ),
-              Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: Row(
-                    children: [
-                      const Spacer(),
-                      ButtonWidget(
-                        width: 170,
-                        height: 40,
-                        text: 'Tạo doanh nghiệp',
-                        textColor: AppColor.WHITE,
-                        bgColor: AppColor.BLUE_TEXT,
-                        borderRadius: 20,
-                        enableShadow: true,
-                        function: () {
-                          Navigator.pushNamed(
-                              context, Routes.ADD_BUSINESS_VIEW);
-                        },
-                      ),
-                      // Expanded(
-                      //   child: UnconstrainedBox(
-                      //     child: ButtonIconWidget(
-                      //       width: 40,
-                      //       height: 40,
-                      //       icon: Icons.question_mark_sharp,
-                      //       title: '',
-                      //       function: () async {},
-                      //       bgColor: Theme.of(context).cardColor,
-                      //       textColor: AppColor.BLUE_TEXT,
-                      //       borderRadius: 30,
-                      //       enableShadow: true,
-                      //     ),
-                      //   ),
-                      // )
-                      const Spacer(),
-                    ],
-                  ))
             ],
           ),
-          const SizedBox(
-            height: 40,
-          ),
-        ],
-      ),
-    );
-  }
+          bottomNavigationBar:
+              Consumer<PageSelectProvider>(builder: (context, page, child) {
+            return Container(
+              decoration: const BoxDecoration(
+                border:
+                    Border(top: BorderSide(color: AppColor.GREY_TOP_TAB_BAR)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: List.generate(
+                  page.listItem.length,
+                  (index) {
+                    var item = page.listItem.elementAt(index);
 
-  Widget _buildBusinessWidget(
-      BuildContext context, List<BusinessItemDTO> listBusinessItemDTO) {
-    final double width = MediaQuery.of(context).size.width;
-    final double height = MediaQuery.of(context).size.height;
-    return Row(
-      children: [
-        GestureDetector(
-            onTap: () {
-              carouselController.previousPage();
-            },
-            child: Padding(
-              padding: EdgeInsets.only(left: 12, bottom: height * 0.1),
-              child: const Icon(Icons.arrow_back_ios),
-            )),
-        Expanded(
-          child: CarouselSlider(
-              carouselController: carouselController,
-              items: List.generate(listBusinessItemDTO.length, (index) {
-                return _buildBusinessItem(
-                  context: context,
-                  dto: listBusinessItemDTO[index],
-                );
-              }).toList(),
-              options: CarouselOptions(
-                viewportFraction: 1,
-                aspectRatio: 0.9,
-                disableCenter: true,
-                onPageChanged: ((index, reason) {
-                  Provider.of<DashboardProvider>(context, listen: false)
-                      .updateBusinessSelect(index);
-                }),
-              )),
-        ),
-        GestureDetector(
-            onTap: () {
-              carouselController.nextPage();
-            },
-            child: Padding(
-              padding:
-                  EdgeInsets.only(right: 12, left: 4, bottom: height * 0.1),
-              child: const Icon(Icons.arrow_forward_ios),
-            )),
-      ],
-    );
-  }
+                    String url = (item.index == page.indexSelected)
+                        ? item.assetsActive
+                        : item.assetsUnActive;
 
-  Widget _buildBusinessItem(
-      {required BuildContext context, required BusinessItemDTO dto}) {
-    final double width = MediaQuery.of(context).size.width;
-    final double height = MediaQuery.of(context).size.height;
-    String heroId = dto.businessId;
-    return GestureDetector(
-      onTap: () {
-        Navigator.pushNamed(
-          context,
-          Routes.BUSINESS_INFORMATION_VIEW,
-          arguments: {
-            'heroId': heroId,
-            'img': dto.coverImgId,
-            'businessItem': dto,
-          },
-        ).then((value) {
-          heroId = value.toString();
-          _dashboardBloc.add(DashboardInitEvent());
-        });
-      },
-      child: Column(
-        children: [
-          Container(
-            width: width,
-            margin: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(8)),
-              boxShadow: <BoxShadow>[
-                BoxShadow(
-                  color: Theme.of(context).shadowColor.withOpacity(0.2),
-                  spreadRadius: 2,
-                  blurRadius: 4,
-                  offset: const Offset(1, 2),
-                ),
-              ],
-              color: Theme.of(context).cardColor,
-            ),
-            child: Column(
-              children: [
-                _buildTitleItemBusiness(dto),
-                const SizedBox(height: 15),
-                Container(
-                  margin: const EdgeInsets.only(left: 15),
-                  child: Column(
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            width: 100,
-                            child: _buildChip(
-                              context: context,
-                              icon: Icons.people_rounded,
-                              text: '${dto.totalMember} thành viên',
-                              color: AppColor.GREY_TEXT,
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: _buildChip(
-                              context: context,
-                              icon: Icons.business_rounded,
-                              color: AppColor.GREY_TEXT,
-                              text: '${dto.totalBranch} chi nhánh',
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      if (dto.address.isNotEmpty)
-                        SizedBox(
-                          width: width - 40,
-                          child: _buildChip(
-                            context: context,
-                            icon: Icons.location_on_outlined,
-                            color: AppColor.GREY_TEXT,
-                            text: dto.address,
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 24),
-                SizedBox(
-                  height: 120,
-                  child: (dto.transactions.isEmpty)
-                      ? const Text('Không có giao dịch nào')
-                      : ListView.separated(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          padding: const EdgeInsets.all(0),
-                          itemCount: dto.transactions.length,
-                          itemBuilder: (context, index) {
-                            return _buildTransactionItem(
-                              context: context,
-                              dto: dto.transactions[index],
-                              businessId: dto.businessId,
-                            );
-                          },
-                          separatorBuilder: (context, index) {
-                            return const SizedBox(
-                              height: 10,
-                            );
-                          },
-                        ),
-                )
-              ],
-            ),
-          ),
-          if (dto.role == TypeRole.ADMIN.role) ...[
-            const SizedBox(
-              height: 20,
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 6),
-                    child: ButtonIconWidget(
-                      width: 40,
-                      height: 40,
-                      pathIcon: 'assets/images/ic-person-blue.png',
-                      title: 'Thêm thành viên',
-                      textSize: 11,
-                      iconSize: 25,
-                      function: () async {
-                        final data =
-                            await DialogWidget.instance.showModelBottomSheet(
-                          context: context,
-                          height: height * 0.5,
-                          padding: EdgeInsets.zero,
-                          widget: SelectBranchWidget(
-                            businessId: dto.businessId,
-                            tySelect: TypeSelect.MEMBER,
-                          ),
-                        );
-
-                        if (!mounted) return;
-                        if (data != null && data is String) {
-                          final result =
-                              await DialogWidget.instance.showModelBottomSheet(
-                            context: context,
-                            widget: AddBranchMemberWidget(
-                              branchId: data,
-                              businessId: dto.businessId,
-                            ),
-                            height: height * 0.5,
-                          );
-
-                          _dashboardBloc
-                              .add(DashboardInitEvent(isLoading: true));
-                        }
-                      },
-                      bgColor: Theme.of(context).cardColor,
-                      textColor: AppColor.BLUE_TEXT,
-                      borderRadius: 30,
-                      enableShadow: true,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 10),
-                    child: ButtonIconWidget(
-                      width: 40,
-                      height: 40,
-                      pathIcon: 'assets/images/ic-card-blue.png',
-                      title: 'Kết nối tài khoản',
-                      textSize: 11,
-                      iconSize: 25,
-                      function: () async {
-                        final data =
-                            await DialogWidget.instance.showModelBottomSheet(
-                          context: context,
-                          padding: EdgeInsets.zero,
-                          widget: SelectBranchWidget(
-                            businessId: dto.businessId,
-                          ),
-                          height: height * 0.5,
-                        );
-
-                        if (!mounted) return;
-                        if (data != null && data is String) {
-                          final result = await DialogWidget.instance
-                              .showModalBottomContent(
-                            context: context,
-                            widget: SelectBankConnectBranchWidget(
-                              branchId: data,
-                              businessId: dto.businessId,
-                            ),
-                            height: height * 0.7,
-                          );
-                        }
-                      },
-                      bgColor: Theme.of(context).cardColor,
-                      textColor: AppColor.BLUE_TEXT,
-                      borderRadius: 30,
-                      enableShadow: true,
-                    ),
-                  ),
-                ),
-                ButtonIconWidget(
-                  width: 40,
-                  height: 40,
-                  pathIcon: 'assets/images/ic-trash.png',
-                  title: '',
-                  iconSize: 30,
-                  function: () async {
-                    DialogWidget.instance.openMsgDialog(
-                      title: 'Xoá doanh nghiệp',
-                      msg: 'Bạn có chắc chắn muốn xoá doanh nghiệp này?',
-                      isSecondBT: true,
-                      functionConfirm: () {
-                        Navigator.of(context).pop();
-                        _dashboardBloc.add(DashboardRemoveBusinessEvent(
-                            businessId: dto.businessId));
-                      },
+                    return _buildShortcut(
+                      index: item.index,
+                      url: url,
+                      label: item.label,
+                      context: context,
+                      select: item.index == page.indexSelected,
                     );
                   },
-                  bgColor: Theme.of(context).cardColor,
-                  textColor: AppColor.RED_TEXT,
-                  borderRadius: 30,
-                  enableShadow: true,
-                ),
-                const SizedBox(
-                  width: 6,
-                )
-              ],
-            ),
-          ]
-        ],
+                ).toList(),
+              ),
+            );
+          }),
+        ),
       ),
     );
   }
 
-  Widget _buildTitleItemBusiness(BusinessItemDTO dto) {
-    return Stack(
-      children: [
-        Container(
-          height: 80,
-          padding: const EdgeInsets.fromLTRB(12, 16, 0, 8),
-          decoration: BoxDecoration(
-            color: Colors.black26,
-            borderRadius: const BorderRadius.only(
-                topRight: Radius.circular(8), topLeft: Radius.circular(8)),
-            image: DecorationImage(
-              fit: BoxFit.cover,
-              image: (dto.coverImgId.isNotEmpty)
-                  ? ImageUtils.instance.getImageNetWork(dto.coverImgId)
-                  : Image.asset(
-                      'assets/images/ic-avatar-business.png',
-                      fit: BoxFit.cover,
-                      width: 40,
-                      height: 40,
-                    ).image,
-            ),
-          ),
-        ),
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.only(
-                topRight: Radius.circular(8), topLeft: Radius.circular(8)),
-            gradient: LinearGradient(
-                colors: [
-                  AppColor.BLACK_DARK,
-                  AppColor.BLACK_DARK.withOpacity(0.1),
-                ],
-                begin: Alignment.bottomCenter,
-                end: Alignment.topCenter,
-                tileMode: TileMode.clamp),
-          ),
-          padding: const EdgeInsets.fromLTRB(12, 32, 0, 8),
-          child: Row(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(25),
-                  image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: (dto.imgId.isNotEmpty)
-                        ? ImageUtils.instance.getImageNetWork(dto.imgId)
-                        : Image.asset(
-                            'assets/images/ic-avatar-business.png',
-                            fit: BoxFit.cover,
-                            width: 40,
-                            height: 40,
-                          ).image,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Text(
-                  dto.name,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      overflow: TextOverflow.ellipsis,
-                      color: AppColor.WHITE),
-                ),
-              ),
-            ],
-          ),
-        )
-      ],
-    );
-  }
-
-  Widget _buildTransactionItem({
+  //build shorcuts in bottom bar
+  Widget _buildShortcut({
+    required int index,
+    required String url,
+    required String label,
+    bool select = false,
     required BuildContext context,
-    required RelatedTransactionReceiveDTO dto,
-    required String businessId,
   }) {
-    final double width = MediaQuery.of(context).size.width;
-    return InkWell(
-      onTap: () {},
+    return GestureDetector(
+      onTap: () async {
+        if (index == 1) {
+          DialogWidget.instance.openMsgDialog(
+            title: 'Tính năng đang bảo trì',
+            msg: 'Vui lòng thử lại sau',
+          );
+        } else if (index != -1) {
+          _animatedToPage(index);
+        } else {
+          if (QRScannerHelper.instance.getQrIntro()) {
+            startBarcodeScanStream();
+            // Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
+          } else {
+            await DialogWidget.instance.showFullModalBottomContent(
+              widget: const QRScanWidget(),
+              color: AppColor.BLACK,
+            );
+            startBarcodeScanStream();
+          }
+        }
+      },
       child: Container(
-        width: width,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
+        padding: const EdgeInsets.all(5),
+        margin: const EdgeInsets.symmetric(horizontal: 8),
+        height: 80,
+        decoration: BoxDecoration(
+          color: AppColor.TRANSPARENT,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '${TransactionUtils.instance.getTransType(dto.transType)} ${CurrencyUtils.instance.getCurrencyFormatted(dto.amount)} VND',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: TransactionUtils.instance
-                          .getColorStatus(dto.status, dto.type, dto.transType),
-                    ),
-                  ),
-                ],
-              ),
+            Image.asset(
+              url,
+              width: 42,
+              height: 36,
+              fit: BoxFit.cover,
             ),
-            Align(
-              alignment: Alignment.topRight,
-              child: Text(
-                TimeUtils.instance.formatTimeDateFromInt(dto.time),
-                textAlign: TextAlign.right,
-                style: const TextStyle(
-                  fontSize: 12,
-                ),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                color: select ? AppColor.BLUE_TEXT : AppColor.BLACK,
               ),
             ),
           ],
@@ -693,45 +467,255 @@ class _DashboardScreenState extends State<DashboardScreen>
     );
   }
 
-  Widget _buildChip({
-    required BuildContext context,
-    required IconData icon,
-    required String text,
-    required Color color,
-  }) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(
-          icon,
-          size: 15,
-          color: color,
-        ),
-        const SizedBox(width: 4),
-        Expanded(
-          child: Text(
-            text,
-            maxLines: 2,
-          ),
-        ),
-      ],
-    );
+  //navigate to page
+  void _animatedToPage(int index) {
+    try {
+      _pageController.jumpToPage(
+        index,
+        // duration: const Duration(milliseconds: 200),
+        // curve: Curves.easeInOutQuart,
+      );
+    } catch (e) {
+      _pageController = PageController(
+        initialPage: Provider.of<PageSelectProvider>(context, listen: false)
+            .indexSelected,
+        keepPage: true,
+      );
+      _animatedToPage(index);
+    }
   }
 
-  String getRoleName(int role) {
-    String result = '';
-    if (role == 5) {
-      result = 'Admin';
-    } else if (role == 1) {
-      result = 'Quản lý';
-    } else if (role == 3) {
-      result = 'Quản lý chi nhánh';
-    } else {
-      result = 'Thành viên';
+  //get title page
+  Widget _getTitlePaqe(BuildContext context, int indexSelected) {
+    Widget titleWidget = const SizedBox();
+    if (indexSelected == 0) {
+      titleWidget = Consumer<BankCardSelectProvider>(
+        builder: (context, provider, child) {
+          return ButtonIconWidget(
+            width: double.infinity,
+            height: 40,
+            borderRadius: 40,
+            icon: Icons.search_rounded,
+            iconSize: 18,
+            contentPadding: const EdgeInsets.only(left: 16),
+            alignment: Alignment.centerLeft,
+            title: 'Tài khoản ngân hàng',
+            textSize: 11,
+            function: () {
+              Navigator.pushNamed(context, Routes.SEARCH_BANK);
+            },
+            bgColor: Theme.of(context).cardColor,
+            textColor: Theme.of(context).hintColor,
+          );
+        },
+      );
     }
-    return result;
+
+    if (indexSelected == 1) {
+      titleWidget = const Text(
+        'Mở tài khoản MB',
+        style: TextStyle(
+          fontFamily: 'NewYork',
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.2,
+        ),
+      );
+    }
+    if (indexSelected == 2) {
+      titleWidget = RichText(
+        textAlign: TextAlign.left,
+        text: TextSpan(
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Theme.of(context).hintColor,
+            letterSpacing: 0.2,
+          ),
+          children: const [
+            TextSpan(
+              text: 'VietQR',
+            ),
+          ],
+        ),
+      );
+    }
+    if (indexSelected == 3) {
+      titleWidget = RichText(
+        textAlign: TextAlign.left,
+        text: TextSpan(
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Theme.of(context).hintColor,
+            letterSpacing: 0.2,
+          ),
+          children: [
+            const TextSpan(
+              text: 'Trang chủ\n',
+            ),
+            TextSpan(
+              text:
+                  '${TimeUtils.instance.getCurrentDateInWeek(DateTime.now())}, ${TimeUtils.instance.getCurentDate(DateTime.now())}',
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.normal,
+                color: AppColor.GREY_TEXT,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    if (indexSelected == 4) {
+      titleWidget = const Text(
+        'Cá nhân',
+        style: TextStyle(
+          fontFamily: 'NewYork',
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.2,
+        ),
+      );
+    }
+    return titleWidget;
   }
 
   @override
   bool get wantKeepAlive => true;
+
+//header
+  Widget _buildAppBar() {
+    double paddingTop = MediaQuery.of(context).viewPadding.top;
+    return BackgroundAppBarHome(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 25),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              width: 60,
+              height: 30,
+              decoration: BoxDecoration(
+                //color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Image.asset(
+                'assets/images/ic-viet-qr.png',
+                width: 50,
+              ),
+            ),
+            Expanded(
+              child: Consumer<PageSelectProvider>(
+                builder: (context, page, child) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: _getTitlePaqe(context, page.indexSelected),
+                  );
+                },
+              ),
+            ),
+            SizedBox(
+                width: 50,
+                height: 60,
+                child: BlocConsumer<NotificationBloc, NotificationState>(
+                  listener: (context, state) {
+                    //
+                  },
+                  builder: (context, state) {
+                    if (state is NotificationCountSuccessState) {
+                      _notificationCount = state.count;
+                    }
+                    if (state is NotificationUpdateStatusSuccessState) {
+                      _notificationCount = 0;
+                    }
+                    return Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        ButtonIconWidget(
+                          width: 40,
+                          height: 40,
+                          borderRadius: 40,
+                          icon: Icons.notifications_outlined,
+                          title: '',
+                          function: () {
+                            Navigator.pushNamed(
+                              context,
+                              Routes.NOTIFICATION_VIEW,
+                              arguments: {
+                                'notificationBloc': _notificationBloc,
+                              },
+                            ).then((value) {
+                              _notificationBloc.add(
+                                NotificationUpdateStatusEvent(),
+                              );
+                            });
+                          },
+                          bgColor: Theme.of(context).cardColor,
+                          textColor: Theme.of(context).hintColor,
+                        ),
+                        if (_notificationCount != 0)
+                          Positioned(
+                            top: 5,
+                            right: 0,
+                            child: Container(
+                              width: 20,
+                              height: 20,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30),
+                                color: AppColor.RED_CALENDAR,
+                              ),
+                              child: Text(
+                                _notificationCount.toString(),
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize:
+                                      (_notificationCount.toString().length >=
+                                              3)
+                                          ? 8
+                                          : 10,
+                                  color: AppColor.WHITE,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    );
+                  },
+                )),
+            const Padding(padding: EdgeInsets.only(left: 5)),
+            GestureDetector(
+                onTap: () {
+                  Provider.of<PageSelectProvider>(context, listen: false)
+                      .updateIndex(4);
+
+                  _animatedToPage(4);
+                },
+                child: _buildAvatarWidget(context)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAvatarWidget(BuildContext context) {
+    double size = 40;
+    String imgId = UserInformationHelper.instance.getAccountInformation().imgId;
+    return Consumer<AvatarProvider>(
+      builder: (context, provider, child) => (imgId.isEmpty)
+          ? ClipOval(
+              child: SizedBox(
+                width: size,
+                height: size,
+                child: Image.asset('assets/images/ic-avatar.png'),
+              ),
+            )
+          : AmbientAvatarWidget(
+              imgId: imgId,
+              size: size,
+              onlyImage: true,
+            ),
+    );
+  }
 }

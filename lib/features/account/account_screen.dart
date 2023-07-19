@@ -363,8 +363,8 @@ class _IntroduceWidget extends StatelessWidget {
               ),
               Image.asset(
                 'assets/images/ic_point.png',
-                width: 28,
-                height: 28,
+                width: 16,
+                height: 16,
               ),
             ],
           ),

@@ -49,10 +49,10 @@ class PageSelectProvider with ChangeNotifier {
     ),
     if (PlatformUtils.instance.isAndroidApp())
       const NavigationDTO(
-        name: 'Mở tài khoản MB',
+        name: 'Doanh nghiệp',
         label: 'Doanh nghiệp',
-        assetsActive: 'assets/images/ic-linked.png',
-        assetsUnActive: 'assets/images/ic-linked-unselect.png',
+        assetsActive: 'assets/images/ic-tb-business-selected.png',
+        assetsUnActive: 'assets/images/ic-tb-business.png',
         index: 2,
       ),
     NavigationDTO(

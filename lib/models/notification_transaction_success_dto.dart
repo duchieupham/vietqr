@@ -48,11 +48,15 @@ class NotificationTransactionSuccessDTO {
       branchName: json['branchName'] ?? '',
       businessName: json['businessName'] ?? '',
       notificationId: json['notificationId'] ?? '',
-      time: int.tryParse(json['time'] ?? '') ?? 0,
+      time: json['time'] is String
+          ? int.tryParse(json['time'] ?? '')
+          : json['time'] ?? 0,
       refId: json['refId'] ?? '',
       transactionReceiveId: json['transactionReceiveId'] ?? '',
       content: json['content'] ?? '',
-      status: int.tryParse(json['status'] ?? '') ?? 0,
+      status: json['status'] is String
+          ? int.tryParse(json['status'] ?? '')
+          : json['status'] ?? 0,
       transType: json['transType'] ?? '',
     );
   }
