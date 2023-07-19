@@ -8,6 +8,7 @@ import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/commons/utils/transaction_utils.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
+import 'package:vierqr/layouts/button_widget.dart';
 import 'package:vierqr/models/notification_transaction_success_dto.dart';
 import 'package:rive/rive.dart' as rive;
 
@@ -148,14 +149,12 @@ class _TransactionSuccessWidget extends State<TransactionSuccessWidget> {
             ],
           ),
         ),
-        ButtonWidget(
-            width: width * 0.8,
-            text: 'OK',
-            height: 40,
-            borderRadius: 10,
-            textColor: AppColor.WHITE,
-            bgColor: AppColor.GREEN,
-            function: () {
+        MButtonWidget(
+            title: 'OK',
+            colorEnableText: AppColor.WHITE,
+            colorEnableBgr: AppColor.BLUE_TEXT,
+            isEnable: true,
+            onTap: () {
               if (widget.dto.transType == 'C') {
                 _doEndAnimation();
                 Future.delayed(const Duration(milliseconds: 500), () {

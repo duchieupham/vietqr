@@ -7,6 +7,7 @@ import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/create_qr/events/create_qr_event.dart';
 import 'package:vierqr/features/create_qr/states/create_qr_state.dart';
 import 'package:vierqr/features/generate_qr/repositories/qr_repository.dart';
+import 'package:vierqr/models/notification_transaction_success_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 
@@ -15,11 +16,22 @@ class CreateQRBloc extends Bloc<CreateQREvent, CreateQRState> with BaseManager {
   final BuildContext context;
 
   CreateQRBloc(this.context) : super(const CreateQRState()) {
+    on<QREventInitData>(_initData);
     on<QREventGenerate>(_generateQR);
     on<QREventUploadImage>(_uploadImage);
+    on<QREventPaid>(_onPaid);
   }
 
   final qrRepository = const QRRepository();
+
+  void _initData(CreateQREvent event, Emitter emit) async {
+    if (event is QREventInitData) {
+      emit(state.copyWith(
+          status: BlocStatus.NONE,
+          type: CreateQRType.NONE,
+          bankAccountDTO: event.bankAccountDTO));
+    }
+  }
 
   void _generateQR(CreateQREvent event, Emitter emit) async {
     try {
@@ -51,6 +63,28 @@ class CreateQRBloc extends Bloc<CreateQREvent, CreateQRState> with BaseManager {
             event.dto?.transactionId ?? '', event.file);
         if (dto.status == Stringify.RESPONSE_STATUS_SUCCESS) {
           emit(state.copyWith(type: CreateQRType.UPLOAD_IMAGE));
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(status: BlocStatus.ERROR));
+    }
+  }
+
+  void _onPaid(CreateQREvent event, Emitter emit) async {
+    try {
+      if (event is QREventPaid) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, type: CreateQRType.NONE));
+        final dto = await qrRepository.paid(event.id);
+        if (dto != null && dto is NotificationTransactionSuccessDTO) {
+          emit(state.copyWith(
+              type: CreateQRType.PAID,
+              transDTO: dto,
+              status: BlocStatus.UNLOADING));
+        } else {
+          emit(state.copyWith(
+              type: CreateQRType.NONE, status: BlocStatus.UNLOADING));
         }
       }
     } catch (e) {

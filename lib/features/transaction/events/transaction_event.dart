@@ -53,11 +53,6 @@ class TransactionEventFetch extends TransactionEvent {
   List<Object?> get props => [dto];
 }
 
-class TransactionEventGetDetail extends TransactionEvent {
-  final String id;
+class TransactionEventGetDetail extends TransactionEvent {}
 
-  const TransactionEventGetDetail({required this.id});
-
-  @override
-  List<Object?> get props => [id];
-}
+class TransactionEventGetImage extends TransactionEvent {}

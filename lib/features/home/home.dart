@@ -13,7 +13,6 @@ import 'package:vierqr/features/home/states/home_state.dart';
 import 'package:vierqr/features/home/widgets/background_app_bar_home.dart';
 import 'package:vierqr/features/home/widgets/disconnect_widget.dart';
 import 'package:vierqr/features/home/widgets/maintain_widget.dart';
-import 'package:vierqr/features/introduce/views/introduce_screen.dart';
 import 'package:vierqr/features/notification/blocs/notification_bloc.dart';
 import 'package:vierqr/features/notification/events/notification_event.dart';
 import 'package:vierqr/features/notification/states/notification_state.dart';
@@ -89,7 +88,7 @@ class _HomeScreen extends State<HomeScreen>
         // const BankCardSelectView(key: PageStorageKey('QR_GENERATOR_PAGE')),
         const BankScreen(key: PageStorageKey('QR_GENERATOR_PAGE')),
         const DashboardScreen(key: PageStorageKey('SMS_LIST_PAGE')),
-        if (PlatformUtils.instance.isAndroidApp()) const IntroduceScreen(),
+        // if (PlatformUtils.instance.isAndroidApp()) const IntroduceScreen(),
         AccountScreen(
           key: const PageStorageKey('USER_SETTING_PAGE'),
           voidCallback: () {
@@ -326,12 +325,12 @@ class _HomeScreen extends State<HomeScreen>
             return Scaffold(
               body: Stack(
                 children: [
-                  if (page.indexSelected != 3) _buildAppBar(),
+                  if (page.indexSelected != 2) _buildAppBar(),
                   Column(
                     children: [
                       Expanded(
                         child: Padding(
-                          padding: (page.indexSelected != 3)
+                          padding: (page.indexSelected != 2)
                               ? const EdgeInsets.only(top: 130)
                               : EdgeInsets.zero,
                           child: SizedBox(

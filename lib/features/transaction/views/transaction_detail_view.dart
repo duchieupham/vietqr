@@ -32,8 +32,8 @@ import 'package:vierqr/models/transaction_receive_dto.dart';
 import 'package:vierqr/services/providers/water_mark_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
-class TransactionDetailScreen extends StatelessWidget {
-  const TransactionDetailScreen({super.key});
+class TransactionScreen extends StatelessWidget {
+  const TransactionScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -73,11 +73,11 @@ class TransactionDetailView extends StatelessWidget {
   void initialServices(BuildContext context, String transactionId) {
     qrBloc = BlocProvider.of(context);
     transactionBloc = BlocProvider.of(context);
-    transactionBloc.add(TransactionEventGetDetail(id: transactionId));
+    transactionBloc.add(TransactionEventGetDetail());
   }
 
   Future<void> _refresh(String transactionId) async {
-    transactionBloc.add(TransactionEventGetDetail(id: transactionId));
+    transactionBloc.add(TransactionEventGetDetail());
   }
 
   @override
@@ -157,8 +157,8 @@ class TransactionDetailView extends StatelessWidget {
                 arguments: {
                   'qrGeneratedDTO': state.dto,
                 },
-              ).then((value) => transactionBloc
-                  .add(TransactionEventGetDetail(id: transactionId)));
+              ).then(
+                  (value) => transactionBloc.add(TransactionEventGetDetail()));
             }
           }
           if (state is QRRegeneratedFailedState) {
@@ -191,9 +191,9 @@ class TransactionDetailView extends StatelessWidget {
                 refId: '',
                 referenceNumber: '',
               );
-              if (state is TransactionDetailSuccessState) {
-                dto = state.dto;
-              }
+              // if (state is TransactionDetailSuccessState) {
+              //   dto = state.dto;
+              // }
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [

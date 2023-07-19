@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:io';
 
 import 'package:clipboard/clipboard.dart';
@@ -8,28 +7,27 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
-import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/file_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/printer_utils.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
-import 'package:vierqr/commons/utils/transaction_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_custom.dart';
+import 'package:vierqr/commons/widgets/viet_qr.dart';
 import 'package:vierqr/features/create_qr/blocs/create_qr_bloc.dart';
 import 'package:vierqr/features/create_qr/events/create_qr_event.dart';
 import 'package:vierqr/features/create_qr/states/create_qr_state.dart';
 import 'package:vierqr/features/printer/views/printing_view.dart';
+import 'package:vierqr/features/transaction/widgets/transaction_sucess_widget.dart';
 import 'package:vierqr/layouts/button_widget.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
+import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
-import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/bluetooth_printer_dto.dart';
 import 'package:vierqr/models/qr_create_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
@@ -38,7 +36,8 @@ import 'package:vierqr/services/providers/water_mark_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 import 'package:vierqr/services/sqflite/local_database.dart';
 
-import 'views/qr_generated_view.dart';
+import 'views/dialog_exits_view.dart';
+import 'views/dialog_more_view.dart';
 
 class CreateQrScreen extends StatelessWidget {
   const CreateQrScreen({super.key});
@@ -62,25 +61,40 @@ class _CreateQRScreen extends StatefulWidget {
 
 class _CreateQRScreenState extends State<_CreateQRScreen> {
   late CreateQRBloc _bloc;
+  final _waterMarkProvider = WaterMarkProvider(false);
 
   final imagePicker = ImagePicker();
+  final GlobalKey globalKey = GlobalKey();
+
+  final dto = const QRGeneratedDTO(
+      bankCode: '',
+      bankName: '',
+      bankAccount: '',
+      userBankName: '',
+      amount: '',
+      content: '',
+      qrCode: '',
+      imgId: '');
 
   @override
   void initState() {
     super.initState();
     _bloc = BlocProvider.of(context);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      initData(context);
+    });
   }
 
   initData(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as Map;
-    BankTypeDTO? bankTypeDTO = args['bankTypeDTO'];
+    BankAccountDTO? model = args['bankInfo'];
+    _bloc.add(QREventInitData(model));
   }
 
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    final args = ModalRoute.of(context)!.settings.arguments as Map;
-    BankAccountDTO? model = args['bankInfo'];
+
     return BlocConsumer<CreateQRBloc, CreateQRState>(
       listener: (context, state) async {
         if (state.status == BlocStatus.LOADING) {
@@ -103,6 +117,21 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
         if (state.type == CreateQRType.UPLOAD_IMAGE) {
           Provider.of<CreateQRProvider>(context, listen: false).setImage(null);
         }
+
+        if (state.type == CreateQRType.PAID) {
+          if (state.transDTO?.status == 1) {
+            await DialogWidget.instance.openWidgetDialog(
+              child: TransactionSuccessWidget(
+                dto: state.transDTO!,
+              ),
+            );
+            if (!mounted) return;
+            Navigator.of(context).pop();
+          } else {
+            Navigator.of(context).pop();
+          }
+        }
+
         if (state.type == CreateQRType.ERROR) {
           await DialogWidget.instance.openMsgDialog(
               title: 'Đã có lỗi xảy ra', msg: 'Vui lòng thử lại');
@@ -112,21 +141,81 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
         return Consumer<CreateQRProvider>(
           builder: (context, provider, child) {
             if (provider.page == 1) {
-              return RepaintBoundaryWidget(
-                globalKey: globalKey,
-                builder: (key) {
-                  return GeneratedQRView(
-                    qrGeneratedDTO: state.dto,
-                    fileImage: provider.imageFile,
-                    progressBar: provider.progressBar,
-                    callback: (index) {
-                      onClick(
-                        index,
-                        state.dto!,
+              return Scaffold(
+                body: SafeArea(
+                  child: RepaintBoundaryWidget(
+                    globalKey: globalKey,
+                    builder: (key) {
+                      return Container(
+                        color: AppColor.GREY_BG,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 16),
+                              child: VietQr(qrGeneratedDTO: state.dto ?? dto),
+                            ),
+                            ValueListenableBuilder(
+                              valueListenable: _waterMarkProvider,
+                              builder: (_, provider, child) {
+                                return Visibility(
+                                  visible: provider == true,
+                                  child: Container(
+                                    width: width,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 20,
+                                      vertical: 10,
+                                    ),
+                                    child: RichText(
+                                      textAlign: TextAlign.right,
+                                      text: const TextSpan(
+                                        style: TextStyle(
+                                          color: AppColor.GREY_TEXT,
+                                          fontSize: 12,
+                                        ),
+                                        children: [
+                                          TextSpan(text: 'Được tạo bởi '),
+                                          TextSpan(
+                                            text: 'vietqr.vn',
+                                            style: TextStyle(
+                                              color: AppColor.BLUE_TEXT,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                          TextSpan(text: ' - '),
+                                          TextSpan(text: 'Hotline '),
+                                          TextSpan(
+                                            text: '19006234',
+                                            style: TextStyle(
+                                              color: AppColor.BLUE_TEXT,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
                       );
                     },
-                  );
-                },
+                  ),
+                ),
+                bottomSheet: _buildButton(
+                  context: context,
+                  fileImage: provider.imageFile,
+                  progressBar: provider.progressBar,
+                  onClick: (index) {
+                    onClick(index, state.dto!);
+                  },
+                  onPaid: () {
+                    _bloc.add(QREventPaid(state.dto?.transactionId ?? ''));
+                  },
+                ),
               );
             }
             return GestureDetector(
@@ -155,8 +244,8 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                               margin: const EdgeInsets.only(left: 4),
                               decoration: BoxDecoration(
                                 image: DecorationImage(
-                                    image: ImageUtils.instance
-                                        .getImageNetWork(model?.imgId ?? '')),
+                                    image: ImageUtils.instance.getImageNetWork(
+                                        state.bankAccountDTO?.imgId ?? '')),
                               ),
                             ),
                             const SizedBox(width: 4),
@@ -165,7 +254,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
                                   Text(
-                                    '${model?.bankCode ?? ''} - ${model?.bankName ?? ''}',
+                                    '${state.bankAccountDTO?.bankCode ?? ''} - ${state.bankAccountDTO?.bankName ?? ''}',
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(
@@ -175,7 +264,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    model?.bankAccount ?? '',
+                                    state.bankAccountDTO?.bankAccount ?? '',
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(
@@ -185,7 +274,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    model?.userBankName ?? '',
+                                    state.bankAccountDTO?.userBankName ?? '',
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(
@@ -268,25 +357,25 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                       _buildItemSuggest(
                                         onChange: provider.updateSuggest,
                                         text:
-                                            'Chuyen khoan den ${model?.bankAccount ?? ''}',
+                                            'Chuyen khoan den ${state.bankAccountDTO?.bankAccount ?? ''}',
                                       ),
-                                      if (model?.type == 1) ...[
+                                      if (state.bankAccountDTO?.type == 1) ...[
                                         _buildItemSuggest(
                                           onChange: provider.updateSuggest,
                                           text:
-                                              'Thanh toan cho ${model?.businessName ?? ''}',
+                                              'Thanh toan cho ${state.bankAccountDTO?.businessName ?? ''}',
                                         ),
                                         _buildItemSuggest(
                                           onChange: provider.updateSuggest,
                                           text:
-                                              'Giao dich ${model?.branchName ?? ''}',
+                                              'Giao dich ${state.bankAccountDTO?.branchName ?? ''}',
                                         ),
                                       ],
-                                      if (model?.type == 0) ...[
+                                      if (state.bankAccountDTO?.type == 0) ...[
                                         _buildItemSuggest(
                                           onChange: provider.updateSuggest,
                                           text:
-                                              'Chuyen khoan cho ${model?.userBankName ?? ''}',
+                                              'Chuyen khoan cho ${state.bankAccountDTO?.userBankName ?? ''}',
                                         ),
                                       ],
                                     ],
@@ -314,22 +403,24 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                 );
                               },
                               child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 14, horizontal: 24),
+                                height: 40,
+                                padding:
+                                    const EdgeInsets.only(left: 8, right: 20),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5),
                                   color: AppColor.WHITE,
                                 ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
-                                  children: const [
-                                    Icon(Icons.note),
-                                    SizedBox(width: 8),
-                                    Text(
+                                  children: [
+                                    Image.asset(
+                                        'assets/images/ic-file-blue.png'),
+                                    const SizedBox(width: 8),
+                                    const Text(
                                       'Định kèm hoá đơn',
                                       style: TextStyle(
                                         color: AppColor.BLUE_TEXT,
-                                        fontSize: 16,
+                                        fontSize: 14,
                                       ),
                                     )
                                   ],
@@ -351,11 +442,11 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                     String money = provider.money.replaceAll('.', '');
 
                     QRCreateDTO dto = QRCreateDTO(
-                      bankId: model?.id ?? '',
+                      bankId: state.bankAccountDTO?.id ?? '',
                       amount: money,
                       content: provider.contentController.text,
-                      branchId: model?.branchId ?? '',
-                      businessId: model?.businessId ?? '',
+                      branchId: state.bankAccountDTO?.branchId ?? '',
+                      businessId: state.bankAccountDTO?.businessId ?? '',
                       userId: UserInformationHelper.instance.getUserId(),
                     );
 
@@ -366,6 +457,142 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
             );
           },
         );
+      },
+    );
+  }
+
+  Widget _buildButton(
+      {File? fileImage,
+      double progressBar = 0,
+      required BuildContext context,
+      GestureTapCallback? onPaid,
+      required Function(int) onClick}) {
+    return IntrinsicHeight(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: MButtonWidget(
+                    title: 'Đã thanh toán',
+                    isEnable: true,
+                    margin: const EdgeInsets.only(left: 20),
+                    onTap: onPaid,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                GestureDetector(
+                  onTap: () {
+                    if (fileImage != null) {
+                      dialogExits();
+                    } else {
+                      Navigator.of(context).pop();
+                    }
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                        color: AppColor.WHITE,
+                        borderRadius: BorderRadius.circular(5)),
+                    child: Image.asset(
+                      'assets/images/ic-home-blue.png',
+                      width: 36,
+                      height: 36,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                GestureDetector(
+                  onTap: () {
+                    dialog(onClick: onClick);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                        color: AppColor.WHITE,
+                        borderRadius: BorderRadius.circular(5)),
+                    child: Image.asset(
+                      'assets/images/ic-more-blue.png',
+                      width: 36,
+                      height: 36,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 20),
+              ],
+            ),
+            const SizedBox(height: 10),
+            if (fileImage != null)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: MediaQuery.of(context).size.width * progressBar,
+                    alignment: Alignment.centerLeft,
+                    padding:
+                        const EdgeInsets.only(top: 10, left: 20, right: 20),
+                    decoration: const BoxDecoration(
+                      border: Border(
+                        top: BorderSide(color: AppColor.BLUE_TEXT, width: 4),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(top: 10, left: 20, right: 20),
+                    child: Row(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(5),
+                          child: Image.file(
+                            fileImage,
+                            height: 60,
+                            fit: BoxFit.fill,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        const Text(
+                          'Đang lưu tệp đính kèm.',
+                          style: TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              )
+          ],
+        ),
+      ),
+    );
+  }
+
+  void dialog({required Function(int) onClick}) async {
+    final data = await showDialog(
+      barrierDismissible: true,
+      context: NavigationService.navigatorKey.currentContext!,
+      builder: (BuildContext context) {
+        return const DialogMoreView();
+      },
+    );
+
+    if (data is int) {
+      onClick(data);
+    }
+  }
+
+  void dialogExits() async {
+    final data = await showDialog(
+      barrierDismissible: true,
+      context: NavigationService.navigatorKey.currentContext!,
+      builder: (BuildContext context) {
+        return const DialogExitsView();
       },
     );
   }
@@ -507,12 +734,12 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
     }
   }
 
-  final GlobalKey globalKey = GlobalKey();
-
   Future<void> saveImage(BuildContext context) async {
+    _waterMarkProvider.updateWaterMark(true);
     DialogWidget.instance.openLoadingDialog();
     await Future.delayed(const Duration(milliseconds: 200), () async {
       await ShareUtils.instance.saveImageToGallery(globalKey).then((value) {
+        _waterMarkProvider.updateWaterMark(false);
         Navigator.pop(context);
         Fluttertoast.showToast(
           msg: 'Đã lưu ảnh',

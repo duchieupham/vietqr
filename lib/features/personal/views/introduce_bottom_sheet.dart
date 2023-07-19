@@ -133,7 +133,7 @@ class _IntroduceBottomSheetState extends State<IntroduceBottomSheet> {
                           borderRadius: BorderRadius.all(Radius.circular(5))),
                       child: Row(
                         children: const [
-                          Icon(Icons.ios_share),
+                          Icon(Icons.ios_share, color: Colors.white),
                           Expanded(
                             child: Text(
                               'Chia sẻ mã giới thiệu',
