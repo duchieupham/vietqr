@@ -429,7 +429,6 @@ class _HomeScreen extends State<HomeScreen>
       },
       child: Container(
         padding: const EdgeInsets.all(5),
-        margin: const EdgeInsets.symmetric(horizontal: 8),
         height: 80,
         decoration: BoxDecoration(
           color: AppColor.TRANSPARENT,

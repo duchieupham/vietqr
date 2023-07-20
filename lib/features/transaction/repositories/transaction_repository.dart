@@ -64,6 +64,7 @@ class TransactionRepository {
       );
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
+        print(data);
         result = TransactionReceiveDTO.fromJson(data);
       }
     } catch (e) {
@@ -72,7 +73,8 @@ class TransactionRepository {
     return result;
   }
 
-  loadImage(String transactionId) async {
+  Future<List<dynamic>> loadImage(String transactionId) async {
+    List<dynamic> list = [];
     try {
       final String url =
           '${EnvConfig.getBaseUrl()}transaction/image/$transactionId';
@@ -82,9 +84,11 @@ class TransactionRepository {
       );
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
+        list = data.map((job) => job['imgId']).toList();
       }
     } catch (e) {
       LOG.error(e.toString());
     }
+    return list;
   }
 }

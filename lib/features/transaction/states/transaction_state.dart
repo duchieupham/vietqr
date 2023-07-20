@@ -99,6 +99,8 @@ class TransactionState extends Equatable {
 
   final List<BusinessTransactionDTO> list;
 
+  final List<dynamic> listImage;
+
   // final List<BusinessTransactionDTO> list;
   // final List<RelatedTransactionReceiveDTO> list;
 
@@ -108,24 +110,34 @@ class TransactionState extends Equatable {
     this.msg,
     this.dto,
     required this.list,
+    required this.listImage,
   });
 
   TransactionState copyWith({
     BlocStatus? status,
     TransactionType? type,
     String? msg,
-    TransactionReceiveDTO? transactionReceiveDTO,
+    TransactionReceiveDTO? dto,
     List<BusinessTransactionDTO>? list,
+    List<dynamic>? listImage,
   }) {
     return TransactionState(
       status: status ?? this.status,
       type: type ?? this.type,
       msg: msg ?? this.msg,
-      dto: transactionReceiveDTO ?? this.dto,
+      dto: dto ?? this.dto,
       list: list ?? this.list,
+      listImage: listImage ?? this.listImage,
     );
   }
 
   @override
-  List<Object?> get props => [status, type];
+  List<Object?> get props => [
+        status,
+        type,
+        msg,
+        dto,
+        list,
+        listImage,
+      ];
 }
