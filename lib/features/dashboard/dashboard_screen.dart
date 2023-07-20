@@ -438,8 +438,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
         }
       },
       child: Container(
-        padding: const EdgeInsets.all(5),
-        margin: const EdgeInsets.symmetric(horizontal: 8),
+        margin: const EdgeInsets.symmetric(horizontal: 4),
         height: 80,
         decoration: BoxDecoration(
           color: AppColor.TRANSPARENT,
