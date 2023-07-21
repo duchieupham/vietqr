@@ -141,12 +141,6 @@ class UserEditBloc extends Bloc<UserEditEvent, UserEditState> {
         status: 'FAILED',
         message: 'E05',
       );
-      emit(
-        UserDeactiveFailedState(
-          message:
-              ErrorUtils.instance.getErrorMessage(responseMessageDTO.message),
-        ),
-      );
       LOG.error(e.toString());
     }
   }
