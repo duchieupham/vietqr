@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:vierqr/commons/constants/configurations/theme.dart';
 
 class BackgroundAppBarHome extends StatelessWidget {
   final Widget child;
