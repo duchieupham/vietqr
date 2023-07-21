@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:vierqr/models/bank_name_search_dto.dart';
 
 class DashBoardEvent extends Equatable {
   const DashBoardEvent();
@@ -28,4 +29,13 @@ class ScanQrEventGetBankType extends DashBoardEvent {
 
   @override
   List<Object?> get props => [code];
+}
+
+class DashBoardEventSearchName extends DashBoardEvent {
+  final BankNameSearchDTO dto;
+
+  const DashBoardEventSearchName({required this.dto});
+
+  @override
+  List<Object?> get props => [dto];
 }

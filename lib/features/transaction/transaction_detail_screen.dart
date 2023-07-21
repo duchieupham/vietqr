@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
@@ -12,8 +13,11 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
 import 'package:vierqr/layouts/box_layout.dart';
+import 'package:vierqr/layouts/button_widget.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
+import 'package:vierqr/models/qr_recreate_dto.dart';
 import 'package:vierqr/services/providers/water_mark_provider.dart';
+import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 import 'blocs/transaction_bloc.dart';
 import 'events/transaction_event.dart';
@@ -66,35 +70,47 @@ class _BodyWidgetState extends State<_BodyWidget> {
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
-    return Scaffold(
-      appBar: const MAppBar(title: 'Chi tiết giao dịch'),
-      body: BlocConsumer<TransactionBloc, TransactionState>(
-        listener: (context, state) {
-          // if (state.status == BlocStatus.LOADING) {
-          //   DialogWidget.instance.openLoadingDialog();
-          // }
-          //
-          // if (state.status == BlocStatus.UNLOADING) {
-          //   Navigator.pop(context);
-          // }
+    return BlocConsumer<TransactionBloc, TransactionState>(
+      listener: (context, state) async {
+        if (state.status == BlocStatus.LOADING) {
+          DialogWidget.instance.openLoadingDialog();
+        }
 
-          if (state.type == TransactionType.LOAD_DATA) {
-            _bloc.add(TransactionEventGetImage());
-          }
-        },
-        builder: (context, state) {
-          if (state.status == BlocStatus.LOADING) {
-            return const Center(
-              child: SizedBox(
-                width: 30,
-                height: 30,
-                child: CircularProgressIndicator(
-                  color: AppColor.BLUE_TEXT,
-                ),
-              ),
+        if (state.status == BlocStatus.UNLOADING) {
+          Navigator.pop(context);
+        }
+
+        if (state.type == TransactionType.LOAD_DATA) {
+          _bloc.add(const TransactionEventGetImage(isLoading: false));
+        }
+
+        if (state.type == TransactionType.REFRESH) {
+          if (state.newTransaction) {
+            await Navigator.pushReplacementNamed(
+              context,
+              Routes.CREATE_QR,
+              arguments: {
+                'qr': state.qrGeneratedDTO,
+              },
             );
           }
-          return RefreshIndicator(
+        }
+      },
+      builder: (context, state) {
+        // if (state.status == BlocStatus.LOADING) {
+        //   return const Center(
+        //     child: SizedBox(
+        //       width: 30,
+        //       height: 30,
+        //       child: CircularProgressIndicator(
+        //         color: AppColor.BLUE_TEXT,
+        //       ),
+        //     ),
+        //   );
+        // }
+        return Scaffold(
+          appBar: const MAppBar(title: 'Chi tiết giao dịch'),
+          body: RefreshIndicator(
             onRefresh: onRefresh,
             child: Column(
               children: [
@@ -352,8 +368,102 @@ class _BodyWidgetState extends State<_BodyWidget> {
                   )
               ],
             ),
-          );
-        },
+          ),
+          bottomSheet: _buildButton(
+            context: context,
+            onClick: (index) {},
+            onPaid: () {
+              QRRecreateDTO qrRecreateDTO = QRRecreateDTO(
+                bankId: state.dto?.bankId ?? '',
+                amount: (state.dto?.amount ?? 0).toString(),
+                content: state.dto?.content ?? '',
+                userId: UserInformationHelper.instance.getUserId(),
+                newTransaction: true,
+              );
+              _bloc.add(TransEventQRRegenerate(dto: qrRecreateDTO));
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildButton(
+      {required BuildContext context,
+      GestureTapCallback? onPaid,
+      bool isEnable = false,
+      required Function(int) onClick}) {
+    return IntrinsicHeight(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: MButtonWidget(
+                    widget: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        Icon(
+                          Icons.refresh,
+                          color: AppColor.WHITE,
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          'Thực hiện lại',
+                          style: TextStyle(
+                            color: AppColor.WHITE,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                    title: '',
+                    isEnable: true,
+                    margin: const EdgeInsets.only(left: 20),
+                    onTap: onPaid,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                GestureDetector(
+                  onTap: () {},
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                        color: AppColor.WHITE,
+                        borderRadius: BorderRadius.circular(5)),
+                    child: Image.asset(
+                      'assets/images/ic-img-blue.png',
+                      width: 42,
+                      height: 34,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                GestureDetector(
+                  onTap: () {},
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                        color: AppColor.WHITE,
+                        borderRadius: BorderRadius.circular(5)),
+                    child: Image.asset(
+                      'assets/images/ic-share-blue.png',
+                      width: 42,
+                      height: 34,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 20),
+              ],
+            ),
+            const SizedBox(height: 10),
+          ],
+        ),
       ),
     );
   }

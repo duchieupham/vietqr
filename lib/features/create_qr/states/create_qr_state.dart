@@ -1,9 +1,9 @@
 import 'package:equatable/equatable.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/models/account_bank_detail_dto.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/notification_transaction_success_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
-import 'package:vierqr/models/transaction_receive_dto.dart';
 
 enum CreateQRType {
   NONE,
@@ -19,7 +19,9 @@ class CreateQRState extends Equatable {
   final String? msg;
   final QRGeneratedDTO? dto;
   final BankAccountDTO? bankAccountDTO;
+  final AccountBankDetailDTO? bankDetailDTO;
   final NotificationTransactionSuccessDTO? transDTO;
+  final int page;
 
   const CreateQRState({
     this.status = BlocStatus.NONE,
@@ -27,23 +29,30 @@ class CreateQRState extends Equatable {
     this.msg,
     this.dto,
     this.bankAccountDTO,
+    this.bankDetailDTO,
     this.transDTO,
+    this.page = -1,
   });
 
-  CreateQRState copyWith(
-      {BlocStatus? status,
-      CreateQRType? type,
-      String? msg,
-      QRGeneratedDTO? dto,
-      BankAccountDTO? bankAccountDTO,
-      NotificationTransactionSuccessDTO? transDTO}) {
+  CreateQRState copyWith({
+    BlocStatus? status,
+    CreateQRType? type,
+    String? msg,
+    QRGeneratedDTO? dto,
+    BankAccountDTO? bankAccountDTO,
+    AccountBankDetailDTO? bankDetailDTO,
+    NotificationTransactionSuccessDTO? transDTO,
+    int? page,
+  }) {
     return CreateQRState(
       status: status ?? this.status,
       type: type ?? this.type,
       msg: msg ?? this.msg,
       dto: dto ?? this.dto,
       bankAccountDTO: bankAccountDTO ?? this.bankAccountDTO,
+      bankDetailDTO: bankDetailDTO ?? this.bankDetailDTO,
       transDTO: transDTO ?? this.transDTO,
+      page: page ?? this.page,
     );
   }
 
@@ -54,5 +63,7 @@ class CreateQRState extends Equatable {
         msg,
         dto,
         bankAccountDTO,
+        bankDetailDTO,
+        page,
       ];
 }

@@ -11,6 +11,7 @@ import 'package:vierqr/features/bank_card/bank_screen.dart';
 import 'package:vierqr/features/business/views/business_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
+import 'package:vierqr/features/dashboard/views/dialog_scan_type_bank.dart';
 import 'package:vierqr/features/home/widgets/background_app_bar_home.dart';
 import 'package:vierqr/features/home/widgets/disconnect_widget.dart';
 import 'package:vierqr/features/home/widgets/maintain_widget.dart';
@@ -24,7 +25,9 @@ import 'package:vierqr/features/token/blocs/token_bloc.dart';
 import 'package:vierqr/features/token/events/token_event.dart';
 import 'package:vierqr/features/token/states/token_state.dart';
 import 'package:vierqr/main.dart';
+import 'package:vierqr/models/bank_name_search_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
+import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/services/providers/account_balance_home_provider.dart';
 import 'package:vierqr/services/providers/avatar_provider.dart';
 import 'package:vierqr/services/providers/bank_card_select_provider.dart';
@@ -112,8 +115,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
     String data = await FlutterBarcodeScanner.scanBarcode(
         '#ff6666', 'Cancel', true, ScanMode.DEFAULT);
     if (data.isNotEmpty) {
-      if (data == TypeQR.NEGATIVE_ONE.value) {
-      } else if (data == TypeQR.NEGATIVE_TWO.value) {
+      if (data == TypeQR.NEGATIVE_TWO.value) {
         DialogWidget.instance.openMsgDialog(
           title: 'Không thể xác nhận mã QR',
           msg: 'Ảnh QR không đúng định dạng, vui lòng chọn ảnh khác.',
@@ -249,7 +251,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
         }
       },
       child: BlocListener<DashBoardBloc, DashBoardState>(
-        listener: (context, state) {
+        listener: (context, state) async {
           if (state.typePermission == DashBoardTypePermission.Request) {
             _dashBoardBloc.add(const PermissionEventGetStatus());
           }
@@ -300,16 +302,21 @@ class _DashBoardScreen extends State<DashBoardScreen>
           }
           if (state.request == DashBoardType.SCAN) {
             if (state.typeQR == TypeQR.QR_BANK) {
-              Navigator.pushNamed(
-                context,
-                Routes.ADD_BANK_CARD,
-                arguments: {
-                  'step': 0,
-                  'bankDTO': state.bankTypeDTO,
-                  'bankAccount': state.bankAccount,
-                  'name': ''
-                },
+              String transferType = '';
+              if (state.bankTypeDTO?.bankCode == 'MB') {
+                transferType = 'INHOUSE';
+              } else {
+                transferType = 'NAPAS';
+              }
+              BankNameSearchDTO bankNameSearchDTO = BankNameSearchDTO(
+                accountNumber: state.bankAccount,
+                accountType: 'ACCOUNT',
+                transferType: transferType,
+                bankCode: state.bankTypeDTO?.caiValue ?? '',
               );
+
+              _dashBoardBloc
+                  .add(DashBoardEventSearchName(dto: bankNameSearchDTO));
             } else if (state.typeQR == TypeQR.QR_BARCODE) {
               DialogWidget.instance.openMsgDialog(
                 title: 'Không thể xác nhận mã QR',
@@ -323,6 +330,41 @@ class _DashBoardScreen extends State<DashBoardScreen>
                 },
               );
             }
+          }
+
+          if (state.request == DashBoardType.SEARCH_BANK_NAME) {
+            QRGeneratedDTO dto = QRGeneratedDTO(
+                bankCode: state.bankTypeDTO?.bankCode ?? '',
+                bankName: state.bankTypeDTO?.bankName ?? '',
+                bankAccount: state.bankAccount ?? '',
+                userBankName: state.informationDTO?.accountName ?? '',
+                amount: '',
+                content: '',
+                qrCode: state.codeQR ?? '',
+                imgId: '');
+
+            final data = await showGeneralDialog(
+              context: context,
+              barrierDismissible: true,
+              barrierLabel:
+                  MaterialLocalizations.of(context).modalBarrierDismissLabel,
+              barrierColor: Colors.black45,
+              transitionDuration: const Duration(milliseconds: 200),
+              pageBuilder: (BuildContext buildContext, Animation animation,
+                  Animation secondaryAnimation) {
+                return DialogScanBank(dto: dto);
+              },
+            );
+            // Navigator.pushNamed(
+            //   context,
+            //   Routes.ADD_BANK_CARD,
+            //   arguments: {
+            //     'step': 0,
+            //     'bankDTO': state.bankTypeDTO,
+            //     'bankAccount': state.bankAccount,
+            //     'name': ''
+            //   },
+            // );
           }
         },
         child: Scaffold(

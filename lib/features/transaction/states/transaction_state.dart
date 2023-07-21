@@ -82,13 +82,16 @@
 // class TransactionDetailFailedState extends TransactionState {}
 import 'package:equatable/equatable.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/business_detail_dto.dart';
+import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/related_transaction_receive_dto.dart';
 import 'package:vierqr/models/transaction_receive_dto.dart';
 
 enum TransactionType {
   NONE,
   LOAD_DATA,
+  REFRESH,
 }
 
 class TransactionState extends Equatable {
@@ -96,10 +99,10 @@ class TransactionState extends Equatable {
   final TransactionType type;
   final String? msg;
   final TransactionReceiveDTO? dto;
-
   final List<BusinessTransactionDTO> list;
-
   final List<dynamic> listImage;
+  final QRGeneratedDTO? qrGeneratedDTO;
+  final bool newTransaction;
 
   // final List<BusinessTransactionDTO> list;
   // final List<RelatedTransactionReceiveDTO> list;
@@ -109,18 +112,21 @@ class TransactionState extends Equatable {
     this.type = TransactionType.NONE,
     this.msg,
     this.dto,
+    this.qrGeneratedDTO,
     required this.list,
     required this.listImage,
+    this.newTransaction = false,
   });
 
-  TransactionState copyWith({
-    BlocStatus? status,
-    TransactionType? type,
-    String? msg,
-    TransactionReceiveDTO? dto,
-    List<BusinessTransactionDTO>? list,
-    List<dynamic>? listImage,
-  }) {
+  TransactionState copyWith(
+      {BlocStatus? status,
+      TransactionType? type,
+      String? msg,
+      TransactionReceiveDTO? dto,
+      List<BusinessTransactionDTO>? list,
+      List<dynamic>? listImage,
+      QRGeneratedDTO? qrGeneratedDTO,
+      bool? newTransaction}) {
     return TransactionState(
       status: status ?? this.status,
       type: type ?? this.type,
@@ -128,6 +134,8 @@ class TransactionState extends Equatable {
       dto: dto ?? this.dto,
       list: list ?? this.list,
       listImage: listImage ?? this.listImage,
+      qrGeneratedDTO: qrGeneratedDTO ?? this.qrGeneratedDTO,
+      newTransaction: newTransaction ?? this.newTransaction,
     );
   }
 
@@ -139,5 +147,6 @@ class TransactionState extends Equatable {
         dto,
         list,
         listImage,
+        qrGeneratedDTO,
       ];
 }

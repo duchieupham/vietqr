@@ -11,18 +11,21 @@ class MButtonWidget extends StatelessWidget {
   final Color? colorEnableText;
   final Color? colorDisableText;
   final double? height;
+  final Widget? widget;
 
-  const MButtonWidget(
-      {super.key,
-      required this.title,
-      this.margin,
-      this.onTap,
-      this.isEnable = false,
-      this.colorEnableBgr,
-      this.colorDisableBgr,
-      this.colorEnableText,
-      this.height,
-      this.colorDisableText});
+  const MButtonWidget({
+    super.key,
+    required this.title,
+    this.margin,
+    this.onTap,
+    this.isEnable = false,
+    this.colorEnableBgr,
+    this.colorDisableBgr,
+    this.colorEnableText,
+    this.height,
+    this.widget,
+    this.colorDisableText,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -42,15 +45,16 @@ class MButtonWidget extends StatelessWidget {
                   ? colorEnableBgr ?? AppColor.BLUE_TEXT
                   : colorDisableBgr ?? AppColor.WHITE,
             ),
-            child: Text(
-              title,
-              style: TextStyle(
-                color: isEnable
-                    ? colorEnableText ?? AppColor.WHITE
-                    : colorDisableText ?? AppColor.GREY_TEXT,
-                fontSize: 14,
-              ),
-            ),
+            child: widget ??
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: isEnable
+                        ? colorEnableText ?? AppColor.WHITE
+                        : colorDisableText ?? AppColor.GREY_TEXT,
+                    fontSize: 14,
+                  ),
+                ),
           ),
         ],
       ),

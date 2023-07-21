@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:vierqr/models/qr_recreate_dto.dart';
 import 'package:vierqr/models/transaction_branch_input_dto.dart';
 import 'package:vierqr/models/transaction_input_dto.dart';
 
@@ -53,6 +54,29 @@ class TransactionEventFetch extends TransactionEvent {
   List<Object?> get props => [dto];
 }
 
-class TransactionEventGetDetail extends TransactionEvent {}
+class TransactionEventGetDetail extends TransactionEvent {
+  final bool isLoading;
 
-class TransactionEventGetImage extends TransactionEvent {}
+  const TransactionEventGetDetail({this.isLoading = false});
+
+  @override
+  List<Object?> get props => [isLoading];
+}
+
+class TransactionEventGetImage extends TransactionEvent {
+  final bool isLoading;
+
+  const TransactionEventGetImage({this.isLoading = true});
+
+  @override
+  List<Object?> get props => [isLoading];
+}
+
+class TransEventQRRegenerate extends TransactionEvent {
+  final QRRecreateDTO dto;
+
+  const TransEventQRRegenerate({required this.dto});
+
+  @override
+  List<Object?> get props => [dto];
+}

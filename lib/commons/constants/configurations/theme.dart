@@ -26,6 +26,7 @@ class AppColor {
   static const Color RED_CALENDAR = Color(0xFFF5233C);
   static const Color TRANSPARENT = Color(0x00000000);
   static const Color GREY_TOP_TAB_BAR = Color(0xFFBEC1C9);
+  static const Color gray = Color(0xffA8A8A8);
   static const Color SUCCESS_STATUS = Color(0xFF06B271);
   static const Color GREEN = Color(0xFF00CA28);
   static const Color DARK_GREEN = Color(0xFF0D5F34);

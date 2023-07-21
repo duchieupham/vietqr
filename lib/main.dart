@@ -37,6 +37,8 @@ import 'package:vierqr/features/home/home.dart';
 import 'package:vierqr/features/home/theme_setting.dart';
 import 'package:vierqr/features/notification/views/notification_view.dart';
 import 'package:vierqr/features/personal/views/national_information_view.dart';
+import 'package:vierqr/features/phone_book/phone_book_screen.dart';
+import 'package:vierqr/features/phone_book/save_phone_book_screen.dart';
 import 'package:vierqr/features/printer/blocs/printer_bloc.dart';
 import 'package:vierqr/features/printer/views/printer_setting_view.dart';
 import 'package:vierqr/features/logout/blocs/log_out_bloc.dart';
@@ -343,9 +345,11 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.NATIONAL_INFORMATION: (context) =>
                       const NationalInformationView(),
                   Routes.BUSINESS_TRANSACTION: (context) =>
-                      BusinessTransactionView(),
+                      const BusinessTransactionView(),
                   Routes.BRANCH_DETAIL: (context) => const BranchDetailView(),
                   Routes.CREATE_QR: (context) => const CreateQrScreen(),
+                  // Routes.PHONE_BOOK: (context) => const PhoneBookScreen(),
+                  Routes.PHONE_BOOK: (context) => const SavePhoneBookScreen(),
                 },
                 onGenerateRoute: (settings) {
                   if (settings.name == Routes.BUSINESS_INFORMATION_VIEW) {
