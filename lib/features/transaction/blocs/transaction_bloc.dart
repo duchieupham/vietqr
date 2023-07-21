@@ -16,7 +16,7 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState>
   final String transactionId;
 
   TransactionBloc(this.context, this.transactionId)
-      : super(const TransactionState(list: [])) {
+      : super(const TransactionState(list: [], listImage: [])) {
     on<TransactionEventGetDetail>(_getDetail);
     on<TransactionEventGetImage>(_loadImage);
     // on<TransactionEventGetListBranch>(_getTransactionsBranch);
@@ -32,7 +32,7 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState>
         TransactionReceiveDTO dto =
             await transactionRepository.getTransactionDetail(transactionId);
         emit(state.copyWith(
-          transactionReceiveDTO: dto,
+          dto: dto,
           status: BlocStatus.UNLOADING,
           type: TransactionType.LOAD_DATA,
         ));
@@ -51,6 +51,7 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState>
         emit(state.copyWith(
           status: BlocStatus.UNLOADING,
           type: TransactionType.NONE,
+          listImage: result,
         ));
       }
     } catch (e) {

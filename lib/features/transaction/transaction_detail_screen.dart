@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,6 +18,7 @@ import 'package:vierqr/services/providers/water_mark_provider.dart';
 import 'blocs/transaction_bloc.dart';
 import 'events/transaction_event.dart';
 import 'states/transaction_state.dart';
+import 'widgets/detail_image_view.dart';
 
 class TransactionDetailScreen extends StatelessWidget {
   const TransactionDetailScreen({super.key});
@@ -96,213 +98,258 @@ class _BodyWidgetState extends State<_BodyWidget> {
             onRefresh: onRefresh,
             child: Column(
               children: [
-                Expanded(
-                  child: Visibility(
-                    visible: state.dto?.id != null,
-                    child: RepaintBoundaryWidget(
-                      globalKey: globalKey,
-                      builder: (key) {
-                        return Container(
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          child: ListView(
-                            shrinkWrap: true,
-                            children: [
-                              const Padding(padding: EdgeInsets.only(top: 30)),
-                              SizedBox(
-                                width: width,
-                                child: Center(
-                                  child: Text(
-                                    '${state.dto?.getTransType} ${state.dto?.getAmount} VND',
-                                    style: TextStyle(
-                                      fontSize: 30,
-                                      color: TransactionUtils.instance
-                                          .getColorStatus(
-                                        state.dto?.status ?? 0,
-                                        state.dto?.type ?? 0,
-                                        state.dto?.transType ?? '',
-                                      ),
+                Visibility(
+                  visible: state.dto?.id != null,
+                  child: RepaintBoundaryWidget(
+                    globalKey: globalKey,
+                    builder: (key) {
+                      return Container(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        child: ListView(
+                          shrinkWrap: true,
+                          children: [
+                            const Padding(padding: EdgeInsets.only(top: 30)),
+                            SizedBox(
+                              width: width,
+                              child: Center(
+                                child: Text(
+                                  '${state.dto?.getTransType} ${state.dto?.getAmount} VND',
+                                  style: TextStyle(
+                                    fontSize: 30,
+                                    color: TransactionUtils.instance
+                                        .getColorStatus(
+                                      state.dto?.status ?? 0,
+                                      state.dto?.type ?? 0,
+                                      state.dto?.transType ?? '',
                                     ),
                                   ),
                                 ),
                               ),
-                              const Padding(padding: EdgeInsets.only(top: 5)),
-                              SizedBox(
-                                width: width,
-                                child: Center(
-                                  child: Text(
-                                    state.dto?.getStatus ?? '',
-                                    style: TextStyle(
-                                      color: TransactionUtils.instance
-                                          .getColorStatus(
-                                        state.dto?.status ?? 0,
-                                        state.dto?.type ?? 0,
-                                        state.dto?.transType ?? '',
-                                      ),
-                                      fontSize: 18,
+                            ),
+                            const Padding(padding: EdgeInsets.only(top: 5)),
+                            SizedBox(
+                              width: width,
+                              child: Center(
+                                child: Text(
+                                  state.dto?.getStatus ?? '',
+                                  style: TextStyle(
+                                    color: TransactionUtils.instance
+                                        .getColorStatus(
+                                      state.dto?.status ?? 0,
+                                      state.dto?.type ?? 0,
+                                      state.dto?.transType ?? '',
                                     ),
+                                    fontSize: 18,
                                   ),
                                 ),
                               ),
-                              const Padding(padding: EdgeInsets.only(top: 30)),
-                              UnconstrainedBox(
-                                child: BoxLayout(
-                                  width: width - 40,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Padding(
-                                          padding: EdgeInsets.only(top: 10)),
-                                      Text(
-                                        state.dto?.getPrefixBankAccount ?? '',
-                                        style: const TextStyle(
-                                          fontSize: 13,
-                                          color: AppColor.GREY_TEXT,
-                                        ),
+                            ),
+                            const Padding(padding: EdgeInsets.only(top: 30)),
+                            UnconstrainedBox(
+                              child: BoxLayout(
+                                width: width - 40,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Padding(
+                                        padding: EdgeInsets.only(top: 10)),
+                                    Text(
+                                      state.dto?.getPrefixBankAccount ?? '',
+                                      style: const TextStyle(
+                                        fontSize: 13,
+                                        color: AppColor.GREY_TEXT,
                                       ),
-                                      const Padding(
-                                          padding: EdgeInsets.only(top: 5)),
-                                      SizedBox(
-                                        width: width - 40,
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                              child: Text(
-                                                '${state.dto?.bankCode ?? ''} - ${state.dto?.bankName ?? ''}',
-                                                maxLines: 2,
-                                                overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const Padding(
+                                        padding: EdgeInsets.only(top: 5)),
+                                    SizedBox(
+                                      width: width - 40,
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              '${state.dto?.bankCode ?? ''} - ${state.dto?.bankName ?? ''}',
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                          Container(
+                                            width: 30,
+                                            height: 30,
+                                            decoration: BoxDecoration(
+                                              color: AppColor.WHITE,
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
+                                              border: Border.all(
+                                                color:
+                                                    AppColor.GREY_TOP_TAB_BAR,
+                                                width: 0.5,
+                                              ),
+                                              image: DecorationImage(
+                                                fit: BoxFit.contain,
+                                                image: ImageUtils.instance
+                                                    .getImageNetWork(
+                                                        state.dto?.imgId ?? ''),
                                               ),
                                             ),
-                                            Container(
-                                              width: 30,
-                                              height: 30,
-                                              decoration: BoxDecoration(
-                                                color: AppColor.WHITE,
-                                                borderRadius:
-                                                    BorderRadius.circular(30),
-                                                border: Border.all(
-                                                  color:
-                                                      AppColor.GREY_TOP_TAB_BAR,
-                                                  width: 0.5,
-                                                ),
-                                                image: DecorationImage(
-                                                  fit: BoxFit.contain,
-                                                  image: ImageUtils.instance
-                                                      .getImageNetWork(
-                                                          state.dto?.imgId ??
-                                                              ''),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
-                                      const Padding(
-                                          padding: EdgeInsets.only(top: 5)),
-                                      _buildElement1(
+                                    ),
+                                    const Padding(
+                                        padding: EdgeInsets.only(top: 5)),
+                                    _buildElement1(
+                                      context: context,
+                                      width: width - 40,
+                                      content:
+                                          (state.dto?.bankAccountName ?? '')
+                                              .toUpperCase(),
+                                      isBold: true,
+                                    ),
+                                    _buildElement1(
+                                      context: context,
+                                      width: width - 40,
+                                      content: state.dto?.bankAccount ?? '',
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10),
+                                      child: DividerWidget(width: width - 40),
+                                    ),
+                                    _buildElement2(
+                                      context: context,
+                                      title: 'Thời gian',
+                                      content: TimeUtils.instance
+                                          .formatDateFromInt(
+                                              state.dto?.time ?? 0, false),
+                                      width: width - 40,
+                                    ),
+                                    const Padding(
+                                        padding: EdgeInsets.only(top: 10)),
+                                    if ((state.dto?.referenceNumber ?? '')
+                                        .trim()
+                                        .isNotEmpty) ...[
+                                      _buildElement2(
                                         context: context,
-                                        width: width - 40,
+                                        title: 'Mã giao dịch',
                                         content:
-                                            (state.dto?.bankAccountName ?? '')
-                                                .toUpperCase(),
-                                        isBold: true,
-                                      ),
-                                      _buildElement1(
-                                        context: context,
-                                        width: width - 40,
-                                        content: state.dto?.bankAccount ?? '',
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 10),
-                                        child: DividerWidget(width: width - 40),
-                                      ),
-                                      _buildElement2(
-                                        context: context,
-                                        title: 'Thời gian',
-                                        content: TimeUtils.instance
-                                            .formatDateFromInt(
-                                                state.dto?.time ?? 0, false),
-                                        width: width - 40,
-                                      ),
-                                      const Padding(
-                                          padding: EdgeInsets.only(top: 10)),
-                                      if ((state.dto?.referenceNumber ?? '')
-                                          .trim()
-                                          .isNotEmpty) ...[
-                                        _buildElement2(
-                                          context: context,
-                                          title: 'Mã giao dịch',
-                                          content:
-                                              state.dto?.referenceNumber ?? '',
-                                          width: width - 40,
-                                        ),
-                                        const Padding(
-                                            padding: EdgeInsets.only(top: 10)),
-                                      ],
-                                      _buildElement2(
-                                        context: context,
-                                        title: 'Nội dung',
-                                        content: state.dto?.content ?? '',
+                                            state.dto?.referenceNumber ?? '',
                                         width: width - 40,
                                       ),
                                       const Padding(
                                           padding: EdgeInsets.only(top: 10)),
                                     ],
-                                  ),
+                                    _buildElement2(
+                                      context: context,
+                                      title: 'Nội dung',
+                                      content: state.dto?.content ?? '',
+                                      width: width - 40,
+                                    ),
+                                    const Padding(
+                                        padding: EdgeInsets.only(top: 10)),
+                                  ],
                                 ),
                               ),
-                              ValueListenableBuilder(
-                                valueListenable: _waterMarkProvider,
-                                builder: (_, provider, child) {
-                                  return Visibility(
-                                    visible: provider == true,
-                                    child: Container(
-                                      width: width,
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 20,
-                                        vertical: 10,
-                                      ),
-                                      child: RichText(
-                                        textAlign: TextAlign.right,
-                                        text: const TextSpan(
-                                          style: TextStyle(
-                                            color: AppColor.GREY_TEXT,
-                                            fontSize: 12,
-                                          ),
-                                          children: [
-                                            TextSpan(text: 'Được tạo bởi '),
-                                            TextSpan(
-                                              text: 'vietqr.vn',
-                                              style: TextStyle(
-                                                color: AppColor.BLUE_TEXT,
-                                                fontSize: 12,
-                                              ),
-                                            ),
-                                            TextSpan(text: ' - '),
-                                            TextSpan(text: 'Hotline '),
-                                            TextSpan(
-                                              text: '19006234',
-                                              style: TextStyle(
-                                                color: AppColor.BLUE_TEXT,
-                                                fontSize: 12,
-                                              ),
-                                            ),
-                                          ],
+                            ),
+                            ValueListenableBuilder(
+                              valueListenable: _waterMarkProvider,
+                              builder: (_, provider, child) {
+                                return Visibility(
+                                  visible: provider == true,
+                                  child: Container(
+                                    width: width,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 20,
+                                      vertical: 10,
+                                    ),
+                                    child: RichText(
+                                      textAlign: TextAlign.right,
+                                      text: const TextSpan(
+                                        style: TextStyle(
+                                          color: AppColor.GREY_TEXT,
+                                          fontSize: 12,
                                         ),
+                                        children: [
+                                          TextSpan(text: 'Được tạo bởi '),
+                                          TextSpan(
+                                            text: 'vietqr.vn',
+                                            style: TextStyle(
+                                              color: AppColor.BLUE_TEXT,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                          TextSpan(text: ' - '),
+                                          TextSpan(text: 'Hotline '),
+                                          TextSpan(
+                                            text: '19006234',
+                                            style: TextStyle(
+                                              color: AppColor.BLUE_TEXT,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ],
                                       ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            const Padding(padding: EdgeInsets.only(top: 30)),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                if (state.listImage.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const Text(
+                          'Đính kèm',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          children: List.generate(
+                            state.listImage.length,
+                            (index) {
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => DetailImageView(
+                                          image:
+                                              state.listImage.elementAt(index)),
                                     ),
                                   );
                                 },
-                              ),
-                              const Padding(padding: EdgeInsets.only(top: 30)),
-                            ],
+                                child: Container(
+                                  width: 100,
+                                  height: 160,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    color: AppColor.WHITE,
+                                    image: DecorationImage(
+                                      image: ImageUtils.instance
+                                          .getImageNetWork(
+                                              state.listImage[index]),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
                           ),
-                        );
-                      },
+                        ),
+                      ],
                     ),
-                  ),
-                ),
+                  )
               ],
             ),
           );
