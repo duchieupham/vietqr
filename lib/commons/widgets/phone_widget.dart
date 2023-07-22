@@ -14,11 +14,12 @@ class PhoneWidget extends StatefulWidget {
 class _PhoneWidgetState extends State<PhoneWidget> {
   dynamic _selectedCountryCode;
   final List<String> _countryCodes = ['+84'];
-
+  late FocusNode myFocusPhone;
   @override
   void initState() {
     super.initState();
     _selectedCountryCode = _countryCodes.first;
+    myFocusPhone = FocusNode();
   }
 
   @override
@@ -98,6 +99,7 @@ class _PhoneWidgetState extends State<PhoneWidget> {
                   textInputAction: TextInputAction.next,
                   controller: widget.phoneController,
                   onChanged: widget.onChanged,
+                  autofocus: true,
                   decoration: const InputDecoration(
                     contentPadding: EdgeInsets.symmetric(horizontal: 16),
                     fillColor: AppColor.WHITE,
