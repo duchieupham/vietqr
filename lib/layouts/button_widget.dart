@@ -28,31 +28,26 @@ class MButtonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: isEnable ? onTap : null,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            alignment: Alignment.center,
-            margin: margin ??
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-            height: height ?? 40,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              color: isEnable
-                  ? colorEnableBgr ?? AppColor.BLUE_TEXT
-                  : colorDisableBgr ?? AppColor.WHITE,
-            ),
-            child: Text(
-              title,
-              style: TextStyle(
-                color: isEnable
-                    ? colorEnableText ?? AppColor.WHITE
-                    : colorDisableText ?? AppColor.GREY_TEXT,
-                fontSize: 14,
-              ),
-            ),
+      child: Container(
+        alignment: Alignment.center,
+        margin:
+            margin ?? const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        height: height ?? 40,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          color: isEnable
+              ? colorEnableBgr ?? AppColor.BLUE_TEXT
+              : colorDisableBgr ?? AppColor.WHITE,
+        ),
+        child: Text(
+          title,
+          style: TextStyle(
+            color: isEnable
+                ? colorEnableText ?? AppColor.WHITE
+                : colorDisableText ?? AppColor.GREY_TEXT,
+            fontSize: 14,
           ),
-        ],
+        ),
       ),
     );
   }
