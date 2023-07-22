@@ -342,16 +342,84 @@ class _LoginState extends State<_Login> {
                           ),
                         ),
                       ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: GestureDetector(
+                          onTap: () {
+                            DialogWidget.instance.openMsgDialog(
+                              title: 'Tính năng đang bảo trì',
+                              msg: 'Vui lòng thử lại sau',
+                            );
+                          },
+                          child: const Text(
+                            'Quên mật khẩu',
+                          ),
+                        ),
+                      )
                     ],
                   ),
                 ),
-                bottomSheet: MButtonWidget(
-                  title: 'Tiếp tục',
-                  isEnable: provider.isEnableButton,
-                  onTap: () {
-                    FocusManager.instance.primaryFocus?.unfocus();
-                    _bloc.add(CheckExitsPhoneEvent(phone: provider.phone));
-                  },
+                bottomSheet: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    MButtonWidget(
+                      title: 'Tiếp tục',
+                      isEnable: provider.isEnableButton,
+                      onTap: () {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                        _bloc.add(CheckExitsPhoneEvent(phone: provider.phone));
+                      },
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text('Bạn chưa có tài khoản? '),
+                          GestureDetector(
+                            onTap: () async {
+                              final data = await Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      Register(phoneNo: state.phone ?? ''),
+                                  settings: const RouteSettings(
+                                    name: Routes.REGISTER,
+                                  ),
+                                ),
+                              );
+
+                              if (data is Map) {
+                                AccountLoginDTO dto = AccountLoginDTO(
+                                  phoneNo: data['phone'],
+                                  password: EncryptUtils.instance.encrypted(
+                                    data['phone'],
+                                    data['password'],
+                                  ),
+                                  device: '',
+                                  fcmToken: '',
+                                  platform: '',
+                                  sharingCode: '',
+                                );
+                                if (!mounted) return;
+                                context.read<LoginBloc>().add(
+                                    LoginEventByPhone(dto: dto, isToast: true));
+                              }
+                            },
+                            child: const Text(
+                              'Đăng ký',
+                              style: TextStyle(color: AppColor.BLUE_TEXT),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 12,
+                    )
+                  ],
                 ),
                 // body: LoginFrame(
                 //   width: width,
