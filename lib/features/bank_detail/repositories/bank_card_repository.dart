@@ -5,6 +5,7 @@ import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
+import 'package:vierqr/models/add_phone_book_dto.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_account_remove_dto.dart';
 import 'package:vierqr/models/bank_card_insert_dto.dart';
@@ -369,6 +370,28 @@ class BankCardRepository {
         const ResponseMessageDTO(status: '', message: '');
     try {
       final String url = '${EnvConfig.getUrl()}bank/api/unregister_confirm';
+      final response = await BaseAPIClient.postAPI(
+        url: url,
+        body: dto.toJson(),
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200 || response.statusCode == 400) {
+        var data = jsonDecode(response.body);
+        result = ResponseMessageDTO.fromJson(data);
+      } else {
+        result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return result;
+  }
+
+  Future<ResponseMessageDTO> addPhoneBook(AddPhoneBookDTO dto) async {
+    ResponseMessageDTO result =
+        const ResponseMessageDTO(status: '', message: '');
+    try {
+      final String url = '${EnvConfig.getUrl()}contact';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: dto.toJson(),

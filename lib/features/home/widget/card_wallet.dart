@@ -14,6 +14,7 @@ import '../../scan_qr/widgets/qr_scan_widget.dart';
 
 class CardWallet extends StatelessWidget {
   final Function startBarcodeScanStream;
+
   const CardWallet({Key? key, required this.startBarcodeScanStream})
       : super(key: key);
 
@@ -131,12 +132,13 @@ class CardWallet extends StatelessWidget {
           }
         }),
         const Spacer(),
-        _buildItemAction('assets/images/ic-contact.png', 'Danh bạ', () {
-          DialogWidget.instance.openMsgDialog(
-            title: 'Tính năng đang bảo trì',
-            msg: 'Vui lòng thử lại sau',
-          );
-        }),
+        _buildItemAction(
+          'assets/images/ic-contact.png',
+          'Danh bạ',
+          () {
+            Navigator.pushNamed(context, Routes.PHONE_BOOK);
+          },
+        ),
       ],
     );
   }

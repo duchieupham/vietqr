@@ -11,43 +11,52 @@ class MButtonWidget extends StatelessWidget {
   final Color? colorEnableText;
   final Color? colorDisableText;
   final double? height;
+  final Widget? widget;
 
-  const MButtonWidget(
-      {super.key,
-      required this.title,
-      this.margin,
-      this.onTap,
-      this.isEnable = false,
-      this.colorEnableBgr,
-      this.colorDisableBgr,
-      this.colorEnableText,
-      this.height,
-      this.colorDisableText});
+  const MButtonWidget({
+    super.key,
+    required this.title,
+    this.margin,
+    this.onTap,
+    this.isEnable = false,
+    this.colorEnableBgr,
+    this.colorDisableBgr,
+    this.colorEnableText,
+    this.height,
+    this.widget,
+    this.colorDisableText,
+  });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: isEnable ? onTap : null,
-      child: Container(
-        alignment: Alignment.center,
-        margin:
-            margin ?? const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-        height: height ?? 40,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5),
-          color: isEnable
-              ? colorEnableBgr ?? AppColor.BLUE_TEXT
-              : colorDisableBgr ?? AppColor.WHITE,
-        ),
-        child: Text(
-          title,
-          style: TextStyle(
-            color: isEnable
-                ? colorEnableText ?? AppColor.WHITE
-                : colorDisableText ?? AppColor.GREY_TEXT,
-            fontSize: 14,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            alignment: Alignment.center,
+            margin: margin ??
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            height: height ?? 40,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: isEnable
+                  ? colorEnableBgr ?? AppColor.BLUE_TEXT
+                  : colorDisableBgr ?? AppColor.WHITE,
+            ),
+            child: widget ??
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: isEnable
+                        ? colorEnableText ?? AppColor.WHITE
+                        : colorDisableText ?? AppColor.GREY_TEXT,
+                    fontSize: 14,
+                  ),
+                ),
           ),
-        ),
+        ],
       ),
     );
   }

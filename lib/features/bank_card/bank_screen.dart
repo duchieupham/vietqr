@@ -27,6 +27,7 @@ import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
 import 'package:vierqr/features/bank_card/widgets/function_bank_widget.dart';
 import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
+import 'package:vierqr/features/dashboard/views/dialog_scan_type_bank.dart';
 import 'package:vierqr/features/generate_qr/views/create_qr.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
 import 'package:vierqr/layouts/box_layout.dart';
@@ -718,10 +719,10 @@ class _StackedList extends State<StackedList> {
                           ),
                         const Padding(padding: EdgeInsets.only(left: 10)),
                         InkWell(
-                          onTap: () {
+                          onTap: () async {
                             Navigator.pushNamed(
                               context,
-                              Routes.CREATE_QR,
+                              Routes.PHONE_BOOK,
                               arguments: {
                                 'bankInfo': dto,
                               },

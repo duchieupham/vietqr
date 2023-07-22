@@ -1,9 +1,17 @@
 import 'package:equatable/equatable.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/models/bank_name_information_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 
-enum DashBoardType { GET_BANK, NONE, SCAN_ERROR, SCAN_NOT_FOUND, SCAN }
+enum DashBoardType {
+  GET_BANK,
+  NONE,
+  SCAN_ERROR,
+  SCAN_NOT_FOUND,
+  SCAN,
+  SEARCH_BANK_NAME
+}
 
 enum DashBoardTypePermission {
   None,
@@ -28,6 +36,7 @@ class DashBoardState extends Equatable {
   final BankTypeDTO? bankTypeDTO;
   final String bankAccount;
   final List<BankTypeDTO>? listBanks;
+  final BankNameInformationDTO? informationDTO;
 
   const DashBoardState({
     this.msg,
@@ -41,12 +50,13 @@ class DashBoardState extends Equatable {
     this.listBanks,
     this.bankTypeDTO,
     this.bankAccount = '',
+    this.informationDTO,
   });
 
   DashBoardState copyWith({
     BlocStatus? status,
     String? msg,
-    DashBoardTypePermission? type,
+    DashBoardTypePermission? typePermission,
     NationalScannerDTO? nationalScannerDTO,
     String? codeQR,
     String? barCode,
@@ -55,11 +65,12 @@ class DashBoardState extends Equatable {
     DashBoardType? request,
     List<BankTypeDTO>? listBanks,
     TypeQR? typeQR,
+    BankNameInformationDTO? informationDTO,
   }) {
     return DashBoardState(
       status: status ?? this.status,
       msg: msg ?? this.msg,
-      typePermission: type ?? this.typePermission,
+      typePermission: typePermission ?? this.typePermission,
       typeQR: typeQR ?? this.typeQR,
       nationalScannerDTO: nationalScannerDTO ?? this.nationalScannerDTO,
       codeQR: codeQR ?? this.codeQR,
@@ -68,6 +79,7 @@ class DashBoardState extends Equatable {
       bankAccount: bankAccount ?? this.bankAccount,
       request: request ?? this.request,
       listBanks: listBanks ?? this.listBanks,
+      informationDTO: informationDTO ?? this.informationDTO,
     );
   }
 
@@ -83,6 +95,7 @@ class DashBoardState extends Equatable {
         bankTypeDTO,
         bankAccount,
         request,
-        listBanks
+        listBanks,
+        informationDTO,
       ];
 }

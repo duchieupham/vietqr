@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
@@ -44,8 +45,17 @@ class CreateQrScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final args = ModalRoute.of(context)!.settings.arguments as Map;
+    BankAccountDTO? data;
+    QRGeneratedDTO? qrDto;
+    if (args.containsKey('bankInfo')) {
+      data = args['bankInfo'];
+    } else if (args.containsKey('qr')) {
+      qrDto = args['qr'];
+    }
+
     return BlocProvider<CreateQRBloc>(
-      create: (_) => CreateQRBloc(context),
+      create: (_) => CreateQRBloc(context, data, qrDto),
       child: ChangeNotifierProvider(
         create: (context) => CreateQRProvider(),
         child: _CreateQRScreen(),
@@ -86,9 +96,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
   }
 
   initData(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as Map;
-    BankAccountDTO? model = args['bankInfo'];
-    _bloc.add(QREventInitData(model));
+    _bloc.add(QrEventGetBankDetail());
   }
 
   @override
@@ -140,7 +148,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
       builder: (context, state) {
         return Consumer<CreateQRProvider>(
           builder: (context, provider, child) {
-            if (provider.page == 1) {
+            if (provider.page == 1 || state.page == 1) {
               return Scaffold(
                 body: SafeArea(
                   child: RepaintBoundaryWidget(
@@ -238,16 +246,19 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                         ),
                         child: Row(
                           children: [
-                            Container(
-                              width: 60,
-                              height: 30,
-                              margin: const EdgeInsets.only(left: 4),
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
+                            if (state.bankAccountDTO?.imgId != null &&
+                                state.bankAccountDTO!.imgId.isNotEmpty)
+                              Container(
+                                width: 60,
+                                height: 30,
+                                margin: const EdgeInsets.only(left: 4),
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
                                     image: ImageUtils.instance.getImageNetWork(
-                                        state.bankAccountDTO?.imgId ?? '')),
+                                        state.bankAccountDTO?.imgId ?? ''),
+                                  ),
+                                ),
                               ),
-                            ),
                             const SizedBox(width: 4),
                             Expanded(
                               child: Column(
@@ -299,10 +310,25 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                             fillColor: AppColor.WHITE,
                             textFieldType: TextfieldType.LABEL,
                             title: 'Số tiền',
+                            autoFocus: state.page == 0,
                             hintText: 'Nhập số tiền thanh toán',
                             inputType: TextInputType.number,
                             keyboardAction: TextInputAction.next,
                             onChange: provider.updateMoney,
+                            suffixIcon: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: const [
+                                Text(
+                                  'VND',
+                                  style: TextStyle(
+                                      fontSize: 14, color: AppColor.gray),
+                                ),
+                              ],
+                            ),
+                            inputFormatter: [
+                              FilteringTextInputFormatter.digitsOnly,
+                            ],
                           ),
                           Visibility(
                             visible: provider.errorAmount != null,
@@ -435,7 +461,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                   ),
                 ),
                 bottomSheet: MButtonWidget(
-                  title: 'Tạo QR',
+                  title: 'Tạo mã QR',
                   isEnable: provider.amountErr,
                   onTap: () {
                     FocusManager.instance.primaryFocus?.unfocus();

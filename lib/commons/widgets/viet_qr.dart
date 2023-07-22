@@ -31,11 +31,11 @@ class VietQr extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Container(
             margin:
-                const EdgeInsets.only(left: 20, right: 20, top: 40, bottom: 24),
+                const EdgeInsets.only(left: 8, right: 8, top: 30, bottom: 24),
             decoration: BoxDecoration(
               color: AppColor.WHITE,
               borderRadius: const BorderRadius.all(Radius.circular(16)),
@@ -94,7 +94,7 @@ class VietQr extends StatelessWidget {
                       SizedBox(width: width / 2 * 0.5),
                   ],
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 16),
               ],
             ),
           ),
