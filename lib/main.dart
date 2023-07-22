@@ -34,6 +34,7 @@ import 'package:vierqr/features/dashboard/dashboard_screen.dart';
 import 'package:vierqr/features/dashboard/theme_setting.dart';
 import 'package:vierqr/features/generate_qr/views/qr_share_view.dart';
 import 'package:vierqr/features/home/blocs/home_bloc.dart';
+import 'package:vierqr/features/introduce/views/introduce_screen.dart';
 import 'package:vierqr/features/notification/views/notification_view.dart';
 import 'package:vierqr/features/personal/views/national_information_view.dart';
 import 'package:vierqr/features/printer/blocs/printer_bloc.dart';
@@ -340,9 +341,10 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.NATIONAL_INFORMATION: (context) =>
                       const NationalInformationView(),
                   Routes.BUSINESS_TRANSACTION: (context) =>
-                      BusinessTransactionView(),
+                      const BusinessTransactionView(),
                   Routes.BRANCH_DETAIL: (context) => const BranchDetailView(),
                   Routes.CREATE_QR: (context) => const CreateQrScreen(),
+                  Routes.INTRODUCE_SCREEN: (context) => const IntroduceScreen(),
                 },
                 onGenerateRoute: (settings) {
                   if (settings.name == Routes.BUSINESS_INFORMATION_VIEW) {
