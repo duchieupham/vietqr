@@ -6,8 +6,9 @@ import 'package:vierqr/models/qr_generated_dto.dart';
 
 class DialogScanBank extends StatelessWidget {
   final QRGeneratedDTO dto;
+  final GestureTapCallback? onTap;
 
-  const DialogScanBank({super.key, required this.dto});
+  const DialogScanBank({super.key, required this.dto, this.onTap});
 
   final _dto = const QRGeneratedDTO(
       bankCode: '',
@@ -73,7 +74,6 @@ class DialogScanBank extends StatelessWidget {
                     child: VietQr(qrGeneratedDTO: dto),
                   ),
                 ),
-                const SizedBox(height: 30),
                 MButtonWidget(
                   title: 'Thêm TK ngân hàng',
                   onTap: () {},
@@ -81,7 +81,7 @@ class DialogScanBank extends StatelessWidget {
                 ),
                 MButtonWidget(
                   title: 'Lưu vào danh bạ',
-                  onTap: () {},
+                  onTap: onTap,
                   isEnable: true,
                   margin: const EdgeInsets.symmetric(horizontal: 20),
                 )

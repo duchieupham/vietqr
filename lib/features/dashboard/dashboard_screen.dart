@@ -12,9 +12,10 @@ import 'package:vierqr/features/business/views/business_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
 import 'package:vierqr/features/dashboard/views/dialog_scan_type_bank.dart';
-import 'package:vierqr/features/home/widgets/background_app_bar_home.dart';
-import 'package:vierqr/features/home/widgets/disconnect_widget.dart';
-import 'package:vierqr/features/home/widgets/maintain_widget.dart';
+import 'package:vierqr/features/dashboard/widget/background_app_bar_home.dart';
+import 'package:vierqr/features/dashboard/widget/disconnect_widget.dart';
+import 'package:vierqr/features/dashboard/widget/maintain_widget.dart';
+import 'package:vierqr/features/home/home.dart';
 import 'package:vierqr/features/notification/blocs/notification_bloc.dart';
 import 'package:vierqr/features/notification/events/notification_event.dart';
 import 'package:vierqr/features/notification/states/notification_state.dart';
@@ -25,6 +26,7 @@ import 'package:vierqr/features/token/blocs/token_bloc.dart';
 import 'package:vierqr/features/token/events/token_event.dart';
 import 'package:vierqr/features/token/states/token_state.dart';
 import 'package:vierqr/main.dart';
+import 'package:vierqr/models/add_phone_book_dto.dart';
 import 'package:vierqr/models/bank_name_search_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
@@ -90,11 +92,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
       [
         // const BankCardSelectView(key: PageStorageKey('QR_GENERATOR_PAGE')),
         const BankScreen(key: PageStorageKey('QR_GENERATOR_PAGE')),
-        const SizedBox(
-          child: Center(
-            child: Text('dâd'),
-          ),
-        ),
+        const HomeScreen(key: PageStorageKey('HOME_PAGE')),
         const BusinessScreen(key: PageStorageKey('SMS_LIST_PAGE')),
         // if (PlatformUtils.instance.isAndroidApp()) const IntroduceScreen(),
         AccountScreen(
@@ -352,7 +350,22 @@ class _DashBoardScreen extends State<DashBoardScreen>
               transitionDuration: const Duration(milliseconds: 200),
               pageBuilder: (BuildContext buildContext, Animation animation,
                   Animation secondaryAnimation) {
-                return DialogScanBank(dto: dto);
+                return DialogScanBank(
+                  dto: dto,
+                  onTap: () {
+                    AddPhoneBookDTO dto = AddPhoneBookDTO(
+                      additionalData: '',
+                      nickName: '',
+                      type: 0,
+                      value: '',
+                      userId: '',
+                      bankTypeId: '',
+                      bankAccount: '',
+                    );
+
+                    _dashBoardBloc.add(DashBoardEventAddPhoneBook(dto: dto));
+                  },
+                );
               },
             );
             // Navigator.pushNamed(
@@ -459,12 +472,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
   }) {
     return GestureDetector(
       onTap: () async {
-        if (index == 1) {
-          DialogWidget.instance.openMsgDialog(
-            title: 'Tính năng đang bảo trì',
-            msg: 'Vui lòng thử lại sau',
-          );
-        } else if (index != -1) {
+        if (index != -1) {
           _animatedToPage(index);
         } else {
           if (QRScannerHelper.instance.getQrIntro()) {
@@ -529,7 +537,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
   //get title page
   Widget _getTitlePaqe(BuildContext context, int indexSelected) {
     Widget titleWidget = const SizedBox();
-    if (indexSelected == 0) {
+    if (indexSelected == 0 || indexSelected == 1) {
       titleWidget = Consumer<BankCardSelectProvider>(
         builder: (context, provider, child) {
           return ButtonIconWidget(
@@ -552,17 +560,6 @@ class _DashBoardScreen extends State<DashBoardScreen>
       );
     }
 
-    if (indexSelected == 1) {
-      titleWidget = const Text(
-        'Mở tài khoản MB',
-        style: TextStyle(
-          fontFamily: 'NewYork',
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.2,
-        ),
-      );
-    }
     if (indexSelected == 2) {
       titleWidget = RichText(
         textAlign: TextAlign.left,

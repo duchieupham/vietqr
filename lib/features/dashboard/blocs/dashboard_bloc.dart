@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/base_manager.dart';
 import 'package:vierqr/commons/utils/log.dart';
@@ -12,6 +13,7 @@ import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
 import 'package:vierqr/models/bank_name_information_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
+import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/models/viet_qr_scanned_dto.dart';
 
 class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
@@ -24,6 +26,7 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
     on<PermissionEventRequest>(_requestPermissions);
     on<ScanQrEventGetBankType>(_getBankType);
     on<DashBoardEventSearchName>(_searchBankName);
+    on<DashBoardEventAddPhoneBook>(_addPhoneBook);
   }
 
   void _getPermissionStatus(DashBoardEvent event, Emitter emit) async {
@@ -132,6 +135,35 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
           emit(state.copyWith(
               status: BlocStatus.UNLOADING,
               informationDTO: dto,
+              request: DashBoardType.SEARCH_BANK_NAME));
+        } else {
+          emit(
+            state.copyWith(
+              request: DashBoardType.SCAN_NOT_FOUND,
+              status: BlocStatus.UNLOADING,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+        request: DashBoardType.SCAN_NOT_FOUND,
+        status: BlocStatus.UNLOADING,
+      ));
+    }
+  }
+
+  void _addPhoneBook(DashBoardEvent event, Emitter emit) async {
+    try {
+      if (event is DashBoardEventAddPhoneBook) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, request: DashBoardType.NONE));
+        ResponseMessageDTO result =
+            await bankCardRepository.addPhoneBook(event.dto);
+        if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
+          emit(state.copyWith(
+              status: BlocStatus.UNLOADING,
               request: DashBoardType.SEARCH_BANK_NAME));
         } else {
           emit(

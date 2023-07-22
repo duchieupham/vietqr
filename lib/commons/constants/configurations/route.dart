@@ -31,4 +31,5 @@ class Routes {
   static const String BUSINESS_TRANSACTION = '/businessTransaction';
   static const String BRANCH_DETAIL = '/branchDetail';
   static const String PHONE_BOOK = '/phoneBook';
+  static const String INTRODUCE_SCREEN = '/introduce';
 }

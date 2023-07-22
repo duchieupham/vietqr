@@ -4,3 +4,5 @@ class PhoneBookEvent extends Equatable {
   @override
   List<Object?> get props => [];
 }
+
+class PhoneBookEventGetList extends PhoneBookEvent {}

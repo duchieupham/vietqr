@@ -31,10 +31,10 @@ import 'package:vierqr/features/business/views/business_transaction_view.dart';
 import 'package:vierqr/features/create_qr/create_qr_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/dashboard_screen.dart';
+import 'package:vierqr/features/dashboard/theme_setting.dart';
 import 'package:vierqr/features/generate_qr/views/qr_share_view.dart';
 import 'package:vierqr/features/home/blocs/home_bloc.dart';
-import 'package:vierqr/features/home/home.dart';
-import 'package:vierqr/features/home/theme_setting.dart';
+import 'package:vierqr/features/introduce/views/introduce_screen.dart';
 import 'package:vierqr/features/notification/views/notification_view.dart';
 import 'package:vierqr/features/personal/views/national_information_view.dart';
 import 'package:vierqr/features/phone_book/phone_book_screen.dart';
@@ -52,8 +52,6 @@ import 'package:vierqr/features/scan_qr/blocs/scan_qr_bloc.dart';
 import 'package:vierqr/features/scan_qr/views/qr_scan_view.dart';
 import 'package:vierqr/features/token/blocs/token_bloc.dart';
 import 'package:vierqr/features/transaction/transaction_detail_screen.dart';
-import 'package:vierqr/features/transaction/views/transaction_detail_view.dart';
-import 'package:vierqr/features/transaction/views/transaction_history_view.dart';
 import 'package:vierqr/features/transaction/widgets/transaction_sucess_widget.dart';
 import 'package:vierqr/models/notification_transaction_success_dto.dart';
 import 'package:vierqr/services/local_notification/notification_service.dart';
@@ -348,8 +346,9 @@ class _VietQRApp extends State<VietQRApp> {
                       const BusinessTransactionView(),
                   Routes.BRANCH_DETAIL: (context) => const BranchDetailView(),
                   Routes.CREATE_QR: (context) => const CreateQrScreen(),
-                  // Routes.PHONE_BOOK: (context) => const PhoneBookScreen(),
-                  Routes.PHONE_BOOK: (context) => const SavePhoneBookScreen(),
+                  Routes.INTRODUCE_SCREEN: (context) => const IntroduceScreen(),
+                  Routes.PHONE_BOOK: (context) => const PhoneBookScreen(),
+                  // Routes.PHONE_BOOK: (context) => const SavePhoneBookScreen(),
                 },
                 onGenerateRoute: (settings) {
                   if (settings.name == Routes.BUSINESS_INFORMATION_VIEW) {
