@@ -581,6 +581,9 @@ class DialogWidget {
     VoidCallback? function,
     VoidCallback? functionConfirm,
     bool isSecondBT = false,
+    bool showImageWarning = true,
+    double width = 300,
+    double height = 300,
   }) {
     return showDialog(
         barrierDismissible: false,
@@ -590,8 +593,8 @@ class DialogWidget {
             color: AppColor.TRANSPARENT,
             child: Center(
               child: Container(
-                width: 300,
-                height: 300,
+                width: width,
+                height: height,
                 alignment: Alignment.center,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -603,11 +606,12 @@ class DialogWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Image.asset(
-                      'assets/images/ic-warning.png',
-                      width: 80,
-                      height: 80,
-                    ),
+                    if (showImageWarning)
+                      Image.asset(
+                        'assets/images/ic-warning.png',
+                        width: 80,
+                        height: 80,
+                      ),
                     const Padding(padding: EdgeInsets.only(top: 10)),
                     Text(
                       title,

@@ -3,7 +3,8 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
 
 class TextFieldWidget extends StatelessWidget {
-  final double width;
+  final double? width;
+  final double? height;
   final String hintText;
   final TextEditingController controller;
   final ValueChanged<Object>? onChange;
@@ -26,7 +27,7 @@ class TextFieldWidget extends StatelessWidget {
 
   const TextFieldWidget({
     Key? key,
-    required this.width,
+    this.width,
     required this.hintText,
     required this.controller,
     required this.keyboardAction,
@@ -46,6 +47,7 @@ class TextFieldWidget extends StatelessWidget {
     this.textAlign,
     this.onTapOutside,
     this.enable,
+    this.height = 60,
   }) : super(key: key);
 
   @override
@@ -53,7 +55,7 @@ class TextFieldWidget extends StatelessWidget {
     return (textfieldType != null && textfieldType == TextfieldType.LABEL)
         ? Container(
             width: width,
-            height: 60,
+            height: height,
             alignment: Alignment.centerLeft,
             child: Row(
               children: [
@@ -105,7 +107,7 @@ class TextFieldWidget extends StatelessWidget {
             ))
         : Container(
             width: width,
-            height: 60,
+            height: height,
             alignment: Alignment.center,
             child: TextField(
               obscureText: isObscureText,

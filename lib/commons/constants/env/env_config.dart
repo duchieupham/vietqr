@@ -5,7 +5,7 @@ import 'package:vierqr/commons/constants/env/stg_env.dart';
 import 'package:vierqr/commons/enums/env_type.dart';
 
 class EnvConfig {
-  static final Env _env = (getEnv() != EnvType.STG) ? StgEnv() : ProdEnv();
+  static final Env _env = (getEnv() == EnvType.STG) ? StgEnv() : ProdEnv();
 
   static String getBankUrl() {
     return _env.getBankUrl();

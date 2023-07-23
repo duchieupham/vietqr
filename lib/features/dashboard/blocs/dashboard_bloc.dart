@@ -163,13 +163,13 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
             await bankCardRepository.addPhoneBook(event.dto);
         if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
           emit(state.copyWith(
-              status: BlocStatus.UNLOADING,
-              request: DashBoardType.SEARCH_BANK_NAME));
+              status: BlocStatus.SUCCESS,
+              request: DashBoardType.ADD_BOOK_CONTACT));
         } else {
           emit(
             state.copyWith(
-              request: DashBoardType.SCAN_NOT_FOUND,
-              status: BlocStatus.UNLOADING,
+              request: DashBoardType.ADD_BOOK_CONTACT_EXIST,
+              status: BlocStatus.ERROR,
             ),
           );
         }
@@ -177,8 +177,8 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
     } catch (e) {
       LOG.error(e.toString());
       emit(state.copyWith(
-        request: DashBoardType.SCAN_NOT_FOUND,
-        status: BlocStatus.UNLOADING,
+        request: DashBoardType.ADD_BOOK_CONTACT_EXIST,
+        status: BlocStatus.ERROR,
       ));
     }
   }

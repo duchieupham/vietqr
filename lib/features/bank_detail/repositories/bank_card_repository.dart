@@ -391,7 +391,7 @@ class BankCardRepository {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getUrl()}contact';
+      final String url = '${EnvConfig.getBaseUrl()}contact';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: dto.toJson(),

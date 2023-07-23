@@ -463,6 +463,8 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                 bottomSheet: MButtonWidget(
                   title: 'Tạo mã QR',
                   isEnable: provider.amountErr,
+                  colorEnableText:
+                      provider.amountErr ? AppColor.WHITE : AppColor.GREY_TEXT,
                   onTap: () {
                     FocusManager.instance.primaryFocus?.unfocus();
                     String money = provider.money.replaceAll('.', '');

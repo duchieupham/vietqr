@@ -354,13 +354,13 @@ class _DashBoardScreen extends State<DashBoardScreen>
                   dto: dto,
                   onTap: () {
                     AddPhoneBookDTO dto = AddPhoneBookDTO(
-                      additionalData: '',
-                      nickName: '',
-                      type: 0,
-                      value: '',
-                      userId: '',
-                      bankTypeId: '',
-                      bankAccount: '',
+                      additionalData: 'Đã thêm từ quét QR',
+                      nickName: state.informationDTO?.accountName ?? '',
+                      type: 2,
+                      value: state.codeQR ?? '',
+                      userId: UserInformationHelper.instance.getUserId(),
+                      bankTypeId: state.bankTypeDTO?.id ?? '',
+                      bankAccount: state.bankAccount ?? '',
                     );
 
                     _dashBoardBloc.add(DashBoardEventAddPhoneBook(dto: dto));
@@ -378,6 +378,31 @@ class _DashBoardScreen extends State<DashBoardScreen>
             //     'name': ''
             //   },
             // );
+          }
+          if (state.request == DashBoardType.ADD_BOOK_CONTACT) {
+            DialogWidget.instance.openMsgDialog(
+              title: 'Thành công',
+              msg: 'Đã thêm vào danh bạ',
+              showImageWarning: false,
+              height: 190,
+              function: () {
+                Navigator.pop(context);
+                if (Navigator.canPop(context)) {
+                  Navigator.pop(context);
+                }
+              },
+            );
+          }
+          if (state.request == DashBoardType.ADD_BOOK_CONTACT_EXIST) {
+            DialogWidget.instance.openMsgDialog(
+              title: 'Thất bại',
+              msg: 'Tài khoản đã tồn tại trong danh bạ',
+              function: () {
+                if (Navigator.canPop(context)) {
+                  Navigator.pop(context);
+                }
+              },
+            );
           }
         },
         child: Scaffold(
