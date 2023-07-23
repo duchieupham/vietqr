@@ -83,6 +83,16 @@ class UserEditView extends StatelessWidget {
       _firstNameController.value = _firstNameController.value
           .copyWith(text: accountInformationDTO.firstName);
     }
+    if (accountInformationDTO.nationalId.isNotEmpty &&
+        _nationalIdController.text.isEmpty) {
+      _nationalIdController.value = _nationalIdController.value
+          .copyWith(text: accountInformationDTO.nationalId);
+    }
+    if (accountInformationDTO.oldNationalId.isNotEmpty &&
+        _oldNationalIdController.text.isEmpty) {
+      _oldNationalIdController.value = _oldNationalIdController.value
+          .copyWith(text: accountInformationDTO.oldNationalId);
+    }
     _birthDate = accountInformationDTO.birthDate;
     if (accountInformationDTO.nationalDate.isEmpty) {
       _nationalDate = '01/01/1970';

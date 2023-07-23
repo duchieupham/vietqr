@@ -561,6 +561,9 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                           : MButtonWidget(
                               title: 'Lưu tài khoản',
                               isEnable: provider.isEnableButton,
+                              colorEnableText: provider.isEnableButton
+                                  ? AppColor.WHITE
+                                  : AppColor.GREY_TEXT,
                               onTap: () {
                                 FocusManager.instance.primaryFocus?.unfocus();
                                 String bankTypeId = provider.bankTypeDTO!.id;

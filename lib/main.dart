@@ -37,8 +37,10 @@ import 'package:vierqr/features/home/blocs/home_bloc.dart';
 import 'package:vierqr/features/introduce/views/introduce_screen.dart';
 import 'package:vierqr/features/notification/views/notification_view.dart';
 import 'package:vierqr/features/personal/views/national_information_view.dart';
+import 'package:vierqr/features/phone_book/blocs/phone_book_bloc.dart';
 import 'package:vierqr/features/phone_book/phone_book_screen.dart';
 import 'package:vierqr/features/phone_book/save_phone_book_screen.dart';
+import 'package:vierqr/features/phone_book/views/phone_book_detail.dart';
 import 'package:vierqr/features/printer/blocs/printer_bloc.dart';
 import 'package:vierqr/features/printer/views/printer_setting_view.dart';
 import 'package:vierqr/features/logout/blocs/log_out_bloc.dart';
@@ -51,9 +53,11 @@ import 'package:vierqr/features/personal/views/user_update_password_view.dart';
 import 'package:vierqr/features/scan_qr/blocs/scan_qr_bloc.dart';
 import 'package:vierqr/features/scan_qr/views/qr_scan_view.dart';
 import 'package:vierqr/features/token/blocs/token_bloc.dart';
+import 'package:vierqr/features/top_up/top_up_screen.dart';
 import 'package:vierqr/features/transaction/transaction_detail_screen.dart';
 import 'package:vierqr/features/transaction/widgets/transaction_sucess_widget.dart';
 import 'package:vierqr/models/notification_transaction_success_dto.dart';
+import 'package:vierqr/models/phone_book_dto.dart';
 import 'package:vierqr/services/local_notification/notification_service.dart';
 import 'package:vierqr/services/providers/action_share_provider.dart';
 import 'package:vierqr/services/providers/add_business_provider.dart';
@@ -349,6 +353,7 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.INTRODUCE_SCREEN: (context) => const IntroduceScreen(),
                   Routes.PHONE_BOOK: (context) => const PhoneBookScreen(),
                   // Routes.PHONE_BOOK: (context) => const SavePhoneBookScreen(),
+                  Routes.TOP_UP: (context) => const TopUpScreen(),
                 },
                 onGenerateRoute: (settings) {
                   if (settings.name == Routes.BUSINESS_INFORMATION_VIEW) {
@@ -356,6 +361,17 @@ class _VietQRApp extends State<VietQRApp> {
                       pageBuilder: (context, animation1, animation2) =>
                           const BusinessInformationView(),
                       transitionDuration: const Duration(milliseconds: 300),
+                    );
+                  }
+                  if (settings.name == Routes.PHONE_BOOK_DETAIL) {
+                    PhoneBookDTO _dto = settings.arguments as PhoneBookDTO;
+
+                    return MaterialPageRoute(
+                      builder: (context) {
+                        return PhoneDetailScreen(
+                          dto: _dto,
+                        );
+                      },
                     );
                   }
 

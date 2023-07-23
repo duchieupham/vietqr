@@ -10,7 +10,9 @@ enum DashBoardType {
   SCAN_ERROR,
   SCAN_NOT_FOUND,
   SCAN,
-  SEARCH_BANK_NAME
+  SEARCH_BANK_NAME,
+  ADD_BOOK_CONTACT,
+  ADD_BOOK_CONTACT_EXIST,
 }
 
 enum DashBoardTypePermission {

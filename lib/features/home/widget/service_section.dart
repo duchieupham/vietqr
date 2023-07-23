@@ -28,10 +28,7 @@ class ServiceSection extends StatelessWidget {
       children: [
         _buildItemService(
             'assets/images/ic-phone-money.png', 'Nạp tiền\nđiện thoại', () {
-          DialogWidget.instance.openMsgDialog(
-            title: 'Tính năng đang bảo trì',
-            msg: 'Vui lòng thử lại sau',
-          );
+          Navigator.pushNamed(context, Routes.TOP_UP);
         }),
         _buildItemService('assets/images/ic-mb.png', 'Mở TK\nMB Bank', () {
           Navigator.pushNamed(context, Routes.INTRODUCE_SCREEN);

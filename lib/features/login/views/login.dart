@@ -117,6 +117,7 @@ class _LoginState extends State<_Login> {
 
         if (state.request == LoginType.ERROR) {
           FocusManager.instance.primaryFocus?.unfocus();
+          Navigator.of(context).pop();
           //pop loading dialog
           //show msg dialog
           DialogWidget.instance.openMsgDialog(
@@ -294,6 +295,9 @@ class _LoginState extends State<_Login> {
                   bottomSheet: MButtonWidget(
                     title: 'Đăng nhập',
                     isEnable: provider.isButtonLogin,
+                    colorEnableText: provider.isButtonLogin
+                        ? AppColor.WHITE
+                        : AppColor.GREY_TEXT,
                     onTap: () {
                       AccountLoginDTO dto = AccountLoginDTO(
                         phoneNo: provider.phone,
@@ -368,6 +372,9 @@ class _LoginState extends State<_Login> {
                     MButtonWidget(
                       title: 'Tiếp tục',
                       isEnable: provider.isEnableButton,
+                      colorEnableText: provider.isEnableButton
+                          ? AppColor.WHITE
+                          : AppColor.GREY_TEXT,
                       onTap: () {
                         FocusManager.instance.primaryFocus?.unfocus();
                         _bloc.add(CheckExitsPhoneEvent(phone: provider.phone));

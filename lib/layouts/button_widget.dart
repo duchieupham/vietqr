@@ -12,7 +12,8 @@ class MButtonWidget extends StatelessWidget {
   final Color? colorDisableText;
   final double? height;
   final Widget? widget;
-
+  final double? width;
+  final double? fontSize;
   const MButtonWidget({
     super.key,
     required this.title,
@@ -24,7 +25,9 @@ class MButtonWidget extends StatelessWidget {
     this.colorEnableText,
     this.height,
     this.widget,
+    this.width,
     this.colorDisableText,
+    this.fontSize = 14,
   });
 
   @override
@@ -39,6 +42,7 @@ class MButtonWidget extends StatelessWidget {
             margin: margin ??
                 const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
             height: height ?? 40,
+            width: width,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
               color: isEnable
@@ -49,10 +53,8 @@ class MButtonWidget extends StatelessWidget {
                 Text(
                   title,
                   style: TextStyle(
-                    color: isEnable
-                        ? colorEnableText ?? AppColor.WHITE
-                        : colorDisableText ?? AppColor.GREY_TEXT,
-                    fontSize: 14,
+                    color: colorEnableText ?? AppColor.WHITE,
+                    fontSize: fontSize,
                   ),
                 ),
           ),
