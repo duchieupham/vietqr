@@ -138,14 +138,6 @@ class _AccountScreenState extends State<AccountScreen>
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.all(Radius.circular(10)),
           color: Theme.of(context).cardColor,
-          boxShadow: [
-            BoxShadow(
-              color: AppColor.GREY_LIGHT.withOpacity(0.1),
-              spreadRadius: 1,
-              blurRadius: 5,
-              offset: const Offset(0, 2), // changes position of shadow
-            ),
-          ],
         ),
         child: const Text(
           'Đăng xuất',
@@ -337,14 +329,6 @@ class _IntroduceWidget extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(10)),
         color: Theme.of(context).cardColor,
-        boxShadow: [
-          BoxShadow(
-            color: AppColor.GREY_LIGHT.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 5,
-            offset: const Offset(0, 2), // changes position of shadow
-          ),
-        ],
       ),
       child: Column(
         children: [
@@ -432,14 +416,6 @@ class _SettingWidget extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(10)),
               color: Theme.of(context).cardColor,
-              boxShadow: [
-                BoxShadow(
-                  color: AppColor.GREY_LIGHT.withOpacity(0.1),
-                  spreadRadius: 1,
-                  blurRadius: 5,
-                  offset: const Offset(0, 2), // changes position of shadow
-                ),
-              ],
             ),
             child: Column(
               children: [
