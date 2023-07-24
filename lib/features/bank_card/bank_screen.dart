@@ -722,7 +722,7 @@ class _StackedList extends State<StackedList> {
                           onTap: () async {
                             Navigator.pushNamed(
                               context,
-                              Routes.PHONE_BOOK,
+                              Routes.CREATE_QR,
                               arguments: {
                                 'bankInfo': dto,
                               },

@@ -11,6 +11,9 @@ enum CreateQRType {
   UPLOAD_IMAGE,
   ERROR,
   PAID,
+  LOAD_DATA,
+  SCAN_QR,
+  SCAN_NOT_FOUND,
 }
 
 class CreateQRState extends Equatable {
@@ -22,6 +25,7 @@ class CreateQRState extends Equatable {
   final AccountBankDetailDTO? bankDetailDTO;
   final NotificationTransactionSuccessDTO? transDTO;
   final int page;
+  final String? barCode;
 
   const CreateQRState({
     this.status = BlocStatus.NONE,
@@ -32,6 +36,7 @@ class CreateQRState extends Equatable {
     this.bankDetailDTO,
     this.transDTO,
     this.page = -1,
+    this.barCode,
   });
 
   CreateQRState copyWith({
@@ -43,6 +48,7 @@ class CreateQRState extends Equatable {
     AccountBankDetailDTO? bankDetailDTO,
     NotificationTransactionSuccessDTO? transDTO,
     int? page,
+    String? barCode,
   }) {
     return CreateQRState(
       status: status ?? this.status,
@@ -53,6 +59,7 @@ class CreateQRState extends Equatable {
       bankDetailDTO: bankDetailDTO ?? this.bankDetailDTO,
       transDTO: transDTO ?? this.transDTO,
       page: page ?? this.page,
+      barCode: barCode ?? this.barCode,
     );
   }
 
@@ -65,5 +72,6 @@ class CreateQRState extends Equatable {
         bankAccountDTO,
         bankDetailDTO,
         page,
+        barCode,
       ];
 }

@@ -352,7 +352,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
                   Animation secondaryAnimation) {
                 return DialogScanBank(
                   dto: dto,
-                  onTap: () {
+                  onTapSave: () {
                     AddPhoneBookDTO dto = AddPhoneBookDTO(
                       additionalData: 'Đã thêm từ quét QR',
                       nickName: state.informationDTO?.accountName ?? '',

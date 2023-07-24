@@ -8,8 +8,10 @@ import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/create_qr/events/create_qr_event.dart';
 import 'package:vierqr/features/create_qr/states/create_qr_state.dart';
 import 'package:vierqr/features/generate_qr/repositories/qr_repository.dart';
+import 'package:vierqr/features/home/blocs/home_bloc.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
+import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/models/notification_transaction_success_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
@@ -26,6 +28,7 @@ class CreateQRBloc extends Bloc<CreateQREvent, CreateQRState> with BaseManager {
     on<QREventGenerate>(_generateQR);
     on<QREventUploadImage>(_uploadImage);
     on<QREventPaid>(_onPaid);
+    on<QrEventScanGetBankType>(_getDataScan);
   }
 
   final qrRepository = const QRRepository();
@@ -33,14 +36,16 @@ class CreateQRBloc extends Bloc<CreateQREvent, CreateQRState> with BaseManager {
   void _initData(CreateQREvent event, Emitter emit) async {
     try {
       if (event is QrEventGetBankDetail) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, type: CreateQRType.NONE));
         if (bankAccountDTO != null) {
           final AccountBankDetailDTO dto = await bankCardRepository
               .getAccountBankDetail(bankAccountDTO?.id ?? '');
           emit(
             state.copyWith(
               bankDetailDTO: dto,
-              status: BlocStatus.NONE,
-              type: CreateQRType.NONE,
+              status: BlocStatus.UNLOADING,
+              type: CreateQRType.LOAD_DATA,
               bankAccountDTO: bankAccountDTO,
               page: 0,
             ),
@@ -49,8 +54,8 @@ class CreateQRBloc extends Bloc<CreateQREvent, CreateQRState> with BaseManager {
           emit(
             state.copyWith(
               dto: qrDTO,
-              status: BlocStatus.NONE,
-              type: CreateQRType.NONE,
+              status: BlocStatus.UNLOADING,
+              type: CreateQRType.LOAD_DATA,
               page: 1,
             ),
           );
@@ -124,6 +129,34 @@ class CreateQRBloc extends Bloc<CreateQREvent, CreateQRState> with BaseManager {
     } catch (e) {
       LOG.error(e.toString());
       emit(state.copyWith(status: BlocStatus.ERROR));
+    }
+  }
+
+  void _getDataScan(CreateQREvent event, Emitter emit) {
+    if (event is QrEventScanGetBankType) {
+      emit(state.copyWith(type: CreateQRType.NONE, status: BlocStatus.LOADING));
+      NationalScannerDTO nationalScannerDTO =
+          homeRepository.getNationalInformation(event.code);
+      if (nationalScannerDTO.nationalId.trim().isNotEmpty) {
+        emit(
+          state.copyWith(
+            barCode: nationalScannerDTO.nationalId,
+            type: CreateQRType.SCAN_QR,
+            status: BlocStatus.UNLOADING,
+          ),
+        );
+      } else if (event.code.isNotEmpty) {
+        emit(state.copyWith(
+          barCode: event.code,
+          type: CreateQRType.SCAN_QR,
+          status: BlocStatus.UNLOADING,
+        ));
+      } else {
+        emit(state.copyWith(
+          type: CreateQRType.SCAN_NOT_FOUND,
+          status: BlocStatus.UNLOADING,
+        ));
+      }
     }
   }
 }

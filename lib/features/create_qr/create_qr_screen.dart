@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
@@ -75,6 +76,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
 
   final imagePicker = ImagePicker();
   final GlobalKey globalKey = GlobalKey();
+  final _focusMoney = FocusNode();
 
   final dto = const QRGeneratedDTO(
       bankCode: '',
@@ -122,6 +124,14 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
           }
         }
 
+        if (state.type == CreateQRType.LOAD_DATA) {
+          Provider.of<CreateQRProvider>(context, listen: false)
+              .updatePage(state.page);
+          if (state.page == 0) {
+            _focusMoney.requestFocus();
+          }
+        }
+
         if (state.type == CreateQRType.UPLOAD_IMAGE) {
           Provider.of<CreateQRProvider>(context, listen: false).setImage(null);
         }
@@ -138,6 +148,33 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
           } else {
             Navigator.of(context).pop();
           }
+        }
+
+        if (state.type == CreateQRType.SCAN_QR) {
+          if (state.barCode != '-1') {
+            if (!mounted) return;
+            Provider.of<CreateQRProvider>(context, listen: false)
+                    .contentController
+                    .value =
+                Provider.of<CreateQRProvider>(context, listen: false)
+                    .contentController
+                    .value
+                    .copyWith(text: state.barCode);
+          }
+        }
+
+        if (state.type == CreateQRType.SCAN_NOT_FOUND) {
+          DialogWidget.instance.openMsgDialog(
+            title: 'Không thể xác nhận mã QR',
+            msg:
+                'Không tìm thấy thông tin trong đoạn mã QR. Vui lòng kiểm tra lại thông tin.',
+            function: () {
+              Navigator.pop(context);
+              if (Navigator.canPop(context)) {
+                Navigator.pop(context);
+              }
+            },
+          );
         }
 
         if (state.type == CreateQRType.ERROR) {
@@ -310,7 +347,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                             fillColor: AppColor.WHITE,
                             textFieldType: TextfieldType.LABEL,
                             title: 'Số tiền',
-                            autoFocus: state.page == 0,
+                            focusNode: _focusMoney,
                             hintText: 'Nhập số tiền thanh toán',
                             inputType: TextInputType.number,
                             keyboardAction: TextInputAction.next,
@@ -352,6 +389,17 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                             title: 'Nội dung',
                             hintText: 'Nhập nội dung thanh toán',
                             inputType: TextInputType.text,
+                            suffixIcon: GestureDetector(
+                              onTap: () {
+                                FocusManager.instance.primaryFocus?.unfocus();
+                                startBarcodeScanStream(context);
+                              },
+                              child: Image.asset(
+                                'assets/images/ic-barcode.png',
+                                width: 24,
+                                height: 24,
+                              ),
+                            ),
                             keyboardAction: TextInputAction.next,
                             onChange: (value) {},
                           ),
@@ -489,6 +537,28 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
     );
   }
 
+  Future<void> startBarcodeScanStream(BuildContext context) async {
+    String data = await FlutterBarcodeScanner.scanBarcode(
+        '#ff6666', 'Cancel', true, ScanMode.DEFAULT);
+    if (data.isNotEmpty) {
+      if (data == TypeQR.NEGATIVE_TWO.value) {
+        DialogWidget.instance.openMsgDialog(
+          title: 'Không thể xác nhận mã QR',
+          msg: 'Ảnh QR không đúng định dạng, vui lòng chọn ảnh khác.',
+          function: () {
+            Navigator.pop(context);
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+          },
+        );
+      } else {
+        if (!mounted) return;
+        _bloc.add(QrEventScanGetBankType(code: data));
+      }
+    }
+  }
+
   Widget _buildButton(
       {File? fileImage,
       double progressBar = 0,
@@ -517,7 +587,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                     if (fileImage != null) {
                       dialogExits();
                     } else {
-                      Navigator.of(context).pop();
+                      Navigator.of(context).popUntil((route) => route.isFirst);
                     }
                   },
                   child: Container(
