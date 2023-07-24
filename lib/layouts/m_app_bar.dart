@@ -56,13 +56,18 @@ class MAppBar extends StatelessWidget implements PreferredSizeWidget {
         automaticallyImplyLeading: false,
         actions: actions ??
             [
-              Container(
-                width: 60,
-                height: 40,
-                margin: const EdgeInsets.only(right: 20),
-                child: Image.asset(
-                  'assets/images/ic-viet-qr.png',
+              GestureDetector(
+                onTap: () {
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                },
+                child: Container(
+                  width: 60,
                   height: 40,
+                  margin: const EdgeInsets.only(right: 20),
+                  child: Image.asset(
+                    'assets/images/ic-viet-qr.png',
+                    height: 40,
+                  ),
                 ),
               ),
             ],

@@ -90,12 +90,13 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
                 typeQR: TypeQR.QR_BANK,
                 request: DashBoardType.SCAN,
                 codeQR: event.code,
+                typePhoneBook: TypePhoneBook.Bank,
               ),
             );
           } else {
             emit(state.copyWith(request: DashBoardType.SCAN_ERROR));
           }
-        } else {
+        } else if (event.code.contains('|')) {
           NationalScannerDTO nationalScannerDTO =
               dashBoardRepository.getNationalInformation(event.code);
           if (nationalScannerDTO.nationalId.trim().isNotEmpty) {
@@ -105,6 +106,7 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
                 request: DashBoardType.SCAN,
                 typeQR: TypeQR.QR_CMT,
                 codeQR: event.code,
+                typePhoneBook: TypePhoneBook.Other,
               ),
             );
           } else if (event.code.isNotEmpty) {
@@ -112,6 +114,7 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
               barCode: event.code,
               request: DashBoardType.SCAN,
               typeQR: TypeQR.QR_BARCODE,
+              typePhoneBook: TypePhoneBook.Bank,
             ));
           } else {
             emit(state.copyWith(request: DashBoardType.SCAN_NOT_FOUND));

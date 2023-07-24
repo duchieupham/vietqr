@@ -94,3 +94,44 @@ extension TypeQRExt on TypeQR {
     }
   }
 }
+
+enum TypePhoneBook {
+  VietQR_ID,
+  Bank,
+  Other,
+  NONE,
+}
+// 1: VietQR ID
+// 2: Bank
+// 3: Khác
+
+extension TypePhoneBookExt on int {
+  TypePhoneBook get type {
+    switch (this) {
+      case 1:
+        return TypePhoneBook.VietQR_ID;
+      case 2:
+        return TypePhoneBook.Bank;
+      case 3:
+        return TypePhoneBook.Other;
+      default:
+        return TypePhoneBook.NONE;
+    }
+  }
+}
+
+extension TypePhoneBookExt2 on TypePhoneBook {
+  int get value {
+    switch (this) {
+      case TypePhoneBook.VietQR_ID:
+        return 1;
+      case TypePhoneBook.Bank:
+        return 2;
+      case TypePhoneBook.Other:
+        return 3;
+      case TypePhoneBook.NONE:
+      default:
+        return -1;
+    }
+  }
+}

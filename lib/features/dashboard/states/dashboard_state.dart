@@ -39,6 +39,7 @@ class DashBoardState extends Equatable {
   final String bankAccount;
   final List<BankTypeDTO>? listBanks;
   final BankNameInformationDTO? informationDTO;
+  final TypePhoneBook? typePhoneBook;
 
   const DashBoardState({
     this.msg,
@@ -53,6 +54,7 @@ class DashBoardState extends Equatable {
     this.bankTypeDTO,
     this.bankAccount = '',
     this.informationDTO,
+    this.typePhoneBook,
   });
 
   DashBoardState copyWith({
@@ -68,6 +70,7 @@ class DashBoardState extends Equatable {
     List<BankTypeDTO>? listBanks,
     TypeQR? typeQR,
     BankNameInformationDTO? informationDTO,
+    TypePhoneBook? typePhoneBook,
   }) {
     return DashBoardState(
       status: status ?? this.status,
@@ -82,6 +85,7 @@ class DashBoardState extends Equatable {
       request: request ?? this.request,
       listBanks: listBanks ?? this.listBanks,
       informationDTO: informationDTO ?? this.informationDTO,
+      typePhoneBook: typePhoneBook ?? this.typePhoneBook,
     );
   }
 
@@ -99,5 +103,6 @@ class DashBoardState extends Equatable {
         request,
         listBanks,
         informationDTO,
+        typePhoneBook,
       ];
 }

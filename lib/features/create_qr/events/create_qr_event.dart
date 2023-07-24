@@ -57,3 +57,12 @@ class QREventPaid extends CreateQREvent {
   @override
   List<Object?> get props => [id];
 }
+
+class QrEventScanGetBankType extends CreateQREvent {
+  final String code;
+
+  QrEventScanGetBankType({required this.code});
+
+  @override
+  List<Object?> get props => [code];
+}

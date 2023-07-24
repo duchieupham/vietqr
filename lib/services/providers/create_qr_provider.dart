@@ -16,7 +16,7 @@ class CreateQRProvider with ChangeNotifier {
 
   //page = 1 : Tạo QR
   //page = 2 : chi tiết QR
-  int page = 0;
+  int page = -1;
 
   //errors
   bool _isAmountErr = false;
