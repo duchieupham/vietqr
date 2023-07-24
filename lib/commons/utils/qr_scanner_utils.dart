@@ -1,5 +1,6 @@
 import 'package:vierqr/commons/constants/vietqr/aid.dart';
 import 'package:vierqr/commons/constants/vietqr/viet_qr_id.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/models/viet_qr_scanned_dto.dart';
 
@@ -7,6 +8,7 @@ class QRScannerUtils {
   const QRScannerUtils._privateConsrtructor();
 
   static const QRScannerUtils _instance = QRScannerUtils._privateConsrtructor();
+
   static QRScannerUtils get instance => _instance;
 
   VietQRScannedDTO getBankAccountFromQR(String qr) {
@@ -62,5 +64,21 @@ class QRScannerUtils {
     }
 
     return result;
+  }
+
+  Future<TypeQR> checkScan(String code) async {
+    VietQRScannedDTO vietQRScannedDTO =
+        QRScannerUtils.instance.getBankAccountFromQR(code);
+    if (vietQRScannedDTO.caiValue.isNotEmpty &&
+        vietQRScannedDTO.bankAccount.isNotEmpty) {
+      return TypeQR.QR_BANK;
+    } else if (code.contains('|')) {
+      return TypeQR.QR_CMT;
+    } else if (code.trim().contains('VQRID')) {
+      return TypeQR.VietQR_ID;
+    } else if (code.trim().contains('http') || code.trim().contains('https')) {
+      return TypeQR.QR_LINK;
+    }
+    return TypeQR.OTHER;
   }
 }

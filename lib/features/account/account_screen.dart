@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
@@ -15,6 +16,7 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/account/blocs/account_bloc.dart';
 import 'package:vierqr/features/account/events/account_event.dart';
 import 'package:vierqr/features/account/states/account_state.dart';
+import 'package:vierqr/features/account/views/dialog_my_qr.dart';
 import 'package:vierqr/features/personal/views/introduce_bottom_sheet.dart';
 import 'package:vierqr/models/introduce_dto.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
@@ -28,10 +30,10 @@ class IconData {
 }
 
 List<IconData> listIcon = [
-  // IconData(
-  //   url: 'assets/images/ic-my-qr-setting.png',
-  //   name: 'QR của tôi',
-  // ),
+  IconData(
+    url: 'assets/images/ic-my-qr-setting.png',
+    name: 'QR của tôi',
+  ),
   IconData(
     url: 'assets/images/ic-edit-personal-setting.png',
     name: 'Cá nhân',
@@ -109,7 +111,7 @@ class _AccountScreenState extends State<AccountScreen>
               children: [
                 _BannerWidget(),
                 const SizedBox(height: 30),
-                _FeatureWidget(),
+                _FeatureWidget(code: state.introduceDTO?.walletId ?? ''),
                 const SizedBox(height: 30),
                 _IntroduceWidget(dto: state.introduceDTO),
                 const SizedBox(height: 20),
@@ -138,14 +140,6 @@ class _AccountScreenState extends State<AccountScreen>
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.all(Radius.circular(10)),
           color: Theme.of(context).cardColor,
-          boxShadow: [
-            BoxShadow(
-              color: AppColor.GREY_LIGHT.withOpacity(0.1),
-              spreadRadius: 1,
-              blurRadius: 5,
-              offset: const Offset(0, 2), // changes position of shadow
-            ),
-          ],
         ),
         child: const Text(
           'Đăng xuất',
@@ -230,25 +224,57 @@ class _BannerWidget extends StatelessWidget {
 }
 
 class _FeatureWidget extends StatelessWidget {
+  final String code;
   final ImagePicker imagePicker = ImagePicker();
+
+  _FeatureWidget({super.key, required this.code});
 
   void onTap(BuildContext context, int index) {
     switch (index) {
       case 0:
-        onNaviAccount(context);
+        onMyQr(context,
+            code: code,
+            userName: UserInformationHelper.instance.getUserFullname());
         break;
       case 1:
-        onChangeAvatar();
+        onNaviAccount(context);
         break;
       case 2:
-        onNaviPassword(context);
+        onChangeAvatar();
         break;
       case 3:
+        onNaviPassword(context);
+        break;
       default:
         () {
           Navigator.of(context).pushNamed(Routes.USER_EDIT);
         };
     }
+  }
+
+  void onMyQr(
+    BuildContext context, {
+    required String code,
+    required String userName,
+    GestureTapCallback? onTapShare,
+  }) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierColor: Colors.black45,
+      transitionDuration: const Duration(milliseconds: 200),
+      pageBuilder: (BuildContext buildContext, Animation animation,
+          Animation secondaryAnimation) {
+        return DialogMyQR(
+          code: code,
+          userName: userName,
+          onTapShare: () {
+            Share.share(code);
+          },
+        );
+      },
+    );
   }
 
   void onNaviAccount(BuildContext context) {
@@ -337,14 +363,6 @@ class _IntroduceWidget extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(10)),
         color: Theme.of(context).cardColor,
-        boxShadow: [
-          BoxShadow(
-            color: AppColor.GREY_LIGHT.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 5,
-            offset: const Offset(0, 2), // changes position of shadow
-          ),
-        ],
       ),
       child: Column(
         children: [
@@ -432,14 +450,6 @@ class _SettingWidget extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(10)),
               color: Theme.of(context).cardColor,
-              boxShadow: [
-                BoxShadow(
-                  color: AppColor.GREY_LIGHT.withOpacity(0.1),
-                  spreadRadius: 1,
-                  blurRadius: 5,
-                  offset: const Offset(0, 2), // changes position of shadow
-                ),
-              ],
             ),
             child: Column(
               children: [

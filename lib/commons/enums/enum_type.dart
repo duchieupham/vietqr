@@ -73,9 +73,12 @@ extension TypeRoleExt on TypeRole {
 
 enum TypeQR {
   NONE,
+  VietQR_ID,
   QR_CMT,
   QR_BANK,
   QR_BARCODE,
+  OTHER,
+  QR_LINK,
   NEGATIVE_TWO,
   NEGATIVE_ONE,
 }
@@ -104,6 +107,9 @@ enum TypePhoneBook {
 // 1: VietQR ID
 // 2: Bank
 // 3: Khác
+// 4: CMT
+// 5: link
+// 5: BarCode
 
 extension TypePhoneBookExt on int {
   TypePhoneBook get type {
@@ -132,6 +138,20 @@ extension TypePhoneBookExt2 on TypePhoneBook {
       case TypePhoneBook.NONE:
       default:
         return -1;
+    }
+  }
+
+  String get typeName {
+    switch (this) {
+      case TypePhoneBook.VietQR_ID:
+        return 'VietQR ID';
+      case TypePhoneBook.Bank:
+        return 'Bank';
+      case TypePhoneBook.Other:
+        return 'Khác';
+      case TypePhoneBook.NONE:
+      default:
+        return '';
     }
   }
 }

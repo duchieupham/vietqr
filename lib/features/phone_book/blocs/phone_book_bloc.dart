@@ -3,7 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/base_manager.dart';
+import 'package:vierqr/commons/utils/check_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
+import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/phone_book/events/phone_book_event.dart';
 import 'package:vierqr/features/phone_book/repostiroties/phone_book_repository.dart';
 import 'package:vierqr/features/phone_book/states/phone_book_state.dart';
@@ -16,16 +18,24 @@ class PhoneBookBloc extends Bloc<PhoneBookEvent, PhoneBookState>
   @override
   BuildContext context;
 
-  PhoneBookBloc(this.context)
-      : super(PhoneBookState(
-            listPhoneBookDTO: const [],
-            listPhoneBookDTOSuggest: const [],
-            phoneBookDetailDTO: PhoneBookDetailDTO())) {
-    on<PhoneBookEventGetList>(_getListPhoneBook);
+  final String qrCode;
+  final TypePhoneBook typeQR;
 
+  PhoneBookBloc(this.context,
+      {this.qrCode = '', this.typeQR = TypePhoneBook.NONE})
+      : super(PhoneBookState(
+          listPhoneBookDTO: const [],
+          listPhoneBookDTOSuggest: const [],
+          phoneBookDetailDTO: PhoneBookDetailDTO(),
+          qrCode: qrCode,
+          typeQR: typeQR,
+        )) {
+    on<PhoneBookEventGetList>(_getListPhoneBook);
     on<PhoneBookEventGetListPending>(_getListPhoneBookPending);
     on<PhoneBookEventGetDetail>(_getDetailPhoneBook);
     on<RemovePhoneBookEvent>(_removePhoneBook);
+    on<UpdatePhoneBookEvent>(_updatePhoneBook);
+    on<SavePhoneBookEvent>(_savePhoneBook);
   }
 
   final repository = PhoneBookRepository();
@@ -116,18 +126,18 @@ class PhoneBookBloc extends Bloc<PhoneBookEvent, PhoneBookState>
         emit(
           state.copyWith(
             status: BlocStatus.LOADING,
-            type: PhoneBookType.REMOVE,
+            type: PhoneBookType.NONE,
           ),
         );
         ResponseMessageDTO result = await repository.removePhoneBook(event.id);
         if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
           emit(state.copyWith(
-              status: BlocStatus.SUCCESS, type: PhoneBookType.REMOVE));
+              status: BlocStatus.UNLOADING, type: PhoneBookType.REMOVE));
         } else {
           emit(
             state.copyWith(
-              type: PhoneBookType.REMOVE,
-              status: BlocStatus.ERROR,
+              type: PhoneBookType.ERROR,
+              status: BlocStatus.UNLOADING,
             ),
           );
         }
@@ -135,6 +145,56 @@ class PhoneBookBloc extends Bloc<PhoneBookEvent, PhoneBookState>
     } catch (e) {
       LOG.error(e.toString());
       emit(state.copyWith(status: BlocStatus.ERROR));
+    }
+  }
+
+  void _updatePhoneBook(PhoneBookEvent event, Emitter emit) async {
+    try {
+      if (event is UpdatePhoneBookEvent) {
+        emit(
+          state.copyWith(
+            status: BlocStatus.LOADING,
+            type: PhoneBookType.REMOVE,
+          ),
+        );
+        ResponseMessageDTO result =
+            await repository.updatePhoneBook(event.query);
+        if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
+          emit(state.copyWith(
+              status: BlocStatus.UNLOADING, type: PhoneBookType.UPDATE));
+        } else {
+          emit(
+            state.copyWith(
+                type: PhoneBookType.ERROR, status: BlocStatus.UNLOADING),
+          );
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(type: PhoneBookType.ERROR));
+    }
+  }
+
+  void _savePhoneBook(PhoneBookEvent event, Emitter emit) async {
+    try {
+      if (event is SavePhoneBookEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, type: PhoneBookType.NONE));
+        ResponseMessageDTO result =
+            await bankCardRepository.addPhoneBook(event.dto);
+        if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
+          emit(state.copyWith(
+              status: BlocStatus.UNLOADING, type: PhoneBookType.SAVE));
+        } else {
+          emit(state.copyWith(
+              type: PhoneBookType.ERROR,
+              status: BlocStatus.UNLOADING,
+              msg: CheckUtils.instance.getCheckMessage(result.message)));
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(type: PhoneBookType.ERROR));
     }
   }
 }

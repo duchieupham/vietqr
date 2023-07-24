@@ -59,7 +59,7 @@ class _PhoneWidgetState extends State<PhoneWidget> {
           ),
           const VerticalDivider(
             color: Colors.black,
-            thickness: 0.5,
+            thickness: 0.2,
           ),
         ],
       ),

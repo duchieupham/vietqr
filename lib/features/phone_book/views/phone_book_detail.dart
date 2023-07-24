@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
@@ -13,61 +14,83 @@ import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/phone_book_detail_dto.dart';
 import 'package:vierqr/models/phone_book_dto.dart';
 
+import 'phone_book_edit_view.dart';
+
 // ignore: must_be_immutable
-class PhoneDetailScreen extends StatelessWidget {
+class PhoneDetailScreen extends StatefulWidget {
   final PhoneBookDTO dto;
 
   const PhoneDetailScreen({super.key, required this.dto});
 
   @override
+  State<PhoneDetailScreen> createState() => _PhoneDetailScreenState();
+}
+
+class _PhoneDetailScreenState extends State<PhoneDetailScreen> {
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: MAppBar(
-          title: dto.nickname,
-          actions: [
-            GestureDetector(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Image.asset(
-                  'assets/images/ic-edit.png',
-                ),
-              ),
-            )
-          ],
-        ),
-        body: BlocProvider<PhoneBookBloc>(
-          create: (context) =>
-              PhoneBookBloc(context)..add(PhoneBookEventGetDetail(id: dto.id)),
-          child: BlocConsumer<PhoneBookBloc, PhoneBookState>(
-              listener: (context, state) {
-            if (state.type == PhoneBookType.REMOVE) {
-              if (state.status == BlocStatus.LOADING) {
-                DialogWidget.instance.openLoadingDialog();
-              }
-              if (state.status == BlocStatus.SUCCESS) {
-                Navigator.pop(context);
-                DialogWidget.instance.openMsgDialog(
-                  title: 'Thành công',
-                  msg: 'Đã xoá thông tin thành công',
-                  showImageWarning: false,
-                  height: 190,
-                  function: () {
-                    Navigator.pop(context);
-                    if (Navigator.canPop(context)) {
-                      Navigator.pop(context);
+    return BlocProvider<PhoneBookBloc>(
+      create: (context) => PhoneBookBloc(context)
+        ..add(PhoneBookEventGetDetail(id: widget.dto.id)),
+      child: BlocConsumer<PhoneBookBloc, PhoneBookState>(
+        listener: (context, state) {
+          if (state.status == BlocStatus.LOADING) {
+            DialogWidget.instance.openLoadingDialog();
+          }
+
+          if (state.status == BlocStatus.UNLOADING) {
+            Navigator.pop(context);
+          }
+
+          if (state.type == PhoneBookType.REMOVE) {
+            Navigator.of(context).pop();
+            Fluttertoast.showToast(
+              msg: 'Xoá thành công',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              backgroundColor: Theme.of(context).cardColor,
+              textColor: Theme.of(context).hintColor,
+              fontSize: 15,
+            );
+          }
+
+          if (state.type == PhoneBookType.UPDATE) {}
+
+          if (state.type == PhoneBookType.GET_LIST) {}
+        },
+        builder: (context, state) {
+          return Scaffold(
+            appBar: MAppBar(
+              title: widget.dto.nickname,
+              actions: [
+                GestureDetector(
+                  onTap: () async {
+                    final data = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => PhoneBookEditView(
+                            phoneBookDetailDTO: state.phoneBookDetailDTO),
+                        // settings: RouteSettings(name: PhoneBookEditView.routeName),
+                      ),
+                    );
+
+                    if (!mounted) return;
+                    if (data is bool) {
+                      context
+                          .read<PhoneBookBloc>()
+                          .add(PhoneBookEventGetDetail(id: widget.dto.id));
                     }
                   },
-                );
-              }
-            }
-
-            if (state.type == PhoneBookType.GET_LIST) {}
-          }, builder: (context, state) {
-            if (state.type == PhoneBookType.GET_DETAIL &&
-                state.status == BlocStatus.LOADING) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            return Padding(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Image.asset(
+                      'assets/images/ic-edit.png',
+                    ),
+                  ),
+                )
+              ],
+            ),
+            body: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 children: [
@@ -148,7 +171,7 @@ class PhoneDetailScreen extends StatelessWidget {
                           functionConfirm: () {
                             Navigator.of(context).pop();
                             BlocProvider.of<PhoneBookBloc>(context)
-                                .add(RemovePhoneBookEvent(id: dto.id));
+                                .add(RemovePhoneBookEvent(id: widget.dto.id));
                           },
                         );
                       },
@@ -165,9 +188,11 @@ class PhoneDetailScreen extends StatelessWidget {
                   )
                 ],
               ),
-            );
-          }),
-        ));
+            ),
+          );
+        },
+      ),
+    );
   }
 
   Widget _buildTypeQr(PhoneBookDetailDTO dto) {

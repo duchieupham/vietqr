@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
@@ -58,6 +59,25 @@ class _PhoneBookStateState extends State<_PhoneBookState> {
     });
   }
 
+  Future<void> startBarcodeScanStream() async {
+    String data = await FlutterBarcodeScanner.scanBarcode(
+        '#ff6666', 'Cancel', true, ScanMode.DEFAULT);
+    if (data.isNotEmpty) {
+      if (data == TypeQR.NEGATIVE_TWO.value) {
+        DialogWidget.instance.openMsgDialog(
+          title: 'Không thể xác nhận mã QR',
+          msg: 'Ảnh QR không đúng định dạng, vui lòng chọn ảnh khác.',
+          function: () {
+            Navigator.pop(context);
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+          },
+        );
+      } else {}
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,6 +85,9 @@ class _PhoneBookStateState extends State<_PhoneBookState> {
         title: 'Danh bạ',
         actions: [
           GestureDetector(
+            onTap: () {
+              startBarcodeScanStream();
+            },
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Image.asset(
@@ -196,8 +219,10 @@ class _PhoneBookStateState extends State<_PhoneBookState> {
 
   Widget _buildItemSave({required PhoneBookDTO? dto}) {
     return GestureDetector(
-      onTap: () {
-        Navigator.pushNamed(context, Routes.PHONE_BOOK_DETAIL, arguments: dto);
+      onTap: () async {
+        await Navigator.pushNamed(context, Routes.PHONE_BOOK_DETAIL,
+            arguments: dto);
+        _bloc.add(PhoneBookEventGetList());
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -216,7 +241,7 @@ class _PhoneBookStateState extends State<_PhoneBookState> {
                 border: Border.all(color: AppColor.GREY_LIGHT.withOpacity(0.3)),
                 image: DecorationImage(
                   image: ImageUtils.instance.getImageNetWork(dto?.imgId ?? ''),
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
                 ),
               ),
             ),

@@ -9,6 +9,7 @@ class PhoneBookDetailDTO {
   final String? bankName;
   final String? imgId;
   final String? bankAccount;
+
   PhoneBookDetailDTO({
     this.id = '',
     this.additionalData = '',

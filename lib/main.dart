@@ -55,6 +55,7 @@ import 'package:vierqr/features/scan_qr/views/qr_scan_view.dart';
 import 'package:vierqr/features/token/blocs/token_bloc.dart';
 import 'package:vierqr/features/top_up/top_up_screen.dart';
 import 'package:vierqr/features/transaction/transaction_detail_screen.dart';
+import 'package:vierqr/features/trans_history/trans_history_screen.dart';
 import 'package:vierqr/features/transaction/widgets/transaction_sucess_widget.dart';
 import 'package:vierqr/models/notification_transaction_success_dto.dart';
 import 'package:vierqr/models/phone_book_dto.dart';
@@ -335,8 +336,8 @@ class _VietQRApp extends State<VietQRApp> {
                       const AddBusinessView(),
                   // Routes.BANK_CARD_DETAIL_VEW: (context) =>
                   //     const BankCardDetailScreen(),
-                  // Routes.TRANSACTION_HISTORY_VIEW: (context) =>
-                  //     const TransactionHistoryView(),
+                  Routes.TRANSACTION_HISTORY_VIEW: (context) =>
+                      const TransHistoryScreen(),
                   Routes.SCAN_QR_VIEW: (context) => const QRScanView(),
                   Routes.PRINTER_SETTING: (context) => PrinterSettingView(),
                   Routes.SEARCH_BANK: (context) => SearchBankView(),

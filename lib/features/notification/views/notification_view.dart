@@ -132,15 +132,10 @@ class NotificationView extends StatelessWidget {
       onTap: () {
         if (dto.type == Stringify.NOTI_TYPE_NEW_TRANSACTION ||
             dto.type == Stringify.NOTI_TYPE_UPDATE_TRANSACTION) {
-          String userId = UserInformationHelper.instance.getUserId();
           Navigator.pushNamed(
             context,
             Routes.TRANSACTION_DETAIL,
-            arguments: {
-              'transactionId': dto.data,
-              'notificationBloc': notificationBloc,
-              'userId': userId,
-            },
+            arguments: {'transactionId': dto.data},
           );
         }
       },

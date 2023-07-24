@@ -3,7 +3,7 @@ import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/models/phone_book_detail_dto.dart';
 import 'package:vierqr/models/phone_book_dto.dart';
 
-enum PhoneBookType { NONE, GET_LIST, GET_DETAIL, REMOVE }
+enum PhoneBookType { NONE, GET_LIST, GET_DETAIL, REMOVE, UPDATE, ERROR, SAVE }
 
 class PhoneBookState extends Equatable {
   final List<PhoneBookDTO> listPhoneBookDTO;
@@ -12,6 +12,8 @@ class PhoneBookState extends Equatable {
   final BlocStatus status;
   final PhoneBookType type;
   final String? msg;
+  final String qrCode;
+  final TypePhoneBook typeQR;
 
   const PhoneBookState({
     required this.listPhoneBookDTO,
@@ -20,6 +22,8 @@ class PhoneBookState extends Equatable {
     this.status = BlocStatus.NONE,
     this.type = PhoneBookType.NONE,
     this.msg,
+    required this.qrCode,
+    this.typeQR = TypePhoneBook.NONE,
   });
 
   PhoneBookState copyWith({
@@ -29,6 +33,8 @@ class PhoneBookState extends Equatable {
     List<PhoneBookDTO>? listPhoneBookDTO,
     List<PhoneBookDTO>? listPhoneBookDTOSuggest,
     PhoneBookDetailDTO? phoneBookDetailDTO,
+    String? qrCode,
+    TypePhoneBook? typeQR,
   }) {
     return PhoneBookState(
       status: status ?? this.status,
@@ -38,6 +44,8 @@ class PhoneBookState extends Equatable {
       listPhoneBookDTOSuggest:
           listPhoneBookDTOSuggest ?? this.listPhoneBookDTOSuggest,
       phoneBookDetailDTO: phoneBookDetailDTO ?? this.phoneBookDetailDTO,
+      qrCode: qrCode ?? this.qrCode,
+      typeQR: typeQR ?? this.typeQR,
     );
   }
 
@@ -49,5 +57,7 @@ class PhoneBookState extends Equatable {
         listPhoneBookDTO,
         listPhoneBookDTOSuggest,
         phoneBookDetailDTO,
+        qrCode,
+        typeQR,
       ];
 }

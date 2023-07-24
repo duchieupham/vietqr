@@ -115,31 +115,3 @@ const TransactionRepository transactionRepository = TransactionRepository();
 //     emit(TransactionGetListBranchFailedState());
 //   }
 // }
-//
-// void _getTransactions(TransactionEvent event, Emitter emit) async {
-//   try {
-//     if (event is TransactionEventGetList) {
-//       emit(TransactionLoadingState());
-//       final List<RelatedTransactionReceiveDTO> result =
-//           await transactionRepository.getTransactionByBankId(event.dto);
-//       emit(TransactionGetListSuccessState(list: result));
-//     }
-//   } catch (e) {
-//     LOG.error(e.toString());
-//     emit(TransactionGetListFailedState());
-//   }
-// }
-//
-// void _fetchTransactions(TransactionEvent event, Emitter emit) async {
-//   try {
-//     if (event is TransactionEventFetch) {
-//       emit(TransactionLoadingState());
-//       final List<RelatedTransactionReceiveDTO> result =
-//           await transactionRepository.getTransactionByBankId(event.dto);
-//       emit(TransactionFetchSuccessState(list: result));
-//     }
-//   } catch (e) {
-//     LOG.error(e.toString());
-//     emit(TransactionFetchFailedState());
-//   }
-// }

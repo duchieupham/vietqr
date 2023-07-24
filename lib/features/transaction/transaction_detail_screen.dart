@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
@@ -60,11 +59,11 @@ class _BodyWidgetState extends State<_BodyWidget> {
   }
 
   initData(BuildContext context) {
-    _bloc.add(TransactionEventGetDetail());
+    _bloc.add(const TransactionEventGetDetail());
   }
 
   Future<void> onRefresh() async {
-    _bloc.add(TransactionEventGetDetail());
+    _bloc.add(const TransactionEventGetDetail());
   }
 
   @override

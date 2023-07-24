@@ -286,6 +286,17 @@ class _LoginState extends State<_Login> {
                                       color: AppColor.BLUE_TEXT),
                                 ),
                               ),
+                              const SizedBox(height: 8),
+                              GestureDetector(
+                                onTap: () {},
+                                child: const Text(
+                                  'Quên mật khẩu',
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: AppColor.BLUE_TEXT),
+                                ),
+                              ),
                             ],
                           ),
                         ),

@@ -13,6 +13,9 @@ enum DashBoardType {
   SEARCH_BANK_NAME,
   ADD_BOOK_CONTACT,
   ADD_BOOK_CONTACT_EXIST,
+  ERROR,
+  EXIST_BANK,
+  INSERT_BANK,
 }
 
 enum DashBoardTypePermission {
@@ -39,7 +42,7 @@ class DashBoardState extends Equatable {
   final String bankAccount;
   final List<BankTypeDTO>? listBanks;
   final BankNameInformationDTO? informationDTO;
-  final TypePhoneBook? typePhoneBook;
+  final TypePhoneBook typePhoneBook;
 
   const DashBoardState({
     this.msg,
@@ -54,7 +57,7 @@ class DashBoardState extends Equatable {
     this.bankTypeDTO,
     this.bankAccount = '',
     this.informationDTO,
-    this.typePhoneBook,
+    this.typePhoneBook = TypePhoneBook.NONE,
   });
 
   DashBoardState copyWith({
