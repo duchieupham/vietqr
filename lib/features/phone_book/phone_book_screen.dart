@@ -209,8 +209,8 @@ class _PhoneBookStateState extends State<_PhoneBookState> {
         child: Row(
           children: [
             Container(
-              width: 40,
-              height: 40,
+              width: 35,
+              height: 35,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
                 border: Border.all(color: AppColor.GREY_LIGHT.withOpacity(0.3)),
@@ -237,7 +237,7 @@ class _PhoneBookStateState extends State<_PhoneBookState> {
                   Text(
                     dto?.description ?? '',
                     style: const TextStyle(
-                      fontSize: 12,
+                      fontSize: 11,
                       fontWeight: FontWeight.w400,
                       color: AppColor.BLUE_TEXT,
                       height: 1.4,
@@ -366,24 +366,24 @@ class _PhoneBookStateState extends State<_PhoneBookState> {
               text,
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
             ),
-            if (isSuggest)
-              Container(
-                padding: const EdgeInsets.all(4),
-                margin: const EdgeInsets.only(left: 4),
-                width: 20,
-                height: 20,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                    color: AppColor.BLUE_TEXT.withOpacity(0.4),
-                    borderRadius: BorderRadius.circular(100)),
-                child: const Text(
-                  '1',
-                  style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w400,
-                      color: AppColor.BLUE_TEXT),
-                ),
-              ),
+            // if (isSuggest)
+            //   Container(
+            //     padding: const EdgeInsets.all(4),
+            //     margin: const EdgeInsets.only(left: 4),
+            //     width: 20,
+            //     height: 20,
+            //     alignment: Alignment.center,
+            //     decoration: BoxDecoration(
+            //         color: AppColor.BLUE_TEXT.withOpacity(0.4),
+            //         borderRadius: BorderRadius.circular(100)),
+            //     child: const Text(
+            //       '1',
+            //       style: TextStyle(
+            //           fontSize: 10,
+            //           fontWeight: FontWeight.w400,
+            //           color: AppColor.BLUE_TEXT),
+            //     ),
+            //   ),
           ],
         ),
       ),
