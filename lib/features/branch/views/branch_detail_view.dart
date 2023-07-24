@@ -11,6 +11,7 @@ import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/commons/widgets/sub_header_widget.dart';
+import 'package:vierqr/features/bank_detail/bank_card_detail_screen.dart';
 import 'package:vierqr/features/branch/blocs/branch_bloc.dart';
 import 'package:vierqr/features/branch/events/branch_event.dart';
 import 'package:vierqr/features/branch/states/branch_state.dart';
@@ -49,7 +50,6 @@ class _BranchDetailViewState extends State<BranchDetailView> {
   );
 
   late BranchBloc branchBloc;
-
 
   void initialServices(BuildContext context) {
     String userId = UserInformationHelper.instance.getUserId();
@@ -428,8 +428,7 @@ class _BranchDetailViewState extends State<BranchDetailView> {
                                                               id: branchId));
                                                     },
                                                     bgColor: AppColor.GREEN,
-                                                    textColor:
-                                                        AppColor.WHITE,
+                                                    textColor: AppColor.WHITE,
                                                   )
                                                 : const SizedBox(),
                                             const Padding(
@@ -701,13 +700,15 @@ class _BranchDetailViewState extends State<BranchDetailView> {
               icon: Icons.info_rounded,
               title: 'Chi tiết',
               textSize: 15,
-              function: () {
-                Navigator.pushNamed(
-                  context,
-                  Routes.BANK_CARD_DETAIL_VEW,
-                  arguments: {
-                    'bankId': dto.bankId,
-                  },
+              function: () async {
+                await Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        BankCardDetailScreen(bankId: dto.bankId),
+                    settings: const RouteSettings(
+                      name: Routes.BANK_CARD_DETAIL_VEW,
+                    ),
+                  ),
                 );
               },
               bgColor: AppColor.TRANSPARENT,

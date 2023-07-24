@@ -1,0 +1,128 @@
+import 'package:flutter/material.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/utils/share_utils.dart';
+import 'package:vierqr/commons/widgets/button_widget.dart';
+import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
+import 'package:vierqr/services/shared_references/user_information_helper.dart';
+
+class MyQRBottomSheet extends StatelessWidget {
+  MyQRBottomSheet({Key? key}) : super(key: key);
+
+  final GlobalKey globalKey = GlobalKey();
+  Future<void> share({required String name}) async {
+    await Future.delayed(const Duration(milliseconds: 200), () async {
+      await ShareUtils.instance.shareImage(
+        textSharing: 'VietId of $name',
+        key: globalKey,
+      );
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(
+          height: 8,
+        ),
+        Row(
+          children: [
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(
+                Icons.clear,
+                color: Colors.transparent,
+                size: 18,
+              ),
+            ),
+            Expanded(
+              child: Container(
+                alignment: Alignment.center,
+                child: const Text(
+                  'My QR',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+            ),
+            IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: const Icon(
+                Icons.clear,
+                size: 18,
+              ),
+            ),
+          ],
+        ),
+        const Spacer(),
+        RepaintBoundaryWidget(
+          globalKey: globalKey,
+          builder: (key) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(
+                      left: 45, right: 45, top: 0, bottom: 16),
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: AppColor.WHITE,
+                    borderRadius: const BorderRadius.all(Radius.circular(16)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Theme.of(context).shadowColor.withOpacity(0.1),
+                        spreadRadius: 2,
+                        blurRadius: 4,
+                        offset: const Offset(1, 2),
+                      ),
+                    ],
+                  ),
+                  child: QrImage(
+                    data: UserInformationHelper.instance.getWalletId(),
+                    version: QrVersions.auto,
+                    embeddedImage:
+                        const AssetImage('assets/images/ic-viet-qr-small.png'),
+                    embeddedImageStyle: QrEmbeddedImageStyle(
+                      size: const Size(30, 30),
+                    ),
+                  ),
+                ),
+                Text(
+                  UserInformationHelper.instance.getUserFullname(),
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.w400),
+                ),
+              ],
+            );
+          },
+        ),
+        const Spacer(
+          flex: 3,
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: ButtonWidget(
+            width: double.infinity,
+            height: 40,
+            text: 'Chia sẻ',
+            textColor: AppColor.WHITE,
+            bgColor: AppColor.BLUE_TEXT,
+            borderRadius: 8,
+            enableShadow: true,
+            function: () {
+              share(name: UserInformationHelper.instance.getUserFullname());
+            },
+          ),
+        ),
+        const SizedBox(
+          height: 20,
+        )
+      ],
+    );
+  }
+}

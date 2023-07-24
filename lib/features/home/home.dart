@@ -79,23 +79,25 @@ class _HomeScreen extends State<HomeScreen> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    return SizedBox(
-      width: width,
-      height: height,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: ListView(
-          children: [
-            CardWallet(
-              startBarcodeScanStream: () {
-                startBarcodeScanStream(context);
-              },
-            ),
-            const SizedBox(
-              height: 24,
-            ),
-            const ServiceSection()
-          ],
+    return Scaffold(
+      body: SizedBox(
+        width: width,
+        height: height,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: ListView(
+            children: [
+              CardWallet(
+                startBarcodeScanStream: () {
+                  startBarcodeScanStream(context);
+                },
+              ),
+              const SizedBox(
+                height: 24,
+              ),
+              const ServiceSection()
+            ],
+          ),
         ),
       ),
     );

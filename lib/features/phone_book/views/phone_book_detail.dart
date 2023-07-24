@@ -80,7 +80,7 @@ class PhoneDetailScreen extends StatelessWidget {
                       borderRadius: const BorderRadius.all(Radius.circular(16)),
                       boxShadow: [
                         BoxShadow(
-                          color: Theme.of(context).shadowColor.withOpacity(0.2),
+                          color: Theme.of(context).shadowColor.withOpacity(0.1),
                           spreadRadius: 2,
                           blurRadius: 4,
                           offset: const Offset(1, 2),

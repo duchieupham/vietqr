@@ -373,13 +373,13 @@ class DialogWidget {
     BuildContext? context,
     required Widget widget,
     required double height,
+    double radius = 15,
     EdgeInsetsGeometry? padding,
   }) async {
     context ??= NavigationService.navigatorKey.currentContext!;
     return await showModalBottomSheet(
         isScrollControlled: true,
         enableDrag: false,
-        // Ngăn người dùng kéo ModalBottomSheet
         context: context,
         backgroundColor: AppColor.TRANSPARENT,
         builder: (_) {
@@ -398,7 +398,7 @@ class DialogWidget {
                 width: MediaQuery.of(context).size.width - 10,
                 height: height + keyboardHeight,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
+                  borderRadius: BorderRadius.circular(radius),
                   color: Theme.of(context).cardColor,
                 ),
                 child: widget,
@@ -412,6 +412,7 @@ class DialogWidget {
     BuildContext? context,
     required Widget widget,
     required double height,
+    double radius = 15,
     EdgeInsetsGeometry? padding,
   }) async {
     context ??= NavigationService.navigatorKey.currentContext!;
@@ -439,7 +440,7 @@ class DialogWidget {
                 width: MediaQuery.of(context).size.width - 10,
                 height: height + keyboardHeight,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
+                  borderRadius: BorderRadius.circular(radius),
                   color: Theme.of(context).cardColor,
                 ),
                 child: widget,
