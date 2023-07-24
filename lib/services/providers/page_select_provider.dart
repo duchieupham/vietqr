@@ -47,20 +47,19 @@ class PageSelectProvider with ChangeNotifier {
       assetsUnActive: 'assets/images/ic-tb-qr.png',
       index: -1,
     ),
-    if (PlatformUtils.instance.isAndroidApp())
-      const NavigationDTO(
-        name: 'Doanh nghiệp',
-        label: 'Doanh nghiệp',
-        assetsActive: 'assets/images/ic-tb-business-selected.png',
-        assetsUnActive: 'assets/images/ic-tb-business.png',
-        index: 2,
-      ),
-    NavigationDTO(
+    const NavigationDTO(
+      name: 'Doanh nghiệp',
+      label: 'Doanh nghiệp',
+      assetsActive: 'assets/images/ic-tb-business-selected.png',
+      assetsUnActive: 'assets/images/ic-tb-business.png',
+      index: 2,
+    ),
+    const NavigationDTO(
       name: 'Cá nhân',
       label: 'Cá nhân',
       assetsActive: 'assets/images/ic-tb-personal-selected.png',
       assetsUnActive: 'assets/images/ic-tb-personal.png',
-      index: (PlatformUtils.instance.isAndroidApp()) ? 3 : 2,
+      index: 3,
     ),
   ];
 

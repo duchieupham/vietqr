@@ -1,5 +1,6 @@
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
@@ -380,18 +381,20 @@ class _DashBoardScreen extends State<DashBoardScreen>
             // );
           }
           if (state.request == DashBoardType.ADD_BOOK_CONTACT) {
-            DialogWidget.instance.openMsgDialog(
-              title: 'Thành công',
+            Fluttertoast.showToast(
               msg: 'Đã thêm vào danh bạ',
-              showImageWarning: false,
-              height: 190,
-              function: () {
-                Navigator.pop(context);
-                if (Navigator.canPop(context)) {
-                  Navigator.pop(context);
-                }
-              },
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.TOP,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Theme.of(context).cardColor,
+              textColor: Theme.of(context).hintColor,
+              fontSize: 15,
+              webBgColor: 'rgba(255, 255, 255)',
+              webPosition: 'center',
             );
+            Future.delayed(const Duration(milliseconds: 400), () {
+              Navigator.pushNamed(context, Routes.PHONE_BOOK);
+            });
           }
           if (state.request == DashBoardType.ADD_BOOK_CONTACT_EXIST) {
             DialogWidget.instance.openMsgDialog(

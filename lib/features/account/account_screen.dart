@@ -140,8 +140,8 @@ class _AccountScreenState extends State<AccountScreen>
           color: Theme.of(context).cardColor,
           boxShadow: [
             BoxShadow(
-              color: AppColor.GREY_TEXT.withOpacity(0.2),
-              spreadRadius: 2,
+              color: AppColor.GREY_LIGHT.withOpacity(0.1),
+              spreadRadius: 1,
               blurRadius: 5,
               offset: const Offset(0, 2), // changes position of shadow
             ),
@@ -339,8 +339,8 @@ class _IntroduceWidget extends StatelessWidget {
         color: Theme.of(context).cardColor,
         boxShadow: [
           BoxShadow(
-            color: AppColor.GREY_TEXT.withOpacity(0.2),
-            spreadRadius: 2,
+            color: AppColor.GREY_LIGHT.withOpacity(0.1),
+            spreadRadius: 1,
             blurRadius: 5,
             offset: const Offset(0, 2), // changes position of shadow
           ),
@@ -434,8 +434,8 @@ class _SettingWidget extends StatelessWidget {
               color: Theme.of(context).cardColor,
               boxShadow: [
                 BoxShadow(
-                  color: AppColor.GREY_TEXT.withOpacity(0.2),
-                  spreadRadius: 2,
+                  color: AppColor.GREY_LIGHT.withOpacity(0.1),
+                  spreadRadius: 1,
                   blurRadius: 5,
                   offset: const Offset(0, 2), // changes position of shadow
                 ),
