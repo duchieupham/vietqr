@@ -5,16 +5,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/file_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/widgets/ambient_avatar_widget.dart';
+import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/account/blocs/account_bloc.dart';
 import 'package:vierqr/features/account/events/account_event.dart';
 import 'package:vierqr/features/account/states/account_state.dart';
+import 'package:vierqr/features/account/widget/my_QR_bottom_sheet.dart';
 import 'package:vierqr/features/personal/views/introduce_bottom_sheet.dart';
 import 'package:vierqr/models/introduce_dto.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
@@ -386,6 +389,37 @@ class _IntroduceWidget extends StatelessWidget {
                   ),
                   child: const Icon(Icons.arrow_forward_ios, size: 12),
                 )
+              ],
+            ),
+          ),
+          const Divider(),
+          GestureDetector(
+            onTap: () async {
+              await DialogWidget.instance.showModelBottomSheet(
+                context: context,
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                radius: 15,
+                widget: MyQRBottomSheet(),
+                height: height * 0.7,
+              );
+            },
+            child: Row(
+              children: [
+                Image.asset(
+                  'assets/images/ic-tb-qr.png',
+                  width: 28,
+                  height: 28,
+                  color: AppColor.BLUE_TEXT,
+                ),
+                const SizedBox(width: 8),
+                const Expanded(
+                  child: Text(
+                    'My QR',
+                    style: TextStyle(
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

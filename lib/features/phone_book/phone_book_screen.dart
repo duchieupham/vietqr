@@ -209,14 +209,16 @@ class _PhoneBookStateState extends State<_PhoneBookState> {
         child: Row(
           children: [
             Container(
-              width: 35,
-              height: 35,
+              width: 40,
+              height: 40,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
+                color: AppColor.WHITE,
                 border: Border.all(color: AppColor.GREY_LIGHT.withOpacity(0.3)),
+                borderRadius: BorderRadius.circular(40),
                 image: DecorationImage(
-                  image: ImageUtils.instance.getImageNetWork(dto?.imgId ?? ''),
-                  fit: BoxFit.cover,
+                  image: ImageUtils.instance.getImageNetWork(
+                    dto?.imgId ?? '',
+                  ),
                 ),
               ),
             ),

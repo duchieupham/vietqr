@@ -40,6 +40,14 @@ class UserInformationHelper {
     return sharedPrefs.getString('PHONE_NO')!;
   }
 
+  Future<void> setWalletId(String phoneNo) async {
+    await sharedPrefs.setString('WALLET_ID', phoneNo);
+  }
+
+  String getWalletId() {
+    return sharedPrefs.getString('WALLET_ID')!;
+  }
+
   Future<void> setAccountInformation(AccountInformationDTO dto) async {
     await sharedPrefs.setString(
         'ACCOUNT_INFORMATION', dto.toSPJson().toString());

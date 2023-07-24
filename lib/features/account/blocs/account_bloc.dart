@@ -22,6 +22,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
           status: BlocStatus.LOADING, request: AccountType.NONE));
       if (event is InitAccountEvent) {
         final result = await accRepository.getPointAccount(userId);
+        await UserInformationHelper.instance.setWalletId(result.walletId!);
         emit(state.copyWith(
           introduceDTO: result,
           status: BlocStatus.UNLOADING,
