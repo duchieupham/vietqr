@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 
 class DialogMoreView extends StatefulWidget {
   const DialogMoreView({super.key});

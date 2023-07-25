@@ -5,7 +5,7 @@ import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
-import 'package:vierqr/models/add_phone_book_dto.dart';
+import 'package:vierqr/models/add_contact_dto.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_account_remove_dto.dart';
 import 'package:vierqr/models/bank_card_insert_dto.dart';
@@ -387,7 +387,7 @@ class BankCardRepository {
     return result;
   }
 
-  Future<ResponseMessageDTO> addPhoneBook(AddPhoneBookDTO dto) async {
+  Future<ResponseMessageDTO> addContact(AddContactDTO dto) async {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {

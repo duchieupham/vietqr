@@ -72,11 +72,11 @@ class TransactionDetailView extends StatelessWidget {
   void initialServices(BuildContext context, String transactionId) {
     qrBloc = BlocProvider.of(context);
     transactionBloc = BlocProvider.of(context);
-    transactionBloc.add(TransactionEventGetDetail());
+    transactionBloc.add(const TransactionEventGetDetail());
   }
 
   Future<void> _refresh(String transactionId) async {
-    transactionBloc.add(TransactionEventGetDetail());
+    transactionBloc.add(const TransactionEventGetDetail());
   }
 
   @override
@@ -156,8 +156,8 @@ class TransactionDetailView extends StatelessWidget {
                 arguments: {
                   'qrGeneratedDTO': state.dto,
                 },
-              ).then(
-                  (value) => transactionBloc.add(TransactionEventGetDetail()));
+              ).then((value) =>
+                  transactionBloc.add(const TransactionEventGetDetail()));
             }
           }
           if (state is QRRegeneratedFailedState) {

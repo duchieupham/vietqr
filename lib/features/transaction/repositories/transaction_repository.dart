@@ -4,11 +4,9 @@ import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
-import 'package:vierqr/models/business_detail_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/qr_recreate_dto.dart';
 import 'package:vierqr/models/related_transaction_receive_dto.dart';
-import 'package:vierqr/models/transaction_branch_input_dto.dart';
 import 'package:vierqr/models/transaction_input_dto.dart';
 import 'package:vierqr/models/transaction_receive_dto.dart';
 

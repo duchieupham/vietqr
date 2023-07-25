@@ -22,6 +22,8 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/commons/widgets/sub_header_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_widget.dart';
+import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
+import 'package:vierqr/features/dashboard/dashboard_screen.dart';
 import 'package:vierqr/features/home/home.dart';
 import 'package:vierqr/features/personal/blocs/user_edit_bloc.dart';
 import 'package:vierqr/features/personal/events/user_edit_event.dart';
@@ -38,34 +40,31 @@ import 'package:vierqr/services/providers/user_edit_provider.dart';
 import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
-class UserEditView extends StatelessWidget {
-  static final TextEditingController _lastNameController =
-      TextEditingController();
-  static final TextEditingController _middleNameController =
-      TextEditingController();
-  static final TextEditingController _firstNameController =
-      TextEditingController();
-  static final TextEditingController _addressController =
-      TextEditingController();
-  static final TextEditingController _emailController = TextEditingController();
-  static final TextEditingController _nationalIdController =
-      TextEditingController(text: '');
-  static final TextEditingController _oldNationalIdController =
-      TextEditingController(text: '');
-  static String _birthDate = '';
-  static String _nationalDate = '';
-  static late UserEditBloc _userEditBloc;
-  static final _formKey = GlobalKey<FormState>();
-  static final ImagePicker imagePicker = ImagePicker();
-
+class UserEditView extends StatefulWidget {
   const UserEditView({super.key});
+
+  @override
+  State<UserEditView> createState() => _UserEditViewState();
+}
+
+class _UserEditViewState extends State<UserEditView> {
+  final _lastNameController = TextEditingController();
+  final _middleNameController = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _addressController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _nationalIdController = TextEditingController(text: '');
+  final _oldNationalIdController = TextEditingController(text: '');
+  String _birthDate = '';
+  String _nationalDate = '';
+  late UserEditBloc _userEditBloc;
+  final _formKey = GlobalKey<FormState>();
+  final imagePicker = ImagePicker();
 
   void initialServices(BuildContext context) {
     _userEditBloc = BlocProvider.of(context);
     _userEditBloc.add(GetInformationUserEvent(
         userId: UserInformationHelper.instance.getUserId()));
-    // final AccountInformationDTO accountInformationDTO =
-    //     UserInformationHelper.instance.getUserInformation();
     final AccountInformationDTO accountInformationDTO =
         UserInformationHelper.instance.getAccountInformation();
     if (accountInformationDTO.lastName.isNotEmpty &&
@@ -184,7 +183,7 @@ class UserEditView extends StatelessWidget {
                   Provider.of<UserEditProvider>(context, listen: false).reset();
                   Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(
-                          builder: (context) => const HomeScreen()),
+                          builder: (context) => const DashBoardScreen()),
                       (Route<dynamic> route) => false);
                 }
                 if (state is UserEditPasswordFailedState) {
@@ -333,20 +332,11 @@ class UserEditView extends StatelessWidget {
                                   widget: const QRScanWidget(),
                                   color: AppColor.BLACK,
                                 );
+                                if (!mounted) return;
                                 startBarcodeScanStream(context);
                               }
                             },
                           ),
-                          // const Padding(padding: EdgeInsets.only(top: 10)),
-                          // ButtonWidget(
-                          //   width: width - 40,
-                          //   text: 'Xoá tài khoản',
-                          //   textColor: DefaultTheme.RED_TEXT,
-                          //   bgColor: Theme.of(context).cardColor,
-                          //   function: () {
-                          //     //
-                          //   },
-                          // ),
                           const Padding(padding: EdgeInsets.only(top: 30)),
                           BoxLayout(
                             width: width,
@@ -361,7 +351,7 @@ class UserEditView extends StatelessWidget {
                                   controller: _lastNameController,
                                   inputType: TextInputType.text,
                                   keyboardAction: TextInputAction.next,
-                                  onChange: (vavlue) {
+                                  onChange: (value) {
                                     provider.setAvailableUpdate(true);
                                   },
                                 ),
@@ -375,7 +365,7 @@ class UserEditView extends StatelessWidget {
                                   controller: _middleNameController,
                                   inputType: TextInputType.text,
                                   keyboardAction: TextInputAction.next,
-                                  onChange: (vavlue) {
+                                  onChange: (value) {
                                     provider.setAvailableUpdate(true);
                                   },
                                 ),
@@ -389,7 +379,7 @@ class UserEditView extends StatelessWidget {
                                   controller: _firstNameController,
                                   inputType: TextInputType.text,
                                   keyboardAction: TextInputAction.next,
-                                  onChange: (vavlue) {
+                                  onChange: (value) {
                                     provider.setAvailableUpdate(true);
                                   },
                                 ),
@@ -773,31 +763,11 @@ class UserEditView extends StatelessWidget {
   }
 
   // Future<void> _openDatePicker() async {
-  //   await showDatePicker(
-  //     context: NavigationService.navigatorKey.currentContext!,
-  //     initialDate: TimeUtils.instance.getDateFromString(_birthDate),
-  //     firstDate: TimeUtils.instance.getDateFromString('01/01/1900'),
-  //     lastDate: DateTime.now(),
-  //     helpText: 'Ngày sinh',
-  //     cancelText: 'Đóng',
-  //     confirmText: 'Chọn',
-  //   ).then((pickedDate) {
-  //     if (pickedDate != null) {
-  //       Provider.of<UserEditProvider>(
-  //               NavigationService.navigatorKey.currentContext!,
-  //               listen: false)
-  //           .setAvailableUpdate(true);
-  //       _birthDate = TimeUtils.instance.formatDate(pickedDate.toString());
-  //     }
-  //   });
-  // }
-
   Future<void> startBarcodeScanStream(BuildContext context) async {
     String data = await FlutterBarcodeScanner.scanBarcode(
-        '#ff6666', 'Cancel', true, ScanMode.QR);
+        '#ff6666', 'Cancel', true, ScanMode.DEFAULT);
     if (data.isNotEmpty) {
-      if (data == TypeQR.NEGATIVE_ONE.value) {
-      } else if (data == TypeQR.NEGATIVE_TWO.value) {
+      if (data == TypeQR.NEGATIVE_TWO.value) {
         DialogWidget.instance.openMsgDialog(
           title: 'Không thể xác nhận mã QR',
           msg: 'Ảnh QR không đúng định dạng, vui lòng chọn ảnh khác.',
@@ -810,24 +780,13 @@ class UserEditView extends StatelessWidget {
         );
       } else {
         if (data.contains('|')) {
-          final list = data.split("|");
-          if (list.isNotEmpty) {
-            NationalScannerDTO identityDTO = NationalScannerDTO.fromJson(list);
-            Navigator.pushNamed(
-              context,
-              Routes.NATIONAL_INFORMATION,
-              arguments: {'dto': identityDTO, 'isPop': true},
-            );
-          }
-        } else {
-          DialogWidget.instance.openMsgDialog(
-            title: 'Không thể xác nhận mã QR',
-            msg: 'Ảnh QR không đúng định dạng, vui lòng chọn ảnh khác.',
-            function: () {
-              if (Navigator.canPop(context)) {
-                Navigator.pop(context);
-              }
-            },
+          NationalScannerDTO nationalScannerDTO =
+              dashBoardRepository.getNationalInformation(data);
+          if (!mounted) return;
+          Navigator.pushNamed(
+            context,
+            Routes.NATIONAL_INFORMATION,
+            arguments: {'dto': nationalScannerDTO, 'isPop': true},
           );
         }
       }

@@ -1,4 +1,4 @@
-class AddPhoneBookDTO {
+class AddContactDTO {
   final String? additionalData;
   final String? nickName;
   final int? type;
@@ -7,7 +7,7 @@ class AddPhoneBookDTO {
   final String? bankTypeId;
   final String? bankAccount;
 
-  AddPhoneBookDTO({
+  AddContactDTO({
     this.additionalData,
     this.nickName,
     this.type,
@@ -17,8 +17,8 @@ class AddPhoneBookDTO {
     this.bankAccount,
   });
 
-  factory AddPhoneBookDTO.fromJson(Map<String, dynamic> json) =>
-      AddPhoneBookDTO(
+  factory AddContactDTO.fromJson(Map<String, dynamic> json) =>
+      AddContactDTO(
         additionalData: json["additionalData"],
         nickName: json["nickName"],
         type: json["type"],

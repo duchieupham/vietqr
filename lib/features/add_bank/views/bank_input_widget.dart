@@ -176,6 +176,7 @@ class _BodyWidget extends State<ModelBottomSheetView> {
                 inputType: TextInputType.text,
                 keyboardAction: TextInputAction.next,
                 isRequired: false,
+                autoFocus: true,
                 isObscureText: false,
                 controller: controller,
                 onChange: (value) => onSearch(value),

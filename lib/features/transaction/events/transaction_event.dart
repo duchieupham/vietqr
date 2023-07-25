@@ -43,17 +43,6 @@ class TransactionEventGetList extends TransactionEvent {
   List<Object?> get props => [dto];
 }
 
-class TransactionEventFetch extends TransactionEvent {
-  final TransactionInputDTO dto;
-
-  const TransactionEventFetch({
-    required this.dto,
-  });
-
-  @override
-  List<Object?> get props => [dto];
-}
-
 class TransactionEventGetDetail extends TransactionEvent {
   final bool isLoading;
 

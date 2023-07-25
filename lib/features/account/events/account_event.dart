@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:equatable/equatable.dart';
 
 class AccountEvent extends Equatable {
@@ -10,3 +12,18 @@ class LoadingAccountEvent extends AccountEvent {}
 class InitAccountEvent extends AccountEvent {}
 
 class LogoutEventSubmit extends AccountEvent {}
+
+class UpdateAvatarEvent extends AccountEvent {
+  final String userId;
+  final String imgId;
+  final File? image;
+
+  UpdateAvatarEvent({
+    required this.userId,
+    required this.imgId,
+    required this.image,
+  });
+
+  @override
+  List<Object?> get props => [userId, imgId, image];
+}

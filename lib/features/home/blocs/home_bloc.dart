@@ -33,9 +33,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with BaseManager {
         //   emit(PermissionSMSAllowedState());
         // }
         if (!permissions['camera']!.isGranted) {
-          emit(state.copyWith(type: TypePermission.CameraDenied));
+          emit(state.copyWith(typePermission: TypePermission.CameraDenied));
         } else {
-          emit(state.copyWith(type: TypePermission.CameraAllow));
+          emit(state.copyWith(typePermission: TypePermission.CameraAllow));
         }
         // if (permissions['sms']!.isGranted && permissions['camera']!.isGranted) {
         //   emit(PermissionAllowedState());
@@ -43,7 +43,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with BaseManager {
       }
     } catch (e) {
       LOG.error('Error at _getPermissionStatus - PermissionBloc: $e');
-      emit(state.copyWith(type: TypePermission.Error));
+      emit(state.copyWith(typePermission: TypePermission.Error));
     }
   }
 
@@ -52,14 +52,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> with BaseManager {
       if (event is PermissionEventRequest) {
         bool check = await homeRepository.requestPermissions();
         if (check) {
-          emit(state.copyWith(type: TypePermission.Allow));
+          emit(state.copyWith(typePermission: TypePermission.Allow));
         } else {
-          emit(state.copyWith(type: TypePermission.Request));
+          emit(state.copyWith(typePermission: TypePermission.Request));
         }
       }
     } catch (e) {
-      print('Error at _requestPermissions - PermissionBloc: $e');
-      emit(state.copyWith(type: TypePermission.Error));
+      LOG.error('Error at _requestPermissions - PermissionBloc: $e');
+      emit(state.copyWith(typePermission: TypePermission.Error));
     }
   }
 

@@ -23,11 +23,9 @@ class HomeRepository {
       // }
 
       LOG.info('CAMERA PERMISSION: $cameraPermission');
-      print('CAMERA PERMISSION: $cameraPermission');
       if (!cameraPermission.isGranted) {
         await Permission.camera.request().then((value) async {
           cameraPermission = await Permission.camera.status;
-          print('CAMERA PERMISSION after access: $cameraPermission');
         });
       }
 
@@ -35,7 +33,7 @@ class HomeRepository {
       //   result = true;
       // }
     } catch (e) {
-      print('Error at requestPermissions - PermissionRepository: $e');
+      LOG.error('Error at requestPermissions - PermissionRepository: $e');
     }
     return result;
   }
@@ -48,7 +46,9 @@ class HomeRepository {
       PermissionStatus cameraPermission = await Permission.camera.status;
       // result['sms'] = smsPermission;
       result['camera'] = cameraPermission;
-    } catch (e) {}
+    } catch (e) {
+      LOG.error(e.toString());
+    }
     return result;
   }
 

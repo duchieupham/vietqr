@@ -1,6 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/commons/widgets/sub_header_widget.dart';
 import 'package:vierqr/features/generate_qr/blocs/qr_blocs.dart';
 import 'package:vierqr/features/generate_qr/states/qr_state.dart';
 import 'package:vierqr/features/generate_qr/widgets/input_content_widget.dart';

@@ -285,7 +285,6 @@ class _BusinessScreenState extends State<BusinessScreen>
 
   Widget _buildBusinessWidget(
       BuildContext context, List<BusinessItemDTO> listBusinessItemDTO) {
-    final double width = MediaQuery.of(context).size.width;
     final double height = MediaQuery.of(context).size.height;
     return Row(
       children: [
@@ -468,8 +467,7 @@ class _BusinessScreenState extends State<BusinessScreen>
 
                         if (!mounted) return;
                         if (data != null && data is String) {
-                          final result =
-                              await DialogWidget.instance.showModelBottomSheet(
+                          await DialogWidget.instance.showModelBottomSheet(
                             context: context,
                             widget: AddBranchMemberWidget(
                               branchId: data,
@@ -512,8 +510,7 @@ class _BusinessScreenState extends State<BusinessScreen>
 
                         if (!mounted) return;
                         if (data != null && data is String) {
-                          final result = await DialogWidget.instance
-                              .showModalBottomContent(
+                          await DialogWidget.instance.showModalBottomContent(
                             context: context,
                             widget: SelectBankConnectBranchWidget(
                               branchId: data,

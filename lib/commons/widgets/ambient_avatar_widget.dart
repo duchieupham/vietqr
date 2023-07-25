@@ -1,7 +1,5 @@
 import 'dart:io';
-import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 
 class AmbientAvatarWidget extends StatelessWidget {

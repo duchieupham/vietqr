@@ -7,73 +7,88 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/features/phone_book/blocs/phone_book_bloc.dart';
-import 'package:vierqr/features/phone_book/events/phone_book_event.dart';
-import 'package:vierqr/features/phone_book/states/phone_book_state.dart';
+import 'package:vierqr/features/contact/blocs/contact_bloc.dart';
+import 'package:vierqr/features/contact/events/contact_event.dart';
+import 'package:vierqr/features/contact/states/contact_state.dart';
+
 import 'package:vierqr/layouts/button_widget.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
-import 'package:vierqr/models/phone_book_detail_dto.dart';
-import 'package:vierqr/models/phone_book_dto.dart';
+import 'package:vierqr/models/contact_detail_dto.dart';
+import 'package:vierqr/models/contact_dto.dart';
 
-class PhoneDetailScreen extends StatelessWidget {
-  final PhoneBookDTO dto;
+import 'contact_edit_view.dart';
 
-  PhoneDetailScreen({super.key, required this.dto});
-  late PhoneBookDetailDTO phoneBookDetailDTO = PhoneBookDetailDTO();
+// ignore: must_be_immutable
+class ContactDetailScreen extends StatefulWidget {
+  final ContactDTO dto;
 
-  late final PhoneBookBloc _phoneBookBloc;
+  const ContactDetailScreen({super.key, required this.dto});
 
   @override
-  Widget build(BuildContext context) {
-    _phoneBookBloc = PhoneBookBloc()..add(PhoneBookEventGetDetail(id: dto.id));
-    return Scaffold(
-        appBar: MAppBar(
-          title: dto.nickname,
-          actions: [
-            GestureDetector(
-              onTap: () async {
-                await Navigator.pushNamed(context, Routes.UPDATE_PHONE_BOOK,
-                    arguments: phoneBookDetailDTO);
-                _phoneBookBloc.add(PhoneBookEventGetDetail(id: dto.id));
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Image.asset(
-                  'assets/images/ic-edit.png',
-                ),
-              ),
-            )
-          ],
-        ),
-        body: BlocProvider<PhoneBookBloc>(
-          create: (context) => _phoneBookBloc,
-          child: BlocConsumer<PhoneBookBloc, PhoneBookState>(
-              listener: (context, state) {
-            if (state.type == PhoneBookType.REMOVE) {
-              if (state.status == BlocStatus.SUCCESS) {
-                Navigator.pop(context);
-                Fluttertoast.showToast(
-                  msg: 'Xoá liên hệ thành công',
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.TOP,
-                  timeInSecForIosWeb: 1,
-                  backgroundColor: Theme.of(context).cardColor,
-                  textColor: Theme.of(context).hintColor,
-                  fontSize: 15,
-                  webBgColor: 'rgba(255, 255, 255)',
-                  webPosition: 'center',
-                );
-              }
-            }
+  State<ContactDetailScreen> createState() => _ContactDetailScreenState();
+}
 
-            if (state.type == PhoneBookType.GET_LIST) {}
-          }, builder: (context, state) {
-            // if (state.type == PhoneBookType.GET_DETAIL &&
-            //     state.status == BlocStatus.LOADING) {
-            //   return const Center(child: CircularProgressIndicator());
-            // }
-            phoneBookDetailDTO = state.phoneBookDetailDTO;
-            return Padding(
+class _ContactDetailScreenState extends State<ContactDetailScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider<ContactBloc>(
+      create: (context) =>
+          ContactBloc(context)..add(ContactEventGetDetail(id: widget.dto.id)),
+      child: BlocConsumer<ContactBloc, ContactState>(
+        listener: (context, state) {
+          if (state.status == BlocStatus.UNLOADING) {
+            // Navigator.pop(context);
+          }
+
+          if (state.type == ContactType.REMOVE) {
+            Navigator.of(context).pop();
+            Fluttertoast.showToast(
+              msg: 'Xoá thành công',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              backgroundColor: Theme.of(context).cardColor,
+              textColor: Theme.of(context).hintColor,
+              fontSize: 15,
+            );
+          }
+
+          if (state.type == ContactType.UPDATE) {}
+
+          if (state.type == ContactType.GET_LIST) {}
+        },
+        builder: (context, state) {
+          return Scaffold(
+            appBar: MAppBar(
+              title: widget.dto.nickname,
+              actions: [
+                GestureDetector(
+                  onTap: () async {
+                    final data = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ContactEditView(
+                            contactDetailDTO: state.contactDetailDTO),
+                        // settings: RouteSettings(name: ContactEditView.routeName),
+                      ),
+                    );
+
+                    if (!mounted) return;
+                    if (data is bool) {
+                      context
+                          .read<ContactBloc>()
+                          .add(ContactEventGetDetail(id: widget.dto.id));
+                    }
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Image.asset(
+                      'assets/images/ic-edit.png',
+                    ),
+                  ),
+                )
+              ],
+            ),
+            body: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 children: [
@@ -94,7 +109,7 @@ class PhoneDetailScreen extends StatelessWidget {
                       ],
                     ),
                     child: QrImage(
-                      data: state.phoneBookDetailDTO.value ?? '',
+                      data: state.contactDetailDTO.value ?? '',
                       version: QrVersions.auto,
                       embeddedImage: const AssetImage(
                           'assets/images/ic-viet-qr-small.png'),
@@ -104,7 +119,7 @@ class PhoneDetailScreen extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    state.phoneBookDetailDTO.nickName ?? '',
+                    state.contactDetailDTO.nickName ?? '',
                     style: const TextStyle(
                         fontSize: 16, fontWeight: FontWeight.w600),
                   ),
@@ -118,7 +133,7 @@ class PhoneDetailScreen extends StatelessWidget {
                         style: TextStyle(fontWeight: FontWeight.w600),
                       ),
                       const Spacer(),
-                      _buildTypeQr(state.phoneBookDetailDTO)
+                      _buildTypeQr(state.contactDetailDTO)
                     ],
                   ),
                   const SizedBox(
@@ -142,7 +157,7 @@ class PhoneDetailScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                       color: AppColor.WHITE,
                     ),
-                    child: Text(state.phoneBookDetailDTO.additionalData ?? ''),
+                    child: Text(state.contactDetailDTO.additionalData ?? ''),
                   ),
                   const Spacer(),
                   MButtonWidget(
@@ -153,8 +168,8 @@ class PhoneDetailScreen extends StatelessWidget {
                           isSecondBT: true,
                           functionConfirm: () {
                             Navigator.of(context).pop();
-                            BlocProvider.of<PhoneBookBloc>(context)
-                                .add(RemovePhoneBookEvent(id: dto.id));
+                            BlocProvider.of<ContactBloc>(context)
+                                .add(RemoveContactEvent(id: widget.dto.id));
                           },
                         );
                       },
@@ -171,12 +186,14 @@ class PhoneDetailScreen extends StatelessWidget {
                   )
                 ],
               ),
-            );
-          }),
-        ));
+            ),
+          );
+        },
+      ),
+    );
   }
 
-  Widget _buildTypeQr(PhoneBookDetailDTO dto) {
+  Widget _buildTypeQr(ContactDetailDTO dto) {
     if (dto.type == 2) {
       return Container(
         width: 60,

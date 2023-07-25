@@ -2,12 +2,6 @@ import 'package:equatable/equatable.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/models/introduce_dto.dart';
 
-enum AccountType {
-  NONE,
-  LOG_OUT,
-  PONIT,
-}
-
 class AccountState extends Equatable {
   final String? msg;
   final BlocStatus status;

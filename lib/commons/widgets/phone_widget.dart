@@ -8,13 +8,14 @@ class PhoneWidget extends StatefulWidget {
   const PhoneWidget({super.key, this.onChanged, required this.phoneController});
 
   @override
-  _PhoneWidgetState createState() => _PhoneWidgetState();
+  State<PhoneWidget> createState() => _BodyWidget();
 }
 
-class _PhoneWidgetState extends State<PhoneWidget> {
+class _BodyWidget extends State<PhoneWidget> {
   dynamic _selectedCountryCode;
   final List<String> _countryCodes = ['+84'];
   late FocusNode myFocusPhone;
+
   @override
   void initState() {
     super.initState();
@@ -59,7 +60,7 @@ class _PhoneWidgetState extends State<PhoneWidget> {
           ),
           const VerticalDivider(
             color: Colors.black,
-            thickness: 0.5,
+            thickness: 0.2,
           ),
         ],
       ),

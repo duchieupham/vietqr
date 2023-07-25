@@ -6,6 +6,7 @@ class TimeUtils {
   const TimeUtils._privateConsrtructor();
 
   static const TimeUtils _instance = TimeUtils._privateConsrtructor();
+
   static TimeUtils get instance => _instance;
 
   DateTime getDateFromString(String time) {
@@ -215,7 +216,7 @@ class TimeUtils {
         }
       }
     } catch (e) {
-      print('Error at checkValidTimeRange: $e');
+      LOG.error('Error at checkValidTimeRange: $e');
     }
     return result;
   }
@@ -303,7 +304,7 @@ class TimeUtils {
         result = format.format(time).toString();
       }
     } catch (e) {
-      print('Error at formatDateFromTimeStamp: $e');
+      LOG.error('Error at formatDateFromTimeStamp: $e');
     }
     return result;
   }
@@ -320,7 +321,7 @@ class TimeUtils {
         result = format.format(time).toString();
       }
     } catch (e) {
-      print('Error at formatDateFromTimeStamp: $e');
+      LOG.error('Error at formatDateFromTimeStamp: $e');
     }
     return result;
   }

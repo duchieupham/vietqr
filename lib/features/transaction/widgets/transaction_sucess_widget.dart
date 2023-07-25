@@ -6,7 +6,6 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/commons/utils/transaction_utils.dart';
-import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/layouts/button_widget.dart';
 import 'package:vierqr/models/notification_transaction_success_dto.dart';

@@ -1,4 +1,4 @@
-class PhoneBookDTO {
+class ContactDTO {
   String id;
   String nickname;
   int status;
@@ -6,7 +6,7 @@ class PhoneBookDTO {
   String imgId;
   String description;
 
-  PhoneBookDTO({
+  ContactDTO({
     required this.id,
     required this.nickname,
     required this.status,
@@ -15,7 +15,7 @@ class PhoneBookDTO {
     required this.description,
   });
 
-  factory PhoneBookDTO.fromJson(Map<String, dynamic> json) => PhoneBookDTO(
+  factory ContactDTO.fromJson(Map<String, dynamic> json) => ContactDTO(
         id: json["id"],
         nickname: json["nickname"],
         status: json["status"],

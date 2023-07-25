@@ -31,7 +31,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         }
       }
     } catch (e) {
-      print('Error at login - LoginBloc: $e');
       emit(state.copyWith(request: LoginType.ERROR));
     }
   }
@@ -64,7 +63,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         }
       }
     } catch (e) {
-      print('Error at login - LoginBloc: $e');
       emit(state.copyWith(request: LoginType.ERROR));
     }
   }

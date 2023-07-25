@@ -3,13 +3,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
+import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/ambient_avatar_widget.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/account/account_screen.dart';
 import 'package:vierqr/features/bank_card/bank_screen.dart';
 import 'package:vierqr/features/business/views/business_screen.dart';
+import 'package:vierqr/features/contact/save_contact_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
 import 'package:vierqr/features/dashboard/views/dialog_scan_type_bank.dart';
@@ -27,7 +30,8 @@ import 'package:vierqr/features/token/blocs/token_bloc.dart';
 import 'package:vierqr/features/token/events/token_event.dart';
 import 'package:vierqr/features/token/states/token_state.dart';
 import 'package:vierqr/main.dart';
-import 'package:vierqr/models/add_phone_book_dto.dart';
+import 'package:vierqr/models/add_contact_dto.dart';
+import 'package:vierqr/models/bank_card_insert_unauthenticated.dart';
 import 'package:vierqr/models/bank_name_search_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
@@ -39,11 +43,11 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/services/providers/suggestion_widget_provider.dart';
 import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
-import 'dart:ui';
 
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 import 'events/dashboard_event.dart';
+import 'views/dialog_scan_type_url.dart';
 
 class DashBoardScreen extends StatefulWidget {
   const DashBoardScreen({Key? key}) : super(key: key);
@@ -126,20 +130,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
           },
         );
       } else {
-        if (data.contains('|')) {
-          final list = data.split("|");
-          if (list.isNotEmpty) {
-            identityDTO = NationalScannerDTO.fromJson(list);
-            if (!mounted) return;
-            Navigator.pushNamed(
-              context,
-              Routes.NATIONAL_INFORMATION,
-              arguments: {'dto': identityDTO},
-            );
-          }
-        } else {
-          _dashBoardBloc.add(ScanQrEventGetBankType(code: data));
-        }
+        _dashBoardBloc.add(ScanQrEventGetBankType(code: data));
       }
     }
   }
@@ -177,7 +168,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
     super.dispose();
   }
 
-  //check user information is updated before or not
+//check user information is updated before or not
   void checkUserInformation() {
     String firstName =
         UserInformationHelper.instance.getAccountInformation().firstName;
@@ -251,6 +242,13 @@ class _DashBoardScreen extends State<DashBoardScreen>
       },
       child: BlocListener<DashBoardBloc, DashBoardState>(
         listener: (context, state) async {
+          if (state.status == BlocStatus.LOADING) {
+            DialogWidget.instance.openLoadingDialog();
+          }
+
+          if (state.status == BlocStatus.UNLOADING) {
+            Navigator.pop(context);
+          }
           if (state.typePermission == DashBoardTypePermission.Request) {
             _dashBoardBloc.add(const PermissionEventGetStatus());
           }
@@ -328,6 +326,62 @@ class _DashBoardScreen extends State<DashBoardScreen>
                   }
                 },
               );
+            } else if (state.typeQR == TypeQR.VietQR_ID) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => SaveContactScreen(
+                    code: state.codeQR ?? '',
+                    typeQR: TypeContact.VietQR_ID,
+                  ),
+                  // settings: RouteSettings(name: ContactEditView.routeName),
+                ),
+              );
+            } else if (state.typeQR == TypeQR.QR_LINK) {
+              showGeneralDialog(
+                context: context,
+                barrierDismissible: true,
+                barrierLabel:
+                    MaterialLocalizations.of(context).modalBarrierDismissLabel,
+                barrierColor: Colors.black45,
+                transitionDuration: const Duration(milliseconds: 200),
+                pageBuilder: (BuildContext buildContext, Animation animation,
+                    Animation secondaryAnimation) {
+                  return DialogScanURL(
+                    code: state.codeQR ?? '',
+                    onTapSave: () async {
+                      final data = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => SaveContactScreen(
+                            code: state.codeQR ?? '',
+                            typeQR: TypeContact.Other,
+                          ),
+                          // settings: RouteSettings(name: ContactEditView.routeName),
+                        ),
+                      );
+                      if (!mounted) return;
+                      if (data is bool) {
+                        Fluttertoast.showToast(
+                          msg: 'Lưu thành công',
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.CENTER,
+                          backgroundColor: Theme.of(context).cardColor,
+                          textColor: Theme.of(context).hintColor,
+                          fontSize: 15,
+                        );
+                      }
+                    },
+                  );
+                },
+              );
+            } else if (state.typeQR == TypeQR.QR_CMT) {
+              if (!mounted) return;
+              Navigator.pushNamed(
+                context,
+                Routes.NATIONAL_INFORMATION,
+                arguments: {'dto': state.nationalScannerDTO},
+              );
             }
           }
 
@@ -335,14 +389,14 @@ class _DashBoardScreen extends State<DashBoardScreen>
             QRGeneratedDTO dto = QRGeneratedDTO(
                 bankCode: state.bankTypeDTO?.bankCode ?? '',
                 bankName: state.bankTypeDTO?.bankName ?? '',
-                bankAccount: state.bankAccount ?? '',
+                bankAccount: state.bankAccount,
                 userBankName: state.informationDTO?.accountName ?? '',
                 amount: '',
                 content: '',
                 qrCode: state.codeQR ?? '',
                 imgId: '');
-
-            final data = await showGeneralDialog(
+            if (!mounted) return;
+            await showGeneralDialog(
               context: context,
               barrierDismissible: true,
               barrierLabel:
@@ -354,33 +408,29 @@ class _DashBoardScreen extends State<DashBoardScreen>
                 return DialogScanBank(
                   dto: dto,
                   onTapSave: () {
-                    AddPhoneBookDTO dto = AddPhoneBookDTO(
+                    AddContactDTO dto = AddContactDTO(
                       additionalData: 'Đã thêm từ quét QR',
                       nickName: state.informationDTO?.accountName ?? '',
-                      type: 2,
+                      type: state.typeContact.value,
                       value: state.codeQR ?? '',
                       userId: UserInformationHelper.instance.getUserId(),
                       bankTypeId: state.bankTypeDTO?.id ?? '',
-                      bankAccount: state.bankAccount ?? '',
+                      bankAccount: state.bankAccount,
                     );
 
-                    _dashBoardBloc.add(DashBoardEventAddPhoneBook(dto: dto));
+                    _dashBoardBloc.add(DashBoardEventAddContact(dto: dto));
+                  },
+                  onTapAdd: () {
+                    _dashBoardBloc.add(DashBoardCheckExistedEvent(
+                        bankAccount: state.bankAccount,
+                        bankTypeId: state.bankTypeDTO?.id ?? ''));
                   },
                 );
               },
             );
-            // Navigator.pushNamed(
-            //   context,
-            //   Routes.ADD_BANK_CARD,
-            //   arguments: {
-            //     'step': 0,
-            //     'bankDTO': state.bankTypeDTO,
-            //     'bankAccount': state.bankAccount,
-            //     'name': ''
-            //   },
-            // );
           }
           if (state.request == DashBoardType.ADD_BOOK_CONTACT) {
+            Navigator.pop(context);
             Fluttertoast.showToast(
               msg: 'Đã thêm vào danh bạ',
               toastLength: Toast.LENGTH_SHORT,
@@ -392,6 +442,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
               webBgColor: 'rgba(255, 255, 255)',
               webPosition: 'center',
             );
+
             Future.delayed(const Duration(milliseconds: 400), () {
               Navigator.pushNamed(context, Routes.PHONE_BOOK);
             });
@@ -406,6 +457,39 @@ class _DashBoardScreen extends State<DashBoardScreen>
                 }
               },
             );
+          }
+
+          if (state.request == DashBoardType.EXIST_BANK) {
+            String userId = UserInformationHelper.instance.getUserId();
+            String formattedName = StringUtils.instance.removeDiacritic(
+                StringUtils.instance.capitalFirstCharacter(
+                    state.informationDTO?.accountName ?? ''));
+            BankCardInsertUnauthenticatedDTO dto =
+                BankCardInsertUnauthenticatedDTO(
+              bankTypeId: state.bankTypeDTO?.id ?? '',
+              userId: userId,
+              userBankName: formattedName,
+              bankAccount: state.bankAccount,
+            );
+            _dashBoardBloc.add(DashBoardEventInsertUnauthenticated(dto: dto));
+          }
+
+          if (state.request == DashBoardType.INSERT_BANK) {
+            if (!mounted) return;
+            eventBus.fire(ChangeThemeEvent());
+            Navigator.of(context).pop(true);
+          }
+
+          if (state.request == DashBoardType.ERROR) {
+            await DialogWidget.instance.openMsgDialog(
+                title: 'Không thể thêm TK', msg: state.msg ?? '');
+          }
+
+          if (state.status != BlocStatus.NONE ||
+              state.request != DashBoardType.NONE ||
+              state.typeQR != TypeQR.NONE ||
+              state.typePermission == DashBoardTypePermission.None) {
+            _dashBoardBloc.add(UpdateEvent());
           }
         },
         child: Scaffold(
@@ -455,42 +539,44 @@ class _DashBoardScreen extends State<DashBoardScreen>
               ),
             ],
           ),
-          bottomNavigationBar:
-              Consumer<PageSelectProvider>(builder: (context, page, child) {
-            return Container(
-              decoration: const BoxDecoration(
-                border:
-                    Border(top: BorderSide(color: AppColor.GREY_TOP_TAB_BAR)),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: List.generate(
-                  page.listItem.length,
-                  (index) {
-                    var item = page.listItem.elementAt(index);
+          bottomNavigationBar: Consumer<PageSelectProvider>(
+            builder: (context, page, child) {
+              return Container(
+                padding: const EdgeInsets.only(bottom: 12),
+                decoration: const BoxDecoration(
+                  border:
+                      Border(top: BorderSide(color: AppColor.GREY_TOP_TAB_BAR)),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: List.generate(
+                    page.listItem.length,
+                    (index) {
+                      var item = page.listItem.elementAt(index);
 
-                    String url = (item.index == page.indexSelected)
-                        ? item.assetsActive
-                        : item.assetsUnActive;
+                      String url = (item.index == page.indexSelected)
+                          ? item.assetsActive
+                          : item.assetsUnActive;
 
-                    return _buildShortcut(
-                      index: item.index,
-                      url: url,
-                      label: item.label,
-                      context: context,
-                      select: item.index == page.indexSelected,
-                    );
-                  },
-                ).toList(),
-              ),
-            );
-          }),
+                      return _buildShortcut(
+                        index: item.index,
+                        url: url,
+                        label: item.label,
+                        context: context,
+                        select: item.index == page.indexSelected,
+                      );
+                    },
+                  ).toList(),
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
   }
 
-  //build shorcuts in bottom bar
+//build shorcuts in bottom bar
   Widget _buildShortcut({
     required int index,
     required String url,
@@ -544,7 +630,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
     );
   }
 
-  //navigate to page
+//navigate to page
   void _animatedToPage(int index) {
     try {
       _pageController.jumpToPage(
@@ -562,7 +648,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
     }
   }
 
-  //get title page
+//get title page
   Widget _getTitlePaqe(BuildContext context, int indexSelected) {
     Widget titleWidget = const SizedBox();
     if (indexSelected == 0 || indexSelected == 1) {
@@ -652,7 +738,6 @@ class _DashBoardScreen extends State<DashBoardScreen>
 
 //header
   Widget _buildAppBar() {
-    double paddingTop = MediaQuery.of(context).viewPadding.top;
     return BackgroundAppBarHome(
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 25),
