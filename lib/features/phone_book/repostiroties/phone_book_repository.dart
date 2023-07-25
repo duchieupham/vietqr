@@ -93,4 +93,26 @@ class PhoneBookRepository {
     }
     return result;
   }
+
+  Future<ResponseMessageDTO> updatePhoneBook(Map<String, dynamic> data) async {
+    ResponseMessageDTO result =
+        const ResponseMessageDTO(status: '', message: '');
+    try {
+      String url = '${EnvConfig.getBaseUrl()}contact/update';
+      final response = await BaseAPIClient.postAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+        body: data,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        if (data != null) {
+          result = ResponseMessageDTO.fromJson(data);
+        }
+      }
+    } catch (e) {
+      print('Error at requestPermissions - PermissionRepository: $e');
+    }
+    return result;
+  }
 }

@@ -40,6 +40,7 @@ import 'package:vierqr/features/personal/views/national_information_view.dart';
 import 'package:vierqr/features/phone_book/blocs/phone_book_bloc.dart';
 import 'package:vierqr/features/phone_book/phone_book_screen.dart';
 import 'package:vierqr/features/phone_book/save_phone_book_screen.dart';
+import 'package:vierqr/features/phone_book/views/edit_phone_book.dart';
 import 'package:vierqr/features/phone_book/views/phone_book_detail.dart';
 import 'package:vierqr/features/printer/blocs/printer_bloc.dart';
 import 'package:vierqr/features/printer/views/printer_setting_view.dart';
@@ -57,6 +58,7 @@ import 'package:vierqr/features/top_up/top_up_screen.dart';
 import 'package:vierqr/features/transaction/transaction_detail_screen.dart';
 import 'package:vierqr/features/transaction/widgets/transaction_sucess_widget.dart';
 import 'package:vierqr/models/notification_transaction_success_dto.dart';
+import 'package:vierqr/models/phone_book_detail_dto.dart';
 import 'package:vierqr/models/phone_book_dto.dart';
 import 'package:vierqr/services/local_notification/notification_service.dart';
 import 'package:vierqr/services/providers/action_share_provider.dart';
@@ -374,7 +376,18 @@ class _VietQRApp extends State<VietQRApp> {
                       },
                     );
                   }
+                  if (settings.name == Routes.UPDATE_PHONE_BOOK) {
+                    PhoneBookDetailDTO _dto =
+                        settings.arguments as PhoneBookDetailDTO;
 
+                    return MaterialPageRoute(
+                      builder: (context) {
+                        return EditPhoneBookScreen(
+                          dto: _dto,
+                        );
+                      },
+                    );
+                  }
                   return null;
                 },
                 themeMode: (themeSelect.themeSystem == AppColor.THEME_SYSTEM)

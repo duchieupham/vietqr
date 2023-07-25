@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
@@ -13,19 +15,27 @@ import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/phone_book_detail_dto.dart';
 import 'package:vierqr/models/phone_book_dto.dart';
 
-// ignore: must_be_immutable
 class PhoneDetailScreen extends StatelessWidget {
   final PhoneBookDTO dto;
 
-  const PhoneDetailScreen({super.key, required this.dto});
+  PhoneDetailScreen({super.key, required this.dto});
+  late PhoneBookDetailDTO phoneBookDetailDTO = PhoneBookDetailDTO();
+
+  late final PhoneBookBloc _phoneBookBloc;
 
   @override
   Widget build(BuildContext context) {
+    _phoneBookBloc = PhoneBookBloc()..add(PhoneBookEventGetDetail(id: dto.id));
     return Scaffold(
         appBar: MAppBar(
           title: dto.nickname,
           actions: [
             GestureDetector(
+              onTap: () async {
+                await Navigator.pushNamed(context, Routes.UPDATE_PHONE_BOOK,
+                    arguments: phoneBookDetailDTO);
+                _phoneBookBloc.add(PhoneBookEventGetDetail(id: dto.id));
+              },
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Image.asset(
@@ -36,37 +46,33 @@ class PhoneDetailScreen extends StatelessWidget {
           ],
         ),
         body: BlocProvider<PhoneBookBloc>(
-          create: (context) =>
-              PhoneBookBloc(context)..add(PhoneBookEventGetDetail(id: dto.id)),
+          create: (context) => _phoneBookBloc,
           child: BlocConsumer<PhoneBookBloc, PhoneBookState>(
               listener: (context, state) {
             if (state.type == PhoneBookType.REMOVE) {
-              if (state.status == BlocStatus.LOADING) {
-                DialogWidget.instance.openLoadingDialog();
-              }
               if (state.status == BlocStatus.SUCCESS) {
                 Navigator.pop(context);
-                DialogWidget.instance.openMsgDialog(
-                  title: 'Thành công',
-                  msg: 'Đã xoá thông tin thành công',
-                  showImageWarning: false,
-                  height: 190,
-                  function: () {
-                    Navigator.pop(context);
-                    if (Navigator.canPop(context)) {
-                      Navigator.pop(context);
-                    }
-                  },
+                Fluttertoast.showToast(
+                  msg: 'Xoá liên hệ thành công',
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.TOP,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Theme.of(context).cardColor,
+                  textColor: Theme.of(context).hintColor,
+                  fontSize: 15,
+                  webBgColor: 'rgba(255, 255, 255)',
+                  webPosition: 'center',
                 );
               }
             }
 
             if (state.type == PhoneBookType.GET_LIST) {}
           }, builder: (context, state) {
-            if (state.type == PhoneBookType.GET_DETAIL &&
-                state.status == BlocStatus.LOADING) {
-              return const Center(child: CircularProgressIndicator());
-            }
+            // if (state.type == PhoneBookType.GET_DETAIL &&
+            //     state.status == BlocStatus.LOADING) {
+            //   return const Center(child: CircularProgressIndicator());
+            // }
+            phoneBookDetailDTO = state.phoneBookDetailDTO;
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(

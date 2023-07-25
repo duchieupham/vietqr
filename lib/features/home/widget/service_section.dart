@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
+import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 
 class ServiceSection extends StatelessWidget {
@@ -35,7 +37,7 @@ class ServiceSection extends StatelessWidget {
           // Navigator.pushNamed(context, Routes.TOP_UP);
         }),
         _buildItemService('assets/images/ic-mb.png', 'Mở TK\nMB Bank', () {
-          Navigator.pushNamed(context, Routes.INTRODUCE_SCREEN);
+          _launchUrl();
         }),
         _buildItemService('assets/images/ic-login-web.png', 'Đăng nhập\nweb',
             () {
@@ -46,6 +48,15 @@ class ServiceSection extends StatelessWidget {
         }),
       ],
     );
+  }
+
+  Future<void> _launchUrl() async {
+    final Uri url = Uri.parse('https://l.linklyhq.com/l/1nyVv');
+    try {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } catch (e) {
+      LOG.error(e.toString());
+    }
   }
 
   Widget _buildItemService(String pathIcon, String title, VoidCallback onTap) {

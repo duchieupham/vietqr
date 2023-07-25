@@ -3,7 +3,7 @@ import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/models/phone_book_detail_dto.dart';
 import 'package:vierqr/models/phone_book_dto.dart';
 
-enum PhoneBookType { NONE, GET_LIST, GET_DETAIL, REMOVE }
+enum PhoneBookType { NONE, GET_LIST, GET_DETAIL, REMOVE, UPDATE }
 
 class PhoneBookState extends Equatable {
   final List<PhoneBookDTO> listPhoneBookDTO;

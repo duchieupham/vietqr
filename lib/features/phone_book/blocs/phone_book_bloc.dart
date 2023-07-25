@@ -10,13 +10,11 @@ import 'package:vierqr/features/phone_book/states/phone_book_state.dart';
 import 'package:vierqr/models/phone_book_detail_dto.dart';
 import 'package:vierqr/models/phone_book_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
+import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
-class PhoneBookBloc extends Bloc<PhoneBookEvent, PhoneBookState>
-    with BaseManager {
+class PhoneBookBloc extends Bloc<PhoneBookEvent, PhoneBookState> {
   @override
-  BuildContext context;
-
-  PhoneBookBloc(this.context)
+  PhoneBookBloc()
       : super(PhoneBookState(
             listPhoneBookDTO: const [],
             listPhoneBookDTOSuggest: const [],
@@ -26,6 +24,7 @@ class PhoneBookBloc extends Bloc<PhoneBookEvent, PhoneBookState>
     on<PhoneBookEventGetListPending>(_getListPhoneBookPending);
     on<PhoneBookEventGetDetail>(_getDetailPhoneBook);
     on<RemovePhoneBookEvent>(_removePhoneBook);
+    on<PhoneBookEventUpdate>(_updatePhoneBook);
   }
 
   final repository = PhoneBookRepository();
@@ -34,8 +33,8 @@ class PhoneBookBloc extends Bloc<PhoneBookEvent, PhoneBookState>
     try {
       if (event is PhoneBookEventGetList) {
         emit(state.copyWith(status: BlocStatus.LOADING));
-        List<PhoneBookDTO> result =
-            await repository.getListSavePhoneBook(userId);
+        List<PhoneBookDTO> result = await repository
+            .getListSavePhoneBook(UserInformationHelper.instance.getUserId());
         result.sort((a, b) => a.nickname.compareTo(b.nickname));
         if (result.isNotEmpty) {
           emit(
@@ -59,7 +58,8 @@ class PhoneBookBloc extends Bloc<PhoneBookEvent, PhoneBookState>
   void _getListPhoneBookPending(PhoneBookEvent event, Emitter emit) async {
     try {
       if (event is PhoneBookEventGetListPending) {
-        final result = await repository.getListPhoneBookPending(userId);
+        final result = await repository.getListPhoneBookPending(
+            UserInformationHelper.instance.getUserId());
         if (result.isNotEmpty) {
           emit(
             state.copyWith(
@@ -127,6 +127,35 @@ class PhoneBookBloc extends Bloc<PhoneBookEvent, PhoneBookState>
           emit(
             state.copyWith(
               type: PhoneBookType.REMOVE,
+              status: BlocStatus.ERROR,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(status: BlocStatus.ERROR));
+    }
+  }
+
+  void _updatePhoneBook(PhoneBookEvent event, Emitter emit) async {
+    try {
+      if (event is PhoneBookEventUpdate) {
+        emit(
+          state.copyWith(
+            status: BlocStatus.LOADING,
+            type: PhoneBookType.UPDATE,
+          ),
+        );
+        ResponseMessageDTO result =
+            await repository.updatePhoneBook(event.data);
+        if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
+          emit(state.copyWith(
+              status: BlocStatus.SUCCESS, type: PhoneBookType.UPDATE));
+        } else {
+          emit(
+            state.copyWith(
+              type: PhoneBookType.UPDATE,
               status: BlocStatus.ERROR,
             ),
           );

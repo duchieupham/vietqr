@@ -138,7 +138,7 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
                       ? _buildSearchItem(
                           context: context,
                           dto: _dto,
-                          existed: _typeMember,
+                          existed: getTypeMember(_dto.existed),
                         )
                       : const SizedBox(),
             ],
@@ -335,6 +335,15 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
       _dto = dtoDefault;
       _typeMember = dtoDefault.typeMember;
     });
+  }
+
+  TypeAddMember getTypeMember(int existed) {
+    if (existed == 0) {
+      return TypeAddMember.MORE;
+    } else if (existed == 1) {
+      return TypeAddMember.ADDED;
+    }
+    return TypeAddMember.MORE;
   }
 
   void _insertMember(dto) async {

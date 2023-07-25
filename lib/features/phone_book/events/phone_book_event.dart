@@ -22,3 +22,10 @@ class RemovePhoneBookEvent extends PhoneBookEvent {
   @override
   List<Object?> get props => [id];
 }
+
+class PhoneBookEventUpdate extends PhoneBookEvent {
+  final Map<String, dynamic> data;
+  PhoneBookEventUpdate({required this.data});
+  @override
+  List<Object?> get props => [data];
+}

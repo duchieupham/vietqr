@@ -21,7 +21,7 @@ class PhoneBookScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<PhoneBookBloc>(
-      create: (context) => PhoneBookBloc(context),
+      create: (context) => PhoneBookBloc(),
       child: ChangeNotifierProvider<PhoneBookProvider>(
         create: (context) => PhoneBookProvider(),
         child: _PhoneBookState(),
@@ -65,6 +65,7 @@ class _PhoneBookStateState extends State<_PhoneBookState> {
         title: 'Danh bạ',
         actions: [
           GestureDetector(
+            onTap: () {},
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Image.asset(
@@ -196,8 +197,10 @@ class _PhoneBookStateState extends State<_PhoneBookState> {
 
   Widget _buildItemSave({required PhoneBookDTO? dto}) {
     return GestureDetector(
-      onTap: () {
-        Navigator.pushNamed(context, Routes.PHONE_BOOK_DETAIL, arguments: dto);
+      onTap: () async {
+        await Navigator.pushNamed(context, Routes.PHONE_BOOK_DETAIL,
+            arguments: dto);
+        _bloc.add(PhoneBookEventGetList());
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
