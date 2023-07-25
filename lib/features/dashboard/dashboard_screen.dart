@@ -651,7 +651,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
 //get title page
   Widget _getTitlePaqe(BuildContext context, int indexSelected) {
     Widget titleWidget = const SizedBox();
-    if (indexSelected == 0 || indexSelected == 1) {
+    if (indexSelected == 0 || indexSelected == 1 || indexSelected == 2) {
       titleWidget = Consumer<BankCardSelectProvider>(
         builder: (context, provider, child) {
           return ButtonIconWidget(
@@ -674,24 +674,6 @@ class _DashBoardScreen extends State<DashBoardScreen>
       );
     }
 
-    if (indexSelected == 2) {
-      titleWidget = RichText(
-        textAlign: TextAlign.left,
-        text: TextSpan(
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: Theme.of(context).hintColor,
-            letterSpacing: 0.2,
-          ),
-          children: const [
-            TextSpan(
-              text: 'VietQR',
-            ),
-          ],
-        ),
-      );
-    }
     if (indexSelected == 3) {
       titleWidget = RichText(
         textAlign: TextAlign.left,

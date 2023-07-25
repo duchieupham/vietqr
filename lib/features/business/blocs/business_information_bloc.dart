@@ -51,6 +51,7 @@ class BusinessInformationBloc
       BusinessInformationEvent event, Emitter emit) async {
     try {
       if (event is BusinessInformationEventInsert) {
+        emit(state.copyWith(status: BlocStatus.LOADING));
         final ResponseMessageDTO result = await businessInformationRepository
             .insertBusinessInformation(event.dto);
         if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {

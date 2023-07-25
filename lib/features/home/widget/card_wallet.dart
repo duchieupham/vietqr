@@ -60,7 +60,7 @@ class CardWallet extends StatelessWidget {
                   return Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      if (provider.isHide)
+                      if (!provider.isHide)
                         const Text(
                           '********',
                           style: TextStyle(
@@ -80,11 +80,14 @@ class CardWallet extends StatelessWidget {
                         onTap: () {
                           provider.updateHideAmount(!provider.isHide);
                         },
-                        child: Image.asset(
-                          provider.isHide
-                              ? 'assets/images/ic-unhide.png'
-                              : 'assets/images/ic-hide.png',
-                          height: 18,
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 4),
+                          child: Image.asset(
+                            !provider.isHide
+                                ? 'assets/images/ic-unhide.png'
+                                : 'assets/images/ic-hide.png',
+                            height: 15,
+                          ),
                         ),
                       ),
                       const Spacer(),
@@ -108,18 +111,17 @@ class CardWallet extends StatelessWidget {
 
   Widget _buildListAction(BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         _buildItemAction('assets/images/ic-tb-card.png', 'Tài khoản', () {
           Navigator.pushNamed(context, Routes.SEARCH_BANK);
         }),
-        const Spacer(),
         _buildItemAction('assets/images/ic-money-add.png', 'Nạp tiền', () {
           DialogWidget.instance.openMsgDialog(
             title: 'Tính năng đang bảo trì',
             msg: 'Vui lòng thử lại sau',
           );
         }),
-        const Spacer(),
         _buildItemAction('assets/images/ic-tb-qr.png', 'Quét QR', () async {
           if (QRScannerHelper.instance.getQrIntro()) {
             startBarcodeScanStream();
@@ -131,7 +133,6 @@ class CardWallet extends StatelessWidget {
             startBarcodeScanStream();
           }
         }),
-        const Spacer(),
         _buildItemAction(
           'assets/images/ic-contact.png',
           'Danh bạ',

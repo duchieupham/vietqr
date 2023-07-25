@@ -5,6 +5,7 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/widgets/sub_header_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_widget.dart';
+import 'package:vierqr/features/bank_detail/bank_card_detail_screen.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/services/providers/bank_card_select_provider.dart';
@@ -245,12 +246,13 @@ class SearchBankView extends StatelessWidget {
     return (dto.id.isNotEmpty)
         ? InkWell(
             onTap: () {
-              Navigator.pushNamed(
-                context,
-                Routes.BANK_CARD_DETAIL_VEW,
-                arguments: {
-                  'bankId': dto.id,
-                },
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => BankCardDetailScreen(bankId: dto.id),
+                  settings: const RouteSettings(
+                    name: Routes.BANK_CARD_DETAIL_VEW,
+                  ),
+                ),
               );
             },
             child: Container(

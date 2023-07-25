@@ -239,10 +239,12 @@ class _FeatureWidget extends StatelessWidget {
   void onTap(BuildContext context, int index) {
     switch (index) {
       case 0:
-        onMyQr(
-          context,
-          code: code,
-          userName: UserInformationHelper.instance.getUserFullname(),
+        DialogWidget.instance.showModelBottomSheet(
+          context: context,
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          radius: 15,
+          widget: MyQRBottomSheet(),
+          height: MediaQuery.of(context).size.height * 0.7,
         );
         break;
       case 1:
@@ -424,37 +426,6 @@ class _IntroduceWidget extends StatelessWidget {
                   ),
                   child: const Icon(Icons.arrow_forward_ios, size: 12),
                 )
-              ],
-            ),
-          ),
-          const Divider(),
-          GestureDetector(
-            onTap: () async {
-              await DialogWidget.instance.showModelBottomSheet(
-                context: context,
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                radius: 15,
-                widget: MyQRBottomSheet(),
-                height: height * 0.7,
-              );
-            },
-            child: Row(
-              children: [
-                Image.asset(
-                  'assets/images/ic-tb-qr.png',
-                  width: 28,
-                  height: 28,
-                  color: AppColor.BLUE_TEXT,
-                ),
-                const SizedBox(width: 8),
-                const Expanded(
-                  child: Text(
-                    'My QR',
-                    style: TextStyle(
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
               ],
             ),
           ),

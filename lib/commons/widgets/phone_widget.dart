@@ -35,30 +35,40 @@ class _BodyWidget extends State<PhoneWidget> {
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
-        children: [
-          DropdownButtonHideUnderline(
-            child: ButtonTheme(
-              alignedDropdown: true,
-              child: DropdownButton(
-                value: _selectedCountryCode,
-                items: _countryCodes.map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(
-                      value,
-                      style: const TextStyle(fontSize: 14.0),
-                    ),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedCountryCode = value;
-                  });
-                },
-              ),
-            ),
+        children: const [
+          // DropdownButtonHideUnderline(
+          //   child: ButtonTheme(
+          //     alignedDropdown: true,
+          //     child: DropdownButton(
+          //       value: _selectedCountryCode,
+          //       items: _countryCodes.map((String value) {
+          //         return DropdownMenuItem<String>(
+          //           value: value,
+          //           child: Text(
+          //             value,
+          //             style: const TextStyle(fontSize: 14.0),
+          //           ),
+          //         );
+          //       }).toList(),
+          //       onChanged: (value) {
+          //         setState(() {
+          //           _selectedCountryCode = value;
+          //         });
+          //       },
+          //     ),
+          //   ),
+          // ),
+          SizedBox(
+            width: 16,
           ),
-          const VerticalDivider(
+          Text(
+            '+84',
+            style: TextStyle(fontSize: 14.0),
+          ),
+          SizedBox(
+            width: 8,
+          ),
+          VerticalDivider(
             color: Colors.black,
             thickness: 0.2,
           ),

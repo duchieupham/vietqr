@@ -727,12 +727,14 @@ class _BranchDetailViewState extends State<BranchDetailView> {
                     title: 'Chi tiết',
                     textSize: 12,
                     function: () {
-                      Navigator.pushNamed(
-                        context,
-                        Routes.BANK_CARD_DETAIL_VEW,
-                        arguments: {
-                          'bankId': dto.bankId,
-                        },
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              BankCardDetailScreen(bankId: dto.bankId),
+                          settings: const RouteSettings(
+                            name: Routes.BANK_CARD_DETAIL_VEW,
+                          ),
+                        ),
                       );
                     },
                     bgColor: Theme.of(context).cardColor.withOpacity(0.3),
