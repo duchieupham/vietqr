@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
-import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
@@ -148,7 +147,6 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
 
   @override
   Widget build(BuildContext context) {
-    final double width = MediaQuery.of(context).size.width;
     final double height = MediaQuery.of(context).size.height;
 
     return WillPopScope(
@@ -305,274 +303,304 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
               builder: (context, constraint) {
                 return Scaffold(
                   appBar: const MAppBar(title: 'Thêm tài khoản'),
-                  body: Container(
-                    height: constraint.maxHeight,
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 20, horizontal: 20),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          Consumer<AddBankProvider>(
-                              builder: (context, provider, child) {
-                            return Column(
+                  body: Column(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          height: constraint.maxHeight,
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 20, horizontal: 20),
+                          child: SingleChildScrollView(
+                            child: Column(
                               children: [
-                                if (provider.bankTypeDTO?.status == 1) ...[
-                                  _BuildHeader(select: provider.step),
-                                  const SizedBox(height: 20),
-                                ],
-                              ],
-                            );
-                          }),
-                          Consumer<AddBankProvider>(
-                            builder: (context, provider, child) {
-                              if (provider.step == 1) {
-                                return AccountLinkView(
-                                  bankTypeDTO: provider.bankTypeDTO!,
-                                  bankAccount: bankAccountController.text,
-                                  bankUserName: nameController.text,
-                                  phone: phoneController,
-                                  cmt: cmtController,
-                                  onChangePhone: (value) {
-                                    provider.onChangePhone(value,
-                                        cmt: cmtController.text);
-                                  },
-                                  onChangeCMT: (value) {
-                                    provider.onChangeCMT(value,
-                                        phone: phoneController.text);
-                                  },
-                                  errorPhone: provider.errorSDT,
-                                  errorCMT: provider.errorCMT,
-                                  onScan: () {
-                                    FocusManager.instance.primaryFocus
-                                        ?.unfocus();
-                                    startBarcodeScanStream(context);
-                                  },
-                                  onEdit: () {
-                                    phoneController.clear();
-                                    cmtController.clear();
-                                    provider.updateStep(0);
-                                    provider.updateEdit(false);
-                                  },
-                                );
-                              } else if (provider.step == 2) {
-                                return ConfirmOTPView(
-                                  phone: phoneController.text,
-                                  otpController: otpController,
-                                  onChangeOTP: (value) {},
-                                  onResend: () {
-                                    String formattedName = StringUtils.instance
-                                        .removeDiacritic(StringUtils.instance
-                                            .capitalFirstCharacter(
-                                                nameController.text));
-                                    BankCardRequestOTP dto = BankCardRequestOTP(
-                                      nationalId: cmtController.text,
-                                      accountNumber: bankAccountController.text,
-                                      accountName: formattedName,
-                                      applicationType: 'MOBILE',
-                                      phoneNumber: phoneController.text,
-                                    );
-                                    _bloc
-                                        .add(BankCardEventRequestOTP(dto: dto));
-                                  },
-                                );
-                              }
+                                Consumer<AddBankProvider>(
+                                    builder: (context, provider, child) {
+                                  return Column(
+                                    children: [
+                                      if (provider.bankTypeDTO?.status ==
+                                          1) ...[
+                                        _BuildHeader(select: provider.step),
+                                        const SizedBox(height: 20),
+                                      ],
+                                    ],
+                                  );
+                                }),
+                                Consumer<AddBankProvider>(
+                                  builder: (context, provider, child) {
+                                    if (provider.step == 1) {
+                                      return AccountLinkView(
+                                        bankTypeDTO: provider.bankTypeDTO!,
+                                        bankAccount: bankAccountController.text,
+                                        bankUserName: nameController.text,
+                                        phone: phoneController,
+                                        cmt: cmtController,
+                                        onChangePhone: (value) {
+                                          provider.onChangePhone(value,
+                                              cmt: cmtController.text);
+                                        },
+                                        onChangeCMT: (value) {
+                                          provider.onChangeCMT(value,
+                                              phone: phoneController.text);
+                                        },
+                                        errorPhone: provider.errorSDT,
+                                        errorCMT: provider.errorCMT,
+                                        onScan: () {
+                                          FocusManager.instance.primaryFocus
+                                              ?.unfocus();
+                                          startBarcodeScanStream(context);
+                                        },
+                                        onEdit: () {
+                                          phoneController.clear();
+                                          cmtController.clear();
+                                          provider.updateStep(0);
+                                          provider.updateEdit(false);
+                                        },
+                                      );
+                                    } else if (provider.step == 2) {
+                                      return ConfirmOTPView(
+                                        phone: phoneController.text,
+                                        otpController: otpController,
+                                        onChangeOTP: (value) {},
+                                        onResend: () {
+                                          String formattedName = StringUtils
+                                              .instance
+                                              .removeDiacritic(StringUtils
+                                                  .instance
+                                                  .capitalFirstCharacter(
+                                                      nameController.text));
+                                          BankCardRequestOTP dto =
+                                              BankCardRequestOTP(
+                                            nationalId: cmtController.text,
+                                            accountNumber:
+                                                bankAccountController.text,
+                                            accountName: formattedName,
+                                            applicationType: 'MOBILE',
+                                            phoneNumber: phoneController.text,
+                                          );
+                                          _bloc.add(BankCardEventRequestOTP(
+                                              dto: dto));
+                                        },
+                                      );
+                                    }
 
-                              return SizedBox(
-                                child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: [
-                                    const Text(
-                                      'Ngân hàng',
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    GestureDetector(
-                                      onTap: () async {
-                                        final data = await DialogWidget.instance
-                                            .showModelBottomSheet(
-                                          context: context,
-                                          padding: EdgeInsets.zero,
-                                          widget: ModelBottomSheetView(
-                                            tvTitle: 'Chọn ngân hàng',
-                                            list: state.listBanks ?? [],
-                                            isSearch: true,
-                                            data: provider.bankTypeDTO,
+                                    return SizedBox(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.stretch,
+                                        children: [
+                                          const Text(
+                                            'Ngân hàng',
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold),
                                           ),
-                                          height: height * 0.6,
-                                        );
-                                        if (data is int) {
-                                          bankAccountController.clear();
-                                          nameController.clear();
-                                          provider.resetValidate();
-                                          provider.updateSelectBankType(
-                                              state.listBanks![data]);
-                                        }
-                                      },
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 12),
-                                        decoration: const BoxDecoration(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(5)),
-                                          color: AppColor.WHITE,
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            if (provider.bankTypeDTO != null)
-                                              Container(
-                                                width: 60,
-                                                height: 30,
-                                                margin: const EdgeInsets.only(
-                                                    left: 4),
-                                                decoration: BoxDecoration(
-                                                  image: DecorationImage(
-                                                      image: ImageUtils.instance
-                                                          .getImageNetWork(provider
-                                                                  .bankTypeDTO
-                                                                  ?.imageId ??
-                                                              '')),
+                                          const SizedBox(height: 10),
+                                          GestureDetector(
+                                            onTap: () async {
+                                              final data = await DialogWidget
+                                                  .instance
+                                                  .showModelBottomSheet(
+                                                context: context,
+                                                padding: EdgeInsets.zero,
+                                                widget: ModelBottomSheetView(
+                                                  tvTitle: 'Chọn ngân hàng',
+                                                  list: state.listBanks ?? [],
+                                                  isSearch: true,
+                                                  data: provider.bankTypeDTO,
                                                 ),
-                                              )
-                                            else
-                                              const SizedBox(width: 16),
-                                            const SizedBox(width: 4),
-                                            Expanded(
-                                              child: Text(
-                                                provider.bankTypeDTO?.name ??
-                                                    'Chọn ngân hàng',
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w400,
-                                                    color: provider
-                                                                .bankTypeDTO !=
-                                                            null
-                                                        ? AppColor.BLACK
-                                                        : AppColor.GREY_TEXT),
+                                                height: height * 0.6,
+                                              );
+                                              if (data is int) {
+                                                bankAccountController.clear();
+                                                nameController.clear();
+                                                provider.resetValidate();
+                                                provider.updateSelectBankType(
+                                                    state.listBanks![data]);
+                                              }
+                                            },
+                                            child: Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 12),
+                                              decoration: const BoxDecoration(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(5)),
+                                                color: AppColor.WHITE,
+                                              ),
+                                              child: Row(
+                                                children: [
+                                                  if (provider.bankTypeDTO !=
+                                                      null)
+                                                    Container(
+                                                      width: 60,
+                                                      height: 30,
+                                                      margin:
+                                                          const EdgeInsets.only(
+                                                              left: 4),
+                                                      decoration: BoxDecoration(
+                                                        image: DecorationImage(
+                                                            image: ImageUtils
+                                                                .instance
+                                                                .getImageNetWork(provider
+                                                                        .bankTypeDTO
+                                                                        ?.imageId ??
+                                                                    '')),
+                                                      ),
+                                                    )
+                                                  else
+                                                    const SizedBox(width: 16),
+                                                  const SizedBox(width: 4),
+                                                  Expanded(
+                                                    child: Text(
+                                                      provider.bankTypeDTO
+                                                              ?.name ??
+                                                          'Chọn ngân hàng',
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                          color: provider
+                                                                      .bankTypeDTO !=
+                                                                  null
+                                                              ? AppColor.BLACK
+                                                              : AppColor
+                                                                  .GREY_TEXT),
+                                                    ),
+                                                  ),
+                                                  const Icon(
+                                                    Icons.keyboard_arrow_down,
+                                                    color: AppColor.GREY_TEXT,
+                                                  ),
+                                                  const SizedBox(width: 20),
+                                                ],
                                               ),
                                             ),
-                                            const Icon(
-                                              Icons.keyboard_arrow_down,
-                                              color: AppColor.GREY_TEXT,
+                                          ),
+                                          const SizedBox(height: 30),
+                                          TextFieldCustom(
+                                            isObscureText: false,
+                                            maxLines: 1,
+                                            enable:
+                                                provider.bankTypeDTO != null,
+                                            fillColor:
+                                                provider.bankTypeDTO != null
+                                                    ? null
+                                                    : AppColor.GREY_EBEBEB,
+                                            controller: bankAccountController,
+                                            textFieldType: TextfieldType.LABEL,
+                                            title: 'Số tài khoản',
+                                            focusNode: focusAccount,
+                                            hintText: 'Nhập số tài khoản',
+                                            inputType: TextInputType.number,
+                                            keyboardAction:
+                                                TextInputAction.next,
+                                            onChange:
+                                                provider.updateValidBankAccount,
+                                          ),
+                                          Visibility(
+                                            visible: provider.errorTk != null,
+                                            child: Container(
+                                              width: double.infinity,
+                                              margin:
+                                                  const EdgeInsets.only(top: 8),
+                                              padding: const EdgeInsets.only(
+                                                  left: 10),
+                                              child: Text(
+                                                provider.errorTk ?? '',
+                                                maxLines: 2,
+                                                textAlign: TextAlign.start,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: Styles.errorStyle(
+                                                    fontSize: 12),
+                                              ),
                                             ),
-                                            const SizedBox(width: 20),
+                                          ),
+//
+                                          const SizedBox(height: 30),
+                                          TextFieldCustom(
+                                            key: provider.keyAccount,
+                                            controller: nameController,
+                                            isObscureText: false,
+                                            maxLines: 1,
+                                            enable: provider.isEnableName,
+                                            focusNode: focusName,
+                                            fillColor: provider.isEnableName
+                                                ? AppColor.WHITE
+                                                : AppColor.GREY_EBEBEB,
+                                            textFieldType: TextfieldType.LABEL,
+                                            title: 'Chủ tài khoản',
+                                            hintText: 'Nhập tên tài khoản',
+                                            inputType: TextInputType.text,
+                                            keyboardAction:
+                                                TextInputAction.next,
+                                            inputFormatter: [
+                                              UpperCaseTextFormatter(),
+                                            ],
+                                            onChange: provider
+                                                .updateValidUserBankName,
+                                          ),
+                                          Visibility(
+                                            visible:
+                                                provider.errorNameTK != null,
+                                            child: Container(
+                                              width: double.infinity,
+                                              margin:
+                                                  const EdgeInsets.only(top: 8),
+                                              padding: const EdgeInsets.only(
+                                                  left: 10),
+                                              child: Text(
+                                                provider.errorNameTK ?? '',
+                                                maxLines: 2,
+                                                textAlign: TextAlign.start,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: Styles.errorStyle(
+                                                    fontSize: 12),
+                                              ),
+                                            ),
+                                          ),
+                                          if (provider.bankTypeDTO?.status ==
+                                              1) ...[
+                                            const SizedBox(
+                                              height: 30,
+                                            ),
+                                            _BuildNoteWidget()
                                           ],
-                                        ),
+                                        ],
                                       ),
-                                    ),
-//
-                                    const SizedBox(height: 30),
-                                    TextFieldCustom(
-                                      isObscureText: false,
-                                      maxLines: 1,
-                                      enable: provider.bankTypeDTO != null,
-                                      fillColor: provider.bankTypeDTO != null
-                                          ? null
-                                          : AppColor.GREY_EBEBEB,
-                                      controller: bankAccountController,
-                                      textFieldType: TextfieldType.LABEL,
-                                      title: 'Số tài khoản',
-                                      focusNode: focusAccount,
-                                      hintText: 'Nhập số tài khoản',
-                                      inputType: TextInputType.number,
-                                      keyboardAction: TextInputAction.next,
-                                      onChange: provider.updateValidBankAccount,
-                                    ),
-                                    Visibility(
-                                      visible: provider.errorTk != null,
-                                      child: Container(
-                                        width: double.infinity,
-                                        margin: const EdgeInsets.only(top: 8),
-                                        padding:
-                                            const EdgeInsets.only(left: 10),
-                                        child: Text(
-                                          provider.errorTk ?? '',
-                                          maxLines: 2,
-                                          textAlign: TextAlign.start,
-                                          overflow: TextOverflow.ellipsis,
-                                          style:
-                                              Styles.errorStyle(fontSize: 12),
-                                        ),
-                                      ),
-                                    ),
-//
-                                    const SizedBox(height: 30),
-                                    TextFieldCustom(
-                                      key: provider.keyAccount,
-                                      controller: nameController,
-                                      isObscureText: false,
-                                      maxLines: 1,
-                                      enable: provider.isEnableName,
-                                      focusNode: focusName,
-                                      fillColor: provider.isEnableName
-                                          ? AppColor.WHITE
-                                          : AppColor.GREY_EBEBEB,
-                                      textFieldType: TextfieldType.LABEL,
-                                      title: 'Chủ tài khoản',
-                                      hintText: 'Nhập tên tài khoản',
-                                      inputType: TextInputType.text,
-                                      keyboardAction: TextInputAction.next,
-                                      inputFormatter: [
-                                        UpperCaseTextFormatter(),
-                                      ],
-                                      onChange:
-                                          provider.updateValidUserBankName,
-                                    ),
-                                    Visibility(
-                                      visible: provider.errorNameTK != null,
-                                      child: Container(
-                                        width: double.infinity,
-                                        margin: const EdgeInsets.only(top: 8),
-                                        padding:
-                                            const EdgeInsets.only(left: 10),
-                                        child: Text(
-                                          provider.errorNameTK ?? '',
-                                          maxLines: 2,
-                                          textAlign: TextAlign.start,
-                                          overflow: TextOverflow.ellipsis,
-                                          style:
-                                              Styles.errorStyle(fontSize: 12),
-                                        ),
-                                      ),
-                                    ),
-                                    if (provider.bankTypeDTO?.status == 1) ...[
-                                      const SizedBox(
-                                        height: 30,
-                                      ),
-                                      _BuildNoteWidget()
-                                    ],
-                                  ],
+                                    );
+                                  },
                                 ),
-                              );
-                            },
+                              ],
+                            ),
                           ),
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
-                  bottomSheet: Consumer<AddBankProvider>(
-                    builder: (context, provider, child) {
-                      return (provider.bankTypeDTO?.status == 1)
-                          ? _buildButton(provider, state.requestId ?? '')
-                          : MButtonWidget(
-                              title: 'Lưu tài khoản',
-                              isEnable: provider.isEnableButton,
-                              colorEnableText: provider.isEnableButton
-                                  ? AppColor.WHITE
-                                  : AppColor.GREY_TEXT,
-                              onTap: () {
-                                FocusManager.instance.primaryFocus?.unfocus();
-                                String bankTypeId = provider.bankTypeDTO!.id;
-                                _bloc.add(BankCardCheckExistedEvent(
-                                    bankAccount: bankAccountController.text,
-                                    bankTypeId: bankTypeId));
-                              },
-                            );
-                    },
+                      Consumer<AddBankProvider>(
+                        builder: (context, provider, child) {
+                          return (provider.bankTypeDTO?.status == 1)
+                              ? _buildButton(provider, state.requestId ?? '')
+                              : MButtonWidget(
+                                  title: 'Lưu tài khoản',
+                                  isEnable: provider.isEnableButton,
+                                  colorEnableText: provider.isEnableButton
+                                      ? AppColor.WHITE
+                                      : AppColor.GREY_TEXT,
+                                  onTap: () {
+                                    FocusManager.instance.primaryFocus
+                                        ?.unfocus();
+                                    String bankTypeId =
+                                        provider.bankTypeDTO!.id;
+                                    _bloc.add(BankCardCheckExistedEvent(
+                                        bankAccount: bankAccountController.text,
+                                        bankTypeId: bankTypeId));
+                                  },
+                                );
+                        },
+                      ),
+                    ],
                   ),
                 );
               },
@@ -604,9 +632,11 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
     final buttonStepSecond = MButtonWidget(
       title: 'Liên kết',
       isEnable: provider.isValidForm(),
+      colorEnableText:
+          provider.isValidForm() ? AppColor.WHITE : AppColor.GREY_TEXT,
       onTap: () async {
         FocusManager.instance.primaryFocus?.unfocus();
-        final data = await showGeneralDialog(
+        await showGeneralDialog(
           context: context,
           barrierDismissible: true,
           barrierLabel:
@@ -644,6 +674,8 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
     final buttonStepThree = MButtonWidget(
       title: 'Xác thực',
       isEnable: provider.isValidForm(),
+      colorEnableText:
+          provider.isValidForm() ? AppColor.WHITE : AppColor.GREY_TEXT,
       onTap: () async {
         FocusManager.instance.primaryFocus?.unfocus();
         ConfirmOTPBankDTO confirmDTO = ConfirmOTPBankDTO(
@@ -717,7 +749,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
 class _BuildHeader extends StatelessWidget {
   final int select;
 
-  const _BuildHeader({super.key, this.select = 0});
+  const _BuildHeader({this.select = 0});
 
   @override
   Widget build(BuildContext context) {
@@ -892,8 +924,7 @@ class _BuildButton extends StatelessWidget {
   final bool isEnableBTSave;
 
   const _BuildButton(
-      {super.key,
-      this.onTapLK,
+      {this.onTapLK,
       this.onTapSave,
       this.isEnableBTSave = false,
       this.isEnableBTLK = false});

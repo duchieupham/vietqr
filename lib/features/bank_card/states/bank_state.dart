@@ -5,7 +5,6 @@ import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 
-enum BankType { QR, NONE, SCAN, BANK, GET_BANK, SCAN_ERROR, SCAN_NOT_FOUND }
 
 class BankState extends Equatable {
   final String? msg;

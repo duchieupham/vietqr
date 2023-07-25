@@ -5,16 +5,7 @@ import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/notification_transaction_success_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 
-enum CreateQRType {
-  NONE,
-  CREATE_QR,
-  UPLOAD_IMAGE,
-  ERROR,
-  PAID,
-  LOAD_DATA,
-  SCAN_QR,
-  SCAN_NOT_FOUND,
-}
+
 
 class CreateQRState extends Equatable {
   final BlocStatus status;

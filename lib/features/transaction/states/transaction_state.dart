@@ -82,17 +82,9 @@
 // class TransactionDetailFailedState extends TransactionState {}
 import 'package:equatable/equatable.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
-import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/business_detail_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
-import 'package:vierqr/models/related_transaction_receive_dto.dart';
 import 'package:vierqr/models/transaction_receive_dto.dart';
-
-enum TransactionType {
-  NONE,
-  LOAD_DATA,
-  REFRESH,
-}
 
 class TransactionState extends Equatable {
   final BlocStatus status;

@@ -1,4 +1,4 @@
-class PhoneBookDetailDTO {
+class ContactDetailDTO {
   final String? id;
   final String? additionalData;
   final String? nickName;
@@ -9,7 +9,8 @@ class PhoneBookDetailDTO {
   final String? bankName;
   final String? imgId;
   final String? bankAccount;
-  PhoneBookDetailDTO({
+
+  ContactDetailDTO({
     this.id = '',
     this.additionalData = '',
     this.nickName = '',
@@ -22,8 +23,8 @@ class PhoneBookDetailDTO {
     this.bankAccount = '',
   });
 
-  factory PhoneBookDetailDTO.fromJson(Map<String, dynamic> json) =>
-      PhoneBookDetailDTO(
+  factory ContactDetailDTO.fromJson(Map<String, dynamic> json) =>
+      ContactDetailDTO(
         additionalData: json["additionalData"],
         nickName: json["nickname"],
         type: json["type"],

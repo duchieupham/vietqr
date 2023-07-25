@@ -5,19 +5,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/file_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/widgets/ambient_avatar_widget.dart';
-import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/account/blocs/account_bloc.dart';
 import 'package:vierqr/features/account/events/account_event.dart';
 import 'package:vierqr/features/account/states/account_state.dart';
 import 'package:vierqr/features/account/widget/my_QR_bottom_sheet.dart';
+import 'package:vierqr/features/account/views/dialog_my_qr.dart';
 import 'package:vierqr/features/personal/views/introduce_bottom_sheet.dart';
 import 'package:vierqr/models/introduce_dto.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
@@ -31,10 +30,10 @@ class IconData {
 }
 
 List<IconData> listIcon = [
-  // IconData(
-  //   url: 'assets/images/ic-my-qr-setting.png',
-  //   name: 'QR của tôi',
-  // ),
+  IconData(
+    url: 'assets/images/ic-my-qr-setting.png',
+    name: 'QR của tôi',
+  ),
   IconData(
     url: 'assets/images/ic-edit-personal-setting.png',
     name: 'Cá nhân',
@@ -103,26 +102,32 @@ class _AccountScreenState extends State<AccountScreen>
         }
       },
       builder: (context, state) {
-        return RefreshIndicator(
-          onRefresh: _onRefresh,
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _BannerWidget(),
-                const SizedBox(height: 30),
-                _FeatureWidget(),
-                const SizedBox(height: 30),
-                _IntroduceWidget(dto: state.introduceDTO),
-                const SizedBox(height: 20),
-                _SettingWidget(),
-                const SizedBox(height: 16),
-                _buildLogOutWidget(),
-                const SizedBox(height: kToolbarHeight + 16),
-              ],
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _BannerWidget(),
+            const SizedBox(height: 30),
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: _onRefresh,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Column(
+                    children: [
+                      _FeatureWidget(code: state.introduceDTO?.walletId ?? ''),
+                      const SizedBox(height: 30),
+                      _IntroduceWidget(dto: state.introduceDTO),
+                      const SizedBox(height: 20),
+                      _SettingWidget(),
+                      const SizedBox(height: 16),
+                      _buildLogOutWidget(),
+                      const SizedBox(height: kToolbarHeight + 16),
+                    ],
+                  ),
+                ),
+              ),
             ),
-          ),
+          ],
         );
       },
     );
@@ -162,7 +167,7 @@ class _BannerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 220,
+      height: 250,
       width: MediaQuery.of(context).size.width,
       decoration: const BoxDecoration(
         image: DecorationImage(
@@ -174,7 +179,7 @@ class _BannerWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const SizedBox(height: 16),
+          const SizedBox(height: 30),
           _buildAvatarWidget(context),
           const SizedBox(height: 16),
           Text(
@@ -225,25 +230,57 @@ class _BannerWidget extends StatelessWidget {
 }
 
 class _FeatureWidget extends StatelessWidget {
+  final String code;
+
+  _FeatureWidget({required this.code});
+
   final ImagePicker imagePicker = ImagePicker();
 
   void onTap(BuildContext context, int index) {
     switch (index) {
       case 0:
-        onNaviAccount(context);
+        onMyQr(
+          context,
+          code: code,
+          userName: UserInformationHelper.instance.getUserFullname(),
+        );
         break;
       case 1:
-        onChangeAvatar();
+        onNaviAccount(context);
         break;
       case 2:
-        onNaviPassword(context);
+        onChangeAvatar(context);
         break;
       case 3:
+        onNaviPassword(context);
+        break;
       default:
         () {
           Navigator.of(context).pushNamed(Routes.USER_EDIT);
         };
     }
+  }
+
+  void onMyQr(
+    BuildContext context, {
+    required String code,
+    required String userName,
+    GestureTapCallback? onTapShare,
+  }) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierColor: Colors.black45,
+      transitionDuration: const Duration(milliseconds: 200),
+      pageBuilder: (BuildContext buildContext, Animation animation,
+          Animation secondaryAnimation) {
+        return DialogMyQR(
+          code: code,
+          userName: userName,
+        );
+      },
+    );
   }
 
   void onNaviAccount(BuildContext context) {
@@ -254,7 +291,7 @@ class _FeatureWidget extends StatelessWidget {
     Navigator.of(context).pushNamed(Routes.UPDATE_PASSWORD);
   }
 
-  void onChangeAvatar() async {
+  void onChangeAvatar(BuildContext context) async {
     await Permission.mediaLibrary.request();
     await imagePicker.pickImage(source: ImageSource.gallery).then(
       (pickedFile) async {
@@ -267,10 +304,8 @@ class _FeatureWidget extends StatelessWidget {
             String userId = UserInformationHelper.instance.getUserId();
             String imgId =
                 UserInformationHelper.instance.getAccountInformation().imgId;
-            // _userEditBloc.add(
-            //   UserEditAvatarEvent(
-            //       userId: userId, imgId: imgId, image: compressedFile),
-            // );
+            context.read<AccountBloc>().add(UpdateAvatarEvent(
+                userId: userId, imgId: imgId, image: compressedFile));
           });
         }
       },
@@ -321,7 +356,7 @@ class _FeatureWidget extends StatelessWidget {
 class _IntroduceWidget extends StatelessWidget {
   final IntroduceDTO? dto;
 
-  const _IntroduceWidget({super.key, this.dto});
+  const _IntroduceWidget({this.dto});
 
   @override
   Widget build(BuildContext context) {
@@ -358,7 +393,7 @@ class _IntroduceWidget extends StatelessWidget {
           const Divider(),
           GestureDetector(
             onTap: () async {
-              final data = await DialogWidget.instance.showModelBottomSheet(
+              await DialogWidget.instance.showModelBottomSheet(
                 context: context,
                 padding: EdgeInsets.zero,
                 widget: IntroduceBottomSheet(introduceDTO: dto),

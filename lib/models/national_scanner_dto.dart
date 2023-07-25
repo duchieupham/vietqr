@@ -17,21 +17,6 @@ class NationalScannerDTO {
     required this.dateValid,
   });
 
-  String convertDate(String data) {
-    if (data.isNotEmpty && data.length == 8) {
-      String day = data.substring(0, 2);
-      String month = data.substring(2, 4);
-      String year = data.substring(4, data.length);
-
-      return '$day/$month/$year';
-    }
-    return '';
-  }
-
-  String get getBirth => convertDate(birthdate);
-
-  String get getDateValid => convertDate(dateValid);
-
   factory NationalScannerDTO.fromJson(list) {
     return NationalScannerDTO(
       nationalId: list[0],

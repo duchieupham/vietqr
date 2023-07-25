@@ -73,9 +73,12 @@ extension TypeRoleExt on TypeRole {
 
 enum TypeQR {
   NONE,
+  VietQR_ID,
   QR_CMT,
   QR_BANK,
   QR_BARCODE,
+  OTHER,
+  QR_LINK,
   NEGATIVE_TWO,
   NEGATIVE_ONE,
 }
@@ -95,7 +98,7 @@ extension TypeQRExt on TypeQR {
   }
 }
 
-enum TypePhoneBook {
+enum TypeContact {
   VietQR_ID,
   Bank,
   Other,
@@ -104,34 +107,143 @@ enum TypePhoneBook {
 // 1: VietQR ID
 // 2: Bank
 // 3: Khác
+// 4: CMT
+// 5: link
+// 5: BarCode
 
-extension TypePhoneBookExt on int {
-  TypePhoneBook get type {
+extension TypeContactExt on int {
+  TypeContact get type {
     switch (this) {
       case 1:
-        return TypePhoneBook.VietQR_ID;
+        return TypeContact.VietQR_ID;
       case 2:
-        return TypePhoneBook.Bank;
+        return TypeContact.Bank;
       case 3:
-        return TypePhoneBook.Other;
+        return TypeContact.Other;
       default:
-        return TypePhoneBook.NONE;
+        return TypeContact.NONE;
     }
   }
 }
 
-extension TypePhoneBookExt2 on TypePhoneBook {
+extension TypeContactExt2 on TypeContact {
   int get value {
     switch (this) {
-      case TypePhoneBook.VietQR_ID:
+      case TypeContact.VietQR_ID:
         return 1;
-      case TypePhoneBook.Bank:
+      case TypeContact.Bank:
         return 2;
-      case TypePhoneBook.Other:
+      case TypeContact.Other:
         return 3;
-      case TypePhoneBook.NONE:
+      case TypeContact.NONE:
       default:
         return -1;
     }
   }
+
+  String get typeName {
+    switch (this) {
+      case TypeContact.VietQR_ID:
+        return 'VietQR ID';
+      case TypeContact.Bank:
+        return 'Bank';
+      case TypeContact.Other:
+        return 'Khác';
+      case TypeContact.NONE:
+      default:
+        return '';
+    }
+  }
 }
+
+enum BankDetailType { NONE, SUCCESS, DELETED, ERROR, UN_LINK, OTP }
+
+enum AccountType { NONE, LOG_OUT, POINT, AVATAR, ERROR }
+
+enum AddBankType {
+  NONE,
+  LOAD_BANK,
+  SEARCH_BANK,
+  ERROR,
+  REQUEST_BANK,
+  INSERT_BANK,
+  EXIST_BANK,
+  OTP_BANK,
+  INSERT_OTP_BANK,
+  SCAN_QR,
+  SCAN_NOT_FOUND
+}
+
+enum BankType { QR, NONE, SCAN, BANK, GET_BANK, SCAN_ERROR, SCAN_NOT_FOUND }
+
+enum TransType { NONE, GET_TRANDS }
+
+enum ContactType {
+  NONE,
+  GET_LIST,
+  GET_DETAIL,
+  REMOVE,
+  UPDATE,
+  ERROR,
+  SAVE,
+  SUGGEST,
+  NICK_NAME,
+  SCAN,
+  SCAN_ERROR,
+  OTHER,
+}
+
+enum CreateQRType {
+  NONE,
+  CREATE_QR,
+  UPLOAD_IMAGE,
+  ERROR,
+  PAID,
+  LOAD_DATA,
+  SCAN_QR,
+  SCAN_NOT_FOUND
+}
+
+enum DashBoardType {
+  GET_BANK,
+  NONE,
+  SCAN_ERROR,
+  SCAN_NOT_FOUND,
+  SCAN,
+  SEARCH_BANK_NAME,
+  ADD_BOOK_CONTACT,
+  ADD_BOOK_CONTACT_EXIST,
+  ERROR,
+  EXIST_BANK,
+  INSERT_BANK,
+}
+
+enum DashBoardTypePermission {
+  None,
+  CameraDenied,
+  CameraAllow,
+  CameraRequest,
+  Allow,
+  Request,
+  Denied,
+  Error,
+}
+
+enum HomeType { GET_BANK, NONE, SCAN_ERROR, SCAN_NOT_FOUND, SCAN }
+
+enum TypePermission {
+  None,
+  CameraDenied,
+  CameraAllow,
+  CameraRequest,
+  Allow,
+  Request,
+  Denied,
+  Error,
+}
+
+enum LoginType { NONE, SUCCESS, TOAST, ERROR, CHECK_EXIST, REGISTER }
+
+enum TransactionType { NONE, LOAD_DATA, REFRESH }
+
+enum TransHistoryType { NONE, ERROR, LOAD_DATA }

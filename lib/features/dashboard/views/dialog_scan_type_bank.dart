@@ -12,16 +12,6 @@ class DialogScanBank extends StatelessWidget {
   const DialogScanBank(
       {super.key, required this.dto, this.onTapSave, this.onTapAdd});
 
-  final _dto = const QRGeneratedDTO(
-      bankCode: '',
-      bankName: '',
-      bankAccount: '',
-      userBankName: '',
-      amount: '',
-      content: '',
-      qrCode: '',
-      imgId: '');
-
   @override
   Widget build(BuildContext context) {
     return Material(

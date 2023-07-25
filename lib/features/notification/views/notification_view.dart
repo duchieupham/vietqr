@@ -9,6 +9,7 @@ import 'package:vierqr/features/notification/blocs/notification_bloc.dart';
 import 'package:vierqr/features/notification/events/notification_event.dart';
 import 'package:vierqr/features/notification/states/notification_state.dart';
 import 'package:vierqr/layouts/box_layout.dart';
+import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/notification_dto.dart';
 import 'package:vierqr/models/notification_input_dto.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
@@ -57,11 +58,9 @@ class NotificationView extends StatelessWidget {
     initialServices(context, notificationBloc);
 
     return Scaffold(
-      appBar: AppBar(toolbarHeight: 0),
+      appBar: const MAppBar(title: 'Thông báo'),
       body: Column(
         children: [
-          const SubHeader(title: 'Thông báo'),
-          const Padding(padding: EdgeInsets.only(top: 10)),
           Expanded(
             child: RefreshIndicator(
               onRefresh: () async {
@@ -132,15 +131,10 @@ class NotificationView extends StatelessWidget {
       onTap: () {
         if (dto.type == Stringify.NOTI_TYPE_NEW_TRANSACTION ||
             dto.type == Stringify.NOTI_TYPE_UPDATE_TRANSACTION) {
-          String userId = UserInformationHelper.instance.getUserId();
           Navigator.pushNamed(
             context,
             Routes.TRANSACTION_DETAIL,
-            arguments: {
-              'transactionId': dto.data,
-              'notificationBloc': notificationBloc,
-              'userId': userId,
-            },
+            arguments: {'transactionId': dto.data},
           );
         }
       },

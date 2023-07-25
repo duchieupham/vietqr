@@ -32,7 +32,7 @@ class BusinessTransactionView extends StatelessWidget {
 }
 
 class _BodyWidget extends StatefulWidget {
-  const _BodyWidget({super.key});
+  const _BodyWidget();
 
   @override
   State<_BodyWidget> createState() => _BusinessTransactionViewState();
