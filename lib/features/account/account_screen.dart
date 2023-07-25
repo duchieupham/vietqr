@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
@@ -16,6 +15,7 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/account/blocs/account_bloc.dart';
 import 'package:vierqr/features/account/events/account_event.dart';
 import 'package:vierqr/features/account/states/account_state.dart';
+import 'package:vierqr/features/account/widget/my_QR_bottom_sheet.dart';
 import 'package:vierqr/features/account/views/dialog_my_qr.dart';
 import 'package:vierqr/features/personal/views/introduce_bottom_sheet.dart';
 import 'package:vierqr/models/introduce_dto.dart';
@@ -102,26 +102,32 @@ class _AccountScreenState extends State<AccountScreen>
         }
       },
       builder: (context, state) {
-        return RefreshIndicator(
-          onRefresh: _onRefresh,
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _BannerWidget(),
-                const SizedBox(height: 30),
-                _FeatureWidget(code: state.introduceDTO?.walletId ?? ''),
-                const SizedBox(height: 30),
-                _IntroduceWidget(dto: state.introduceDTO),
-                const SizedBox(height: 20),
-                _SettingWidget(),
-                const SizedBox(height: 16),
-                _buildLogOutWidget(),
-                const SizedBox(height: kToolbarHeight + 16),
-              ],
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _BannerWidget(),
+            const SizedBox(height: 30),
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: _onRefresh,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Column(
+                    children: [
+                      _FeatureWidget(code: state.introduceDTO?.walletId ?? ''),
+                      const SizedBox(height: 30),
+                      _IntroduceWidget(dto: state.introduceDTO),
+                      const SizedBox(height: 20),
+                      _SettingWidget(),
+                      const SizedBox(height: 16),
+                      _buildLogOutWidget(),
+                      const SizedBox(height: kToolbarHeight + 16),
+                    ],
+                  ),
+                ),
+              ),
             ),
-          ),
+          ],
         );
       },
     );
@@ -161,7 +167,7 @@ class _BannerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 220,
+      height: 250,
       width: MediaQuery.of(context).size.width,
       decoration: const BoxDecoration(
         image: DecorationImage(
@@ -173,7 +179,7 @@ class _BannerWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const SizedBox(height: 16),
+          const SizedBox(height: 30),
           _buildAvatarWidget(context),
           const SizedBox(height: 16),
           Text(
@@ -225,22 +231,25 @@ class _BannerWidget extends StatelessWidget {
 
 class _FeatureWidget extends StatelessWidget {
   final String code;
-  final ImagePicker imagePicker = ImagePicker();
 
-  _FeatureWidget({super.key, required this.code});
+  _FeatureWidget({required this.code});
+
+  final ImagePicker imagePicker = ImagePicker();
 
   void onTap(BuildContext context, int index) {
     switch (index) {
       case 0:
-        onMyQr(context,
-            code: code,
-            userName: UserInformationHelper.instance.getUserFullname());
+        onMyQr(
+          context,
+          code: code,
+          userName: UserInformationHelper.instance.getUserFullname(),
+        );
         break;
       case 1:
         onNaviAccount(context);
         break;
       case 2:
-        onChangeAvatar();
+        onChangeAvatar(context);
         break;
       case 3:
         onNaviPassword(context);
@@ -269,9 +278,6 @@ class _FeatureWidget extends StatelessWidget {
         return DialogMyQR(
           code: code,
           userName: userName,
-          onTapShare: () {
-            Share.share(code);
-          },
         );
       },
     );
@@ -285,7 +291,7 @@ class _FeatureWidget extends StatelessWidget {
     Navigator.of(context).pushNamed(Routes.UPDATE_PASSWORD);
   }
 
-  void onChangeAvatar() async {
+  void onChangeAvatar(BuildContext context) async {
     await Permission.mediaLibrary.request();
     await imagePicker.pickImage(source: ImageSource.gallery).then(
       (pickedFile) async {
@@ -298,10 +304,8 @@ class _FeatureWidget extends StatelessWidget {
             String userId = UserInformationHelper.instance.getUserId();
             String imgId =
                 UserInformationHelper.instance.getAccountInformation().imgId;
-            // _userEditBloc.add(
-            //   UserEditAvatarEvent(
-            //       userId: userId, imgId: imgId, image: compressedFile),
-            // );
+            context.read<AccountBloc>().add(UpdateAvatarEvent(
+                userId: userId, imgId: imgId, image: compressedFile));
           });
         }
       },
@@ -352,7 +356,7 @@ class _FeatureWidget extends StatelessWidget {
 class _IntroduceWidget extends StatelessWidget {
   final IntroduceDTO? dto;
 
-  const _IntroduceWidget({super.key, this.dto});
+  const _IntroduceWidget({this.dto});
 
   @override
   Widget build(BuildContext context) {
@@ -389,7 +393,7 @@ class _IntroduceWidget extends StatelessWidget {
           const Divider(),
           GestureDetector(
             onTap: () async {
-              final data = await DialogWidget.instance.showModelBottomSheet(
+              await DialogWidget.instance.showModelBottomSheet(
                 context: context,
                 padding: EdgeInsets.zero,
                 widget: IntroduceBottomSheet(introduceDTO: dto),
@@ -420,6 +424,37 @@ class _IntroduceWidget extends StatelessWidget {
                   ),
                   child: const Icon(Icons.arrow_forward_ios, size: 12),
                 )
+              ],
+            ),
+          ),
+          const Divider(),
+          GestureDetector(
+            onTap: () async {
+              await DialogWidget.instance.showModelBottomSheet(
+                context: context,
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                radius: 15,
+                widget: MyQRBottomSheet(),
+                height: height * 0.7,
+              );
+            },
+            child: Row(
+              children: [
+                Image.asset(
+                  'assets/images/ic-tb-qr.png',
+                  width: 28,
+                  height: 28,
+                  color: AppColor.BLUE_TEXT,
+                ),
+                const SizedBox(width: 8),
+                const Expanded(
+                  child: Text(
+                    'My QR',
+                    style: TextStyle(
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

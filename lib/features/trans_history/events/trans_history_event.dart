@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:vierqr/models/transaction_branch_input_dto.dart';
-import 'package:vierqr/models/transaction_input_dto.dart';
 
 class TransHistoryEvent extends Equatable {
   @override

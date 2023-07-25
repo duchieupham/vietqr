@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/utils/share_utils.dart';
+import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
 import 'package:vierqr/layouts/button_widget.dart';
 
 class DialogMyQR extends StatelessWidget {
@@ -8,12 +10,14 @@ class DialogMyQR extends StatelessWidget {
   final String userName;
   final GestureTapCallback? onTapShare;
 
-  const DialogMyQR({
+  DialogMyQR({
     super.key,
     required this.code,
     this.onTapShare,
     required this.userName,
   });
+
+  final globalKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -70,31 +74,35 @@ class DialogMyQR extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 60),
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 40),
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(25),
-                    color: AppColor.WHITE,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.3),
-                        spreadRadius: 2,
-                        blurRadius: 7,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: QrImage(
-                    data: code,
-                    version: QrVersions.auto,
-                    embeddedImage:
-                        const AssetImage('assets/images/ic-viet-qr-small.png'),
-                    embeddedImageStyle: QrEmbeddedImageStyle(
-                      size: const Size(30, 30),
-                    ),
-                  ),
-                ),
+                RepaintBoundaryWidget(
+                    globalKey: globalKey,
+                    builder: (key) {
+                      return Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 40),
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(25),
+                          color: AppColor.WHITE,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.3),
+                              spreadRadius: 2,
+                              blurRadius: 7,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: QrImage(
+                          data: code,
+                          version: QrVersions.auto,
+                          embeddedImage: const AssetImage(
+                              'assets/images/ic-viet-qr-small.png'),
+                          embeddedImageStyle: QrEmbeddedImageStyle(
+                            size: const Size(30, 30),
+                          ),
+                        ),
+                      );
+                    }),
                 const SizedBox(height: 20),
                 Text(
                   userName,
@@ -104,7 +112,7 @@ class DialogMyQR extends StatelessWidget {
                 const SizedBox(height: 100),
                 MButtonWidget(
                   title: 'Chia sẻ',
-                  onTap: onTapShare,
+                  onTap: shareImage,
                   isEnable: true,
                   margin: const EdgeInsets.symmetric(horizontal: 20),
                 ),
@@ -114,5 +122,12 @@ class DialogMyQR extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> shareImage() async {
+    // _waterMarkProvider.updateWaterMark(true);
+    await Future.delayed(const Duration(milliseconds: 200), () async {
+      await ShareUtils.instance.shareImage(key: globalKey, textSharing: '');
+    });
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class PhoneBookProvider extends ChangeNotifier {
+class ContactProvider extends ChangeNotifier {
   int tab = 0;
 
   bool isEnableBTSave = false;

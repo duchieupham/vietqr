@@ -8,36 +8,38 @@ import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_custom.dart';
-import 'package:vierqr/features/phone_book/blocs/phone_book_bloc.dart';
-import 'package:vierqr/features/phone_book/blocs/phone_book_provider.dart';
-import 'package:vierqr/features/phone_book/events/phone_book_event.dart';
-import 'package:vierqr/features/phone_book/states/phone_book_state.dart';
+import 'package:vierqr/features/contact/blocs/contact_bloc.dart';
+import 'package:vierqr/features/contact/blocs/contact_provider.dart';
+import 'package:vierqr/features/contact/events/contact_event.dart';
+import 'package:vierqr/features/contact/states/contact_state.dart';
 import 'package:vierqr/layouts/button_widget.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
-import 'package:vierqr/models/phone_book_dto.dart';
+import 'package:vierqr/models/contact_dto.dart';
 
-class PhoneBookScreen extends StatelessWidget {
-  const PhoneBookScreen({super.key});
+import 'save_contact_screen.dart';
+
+class ContactScreen extends StatelessWidget {
+  const ContactScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<PhoneBookBloc>(
-      create: (context) => PhoneBookBloc(context),
-      child: ChangeNotifierProvider<PhoneBookProvider>(
-        create: (context) => PhoneBookProvider(),
-        child: _PhoneBookState(),
+    return BlocProvider<ContactBloc>(
+      create: (context) => ContactBloc(context),
+      child: ChangeNotifierProvider<ContactProvider>(
+        create: (context) => ContactProvider(),
+        child: _ContactState(),
       ),
     );
   }
 }
 
-class _PhoneBookState extends StatefulWidget {
+class _ContactState extends StatefulWidget {
   @override
-  State<_PhoneBookState> createState() => _PhoneBookStateState();
+  State<_ContactState> createState() => _ContactStateState();
 }
 
-class _PhoneBookStateState extends State<_PhoneBookState> {
-  late PhoneBookBloc _bloc;
+class _ContactStateState extends State<_ContactState> {
+  late ContactBloc _bloc;
 
   List<DataModel> listTab = [
     DataModel(
@@ -55,7 +57,7 @@ class _PhoneBookStateState extends State<_PhoneBookState> {
     super.initState();
     _bloc = BlocProvider.of(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _bloc.add(PhoneBookEventGetList());
+      _bloc.add(ContactEventGetList());
     });
   }
 
@@ -74,8 +76,14 @@ class _PhoneBookStateState extends State<_PhoneBookState> {
             }
           },
         );
-      } else {}
+      } else {
+        _bloc.add(ScanQrContactEvent(data));
+      }
     }
+  }
+
+  Future<void> _onRefresh() async {
+    _bloc.add(ContactEventGetList());
   }
 
   @override
@@ -97,8 +105,8 @@ class _PhoneBookStateState extends State<_PhoneBookState> {
           )
         ],
       ),
-      body: BlocConsumer<PhoneBookBloc, PhoneBookState>(
-        listener: (context, state) {
+      body: BlocConsumer<ContactBloc, ContactState>(
+        listener: (context, state) async {
           if (state.status == BlocStatus.LOADING) {
             // DialogWidget.instance.openLoadingDialog();
           }
@@ -107,10 +115,28 @@ class _PhoneBookStateState extends State<_PhoneBookState> {
             // Navigator.pop(context);
           }
 
-          if (state.type == PhoneBookType.GET_LIST) {}
+          if (state.type == ContactType.SUGGEST) {
+            Provider.of<ContactProvider>(context, listen: false).updateTab(0);
+            _bloc.add(ContactEventGetList());
+          }
+
+          if (state.type == ContactType.SCAN) {
+            _bloc.add(UpdateEvent());
+            await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => SaveContactScreen(
+                  code: state.qrCode,
+                  typeQR: state.typeQR,
+                ),
+                // settings: RouteSettings(name: ContactEditView.routeName),
+              ),
+            );
+            _bloc.add(ContactEventGetList());
+          }
         },
         builder: (context, state) {
-          return Consumer<PhoneBookProvider>(
+          return Consumer<ContactProvider>(
             builder: (context, provider, child) {
               return Padding(
                 padding:
@@ -124,9 +150,9 @@ class _PhoneBookStateState extends State<_PhoneBookState> {
                           onTap: () {
                             provider.updateTab(index);
                             if (index == 1) {
-                              _bloc.add(PhoneBookEventGetListPending());
+                              _bloc.add(ContactEventGetListPending());
                             } else {
-                              _bloc.add(PhoneBookEventGetList());
+                              _bloc.add(ContactEventGetList());
                             }
                           },
                           text: model.title,
@@ -150,49 +176,52 @@ class _PhoneBookStateState extends State<_PhoneBookState> {
                       ),
                       const SizedBox(height: 30),
                       Expanded(
-                        child: ListView.separated(
-                          itemCount: state.listPhoneBookDTO.length,
-                          separatorBuilder: (context, index) {
-                            if (index == state.listPhoneBookDTO.length - 1) {
-                              return const SizedBox.shrink();
-                            }
-                            String firstLetterA =
-                                (state.listPhoneBookDTO[index].nickname)[0];
-                            String firstLetterB =
-                                (state.listPhoneBookDTO[index + 1].nickname)[0];
-                            if (firstLetterA != firstLetterB) {
-                              return Padding(
-                                padding: const EdgeInsets.only(bottom: 4),
-                                child: Text(
-                                  firstLetterB,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              );
-                            }
-                            return const SizedBox.shrink();
-                          },
-                          itemBuilder: (BuildContext context, int index) {
-                            if (index == 0) {
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom: 4),
-                                    child: Text(
-                                        (state.listPhoneBookDTO[index]
-                                            .nickname)[0],
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold)),
+                        child: RefreshIndicator(
+                          onRefresh: _onRefresh,
+                          child: ListView.separated(
+                            itemCount: state.listContactDTO.length,
+                            separatorBuilder: (context, index) {
+                              if (index == state.listContactDTO.length - 1) {
+                                return const SizedBox.shrink();
+                              }
+                              String firstLetterA =
+                                  (state.listContactDTO[index].nickname)[0];
+                              String firstLetterB =
+                                  (state.listContactDTO[index + 1].nickname)[0];
+                              if (firstLetterA != firstLetterB) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 4),
+                                  child: Text(
+                                    firstLetterB,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
                                   ),
-                                  _buildItemSave(
-                                      dto: state.listPhoneBookDTO[index]),
-                                ],
-                              );
-                            }
-                            return _buildItemSave(
-                                dto: state.listPhoneBookDTO[index]);
-                          },
+                                );
+                              }
+                              return const SizedBox.shrink();
+                            },
+                            itemBuilder: (BuildContext context, int index) {
+                              if (index == 0) {
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(bottom: 4),
+                                      child: Text(
+                                          (state.listContactDTO[index]
+                                              .nickname)[0],
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold)),
+                                    ),
+                                    _buildItemSave(
+                                        dto: state.listContactDTO[index]),
+                                  ],
+                                );
+                              }
+                              return _buildItemSave(
+                                  dto: state.listContactDTO[index]);
+                            },
+                          ),
                         ),
                       ),
                     ] else
@@ -200,9 +229,8 @@ class _PhoneBookStateState extends State<_PhoneBookState> {
                         child: ListView(
                           padding: const EdgeInsets.only(top: 16),
                           children: List.generate(
-                              state.listPhoneBookDTOSuggest.length, (index) {
-                            PhoneBookDTO dto =
-                                state.listPhoneBookDTOSuggest[index];
+                              state.listContactDTOSuggest.length, (index) {
+                            ContactDTO dto = state.listContactDTOSuggest[index];
                             return _buildItemSuggest(dto: dto);
                           }).toList(),
                         ),
@@ -217,12 +245,12 @@ class _PhoneBookStateState extends State<_PhoneBookState> {
     );
   }
 
-  Widget _buildItemSave({required PhoneBookDTO? dto}) {
+  Widget _buildItemSave({required ContactDTO? dto}) {
     return GestureDetector(
       onTap: () async {
         await Navigator.pushNamed(context, Routes.PHONE_BOOK_DETAIL,
             arguments: dto);
-        _bloc.add(PhoneBookEventGetList());
+        _bloc.add(ContactEventGetList());
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -234,15 +262,20 @@ class _PhoneBookStateState extends State<_PhoneBookState> {
         child: Row(
           children: [
             Container(
-              width: 35,
-              height: 35,
+              width: 40,
+              height: 40,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
+                color: AppColor.WHITE,
+                borderRadius: BorderRadius.circular(40),
                 border: Border.all(color: AppColor.GREY_LIGHT.withOpacity(0.3)),
-                image: DecorationImage(
-                  image: ImageUtils.instance.getImageNetWork(dto?.imgId ?? ''),
-                  fit: BoxFit.contain,
-                ),
+                image: dto?.type == 2
+                    ? DecorationImage(
+                        image: ImageUtils.instance
+                            .getImageNetWork(dto?.imgId ?? ''),
+                        fit: BoxFit.contain)
+                    : const DecorationImage(
+                        image: AssetImage('assets/images/ic-viet-qr-small.png'),
+                        fit: BoxFit.contain),
               ),
             ),
             const SizedBox(width: 10),
@@ -277,7 +310,7 @@ class _PhoneBookStateState extends State<_PhoneBookState> {
     );
   }
 
-  Widget _buildItemSuggest({required PhoneBookDTO? dto}) {
+  Widget _buildItemSuggest({required ContactDTO? dto}) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       margin: const EdgeInsets.only(bottom: 12),
@@ -290,18 +323,21 @@ class _PhoneBookStateState extends State<_PhoneBookState> {
           Row(
             children: [
               Container(
-                width: 40,
-                height: 40,
+                width: 35,
+                height: 35,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(30),
-                  color: AppColor.WHITE,
                   border:
                       Border.all(color: AppColor.GREY_LIGHT.withOpacity(0.3)),
-                  image: DecorationImage(
-                    image:
-                        ImageUtils.instance.getImageNetWork(dto?.imgId ?? ''),
-                    fit: BoxFit.cover,
-                  ),
+                  image: dto?.type == 2
+                      ? DecorationImage(
+                          image: ImageUtils.instance
+                              .getImageNetWork(dto?.imgId ?? ''),
+                          fit: BoxFit.contain)
+                      : const DecorationImage(
+                          image:
+                              AssetImage('assets/images/ic-viet-qr-small.png'),
+                          fit: BoxFit.contain),
                 ),
               ),
               const SizedBox(width: 10),
@@ -339,7 +375,15 @@ class _PhoneBookStateState extends State<_PhoneBookState> {
             children: [
               const Spacer(),
               MButtonWidget(
-                onTap: () {},
+                onTap: () {
+                  FocusManager.instance.primaryFocus?.unfocus();
+                  if (!mounted) return;
+                  Map<String, dynamic> data = {
+                    "id": dto?.id ?? '',
+                    "status": 0
+                  };
+                  _bloc.add(UpdateStatusContactEvent(data));
+                },
                 height: 30,
                 title: 'Lưu',
                 width: 90,
@@ -352,7 +396,15 @@ class _PhoneBookStateState extends State<_PhoneBookState> {
                 width: 12,
               ),
               MButtonWidget(
-                  onTap: () {},
+                  onTap: () {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    if (!mounted) return;
+                    Map<String, dynamic> data = {
+                      "id": dto?.id ?? '',
+                      "status": 2,
+                    };
+                    _bloc.add(UpdateStatusContactEvent(data));
+                  },
                   height: 30,
                   width: 90,
                   title: 'Bỏ qua',

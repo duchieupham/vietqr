@@ -4,30 +4,9 @@ import 'package:vierqr/models/bank_name_information_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 
-enum DashBoardType {
-  GET_BANK,
-  NONE,
-  SCAN_ERROR,
-  SCAN_NOT_FOUND,
-  SCAN,
-  SEARCH_BANK_NAME,
-  ADD_BOOK_CONTACT,
-  ADD_BOOK_CONTACT_EXIST,
-  ERROR,
-  EXIST_BANK,
-  INSERT_BANK,
-}
 
-enum DashBoardTypePermission {
-  None,
-  CameraDenied,
-  CameraAllow,
-  CameraRequest,
-  Allow,
-  Request,
-  Denied,
-  Error,
-}
+
+
 
 class DashBoardState extends Equatable {
   final String? msg;
@@ -42,7 +21,7 @@ class DashBoardState extends Equatable {
   final String bankAccount;
   final List<BankTypeDTO>? listBanks;
   final BankNameInformationDTO? informationDTO;
-  final TypePhoneBook typePhoneBook;
+  final TypeContact typeContact;
 
   const DashBoardState({
     this.msg,
@@ -57,7 +36,7 @@ class DashBoardState extends Equatable {
     this.bankTypeDTO,
     this.bankAccount = '',
     this.informationDTO,
-    this.typePhoneBook = TypePhoneBook.NONE,
+    this.typeContact = TypeContact.NONE,
   });
 
   DashBoardState copyWith({
@@ -73,7 +52,7 @@ class DashBoardState extends Equatable {
     List<BankTypeDTO>? listBanks,
     TypeQR? typeQR,
     BankNameInformationDTO? informationDTO,
-    TypePhoneBook? typePhoneBook,
+    TypeContact? typeContact,
   }) {
     return DashBoardState(
       status: status ?? this.status,
@@ -88,7 +67,7 @@ class DashBoardState extends Equatable {
       request: request ?? this.request,
       listBanks: listBanks ?? this.listBanks,
       informationDTO: informationDTO ?? this.informationDTO,
-      typePhoneBook: typePhoneBook ?? this.typePhoneBook,
+      typeContact: typeContact ?? this.typeContact,
     );
   }
 
@@ -106,6 +85,6 @@ class DashBoardState extends Equatable {
         request,
         listBanks,
         informationDTO,
-        typePhoneBook,
+        typeContact,
       ];
 }

@@ -54,22 +54,7 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
             emit(state.copyWith(request: BankType.SCAN_ERROR));
           }
         } else {
-          NationalScannerDTO nationalScannerDTO =
-              homeRepository.getNationalInformation(event.code);
-          if (nationalScannerDTO.nationalId.trim().isNotEmpty) {
-            emit(state.copyWith(
-              nationalScannerDTO: nationalScannerDTO,
-              typeQR: TypeQR.QR_CMT,
-            ));
-          } else if (event.code.isNotEmpty) {
-            emit(state.copyWith(
-              barCode: event.code,
-              typeQR: TypeQR.QR_BARCODE,
-              request: BankType.SCAN,
-            ));
-          } else {
-            emit(state.copyWith(request: BankType.SCAN_NOT_FOUND));
-          }
+          emit(state.copyWith(request: BankType.SCAN_NOT_FOUND));
         }
       }
     } catch (e) {

@@ -1,16 +1,20 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/commons/utils/error_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/account/events/account_event.dart';
 import 'package:vierqr/features/account/repositories/account_res.dart';
 import 'package:vierqr/features/account/states/account_state.dart';
 import 'package:vierqr/features/logout/repositories/log_out_repository.dart';
+import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class AccountBloc extends Bloc<AccountEvent, AccountState> {
   AccountBloc() : super(const AccountState()) {
     on<InitAccountEvent>(_getPointAccount);
     on<LogoutEventSubmit>(_logOutSubmit);
+    on<UpdateAvatarEvent>(_updateAvatar);
   }
 
   String userId = UserInformationHelper.instance.getUserId();
@@ -22,10 +26,11 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
           status: BlocStatus.LOADING, request: AccountType.NONE));
       if (event is InitAccountEvent) {
         final result = await accRepository.getPointAccount(userId);
+        await UserInformationHelper.instance.setWalletId(result.walletId!);
         emit(state.copyWith(
           introduceDTO: result,
           status: BlocStatus.UNLOADING,
-          request: AccountType.PONIT,
+          request: AccountType.POINT,
         ));
       }
     } catch (e) {
@@ -52,6 +57,44 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     } catch (e) {
       LOG.error(e.toString());
       emit(state.copyWith(status: BlocStatus.ERROR));
+    }
+  }
+
+  void _updateAvatar(AccountEvent event, Emitter emit) async {
+    try {
+      if (event is UpdateAvatarEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, request: AccountType.NONE));
+        final ResponseMessageDTO result = await accRepository.updateAvatar(
+          event.imgId,
+          event.userId,
+          event.image,
+        );
+        if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
+          emit(state.copyWith(
+              status: BlocStatus.UNLOADING, request: AccountType.AVATAR));
+        } else {
+          emit(
+            state.copyWith(
+                msg: ErrorUtils.instance.getErrorMessage(result.message),
+                request: AccountType.ERROR),
+          );
+        }
+      }
+    } catch (e) {
+      ResponseMessageDTO responseMessageDTO = const ResponseMessageDTO(
+        status: 'FAILED',
+        message: 'E05',
+      );
+
+      emit(
+        state.copyWith(
+            msg:
+                ErrorUtils.instance.getErrorMessage(responseMessageDTO.message),
+            request: AccountType.ERROR),
+      );
+
+      LOG.error(e.toString());
     }
   }
 }

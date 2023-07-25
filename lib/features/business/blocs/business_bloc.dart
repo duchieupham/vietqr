@@ -5,8 +5,6 @@ import 'package:vierqr/commons/mixin/base_manager.dart';
 import 'package:vierqr/features/business/events/business_event.dart';
 import 'package:vierqr/features/business/repositories/business_information_repository.dart';
 import 'package:vierqr/features/business/states/business_state.dart';
-import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
-import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
 import 'package:vierqr/models/business_item_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 

@@ -62,7 +62,6 @@ class _InputContentWidgetState extends State<InputContentWidget> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
     return BlocListener<QRBloc, QRState>(
       listener: (context, state) {
         if (state is QRGenerateLoadingState) {
@@ -235,8 +234,8 @@ class _BottomSheetWidget extends StatelessWidget {
 
   // final msgClearProvider = SearchClearProvider(false);
 
-  _BottomSheetWidget(
-      {super.key, required this.bankAccountDTO, required this.onTap});
+  const _BottomSheetWidget(
+      {required this.bankAccountDTO, required this.onTap});
 
   @override
   Widget build(BuildContext context) {

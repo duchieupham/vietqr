@@ -199,37 +199,6 @@ class ThemeSettingView extends StatelessWidget {
     );
   }
 
-  Widget _buildElementBankArr({
-    required BuildContext context,
-    required double width,
-    required String text,
-    required String imageAsset,
-    required bool isSelected,
-    required VoidCallback function,
-  }) {
-    return InkWell(
-      onTap: function,
-      child: BoxLayout(
-        width: width,
-        bgColor: (isSelected)
-            ? Theme.of(context).canvasColor.withOpacity(0.6)
-            : AppColor.TRANSPARENT,
-        child: Column(
-          children: [
-            Image.asset(
-              imageAsset,
-              width: width,
-            ),
-            Text(
-              text,
-              style: const TextStyle(color: AppColor.GREY_TEXT),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   String getTitleTheme(int index) {
     String title = '';
     if (index == 0) {

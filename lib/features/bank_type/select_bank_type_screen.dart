@@ -27,7 +27,7 @@ class SelectBankTypeScreen extends StatelessWidget {
 }
 
 class _SelectBankTypeScreenState extends StatefulWidget {
-  const _SelectBankTypeScreenState({super.key});
+  const _SelectBankTypeScreenState();
 
   @override
   State<_SelectBankTypeScreenState> createState() =>
@@ -79,7 +79,7 @@ class _SelectBankTypeScreenStateState
           );
         }
         return Scaffold(
-          appBar: MAppBar(title: ''),
+          appBar: const MAppBar(title: ''),
           body: SafeArea(
             child: Column(
               children: [

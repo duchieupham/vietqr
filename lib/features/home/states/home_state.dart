@@ -3,19 +3,6 @@ import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 
-enum HomeType { GET_BANK, NONE, SCAN_ERROR, SCAN_NOT_FOUND, SCAN }
-
-enum TypePermission {
-  None,
-  CameraDenied,
-  CameraAllow,
-  CameraRequest,
-  Allow,
-  Request,
-  Denied,
-  Error,
-}
-
 class HomeState extends Equatable {
   final String? msg;
   final BlocStatus status;
@@ -46,7 +33,7 @@ class HomeState extends Equatable {
   HomeState copyWith({
     BlocStatus? status,
     String? msg,
-    TypePermission? type,
+    TypePermission? typePermission,
     NationalScannerDTO? nationalScannerDTO,
     String? codeQR,
     String? barCode,
@@ -59,7 +46,7 @@ class HomeState extends Equatable {
     return HomeState(
       status: status ?? this.status,
       msg: msg ?? this.msg,
-      typePermission: type ?? this.typePermission,
+      typePermission: typePermission ?? this.typePermission,
       typeQR: typeQR ?? this.typeQR,
       nationalScannerDTO: nationalScannerDTO ?? this.nationalScannerDTO,
       codeQR: codeQR ?? this.codeQR,

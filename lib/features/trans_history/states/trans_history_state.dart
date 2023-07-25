@@ -2,11 +2,6 @@ import 'package:equatable/equatable.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/models/related_transaction_receive_dto.dart';
 
-enum TransHistoryType {
-  NONE,
-  ERROR,
-  LOAD_DATA,
-}
 
 class TransHistoryState extends Equatable {
   final BlocStatus status;

@@ -2,7 +2,6 @@ import 'package:equatable/equatable.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/models/info_user_dto.dart';
 
-enum LoginType { NONE, SUCCESS, TOAST, ERROR, CHECK_EXIST, REGISTER }
 
 class LoginState extends Equatable {
   final InfoUserDTO? infoUserDTO;

@@ -12,6 +12,7 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/account/account_screen.dart';
 import 'package:vierqr/features/bank_card/bank_screen.dart';
 import 'package:vierqr/features/business/views/business_screen.dart';
+import 'package:vierqr/features/contact/save_contact_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
 import 'package:vierqr/features/dashboard/views/dialog_scan_type_bank.dart';
@@ -24,13 +25,12 @@ import 'package:vierqr/features/notification/events/notification_event.dart';
 import 'package:vierqr/features/notification/states/notification_state.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:vierqr/features/phone_book/save_phone_book_screen.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
 import 'package:vierqr/features/token/blocs/token_bloc.dart';
 import 'package:vierqr/features/token/events/token_event.dart';
 import 'package:vierqr/features/token/states/token_state.dart';
 import 'package:vierqr/main.dart';
-import 'package:vierqr/models/add_phone_book_dto.dart';
+import 'package:vierqr/models/add_contact_dto.dart';
 import 'package:vierqr/models/bank_card_insert_unauthenticated.dart';
 import 'package:vierqr/models/bank_name_search_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
@@ -327,6 +327,16 @@ class _DashBoardScreen extends State<DashBoardScreen>
                 },
               );
             } else if (state.typeQR == TypeQR.VietQR_ID) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => SaveContactScreen(
+                    code: state.codeQR ?? '',
+                    typeQR: TypeContact.VietQR_ID,
+                  ),
+                  // settings: RouteSettings(name: ContactEditView.routeName),
+                ),
+              );
             } else if (state.typeQR == TypeQR.QR_LINK) {
               showGeneralDialog(
                 context: context,
@@ -343,11 +353,11 @@ class _DashBoardScreen extends State<DashBoardScreen>
                       final data = await Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => SavePhoneBookScreen(
+                          builder: (_) => SaveContactScreen(
                             code: state.codeQR ?? '',
-                            typeQR: TypePhoneBook.Other,
+                            typeQR: TypeContact.Other,
                           ),
-                          // settings: RouteSettings(name: PhoneBookEditView.routeName),
+                          // settings: RouteSettings(name: ContactEditView.routeName),
                         ),
                       );
                       if (!mounted) return;
@@ -398,17 +408,17 @@ class _DashBoardScreen extends State<DashBoardScreen>
                 return DialogScanBank(
                   dto: dto,
                   onTapSave: () {
-                    AddPhoneBookDTO dto = AddPhoneBookDTO(
+                    AddContactDTO dto = AddContactDTO(
                       additionalData: 'Đã thêm từ quét QR',
                       nickName: state.informationDTO?.accountName ?? '',
-                      type: state.typePhoneBook.value,
+                      type: state.typeContact.value,
                       value: state.codeQR ?? '',
                       userId: UserInformationHelper.instance.getUserId(),
                       bankTypeId: state.bankTypeDTO?.id ?? '',
                       bankAccount: state.bankAccount,
                     );
 
-                    _dashBoardBloc.add(DashBoardEventAddPhoneBook(dto: dto));
+                    _dashBoardBloc.add(DashBoardEventAddContact(dto: dto));
                   },
                   onTapAdd: () {
                     _dashBoardBloc.add(DashBoardCheckExistedEvent(
@@ -527,36 +537,38 @@ class _DashBoardScreen extends State<DashBoardScreen>
               ),
             ],
           ),
-          bottomNavigationBar:
-              Consumer<PageSelectProvider>(builder: (context, page, child) {
-            return Container(
-              decoration: const BoxDecoration(
-                border:
-                    Border(top: BorderSide(color: AppColor.GREY_TOP_TAB_BAR)),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: List.generate(
-                  page.listItem.length,
-                  (index) {
-                    var item = page.listItem.elementAt(index);
+          bottomNavigationBar: Consumer<PageSelectProvider>(
+            builder: (context, page, child) {
+              return Container(
+                padding: const EdgeInsets.only(bottom: 12),
+                decoration: const BoxDecoration(
+                  border:
+                      Border(top: BorderSide(color: AppColor.GREY_TOP_TAB_BAR)),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: List.generate(
+                    page.listItem.length,
+                    (index) {
+                      var item = page.listItem.elementAt(index);
 
-                    String url = (item.index == page.indexSelected)
-                        ? item.assetsActive
-                        : item.assetsUnActive;
+                      String url = (item.index == page.indexSelected)
+                          ? item.assetsActive
+                          : item.assetsUnActive;
 
-                    return _buildShortcut(
-                      index: item.index,
-                      url: url,
-                      label: item.label,
-                      context: context,
-                      select: item.index == page.indexSelected,
-                    );
-                  },
-                ).toList(),
-              ),
-            );
-          }),
+                      return _buildShortcut(
+                        index: item.index,
+                        url: url,
+                        label: item.label,
+                        context: context,
+                        select: item.index == page.indexSelected,
+                      );
+                    },
+                  ).toList(),
+                ),
+              );
+            },
+          ),
         ),
       ),
     );

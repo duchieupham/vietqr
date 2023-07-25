@@ -3,20 +3,6 @@ import 'package:vierqr/models/bank_card_request_otp.dart';
 import 'package:vierqr/models/bank_name_information_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 
-enum AddBankType {
-  NONE,
-  LOAD_BANK,
-  SEARCH_BANK,
-  ERROR,
-  REQUEST_BANK,
-  INSERT_BANK,
-  EXIST_BANK,
-  OTP_BANK,
-  INSERT_OTP_BANK,
-  SCAN_QR,
-  SCAN_NOT_FOUND,
-}
-
 class AddBankState {
   final String? msg;
   final String? errorAccount;

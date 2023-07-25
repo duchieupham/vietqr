@@ -58,7 +58,7 @@ class ServiceSection extends StatelessWidget {
           children: [
             Image.asset(
               pathIcon,
-              height: 42,
+              height: 36,
             ),
             const SizedBox(
               height: 4,
@@ -66,7 +66,7 @@ class ServiceSection extends StatelessWidget {
             Text(
               title,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 13),
+              style: const TextStyle(fontSize: 12),
             )
           ],
         ),

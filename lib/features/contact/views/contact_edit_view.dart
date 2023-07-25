@@ -6,27 +6,27 @@ import 'package:vierqr/commons/enums/textfield_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_custom.dart';
-import 'package:vierqr/features/phone_book/blocs/phone_book_bloc.dart';
-import 'package:vierqr/features/phone_book/events/phone_book_event.dart';
-import 'package:vierqr/features/phone_book/states/phone_book_state.dart';
+import 'package:vierqr/features/contact/blocs/contact_bloc.dart';
+import 'package:vierqr/features/contact/events/contact_event.dart';
+import 'package:vierqr/features/contact/states/contact_state.dart';
 import 'package:vierqr/layouts/button_widget.dart';
 
 import 'package:vierqr/layouts/m_app_bar.dart';
-import 'package:vierqr/models/phone_book_detail_dto.dart';
+import 'package:vierqr/models/contact_detail_dto.dart';
 
 // ignore: must_be_immutable
-class PhoneBookEditView extends StatefulWidget {
+class ContactEditView extends StatefulWidget {
   final Function(Map<String, dynamic>)? onCallBack;
-  final PhoneBookDetailDTO phoneBookDetailDTO;
+  final ContactDetailDTO contactDetailDTO;
 
-  const PhoneBookEditView(
-      {super.key, this.onCallBack, required this.phoneBookDetailDTO});
+  const ContactEditView(
+      {super.key, this.onCallBack, required this.contactDetailDTO});
 
   @override
-  State<PhoneBookEditView> createState() => _PhoneBookEditViewState();
+  State<ContactEditView> createState() => _ContactEditViewState();
 }
 
-class _PhoneBookEditViewState extends State<PhoneBookEditView> {
+class _ContactEditViewState extends State<ContactEditView> {
   final nickNameController = TextEditingController();
   final suggestController = TextEditingController();
 
@@ -34,16 +34,16 @@ class _PhoneBookEditViewState extends State<PhoneBookEditView> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      nickNameController.text = widget.phoneBookDetailDTO.nickName ?? '';
-      suggestController.text = widget.phoneBookDetailDTO.additionalData ?? '';
+      nickNameController.text = widget.contactDetailDTO.nickName ?? '';
+      suggestController.text = widget.contactDetailDTO.additionalData ?? '';
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<PhoneBookBloc>(
-      create: (context) => PhoneBookBloc(context),
-      child: BlocConsumer<PhoneBookBloc, PhoneBookState>(
+    return BlocProvider<ContactBloc>(
+      create: (context) => ContactBloc(context),
+      child: BlocConsumer<ContactBloc, ContactState>(
         listener: (context, state) {
           if (state.status == BlocStatus.LOADING) {
             DialogWidget.instance.openLoadingDialog();
@@ -53,7 +53,7 @@ class _PhoneBookEditViewState extends State<PhoneBookEditView> {
             Navigator.of(context).pop();
           }
 
-          if (state.type == PhoneBookType.UPDATE) {
+          if (state.type == ContactType.UPDATE) {
             Navigator.of(context).pop(true);
           }
         },
@@ -99,13 +99,13 @@ class _PhoneBookEditViewState extends State<PhoneBookEditView> {
                 FocusManager.instance.primaryFocus?.unfocus();
                 if (!mounted) return;
                 Map<String, dynamic> data = {
-                  "id": widget.phoneBookDetailDTO.id ?? '',
+                  "id": widget.contactDetailDTO.id ?? '',
                   "nickName": nickNameController.text,
-                  "type": widget.phoneBookDetailDTO.type ?? 0,
+                  "type": widget.contactDetailDTO.type ?? 0,
                   "additionalData": suggestController.text,
                 };
 
-                context.read<PhoneBookBloc>().add(UpdatePhoneBookEvent(data));
+                context.read<ContactBloc>().add(UpdateContactEvent(data));
               },
             ),
           );
@@ -114,7 +114,7 @@ class _PhoneBookEditViewState extends State<PhoneBookEditView> {
     );
   }
 
-  Widget _buildTypeQr(PhoneBookDetailDTO dto) {
+  Widget _buildTypeQr(ContactDetailDTO dto) {
     if (dto.type == 2) {
       return Container(
         width: 60,

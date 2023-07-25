@@ -6,33 +6,34 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/features/phone_book/blocs/phone_book_bloc.dart';
-import 'package:vierqr/features/phone_book/events/phone_book_event.dart';
-import 'package:vierqr/features/phone_book/states/phone_book_state.dart';
+import 'package:vierqr/features/contact/blocs/contact_bloc.dart';
+import 'package:vierqr/features/contact/events/contact_event.dart';
+import 'package:vierqr/features/contact/states/contact_state.dart';
+
 import 'package:vierqr/layouts/button_widget.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
-import 'package:vierqr/models/phone_book_detail_dto.dart';
-import 'package:vierqr/models/phone_book_dto.dart';
+import 'package:vierqr/models/contact_detail_dto.dart';
+import 'package:vierqr/models/contact_dto.dart';
 
-import 'phone_book_edit_view.dart';
+import 'contact_edit_view.dart';
 
 // ignore: must_be_immutable
-class PhoneDetailScreen extends StatefulWidget {
-  final PhoneBookDTO dto;
+class ContactDetailScreen extends StatefulWidget {
+  final ContactDTO dto;
 
-  const PhoneDetailScreen({super.key, required this.dto});
+  const ContactDetailScreen({super.key, required this.dto});
 
   @override
-  State<PhoneDetailScreen> createState() => _PhoneDetailScreenState();
+  State<ContactDetailScreen> createState() => _ContactDetailScreenState();
 }
 
-class _PhoneDetailScreenState extends State<PhoneDetailScreen> {
+class _ContactDetailScreenState extends State<ContactDetailScreen> {
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<PhoneBookBloc>(
-      create: (context) => PhoneBookBloc(context)
-        ..add(PhoneBookEventGetDetail(id: widget.dto.id)),
-      child: BlocConsumer<PhoneBookBloc, PhoneBookState>(
+    return BlocProvider<ContactBloc>(
+      create: (context) =>
+          ContactBloc(context)..add(ContactEventGetDetail(id: widget.dto.id)),
+      child: BlocConsumer<ContactBloc, ContactState>(
         listener: (context, state) {
           if (state.status == BlocStatus.LOADING) {
             DialogWidget.instance.openLoadingDialog();
@@ -42,7 +43,7 @@ class _PhoneDetailScreenState extends State<PhoneDetailScreen> {
             Navigator.pop(context);
           }
 
-          if (state.type == PhoneBookType.REMOVE) {
+          if (state.type == ContactType.REMOVE) {
             Navigator.of(context).pop();
             Fluttertoast.showToast(
               msg: 'Xoá thành công',
@@ -54,9 +55,9 @@ class _PhoneDetailScreenState extends State<PhoneDetailScreen> {
             );
           }
 
-          if (state.type == PhoneBookType.UPDATE) {}
+          if (state.type == ContactType.UPDATE) {}
 
-          if (state.type == PhoneBookType.GET_LIST) {}
+          if (state.type == ContactType.GET_LIST) {}
         },
         builder: (context, state) {
           return Scaffold(
@@ -68,17 +69,17 @@ class _PhoneDetailScreenState extends State<PhoneDetailScreen> {
                     final data = await Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => PhoneBookEditView(
-                            phoneBookDetailDTO: state.phoneBookDetailDTO),
-                        // settings: RouteSettings(name: PhoneBookEditView.routeName),
+                        builder: (_) => ContactEditView(
+                            contactDetailDTO: state.contactDetailDTO),
+                        // settings: RouteSettings(name: ContactEditView.routeName),
                       ),
                     );
 
                     if (!mounted) return;
                     if (data is bool) {
                       context
-                          .read<PhoneBookBloc>()
-                          .add(PhoneBookEventGetDetail(id: widget.dto.id));
+                          .read<ContactBloc>()
+                          .add(ContactEventGetDetail(id: widget.dto.id));
                     }
                   },
                   child: Padding(
@@ -103,7 +104,7 @@ class _PhoneDetailScreenState extends State<PhoneDetailScreen> {
                       borderRadius: const BorderRadius.all(Radius.circular(16)),
                       boxShadow: [
                         BoxShadow(
-                          color: Theme.of(context).shadowColor.withOpacity(0.2),
+                          color: Theme.of(context).shadowColor.withOpacity(0.1),
                           spreadRadius: 2,
                           blurRadius: 4,
                           offset: const Offset(1, 2),
@@ -111,7 +112,7 @@ class _PhoneDetailScreenState extends State<PhoneDetailScreen> {
                       ],
                     ),
                     child: QrImage(
-                      data: state.phoneBookDetailDTO.value ?? '',
+                      data: state.contactDetailDTO.value ?? '',
                       version: QrVersions.auto,
                       embeddedImage: const AssetImage(
                           'assets/images/ic-viet-qr-small.png'),
@@ -121,7 +122,7 @@ class _PhoneDetailScreenState extends State<PhoneDetailScreen> {
                     ),
                   ),
                   Text(
-                    state.phoneBookDetailDTO.nickName ?? '',
+                    state.contactDetailDTO.nickName ?? '',
                     style: const TextStyle(
                         fontSize: 16, fontWeight: FontWeight.w600),
                   ),
@@ -135,7 +136,7 @@ class _PhoneDetailScreenState extends State<PhoneDetailScreen> {
                         style: TextStyle(fontWeight: FontWeight.w600),
                       ),
                       const Spacer(),
-                      _buildTypeQr(state.phoneBookDetailDTO)
+                      _buildTypeQr(state.contactDetailDTO)
                     ],
                   ),
                   const SizedBox(
@@ -159,7 +160,7 @@ class _PhoneDetailScreenState extends State<PhoneDetailScreen> {
                       borderRadius: BorderRadius.circular(8),
                       color: AppColor.WHITE,
                     ),
-                    child: Text(state.phoneBookDetailDTO.additionalData ?? ''),
+                    child: Text(state.contactDetailDTO.additionalData ?? ''),
                   ),
                   const Spacer(),
                   MButtonWidget(
@@ -170,8 +171,8 @@ class _PhoneDetailScreenState extends State<PhoneDetailScreen> {
                           isSecondBT: true,
                           functionConfirm: () {
                             Navigator.of(context).pop();
-                            BlocProvider.of<PhoneBookBloc>(context)
-                                .add(RemovePhoneBookEvent(id: widget.dto.id));
+                            BlocProvider.of<ContactBloc>(context)
+                                .add(RemoveContactEvent(id: widget.dto.id));
                           },
                         );
                       },
@@ -195,7 +196,7 @@ class _PhoneDetailScreenState extends State<PhoneDetailScreen> {
     );
   }
 
-  Widget _buildTypeQr(PhoneBookDetailDTO dto) {
+  Widget _buildTypeQr(ContactDetailDTO dto) {
     if (dto.type == 2) {
       return Container(
         width: 60,

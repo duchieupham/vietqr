@@ -15,7 +15,6 @@ import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
-import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/viet_qr_widget.dart';
 import 'package:vierqr/features/account/blocs/account_bloc.dart';
@@ -27,8 +26,7 @@ import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
 import 'package:vierqr/features/bank_card/widgets/function_bank_widget.dart';
 import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
-import 'package:vierqr/features/dashboard/views/dialog_scan_type_bank.dart';
-import 'package:vierqr/features/generate_qr/views/create_qr.dart';
+import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
@@ -36,7 +34,6 @@ import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/models/qr_create_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
-import 'package:vierqr/services/providers/bank_account_provider.dart';
 import 'package:vierqr/services/providers/bank_card_select_provider.dart';
 import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
@@ -54,7 +51,7 @@ class BankScreen extends StatelessWidget {
 }
 
 class _BankScreen extends StatefulWidget {
-  const _BankScreen({super.key});
+  const _BankScreen();
 
   @override
   State<_BankScreen> createState() => _BankScreenState();
@@ -135,7 +132,6 @@ class _BankScreenState extends State<_BankScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final double width = MediaQuery.of(context).size.width;
     final double maxListHeight = MediaQuery.of(context).size.height - 200;
     final double height = MediaQuery.of(context).size.height;
     double sizedBox = 0;
@@ -191,6 +187,33 @@ class _BankScreenState extends State<_BankScreen>
                   );
                 }
 
+                if (state.request == BankType.SCAN_NOT_FOUND) {
+                  DialogWidget.instance.openMsgDialog(
+                    title: 'Không thể xác nhận mã QR',
+                    msg:
+                        'Không tìm thấy thông tin trong đoạn mã QR. Vui lòng kiểm tra lại thông tin.',
+                    function: () {
+                      Navigator.pop(context);
+                      if (Navigator.canPop(context)) {
+                        Navigator.pop(context);
+                      }
+                    },
+                  );
+                }
+                if (state.request == BankType.SCAN_ERROR) {
+                  DialogWidget.instance.openMsgDialog(
+                    title: 'Không tìm thấy thông tin',
+                    msg:
+                        'Không tìm thấy thông tin ngân hàng tương ứng. Vui lòng thử lại sau.',
+                    function: () {
+                      Navigator.pop(context);
+                      if (Navigator.canPop(context)) {
+                        Navigator.pop(context);
+                      }
+                    },
+                  );
+                }
+
                 if (state.request == BankType.BANK) {
                   if (scrollController.hasClients) {
                     scrollController.jumpTo(0);
@@ -238,8 +261,7 @@ class _BankScreenState extends State<_BankScreen>
     String data = await FlutterBarcodeScanner.scanBarcode(
         '#ff6666', 'Cancel', true, ScanMode.QR);
     if (data.isNotEmpty) {
-      if (data == TypeQR.NEGATIVE_ONE.value) {
-      } else if (data == TypeQR.NEGATIVE_TWO.value) {
+      if (data == TypeQR.NEGATIVE_TWO.value) {
         DialogWidget.instance.openMsgDialog(
           title: 'Không thể xác nhận mã QR',
           msg: 'Ảnh QR không đúng định dạng, vui lòng chọn ảnh khác.',
@@ -252,16 +274,14 @@ class _BankScreenState extends State<_BankScreen>
         );
       } else {
         if (data.contains('|')) {
-          final list = data.split("|");
-          if (list.isNotEmpty) {
-            NationalScannerDTO identityDTO = NationalScannerDTO.fromJson(list);
-            if (!mounted) return;
-            Navigator.pushNamed(
-              context,
-              Routes.NATIONAL_INFORMATION,
-              arguments: {'dto': identityDTO},
-            );
-          }
+          NationalScannerDTO nationalScannerDTO =
+              dashBoardRepository.getNationalInformation(data);
+          if (!mounted) return;
+          Navigator.pushNamed(
+            context,
+            Routes.NATIONAL_INFORMATION,
+            arguments: {'dto': nationalScannerDTO},
+          );
         } else {
           if (!mounted) return;
           _bloc.add(ScanQrEventGetBankType(code: data));
@@ -358,48 +378,6 @@ class _BankScreenState extends State<_BankScreen>
     );
   }
 
-  Widget _buildEmptyList(double width) {
-    return UnconstrainedBox(
-      child: BoxLayout(
-        width: width - 60,
-        borderRadius: 15,
-        alignment: Alignment.center,
-        bgColor: Theme.of(context).cardColor,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              'assets/images/ic-card.png',
-              width: width * 0.4,
-            ),
-            const Text(
-              'Chưa có tài khoản ngân hàng được thêm.',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 15),
-            ),
-            const Padding(padding: EdgeInsets.only(top: 10)),
-            ButtonIconWidget(
-              width: width,
-              icon: Icons.add_rounded,
-              title: 'Thêm TK ngân hàng',
-              function: () {
-                Navigator.pushNamed(context, Routes.ADD_BANK_CARD).then(
-                  (value) {
-                    Provider.of<BankAccountProvider>(context, listen: false)
-                        .reset();
-                  },
-                );
-              },
-              bgColor: AppColor.GREEN,
-              textColor: AppColor.WHITE,
-            ),
-            const Padding(padding: EdgeInsets.only(top: 10)),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget buildList(
     double maxListHeight,
     List<BankAccountDTO> banks,
@@ -462,21 +440,6 @@ class _BankScreenState extends State<_BankScreen>
         cardWidgets.add(qrWidget);
       }
     }
-  }
-
-  Widget _buildDot(bool isSelected) {
-    return Container(
-      width: (isSelected) ? 20 : 10,
-      height: 10,
-      margin: const EdgeInsets.symmetric(horizontal: 5),
-      decoration: BoxDecoration(
-        border: (isSelected)
-            ? Border.all(color: AppColor.GREY_LIGHT, width: 0.5)
-            : null,
-        color: (isSelected) ? AppColor.WHITE : AppColor.GREY_LIGHT,
-        borderRadius: BorderRadius.circular(10),
-      ),
-    );
   }
 
   void resetProvider(BuildContext context) {
@@ -875,7 +838,7 @@ class _StackedList extends State<StackedList> {
               BlocConsumer<AccountBloc, AccountState>(
                 listener: (context, state) {},
                 builder: (context, state) {
-                  if (state.request == AccountType.PONIT) {
+                  if (state.request == AccountType.POINT) {
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,

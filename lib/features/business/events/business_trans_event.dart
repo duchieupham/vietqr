@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:vierqr/models/branch_filter_dto.dart';
 import 'package:vierqr/models/branch_filter_insert_dto.dart';
 import 'package:vierqr/models/transaction_branch_input_dto.dart';
 

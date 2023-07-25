@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
-import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/features/business/repositories/business_information_repository.dart';
@@ -124,8 +123,6 @@ class _SelectBranchWidgetState extends State<SelectBranchWidget> {
         ],
       ),
     );
-
-    return const SizedBox();
   }
 
   Widget _buildBranchList({

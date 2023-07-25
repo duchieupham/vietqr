@@ -1,11 +1,12 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
+import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/commons/utils/transaction_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
@@ -15,6 +16,7 @@ import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/layouts/button_widget.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/qr_recreate_dto.dart';
+import 'package:vierqr/models/transaction_receive_dto.dart';
 import 'package:vierqr/services/providers/water_mark_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
@@ -370,6 +372,7 @@ class _BodyWidgetState extends State<_BodyWidget> {
           ),
           bottomSheet: _buildButton(
             context: context,
+            dto: state.dto,
             onClick: (index) {},
             onPaid: () {
               QRRecreateDTO qrRecreateDTO = QRRecreateDTO(
@@ -390,7 +393,7 @@ class _BodyWidgetState extends State<_BodyWidget> {
   Widget _buildButton(
       {required BuildContext context,
       GestureTapCallback? onPaid,
-      bool isEnable = false,
+      TransactionReceiveDTO? dto,
       required Function(int) onClick}) {
     return IntrinsicHeight(
       child: Padding(
@@ -427,7 +430,9 @@ class _BodyWidgetState extends State<_BodyWidget> {
                 ),
                 const SizedBox(width: 10),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    saveImage(context);
+                  },
                   child: Container(
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
@@ -443,7 +448,9 @@ class _BodyWidgetState extends State<_BodyWidget> {
                 ),
                 const SizedBox(width: 10),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    shareImage(dto);
+                  },
                   child: Container(
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
@@ -465,6 +472,38 @@ class _BodyWidgetState extends State<_BodyWidget> {
         ),
       ),
     );
+  }
+
+  Future<void> saveImage(BuildContext context) async {
+    _waterMarkProvider.updateWaterMark(true);
+    DialogWidget.instance.openLoadingDialog();
+    await Future.delayed(const Duration(milliseconds: 200), () async {
+      await ShareUtils.instance.saveImageToGallery(globalKey).then((value) {
+        _waterMarkProvider.updateWaterMark(false);
+        Navigator.pop(context);
+        Fluttertoast.showToast(
+          msg: 'Đã lưu ảnh',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          backgroundColor: Theme.of(context).cardColor,
+          textColor: Theme.of(context).cardColor,
+          fontSize: 15,
+        );
+      });
+    });
+  }
+
+  Future<void> shareImage(TransactionReceiveDTO? dto) async {
+    _waterMarkProvider.updateWaterMark(true);
+    await Future.delayed(const Duration(milliseconds: 200), () async {
+      await ShareUtils.instance
+          .shareImage(
+            key: globalKey,
+            textSharing:
+                'Giao dịch ${TransactionUtils.instance.getStatusString(dto?.status ?? 0)} ${TransactionUtils.instance.getTransType(dto?.transType ?? '')} ${CurrencyUtils.instance.getCurrencyFormatted((dto?.amount ?? 0).toString())} VND\nĐược tạo bởi vietqr.vn - Hotline 19006234',
+          )
+          .then((value) => _waterMarkProvider.updateWaterMark(false));
+    });
   }
 
   Widget _buildElement1({

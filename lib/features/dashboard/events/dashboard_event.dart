@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:vierqr/models/add_phone_book_dto.dart';
+import 'package:vierqr/models/add_contact_dto.dart';
 import 'package:vierqr/models/bank_card_insert_unauthenticated.dart';
 import 'package:vierqr/models/bank_name_search_dto.dart';
 
@@ -42,10 +42,10 @@ class DashBoardEventSearchName extends DashBoardEvent {
   List<Object?> get props => [dto];
 }
 
-class DashBoardEventAddPhoneBook extends DashBoardEvent {
-  final AddPhoneBookDTO dto;
+class DashBoardEventAddContact extends DashBoardEvent {
+  final AddContactDTO dto;
 
-  const DashBoardEventAddPhoneBook({required this.dto});
+  const DashBoardEventAddContact({required this.dto});
 
   @override
   List<Object?> get props => [dto];

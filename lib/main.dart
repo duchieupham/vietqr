@@ -28,6 +28,8 @@ import 'package:vierqr/features/business/blocs/business_member_bloc.dart';
 import 'package:vierqr/features/business/views/add_business_view.dart';
 import 'package:vierqr/features/business/views/business_information_view.dart';
 import 'package:vierqr/features/business/views/business_transaction_view.dart';
+import 'package:vierqr/features/contact/contact_screen.dart';
+import 'package:vierqr/features/contact/views/contact_detail.dart';
 import 'package:vierqr/features/create_qr/create_qr_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/dashboard_screen.dart';
@@ -37,10 +39,6 @@ import 'package:vierqr/features/home/blocs/home_bloc.dart';
 import 'package:vierqr/features/introduce/views/introduce_screen.dart';
 import 'package:vierqr/features/notification/views/notification_view.dart';
 import 'package:vierqr/features/personal/views/national_information_view.dart';
-import 'package:vierqr/features/phone_book/blocs/phone_book_bloc.dart';
-import 'package:vierqr/features/phone_book/phone_book_screen.dart';
-import 'package:vierqr/features/phone_book/save_phone_book_screen.dart';
-import 'package:vierqr/features/phone_book/views/phone_book_detail.dart';
 import 'package:vierqr/features/printer/blocs/printer_bloc.dart';
 import 'package:vierqr/features/printer/views/printer_setting_view.dart';
 import 'package:vierqr/features/logout/blocs/log_out_bloc.dart';
@@ -58,7 +56,7 @@ import 'package:vierqr/features/transaction/transaction_detail_screen.dart';
 import 'package:vierqr/features/trans_history/trans_history_screen.dart';
 import 'package:vierqr/features/transaction/widgets/transaction_sucess_widget.dart';
 import 'package:vierqr/models/notification_transaction_success_dto.dart';
-import 'package:vierqr/models/phone_book_dto.dart';
+import 'package:vierqr/models/contact_dto.dart';
 import 'package:vierqr/services/local_notification/notification_service.dart';
 import 'package:vierqr/services/providers/action_share_provider.dart';
 import 'package:vierqr/services/providers/add_business_provider.dart';
@@ -352,7 +350,7 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.BRANCH_DETAIL: (context) => const BranchDetailView(),
                   Routes.CREATE_QR: (context) => const CreateQrScreen(),
                   Routes.INTRODUCE_SCREEN: (context) => const IntroduceScreen(),
-                  Routes.PHONE_BOOK: (context) => const PhoneBookScreen(),
+                  Routes.PHONE_BOOK: (context) => const ContactScreen(),
                   // Routes.PHONE_BOOK: (context) => const SavePhoneBookScreen(),
                   Routes.TOP_UP: (context) => const TopUpScreen(),
                 },
@@ -365,12 +363,12 @@ class _VietQRApp extends State<VietQRApp> {
                     );
                   }
                   if (settings.name == Routes.PHONE_BOOK_DETAIL) {
-                    PhoneBookDTO _dto = settings.arguments as PhoneBookDTO;
+                    ContactDTO dto = settings.arguments as ContactDTO;
 
                     return MaterialPageRoute(
                       builder: (context) {
-                        return PhoneDetailScreen(
-                          dto: _dto,
+                        return ContactDetailScreen(
+                          dto: dto,
                         );
                       },
                     );

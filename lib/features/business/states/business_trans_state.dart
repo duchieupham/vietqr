@@ -3,7 +3,6 @@ import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/models/branch_filter_dto.dart';
 import 'package:vierqr/models/business_detail_dto.dart';
 
-enum TransType { NONE, GET_TRANDS }
 
 class BusinessTransState extends Equatable {
   final BusinessDetailDTO? dto;

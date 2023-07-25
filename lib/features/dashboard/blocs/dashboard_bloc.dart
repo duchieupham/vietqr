@@ -28,7 +28,7 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
     on<PermissionEventRequest>(_requestPermissions);
     on<ScanQrEventGetBankType>(_getBankType);
     on<DashBoardEventSearchName>(_searchBankName);
-    on<DashBoardEventAddPhoneBook>(_addPhoneBook);
+    on<DashBoardEventAddContact>(_addContact);
     on<DashBoardCheckExistedEvent>(_checkExistedBank);
     on<DashBoardEventInsertUnauthenticated>(_insertBankCardUnauthenticated);
     on<UpdateEvent>(_updateEvent);
@@ -72,7 +72,7 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
         }
       }
     } catch (e) {
-      print('Error at _requestPermissions - PermissionBloc: $e');
+      LOG.error('Error at _requestPermissions - PermissionBloc: $e');
       emit(state.copyWith(typePermission: DashBoardTypePermission.Error));
     }
   }
@@ -100,7 +100,7 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
                     typeQR: TypeQR.QR_BANK,
                     request: DashBoardType.SCAN,
                     codeQR: event.code,
-                    typePhoneBook: TypePhoneBook.Bank),
+                    typeContact: TypeContact.Bank),
               );
             } else {
               emit(state.copyWith(request: DashBoardType.SCAN_ERROR));
@@ -116,7 +116,7 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
                   request: DashBoardType.SCAN,
                   typeQR: TypeQR.QR_CMT,
                   codeQR: event.code,
-                  typePhoneBook: TypePhoneBook.Other),
+                  typeContact: TypeContact.Other),
             );
           } else {
             emit(state.copyWith(request: DashBoardType.SCAN_NOT_FOUND));
@@ -127,7 +127,7 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
                 codeQR: event.code,
                 request: DashBoardType.SCAN,
                 typeQR: TypeQR.VietQR_ID,
-                typePhoneBook: TypePhoneBook.VietQR_ID),
+                typeContact: TypeContact.VietQR_ID),
           );
         } else if (typeQR == TypeQR.QR_BARCODE) {
           if (event.code.isNotEmpty) {
@@ -136,7 +136,7 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
                   barCode: event.code,
                   request: DashBoardType.SCAN,
                   typeQR: TypeQR.QR_BARCODE,
-                  typePhoneBook: TypePhoneBook.Other),
+                  typeContact: TypeContact.Other),
             );
           }
         } else if (typeQR == TypeQR.QR_LINK) {
@@ -145,7 +145,7 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
                 codeQR: event.code,
                 request: DashBoardType.SCAN,
                 typeQR: TypeQR.QR_LINK,
-                typePhoneBook: TypePhoneBook.Other),
+                typeContact: TypeContact.Other),
           );
         }
       }
@@ -183,13 +183,13 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
     }
   }
 
-  void _addPhoneBook(DashBoardEvent event, Emitter emit) async {
+  void _addContact(DashBoardEvent event, Emitter emit) async {
     try {
-      if (event is DashBoardEventAddPhoneBook) {
+      if (event is DashBoardEventAddContact) {
         emit(state.copyWith(
             status: BlocStatus.LOADING, request: DashBoardType.NONE));
         ResponseMessageDTO result =
-            await bankCardRepository.addPhoneBook(event.dto);
+            await bankCardRepository.addContact(event.dto);
         if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
           emit(state.copyWith(
               status: BlocStatus.UNLOADING,

@@ -12,6 +12,7 @@ import 'package:vierqr/features/personal/blocs/user_edit_bloc.dart';
 import 'package:vierqr/features/personal/events/user_edit_event.dart';
 import 'package:vierqr/features/personal/states/user_edit_state.dart';
 import 'package:vierqr/layouts/box_layout.dart';
+import 'package:vierqr/layouts/button_widget.dart';
 import 'package:vierqr/models/account_information_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/services/providers/suggestion_widget_provider.dart';
@@ -97,7 +98,7 @@ class NationalInformationView extends StatelessWidget {
                     width: width - 40,
                     context: context,
                     title: 'Ngày sinh',
-                    content: dto.getBirth,
+                    content: dto.birthdate,
                   ),
                   Padding(
                     padding: const EdgeInsets.only(
@@ -123,7 +124,7 @@ class NationalInformationView extends StatelessWidget {
                     width: width - 40,
                     context: context,
                     title: 'Ngày cấp',
-                    content: dto.getDateValid,
+                    content: dto.dateValid,
                   ),
                 ],
               ),
@@ -171,12 +172,29 @@ class NationalInformationView extends StatelessWidget {
                           }
                         }
                       },
-                      child: ButtonIconWidget(
+                      child: MButtonWidget(
                         width: width * 0.8 - 25,
                         height: 40,
-                        icon: Icons.person_outline_rounded,
-                        title: 'Cập nhật thông tin cá nhân',
-                        function: () {
+                        isEnable: true,
+                        margin: EdgeInsets.zero,
+                        widget: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Icon(
+                              Icons.person_outline_rounded,
+                              color: AppColor.WHITE,
+                              size: 20,
+                            ),
+                            SizedBox(width: 4),
+                            Text(
+                              'Cập nhật thông tin cá nhân',
+                              style: TextStyle(
+                                  fontSize: 14, color: AppColor.WHITE),
+                            )
+                          ],
+                        ),
+                        title: '',
+                        onTap: () {
                           int gender = (dto.gender.trim() == 'Nam') ? 0 : 1;
                           List<String> namePaths =
                               StringUtils.instance.splitFullName(dto.fullname);
@@ -186,7 +204,7 @@ class NationalInformationView extends StatelessWidget {
                             firstName: namePaths[0].trim(),
                             middleName: namePaths[1].trim(),
                             lastName: namePaths[2].trim(),
-                            birthDate: dto.getBirth,
+                            birthDate: dto.birthdate,
                             gender: gender,
                             address: dto.address,
                             email: UserInformationHelper.instance
@@ -202,8 +220,6 @@ class NationalInformationView extends StatelessWidget {
                             ),
                           );
                         },
-                        bgColor: AppColor.GREEN,
-                        textColor: AppColor.WHITE,
                       ),
                     ),
                     const Padding(padding: EdgeInsets.only(left: 10)),
@@ -215,8 +231,8 @@ class NationalInformationView extends StatelessWidget {
                       function: () {
                         Navigator.pop(context);
                       },
-                      bgColor: Theme.of(context).cardColor,
-                      textColor: AppColor.GREEN,
+                      bgColor: AppColor.WHITE,
+                      textColor: AppColor.BLUE_TEXT,
                     )
                   ],
                 ),

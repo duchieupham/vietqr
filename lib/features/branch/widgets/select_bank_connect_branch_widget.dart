@@ -80,9 +80,6 @@ class _SelectBankConnectBranchWidgetState
       });
     } catch (e) {
       LOG.error(e.toString());
-      ResponseMessageDTO result =
-          const ResponseMessageDTO(status: 'FAILED', message: 'E05');
-      LOG.error(e.toString());
     }
   }
 

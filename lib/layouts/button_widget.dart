@@ -14,6 +14,7 @@ class MButtonWidget extends StatelessWidget {
   final Widget? widget;
   final double? width;
   final double? fontSize;
+
   const MButtonWidget({
     super.key,
     required this.title,
@@ -53,7 +54,9 @@ class MButtonWidget extends StatelessWidget {
                 Text(
                   title,
                   style: TextStyle(
-                    color: colorEnableText ?? AppColor.WHITE,
+                    color: isEnable
+                        ? colorEnableText ?? AppColor.WHITE
+                        : colorDisableText,
                     fontSize: fontSize,
                   ),
                 ),

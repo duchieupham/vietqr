@@ -571,60 +571,67 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: MButtonWidget(
-                    title: 'Đã thanh toán',
-                    isEnable: true,
-                    margin: const EdgeInsets.only(left: 20),
-                    onTap: onPaid,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                GestureDetector(
-                  onTap: () {
-                    if (fileImage != null) {
-                      dialogExits();
-                    } else {
-                      Navigator.of(context).popUntil((route) => route.isFirst);
-                    }
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                        color: AppColor.WHITE,
-                        borderRadius: BorderRadius.circular(5)),
-                    child: Image.asset(
-                      'assets/images/ic-home-blue.png',
-                      width: 36,
-                      height: 36,
-                      fit: BoxFit.cover,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: List.generate(list.length, (index) {
+                  DataModel model = list.elementAt(index);
+                  return Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        onClick(index);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        margin: const EdgeInsets.symmetric(horizontal: 4),
+                        decoration: BoxDecoration(
+                            color: AppColor.WHITE,
+                            borderRadius: BorderRadius.circular(5)),
+                        child: Image.asset(
+                          model.url,
+                          width: 36,
+                          height: 36,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                GestureDetector(
-                  onTap: () {
-                    dialog(onClick: onClick);
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                        color: AppColor.WHITE,
-                        borderRadius: BorderRadius.circular(5)),
-                    child: Image.asset(
-                      'assets/images/ic-more-blue.png',
-                      width: 36,
-                      height: 36,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 20),
-              ],
+                  );
+                }).toList(),
+              ),
             ),
             const SizedBox(height: 10),
+            MButtonWidget(
+              widget: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'assets/images/ic-home-blue.png',
+                    width: 30,
+                    height: 30,
+                    fit: BoxFit.cover,
+                    color: AppColor.WHITE,
+                  ),
+                  const Text(
+                    'Trang chủ',
+                    style: TextStyle(
+                      color: AppColor.WHITE,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+              isEnable: true,
+              margin: const EdgeInsets.symmetric(horizontal: 20),
+              onTap: () {
+                if (fileImage != null) {
+                  dialogExits();
+                } else {
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                }
+              },
+              title: '',
+            ),
             if (fileImage != null)
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -671,6 +678,14 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
     );
   }
 
+  final List<DataModel> list = [
+    DataModel(url: 'assets/images/ic-print-blue.png', text: 'In mã QR'),
+    DataModel(url: 'assets/images/ic-img-blue.png', text: 'Lưu ảnh QR'),
+    DataModel(
+        url: 'assets/images/ic-copy-blue.png', text: 'Sao chép thông tin'),
+    DataModel(url: 'assets/images/ic-share-blue.png', text: 'Chia sẻ'),
+  ];
+
   void dialog({required Function(int) onClick}) async {
     final data = await showDialog(
       barrierDismissible: true,
@@ -686,7 +701,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
   }
 
   void dialogExits() async {
-    final data = await showDialog(
+    await showDialog(
       barrierDismissible: true,
       context: NavigationService.navigatorKey.currentContext!,
       builder: (BuildContext context) {

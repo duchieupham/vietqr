@@ -7,12 +7,10 @@ import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/commons/utils/transaction_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/commons/widgets/sub_header_widget.dart';
 import 'package:vierqr/features/trans_history/blocs/trans_history_bloc.dart';
 import 'package:vierqr/features/trans_history/events/trans_history_event.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/related_transaction_receive_dto.dart';
-import 'package:vierqr/models/transaction_input_dto.dart';
 
 import 'states/trans_history_state.dart';
 
@@ -32,7 +30,7 @@ class TransHistoryScreen extends StatelessWidget {
 }
 
 class _BodyWidget extends StatefulWidget {
-  const _BodyWidget({super.key});
+  const _BodyWidget();
 
   @override
   State<_BodyWidget> createState() => _TransHistoryScreenState();
@@ -65,6 +63,10 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
     _bloc.add(TransactionEventGetList());
   }
 
+  Future<void> onRefresh() async {
+    _bloc.add(TransactionEventGetList());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,33 +84,36 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
         builder: (context, state) {
           return (state.list.isEmpty)
               ? const SizedBox()
-              : SingleChildScrollView(
-                  controller: scrollController,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    children: [
-                      Column(
-                        children: List.generate(
-                          state.list.length,
-                          (index) {
-                            return _buildElement(
-                              context: context,
-                              dto: state.list[index],
-                            );
-                          },
-                        ).toList(),
-                      ),
-                      if (!state.isLoadMore)
-                        const UnconstrainedBox(
-                          child: SizedBox(
-                            width: 30,
-                            height: 30,
-                            child: CircularProgressIndicator(
-                              color: AppColor.BLUE_TEXT,
+              : RefreshIndicator(
+                  onRefresh: onRefresh,
+                  child: SingleChildScrollView(
+                    controller: scrollController,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      children: [
+                        Column(
+                          children: List.generate(
+                            state.list.length,
+                            (index) {
+                              return _buildElement(
+                                context: context,
+                                dto: state.list[index],
+                              );
+                            },
+                          ).toList(),
+                        ),
+                        if (!state.isLoadMore)
+                          const UnconstrainedBox(
+                            child: SizedBox(
+                              width: 30,
+                              height: 30,
+                              child: CircularProgressIndicator(
+                                color: AppColor.BLUE_TEXT,
+                              ),
                             ),
-                          ),
-                        )
-                    ],
+                          )
+                      ],
+                    ),
                   ),
                 );
         },
