@@ -103,6 +103,7 @@ enum TypeContact {
   Bank,
   Other,
   NONE,
+  UPDATE,
 }
 // 1: VietQR ID
 // 2: Bank

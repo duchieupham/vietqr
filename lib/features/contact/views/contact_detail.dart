@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
@@ -35,12 +36,8 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
           ContactBloc(context)..add(ContactEventGetDetail(id: widget.dto.id)),
       child: BlocConsumer<ContactBloc, ContactState>(
         listener: (context, state) {
-          if (state.status == BlocStatus.LOADING) {
-            DialogWidget.instance.openLoadingDialog();
-          }
-
           if (state.status == BlocStatus.UNLOADING) {
-            Navigator.pop(context);
+            // Navigator.pop(context);
           }
 
           if (state.type == ContactType.REMOVE) {
@@ -48,7 +45,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
             Fluttertoast.showToast(
               msg: 'Xoá thành công',
               toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.CENTER,
+              gravity: ToastGravity.BOTTOM,
               backgroundColor: Theme.of(context).cardColor,
               textColor: Theme.of(context).hintColor,
               fontSize: 15,

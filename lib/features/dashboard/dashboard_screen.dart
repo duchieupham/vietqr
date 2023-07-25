@@ -430,6 +430,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
             );
           }
           if (state.request == DashBoardType.ADD_BOOK_CONTACT) {
+            Navigator.pop(context);
             Fluttertoast.showToast(
               msg: 'Đã thêm vào danh bạ',
               toastLength: Toast.LENGTH_SHORT,
@@ -441,6 +442,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
               webBgColor: 'rgba(255, 255, 255)',
               webPosition: 'center',
             );
+
             Future.delayed(const Duration(milliseconds: 400), () {
               Navigator.pushNamed(context, Routes.PHONE_BOOK);
             });

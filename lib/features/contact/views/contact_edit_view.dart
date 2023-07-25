@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
@@ -54,6 +55,14 @@ class _ContactEditViewState extends State<ContactEditView> {
           }
 
           if (state.type == ContactType.UPDATE) {
+            Fluttertoast.showToast(
+              msg: 'Cập nhật thông tin thành công',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              backgroundColor: Theme.of(context).cardColor,
+              textColor: Theme.of(context).hintColor,
+              fontSize: 15,
+            );
             Navigator.of(context).pop(true);
           }
         },

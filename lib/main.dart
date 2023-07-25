@@ -373,7 +373,18 @@ class _VietQRApp extends State<VietQRApp> {
                       },
                     );
                   }
-
+                  // if (settings.name == Routes.UPDATE_PHONE_BOOK) {
+                  //   PhoneBookDetailDTO _dto =
+                  //       settings.arguments as PhoneBookDetailDTO;
+                  //
+                  //   return MaterialPageRoute(
+                  //     builder: (context) {
+                  //       return EditPhoneBookScreen(
+                  //         dto: _dto,
+                  //       );
+                  //     },
+                  //   );
+                  // }
                   return null;
                 },
                 themeMode: (themeSelect.themeSystem == AppColor.THEME_SYSTEM)
