@@ -104,7 +104,7 @@ class AccountLinkView extends StatelessWidget {
           suffixIcon: GestureDetector(
             onTap: onScan,
             child: Image.asset(
-              'assets/images/ic-barcode.png',
+              'assets/images/ic-scan-content.png',
               width: 24,
               height: 24,
             ),

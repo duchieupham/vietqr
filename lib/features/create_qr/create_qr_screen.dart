@@ -16,6 +16,7 @@ import 'package:vierqr/commons/utils/file_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/printer_utils.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
+import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_custom.dart';
@@ -395,7 +396,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                 startBarcodeScanStream(context);
                               },
                               child: Image.asset(
-                                'assets/images/ic-barcode.png',
+                                'assets/images/ic-scan-content.png',
                                 width: 24,
                                 height: 24,
                               ),
@@ -408,7 +409,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const Text(
-                                'Gợi ý: ',
+                                'Mẫu nội dung: ',
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400,
@@ -565,6 +566,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
       required BuildContext context,
       GestureTapCallback? onPaid,
       required Function(int) onClick}) {
+    double width = MediaQuery.of(context).size.width;
     return IntrinsicHeight(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20),
@@ -572,34 +574,64 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: List.generate(list.length, (index) {
-                  DataModel model = list.elementAt(index);
-                  return Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        onClick(index);
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  children: [
+                    ButtonIconWidget(
+                      width: width * 0.2,
+                      height: 40,
+                      icon: Icons.print_rounded,
+                      title: '',
+                      function: () async {
+                        onClick(0);
                       },
-                      child: Container(
-                        padding: const EdgeInsets.all(4),
-                        margin: const EdgeInsets.symmetric(horizontal: 4),
-                        decoration: BoxDecoration(
-                            color: AppColor.WHITE,
-                            borderRadius: BorderRadius.circular(5)),
-                        child: Image.asset(
-                          model.url,
-                          width: 36,
-                          height: 36,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
+                      bgColor: Theme.of(context).cardColor,
+                      textColor: AppColor.ORANGE,
                     ),
-                  );
-                }).toList(),
-              ),
-            ),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 10),
+                    ),
+                    ButtonIconWidget(
+                      width: width * 0.2,
+                      height: 40,
+                      icon: Icons.photo_rounded,
+                      title: '',
+                      function: () {
+                        onClick(1);
+                      },
+                      bgColor: Theme.of(context).cardColor,
+                      textColor: AppColor.RED_CALENDAR,
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 10),
+                    ),
+                    ButtonIconWidget(
+                      width: width * 0.2,
+                      height: 40,
+                      icon: Icons.copy_rounded,
+                      title: '',
+                      function: () async {
+                        onClick(2);
+                      },
+                      bgColor: Theme.of(context).cardColor,
+                      textColor: AppColor.BLUE_TEXT,
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 10),
+                    ),
+                    ButtonIconWidget(
+                      width: width * 0.2,
+                      height: 40,
+                      icon: Icons.share_rounded,
+                      title: '',
+                      function: () {
+                        onClick(3);
+                      },
+                      bgColor: Theme.of(context).cardColor,
+                      textColor: AppColor.BLUE_TEXT,
+                    ),
+                  ],
+                )),
             const SizedBox(height: 10),
             MButtonWidget(
               widget: Row(
@@ -790,7 +822,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
         padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: AppColor.BLUE_TEXT),
+          border: Border.all(color: AppColor.BLUE_TEXT, width: 0.4),
           color: AppColor.BLUE_TEXT.withOpacity(0.3),
         ),
         child: Text(

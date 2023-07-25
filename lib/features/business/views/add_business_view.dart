@@ -531,6 +531,7 @@ class AddBusinessView extends StatelessWidget {
                     members: members,
                     branchs: branchs,
                   );
+                  FocusScope.of(context).requestFocus(FocusNode());
                   businessInformationBloc
                       .add(BusinessInformationEventInsert(dto: dto));
                 }

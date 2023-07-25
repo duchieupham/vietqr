@@ -277,8 +277,14 @@ class _LoginState extends State<_Login> {
                                 ),
                               ),
                               const SizedBox(height: 8),
+
                               GestureDetector(
-                                onTap: () {},
+                                onTap: () {
+                                  DialogWidget.instance.openMsgDialog(
+                                    title: 'Tính năng đang bảo trì',
+                                    msg: 'Vui lòng thử lại sau',
+                                  );
+                                },
                                 child: const Text(
                                   'Quên mật khẩu',
                                   style: TextStyle(
@@ -350,20 +356,6 @@ class _LoginState extends State<_Login> {
                       const SizedBox(
                         height: 8,
                       ),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: GestureDetector(
-                          onTap: () {
-                            DialogWidget.instance.openMsgDialog(
-                              title: 'Tính năng đang bảo trì',
-                              msg: 'Vui lòng thử lại sau',
-                            );
-                          },
-                          child: const Text(
-                            'Quên mật khẩu',
-                          ),
-                        ),
-                      )
                     ],
                   ),
                 ),
@@ -373,6 +365,8 @@ class _LoginState extends State<_Login> {
                     MButtonWidget(
                       title: 'Tiếp tục',
                       isEnable: provider.isEnableButton,
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 8),
                       colorEnableText: provider.isEnableButton
                           ? AppColor.WHITE
                           : AppColor.GREY_TEXT,
@@ -386,7 +380,7 @@ class _LoginState extends State<_Login> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text('Bạn chưa có tài khoản? '),
+                          const Text('Chưa có tài khoản? '),
                           GestureDetector(
                             onTap: () async {
                               final data = await Navigator.of(context).push(
@@ -417,7 +411,7 @@ class _LoginState extends State<_Login> {
                               }
                             },
                             child: const Text(
-                              'Đăng ký',
+                              'Đăng ký ngay',
                               style: TextStyle(color: AppColor.BLUE_TEXT),
                             ),
                           )
@@ -425,7 +419,7 @@ class _LoginState extends State<_Login> {
                       ),
                     ),
                     const SizedBox(
-                      height: 12,
+                      height: 24,
                     )
                   ],
                 ),

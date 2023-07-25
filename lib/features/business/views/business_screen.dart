@@ -148,9 +148,10 @@ class _BusinessScreenState extends State<BusinessScreen>
                                 bgColor: AppColor.BLUE_TEXT,
                                 borderRadius: 20,
                                 enableShadow: true,
-                                function: () {
-                                  Navigator.pushNamed(
+                                function: () async {
+                                  await Navigator.pushNamed(
                                       context, Routes.ADD_BUSINESS_VIEW);
+                                  _refresh();
                                 },
                               ),
                               const Spacer(),
