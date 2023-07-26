@@ -182,9 +182,9 @@ class _TextFieldWidgetState extends State<MTextFieldCustom> {
                 height: 1.4,
               ),
             ),
-          ]
+          ],
+          const SizedBox(height: 8),
         ],
-        const SizedBox(height: 8),
         Container(
           alignment: Alignment.centerLeft,
           child: Column(

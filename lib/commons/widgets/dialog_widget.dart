@@ -720,7 +720,7 @@ class DialogWidget {
         });
   }
 
-  openWidgetDialog({required Widget child}) {
+  openWidgetDialog({required Widget child, double? heightPopup}) {
     final BuildContext context = NavigationService.navigatorKey.currentContext!;
     final double width = MediaQuery.of(context).size.width;
     final double height = MediaQuery.of(context).size.height;
@@ -733,7 +733,7 @@ class DialogWidget {
           child: Center(
             child: Container(
               width: width - 20,
-              height: height * 0.8,
+              height: heightPopup ?? height * 0.8,
               alignment: Alignment.center,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               decoration: BoxDecoration(

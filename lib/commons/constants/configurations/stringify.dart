@@ -26,4 +26,5 @@ class Stringify {
   static const String NOTI_TYPE_NEW_MEMBER = "N03";
   static const String NOTI_TYPE_NEW_TRANSACTION = "N04";
   static const String NOTI_TYPE_UPDATE_TRANSACTION = "N05";
+  static const String NOTI_TYPE_TOPUP = "N10";
 }

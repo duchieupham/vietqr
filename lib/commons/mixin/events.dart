@@ -6,3 +6,6 @@ class ChangeThemeEvent {
   ChangeThemeEvent();
 }
 
+class ReloadWallet {
+  ReloadWallet();
+}

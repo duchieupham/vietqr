@@ -68,6 +68,7 @@ class _HomeScreen extends State<HomeScreen> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: SizedBox(
         width: width,
         height: height,

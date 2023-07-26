@@ -112,7 +112,6 @@ class _UserEditViewState extends State<UserEditView> {
     double height = MediaQuery.of(context).size.height;
     initialServices(context);
     return Scaffold(
-      appBar: AppBar(toolbarHeight: 0),
       body: Column(
         children: [
           SubHeader(
