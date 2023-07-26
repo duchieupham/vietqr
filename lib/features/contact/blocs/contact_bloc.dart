@@ -41,7 +41,7 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
     on<ScanQrContactEvent>(_scanQrGetType);
     on<UpdateStatusContactEvent>(_updateStatusContact);
     on<GetNickNameContactEvent>(_getNickNameWalletId);
-    on<UpdateEvent>(_updateState);
+    on<UpdateEventContact>(_updateState);
   }
 
   final repository = ContactRepository();
@@ -49,20 +49,18 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
   void _getListContact(ContactEvent event, Emitter emit) async {
     try {
       if (event is ContactEventGetList) {
-        emit(state.copyWith(status: BlocStatus.LOADING));
+        emit(state.copyWith(status: BlocStatus.NONE, type: ContactType.NONE));
         List<ContactDTO> result = await repository.getListSaveContact(userId);
         result.sort((a, b) => a.nickname.compareTo(b.nickname));
         if (result.isNotEmpty) {
           emit(
             state.copyWith(
               listContactDTO: result,
-              status: BlocStatus.UNLOADING,
               type: ContactType.GET_LIST,
             ),
           );
         } else {
-          emit(state.copyWith(
-              status: BlocStatus.UNLOADING, type: ContactType.NONE));
+          emit(state.copyWith(type: ContactType.NONE));
         }
       }
     } catch (e) {
@@ -229,12 +227,10 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
     try {
       if (event is GetNickNameContactEvent) {
         if (typeQR == TypeContact.VietQR_ID) {
-          emit(state.copyWith(
-              status: BlocStatus.LOADING, type: ContactType.NONE));
+          emit(state.copyWith(status: BlocStatus.NONE, type: ContactType.NONE));
           final result = await repository.getNickname(qrCode);
           emit(
             state.copyWith(
-              status: BlocStatus.UNLOADING,
               type: ContactType.NICK_NAME,
               nickName: result,
             ),
@@ -298,7 +294,7 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
               emit(state.copyWith(type: ContactType.SCAN_ERROR));
             }
           }
-        } else if (typeQR == TypeQR.VietQR_ID) {
+        } else if (typeQR == TypeQR.QR_ID) {
           emit(
             state.copyWith(
               qrCode: event.code,
@@ -324,7 +320,7 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
 
   void _updateState(ContactEvent event, Emitter emit) async {
     try {
-      if (event is UpdateEvent) {
+      if (event is UpdateEventContact) {
         emit(
           state.copyWith(
             type: ContactType.NONE,

@@ -167,11 +167,11 @@ class _BannerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 250,
+      height: 230,
       width: MediaQuery.of(context).size.width,
       decoration: const BoxDecoration(
         image: DecorationImage(
-          image: AssetImage('assets/images/bg-qr.png'),
+          image: AssetImage('assets/images/bgr-header.png'),
           fit: BoxFit.cover,
         ),
       ),
@@ -187,7 +187,7 @@ class _BannerWidget extends StatelessWidget {
             style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: AppColor.WHITE,
+              color: AppColor.BLACK,
             ),
           ),
           const SizedBox(height: 2),
@@ -196,7 +196,7 @@ class _BannerWidget extends StatelessWidget {
             style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
-              color: AppColor.WHITE,
+              color: AppColor.BLACK,
             ),
           ),
         ],

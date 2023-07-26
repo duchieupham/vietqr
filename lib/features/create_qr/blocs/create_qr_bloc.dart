@@ -36,15 +36,14 @@ class CreateQRBloc extends Bloc<CreateQREvent, CreateQRState> with BaseManager {
   void _initData(CreateQREvent event, Emitter emit) async {
     try {
       if (event is QrEventGetBankDetail) {
-        emit(state.copyWith(
-            status: BlocStatus.LOADING, type: CreateQRType.NONE));
+        emit(state.copyWith(status: BlocStatus.NONE, type: CreateQRType.NONE));
         if (bankAccountDTO != null) {
           final AccountBankDetailDTO dto = await bankCardRepository
               .getAccountBankDetail(bankAccountDTO?.id ?? '');
           emit(
             state.copyWith(
               bankDetailDTO: dto,
-              status: BlocStatus.UNLOADING,
+              status: BlocStatus.NONE,
               type: CreateQRType.LOAD_DATA,
               bankAccountDTO: bankAccountDTO,
               page: 0,
@@ -54,7 +53,7 @@ class CreateQRBloc extends Bloc<CreateQREvent, CreateQRState> with BaseManager {
           emit(
             state.copyWith(
               dto: qrDTO,
-              status: BlocStatus.UNLOADING,
+              status: BlocStatus.NONE,
               type: CreateQRType.LOAD_DATA,
               page: 1,
             ),

@@ -73,7 +73,7 @@ extension TypeRoleExt on TypeRole {
 
 enum TypeQR {
   NONE,
-  VietQR_ID,
+  QR_ID,
   QR_CMT,
   QR_BANK,
   QR_BARCODE,
@@ -104,6 +104,8 @@ enum TypeContact {
   Other,
   NONE,
   UPDATE,
+  ERROR,
+  NOT_FOUND,
 }
 // 1: VietQR ID
 // 2: Bank
@@ -245,6 +247,14 @@ enum TypePermission {
 
 enum LoginType { NONE, SUCCESS, TOAST, ERROR, CHECK_EXIST, REGISTER }
 
-enum TransactionType { NONE, LOAD_DATA, REFRESH }
+enum TransactionType { NONE, LOAD_DATA, REFRESH, GET_LIST }
 
 enum TransHistoryType { NONE, ERROR, LOAD_DATA }
+
+enum ScanType {
+  NONE,
+  SCAN,
+  SCAN_ERROR,
+  SCAN_NOT_FOUND,
+  SEARCH_NAME,
+}

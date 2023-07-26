@@ -5,6 +5,7 @@ import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
+import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/ambient_avatar_widget.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
@@ -12,10 +13,8 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/account/account_screen.dart';
 import 'package:vierqr/features/bank_card/bank_screen.dart';
 import 'package:vierqr/features/business/views/business_screen.dart';
-import 'package:vierqr/features/contact/save_contact_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
-import 'package:vierqr/features/dashboard/views/dialog_scan_type_bank.dart';
 import 'package:vierqr/features/dashboard/widget/background_app_bar_home.dart';
 import 'package:vierqr/features/dashboard/widget/disconnect_widget.dart';
 import 'package:vierqr/features/dashboard/widget/maintain_widget.dart';
@@ -30,11 +29,8 @@ import 'package:vierqr/features/token/blocs/token_bloc.dart';
 import 'package:vierqr/features/token/events/token_event.dart';
 import 'package:vierqr/features/token/states/token_state.dart';
 import 'package:vierqr/main.dart';
-import 'package:vierqr/models/add_contact_dto.dart';
 import 'package:vierqr/models/bank_card_insert_unauthenticated.dart';
-import 'package:vierqr/models/bank_name_search_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
-import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/services/providers/account_balance_home_provider.dart';
 import 'package:vierqr/services/providers/avatar_provider.dart';
 import 'package:vierqr/services/providers/bank_card_select_provider.dart';
@@ -47,7 +43,6 @@ import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 import 'events/dashboard_event.dart';
-import 'views/dialog_scan_type_url.dart';
 
 class DashBoardScreen extends StatefulWidget {
   const DashBoardScreen({Key? key}) : super(key: key);
@@ -114,24 +109,22 @@ class _DashBoardScreen extends State<DashBoardScreen>
     });
   }
 
-  Future<void> startBarcodeScanStream() async {
-    String data = await FlutterBarcodeScanner.scanBarcode(
-        '#ff6666', 'Cancel', true, ScanMode.DEFAULT);
-    if (data.isNotEmpty) {
-      if (data == TypeQR.NEGATIVE_TWO.value) {
-        DialogWidget.instance.openMsgDialog(
-          title: 'Không thể xác nhận mã QR',
-          msg: 'Ảnh QR không đúng định dạng, vui lòng chọn ảnh khác.',
-          function: () {
-            Navigator.pop(context);
-            if (Navigator.canPop(context)) {
-              Navigator.pop(context);
-            }
-          },
-        );
-      } else {
-        _dashBoardBloc.add(ScanQrEventGetBankType(code: data));
-      }
+  void startBarcodeScanStream() async {
+    final data = await Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
+    if (data is Map<String, dynamic>) {
+      if (!mounted) return;
+      QRScannerUtils.instance.onScanNavi(
+        data,
+        context,
+        onTapSave: (data) {
+          _dashBoardBloc.add(DashBoardEventAddContact(dto: data));
+        },
+        onTapAdd: (data) {
+          _dashBoardBloc.add(DashBoardCheckExistedEvent(
+              bankAccount: data['bankAccount'],
+              bankTypeId: data['bankTypeId']));
+        },
+      );
     }
   }
 
@@ -271,165 +264,8 @@ class _DashBoardScreen extends State<DashBoardScreen>
             });
           }
 
-          if (state.request == DashBoardType.SCAN_NOT_FOUND) {
-            DialogWidget.instance.openMsgDialog(
-              title: 'Không thể xác nhận mã QR',
-              msg:
-                  'Không tìm thấy thông tin trong đoạn mã QR. Vui lòng kiểm tra lại thông tin.',
-              function: () {
-                Navigator.pop(context);
-                if (Navigator.canPop(context)) {
-                  Navigator.pop(context);
-                }
-              },
-            );
-          }
-          if (state.request == DashBoardType.SCAN_ERROR) {
-            DialogWidget.instance.openMsgDialog(
-              title: 'Không tìm thấy thông tin',
-              msg:
-                  'Không tìm thấy thông tin ngân hàng tương ứng. Vui lòng thử lại sau.',
-              function: () {
-                Navigator.pop(context);
-                if (Navigator.canPop(context)) {
-                  Navigator.pop(context);
-                }
-              },
-            );
-          }
-          if (state.request == DashBoardType.SCAN) {
-            if (state.typeQR == TypeQR.QR_BANK) {
-              String transferType = '';
-              if (state.bankTypeDTO?.bankCode == 'MB') {
-                transferType = 'INHOUSE';
-              } else {
-                transferType = 'NAPAS';
-              }
-              BankNameSearchDTO bankNameSearchDTO = BankNameSearchDTO(
-                accountNumber: state.bankAccount,
-                accountType: 'ACCOUNT',
-                transferType: transferType,
-                bankCode: state.bankTypeDTO?.caiValue ?? '',
-              );
-
-              _dashBoardBloc
-                  .add(DashBoardEventSearchName(dto: bankNameSearchDTO));
-            } else if (state.typeQR == TypeQR.QR_BARCODE) {
-              DialogWidget.instance.openMsgDialog(
-                title: 'Không thể xác nhận mã QR',
-                msg:
-                    'Không tìm thấy thông tin trong đoạn mã QR. Vui lòng kiểm tra lại thông tin.',
-                function: () {
-                  Navigator.pop(context);
-                  if (Navigator.canPop(context)) {
-                    Navigator.pop(context);
-                  }
-                },
-              );
-            } else if (state.typeQR == TypeQR.VietQR_ID) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => SaveContactScreen(
-                    code: state.codeQR ?? '',
-                    typeQR: TypeContact.VietQR_ID,
-                  ),
-                  // settings: RouteSettings(name: ContactEditView.routeName),
-                ),
-              );
-            } else if (state.typeQR == TypeQR.QR_LINK) {
-              showGeneralDialog(
-                context: context,
-                barrierDismissible: true,
-                barrierLabel:
-                    MaterialLocalizations.of(context).modalBarrierDismissLabel,
-                barrierColor: Colors.black45,
-                transitionDuration: const Duration(milliseconds: 200),
-                pageBuilder: (BuildContext buildContext, Animation animation,
-                    Animation secondaryAnimation) {
-                  return DialogScanURL(
-                    code: state.codeQR ?? '',
-                    onTapSave: () async {
-                      final data = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => SaveContactScreen(
-                            code: state.codeQR ?? '',
-                            typeQR: TypeContact.Other,
-                          ),
-                          // settings: RouteSettings(name: ContactEditView.routeName),
-                        ),
-                      );
-                      if (!mounted) return;
-                      if (data is bool) {
-                        Fluttertoast.showToast(
-                          msg: 'Lưu thành công',
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.CENTER,
-                          backgroundColor: Theme.of(context).cardColor,
-                          textColor: Theme.of(context).hintColor,
-                          fontSize: 15,
-                        );
-                      }
-                    },
-                  );
-                },
-              );
-            } else if (state.typeQR == TypeQR.QR_CMT) {
-              if (!mounted) return;
-              Navigator.pushNamed(
-                context,
-                Routes.NATIONAL_INFORMATION,
-                arguments: {'dto': state.nationalScannerDTO},
-              );
-            }
-          }
-
-          if (state.request == DashBoardType.SEARCH_BANK_NAME) {
-            QRGeneratedDTO dto = QRGeneratedDTO(
-                bankCode: state.bankTypeDTO?.bankCode ?? '',
-                bankName: state.bankTypeDTO?.bankName ?? '',
-                bankAccount: state.bankAccount,
-                userBankName: state.informationDTO?.accountName ?? '',
-                amount: '',
-                content: '',
-                qrCode: state.codeQR ?? '',
-                imgId: '');
-            if (!mounted) return;
-            await showGeneralDialog(
-              context: context,
-              barrierDismissible: true,
-              barrierLabel:
-                  MaterialLocalizations.of(context).modalBarrierDismissLabel,
-              barrierColor: Colors.black45,
-              transitionDuration: const Duration(milliseconds: 200),
-              pageBuilder: (BuildContext buildContext, Animation animation,
-                  Animation secondaryAnimation) {
-                return DialogScanBank(
-                  dto: dto,
-                  onTapSave: () {
-                    AddContactDTO dto = AddContactDTO(
-                      additionalData: 'Đã thêm từ quét QR',
-                      nickName: state.informationDTO?.accountName ?? '',
-                      type: state.typeContact.value,
-                      value: state.codeQR ?? '',
-                      userId: UserInformationHelper.instance.getUserId(),
-                      bankTypeId: state.bankTypeDTO?.id ?? '',
-                      bankAccount: state.bankAccount,
-                    );
-
-                    _dashBoardBloc.add(DashBoardEventAddContact(dto: dto));
-                  },
-                  onTapAdd: () {
-                    _dashBoardBloc.add(DashBoardCheckExistedEvent(
-                        bankAccount: state.bankAccount,
-                        bankTypeId: state.bankTypeDTO?.id ?? ''));
-                  },
-                );
-              },
-            );
-          }
           if (state.request == DashBoardType.ADD_BOOK_CONTACT) {
+            if (!mounted) return;
             Navigator.pop(context);
             Fluttertoast.showToast(
               msg: 'Đã thêm vào danh bạ',
@@ -591,7 +427,6 @@ class _DashBoardScreen extends State<DashBoardScreen>
         } else {
           if (QRScannerHelper.instance.getQrIntro()) {
             startBarcodeScanStream();
-            // Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
           } else {
             await DialogWidget.instance.showFullModalBottomContent(
               widget: const QRScanWidget(),

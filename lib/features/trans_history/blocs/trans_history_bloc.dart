@@ -38,12 +38,15 @@ class TransHistoryBloc extends Bloc<TransHistoryEvent, TransHistoryState>
         if (result.isEmpty || result.length < 20) {
           isLoadMore = true;
         }
-        emit(state.copyWith(
-          list: result,
-          type: TransHistoryType.LOAD_DATA,
-          status: BlocStatus.UNLOADING,
-          isLoadMore: isLoadMore,
-        ));
+        emit(
+          state.copyWith(
+            list: result,
+            type: TransHistoryType.LOAD_DATA,
+            status: BlocStatus.UNLOADING,
+            isLoadMore: isLoadMore,
+            offset: 0,
+          ),
+        );
       }
     } catch (e) {
       LOG.error(e.toString());

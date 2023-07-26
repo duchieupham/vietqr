@@ -193,7 +193,7 @@ class _SaveContactScreenState extends State<_BodyWidget> {
                         FocusManager.instance.primaryFocus?.unfocus();
 
                         AddContactDTO dto = AddContactDTO(
-                          additionalData: 'Đã thêm từ quét QR',
+                          additionalData: suggestController.text,
                           nickName: nameController.text,
                           type: state.typeQR.value,
                           value: state.qrCode,

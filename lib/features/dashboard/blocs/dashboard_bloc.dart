@@ -121,12 +121,12 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
           } else {
             emit(state.copyWith(request: DashBoardType.SCAN_NOT_FOUND));
           }
-        } else if (typeQR == TypeQR.VietQR_ID) {
+        } else if (typeQR == TypeQR.QR_ID) {
           emit(
             state.copyWith(
                 codeQR: event.code,
                 request: DashBoardType.SCAN,
-                typeQR: TypeQR.VietQR_ID,
+                typeQR: TypeQR.QR_ID,
                 typeContact: TypeContact.VietQR_ID),
           );
         } else if (typeQR == TypeQR.QR_BARCODE) {

@@ -66,4 +66,4 @@ class UpdateStatusContactEvent extends ContactEvent {
 
 class GetNickNameContactEvent extends ContactEvent {}
 
-class UpdateEvent extends ContactEvent {}
+class UpdateEventContact extends ContactEvent {}

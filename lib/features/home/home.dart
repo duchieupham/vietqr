@@ -4,7 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
+import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
+import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/home/widget/card_wallet.dart';
 import 'package:vierqr/features/home/widget/service_section.dart';
 
@@ -39,39 +42,24 @@ class _HomeScreen extends State<HomeScreen> {
     _homeBloc = BlocProvider.of(context);
   }
 
-  Future<void> startBarcodeScanStream(BuildContext context) async {
-    String data = await FlutterBarcodeScanner.scanBarcode(
-        '#ff6666', 'Cancel', true, ScanMode.QR);
-    if (data.isNotEmpty) {
-      if (data == TypeQR.NEGATIVE_ONE.value) {
-      } else if (data == TypeQR.NEGATIVE_TWO.value) {
-        DialogWidget.instance.openMsgDialog(
-          title: 'Không thể xác nhận mã QR',
-          msg: 'Ảnh QR không đúng định dạng, vui lòng chọn ảnh khác.',
-          function: () {
-            Navigator.pop(context);
-            if (Navigator.canPop(context)) {
-              Navigator.pop(context);
-            }
-          },
-        );
-      } else {
-        if (data.contains('|')) {
-          final list = data.split("|");
-          if (list.isNotEmpty) {
-            NationalScannerDTO identityDTO = NationalScannerDTO.fromJson(list);
-            if (!mounted) return;
-            Navigator.pushNamed(
-              context,
-              Routes.NATIONAL_INFORMATION,
-              arguments: {'dto': identityDTO},
-            );
-          }
-        } else {
-          if (!mounted) return;
-          // _bloc.add(ScanQrEventGetBankType(code: data));
-        }
-      }
+  void startBarcodeScanStream() async {
+    final data = await Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
+    if (data is Map<String, dynamic>) {
+      if (!mounted) return;
+      QRScannerUtils.instance.onScanNavi(
+        data,
+        context,
+        onTapSave: (data) {
+          context
+              .read<DashBoardBloc>()
+              .add(DashBoardEventAddContact(dto: data));
+        },
+        onTapAdd: (data) {
+          context.read<DashBoardBloc>().add(DashBoardCheckExistedEvent(
+              bankAccount: data['bankAccount'],
+              bankTypeId: data['bankTypeId']));
+        },
+      );
     }
   }
 
@@ -89,7 +77,7 @@ class _HomeScreen extends State<HomeScreen> {
             children: [
               CardWallet(
                 startBarcodeScanStream: () {
-                  startBarcodeScanStream(context);
+                  startBarcodeScanStream();
                 },
               ),
               const SizedBox(

@@ -5,6 +5,7 @@ import 'package:vierqr/commons/enums/textfield_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/widgets/textfield_custom.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
+import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class AccountLinkView extends StatelessWidget {
   final BankTypeDTO bankTypeDTO;
@@ -55,23 +56,30 @@ class AccountLinkView extends StatelessWidget {
           keyboardAction: TextInputAction.next,
           onChange: onChangePhone,
         ),
-        Container(
-          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
-          margin: const EdgeInsets.only(top: 6),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15),
-            border: Border.all(color: AppColor.BLUE_TEXT),
-            color: AppColor.BLUE_TEXT.withOpacity(0.3),
-          ),
-          child: const Text(
-            '0931865469',
-            style: TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.w400,
-              height: 1.4,
+        if (UserInformationHelper.instance.getPhoneNo().isNotEmpty)
+          GestureDetector(
+            onTap: () {
+              phone.text = UserInformationHelper.instance.getPhoneNo();
+              onChangePhone!(UserInformationHelper.instance.getPhoneNo());
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+              margin: const EdgeInsets.only(top: 6),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                border: Border.all(color: AppColor.BLUE_TEXT),
+                color: AppColor.BLUE_TEXT.withOpacity(0.3),
+              ),
+              child: Text(
+                UserInformationHelper.instance.getPhoneNo(),
+                style: const TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w400,
+                  height: 1.4,
+                ),
+              ),
             ),
           ),
-        ),
         Visibility(
           visible: errorPhone != null,
           child: Container(
@@ -111,23 +119,39 @@ class AccountLinkView extends StatelessWidget {
           ),
           onChange: onChangeCMT,
         ),
-        Container(
-          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
-          margin: const EdgeInsets.only(top: 6),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15),
-            border: Border.all(color: AppColor.BLUE_TEXT),
-            color: AppColor.BLUE_TEXT.withOpacity(0.3),
-          ),
-          child: const Text(
-            '272550553',
-            style: TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.w400,
-              height: 1.4,
+        if (UserInformationHelper.instance
+            .getAccountInformation()
+            .nationalId
+            .isNotEmpty)
+          GestureDetector(
+            onTap: () {
+              cmt.text = UserInformationHelper.instance
+                  .getAccountInformation()
+                  .nationalId;
+              onChangeCMT!(UserInformationHelper.instance
+                  .getAccountInformation()
+                  .nationalId);
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+              margin: const EdgeInsets.only(top: 6),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                border: Border.all(color: AppColor.BLUE_TEXT),
+                color: AppColor.BLUE_TEXT.withOpacity(0.3),
+              ),
+              child: Text(
+                UserInformationHelper.instance
+                    .getAccountInformation()
+                    .nationalId,
+                style: const TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w400,
+                  height: 1.4,
+                ),
+              ),
             ),
           ),
-        ),
         Visibility(
           visible: errorCMT != null,
           child: Container(

@@ -14,7 +14,7 @@ class MAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.title,
     this.actions,
     this.isLeading = true,
-  })  : preferredSize = const Size.fromHeight(56),
+  })  : preferredSize = const Size.fromHeight(60),
         super(key: key);
 
   @override
@@ -23,7 +23,7 @@ class MAppBar extends StatelessWidget implements PreferredSizeWidget {
       decoration: const BoxDecoration(
         image: DecorationImage(
           image: AssetImage('assets/images/bgr-header.png'),
-          fit: BoxFit.fill,
+          fit: BoxFit.cover,
         ),
       ),
       child: AppBar(
@@ -35,7 +35,7 @@ class MAppBar extends StatelessWidget implements PreferredSizeWidget {
         title: Text(
           title,
           style: const TextStyle(
-            fontSize: 20,
+            fontSize: 16,
             fontWeight: FontWeight.w500,
             color: Colors.black,
             height: 1.4,
@@ -48,6 +48,7 @@ class MAppBar extends StatelessWidget implements PreferredSizeWidget {
                 icon: const Icon(
                   Icons.arrow_back_ios,
                   color: Colors.black,
+                  size: 18,
                 ),
               )
             : null,
@@ -61,7 +62,7 @@ class MAppBar extends StatelessWidget implements PreferredSizeWidget {
                   Navigator.of(context).popUntil((route) => route.isFirst);
                 },
                 child: Container(
-                  width: 60,
+                  width: 50,
                   height: 40,
                   margin: const EdgeInsets.only(right: 20),
                   child: Image.asset(

@@ -8,6 +8,7 @@ import 'package:vierqr/features/business/repositories/business_information_repos
 import 'package:vierqr/features/business/states/business_trans_state.dart';
 import 'package:vierqr/models/branch_filter_dto.dart';
 import 'package:vierqr/models/business_detail_dto.dart';
+import 'package:vierqr/models/transaction_branch_input_dto.dart';
 
 class BusinessTransBloc extends Bloc<BusinessTransEvent, BusinessTransState>
     with BaseManager {
@@ -25,14 +26,25 @@ class BusinessTransBloc extends Bloc<BusinessTransEvent, BusinessTransState>
   void _getListBranch(BusinessTransEvent event, Emitter emit) async {
     try {
       if (event is TransactionEventGetListBranch) {
+        TransactionBranchInputDTO transactionInputDTO =
+            TransactionBranchInputDTO(
+          businessId: event.dto.businessId,
+          branchId: event.dto.branchId,
+          offset: 0,
+        );
+        bool isLoadMore = false;
         emit(state.copyWith(status: BlocStatus.LOADING));
         List<BusinessTransactionDTO> result =
             await businessInformationRepository
-                .getTransactionByBranchId(event.dto);
+                .getTransactionByBranchId(transactionInputDTO);
+        if (result.isEmpty || result.length < 20) {
+          isLoadMore = true;
+        }
         emit(state.copyWith(
           listTrans: result,
           status: BlocStatus.UNLOADING,
           type: TransType.GET_TRANDS,
+          isLoadMore: isLoadMore,
         ));
       }
     } catch (e) {
@@ -45,13 +57,27 @@ class BusinessTransBloc extends Bloc<BusinessTransEvent, BusinessTransState>
     try {
       if (event is TransactionEventFetchBranch) {
         emit(state.copyWith(status: BlocStatus.LOADING));
+        bool isLoadMore = false;
+        int offset = state.offset;
+        offset += 1;
+        TransactionBranchInputDTO dto = TransactionBranchInputDTO(
+          businessId: event.dto.businessId,
+          branchId: event.dto.branchId,
+          offset: offset,
+        );
+
         List<BusinessTransactionDTO> result =
-            await businessInformationRepository
-                .getTransactionByBranchId(event.dto);
+            await businessInformationRepository.getTransactionByBranchId(dto);
+
+        if (result.isEmpty || result.length < 20) {
+          isLoadMore = true;
+        }
         emit(state.copyWith(
           listTrans: result,
           status: BlocStatus.UNLOADING,
           type: TransType.GET_TRANDS,
+          isLoadMore: isLoadMore,
+          offset: offset,
         ));
       }
     } catch (e) {
@@ -65,7 +91,7 @@ class BusinessTransBloc extends Bloc<BusinessTransEvent, BusinessTransState>
       if (event is BranchEventGetFilter) {
         List<BranchFilterDTO> result =
             await businessInformationRepository.getBranchFilters(event.dto);
-        emit(state.copyWith(listBranch: result, status: BlocStatus.UNLOADING));
+        emit(state.copyWith(listBranch: result, status: BlocStatus.NONE));
       }
     } catch (e) {
       LOG.error(e.toString());

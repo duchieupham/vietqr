@@ -16,6 +16,7 @@ import 'package:vierqr/commons/utils/file_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/printer_utils.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
+import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
@@ -518,10 +519,14 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                     FocusManager.instance.primaryFocus?.unfocus();
                     String money = provider.money.replaceAll('.', '');
 
+                    String formattedName = StringUtils.instance.removeDiacritic(
+                        StringUtils.instance.capitalFirstCharacter(
+                            provider.contentController.text));
+
                     QRCreateDTO dto = QRCreateDTO(
                       bankId: state.bankAccountDTO?.id ?? '',
                       amount: money,
-                      content: provider.contentController.text,
+                      content:formattedName,
                       branchId: state.bankAccountDTO?.branchId ?? '',
                       businessId: state.bankAccountDTO?.businessId ?? '',
                       userId: UserInformationHelper.instance.getUserId(),

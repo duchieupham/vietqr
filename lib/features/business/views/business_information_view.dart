@@ -17,6 +17,7 @@ import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
 import 'package:vierqr/features/business/events/business_information_event.dart';
 import 'package:vierqr/features/business/states/business_information_state.dart';
 import 'package:vierqr/layouts/box_layout.dart';
+import 'package:vierqr/models/branch_filter_insert_dto.dart';
 import 'package:vierqr/models/business_detail_dto.dart';
 import 'package:vierqr/models/business_item_dto.dart';
 import 'package:vierqr/models/transaction_branch_input_dto.dart';
@@ -313,10 +314,23 @@ class _BusinessInformationView extends State<BusinessInformationView>
                                                 icon: Icons.more_horiz_rounded,
                                                 title: 'Xem thêm',
                                                 function: () {
+                                                  BranchFilterInsertDTO
+                                                      brandDTO =
+                                                      BranchFilterInsertDTO(
+                                                          userId:
+                                                              UserInformationHelper
+                                                                  .instance
+                                                                  .getUserId(),
+                                                          role: dto.role,
+                                                          businessId:
+                                                              dto.businessId);
                                                   Navigator.pushNamed(
-                                                    context,
-                                                    Routes.BUSINESS_TRANSACTION,
-                                                  );
+                                                      context,
+                                                      Routes
+                                                          .BUSINESS_TRANSACTION,
+                                                      arguments: {
+                                                        'brandDTO': brandDTO
+                                                      });
                                                 },
                                                 bgColor: AppColor.TRANSPARENT,
                                                 textColor: AppColor.GREEN,

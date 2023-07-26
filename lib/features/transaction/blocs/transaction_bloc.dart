@@ -6,6 +6,7 @@ import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/transaction/events/transaction_event.dart';
 import 'package:vierqr/features/transaction/repositories/transaction_repository.dart';
 import 'package:vierqr/features/transaction/states/transaction_state.dart';
+import 'package:vierqr/models/business_detail_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/transaction_receive_dto.dart';
 
@@ -84,23 +85,27 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState>
       emit(state.copyWith(status: BlocStatus.ERROR));
     }
   }
+
+//   void _getTransactionsBranch(TransactionEvent event, Emitter emit) async {
+//     try {
+//       if (event is TransactionEventGetListBranch) {
+//         emit(state.copyWith(
+//             status: BlocStatus.LOADING, type: TransactionType.NONE));
+//         List<BusinessTransactionDTO> result =
+//             await transactionRepository.getTransactionByBranchId(event.dto);
+//         emit(state.copyWith(
+//             list: result,
+//             status: BlocStatus.UNLOADING,
+//             type: TransactionType.GET_LIST));
+//       }
+//     } catch (e) {
+//       LOG.error(e.toString());
+//     }
+//   }
 }
 
 const TransactionRepository transactionRepository = TransactionRepository();
 
-// void _getTransactionsBranch(TransactionEvent event, Emitter emit) async {
-//   try {
-//     if (event is TransactionEventGetListBranch) {
-//       emit(TransactionLoadingState());
-//       List<BusinessTransactionDTO> result =
-//           await transactionRepository.getTransactionByBranchId(event.dto);
-//       emit(TransactionGetListBranchSuccessState(list: result));
-//     }
-//   } catch (e) {
-//     LOG.error(e.toString());
-//     emit(TransactionGetListBranchFailedState());
-//   }
-// }
 //
 // void _fetchTransactionsBranch(TransactionEvent event, Emitter emit) async {
 //   try {

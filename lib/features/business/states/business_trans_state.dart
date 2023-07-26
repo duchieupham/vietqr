@@ -3,7 +3,6 @@ import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/models/branch_filter_dto.dart';
 import 'package:vierqr/models/business_detail_dto.dart';
 
-
 class BusinessTransState extends Equatable {
   final BusinessDetailDTO? dto;
   final String? msg;
@@ -11,6 +10,8 @@ class BusinessTransState extends Equatable {
   final BlocStatus status;
   final TransType type;
   final List<BranchFilterDTO> listBranch;
+  final bool isLoadMore;
+  final int offset;
 
   const BusinessTransState({
     this.dto,
@@ -19,6 +20,8 @@ class BusinessTransState extends Equatable {
     this.listBranch = const [],
     this.status = BlocStatus.NONE,
     this.type = TransType.NONE,
+    this.isLoadMore = false,
+    this.offset = 0,
   });
 
   BusinessTransState copyWith({
@@ -28,6 +31,8 @@ class BusinessTransState extends Equatable {
     List<BusinessTransactionDTO>? listTrans,
     BusinessDetailDTO? dto,
     List<BranchFilterDTO>? listBranch,
+    bool? isLoadMore,
+    int? offset,
   }) {
     return BusinessTransState(
       listTrans: listTrans ?? this.listTrans,
@@ -36,6 +41,8 @@ class BusinessTransState extends Equatable {
       msg: msg ?? this.msg,
       dto: dto ?? this.dto,
       listBranch: listBranch ?? this.listBranch,
+      isLoadMore: isLoadMore ?? this.isLoadMore,
+      offset: offset ?? this.offset,
     );
   }
 
@@ -47,5 +54,7 @@ class BusinessTransState extends Equatable {
         dto,
         listBranch,
         type,
+        isLoadMore,
+        offset,
       ];
 }
