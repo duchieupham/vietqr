@@ -41,6 +41,7 @@ class AppColor {
   static const Color RED_NEON = Color(0xFFFF5377);
   static const Color PURPLE_NEON = Color(0xFF605DFF);
   static const Color ORANGE = Color(0xFFFF9C1B);
+  static const Color ORANGE_DARK = Color(0xFFff5c01);
   static const Color SUNNY_COLOR = Color(0xFFF23535);
   static const Color HOT_COLOR = Color(0xFFE4BE4A);
   static const Color WARM_COLOR = Color(0xFF75F181);

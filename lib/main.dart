@@ -51,12 +51,14 @@ import 'package:vierqr/features/personal/views/user_update_password_view.dart';
 import 'package:vierqr/features/scan_qr/blocs/scan_qr_bloc.dart';
 import 'package:vierqr/features/scan_qr/views/qr_scan_view.dart';
 import 'package:vierqr/features/token/blocs/token_bloc.dart';
+import 'package:vierqr/features/top_up/qr_top_up.dart';
 import 'package:vierqr/features/top_up/top_up_screen.dart';
 import 'package:vierqr/features/transaction/transaction_detail_screen.dart';
 import 'package:vierqr/features/trans_history/trans_history_screen.dart';
 import 'package:vierqr/features/transaction/widgets/transaction_sucess_widget.dart';
 import 'package:vierqr/models/notification_transaction_success_dto.dart';
 import 'package:vierqr/models/contact_dto.dart';
+import 'package:vierqr/models/respone_top_up_dto.dart';
 import 'package:vierqr/services/local_notification/notification_service.dart';
 import 'package:vierqr/services/providers/action_share_provider.dart';
 import 'package:vierqr/services/providers/add_business_provider.dart';
@@ -368,6 +370,18 @@ class _VietQRApp extends State<VietQRApp> {
                     return MaterialPageRoute(
                       builder: (context) {
                         return ContactDetailScreen(
+                          dto: dto,
+                        );
+                      },
+                    );
+                  }
+                  if (settings.name == Routes.QR_TOP_UP) {
+                    ResponseTopUpDTO dto =
+                        settings.arguments as ResponseTopUpDTO;
+
+                    return MaterialPageRoute(
+                      builder: (context) {
+                        return QRTopUpScreen(
                           dto: dto,
                         );
                       },

@@ -45,9 +45,6 @@ class BankMemberView extends StatelessWidget {
     BankAccountDTO dto = arg['bankAccountDTO'];
     initialServices(context, dto.id);
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 0,
-      ),
       body: Column(
         children: [
           SubHeader(

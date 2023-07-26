@@ -100,9 +100,6 @@ class _BranchDetailViewState extends State<BranchDetailView> {
         return false;
       },
       child: Scaffold(
-        appBar: AppBar(
-          toolbarHeight: 0,
-        ),
         resizeToAvoidBottomInset: false,
         body: SmartRefresher(
           controller: refreshController,

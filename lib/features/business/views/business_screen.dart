@@ -224,7 +224,7 @@ class _BusinessScreenState extends State<BusinessScreen>
                   alignment: Alignment.bottomCenter,
                   child: Padding(
                     padding: EdgeInsets.only(bottom: 30),
-                    child: Text('Bạn chua thuộc doanh nghiệp nào'),
+                    child: Text('Bạn chưa thuộc doanh nghiệp nào'),
                   ))),
           Stack(
             children: [

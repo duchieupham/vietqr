@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
 class ButtonIconWidget extends StatelessWidget {
-  final double width;
+  final double? width;
   final IconData icon;
   final String title;
   final VoidCallback function;
   final Color bgColor;
   final Color textColor;
+  final Color? iconPathColor;
   final double? height;
   final double? textSize, iconSize;
   final bool? autoFocus;
@@ -19,7 +20,7 @@ class ButtonIconWidget extends StatelessWidget {
 
   const ButtonIconWidget({
     super.key,
-    required this.width,
+    this.width,
     this.icon = Icons.add,
     required this.title,
     required this.function,
@@ -36,6 +37,7 @@ class ButtonIconWidget extends StatelessWidget {
     this.contentPadding =
         const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
     this.enableShadow = false,
+    this.iconPathColor,
   });
 
   @override
@@ -73,6 +75,7 @@ class ButtonIconWidget extends StatelessWidget {
               Image.asset(
                 pathIcon,
                 width: iconSize,
+                color: iconPathColor,
               )
             else
               Icon(

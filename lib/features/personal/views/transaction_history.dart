@@ -44,7 +44,6 @@ class _TransactionHistory extends State<TransactionHistory> {
     BankAccountDTO dto = arg['bankAccountDTO'];
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(toolbarHeight: 0),
       body: Column(
         children: [
           const SubHeader(title: 'Giao dịch'),
