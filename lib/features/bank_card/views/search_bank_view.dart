@@ -27,9 +27,6 @@ class SearchBankView extends StatelessWidget {
     final bankCardProvider =
         Provider.of<BankCardSelectProvider>(context, listen: false);
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 0,
-      ),
       body: Column(
         children: [
           // SizedBox(

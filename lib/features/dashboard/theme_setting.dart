@@ -31,9 +31,6 @@ class ThemeSettingView extends StatelessWidget {
       viewportFraction: 0.65,
     );
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 0,
-      ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,

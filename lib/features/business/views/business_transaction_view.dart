@@ -101,7 +101,6 @@ class _BusinessTransactionViewState extends State<_BodyWidget> {
     final double width = MediaQuery.of(context).size.width;
     initialServices(context);
     return Scaffold(
-      appBar: AppBar(toolbarHeight: 0),
       body: BlocConsumer<BusinessTransBloc, BusinessTransState>(
         listener: (context, state) {},
         builder: (context, state) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vierqr/commons/constants/configurations/theme.dart';
 
 class SubHeader extends StatelessWidget {
   final String title;
@@ -12,14 +13,20 @@ class SubHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(left: 10),
       width: MediaQuery.of(context).size.width,
-      padding: const EdgeInsets.all(8),
-      height: 80,
-      alignment: Alignment.centerLeft,
+      padding: const EdgeInsets.fromLTRB(8, 0, 8, 16),
+      decoration: const BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage('assets/images/bgr-sub-header.png'),
+              fit: BoxFit.cover)),
+      height: 100,
+      alignment: Alignment.bottomCenter,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
+          const SizedBox(
+            width: 10,
+          ),
           InkWell(
             onTap: (function == null)
                 ? () {
@@ -29,6 +36,7 @@ class SubHeader extends StatelessWidget {
             child: Image.asset(
               'assets/images/ic-pop.png',
               fit: BoxFit.contain,
+              color: AppColor.BLACK,
               height: 30,
               width: 30,
             ),
@@ -50,19 +58,9 @@ class SubHeader extends StatelessWidget {
                     Navigator.of(context).popUntil((route) => route.isFirst);
                   }
                 : callBackHome,
-            child: Container(
-              width: 30,
-              height: 30,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
-                color: Theme.of(context).cardColor,
-              ),
-              padding: const EdgeInsets.all(5),
-              child: Image.asset(
-                'assets/images/ic-viet-qr-small-trans.png',
-                width: 20,
-                height: 20,
-              ),
+            child: Image.asset(
+              'assets/images/ic-viet-qr.png',
+              height: 20,
             ),
           ),
           const Padding(padding: EdgeInsets.only(right: 10)),

@@ -117,10 +117,7 @@ class CardWallet extends StatelessWidget {
           Navigator.pushNamed(context, Routes.SEARCH_BANK);
         }),
         _buildItemAction('assets/images/ic-money-add.png', 'Nạp tiền', () {
-          DialogWidget.instance.openMsgDialog(
-            title: 'Tính năng đang bảo trì',
-            msg: 'Vui lòng thử lại sau',
-          );
+          Navigator.pushNamed(context, Routes.TOP_UP);
         }),
         _buildItemAction('assets/images/ic-tb-qr.png', 'Quét QR', () async {
           if (QRScannerHelper.instance.getQrIntro()) {

@@ -137,9 +137,6 @@ class PrinterSettingView extends StatelessWidget {
     final double width = MediaQuery.of(context).size.width;
     initialServices(context);
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 0,
-      ),
       body: Column(
         children: [
           const SubHeader(title: 'Cài đặt máy in'),
