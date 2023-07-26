@@ -408,12 +408,8 @@ class _VietQRApp extends State<VietQRApp> {
                   // }
                   return null;
                 },
-                themeMode: (themeSelect.themeSystem == AppColor.THEME_SYSTEM)
-                    ? ThemeMode.system
-                    : (themeSelect.themeSystem == AppColor.THEME_LIGHT)
-                        ? ThemeMode.light
-                        : ThemeMode.dark,
-                darkTheme: DefaultThemeData(context: context).darkTheme,
+                themeMode:ThemeMode.light,
+                darkTheme: DefaultThemeData(context: context).lightTheme,
                 theme: DefaultThemeData(context: context).lightTheme,
                 localizationsDelegates: const [
                   GlobalMaterialLocalizations.delegate,
