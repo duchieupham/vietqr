@@ -489,7 +489,7 @@ class _StackedList extends State<StackedList> {
   // final refreshController = RefreshController(initialRefresh: false);
 
   late AccountBloc _accountBloc;
-
+  StreamSubscription? _subscription;
   _StackedList();
 
   @override
@@ -497,6 +497,9 @@ class _StackedList extends State<StackedList> {
     super.initState();
     _accountBloc = BlocProvider.of(context);
     _accountBloc.add(InitAccountEvent());
+    _subscription = eventBus.on<ReloadWallet>().listen((_) {
+      _accountBloc.add(InitAccountEvent());
+    });
   }
 
   List<Color> fillListColor(List<Color> colors) {
@@ -538,6 +541,13 @@ class _StackedList extends State<StackedList> {
     listBankAccount = [otd, ...listBank, otd2];
 
     return listBankAccount;
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    _subscription = null;
+    super.dispose();
   }
 
   @override

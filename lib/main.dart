@@ -53,12 +53,14 @@ import 'package:vierqr/features/scan_qr/views/qr_scan_view.dart';
 import 'package:vierqr/features/token/blocs/token_bloc.dart';
 import 'package:vierqr/features/top_up/qr_top_up.dart';
 import 'package:vierqr/features/top_up/top_up_screen.dart';
+import 'package:vierqr/features/top_up/widget/pop_up_top_up_sucsess.dart';
 import 'package:vierqr/features/transaction/transaction_detail_screen.dart';
 import 'package:vierqr/features/trans_history/trans_history_screen.dart';
 import 'package:vierqr/features/transaction/widgets/transaction_sucess_widget.dart';
 import 'package:vierqr/models/notification_transaction_success_dto.dart';
 import 'package:vierqr/models/contact_dto.dart';
 import 'package:vierqr/models/respone_top_up_dto.dart';
+import 'package:vierqr/models/top_up_sucsess_dto.dart';
 import 'package:vierqr/services/local_notification/notification_service.dart';
 import 'package:vierqr/services/providers/action_share_provider.dart';
 import 'package:vierqr/services/providers/add_business_provider.dart';
@@ -186,6 +188,15 @@ class _VietQRApp extends State<VietQRApp> {
 
       //process when receive data
       if (message.data.isNotEmpty) {
+        if (message.data['notificationType'] != null &&
+            message.data['notificationType'] == Stringify.NOTI_TYPE_TOPUP) {
+          DialogWidget.instance.openWidgetDialog(
+            heightPopup: 500,
+            child: PopupTopUpSuccess(
+              dto: TopUpSuccessDTO.fromJson(message.data),
+            ),
+          );
+        }
         //process success transcation
         if (message.data['notificationType'] != null &&
             message.data['notificationType'] ==
