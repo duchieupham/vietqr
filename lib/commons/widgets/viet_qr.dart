@@ -134,6 +134,7 @@ class VietQr extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   qrGeneratedDTO.bankName,
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize:
                         (isSmallWidget != null && isSmallWidget!) ? 12 : 15,

@@ -15,6 +15,7 @@ import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
+import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/viet_qr_widget.dart';
 import 'package:vierqr/features/account/blocs/account_bloc.dart';
@@ -27,6 +28,7 @@ import 'package:vierqr/features/bank_card/states/bank_state.dart';
 import 'package:vierqr/features/bank_card/widgets/function_bank_widget.dart';
 import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
+import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
@@ -257,36 +259,24 @@ class _BankScreenState extends State<_BankScreen>
     );
   }
 
-  Future<void> startBarcodeScanStream(BuildContext context) async {
-    String data = await FlutterBarcodeScanner.scanBarcode(
-        '#ff6666', 'Cancel', true, ScanMode.QR);
-    if (data.isNotEmpty) {
-      if (data == TypeQR.NEGATIVE_TWO.value) {
-        DialogWidget.instance.openMsgDialog(
-          title: 'Không thể xác nhận mã QR',
-          msg: 'Ảnh QR không đúng định dạng, vui lòng chọn ảnh khác.',
-          function: () {
-            Navigator.pop(context);
-            if (Navigator.canPop(context)) {
-              Navigator.pop(context);
-            }
-          },
-        );
-      } else {
-        if (data.contains('|')) {
-          NationalScannerDTO nationalScannerDTO =
-              dashBoardRepository.getNationalInformation(data);
-          if (!mounted) return;
-          Navigator.pushNamed(
-            context,
-            Routes.NATIONAL_INFORMATION,
-            arguments: {'dto': nationalScannerDTO},
-          );
-        } else {
-          if (!mounted) return;
-          _bloc.add(ScanQrEventGetBankType(code: data));
-        }
-      }
+  void startBarcodeScanStream() async {
+    final data = await Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
+    if (data is Map<String, dynamic>) {
+      if (!mounted) return;
+      QRScannerUtils.instance.onScanNavi(
+        data,
+        context,
+        onTapSave: (data) {
+          context
+              .read<DashBoardBloc>()
+              .add(DashBoardEventAddContact(dto: data));
+        },
+        onTapAdd: (data) {
+          context.read<DashBoardBloc>().add(DashBoardCheckExistedEvent(
+              bankAccount: data['bankAccount'],
+              bankTypeId: data['bankTypeId']));
+        },
+      );
     }
   }
 
@@ -296,14 +286,14 @@ class _BankScreenState extends State<_BankScreen>
         _buildSection('assets/images/ic-qr-white.png', () async {
           if (QRScannerHelper.instance.getQrIntro()) {
             // Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
-            startBarcodeScanStream(context);
+            startBarcodeScanStream();
           } else {
             await DialogWidget.instance.showFullModalBottomContent(
               widget: const QRScanWidget(),
               color: AppColor.BLACK,
             );
             if (!mounted) return;
-            startBarcodeScanStream(context);
+            startBarcodeScanStream();
           }
         },
             title: 'Copy mã QR',

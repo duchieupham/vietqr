@@ -1,8 +1,17 @@
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vierqr/commons/constants/vietqr/aid.dart';
 import 'package:vierqr/commons/constants/vietqr/viet_qr_id.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/log.dart';
+import 'package:vierqr/commons/widgets/dialog_widget.dart';
+import 'package:vierqr/features/contact/save_contact_screen.dart';
+import 'package:vierqr/features/dashboard/views/dialog_scan_type_bank.dart';
+import 'package:vierqr/features/dashboard/views/dialog_scan_type_other.dart';
+import 'package:vierqr/features/dashboard/views/dialog_scan_type_url.dart';
+import 'package:vierqr/models/add_contact_dto.dart';
 import 'package:vierqr/models/viet_qr_scanned_dto.dart';
+import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class QRScannerUtils {
   const QRScannerUtils._privateConsrtructor();
@@ -75,10 +84,164 @@ class QRScannerUtils {
     } else if (code.contains('|')) {
       return TypeQR.QR_CMT;
     } else if (code.trim().contains('VQRID')) {
-      return TypeQR.VietQR_ID;
+      return TypeQR.QR_ID;
     } else if (code.trim().contains('http') || code.trim().contains('https')) {
       return TypeQR.QR_LINK;
     }
     return TypeQR.OTHER;
+  }
+
+  Future onScanNavi(
+    Map<String, dynamic> data,
+    BuildContext context, {
+    Function(AddContactDTO)? onTapSave,
+    Function(Map<String, dynamic>)? onTapAdd,
+    GestureTapCallback? onCallBack,
+  }) async {
+    final type = data['type'];
+    final typeQR = data['typeQR'];
+    final value = data['data'];
+    if (type != null && type is TypeContact) {
+      switch (type) {
+        case TypeContact.Bank:
+          DialogWidget.instance.showModelBottomSheet(
+            context: context,
+            padding: EdgeInsets.zero,
+            height: MediaQuery.of(context).size.height * 0.90,
+            widget: DialogScanBank(
+              dto: value,
+              onTapSave: () {
+                AddContactDTO dto = AddContactDTO(
+                  additionalData: 'Đã thêm từ quét QR',
+                  nickName: value.userBankName,
+                  type: type.value,
+                  value: value.qrCode,
+                  userId: UserInformationHelper.instance.getUserId(),
+                  bankTypeId: value.bankTypeId,
+                  bankAccount: value.bankAccount,
+                );
+                onTapSave!(dto);
+              },
+              onTapAdd: () {
+                onTapAdd!({
+                  'bankAccount': value.bankAccount,
+                  'bankTypeId': value.bankTypeId,
+                });
+              },
+            ),
+          );
+
+          break;
+        case TypeContact.VietQR_ID:
+          await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => SaveContactScreen(
+                code: value,
+                typeQR: type,
+              ),
+            ),
+          );
+
+          onCallBack!();
+          break;
+        case TypeContact.Other:
+          if (typeQR == TypeQR.QR_LINK) {
+            await DialogWidget.instance.showModelBottomSheet(
+              context: context,
+              padding: EdgeInsets.zero,
+              height: MediaQuery.of(context).size.height * 0.70,
+              widget: DialogScanURL(
+                code: value ?? '',
+                onTapSave: () async {
+                  final data = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => SaveContactScreen(
+                        code: value,
+                        typeQR: type,
+                      ),
+                      // settings: RouteSettings(name: ContactEditView.routeName),
+                    ),
+                  );
+                  if (data is bool) {
+                    Fluttertoast.showToast(
+                      msg: 'Lưu thành công',
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
+                      backgroundColor: Theme.of(context).cardColor,
+                      textColor: Theme.of(context).hintColor,
+                      fontSize: 15,
+                    );
+                  }
+                },
+              ),
+            );
+          } else {
+            await DialogWidget.instance.showModelBottomSheet(
+              context: context,
+              padding: EdgeInsets.zero,
+              height: MediaQuery.of(context).size.height * 0.70,
+              widget: DialogScanOther(
+                code: value ?? '',
+                onTapSave: () async {
+                  final data = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => SaveContactScreen(
+                        code: value,
+                        typeQR: type,
+                      ),
+                      // settings: RouteSettings(name: ContactEditView.routeName),
+                    ),
+                  );
+                  if (data is bool) {
+                    Fluttertoast.showToast(
+                      msg: 'Lưu thành công',
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
+                      backgroundColor: Theme.of(context).cardColor,
+                      textColor: Theme.of(context).hintColor,
+                      fontSize: 15,
+                    );
+                  }
+                },
+              ),
+            );
+          }
+          onCallBack!();
+
+          break;
+        case TypeContact.ERROR:
+          DialogWidget.instance.openMsgDialog(
+            title: 'Không thể xác nhận mã QR',
+            msg:
+                'Không tìm thấy thông tin trong đoạn mã QR. Vui lòng kiểm tra lại thông tin.',
+            function: () {
+              Navigator.pop(context);
+              if (Navigator.canPop(context)) {
+                Navigator.pop(context);
+              }
+            },
+          );
+          break;
+        case TypeContact.NOT_FOUND:
+          DialogWidget.instance.openMsgDialog(
+            title: 'Không tìm thấy thông tin',
+            msg:
+                'Không tìm thấy thông tin ngân hàng tương ứng. Vui lòng thử lại sau.',
+            function: () {
+              Navigator.pop(context);
+              if (Navigator.canPop(context)) {
+                Navigator.pop(context);
+              }
+            },
+          );
+          break;
+        case TypeContact.NONE:
+        case TypeContact.UPDATE:
+          break;
+      }
+    }
   }
 }

@@ -2,7 +2,6 @@ import 'package:equatable/equatable.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/models/related_transaction_receive_dto.dart';
 
-
 class TransHistoryState extends Equatable {
   final BlocStatus status;
   final TransHistoryType type;
@@ -33,9 +32,11 @@ class TransHistoryState extends Equatable {
       type: type ?? this.type,
       msg: msg ?? this.msg,
       list: list ?? this.list,
+      isLoadMore: isLoadMore ?? this.isLoadMore,
+      offset: offset ?? this.offset,
     );
   }
 
   @override
-  List<Object?> get props => [status, type, msg, list];
+  List<Object?> get props => [status, type, msg, list, offset, isLoadMore];
 }

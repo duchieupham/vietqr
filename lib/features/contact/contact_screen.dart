@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
+import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_custom.dart';
 import 'package:vierqr/features/contact/blocs/contact_bloc.dart';
 import 'package:vierqr/features/contact/blocs/contact_provider.dart';
 import 'package:vierqr/features/contact/events/contact_event.dart';
 import 'package:vierqr/features/contact/states/contact_state.dart';
+import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
+import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/layouts/button_widget.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/contact_dto.dart';
@@ -61,27 +65,6 @@ class _ContactStateState extends State<_ContactState> {
     });
   }
 
-  Future<void> startBarcodeScanStream() async {
-    String data = await FlutterBarcodeScanner.scanBarcode(
-        '#ff6666', 'Cancel', true, ScanMode.DEFAULT);
-    if (data.isNotEmpty) {
-      if (data == TypeQR.NEGATIVE_TWO.value) {
-        DialogWidget.instance.openMsgDialog(
-          title: 'Không thể xác nhận mã QR',
-          msg: 'Ảnh QR không đúng định dạng, vui lòng chọn ảnh khác.',
-          function: () {
-            Navigator.pop(context);
-            if (Navigator.canPop(context)) {
-              Navigator.pop(context);
-            }
-          },
-        );
-      } else {
-        _bloc.add(ScanQrContactEvent(data));
-      }
-    }
-  }
-
   Future<void> _onRefresh() async {
     _bloc.add(ContactEventGetList());
   }
@@ -93,8 +76,24 @@ class _ContactStateState extends State<_ContactState> {
         title: 'Danh bạ',
         actions: [
           GestureDetector(
-            onTap: () {
-              startBarcodeScanStream();
+            onTap: () async {
+              final data =
+                  await Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
+              if (data is Map<String, dynamic>) {
+                if (!mounted) return;
+                await QRScannerUtils.instance.onScanNavi(data, context,
+                    onTapSave: (data) async {
+                  _bloc.add(SaveContactEvent(dto: data));
+                }, onTapAdd: (data) {
+                  context.read<DashBoardBloc>().add(DashBoardCheckExistedEvent(
+                      bankAccount: data['bankAccount'],
+                      bankTypeId: data['bankTypeId']));
+                }, onCallBack: () {
+                  _bloc.add(ContactEventGetList());
+                });
+              }
+              _bloc.add(ContactEventGetList());
+
             },
             child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -108,11 +107,23 @@ class _ContactStateState extends State<_ContactState> {
       body: BlocConsumer<ContactBloc, ContactState>(
         listener: (context, state) async {
           if (state.status == BlocStatus.LOADING) {
-            // DialogWidget.instance.openLoadingDialog();
+            DialogWidget.instance.openLoadingDialog();
           }
 
           if (state.status == BlocStatus.UNLOADING) {
-            // Navigator.pop(context);
+            Navigator.pop(context);
+          }
+
+          if (state.type == ContactType.SAVE) {
+            Fluttertoast.showToast(
+              msg: 'Lưu thành công',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              backgroundColor: Theme.of(context).cardColor,
+              textColor: Theme.of(context).hintColor,
+              fontSize: 15,
+            );
+            _bloc.add(ContactEventGetList());
           }
 
           if (state.type == ContactType.SUGGEST) {
@@ -121,7 +132,7 @@ class _ContactStateState extends State<_ContactState> {
           }
 
           if (state.type == ContactType.SCAN) {
-            _bloc.add(UpdateEvent());
+            _bloc.add(UpdateEventContact());
             await Navigator.push(
               context,
               MaterialPageRoute(
@@ -133,6 +144,11 @@ class _ContactStateState extends State<_ContactState> {
               ),
             );
             _bloc.add(ContactEventGetList());
+          }
+
+          if (state.type == ContactType.ERROR) {
+            await DialogWidget.instance.openMsgDialog(
+                title: 'Không thể lưu danh bạ', msg: state.msg ?? '');
           }
         },
         builder: (context, state) {

@@ -48,8 +48,7 @@ import 'package:vierqr/features/bank_card/blocs/bank_manage_bloc.dart';
 import 'package:vierqr/features/personal/blocs/user_edit_bloc.dart';
 import 'package:vierqr/features/personal/views/user_edit_view.dart';
 import 'package:vierqr/features/personal/views/user_update_password_view.dart';
-import 'package:vierqr/features/scan_qr/blocs/scan_qr_bloc.dart';
-import 'package:vierqr/features/scan_qr/views/qr_scan_view.dart';
+import 'package:vierqr/features/scan_qr/scan_qr_screen.dart';
 import 'package:vierqr/features/token/blocs/token_bloc.dart';
 import 'package:vierqr/features/top_up/qr_top_up.dart';
 import 'package:vierqr/features/top_up/top_up_screen.dart';
@@ -269,9 +268,6 @@ class _VietQRApp extends State<VietQRApp> {
           BlocProvider<BranchBloc>(
             create: (BuildContext context) => BranchBloc(),
           ),
-          BlocProvider<ScanQrBloc>(
-            create: (BuildContext context) => ScanQrBloc(),
-          ),
           BlocProvider<PrinterBloc>(
             create: (BuildContext context) => PrinterBloc(),
           ),
@@ -349,7 +345,7 @@ class _VietQRApp extends State<VietQRApp> {
                   //     const BankCardDetailScreen(),
                   Routes.TRANSACTION_HISTORY_VIEW: (context) =>
                       const TransHistoryScreen(),
-                  Routes.SCAN_QR_VIEW: (context) => const QRScanView(),
+                  Routes.SCAN_QR_VIEW: (context) => const ScanQrScreen(),
                   Routes.PRINTER_SETTING: (context) => PrinterSettingView(),
                   Routes.SEARCH_BANK: (context) => SearchBankView(),
                   Routes.NOTIFICATION_VIEW: (context) =>

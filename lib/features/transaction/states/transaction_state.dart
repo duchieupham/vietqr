@@ -96,7 +96,6 @@ class TransactionState extends Equatable {
   final QRGeneratedDTO? qrGeneratedDTO;
   final bool newTransaction;
 
-  // final List<BusinessTransactionDTO> list;
   // final List<RelatedTransactionReceiveDTO> list;
 
   const TransactionState({

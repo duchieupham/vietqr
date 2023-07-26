@@ -69,3 +69,4 @@ class TransEventQRRegenerate extends TransactionEvent {
   @override
   List<Object?> get props => [dto];
 }
+
