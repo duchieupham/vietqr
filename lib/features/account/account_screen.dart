@@ -169,12 +169,6 @@ class _BannerWidget extends StatelessWidget {
     return Container(
       height: 230,
       width: MediaQuery.of(context).size.width,
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/images/bgr-header.png'),
-          fit: BoxFit.cover,
-        ),
-      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
