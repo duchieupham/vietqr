@@ -122,7 +122,7 @@ class _SelectBankConnectBranchWidgetState
                     child: const Text(
                       'Xong',
                       style: TextStyle(
-                        color: AppColor.GREEN,
+                        color: AppColor.BLUE_TEXT,
                       ),
                     ),
                   ),

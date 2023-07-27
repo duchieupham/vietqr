@@ -526,7 +526,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                     QRCreateDTO dto = QRCreateDTO(
                       bankId: state.bankAccountDTO?.id ?? '',
                       amount: money,
-                      content:formattedName,
+                      content: formattedName,
                       branchId: state.bankAccountDTO?.branchId ?? '',
                       businessId: state.bankAccountDTO?.businessId ?? '',
                       userId: UserInformationHelper.instance.getUserId(),
@@ -553,9 +553,6 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
           msg: 'Ảnh QR không đúng định dạng, vui lòng chọn ảnh khác.',
           function: () {
             Navigator.pop(context);
-            if (Navigator.canPop(context)) {
-              Navigator.pop(context);
-            }
           },
         );
       } else {

@@ -11,6 +11,7 @@ import 'package:vierqr/features/top_up/blocs/top_up_bloc.dart';
 import 'package:vierqr/features/top_up/events/scan_qr_event.dart';
 import 'package:vierqr/features/top_up/states/top_up_state.dart';
 import 'package:vierqr/layouts/button_widget.dart';
+import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
 import 'package:vierqr/models/account_information_dto.dart';
 import 'package:vierqr/services/providers/top_up_provider.dart';
@@ -18,87 +19,79 @@ import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class TopUpScreen extends StatelessWidget {
   const TopUpScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: const MAppBar(title: 'Nạp tiền'),
       body: ChangeNotifierProvider(
         create: (context) => TopUpProvider(),
         child: BlocProvider<TopUpBloc>(
           create: (context) => TopUpBloc(),
-          child:
-              BlocConsumer<TopUpBloc, TopUpState>(listener: (context, state) {
-            if (state is TopUpLoadingState) {
-              DialogWidget.instance.openLoadingDialog();
-            }
-            if (state is TopUpCreateQrSuccessState) {
-              Navigator.pop(context);
-              Navigator.pushNamed(context, Routes.QR_TOP_UP,
-                  arguments: state.dto);
-            }
-            if (state is TopUpCreateQrFailedState) {
-              Navigator.pop(context);
-              DialogWidget.instance.openMsgDialog(
-                  title: 'Đã có lỗi xảy ra', msg: 'Vui lòng thử lại sau');
-            }
-          }, builder: (context, state) {
-            return Column(
-              children: [
-                SubHeader(
-                  title: 'Nạp tiền',
-                  function: () {
-                    FocusManager.instance.primaryFocus?.unfocus();
-                    Future.delayed(const Duration(milliseconds: 200), () {
-                      Navigator.of(context).pop();
-                    });
-                  },
-                  callBackHome: () {
-                    Navigator.of(context).popUntil((route) => route.isFirst);
-                  },
-                ),
-                Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    children: [
-                      const SizedBox(
-                        height: 24,
-                      ),
-                      _buildTemplateSection('Tài khoản',
-                          child: _buildAccountInfo(context,
-                              accountInformationDTO: UserInformationHelper
-                                  .instance
-                                  .getAccountInformation(),
-                              phoneNumber:
-                                  UserInformationHelper.instance.getPhoneNo())),
-                      const SizedBox(
-                        height: 28,
-                      ),
-                      _buildTemplateSection('Số tiền cần nạp',
-                          child: _buildTopUp())
-                    ],
+          child: BlocConsumer<TopUpBloc, TopUpState>(
+            listener: (context, state) {
+              if (state is TopUpLoadingState) {
+                DialogWidget.instance.openLoadingDialog();
+              }
+              if (state is TopUpCreateQrSuccessState) {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, Routes.QR_TOP_UP,
+                    arguments: state.dto);
+              }
+              if (state is TopUpCreateQrFailedState) {
+                Navigator.pop(context);
+                DialogWidget.instance.openMsgDialog(
+                    title: 'Đã có lỗi xảy ra', msg: 'Vui lòng thử lại sau');
+              }
+            },
+            builder: (context, state) {
+              return Column(
+                children: [
+                  Expanded(
+                    child: ListView(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      children: [
+                        const SizedBox(
+                          height: 24,
+                        ),
+                        _buildTemplateSection('Tài khoản',
+                            child: _buildAccountInfo(context,
+                                accountInformationDTO: UserInformationHelper
+                                    .instance
+                                    .getAccountInformation(),
+                                phoneNumber: UserInformationHelper.instance
+                                    .getPhoneNo())),
+                        const SizedBox(
+                          height: 28,
+                        ),
+                        _buildTemplateSection('Số tiền cần nạp',
+                            child: _buildTopUp())
+                      ],
+                    ),
                   ),
-                ),
-                Consumer<TopUpProvider>(builder: (context, provider, child) {
-                  return MButtonWidget(
-                    title: 'Thanh toán',
-                    isEnable: provider.errorMoney.isEmpty,
-                    colorEnableText: provider.errorMoney.isEmpty
-                        ? AppColor.WHITE
-                        : AppColor.GREY_TEXT,
-                    onTap: () {
-                      FocusManager.instance.primaryFocus?.unfocus();
-                      Map<String, dynamic> data = {};
-                      data['phoneNo'] =
-                          UserInformationHelper.instance.getPhoneNo();
-                      data['amount'] = provider.money.replaceAll('.', '');
-                      data['transType'] = 'C';
-                      BlocProvider.of<TopUpBloc>(context)
-                          .add(TopUpEventCreateQR(data: data));
-                    },
-                  );
-                }),
-              ],
-            );
-          }),
+                  Consumer<TopUpProvider>(builder: (context, provider, child) {
+                    return MButtonWidget(
+                      title: 'Thanh toán',
+                      isEnable: provider.errorMoney.isEmpty,
+                      colorEnableText: provider.errorMoney.isEmpty
+                          ? AppColor.WHITE
+                          : AppColor.GREY_TEXT,
+                      onTap: () {
+                        FocusManager.instance.primaryFocus?.unfocus();
+                        Map<String, dynamic> data = {};
+                        data['phoneNo'] =
+                            UserInformationHelper.instance.getPhoneNo();
+                        data['amount'] = provider.money.replaceAll('.', '');
+                        data['transType'] = 'C';
+                        BlocProvider.of<TopUpBloc>(context)
+                            .add(TopUpEventCreateQR(data: data));
+                      },
+                    );
+                  }),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
