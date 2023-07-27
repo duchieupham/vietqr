@@ -50,18 +50,20 @@ class _BusinessInformationView extends State<BusinessInformationView>
   late BusinessInformationBloc _businessInformationBloc;
 
   BusinessItemDTO dto = const BusinessItemDTO(
-      businessId: '',
-      code: '',
-      role: 0,
-      imgId: '',
-      coverImgId: '',
-      name: '',
-      branchs: [],
-      address: '',
-      taxCode: '',
-      transactions: [],
-      totalMember: 0,
-      totalBranch: 0);
+    businessId: '',
+    code: '',
+    role: 0,
+    imgId: '',
+    coverImgId: '',
+    name: '',
+    branchs: [],
+    address: '',
+    taxCode: '',
+    transactions: [],
+    totalMember: 0,
+    totalBranch: 0,
+    bankAccounts: [],
+  );
 
   String heroId = '';
 
