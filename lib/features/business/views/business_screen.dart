@@ -106,7 +106,7 @@ class _BusinessScreenState extends State<BusinessScreen>
                 width: width,
                 height: height,
                 child: Padding(
-                  padding: const EdgeInsets.only(bottom: 40),
+                  padding: const EdgeInsets.only(bottom: 20),
                   child: Stack(
                     children: [
                       Align(
@@ -137,38 +137,45 @@ class _BusinessScreenState extends State<BusinessScreen>
                           bottom: 0,
                           left: 0,
                           right: 0,
-                          child: Row(
+                          child: Column(
                             children: [
-                              const Spacer(),
-                              ButtonWidget(
-                                width: 170,
-                                height: 40,
-                                text: 'Tạo doanh nghiệp',
-                                textColor: AppColor.WHITE,
-                                bgColor: AppColor.BLUE_TEXT,
-                                borderRadius: 20,
-                                enableShadow: true,
-                                function: () async {
-                                  await Navigator.pushNamed(
-                                      context, Routes.ADD_BUSINESS_VIEW);
-                                  _refresh();
-                                },
+                              _buildBusinessWidget(context, state.list),
+                              Consumer<DashboardProvider>(
+                                  builder: (context, provider, child) {
+                                return _buildButtonList(context,
+                                    dto: state.list[provider.businessSelect]);
+                              }),
+                              const SizedBox(
+                                height: 12,
                               ),
-                              const Spacer(),
+                              _buildIndicatorDot(),
+                              const SizedBox(
+                                height: 12,
+                              ),
+                              Row(
+                                children: [
+                                  const Spacer(),
+                                  ButtonWidget(
+                                    width: 170,
+                                    height: 40,
+                                    text: 'Tạo doanh nghiệp',
+                                    textColor: AppColor.WHITE,
+                                    bgColor: AppColor.BLUE_TEXT,
+                                    borderRadius: 20,
+                                    enableShadow: true,
+                                    function: () async {
+                                      await Navigator.pushNamed(
+                                          context, Routes.ADD_BUSINESS_VIEW);
+                                      _refresh();
+                                    },
+                                  ),
+                                  const Spacer(),
+                                ],
+                              ),
                             ],
                           )),
                       // _buildSuggestion(context),
-                      Align(
-                          alignment: Alignment.center,
-                          child: Column(
-                            children: [
-                              SizedBox(
-                                height: height * 0.05,
-                              ),
-                              _buildBusinessWidget(context, state.list),
-                              _buildIndicatorDot()
-                            ],
-                          )),
+
                       // const Padding(padding: EdgeInsets.only(bottom: 100)),
                     ],
                   ),
@@ -294,7 +301,7 @@ class _BusinessScreenState extends State<BusinessScreen>
               carouselController.previousPage();
             },
             child: Padding(
-              padding: EdgeInsets.only(left: 12, bottom: height * 0.1),
+              padding: EdgeInsets.only(left: 8, bottom: height * 0.1),
               child: const Icon(Icons.arrow_back_ios),
             )),
         Expanded(
@@ -308,7 +315,7 @@ class _BusinessScreenState extends State<BusinessScreen>
               }).toList(),
               options: CarouselOptions(
                 viewportFraction: 1,
-                aspectRatio: 0.9,
+                aspectRatio: 0.8,
                 disableCenter: true,
                 onPageChanged: ((index, reason) {
                   Provider.of<DashboardProvider>(context, listen: false)
@@ -321,8 +328,7 @@ class _BusinessScreenState extends State<BusinessScreen>
               carouselController.nextPage();
             },
             child: Padding(
-              padding:
-                  EdgeInsets.only(right: 12, left: 4, bottom: height * 0.1),
+              padding: EdgeInsets.only(right: 8, left: 4, bottom: height * 0.1),
               child: const Icon(Icons.arrow_forward_ios),
             )),
       ],
@@ -349,216 +355,335 @@ class _BusinessScreenState extends State<BusinessScreen>
           _businessBloc.add(BusinessInitEvent());
         });
       },
-      child: Column(
-        children: [
-          Container(
-            width: width,
-            margin: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(8)),
-              boxShadow: <BoxShadow>[
-                BoxShadow(
-                  color: Theme.of(context).shadowColor.withOpacity(0.2),
-                  spreadRadius: 2,
-                  blurRadius: 4,
-                  offset: const Offset(1, 2),
-                ),
-              ],
-              color: Theme.of(context).cardColor,
+      child: Container(
+        width: width,
+        margin: const EdgeInsets.all(6),
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(Radius.circular(8)),
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+              color: Theme.of(context).shadowColor.withOpacity(0.2),
+              spreadRadius: 2,
+              blurRadius: 4,
+              offset: const Offset(1, 2),
             ),
-            child: Column(
-              children: [
-                _buildTitleItemBusiness(dto),
-                const SizedBox(height: 15),
-                Container(
-                  margin: const EdgeInsets.only(left: 15),
-                  child: Column(
+          ],
+          color: Theme.of(context).cardColor,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildTitleItemBusiness(dto),
+            const SizedBox(height: 15),
+            Container(
+              margin: const EdgeInsets.only(left: 15),
+              child: Column(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            width: 100,
-                            child: _buildChip(
-                              context: context,
-                              icon: Icons.people_rounded,
-                              text: '${dto.totalMember} thành viên',
-                              color: AppColor.GREY_TEXT,
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: _buildChip(
-                              context: context,
-                              icon: Icons.business_rounded,
-                              color: AppColor.GREY_TEXT,
-                              text: '${dto.totalBranch} chi nhánh',
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      if (dto.address.isNotEmpty)
-                        SizedBox(
-                          width: width - 40,
-                          child: _buildChip(
-                            context: context,
-                            icon: Icons.location_on_outlined,
-                            color: AppColor.GREY_TEXT,
-                            text: dto.address,
-                          ),
+                      SizedBox(
+                        width: 100,
+                        child: _buildChip(
+                          context: context,
+                          icon: Icons.people_rounded,
+                          text: '${dto.totalMember} thành viên',
+                          color: AppColor.GREY_TEXT,
                         ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: _buildChip(
+                          context: context,
+                          icon: Icons.business_rounded,
+                          color: AppColor.GREY_TEXT,
+                          text: '${dto.totalBranch} chi nhánh',
+                        ),
+                      ),
                     ],
                   ),
+                  const SizedBox(height: 4),
+                  if (dto.address.isNotEmpty)
+                    SizedBox(
+                      width: width - 40,
+                      child: _buildChip(
+                        context: context,
+                        icon: Icons.location_on_outlined,
+                        color: AppColor.GREY_TEXT,
+                        text: dto.address,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+            const Padding(
+              padding: EdgeInsets.only(left: 14, bottom: 8),
+              child: Text(
+                'Tài khoản đã kết nối',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+            SizedBox(
+              height: 105,
+              child: (dto.bankAccounts.isEmpty)
+                  ? const Padding(
+                      padding: EdgeInsets.only(left: 14, bottom: 8),
+                      child: Text('Chưa có tài khoản được kết nối'),
+                    )
+                  : ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: const EdgeInsets.all(0),
+                      itemCount: dto.bankAccounts.length > 3
+                          ? 3
+                          : dto.bankAccounts.length,
+                      itemBuilder: (context, index) {
+                        return _buildElementMember(
+                            dto: dto.bankAccounts[index]);
+                      },
+                      separatorBuilder: (context, index) {
+                        return const SizedBox(
+                          height: 6,
+                        );
+                      },
+                    ),
+            ),
+            if (dto.bankAccounts.length > 3)
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 3, horizontal: 14),
+                child: Text(
+                  '${dto.bankAccounts.length - 3} ngân hàng khác',
+                  style: const TextStyle(
+                      fontSize: 12,
+                      decoration: TextDecoration.underline,
+                      color: AppColor.BLUE_TEXT),
                 ),
-                const SizedBox(height: 24),
-                SizedBox(
-                  height: 126,
-                  child: (dto.transactions.isEmpty)
-                      ? const Text('Không có giao dịch nào')
-                      : ListView.separated(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          padding: const EdgeInsets.all(0),
-                          itemCount: dto.transactions.length,
-                          itemBuilder: (context, index) {
-                            return _buildTransactionItem(
-                              context: context,
-                              dto: dto.transactions[index],
-                              businessId: dto.businessId,
-                            );
-                          },
-                          separatorBuilder: (context, index) {
-                            return const SizedBox(
-                              height: 10,
-                            );
-                          },
-                        ),
+              )
+            else
+              const SizedBox(
+                height: 20,
+              ),
+            const Padding(
+              padding: EdgeInsets.only(left: 14, bottom: 8),
+              child: Text(
+                'Giao dịch gần đây',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+            SizedBox(
+              height: 108,
+              child: (dto.transactions.isEmpty)
+                  ? const Padding(
+                      padding: EdgeInsets.only(left: 14, bottom: 8),
+                      child: Text('Chưa có giao dịch nào'),
+                    )
+                  : ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: const EdgeInsets.all(0),
+                      itemCount: dto.transactions.length,
+                      itemBuilder: (context, index) {
+                        return _buildTransactionItem(
+                          context: context,
+                          dto: dto.transactions[index],
+                          businessId: dto.businessId,
+                        );
+                      },
+                      separatorBuilder: (context, index) {
+                        return const SizedBox(
+                          height: 8,
+                        );
+                      },
+                    ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildElementMember({
+    required BankAccountInBusiness dto,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        children: [
+          (dto.imageId.isNotEmpty)
+              ? Container(
+                  width: 30,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                        color: AppColor.GREY_TEXT.withOpacity(0.5), width: 0.5),
+                    borderRadius: BorderRadius.circular(20),
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: ImageUtils.instance.getImageNetWork(dto.imageId),
+                    ),
+                  ),
                 )
+              : ClipOval(
+                  child: SizedBox(
+                    width: 30,
+                    height: 30,
+                    child: Image.asset('assets/images/ic-avatar.png'),
+                  ),
+                ),
+          const Padding(padding: EdgeInsets.only(left: 10)),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${dto.bankCode} - ${dto.bankAccount}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 12,
+                  ),
+                ),
+                Text(
+                  dto.userBankName,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 11,
+                  ),
+                ),
               ],
             ),
           ),
-          if (dto.role == TypeRole.ADMIN.role) ...[
-            const SizedBox(
-              height: 20,
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 6),
-                    child: ButtonIconWidget(
-                      width: 40,
-                      height: 40,
-                      pathIcon: 'assets/images/ic-person-blue.png',
-                      title: 'Thêm thành viên',
-                      textSize: 11,
-                      iconSize: 25,
-                      function: () async {
-                        final data =
-                            await DialogWidget.instance.showModelBottomSheet(
-                          context: context,
-                          height: height * 0.5,
-                          padding: EdgeInsets.zero,
-                          widget: SelectBranchWidget(
-                            businessId: dto.businessId,
-                            tySelect: TypeSelect.MEMBER,
-                          ),
-                        );
+        ],
+      ),
+    );
+  }
 
-                        if (!mounted) return;
-                        if (data != null && data is String) {
-                          await DialogWidget.instance.showModelBottomSheet(
-                            context: context,
-                            widget: AddBranchMemberWidget(
-                              branchId: data,
-                              businessId: dto.businessId,
-                            ),
-                            height: height * 0.5,
-                          );
-
-                          _businessBloc.add(BusinessInitEvent(isLoading: true));
-                        }
-                      },
-                      bgColor: Theme.of(context).cardColor,
-                      textColor: AppColor.BLUE_TEXT,
-                      borderRadius: 30,
-                      enableShadow: true,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 10),
-                    child: ButtonIconWidget(
-                      width: 40,
-                      height: 40,
-                      pathIcon: 'assets/images/ic-card-blue.png',
-                      title: 'Kết nối tài khoản',
-                      textSize: 11,
-                      iconSize: 25,
-                      function: () async {
-                        final data =
-                            await DialogWidget.instance.showModelBottomSheet(
-                          context: context,
-                          padding: EdgeInsets.zero,
-                          widget: SelectBranchWidget(
-                            businessId: dto.businessId,
-                          ),
-                          height: height * 0.5,
-                        );
-
-                        if (!mounted) return;
-                        if (data != null && data is String) {
-                          await DialogWidget.instance.showModalBottomContent(
-                            context: context,
-                            widget: SelectBankConnectBranchWidget(
-                              branchId: data,
-                              businessId: dto.businessId,
-                            ),
-                            height: height * 0.7,
-                          );
-                        }
-                      },
-                      bgColor: Theme.of(context).cardColor,
-                      textColor: AppColor.BLUE_TEXT,
-                      borderRadius: 30,
-                      enableShadow: true,
-                    ),
-                  ),
-                ),
-                ButtonIconWidget(
+  Widget _buildButtonList(BuildContext context,
+      {required BusinessItemDTO dto}) {
+    double height = MediaQuery.of(context).size.height;
+    if (dto.role == TypeRole.ADMIN.role) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32),
+        child: Row(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 6),
+                child: ButtonIconWidget(
                   width: 40,
                   height: 40,
-                  pathIcon: 'assets/images/ic-trash.png',
-                  title: '',
-                  iconSize: 30,
+                  pathIcon: 'assets/images/ic-person-blue.png',
+                  title: 'Thêm thành viên',
+                  textSize: 11,
+                  iconSize: 25,
                   function: () async {
-                    DialogWidget.instance.openMsgDialog(
-                      title: 'Xoá doanh nghiệp',
-                      msg: 'Bạn có chắc chắn muốn xoá doanh nghiệp này?',
-                      isSecondBT: true,
-                      functionConfirm: () {
-                        Navigator.of(context).pop();
-                        _businessBloc.add(BusinessRemoveBusinessEvent(
-                            businessId: dto.businessId));
-                      },
+                    final data =
+                        await DialogWidget.instance.showModelBottomSheet(
+                      context: context,
+                      height: height * 0.5,
+                      padding: EdgeInsets.zero,
+                      widget: SelectBranchWidget(
+                        businessId: dto.businessId,
+                        tySelect: TypeSelect.MEMBER,
+                      ),
                     );
+
+                    if (!mounted) return;
+                    if (data != null && data is String) {
+                      await DialogWidget.instance.showModelBottomSheet(
+                        context: context,
+                        widget: AddBranchMemberWidget(
+                          branchId: data,
+                          businessId: dto.businessId,
+                        ),
+                        height: height * 0.5,
+                      );
+
+                      _businessBloc.add(BusinessInitEvent(isLoading: true));
+                    }
                   },
                   bgColor: Theme.of(context).cardColor,
-                  textColor: AppColor.RED_TEXT,
+                  textColor: AppColor.BLUE_TEXT,
                   borderRadius: 30,
                   enableShadow: true,
                 ),
-                const SizedBox(
-                  width: 6,
-                )
-              ],
+              ),
             ),
-          ]
-        ],
-      ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: ButtonIconWidget(
+                  width: 40,
+                  height: 40,
+                  pathIcon: 'assets/images/ic-card-blue.png',
+                  title: 'Kết nối tài khoản',
+                  textSize: 11,
+                  iconSize: 25,
+                  function: () async {
+                    final data =
+                        await DialogWidget.instance.showModelBottomSheet(
+                      context: context,
+                      padding: EdgeInsets.zero,
+                      widget: SelectBranchWidget(
+                        businessId: dto.businessId,
+                      ),
+                      height: height * 0.5,
+                    );
+
+                    if (!mounted) return;
+                    if (data != null && data is String) {
+                      await DialogWidget.instance.showModalBottomContent(
+                        context: context,
+                        widget: SelectBankConnectBranchWidget(
+                          branchId: data,
+                          businessId: dto.businessId,
+                        ),
+                        height: height * 0.7,
+                      );
+                    }
+                  },
+                  bgColor: Theme.of(context).cardColor,
+                  textColor: AppColor.BLUE_TEXT,
+                  borderRadius: 30,
+                  enableShadow: true,
+                ),
+              ),
+            ),
+            ButtonIconWidget(
+              width: 40,
+              height: 40,
+              pathIcon: 'assets/images/ic-trash.png',
+              title: '',
+              iconSize: 30,
+              function: () async {
+                DialogWidget.instance.openMsgDialog(
+                  title: 'Xoá doanh nghiệp',
+                  msg: 'Bạn có chắc chắn muốn xoá doanh nghiệp này?',
+                  isSecondBT: true,
+                  functionConfirm: () {
+                    Navigator.of(context).pop();
+                    _businessBloc.add(BusinessRemoveBusinessEvent(
+                        businessId: dto.businessId));
+                  },
+                );
+              },
+              bgColor: Theme.of(context).cardColor,
+              textColor: AppColor.RED_TEXT,
+              borderRadius: 30,
+              enableShadow: true,
+            ),
+            const SizedBox(
+              width: 6,
+            )
+          ],
+        ),
+      );
+    }
+    return const SizedBox(
+      height: 40,
     );
   }
 

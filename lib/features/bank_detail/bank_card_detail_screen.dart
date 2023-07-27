@@ -711,19 +711,19 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                 bgColor: AppColor.TRANSPARENT,
                 function: () {
                   BusinessItemDTO businessItemDTO = BusinessItemDTO(
-                    businessId: list[index].businessId,
-                    code: '',
-                    role: 0,
-                    imgId: list[index].imgId,
-                    coverImgId: list[index].coverImgId,
-                    name: list[index].businessName,
-                    address: '',
-                    taxCode: '',
-                    transactions: [],
-                    totalMember: 0,
-                    totalBranch: 0,
-                    branchs: [],
-                  );
+                      businessId: list[index].businessId,
+                      code: '',
+                      role: 0,
+                      imgId: list[index].imgId,
+                      coverImgId: list[index].coverImgId,
+                      name: list[index].businessName,
+                      address: '',
+                      taxCode: '',
+                      transactions: [],
+                      totalMember: 0,
+                      totalBranch: 0,
+                      branchs: [],
+                      bankAccounts: []);
                   Navigator.pushNamed(
                     context,
                     Routes.BUSINESS_INFORMATION_VIEW,

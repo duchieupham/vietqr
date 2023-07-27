@@ -11,6 +11,8 @@ class BusinessItemDTO {
   final String taxCode;
   final List<RelatedTransactionReceiveDTO> transactions;
   final List<BranchDTO> branchs;
+  final List<BankAccountInBusiness> bankAccounts;
+
   final int totalMember;
   final int totalBranch;
 
@@ -27,6 +29,7 @@ class BusinessItemDTO {
     required this.totalMember,
     required this.totalBranch,
     required this.branchs,
+    required this.bankAccounts,
   });
 
   factory BusinessItemDTO.fromJson(Map<String, dynamic> json) {
@@ -44,6 +47,13 @@ class BusinessItemDTO {
       });
     }
 
+    List<BankAccountInBusiness> bankAccounts = [];
+    if (json['bankAccounts'] != null) {
+      json['bankAccounts'].forEach((v) {
+        bankAccounts.add(BankAccountInBusiness.fromJson(v));
+      });
+    }
+
     return BusinessItemDTO(
       businessId: json['businessId'] ?? '',
       code: json['code'] ?? '',
@@ -57,6 +67,7 @@ class BusinessItemDTO {
       totalMember: json['totalMember'] ?? 0,
       totalBranch: json['totalBranch'] ?? 0,
       branchs: branchs,
+      bankAccounts: bankAccounts,
     );
   }
 
@@ -87,6 +98,39 @@ class BranchDTO {
     return BranchDTO(
       branchId: json['branchId'] ?? '',
       connected: json['connected'] ?? 0,
+    );
+  }
+}
+
+class BankAccountInBusiness {
+  String bankId;
+  String bankAccount;
+  String userBankName;
+  String bankCode;
+  String bankName;
+  String imageId;
+  int bankType;
+  bool authenticated;
+
+  BankAccountInBusiness(
+      {this.userBankName = '',
+      this.bankCode = '',
+      this.bankName = '',
+      this.bankAccount = '',
+      this.bankId = '',
+      this.bankType = 0,
+      this.authenticated = false,
+      this.imageId = ''});
+  factory BankAccountInBusiness.fromJson(Map<String, dynamic> json) {
+    return BankAccountInBusiness(
+      userBankName: json['userBankName'] ?? '',
+      bankCode: json['bankCode'] ?? '',
+      bankName: json['bankName'] ?? '',
+      bankAccount: json['bankAccount'] ?? '',
+      bankId: json['bankId'] ?? '',
+      bankType: json['bankType'] ?? 0,
+      authenticated: json['authenticated'] ?? false,
+      imageId: json['imgId'] ?? '',
     );
   }
 }
