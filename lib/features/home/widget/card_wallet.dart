@@ -60,7 +60,7 @@ class CardWallet extends StatelessWidget {
                   return Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      if (!provider.isHide)
+                      if (provider.isHide)
                         const Text(
                           '********',
                           style: TextStyle(
@@ -83,9 +83,9 @@ class CardWallet extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.only(bottom: 4),
                           child: Image.asset(
-                            !provider.isHide
-                                ? 'assets/images/ic-unhide.png'
-                                : 'assets/images/ic-hide.png',
+                            provider.isHide
+                                ? 'assets/images/ic-hide.png'
+                                : 'assets/images/ic-unhide.png',
                             height: 15,
                           ),
                         ),

@@ -510,31 +510,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
     }
 
     if (indexSelected == 3) {
-      titleWidget = RichText(
-        textAlign: TextAlign.left,
-        text: TextSpan(
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: Theme.of(context).hintColor,
-            letterSpacing: 0.2,
-          ),
-          children: [
-            const TextSpan(
-              text: 'Trang chủ\n',
-            ),
-            TextSpan(
-              text:
-                  '${TimeUtils.instance.getCurrentDateInWeek(DateTime.now())}, ${TimeUtils.instance.getCurentDate(DateTime.now())}',
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.normal,
-                color: AppColor.GREY_TEXT,
-              ),
-            ),
-          ],
-        ),
-      );
+      titleWidget = const SizedBox.shrink();
     }
     if (indexSelected == 4) {
       titleWidget = const Text(
@@ -558,111 +534,112 @@ class _DashBoardScreen extends State<DashBoardScreen>
     return BackgroundAppBarHome(
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 25),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Container(
-              width: 60,
-              height: 30,
-              decoration: BoxDecoration(
-                //color: Theme.of(context).cardColor,
-                borderRadius: BorderRadius.circular(10),
+        child: Consumer<PageSelectProvider>(builder: (context, page, child) {
+          if (page.indexSelected == 3) {
+            return const SizedBox.shrink();
+          }
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                width: 60,
+                height: 30,
+                decoration: BoxDecoration(
+                  //color: Theme.of(context).cardColor,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Image.asset(
+                  'assets/images/ic-viet-qr.png',
+                  width: 50,
+                ),
               ),
-              child: Image.asset(
-                'assets/images/ic-viet-qr.png',
-                width: 50,
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: _getTitlePaqe(context, page.indexSelected),
+                ),
               ),
-            ),
-            Expanded(
-              child: Consumer<PageSelectProvider>(
-                builder: (context, page, child) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    child: _getTitlePaqe(context, page.indexSelected),
-                  );
-                },
-              ),
-            ),
-            SizedBox(
-                width: 50,
-                height: 60,
-                child: BlocConsumer<NotificationBloc, NotificationState>(
-                  listener: (context, state) {
-                    //
-                  },
-                  builder: (context, state) {
-                    if (state is NotificationCountSuccessState) {
-                      _notificationCount = state.count;
-                    }
-                    if (state is NotificationUpdateStatusSuccessState) {
-                      _notificationCount = 0;
-                    }
-                    return Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        ButtonIconWidget(
-                          width: 40,
-                          height: 40,
-                          borderRadius: 40,
-                          icon: Icons.notifications_outlined,
-                          title: '',
-                          function: () {
-                            Navigator.pushNamed(
-                              context,
-                              Routes.NOTIFICATION_VIEW,
-                              arguments: {
-                                'notificationBloc': _notificationBloc,
-                              },
-                            ).then((value) {
-                              _notificationBloc.add(
-                                NotificationUpdateStatusEvent(),
-                              );
-                            });
-                          },
-                          bgColor: Theme.of(context).cardColor,
-                          textColor: Theme.of(context).hintColor,
-                        ),
-                        if (_notificationCount != 0)
-                          Positioned(
-                            top: 5,
-                            right: 0,
-                            child: Container(
-                              width: 20,
-                              height: 20,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(30),
-                                color: AppColor.RED_CALENDAR,
-                              ),
-                              child: Text(
-                                _notificationCount.toString(),
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize:
-                                      (_notificationCount.toString().length >=
-                                              3)
-                                          ? 8
-                                          : 10,
-                                  color: AppColor.WHITE,
+              SizedBox(
+                  width: 50,
+                  height: 60,
+                  child: BlocConsumer<NotificationBloc, NotificationState>(
+                    listener: (context, state) {
+                      //
+                    },
+                    builder: (context, state) {
+                      if (state is NotificationCountSuccessState) {
+                        _notificationCount = state.count;
+                      }
+                      if (state is NotificationUpdateStatusSuccessState) {
+                        _notificationCount = 0;
+                      }
+                      return Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          ButtonIconWidget(
+                            width: 40,
+                            height: 40,
+                            borderRadius: 40,
+                            icon: Icons.notifications_outlined,
+                            title: '',
+                            function: () {
+                              Navigator.pushNamed(
+                                context,
+                                Routes.NOTIFICATION_VIEW,
+                                arguments: {
+                                  'notificationBloc': _notificationBloc,
+                                },
+                              ).then((value) {
+                                _notificationBloc.add(
+                                  NotificationUpdateStatusEvent(),
+                                );
+                              });
+                            },
+                            bgColor: Theme.of(context).cardColor,
+                            textColor: Theme.of(context).hintColor,
+                          ),
+                          if (_notificationCount != 0)
+                            Positioned(
+                              top: 5,
+                              right: 0,
+                              child: Container(
+                                width: 20,
+                                height: 20,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(30),
+                                  color: AppColor.RED_CALENDAR,
+                                ),
+                                child: Text(
+                                  _notificationCount.toString(),
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize:
+                                        (_notificationCount.toString().length >=
+                                                3)
+                                            ? 8
+                                            : 10,
+                                    color: AppColor.WHITE,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                      ],
-                    );
-                  },
-                )),
-            const Padding(padding: EdgeInsets.only(left: 5)),
-            GestureDetector(
-                onTap: () {
-                  Provider.of<PageSelectProvider>(context, listen: false)
-                      .updateIndex(4);
+                        ],
+                      );
+                    },
+                  )),
+              const Padding(padding: EdgeInsets.only(left: 5)),
+              GestureDetector(
+                  onTap: () {
+                    Provider.of<PageSelectProvider>(context, listen: false)
+                        .updateIndex(4);
 
-                  _animatedToPage(4);
-                },
-                child: _buildAvatarWidget(context)),
-          ],
-        ),
+                    _animatedToPage(4);
+                  },
+                  child: _buildAvatarWidget(context)),
+            ],
+          );
+        }),
       ),
     );
   }
