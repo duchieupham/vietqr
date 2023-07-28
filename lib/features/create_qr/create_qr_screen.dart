@@ -526,7 +526,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                     QRCreateDTO dto = QRCreateDTO(
                       bankId: state.bankAccountDTO?.id ?? '',
                       amount: money,
-                      content:formattedName,
+                      content: formattedName,
                       branchId: state.bankAccountDTO?.branchId ?? '',
                       businessId: state.bankAccountDTO?.businessId ?? '',
                       userId: UserInformationHelper.instance.getUserId(),
@@ -908,7 +908,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
       await ShareUtils.instance.shareImage(
         key: globalKey,
         textSharing:
-            '${dto.bankAccount} - ${dto.bankName}\nĐược tạo bởi vietqr.vn - Hotline 19006234'
+            '${dto.bankAccount} - ${dto.bankName}\nĐược tạo bởi vietqr.vn - Hotline 1900.6234'
                 .trim(),
       );
     });

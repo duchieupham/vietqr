@@ -579,7 +579,7 @@ class TransactionDetailView extends StatelessWidget {
           .shareImage(
             key: globalKey,
             textSharing:
-                'Giao dịch ${TransactionUtils.instance.getStatusString(dto.status)} ${TransactionUtils.instance.getTransType(dto.transType)} ${CurrencyUtils.instance.getCurrencyFormatted(dto.amount.toString())} VND\nĐược tạo bởi vietqr.vn - Hotline 19006234',
+                'Giao dịch ${TransactionUtils.instance.getStatusString(dto.status)} ${TransactionUtils.instance.getTransType(dto.transType)} ${CurrencyUtils.instance.getCurrencyFormatted(dto.amount.toString())} VND\nĐược tạo bởi vietqr.vn - Hotline 1900.6234',
           )
           .then((value) => _waterMarkProvider.updateWaterMark(false));
     });
