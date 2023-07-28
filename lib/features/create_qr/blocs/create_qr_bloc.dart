@@ -137,16 +137,17 @@ class CreateQRBloc extends Bloc<CreateQREvent, CreateQRState> with BaseManager {
       NationalScannerDTO nationalScannerDTO =
           homeRepository.getNationalInformation(event.code);
       if (nationalScannerDTO.nationalId.trim().isNotEmpty) {
+        String code = event.code.replaceAll('|', '').substring(0, 50);
         emit(
           state.copyWith(
-            barCode: nationalScannerDTO.nationalId,
+            barCode: code,
             type: CreateQRType.SCAN_QR,
             status: BlocStatus.UNLOADING,
           ),
         );
       } else if (event.code.isNotEmpty) {
         emit(state.copyWith(
-          barCode: event.code,
+          barCode: event.code.substring(0, 50),
           type: CreateQRType.SCAN_QR,
           status: BlocStatus.UNLOADING,
         ));

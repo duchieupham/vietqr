@@ -553,9 +553,6 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
           msg: 'Ảnh QR không đúng định dạng, vui lòng chọn ảnh khác.',
           function: () {
             Navigator.pop(context);
-            if (Navigator.canPop(context)) {
-              Navigator.pop(context);
-            }
           },
         );
       } else {

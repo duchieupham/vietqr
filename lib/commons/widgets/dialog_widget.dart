@@ -275,7 +275,7 @@ class DialogWidget {
                       textColor: AppColor.WHITE,
                       bgColor: (confirmColor != null)
                           ? confirmColor
-                          : AppColor.GREEN,
+                          : AppColor.BLUE_TEXT,
                       borderRadius: 5,
                       function: confirmFunction,
                     ),
@@ -646,9 +646,10 @@ class DialogWidget {
                             child: ButtonWidget(
                               height: 40,
                               text: buttonExit ?? 'Đóng',
-                              textColor: AppColor.WHITE,
+                              textColor:
+                                  isSecondBT ? AppColor.BLACK : AppColor.WHITE,
                               bgColor: isSecondBT
-                                  ? AppColor.GREY_TEXT
+                                  ? AppColor.GREY_EBEBEB
                                   : AppColor.BLUE_TEXT,
                               borderRadius: 5,
                               function: (function != null)
@@ -847,7 +848,7 @@ class DialogWidget {
                       width: 250,
                       height: 50,
                       decoration: BoxDecoration(
-                        color: AppColor.GREEN,
+                        color: AppColor.BLUE_TEXT,
                         borderRadius: BorderRadius.circular(25),
                       ),
                       alignment: Alignment.center,
@@ -878,7 +879,7 @@ class DialogWidget {
     );
     Color transactionColor =
         (BankInformationUtil.instance.isIncome(dto.transaction))
-            ? AppColor.GREEN
+            ? AppColor.BLUE_TEXT
             : AppColor.RED_TEXT;
     return showDialog(
       barrierDismissible: false,

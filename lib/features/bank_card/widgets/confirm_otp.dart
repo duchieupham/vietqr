@@ -78,7 +78,7 @@ class _ConfirmOTPView extends State<ConfirmOTPView> {
                   child: const Text(
                     'Đóng',
                     style: TextStyle(
-                      color: AppColor.GREEN,
+                      color: AppColor.BLUE_TEXT,
                     ),
                   ),
                 ),
