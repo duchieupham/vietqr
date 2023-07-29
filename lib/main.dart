@@ -190,7 +190,7 @@ class _VietQRApp extends State<VietQRApp> {
         if (message.data['notificationType'] != null &&
             message.data['notificationType'] == Stringify.NOTI_TYPE_TOPUP) {
           DialogWidget.instance.openWidgetDialog(
-            heightPopup: 500,
+            heightPopup: 300,
             child: PopupTopUpSuccess(
               dto: TopUpSuccessDTO.fromJson(message.data),
             ),
@@ -408,7 +408,7 @@ class _VietQRApp extends State<VietQRApp> {
                   // }
                   return null;
                 },
-                themeMode:ThemeMode.light,
+                themeMode: ThemeMode.light,
                 darkTheme: DefaultThemeData(context: context).lightTheme,
                 theme: DefaultThemeData(context: context).lightTheme,
                 localizationsDelegates: const [

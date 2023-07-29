@@ -111,22 +111,23 @@ class _QRTopUpScreenState extends State<QRTopUpScreen>
                       child: ListView(
                         padding: const EdgeInsets.symmetric(horizontal: 32),
                         children: [
-                          Container(
-                            margin: const EdgeInsets.only(top: 0, bottom: 16),
-                            padding: const EdgeInsets.all(16),
-                            decoration: const BoxDecoration(
-                              color: AppColor.WHITE,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(20)),
-                            ),
-                            child: Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: RepaintBoundaryWidget(
-                                      globalKey: globalKey,
-                                      builder: (key) {
-                                        return QrImage(
+                          RepaintBoundaryWidget(
+                              globalKey: globalKey,
+                              builder: (key) {
+                                return Container(
+                                  margin:
+                                      const EdgeInsets.only(top: 0, bottom: 16),
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: const BoxDecoration(
+                                    color: AppColor.WHITE,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(20)),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: QrImage(
                                           data: widget.dto.qrCode,
                                           version: QrVersions.auto,
                                           embeddedImage: const AssetImage(
@@ -135,29 +136,29 @@ class _QRTopUpScreenState extends State<QRTopUpScreen>
                                               QrEmbeddedImageStyle(
                                             size: const Size(30, 30),
                                           ),
-                                        );
-                                      }),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20),
-                                  child: Row(
-                                    children: [
-                                      Image.asset(
-                                        'assets/images/ic-viet-qr.png',
-                                        height: 28,
+                                        ),
                                       ),
-                                      const Spacer(),
-                                      Image.asset(
-                                        'assets/images/ic-napas247.png',
-                                        height: 30,
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20),
+                                        child: Row(
+                                          children: [
+                                            Image.asset(
+                                              'assets/images/ic-viet-qr.png',
+                                              height: 28,
+                                            ),
+                                            const Spacer(),
+                                            Image.asset(
+                                              'assets/images/ic-napas247.png',
+                                              height: 30,
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ],
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
+                                );
+                              }),
                           _buildInfoBill(),
                           _buildCountDown(),
                           const SizedBox(
