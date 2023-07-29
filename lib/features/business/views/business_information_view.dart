@@ -335,7 +335,7 @@ class _BusinessInformationView extends State<BusinessInformationView>
                                                       });
                                                 },
                                                 bgColor: AppColor.TRANSPARENT,
-                                                textColor: AppColor.GREEN,
+                                                textColor: AppColor.BLUE_TEXT,
                                               ),
                                             )
                                           : _buildTransactionItem(
