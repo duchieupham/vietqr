@@ -80,109 +80,111 @@ class _BusinessScreenState extends State<BusinessScreen>
     return ChangeNotifierProvider<DashboardProvider>(
       create: (_) => DashboardProvider(),
       child: BlocConsumer<BusinessBloc, BusinessState>(
-          bloc: context.read<BusinessBloc>(),
-          listener: (context, state) {
-            if (state.status == BlocStatus.DELETED) {
-              _refresh();
-            }
-            if (state.status == BlocStatus.DELETED_ERROR) {
-              DialogWidget.instance.openMsgDialog(
-                title: 'Xoá thất bại',
-                msg: 'Đã có lỗi xảy ra, bạn vui lòng thử lại sau.',
-                isSecondBT: false,
-              );
-            }
-          },
-          builder: (context, state) {
-            if (state.status == BlocStatus.SUCCESS) {
-              Provider.of<DashboardProvider>(context, listen: false)
-                  .updateBusinessLength(state.list.length);
-            }
+        bloc: context.read<BusinessBloc>(),
+        listener: (context, state) {
+          if (state.status == BlocStatus.DELETED) {
+            _refresh();
+          }
+          if (state.status == BlocStatus.DELETED_ERROR) {
+            DialogWidget.instance.openMsgDialog(
+              title: 'Xoá thất bại',
+              msg: 'Đã có lỗi xảy ra, bạn vui lòng thử lại sau.',
+              isSecondBT: false,
+            );
+          }
+        },
+        builder: (context, state) {
+          if (state.status == BlocStatus.SUCCESS) {
+            Provider.of<DashboardProvider>(context, listen: false)
+                .updateBusinessLength(state.list.length);
+          }
 
-            if (state.list.isEmpty) {
-              return _buildListBlank();
-            } else {
-              return SizedBox(
-                width: width,
-                height: height,
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  child: Stack(
-                    children: [
-                      Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              bottom: 12, left: 16, right: 16),
-                          child: Image.asset(
-                            'assets/images/bg-business.png',
-                            width: width,
-                            fit: BoxFit.fitWidth,
-                          ),
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Container(
-                          height: height * 0.5,
-                          padding: const EdgeInsets.only(
-                              bottom: 12, left: 16, right: 16),
+          if (state.list.isEmpty) {
+            return _buildListBlank();
+          } else {
+            return SizedBox(
+              width: width,
+              height: height,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: Stack(
+                  children: [
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            bottom: 12, left: 16, right: 16),
+                        child: Image.asset(
+                          'assets/images/bg-business.png',
                           width: width,
-                          color: Theme.of(context)
-                              .scaffoldBackgroundColor
-                              .withOpacity(0.6),
+                          fit: BoxFit.fitWidth,
                         ),
                       ),
-                      Positioned(
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          child: Column(
+                    ),
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Container(
+                        height: height * 0.5,
+                        padding: const EdgeInsets.only(
+                            bottom: 12, left: 16, right: 16),
+                        width: width,
+                        color: Theme.of(context)
+                            .scaffoldBackgroundColor
+                            .withOpacity(0.6),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: Column(
+                        children: [
+                          _buildBusinessWidget(context, state.list),
+                          Consumer<DashboardProvider>(
+                              builder: (context, provider, child) {
+                            return _buildButtonList(context,
+                                dto: state.list[provider.businessSelect]);
+                          }),
+                          const SizedBox(
+                            height: 12,
+                          ),
+                          _buildIndicatorDot(),
+                          const SizedBox(
+                            height: 12,
+                          ),
+                          Row(
                             children: [
-                              _buildBusinessWidget(context, state.list),
-                              Consumer<DashboardProvider>(
-                                  builder: (context, provider, child) {
-                                return _buildButtonList(context,
-                                    dto: state.list[provider.businessSelect]);
-                              }),
-                              const SizedBox(
-                                height: 12,
+                              const Spacer(),
+                              ButtonWidget(
+                                width: 170,
+                                height: 40,
+                                text: 'Tạo doanh nghiệp',
+                                textColor: AppColor.WHITE,
+                                bgColor: AppColor.BLUE_TEXT,
+                                borderRadius: 20,
+                                enableShadow: true,
+                                function: () async {
+                                  await Navigator.pushNamed(
+                                      context, Routes.ADD_BUSINESS_VIEW);
+                                  _refresh();
+                                },
                               ),
-                              _buildIndicatorDot(),
-                              const SizedBox(
-                                height: 12,
-                              ),
-                              Row(
-                                children: [
-                                  const Spacer(),
-                                  ButtonWidget(
-                                    width: 170,
-                                    height: 40,
-                                    text: 'Tạo doanh nghiệp',
-                                    textColor: AppColor.WHITE,
-                                    bgColor: AppColor.BLUE_TEXT,
-                                    borderRadius: 20,
-                                    enableShadow: true,
-                                    function: () async {
-                                      await Navigator.pushNamed(
-                                          context, Routes.ADD_BUSINESS_VIEW);
-                                      _refresh();
-                                    },
-                                  ),
-                                  const Spacer(),
-                                ],
-                              ),
+                              const Spacer(),
                             ],
-                          )),
-                      // _buildSuggestion(context),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // _buildSuggestion(context),
 
-                      // const Padding(padding: EdgeInsets.only(bottom: 100)),
-                    ],
-                  ),
+                    // const Padding(padding: EdgeInsets.only(bottom: 100)),
+                  ],
                 ),
-              );
-            }
-          }),
+              ),
+            );
+          }
+        },
+      ),
     );
   }
 
@@ -338,7 +340,6 @@ class _BusinessScreenState extends State<BusinessScreen>
   Widget _buildBusinessItem(
       {required BuildContext context, required BusinessItemDTO dto}) {
     final double width = MediaQuery.of(context).size.width;
-    final double height = MediaQuery.of(context).size.height;
     String heroId = dto.businessId;
     return GestureDetector(
       onTap: () {

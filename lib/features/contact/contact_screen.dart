@@ -75,7 +75,6 @@ class _ContactStateState extends State<_ContactState>
 
   Future<void> _onRefresh() async {
     _bloc.add(ContactEventGetList());
-    _bloc.add(ContactEventGetListPending());
   }
 
   Future<void> _onRefreshTabSecond() async {
@@ -154,6 +153,8 @@ class _ContactStateState extends State<_ContactState>
           if (state.type == ContactType.SUGGEST) {
             Provider.of<ContactProvider>(context, listen: false).updateTab(0);
             _bloc.add(ContactEventGetList());
+            _bloc.add(ContactEventGetListPending());
+            _animatedToPage(0);
           }
 
           if (state.type == ContactType.SCAN) {
@@ -188,13 +189,14 @@ class _ContactStateState extends State<_ContactState>
                       children: List.generate(listTab.length, (index) {
                         DataModel model = listTab.elementAt(index);
                         return _buildTab(
-                          onTap: () {
-                            _animatedToPage(index);
-                          },
-                          text: model.title,
-                          isSuggest: index == 1,
-                          isSelect: provider.tab == model.index,
-                        );
+                            onTap: () {
+                              _animatedToPage(index);
+                            },
+                            text: model.title,
+                            isSuggest: index == 1,
+                            isSelect: provider.tab == model.index,
+                            textSuggest:
+                                '${state.listContactDTOSuggest.length}');
                       }).toList(),
                     ),
                     Expanded(
@@ -481,6 +483,7 @@ class _ContactStateState extends State<_ContactState>
     GestureTapCallback? onTap,
     bool isSuggest = false,
     bool isSelect = false,
+    required String textSuggest,
   }) {
     return GestureDetector(
       onTap: onTap,
@@ -500,24 +503,24 @@ class _ContactStateState extends State<_ContactState>
               text,
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
             ),
-            // if (isSuggest)
-            //   Container(
-            //     padding: const EdgeInsets.all(4),
-            //     margin: const EdgeInsets.only(left: 4),
-            //     width: 20,
-            //     height: 20,
-            //     alignment: Alignment.center,
-            //     decoration: BoxDecoration(
-            //         color: AppColor.BLUE_TEXT.withOpacity(0.4),
-            //         borderRadius: BorderRadius.circular(100)),
-            //     child: const Text(
-            //       '1',
-            //       style: TextStyle(
-            //           fontSize: 10,
-            //           fontWeight: FontWeight.w400,
-            //           color: AppColor.BLUE_TEXT),
-            //     ),
-            //   ),
+            if (isSuggest)
+              Container(
+                padding: const EdgeInsets.all(4),
+                margin: const EdgeInsets.only(left: 4),
+                width: 20,
+                height: 20,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                    color: AppColor.BLUE_TEXT.withOpacity(0.4),
+                    borderRadius: BorderRadius.circular(100)),
+                child: Text(
+                  textSuggest,
+                  style: const TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w400,
+                      color: AppColor.BLUE_TEXT),
+                ),
+              ),
           ],
         ),
       ),

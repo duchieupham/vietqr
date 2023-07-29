@@ -45,6 +45,7 @@ class BusinessTransBloc extends Bloc<BusinessTransEvent, BusinessTransState>
           status: BlocStatus.UNLOADING,
           type: TransType.GET_TRANDS,
           isLoadMore: isLoadMore,
+          offset: 0,
         ));
       }
     } catch (e) {
@@ -63,8 +64,10 @@ class BusinessTransBloc extends Bloc<BusinessTransEvent, BusinessTransState>
         TransactionBranchInputDTO dto = TransactionBranchInputDTO(
           businessId: event.dto.businessId,
           branchId: event.dto.branchId,
-          offset: offset,
+          offset: offset * 20,
         );
+
+        List<BusinessTransactionDTO> data = state.listTrans;
 
         List<BusinessTransactionDTO> result =
             await businessInformationRepository.getTransactionByBranchId(dto);
@@ -72,8 +75,10 @@ class BusinessTransBloc extends Bloc<BusinessTransEvent, BusinessTransState>
         if (result.isEmpty || result.length < 20) {
           isLoadMore = true;
         }
+        data.addAll(result);
+
         emit(state.copyWith(
-          listTrans: result,
+          listTrans: data,
           status: BlocStatus.UNLOADING,
           type: TransType.GET_TRANDS,
           isLoadMore: isLoadMore,
@@ -91,7 +96,11 @@ class BusinessTransBloc extends Bloc<BusinessTransEvent, BusinessTransState>
       if (event is BranchEventGetFilter) {
         List<BranchFilterDTO> result =
             await businessInformationRepository.getBranchFilters(event.dto);
-        emit(state.copyWith(listBranch: result, status: BlocStatus.NONE));
+        emit(state.copyWith(
+          listBranch: result,
+          status: BlocStatus.NONE,
+          type: TransType.GET_FILTER,
+        ));
       }
     } catch (e) {
       LOG.error(e.toString());
