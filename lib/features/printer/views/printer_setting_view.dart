@@ -28,6 +28,7 @@ class PrinterSettingView extends StatelessWidget {
     _printerBloc.add(PrinterInitialEvent());
     _printerBloc.add(PrinterEventCheck(userId: userId));
   }
+
   //   if (PlatformUtils.instance.isPhysicalDevice()) {
   //     PrinterBluetoothManager printerManager = PrinterBluetoothManager();
   //     late PrinterBluetooth myPrinter;

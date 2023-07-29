@@ -209,7 +209,7 @@ class _QRGenerated extends State<QRGenerated> {
           .shareImage(
             key: globalKey,
             textSharing:
-                '${dto.bankAccount} - ${dto.bankName}\nĐược tạo bởi vietqr.vn - Hotline 19006234'
+                '${dto.bankAccount} - ${dto.bankName}\nĐược tạo bởi vietqr.vn - Hotline 1900.6234'
                     .trim(),
           )
           .then((value) => _waterMarkProvider.updateWaterMark(false));
@@ -273,7 +273,7 @@ class _QRGenerated extends State<QRGenerated> {
                               TextSpan(text: ' - '),
                               TextSpan(text: 'Hotline '),
                               TextSpan(
-                                text: '19006234',
+                                text: '1900.6234',
                                 style: TextStyle(
                                     decoration: TextDecoration.underline),
                               ),

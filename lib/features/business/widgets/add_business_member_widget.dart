@@ -250,13 +250,13 @@ class AddBusinessMemberWidget extends StatelessWidget {
                   child: Row(children: const [
                     Icon(
                       Icons.check_rounded,
-                      color: AppColor.GREEN,
+                      color: AppColor.BLUE_TEXT,
                       size: 13,
                     ),
                     Padding(padding: EdgeInsets.only(left: 5)),
                     Text(
                       'Đã thêm',
-                      style: TextStyle(color: AppColor.GREEN),
+                      style: TextStyle(color: AppColor.BLUE_TEXT),
                     )
                   ]),
                 )

@@ -42,8 +42,12 @@ class _ContactState extends StatefulWidget {
   State<_ContactState> createState() => _ContactStateState();
 }
 
-class _ContactStateState extends State<_ContactState> {
+class _ContactStateState extends State<_ContactState>
+    with AutomaticKeepAliveClientMixin {
   late ContactBloc _bloc;
+  late PageController _pageController;
+
+  final List<Widget> _listScreens = [];
 
   List<DataModel> listTab = [
     DataModel(
@@ -60,17 +64,39 @@ class _ContactStateState extends State<_ContactState> {
   void initState() {
     super.initState();
     _bloc = BlocProvider.of(context);
+    _pageController = PageController(
+        initialPage: Provider.of<ContactProvider>(context, listen: false).tab,
+        keepPage: true);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _bloc.add(ContactEventGetList());
+      _bloc.add(ContactEventGetListPending());
     });
   }
 
   Future<void> _onRefresh() async {
     _bloc.add(ContactEventGetList());
+    _bloc.add(ContactEventGetListPending());
+  }
+
+  Future<void> _onRefreshTabSecond() async {
+    _bloc.add(ContactEventGetListPending());
+  }
+
+  void _animatedToPage(int index) {
+    try {
+      _pageController.jumpToPage(index);
+    } catch (e) {
+      _pageController = PageController(
+        initialPage: Provider.of<ContactProvider>(context, listen: false).tab,
+        keepPage: true,
+      );
+      _animatedToPage(index);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       appBar: MAppBar(
         title: 'Danh bạ',
@@ -93,7 +119,6 @@ class _ContactStateState extends State<_ContactState> {
                 });
               }
               _bloc.add(ContactEventGetList());
-
             },
             child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -164,12 +189,7 @@ class _ContactStateState extends State<_ContactState> {
                         DataModel model = listTab.elementAt(index);
                         return _buildTab(
                           onTap: () {
-                            provider.updateTab(index);
-                            if (index == 1) {
-                              _bloc.add(ContactEventGetListPending());
-                            } else {
-                              _bloc.add(ContactEventGetList());
-                            }
+                            _animatedToPage(index);
                           },
                           text: model.title,
                           isSuggest: index == 1,
@@ -177,80 +197,20 @@ class _ContactStateState extends State<_ContactState> {
                         );
                       }).toList(),
                     ),
-                    if (provider.tab == 0) ...[
-                      const SizedBox(height: 10),
-                      TextFieldCustom(
-                        isObscureText: false,
-                        maxLines: 1,
-                        fillColor: AppColor.WHITE,
-                        // controller: provider.contentController,
-                        hintText: 'Tìm kiếm danh bạ',
-                        inputType: TextInputType.text,
-                        prefixIcon: const Icon(Icons.search),
-                        keyboardAction: TextInputAction.next,
-                        onChange: (value) {},
+                    Expanded(
+                      child: PageView(
+                        key: const PageStorageKey('Page_view_contact'),
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        controller: _pageController,
+                        onPageChanged: (index) async {
+                          provider.updateTab(index);
+                        },
+                        children: [
+                          _buildTapFirst(listContactDTO: state.listContactDTO),
+                          _buildTapSecond(list: state.listContactDTOSuggest),
+                        ],
                       ),
-                      const SizedBox(height: 30),
-                      Expanded(
-                        child: RefreshIndicator(
-                          onRefresh: _onRefresh,
-                          child: ListView.separated(
-                            itemCount: state.listContactDTO.length,
-                            separatorBuilder: (context, index) {
-                              if (index == state.listContactDTO.length - 1) {
-                                return const SizedBox.shrink();
-                              }
-                              String firstLetterA =
-                                  (state.listContactDTO[index].nickname)[0];
-                              String firstLetterB =
-                                  (state.listContactDTO[index + 1].nickname)[0];
-                              if (firstLetterA != firstLetterB) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(bottom: 4),
-                                  child: Text(
-                                    firstLetterB,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                );
-                              }
-                              return const SizedBox.shrink();
-                            },
-                            itemBuilder: (BuildContext context, int index) {
-                              if (index == 0) {
-                                return Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(bottom: 4),
-                                      child: Text(
-                                          (state.listContactDTO[index]
-                                              .nickname)[0],
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold)),
-                                    ),
-                                    _buildItemSave(
-                                        dto: state.listContactDTO[index]),
-                                  ],
-                                );
-                              }
-                              return _buildItemSave(
-                                  dto: state.listContactDTO[index]);
-                            },
-                          ),
-                        ),
-                      ),
-                    ] else
-                      Expanded(
-                        child: ListView(
-                          padding: const EdgeInsets.only(top: 16),
-                          children: List.generate(
-                              state.listContactDTOSuggest.length, (index) {
-                            ContactDTO dto = state.listContactDTOSuggest[index];
-                            return _buildItemSuggest(dto: dto);
-                          }).toList(),
-                        ),
-                      ),
+                    ),
                   ],
                 ),
               );
@@ -258,6 +218,91 @@ class _ContactStateState extends State<_ContactState> {
           );
         },
       ),
+    );
+  }
+
+  Widget _buildTapSecond({required List<ContactDTO> list}) {
+    if (list.isNotEmpty) {
+      return RefreshIndicator(
+        onRefresh: _onRefreshTabSecond,
+        child: SingleChildScrollView(
+          child: Container(
+            margin: const EdgeInsets.only(top: 16),
+            child: Column(
+              children: List.generate(
+                list.length,
+                (index) {
+                  ContactDTO dto = list[index];
+                  return _buildItemSuggest(dto: dto);
+                },
+              ).toList(),
+            ),
+          ),
+        ),
+      );
+    }
+    return const SizedBox.shrink();
+  }
+
+  Widget _buildTapFirst({required List<ContactDTO> listContactDTO}) {
+    return Column(
+      children: [
+        const SizedBox(height: 10),
+        TextFieldCustom(
+          isObscureText: false,
+          maxLines: 1,
+          fillColor: AppColor.WHITE,
+          // controller: provider.contentController,
+          hintText: 'Tìm kiếm danh bạ',
+          inputType: TextInputType.text,
+          prefixIcon: const Icon(Icons.search),
+          keyboardAction: TextInputAction.next,
+          onChange: (value) {},
+        ),
+        const SizedBox(height: 30),
+        Expanded(
+          child: RefreshIndicator(
+            onRefresh: _onRefresh,
+            child: ListView.separated(
+              itemCount: listContactDTO.length,
+              separatorBuilder: (context, index) {
+                if (index == listContactDTO.length - 1) {
+                  return const SizedBox.shrink();
+                }
+                String firstLetterA = (listContactDTO[index].nickname)[0];
+                String firstLetterB = (listContactDTO[index + 1].nickname)[0];
+                if (firstLetterA != firstLetterB) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: Text(
+                      firstLetterB,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+              itemBuilder: (BuildContext context, int index) {
+                if (index == 0) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 4),
+                        child: Text((listContactDTO[index].nickname)[0],
+                            style:
+                                const TextStyle(fontWeight: FontWeight.bold)),
+                      ),
+                      _buildItemSave(dto: listContactDTO[index]),
+                    ],
+                  );
+                }
+                return _buildItemSave(dto: listContactDTO[index]);
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -384,12 +429,10 @@ class _ContactStateState extends State<_ContactState> {
               )
             ],
           ),
-          const SizedBox(
-            height: 8,
-          ),
+          const SizedBox(height: 8),
           Row(
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              const Spacer(),
               MButtonWidget(
                 onTap: () {
                   FocusManager.instance.primaryFocus?.unfocus();
@@ -408,9 +451,7 @@ class _ContactStateState extends State<_ContactState> {
                 fontSize: 12,
                 isEnable: true,
               ),
-              const SizedBox(
-                width: 12,
-              ),
+              const SizedBox(width: 12),
               MButtonWidget(
                   onTap: () {
                     FocusManager.instance.primaryFocus?.unfocus();
@@ -482,6 +523,9 @@ class _ContactStateState extends State<_ContactState> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class DataModel {

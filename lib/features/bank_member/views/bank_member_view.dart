@@ -423,7 +423,7 @@ class BankMemberView extends StatelessWidget {
               title: 'Đã thêm',
               function: () {},
               bgColor: Theme.of(context).cardColor,
-              textColor: AppColor.GREEN,
+              textColor: AppColor.BLUE_TEXT,
             ),
         ],
       ),

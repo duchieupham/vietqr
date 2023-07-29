@@ -239,7 +239,7 @@ class QRShareView extends StatelessWidget {
                             TextSpan(text: ' - '),
                             TextSpan(text: 'Hotline '),
                             TextSpan(
-                              text: '19006234',
+                              text: '1900.6234',
                               style: TextStyle(
                                   decoration: TextDecoration.underline),
                             ),
