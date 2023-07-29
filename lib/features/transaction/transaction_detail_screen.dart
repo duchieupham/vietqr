@@ -405,7 +405,11 @@ class _BodyWidgetState extends State<_BodyWidget> {
               children: [
                 Expanded(
                   child: MButtonWidget(
-                    widget: Row(
+                    title: '',
+                    isEnable: true,
+                    margin: const EdgeInsets.only(left: 20),
+                    onTap: onPaid,
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: const [
                         Icon(
@@ -422,10 +426,6 @@ class _BodyWidgetState extends State<_BodyWidget> {
                         ),
                       ],
                     ),
-                    title: '',
-                    isEnable: true,
-                    margin: const EdgeInsets.only(left: 20),
-                    onTap: onPaid,
                   ),
                 ),
                 const SizedBox(width: 10),

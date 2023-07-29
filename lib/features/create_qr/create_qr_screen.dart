@@ -636,7 +636,17 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                 )),
             const SizedBox(height: 10),
             MButtonWidget(
-              widget: Row(
+              isEnable: true,
+              margin: const EdgeInsets.symmetric(horizontal: 20),
+              onTap: () {
+                if (fileImage != null) {
+                  dialogExits();
+                } else {
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                }
+              },
+              title: '',
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Image.asset(
@@ -655,16 +665,6 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                   ),
                 ],
               ),
-              isEnable: true,
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              onTap: () {
-                if (fileImage != null) {
-                  dialogExits();
-                } else {
-                  Navigator.of(context).popUntil((route) => route.isFirst);
-                }
-              },
-              title: '',
             ),
             if (fileImage != null)
               Column(

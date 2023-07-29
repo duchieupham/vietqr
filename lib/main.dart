@@ -1,3 +1,4 @@
+import 'package:camera/camera.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +29,7 @@ import 'package:vierqr/features/business/blocs/business_member_bloc.dart';
 import 'package:vierqr/features/business/views/add_business_view.dart';
 import 'package:vierqr/features/business/views/business_information_view.dart';
 import 'package:vierqr/features/business/views/business_transaction_view.dart';
+import 'package:vierqr/features/camera_demo/camera_demo.dart';
 import 'package:vierqr/features/contact/contact_screen.dart';
 import 'package:vierqr/features/contact/views/contact_detail.dart';
 import 'package:vierqr/features/create_qr/create_qr_screen.dart';
@@ -90,6 +92,7 @@ import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 //Share Preferences
 late SharedPreferences sharedPrefs;
+List<CameraDescription> cameras = [];
 
 //go into EnvConfig to change env
 void main() async {
@@ -104,6 +107,7 @@ void main() async {
   } else {
     await Firebase.initializeApp();
   }
+  cameras = await availableCameras();
   LOG.verbose('Config Environment: ${EnvConfig.getEnv()}');
   runApp(const VietQRApp());
 }
@@ -331,7 +335,8 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.UI_SETTING: (context) => const ThemeSettingView(),
                   // Routes.TRANSACTION_HISTORY: (context) =>
                   //     const TransactionHistory(),
-                  Routes.ADD_BANK_CARD: (context) => const AddBankScreen(),
+                  // Routes.ADD_BANK_CARD: (context) => const AddBankScreen(),
+                  Routes.ADD_BANK_CARD: (context) => CameraScreen(),
                   Routes.SELECT_BANK_TYPE: (context) =>
                       const SelectBankTypeScreen(),
                   Routes.BANK_MEMBER_VIEW: (context) => const BankMemberView(),
@@ -408,7 +413,7 @@ class _VietQRApp extends State<VietQRApp> {
                   // }
                   return null;
                 },
-                themeMode:ThemeMode.light,
+                themeMode: ThemeMode.light,
                 darkTheme: DefaultThemeData(context: context).lightTheme,
                 theme: DefaultThemeData(context: context).lightTheme,
                 localizationsDelegates: const [

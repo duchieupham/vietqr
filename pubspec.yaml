@@ -87,6 +87,7 @@ dependencies:
     git:
       url: https://github.com/trieucq/flutter_barcode_scanner.git
   photo_view: ^0.14.0
+  camera: ^0.10.5+2
 
 
 dev_dependencies:
