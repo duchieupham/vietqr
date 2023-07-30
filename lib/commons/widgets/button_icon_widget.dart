@@ -15,30 +15,31 @@ class ButtonIconWidget extends StatelessWidget {
   final FocusNode? focusNode;
   final Alignment? alignment;
   final EdgeInsets contentPadding;
+  final EdgeInsets customPaddingIcon;
   final bool enableShadow;
   final String pathIcon;
 
-  const ButtonIconWidget({
-    super.key,
-    this.width,
-    this.icon = Icons.add,
-    required this.title,
-    required this.function,
-    required this.bgColor,
-    required this.textColor,
-    this.height,
-    this.textSize,
-    this.autoFocus,
-    this.borderRadius,
-    this.focusNode,
-    this.alignment,
-    this.iconSize,
-    this.pathIcon = '',
-    this.contentPadding =
-        const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-    this.enableShadow = false,
-    this.iconPathColor,
-  });
+  const ButtonIconWidget(
+      {super.key,
+      this.width,
+      this.icon = Icons.add,
+      required this.title,
+      required this.function,
+      required this.bgColor,
+      required this.textColor,
+      this.height,
+      this.textSize,
+      this.autoFocus,
+      this.borderRadius,
+      this.focusNode,
+      this.alignment,
+      this.iconSize,
+      this.pathIcon = '',
+      this.contentPadding =
+          const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+      this.enableShadow = false,
+      this.iconPathColor,
+      this.customPaddingIcon = const EdgeInsets.only(left: 6)});
 
   @override
   Widget build(BuildContext context) {
@@ -84,8 +85,7 @@ class ButtonIconWidget extends StatelessWidget {
                 size: iconSize ?? 15,
               ),
             if (title.isNotEmpty) ...[
-              if (pathIcon.isEmpty)
-                const Padding(padding: EdgeInsets.only(left: 5)),
+              if (pathIcon.isEmpty) Padding(padding: customPaddingIcon),
               Text(
                 title,
                 style: TextStyle(
