@@ -41,9 +41,9 @@ class VietQr extends StatelessWidget {
               borderRadius: const BorderRadius.all(Radius.circular(16)),
               boxShadow: [
                 BoxShadow(
-                  color: Theme.of(context).shadowColor.withOpacity(0.3),
-                  spreadRadius: 5,
-                  blurRadius: 5,
+                  color: Theme.of(context).shadowColor.withOpacity(0.1),
+                  spreadRadius: 2,
+                  blurRadius: 3,
                   offset: const Offset(1, 2),
                 ),
               ],
@@ -109,7 +109,6 @@ class VietQr extends StatelessWidget {
               ),
             ),
           ],
-          const SizedBox(height: 10),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Column(

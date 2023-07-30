@@ -17,10 +17,10 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     on<UpdateAvatarEvent>(_updateAvatar);
   }
 
-  String userId = UserInformationHelper.instance.getUserId();
   final logoutRepository = const LogoutRepository();
 
   void _getPointAccount(AccountEvent event, Emitter emit) async {
+    String userId = UserInformationHelper.instance.getUserId();
     try {
       emit(state.copyWith(
           status: BlocStatus.LOADING, request: AccountType.NONE));

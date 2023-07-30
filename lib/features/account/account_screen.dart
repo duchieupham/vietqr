@@ -90,6 +90,7 @@ class _AccountScreenState extends State<AccountScreen>
           if (Navigator.canPop(context)) {
             Navigator.pop(context);
           }
+
           Navigator.of(context).pushReplacementNamed(Routes.LOGIN);
           widget.voidCallback!();
         }

@@ -281,24 +281,37 @@ class _BankScreenState extends State<_BankScreen>
   }
 
   Widget _buildListSection() {
-    return Column(
-      children: [
-        _buildSection('assets/images/ic-qr-white.png', () async {
-          if (QRScannerHelper.instance.getQrIntro()) {
-            // Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
-            startBarcodeScanStream();
-          } else {
-            await DialogWidget.instance.showFullModalBottomContent(
-              widget: const QRScanWidget(),
-              color: AppColor.BLACK,
-            );
-            if (!mounted) return;
-            startBarcodeScanStream();
-          }
-        },
-            title: 'Copy mã QR',
-            des: 'Quét mã VietQR để thêm/Liên kết TK ngân hàng'),
-      ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        children: [
+          Expanded(
+            child: _buildSection('assets/images/ic-qr-white.png', () async {
+              if (QRScannerHelper.instance.getQrIntro()) {
+                // Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
+                startBarcodeScanStream();
+              } else {
+                await DialogWidget.instance.showFullModalBottomContent(
+                  widget: const QRScanWidget(),
+                  color: AppColor.BLACK,
+                );
+                if (!mounted) return;
+                startBarcodeScanStream();
+              }
+            },
+                title: 'Copy mã QR',
+                des: 'Quét mã VietQR để thêm/Liên kết TK ngân hàng'),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: _buildSection('assets/images/ic-contact.png', () async {
+              Navigator.pushNamed(context, Routes.PHONE_BOOK);
+            },
+                title: 'Danh bạ QR',
+                des: 'Lưu trữ các loại QR để sử dụng cho nhiều mục đích'),
+          ),
+        ],
+      ),
     );
   }
 
@@ -307,8 +320,7 @@ class _BankScreenState extends State<_BankScreen>
     return GestureDetector(
       onTap: onTab,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        margin: const EdgeInsets.symmetric(horizontal: 12),
+        padding: const EdgeInsets.only(left: 8, right: 16, top: 12, bottom: 12),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
           color: Theme.of(context).cardColor,
@@ -326,42 +338,49 @@ class _BankScreenState extends State<_BankScreen>
             Image.asset(
               pathIcon,
               width: 40,
+              height: 30,
               color: AppColor.BLUE_TEXT,
-            ),
-            const SizedBox(
-              width: 12,
+              fit: BoxFit.contain,
             ),
             Expanded(
-                child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(
-                  height: 2,
-                ),
-                Text(
-                  des,
-                  style:
-                      const TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
-                ),
-              ],
-            )),
-            Container(
-              padding: const EdgeInsets.all(5),
-              margin: const EdgeInsets.only(top: 4, left: 2),
-              decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(Radius.circular(25)),
-                  color: AppColor.GREY_LIGHT.withOpacity(0.2)),
-              child: const Icon(
-                Icons.arrow_forward_ios,
-                color: AppColor.GREY_HIGHLIGHT,
-                size: 12,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          title,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                              height: 1.4),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(25)),
+                            color: AppColor.GREY_LIGHT.withOpacity(0.2)),
+                        child: const Icon(
+                          Icons.arrow_forward_ios,
+                          color: AppColor.GREY_HIGHLIGHT,
+                          size: 12,
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    des,
+                    style: const TextStyle(
+                        fontSize: 12, color: AppColor.GREY_TEXT),
+                  ),
+                ],
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -480,6 +499,7 @@ class _StackedList extends State<StackedList> {
 
   late AccountBloc _accountBloc;
   StreamSubscription? _subscription;
+
   _StackedList();
 
   @override
@@ -855,7 +875,7 @@ class _StackedList extends State<StackedList> {
                         Row(
                           children: [
                             Text(
-                              'Số dư : ${CurrencyUtils.instance.getCurrencyFormatted(state.introduceDTO!.amount ?? '0')} VND - Điểm thưởng: ${state.introduceDTO!.point ?? '0'} ',
+                              'Số dư : ${CurrencyUtils.instance.getCurrencyFormatted(state.introduceDTO!.amount ?? '0')} VQR - Điểm thưởng: ${state.introduceDTO!.point ?? '0'} ',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
@@ -885,14 +905,14 @@ class _StackedList extends State<StackedList> {
             ],
           ),
           const Spacer(),
-          // const Padding(
-          //   padding: EdgeInsets.only(top: 10, right: 6),
-          //   child: Icon(
-          //     Icons.arrow_forward_ios,
-          //     color: AppColor.WHITE,
-          //     size: 12,
-          //   ),
-          // ),
+          const Padding(
+            padding: EdgeInsets.only(top: 10, right: 8),
+            child: Icon(
+              Icons.arrow_forward_ios,
+              color: AppColor.WHITE,
+              size: 12,
+            ),
+          ),
         ],
       ),
     );
