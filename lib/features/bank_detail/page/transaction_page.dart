@@ -41,7 +41,13 @@ class Transaction extends StatelessWidget {
         Align(
             alignment: Alignment.centerRight,
             child: GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  Navigator.pushNamed(
+                    context,
+                    Routes.TRANSACTION_HISTORY_VIEW,
+                    arguments: {'bankId': bankId},
+                  );
+                },
                 child: const Text(
                   'Tất cả',
                   style: TextStyle(
