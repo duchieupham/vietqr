@@ -103,12 +103,24 @@ class ScanQrBloc extends Bloc<ScanQrEvent, ScanQrState> {
               informationDTO: dto,
               request: ScanType.SEARCH_NAME));
         } else {
-          emit(
-            state.copyWith(
-              request: ScanType.SCAN_NOT_FOUND,
-              status: BlocStatus.UNLOADING,
-            ),
-          );
+          BankNameInformationDTO dto = const BankNameInformationDTO(
+              accountName: 'Tên chủ tài khoản không xác định',
+              customerName: 'Tên chủ tài khoản không xác định',
+              customerShortName: 'Tên chủ tài khoản không xác định',
+              isNaviAddBank: true);
+          if (event.dto.accountNumber.isNotEmpty) {
+            emit(state.copyWith(
+                status: BlocStatus.UNLOADING,
+                informationDTO: dto,
+                request: ScanType.SEARCH_NAME));
+          } else {
+            emit(
+              state.copyWith(
+                request: ScanType.SCAN_NOT_FOUND,
+                status: BlocStatus.UNLOADING,
+              ),
+            );
+          }
         }
       }
     } catch (e) {

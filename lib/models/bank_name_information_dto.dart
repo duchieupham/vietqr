@@ -2,11 +2,13 @@ class BankNameInformationDTO {
   final String accountName;
   final String customerName;
   final String customerShortName;
+  final bool? isNaviAddBank;
 
   const BankNameInformationDTO({
     required this.accountName,
     required this.customerName,
     required this.customerShortName,
+    this.isNaviAddBank = false,
   });
 
   factory BankNameInformationDTO.fromJson(Map<String, dynamic> json) {

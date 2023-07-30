@@ -74,11 +74,13 @@ class _ScanQrScreenState extends State<_BodyWidget> {
             qrCode: state.codeQR ?? '',
             imgId: state.bankTypeDTO?.imageId ?? '',
             bankTypeId: state.bankTypeDTO?.id ?? '',
+            isNaviAddBank: state.informationDTO?.isNaviAddBank!,
           );
 
           if (!mounted) return;
           Navigator.of(context).pop({
             'type': state.typeContact,
+            'bankTypeDTO': state.bankTypeDTO,
             'data': dto,
           });
         }

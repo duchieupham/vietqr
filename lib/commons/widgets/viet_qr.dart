@@ -116,6 +116,7 @@ class VietQr extends StatelessWidget {
               children: [
                 Text(
                   qrGeneratedDTO.userBankName.toUpperCase(),
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize:
                         (isSmallWidget != null && isSmallWidget!) ? 12 : 15,
