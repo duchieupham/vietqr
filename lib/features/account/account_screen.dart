@@ -108,6 +108,7 @@ class _AccountScreenState extends State<AccountScreen>
           children: [
             _BannerWidget(),
             const SizedBox(height: 30),
+            _FeatureWidget(code: state.introduceDTO?.walletId ?? ''),
             Expanded(
               child: RefreshIndicator(
                 onRefresh: _onRefresh,
@@ -115,7 +116,6 @@ class _AccountScreenState extends State<AccountScreen>
                   physics: const AlwaysScrollableScrollPhysics(),
                   child: Column(
                     children: [
-                      _FeatureWidget(code: state.introduceDTO?.walletId ?? ''),
                       const SizedBox(height: 30),
                       _IntroduceWidget(dto: state.introduceDTO),
                       const SizedBox(height: 20),
@@ -167,7 +167,7 @@ class _AccountScreenState extends State<AccountScreen>
 class _BannerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 230,
       width: MediaQuery.of(context).size.width,
       child: Column(

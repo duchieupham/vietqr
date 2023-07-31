@@ -43,7 +43,7 @@ import 'package:vierqr/features/printer/blocs/printer_bloc.dart';
 import 'package:vierqr/features/printer/views/printer_setting_view.dart';
 import 'package:vierqr/features/logout/blocs/log_out_bloc.dart';
 import 'package:vierqr/features/notification/blocs/notification_bloc.dart';
-import 'package:vierqr/features/login/views/login.dart';
+import 'package:vierqr/features/login/login_screen.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_manage_bloc.dart';
 import 'package:vierqr/features/personal/blocs/user_edit_bloc.dart';
 import 'package:vierqr/features/personal/views/user_edit_view.dart';
@@ -306,6 +306,10 @@ class _VietQRApp extends State<VietQRApp> {
             builder: (context, themeSelect, child) {
               if (themeSelect.typeBankArr != 0) {
                 themeSelect.updateBankArr(0);
+              }
+
+              if (themeSelect.getThemeIndex() != 0) {
+                themeSelect.updateThemeByIndex(0);
               }
               return MaterialApp(
                 navigatorKey: NavigationService.navigatorKey,

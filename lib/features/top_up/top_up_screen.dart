@@ -24,7 +24,7 @@ class TopUpScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const MAppBar(title: 'Nạp tiền'),
+      appBar: const MAppBar(title: 'Dịch vụ VietQR'),
       body: ChangeNotifierProvider(
         create: (context) => TopUpProvider(),
         child: BlocProvider<TopUpBloc>(
@@ -71,8 +71,67 @@ class TopUpScreen extends StatelessWidget {
                     ),
                   ),
                   Consumer<TopUpProvider>(builder: (context, provider, child) {
+                    return Container(
+                      padding: const EdgeInsets.fromLTRB(
+                          20.0, 16, 20, kToolbarHeight),
+                      color: AppColor.WHITE,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Tổng tiền cần thanh toán:'),
+                                Text(
+                                  '${provider.money} VND',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              FocusManager.instance.primaryFocus?.unfocus();
+                              Map<String, dynamic> data = {};
+                              data['phoneNo'] =
+                                  UserInformationHelper.instance.getPhoneNo();
+                              data['amount'] =
+                                  provider.money.replaceAll('.', '');
+                              data['transType'] = 'C';
+                              BlocProvider.of<TopUpBloc>(context)
+                                  .add(TopUpEventCreateQR(data: data));
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 8),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  color: AppColor.BLUE_TEXT),
+                              child: const Text(
+                                'Thanh toán',
+                                style: TextStyle(color: AppColor.WHITE),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+
                     return MButtonWidget(
                       title: 'Thanh toán',
+                      widget: Row(
+                        children: [
+                          Column(
+                            children: [
+                              Text('Tổng tiền cần thanh toán:'),
+                              Text('${provider.money} VND'),
+                            ],
+                          )
+                        ],
+                      ),
+                      margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                       isEnable: provider.errorMoney.isEmpty,
                       colorEnableText: provider.errorMoney.isEmpty
                           ? AppColor.WHITE

@@ -91,7 +91,7 @@ class _SelectBranchWidgetState extends State<SelectBranchWidget> {
                     child: const Text(
                       'Xong',
                       style: TextStyle(
-                        color: AppColor.GREEN,
+                        color: AppColor.BLUE_TEXT,
                       ),
                     ),
                   ),

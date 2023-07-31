@@ -14,6 +14,7 @@ class ModelBottomSheetView extends StatefulWidget {
     this.data,
     this.searchType,
     this.noData,
+    required this.ctx,
   }) : super(key: key);
 
   final TextStyle? titleStyles;
@@ -24,6 +25,7 @@ class ModelBottomSheetView extends StatefulWidget {
   final String? searchType;
   final bool isSearch;
   final List list;
+  final BuildContext ctx;
 
   @override
   State<StatefulWidget> createState() => _BodyWidget();
@@ -59,7 +61,7 @@ class _BodyWidget extends State<ModelBottomSheetView> {
   @override
   Widget build(BuildContext context) {
     var column = Container(
-      margin: const EdgeInsets.only(left: 20, right: 20, top: 24),
+      margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -72,7 +74,7 @@ class _BodyWidget extends State<ModelBottomSheetView> {
                 child: Container(
                   width: double.infinity,
                   color: Colors.transparent,
-                  margin: const EdgeInsets.only(bottom: 16),
+                  margin: const EdgeInsets.only(bottom: 12),
                   child: Row(
                     children: [
                       Expanded(

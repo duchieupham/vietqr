@@ -326,7 +326,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                                   );
                                 }),
                                 Consumer<AddBankProvider>(
-                                  builder: (context, provider, child) {
+                                  builder: (ctx, provider, child) {
                                     if (provider.step == 1) {
                                       return AccountLinkView(
                                         bankTypeDTO: provider.bankTypeDTO!,
@@ -404,6 +404,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                                                 padding: EdgeInsets.zero,
                                                 widget: ModelBottomSheetView(
                                                   tvTitle: 'Chọn ngân hàng',
+                                                  ctx: context,
                                                   list: state.listBanks ?? [],
                                                   isSearch: true,
                                                   data: provider.bankTypeDTO,
@@ -494,7 +495,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                                             title: 'Số tài khoản',
                                             focusNode: focusAccount,
                                             hintText: 'Nhập số tài khoản',
-                                            inputType: TextInputType.number,
+                                            inputType: TextInputType.text,
                                             keyboardAction:
                                                 TextInputAction.next,
                                             onChange:

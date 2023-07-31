@@ -4,8 +4,13 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 class PhoneWidget extends StatefulWidget {
   final ValueChanged<String>? onChanged;
   final TextEditingController phoneController;
+  final bool isShowTitle;
 
-  const PhoneWidget({super.key, this.onChanged, required this.phoneController});
+  const PhoneWidget(
+      {super.key,
+      this.onChanged,
+      required this.phoneController,
+      this.isShowTitle = false});
 
   @override
   State<PhoneWidget> createState() => _BodyWidget();
@@ -77,28 +82,29 @@ class _BodyWidget extends State<PhoneWidget> {
     );
     return Column(
       children: [
-        Row(
-          children: const [
-            SizedBox(
-              child: Text(
-                'Số điện thoại',
+        if (widget.isShowTitle)
+          Row(
+            children: const [
+              SizedBox(
+                child: Text(
+                  'Số điện thoại',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              SizedBox(width: 4),
+              Text(
+                '*',
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
+                  color: AppColor.RED_EC1010,
                 ),
               ),
-            ),
-            SizedBox(width: 4),
-            Text(
-              '*',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: AppColor.RED_EC1010,
-              ),
-            ),
-          ],
-        ),
+            ],
+          ),
         const SizedBox(height: 10),
         IntrinsicHeight(
           child: Row(
