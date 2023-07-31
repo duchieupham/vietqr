@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -13,7 +15,6 @@ import 'package:vierqr/features/login/events/login_event.dart';
 import 'package:vierqr/features/login/states/login_state.dart';
 import 'package:vierqr/features/register/views/register_screen.dart';
 import 'package:vierqr/layouts/button_widget.dart';
-import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/layouts/pin_code_input.dart';
 import 'package:vierqr/models/account_login_dto.dart';
 import 'package:flutter/material.dart';
@@ -326,38 +327,92 @@ class _LoginState extends State<_Login> {
               }
 
               return Scaffold(
-                appBar: const MAppBar(
-                  title: 'Đăng nhập',
-                  isLeading: false,
-                ),
-                body: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      PhoneWidget(
-                        phoneController: phoneNoController,
-                        onChanged: provider.updatePhone,
-                      ),
-                      Visibility(
-                        visible: provider.errorPhone != null,
-                        child: Padding(
-                          padding:
-                              const EdgeInsets.only(left: 5, top: 5, right: 30),
-                          child: Text(
-                            provider.errorPhone ?? '',
-                            textAlign: TextAlign.left,
-                            style: const TextStyle(
-                                color: AppColor.RED_TEXT, fontSize: 13),
+                body: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    SizedBox(
+                      height: 250,
+                      width: MediaQuery.of(context).size.width,
+                      child: Stack(
+                        children: [
+                          Center(
+                            child: Container(
+                              height: 250,
+                              width: MediaQuery.of(context).size.width,
+                              decoration: const BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage(
+                                      'assets/images/bgr-header.png'),
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
+                          Positioned(
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            child: ClipRect(
+                              child: BackdropFilter(
+                                filter:
+                                    ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+                                child: Opacity(
+                                  opacity: 0.6,
+                                  child: Container(
+                                    height: 30,
+                                    color: Colors.transparent,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Container(
+                                height: 100,
+                                width: MediaQuery.of(context).size.width / 2,
+                                margin: const EdgeInsets.only(top: 50),
+                                decoration: const BoxDecoration(
+                                  image: DecorationImage(
+                                    image: AssetImage(
+                                        'assets/images/logo_vietgr_payment.png'),
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(
-                        height: 8,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 20),
+                      child: Column(
+                        children: [
+                          PhoneWidget(
+                            phoneController: phoneNoController,
+                            onChanged: provider.updatePhone,
+                          ),
+                          Visibility(
+                            visible: provider.errorPhone != null,
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 5, top: 5, right: 30),
+                              child: Text(
+                                provider.errorPhone ?? '',
+                                textAlign: TextAlign.left,
+                                style: const TextStyle(
+                                    color: AppColor.RED_TEXT, fontSize: 13),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 8),
+                  ],
                 ),
                 bottomSheet: Column(
                   mainAxisSize: MainAxisSize.min,

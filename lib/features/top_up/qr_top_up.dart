@@ -84,141 +84,143 @@ class _QRTopUpScreenState extends State<QRTopUpScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const MAppBar(title: 'Dịch vụ VietQR'),
-      body: ChangeNotifierProvider(
-        create: (context) => TopUpProvider(),
-        child: BlocProvider<TopUpBloc>(
-          create: (context) => TopUpBloc(),
-          child: BlocConsumer<TopUpBloc, TopUpState>(
-            listener: (context, state) {},
-            builder: (context, state) {
-              return Column(
-                children: [
-                  Expanded(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 16),
-                          RepaintBoundaryWidget(
-                              globalKey: globalKey,
-                              builder: (key) {
-                                return Container(
-                                  margin: const EdgeInsets.only(
-                                      top: 0, bottom: 16, left: 30, right: 30),
-                                  padding: const EdgeInsets.all(16),
-                                  decoration: const BoxDecoration(
-                                    color: AppColor.WHITE,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(20)),
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: QrImage(
-                                          data: widget.dto.qrCode,
-                                          version: QrVersions.auto,
-                                          embeddedImage: const AssetImage(
-                                              'assets/images/ic-viet-qr-small.png'),
-                                          embeddedImageStyle:
-                                              QrEmbeddedImageStyle(
-                                            size: const Size(30, 30),
+      body: SafeArea(
+        child: ChangeNotifierProvider(
+          create: (context) => TopUpProvider(),
+          child: BlocProvider<TopUpBloc>(
+            create: (context) => TopUpBloc(),
+            child: BlocConsumer<TopUpBloc, TopUpState>(
+              listener: (context, state) {},
+              builder: (context, state) {
+                return Column(
+                  children: [
+                    Expanded(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 16),
+                            RepaintBoundaryWidget(
+                                globalKey: globalKey,
+                                builder: (key) {
+                                  return Container(
+                                    margin: const EdgeInsets.only(
+                                        top: 0, bottom: 16, left: 30, right: 30),
+                                    padding: const EdgeInsets.all(16),
+                                    decoration: const BoxDecoration(
+                                      color: AppColor.WHITE,
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(20)),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: QrImage(
+                                            data: widget.dto.qrCode,
+                                            version: QrVersions.auto,
+                                            embeddedImage: const AssetImage(
+                                                'assets/images/ic-viet-qr-small.png'),
+                                            embeddedImageStyle:
+                                                QrEmbeddedImageStyle(
+                                              size: const Size(30, 30),
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 20),
-                                        child: Row(
-                                          children: [
-                                            Image.asset(
-                                              'assets/images/ic-viet-qr.png',
-                                              height: 28,
-                                            ),
-                                            const Spacer(),
-                                            Image.asset(
-                                              'assets/images/ic-napas247.png',
-                                              height: 30,
-                                            ),
-                                          ],
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 20),
+                                          child: Row(
+                                            children: [
+                                              Image.asset(
+                                                'assets/images/ic-viet-qr.png',
+                                                height: 28,
+                                              ),
+                                              const Spacer(),
+                                              Image.asset(
+                                                'assets/images/ic-napas247.png',
+                                                height: 30,
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              }),
-                          const Text(
-                            'Thanh toán qua ứng dụng Ngân hàng/ Ví điện tử',
+                                      ],
+                                    ),
+                                  );
+                                }),
+                            const Text(
+                              'Thanh toán qua ứng dụng Ngân hàng/ Ví điện tử',
+                            ),
+                            _buildInfoBill(),
+                            const SizedBox(height: 30),
+                            _buildSuggest(),
+                            const SizedBox(height: 20)
+                          ],
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: ButtonIconWidget(
+                              height: 40,
+                              pathIcon: 'assets/images/ic-img-blue.png',
+                              textColor: AppColor.BLUE_TEXT,
+                              iconPathColor: AppColor.BLUE_TEXT,
+                              iconSize: 22,
+                              title: 'Lưu ảnh',
+                              textSize: 12,
+                              bgColor: AppColor.WHITE,
+                              borderRadius: 5,
+                              function: () async {
+                                await Future.delayed(
+                                    const Duration(milliseconds: 300), () async {
+                                  await ShareUtils.instance
+                                      .saveImageToGallery(globalKey)
+                                      .then((value) {
+                                    Fluttertoast.showToast(
+                                      msg: 'Đã lưu ảnh',
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.CENTER,
+                                      backgroundColor:
+                                          Theme.of(context).cardColor,
+                                      textColor: Theme.of(context).hintColor,
+                                      fontSize: 15,
+                                    );
+                                    // Navigator.pop(context);
+                                  });
+                                });
+                              },
+                            ),
                           ),
-                          _buildInfoBill(),
-                          const SizedBox(height: 30),
-                          _buildSuggest(),
-                          const SizedBox(height: 20)
+                          const SizedBox(
+                            width: 12,
+                          ),
+                          Expanded(
+                            child: ButtonIconWidget(
+                              title: 'Chia sẻ',
+                              height: 40,
+                              pathIcon: 'assets/images/ic-share-blue.png',
+                              textColor: AppColor.BLUE_TEXT,
+                              bgColor: AppColor.WHITE,
+                              iconPathColor: AppColor.BLUE_TEXT,
+                              iconSize: 22,
+                              borderRadius: 5,
+                              textSize: 12,
+                              function: () async {
+                                share(name: "QR thanh toán");
+                              },
+                            ),
+                          ),
                         ],
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: ButtonIconWidget(
-                            height: 40,
-                            pathIcon: 'assets/images/ic-img-blue.png',
-                            textColor: AppColor.BLUE_TEXT,
-                            iconPathColor: AppColor.BLUE_TEXT,
-                            iconSize: 22,
-                            title: 'Lưu ảnh',
-                            textSize: 12,
-                            bgColor: AppColor.WHITE,
-                            borderRadius: 5,
-                            function: () async {
-                              await Future.delayed(
-                                  const Duration(milliseconds: 300), () async {
-                                await ShareUtils.instance
-                                    .saveImageToGallery(globalKey)
-                                    .then((value) {
-                                  Fluttertoast.showToast(
-                                    msg: 'Đã lưu ảnh',
-                                    toastLength: Toast.LENGTH_SHORT,
-                                    gravity: ToastGravity.CENTER,
-                                    backgroundColor:
-                                        Theme.of(context).cardColor,
-                                    textColor: Theme.of(context).hintColor,
-                                    fontSize: 15,
-                                  );
-                                  // Navigator.pop(context);
-                                });
-                              });
-                            },
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 12,
-                        ),
-                        Expanded(
-                          child: ButtonIconWidget(
-                            title: 'Chia sẻ',
-                            height: 40,
-                            pathIcon: 'assets/images/ic-share-blue.png',
-                            textColor: AppColor.BLUE_TEXT,
-                            bgColor: AppColor.WHITE,
-                            iconPathColor: AppColor.BLUE_TEXT,
-                            iconSize: 22,
-                            borderRadius: 5,
-                            textSize: 12,
-                            function: () async {
-                              share(name: "QR thanh toán");
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              );
-            },
+                  ],
+                );
+              },
+            ),
           ),
         ),
       ),
@@ -447,7 +449,7 @@ class _QRTopUpScreenState extends State<QRTopUpScreen>
               ),
               Expanded(
                 child: Text(
-                  'Lưu ý: Vui lòng không chỉnh sửa nội dung chuyển khoản, điều này có thể ảnh hưởng tới hệ thống nạp tiền.',
+                  'Vui lòng không chỉnh sửa nội dung chuyển khoản, điều này có thể ảnh hưởng tới hệ thống nạp tiền.',
                   style: TextStyle(
                     fontSize: 13,
                     color: AppColor.BLACK,

@@ -371,135 +371,137 @@ class _BusinessScreenState extends State<BusinessScreen>
           ],
           color: Theme.of(context).cardColor,
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildTitleItemBusiness(dto),
-            const SizedBox(height: 15),
-            Container(
-              margin: const EdgeInsets.only(left: 15),
-              child: Column(
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildTitleItemBusiness(dto),
+              const SizedBox(height: 15),
+              Container(
+                margin: const EdgeInsets.only(left: 15),
+                child: Column(
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: 100,
+                          child: _buildChip(
+                            context: context,
+                            icon: Icons.people_rounded,
+                            text: '${dto.totalMember} thành viên',
+                            color: AppColor.GREY_TEXT,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: _buildChip(
+                            context: context,
+                            icon: Icons.business_rounded,
+                            color: AppColor.GREY_TEXT,
+                            text: '${dto.totalBranch} chi nhánh',
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    if (dto.address.isNotEmpty)
                       SizedBox(
-                        width: 100,
+                        width: width - 40,
                         child: _buildChip(
                           context: context,
-                          icon: Icons.people_rounded,
-                          text: '${dto.totalMember} thành viên',
+                          icon: Icons.location_on_outlined,
                           color: AppColor.GREY_TEXT,
+                          text: dto.address,
                         ),
                       ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: _buildChip(
-                          context: context,
-                          icon: Icons.business_rounded,
-                          color: AppColor.GREY_TEXT,
-                          text: '${dto.totalBranch} chi nhánh',
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  if (dto.address.isNotEmpty)
-                    SizedBox(
-                      width: width - 40,
-                      child: _buildChip(
-                        context: context,
-                        icon: Icons.location_on_outlined,
-                        color: AppColor.GREY_TEXT,
-                        text: dto.address,
-                      ),
-                    ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 12),
-            const Padding(
-              padding: EdgeInsets.only(left: 14, bottom: 8),
-              child: Text(
-                'Tài khoản đã kết nối',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-            SizedBox(
-              height: 105,
-              child: (dto.bankAccounts.isEmpty)
-                  ? const Padding(
-                      padding: EdgeInsets.only(left: 14, bottom: 8),
-                      child: Text('Chưa có tài khoản được kết nối'),
-                    )
-                  : ListView.separated(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      padding: const EdgeInsets.all(0),
-                      itemCount: dto.bankAccounts.length > 3
-                          ? 3
-                          : dto.bankAccounts.length,
-                      itemBuilder: (context, index) {
-                        return _buildElementMember(
-                            dto: dto.bankAccounts[index]);
-                      },
-                      separatorBuilder: (context, index) {
-                        return const SizedBox(
-                          height: 6,
-                        );
-                      },
-                    ),
-            ),
-            if (dto.bankAccounts.length > 3)
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 3, horizontal: 14),
-                child: Text(
-                  '${dto.bankAccounts.length - 3} ngân hàng khác',
-                  style: const TextStyle(
-                      fontSize: 12,
-                      decoration: TextDecoration.underline,
-                      color: AppColor.BLUE_TEXT),
+                  ],
                 ),
+              ),
+              const SizedBox(height: 12),
+              const Padding(
+                padding: EdgeInsets.only(left: 14, bottom: 8),
+                child: Text(
+                  'Tài khoản đã kết nối',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+              SizedBox(
+                height: 105,
+                child: (dto.bankAccounts.isEmpty)
+                    ? const Padding(
+                        padding: EdgeInsets.only(left: 14, bottom: 8),
+                        child: Text('Chưa có tài khoản được kết nối'),
+                      )
+                    : ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        padding: const EdgeInsets.all(0),
+                        itemCount: dto.bankAccounts.length > 3
+                            ? 3
+                            : dto.bankAccounts.length,
+                        itemBuilder: (context, index) {
+                          return _buildElementMember(
+                              dto: dto.bankAccounts[index]);
+                        },
+                        separatorBuilder: (context, index) {
+                          return const SizedBox(
+                            height: 6,
+                          );
+                        },
+                      ),
+              ),
+              if (dto.bankAccounts.length > 3)
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 3, horizontal: 14),
+                  child: Text(
+                    '${dto.bankAccounts.length - 3} ngân hàng khác',
+                    style: const TextStyle(
+                        fontSize: 12,
+                        decoration: TextDecoration.underline,
+                        color: AppColor.BLUE_TEXT),
+                  ),
+                )
+              else
+                const SizedBox(
+                  height: 20,
+                ),
+              const Padding(
+                padding: EdgeInsets.only(left: 14, bottom: 8),
+                child: Text(
+                  'Giao dịch gần đây',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+              SizedBox(
+                height: 108,
+                child: (dto.transactions.isEmpty)
+                    ? const Padding(
+                        padding: EdgeInsets.only(left: 14, bottom: 8),
+                        child: Text('Chưa có giao dịch nào'),
+                      )
+                    : ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        padding: const EdgeInsets.all(0),
+                        itemCount: dto.transactions.length,
+                        itemBuilder: (context, index) {
+                          return _buildTransactionItem(
+                            context: context,
+                            dto: dto.transactions[index],
+                            businessId: dto.businessId,
+                          );
+                        },
+                        separatorBuilder: (context, index) {
+                          return const SizedBox(
+                            height: 8,
+                          );
+                        },
+                      ),
               )
-            else
-              const SizedBox(
-                height: 20,
-              ),
-            const Padding(
-              padding: EdgeInsets.only(left: 14, bottom: 8),
-              child: Text(
-                'Giao dịch gần đây',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-            SizedBox(
-              height: 108,
-              child: (dto.transactions.isEmpty)
-                  ? const Padding(
-                      padding: EdgeInsets.only(left: 14, bottom: 8),
-                      child: Text('Chưa có giao dịch nào'),
-                    )
-                  : ListView.separated(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      padding: const EdgeInsets.all(0),
-                      itemCount: dto.transactions.length,
-                      itemBuilder: (context, index) {
-                        return _buildTransactionItem(
-                          context: context,
-                          dto: dto.transactions[index],
-                          businessId: dto.businessId,
-                        );
-                      },
-                      separatorBuilder: (context, index) {
-                        return const SizedBox(
-                          height: 8,
-                        );
-                      },
-                    ),
-            )
-          ],
+            ],
+          ),
         ),
       ),
     );

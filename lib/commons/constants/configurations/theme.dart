@@ -73,10 +73,10 @@ class AppColor {
   static const String THEME_DARK = 'DARK';
   static const String THEME_SYSTEM = 'SYSTEM';
 
-  static BoxDecoration cardDecoration(BuildContext context) {
+  static BoxDecoration cardDecoration(BuildContext context, {Color? color}) {
     return BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: Theme.of(context).cardColor);
+        color: color ?? Theme.of(context).cardColor);
   }
 }
 
