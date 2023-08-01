@@ -103,32 +103,27 @@ class _AccountScreenState extends State<AccountScreen>
         }
       },
       builder: (context, state) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _BannerWidget(),
-            const SizedBox(height: 30),
-            _FeatureWidget(code: state.introduceDTO?.walletId ?? ''),
-            Expanded(
-              child: RefreshIndicator(
-                onRefresh: _onRefresh,
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 30),
-                      _IntroduceWidget(dto: state.introduceDTO),
-                      const SizedBox(height: 20),
-                      _SettingWidget(),
-                      const SizedBox(height: 16),
-                      _buildLogOutWidget(),
-                      const SizedBox(height: kToolbarHeight + 16),
-                    ],
-                  ),
-                ),
-              ),
+        return RefreshIndicator(
+          onRefresh: _onRefresh,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _BannerWidget(),
+                const SizedBox(height: 30),
+                _FeatureWidget(code: state.introduceDTO?.walletId ?? ''),
+                const SizedBox(height: 30),
+                _IntroduceWidget(dto: state.introduceDTO),
+                const SizedBox(height: 30),
+                _SettingWidget(),
+                const SizedBox(height: 30),
+                _SupportWidget(),
+                const SizedBox(height: 30),
+                _buildLogOutWidget(),
+              ],
             ),
-          ],
+          ),
         );
       },
     );
@@ -373,17 +368,17 @@ class _IntroduceWidget extends StatelessWidget {
                 'Điểm thưởng : ',
                 style: TextStyle(
                   color: AppColor.GREY_TEXT,
-                  fontSize: 12,
+                  fontSize: 14,
                 ),
               ),
               Text(
                 dto?.point ?? '0',
-                style: const TextStyle(fontSize: 14),
+                style: const TextStyle(fontSize: 16),
               ),
               Image.asset(
                 'assets/images/ic_point.png',
-                width: 16,
-                height: 16,
+                width: 20,
+                height: 20,
               ),
             ],
           ),
@@ -401,15 +396,15 @@ class _IntroduceWidget extends StatelessWidget {
               children: [
                 Image.asset(
                   'assets/images/ic_share_code.png',
-                  width: 28,
-                  height: 28,
+                  width: 30,
+                  height: 30,
                 ),
                 const SizedBox(width: 8),
                 const Expanded(
                   child: Text(
                     'Giới thiệu VietQR VN',
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 14,
                     ),
                   ),
                 ),
@@ -430,6 +425,86 @@ class _IntroduceWidget extends StatelessWidget {
   }
 }
 
+class _SupportWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Text(
+            'Hỗ trợ',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(10)),
+              color: Theme.of(context).cardColor,
+            ),
+            child: Column(
+              children: [
+                GestureDetector(
+                  onTap: () async {
+                    Navigator.pushNamed(context, Routes.CONTACT_US_SCREEN);
+                  },
+                  child: Row(
+                    children: [
+                      Image.asset(
+                        'assets/images/ic-report.png',
+                        width: 30,
+                        height: 30,
+                      ),
+                      const SizedBox(width: 8),
+                      const Expanded(
+                        child: Text(
+                          'Báo cáo vấn đề',
+                          style: TextStyle(
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(),
+                GestureDetector(
+                  onTap: () async {
+                    Navigator.pushNamed(context, Routes.CONTACT_US_SCREEN);
+                  },
+                  child: Row(
+                    children: [
+                      Image.asset(
+                        'assets/images/ic-introduce.png',
+                        width: 30,
+                        height: 30,
+                      ),
+                      const SizedBox(width: 8),
+                      const Expanded(
+                        child: Text(
+                          'Liên hệ với chúng tôi',
+                          style: TextStyle(
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _SettingWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -441,11 +516,11 @@ class _SettingWidget extends StatelessWidget {
           const Text(
             'Cài đặt',
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 16,
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 10),
           Container(
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
             decoration: BoxDecoration(
@@ -472,15 +547,15 @@ class _SettingWidget extends StatelessWidget {
                     children: [
                       Image.asset(
                         'assets/images/ic-printer-setting.png',
-                        width: 28,
-                        height: 28,
+                        width: 30,
+                        height: 30,
                       ),
                       const SizedBox(width: 8),
                       const Expanded(
                         child: Text(
                           'Cài đặt máy in',
                           style: TextStyle(
-                            fontSize: 12,
+                            fontSize: 14,
                           ),
                         ),
                       ),
@@ -504,7 +579,7 @@ class _SettingWidget extends StatelessWidget {
                         child: Text(
                           'Thay đổi giao diện',
                           style: TextStyle(
-                            fontSize: 12,
+                            fontSize: 14,
                           ),
                         ),
                       ),
