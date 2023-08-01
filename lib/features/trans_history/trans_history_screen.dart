@@ -74,14 +74,22 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
       body: BlocConsumer<TransHistoryBloc, TransHistoryState>(
         listener: (context, state) {
           if (state.status == BlocStatus.LOADING) {
-            DialogWidget.instance.openLoadingDialog();
+            // DialogWidget.instance.openLoadingDialog();
           }
 
           if (state.status == BlocStatus.UNLOADING) {
-            Navigator.pop(context);
+            // Navigator.pop(context);
           }
         },
         builder: (context, state) {
+          if (state.status == BlocStatus.LOADING) {
+            return const Center(
+              child: CircularProgressIndicator(
+                color: AppColor.BLUE_TEXT,
+              ),
+            );
+          }
+
           return (state.list.isEmpty)
               ? const SizedBox()
               : RefreshIndicator(

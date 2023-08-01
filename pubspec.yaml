@@ -15,7 +15,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.2+27
+version: 1.0.5+30
 
 environment:
   sdk: ">=2.17.6 <3.0.0"
@@ -47,7 +47,7 @@ dependencies:
   crclib: ^3.0.0
   shared_preferences: ^2.0.15
   firebase_core: ^2.14.0
-#  firebase_auth: ^4.6.2
+  #  firebase_auth: ^4.6.2
   firebase_analytics: ^10.0.1
   firebase_messaging: ^14.2.4
   cloud_firestore: ^4.3.0
@@ -67,7 +67,7 @@ dependencies:
   rive: ^0.10.1
   device_info_plus: ^8.1.0
   image_picker: ^0.8.6+4
-  image: ^3.0.2
+  image: ^4.0.17
   flutter_local_notifications: ^15.0.0
   webview_flutter: ^4.0.6
   palette_generator: ^0.3.3+2
@@ -83,16 +83,26 @@ dependencies:
   pull_to_refresh:
   pin_code_fields: ^7.4.0
   event_bus: ^2.0.0
+  fl_chart: ^0.62.0
   flutter_barcode_scanner:
     git:
       url: https://github.com/trieucq/flutter_barcode_scanner.git
   photo_view: ^0.14.0
   camera: ^0.10.5+2
-
-
+dependency_overrides:
+  image: ^3.0.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+  flutter_launcher_icons: ^0.13.1
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/logo-viet-qr.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

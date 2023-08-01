@@ -9,6 +9,7 @@ import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/commons/utils/transaction_utils.dart';
+import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
@@ -403,68 +404,160 @@ class _BodyWidgetState extends State<_BodyWidget> {
           children: [
             Row(
               children: [
-                Expanded(
-                  child: MButtonWidget(
-                    title: '',
-                    isEnable: true,
-                    margin: const EdgeInsets.only(left: 20),
-                    onTap: onPaid,
+                if (dto?.transType == 'C')
+                  Expanded(
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Icon(
-                          Icons.refresh,
-                          color: AppColor.WHITE,
-                        ),
-                        SizedBox(width: 8),
-                        Text(
-                          'Thực hiện lại',
-                          style: TextStyle(
-                            color: AppColor.WHITE,
-                            fontSize: 14,
+                      children: [
+                        if (dto?.status != 0)
+                          Expanded(
+                            child: MButtonWidget(
+                              title: '',
+                              isEnable: true,
+                              margin: const EdgeInsets.only(left: 20),
+                              onTap: onPaid,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const [
+                                  Icon(
+                                    Icons.refresh,
+                                    color: AppColor.WHITE,
+                                  ),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    'Thực hiện lại',
+                                    style: TextStyle(
+                                      color: AppColor.WHITE,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        else if (dto?.status == 0)
+                          Expanded(
+                            child: MButtonWidget(
+                              title: '',
+                              isEnable: true,
+                              margin: const EdgeInsets.only(left: 20),
+                              onTap: () {
+                                QRRecreateDTO qrRecreateDTO = QRRecreateDTO(
+                                  bankId: dto?.bankId ?? '',
+                                  amount: (dto?.amount ?? '').toString(),
+                                  content: dto?.content ?? '',
+                                  userId: UserInformationHelper.instance
+                                      .getUserId(),
+                                  newTransaction: false,
+                                );
+                                _bloc.add(
+                                    TransEventQRRegenerate(dto: qrRecreateDTO));
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    'assets/images/ic-qr-dashboard.png',
+                                    color: AppColor.WHITE,
+                                    width: 28,
+                                    height: 28,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  const Text(
+                                    'Hiện mã QR',
+                                    style: TextStyle(
+                                      color: AppColor.WHITE,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        const SizedBox(width: 10),
+                        GestureDetector(
+                          onTap: () {
+                            saveImage(context);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                                color: AppColor.WHITE,
+                                borderRadius: BorderRadius.circular(5)),
+                            child: Image.asset(
+                              'assets/images/ic-img-blue.png',
+                              width: 42,
+                              height: 34,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
+                        const SizedBox(width: 10),
+                        GestureDetector(
+                          onTap: () {
+                            shareImage(dto);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                                color: AppColor.WHITE,
+                                borderRadius: BorderRadius.circular(5)),
+                            child: Image.asset(
+                              'assets/images/ic-share-blue.png',
+                              width: 42,
+                              height: 34,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 20),
                       ],
                     ),
                   ),
-                ),
-                const SizedBox(width: 10),
-                GestureDetector(
-                  onTap: () {
-                    saveImage(context);
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                        color: AppColor.WHITE,
-                        borderRadius: BorderRadius.circular(5)),
-                    child: Image.asset(
-                      'assets/images/ic-img-blue.png',
-                      width: 42,
-                      height: 34,
-                      fit: BoxFit.cover,
+                if (dto?.transType == 'D')
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: ButtonIconWidget(
+                              height: 40,
+                              pathIcon: 'assets/images/ic-img-blue.png',
+                              textColor: AppColor.BLUE_TEXT,
+                              iconPathColor: AppColor.BLUE_TEXT,
+                              iconSize: 22,
+                              title: 'Lưu ảnh',
+                              textSize: 12,
+                              bgColor: AppColor.WHITE,
+                              borderRadius: 5,
+                              function: () async {
+                                saveImage(context);
+                              },
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 12,
+                          ),
+                          Expanded(
+                            child: ButtonIconWidget(
+                              title: 'Chia sẻ',
+                              height: 40,
+                              pathIcon: 'assets/images/ic-share-blue.png',
+                              textColor: AppColor.BLUE_TEXT,
+                              bgColor: AppColor.WHITE,
+                              iconPathColor: AppColor.BLUE_TEXT,
+                              iconSize: 22,
+                              borderRadius: 5,
+                              textSize: 12,
+                              function: () async {
+                                shareImage(dto);
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 10),
-                GestureDetector(
-                  onTap: () {
-                    shareImage(dto);
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                        color: AppColor.WHITE,
-                        borderRadius: BorderRadius.circular(5)),
-                    child: Image.asset(
-                      'assets/images/ic-share-blue.png',
-                      width: 42,
-                      height: 34,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 20),
               ],
             ),
             const SizedBox(height: 10),
@@ -500,7 +593,7 @@ class _BodyWidgetState extends State<_BodyWidget> {
           .shareImage(
             key: globalKey,
             textSharing:
-                'Giao dịch ${TransactionUtils.instance.getStatusString(dto?.status ?? 0)} ${TransactionUtils.instance.getTransType(dto?.transType ?? '')} ${CurrencyUtils.instance.getCurrencyFormatted((dto?.amount ?? 0).toString())} VND\nĐược tạo bởi vietqr.vn - Hotline 19006234',
+                'Giao dịch ${TransactionUtils.instance.getStatusString(dto?.status ?? 0)} ${TransactionUtils.instance.getTransType(dto?.transType ?? '')} ${CurrencyUtils.instance.getCurrencyFormatted((dto?.amount ?? 0).toString())} VND\nĐược tạo bởi vietqr.vn - Hotline 1900.6234',
           )
           .then((value) => _waterMarkProvider.updateWaterMark(false));
     });

@@ -45,12 +45,11 @@ import 'package:vierqr/features/printer/blocs/printer_bloc.dart';
 import 'package:vierqr/features/printer/views/printer_setting_view.dart';
 import 'package:vierqr/features/logout/blocs/log_out_bloc.dart';
 import 'package:vierqr/features/notification/blocs/notification_bloc.dart';
-import 'package:vierqr/features/login/views/login.dart';
+import 'package:vierqr/features/login/login_screen.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_manage_bloc.dart';
 import 'package:vierqr/features/personal/blocs/user_edit_bloc.dart';
 import 'package:vierqr/features/personal/views/user_edit_view.dart';
 import 'package:vierqr/features/personal/views/user_update_password_view.dart';
-import 'package:vierqr/features/scan_qr/scan_qr_screen.dart';
 import 'package:vierqr/features/token/blocs/token_bloc.dart';
 import 'package:vierqr/features/top_up/qr_top_up.dart';
 import 'package:vierqr/features/top_up/top_up_screen.dart';
@@ -194,7 +193,7 @@ class _VietQRApp extends State<VietQRApp> {
         if (message.data['notificationType'] != null &&
             message.data['notificationType'] == Stringify.NOTI_TYPE_TOPUP) {
           DialogWidget.instance.openWidgetDialog(
-            heightPopup: 500,
+            heightPopup: 300,
             child: PopupTopUpSuccess(
               dto: TopUpSuccessDTO.fromJson(message.data),
             ),
@@ -311,6 +310,10 @@ class _VietQRApp extends State<VietQRApp> {
               if (themeSelect.typeBankArr != 0) {
                 themeSelect.updateBankArr(0);
               }
+
+              if (themeSelect.getThemeIndex() != 0) {
+                themeSelect.updateThemeByIndex(0);
+              }
               return MaterialApp(
                 navigatorKey: NavigationService.navigatorKey,
                 debugShowCheckedModeBanner: false,
@@ -335,8 +338,7 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.UI_SETTING: (context) => const ThemeSettingView(),
                   // Routes.TRANSACTION_HISTORY: (context) =>
                   //     const TransactionHistory(),
-                  // Routes.ADD_BANK_CARD: (context) => const AddBankScreen(),
-                  Routes.ADD_BANK_CARD: (context) => CameraScreen(),
+                  Routes.ADD_BANK_CARD: (context) => const AddBankScreen(),
                   Routes.SELECT_BANK_TYPE: (context) =>
                       const SelectBankTypeScreen(),
                   Routes.BANK_MEMBER_VIEW: (context) => const BankMemberView(),

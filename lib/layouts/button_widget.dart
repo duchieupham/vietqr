@@ -41,7 +41,7 @@ class MButtonWidget extends StatelessWidget {
           Container(
             alignment: Alignment.center,
             margin: margin ??
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             height: height ?? 40,
             width: width,
             decoration: BoxDecoration(

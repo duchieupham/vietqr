@@ -79,7 +79,7 @@ class ShareUtils {
         suffix += dto.content;
       }
     }
-    result = '$prefix$suffix\nĐược tạo bởi vietqr.vn - Hotline 19006234';
+    result = '$prefix$suffix\nĐược tạo bởi vietqr.vn - Hotline 1900.6234';
     return result;
   }
 }

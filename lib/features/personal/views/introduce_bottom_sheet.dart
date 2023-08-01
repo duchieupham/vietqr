@@ -122,7 +122,7 @@ class _IntroduceBottomSheetState extends State<IntroduceBottomSheet> {
                   GestureDetector(
                     onTap: () async {
                       Share.share(
-                        'Đăng ký thành viên mới của VietQR VN ngay! Cùng trải nghiệm những tiện ích và ưu đãi mà chúng tôi mang lại bằng cách nhập mã “${widget.introduceDTO?.sharingCode ?? ''}” khi đăng ký tại https://vietqr.vn/register hoặc trên ứng dụng di động.',
+                        'Đăng ký thành viên mới của VietQR VN ngay! Cùng trải nghiệm những tiện ích và ưu đãi mà chúng tôi mang lại bằng cách nhập mã “${widget.introduceDTO?.sharingCode ?? ''}” khi đăng ký tại ${widget.introduceDTO?.sharingCodeLink ?? ''} hoặc trên ứng dụng di động.',
                       );
                     },
                     child: Container(

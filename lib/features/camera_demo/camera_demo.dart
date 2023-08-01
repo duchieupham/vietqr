@@ -50,6 +50,7 @@ class CameraScreen extends StatefulWidget {
 class _CameraScreenState extends State<CameraScreen>
     with WidgetsBindingObserver {
   late ScanQrBloc _bloc;
+  CameraController? controller;
 
   final int _intervalInSeconds = 5;
 
@@ -64,19 +65,41 @@ class _CameraScreenState extends State<CameraScreen>
   }
 
   Future<void> onNewCameraSelected(CameraDescription cameraDescription) async {
-    CameraController? controller =
-        Provider.of<ScanQrProvider>(context, listen: false).controller;
     if (controller != null) {
-      return controller.setDescription(cameraDescription);
+      controller!.setDescription(cameraDescription);
+      return _startPhotoTimer();
     } else {
-      return Provider.of<ScanQrProvider>(context, listen: false)
-          .initializeCameraController(cameraDescription);
+      return _initializeCameraController(cameraDescription);
     }
+  }
+
+  void _initializeCameraController(CameraDescription cameraDescription) async {
+    final cameraController =
+        CameraController(cameraDescription, ResolutionPreset.high);
+
+    controller = cameraController;
+
+    cameraController.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+
+    try {
+      await cameraController.initialize();
+    } on CameraException catch (e) {
+      LOG.error('Error initializing camera: $e');
+    }
+    if (mounted) {
+      setState(() {});
+    }
+    _startPhotoTimer();
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    controller!.dispose();
     if (_timer != null) {
       _timer!.cancel();
     }
@@ -85,8 +108,7 @@ class _CameraScreenState extends State<CameraScreen>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    final CameraController? cameraController =
-        Provider.of<ScanQrProvider>(context, listen: false).controller;
+    final CameraController? cameraController = controller;
 
     // App state changed before we got the chance to initialize.
     if (cameraController == null || !cameraController.value.isInitialized) {
@@ -100,23 +122,18 @@ class _CameraScreenState extends State<CameraScreen>
 
     // Kiểm tra trạng thái của ứng dụng khi thay đổi (ví dụ: chuyển sang nền hoặc ra khỏi nền)
     if (state == AppLifecycleState.resumed) {
-      Provider.of<ScanQrProvider>(context, listen: false)
-          .updateResetCamera(true);
+      _initializeCameraController(cameraController.description);
     }
   }
 
   void _takePicture() async {
-    CameraController? controller =
-        Provider.of<ScanQrProvider>(context, listen: false).controller;
     try {
-      if (controller != null) {
-        final picture = await controller.takePicture();
-        File file = File(picture.path);
-        if (!mounted) return;
-        Provider.of<ScanQrProvider>(context, listen: false).updateFile(file);
-        if (await _scanQr(file)) {
-          _timer!.cancel();
-        }
+      final picture = await controller!.takePicture();
+      File file = File(picture.path);
+      if (!mounted) return;
+      Provider.of<ScanQrProvider>(context, listen: false).updateFile(file);
+      if (await _scanQr(file)) {
+        _timer!.cancel();
       }
     } catch (e) {
       LOG.error('Error taking picture: $e');
@@ -272,9 +289,9 @@ class _CameraScreenState extends State<CameraScreen>
                     height: MediaQuery.of(context).size.width - 80,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(16),
-                      child: !(provider.controller == null ||
-                              !provider.controller!.value.isInitialized)
-                          ? CameraPreview(provider.controller!)
+                      child: !(controller == null ||
+                              !controller!.value.isInitialized)
+                          ? CameraPreview(controller!)
                           : Container(color: AppColor.BLACK),
                     ),
                   ),
@@ -332,7 +349,8 @@ class _CameraScreenState extends State<CameraScreen>
                         ),
                       )
                     ],
-                  )
+                  ),
+                  const SizedBox(height: 20),
                 ],
               );
             },
@@ -388,6 +406,7 @@ class _CameraScreenState extends State<CameraScreen>
       final data = await platformChannel
           .invokeMethod('processQRImage', {'imageData': base64Image});
       if (data is String && data != '-1') {
+        _bloc.add(ScanQrEventGetBankType(code: data));
         return true;
       }
     } on PlatformException catch (e) {

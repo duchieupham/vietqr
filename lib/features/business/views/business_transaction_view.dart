@@ -12,6 +12,7 @@ import 'package:vierqr/features/branch/blocs/branch_bloc.dart';
 import 'package:vierqr/features/branch/states/branch_state.dart';
 import 'package:vierqr/features/business/blocs/business_trans_bloc.dart';
 import 'package:vierqr/features/business/events/business_trans_event.dart';
+import 'package:vierqr/features/business/providers/business_trans_provider.dart';
 import 'package:vierqr/features/business/states/business_trans_state.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
@@ -28,7 +29,10 @@ class BusinessTransactionView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<BusinessTransBloc>(
       create: (BuildContext context) => BusinessTransBloc(context),
-      child: const _BodyWidget(),
+      child: ChangeNotifierProvider(
+        create: (context) => BusinessTransProvider(),
+        child: const _BodyWidget(),
+      ),
     );
   }
 }
@@ -42,130 +46,135 @@ class _BodyWidget extends StatefulWidget {
 
 class _BusinessTransactionViewState extends State<_BodyWidget> {
   late BusinessTransBloc _bloc;
-
-  final ScrollController scrollController = ScrollController();
+  final scrollController = ScrollController();
 
   void initialServices(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as Map;
     BranchFilterInsertDTO brandDTO = args['brandDTO'];
 
+    Provider.of<BusinessTransProvider>(context, listen: false)
+        .updateFilters([]);
+    Provider.of<BusinessTransProvider>(context, listen: false)
+        .updateBranchFilter(brandDTO);
+
     _bloc.add(BranchEventGetFilter(dto: brandDTO));
 
     _bloc.add(
       TransactionEventGetListBranch(
-        dto: TransactionBranchInputDTO(
-            businessId:
-                Provider.of<BusinessInformationProvider>(context, listen: false)
-                    .businessId,
-            branchId: 'all',
-            offset: 0),
-      ),
+          dto: TransactionBranchInputDTO(
+              businessId: brandDTO.businessId, branchId: 'all', offset: 0)),
     );
 
-    if (filters.where((element) => element.branchId == 'all').isEmpty) {
-      filters.add(const BranchFilterDTO(
-          branchId: 'all', branchName: 'Tất cả chi nhánh'));
-    }
     scrollController.addListener(() {
-      if (scrollController.position.pixels ==
-          scrollController.position.maxScrollExtent) {
-        // ListView đã cuộn đến cuối
-        // Xử lý tại đây
-
-        Future.delayed(const Duration(milliseconds: 0), () {
-          TransactionBranchInputDTO transactionInputDTO =
-              TransactionBranchInputDTO(
-            businessId:
-                Provider.of<BusinessInformationProvider>(context, listen: false)
-                    .businessId,
-            branchId:
-                Provider.of<BusinessInformationProvider>(context, listen: false)
-                    .filterSelected
-                    .branchId,
-            offset: 0,
-          );
-          _bloc.add(TransactionEventFetchBranch(dto: transactionInputDTO));
-        });
+      final maxScroll = scrollController.position.maxScrollExtent;
+      if (scrollController.offset >= maxScroll &&
+          !scrollController.position.outOfRange) {
+        _onLoadMore();
       }
     });
+  }
+
+  _onLoadMore() {
+    String businessId =
+        Provider.of<BusinessTransProvider>(context, listen: false)
+                .brandDTO
+                ?.businessId ??
+            '';
+    String branchId = Provider.of<BusinessTransProvider>(context, listen: false)
+            .filterSelected
+            ?.branchId ??
+        '';
+
+    TransactionBranchInputDTO dto = TransactionBranchInputDTO(
+      businessId: businessId,
+      branchId: branchId,
+      offset: 0,
+    );
+
+    _bloc.add(TransactionEventFetchBranch(dto: dto));
+  }
+
+  Future<void> onRefresh() async {
+    String businessId =
+        Provider.of<BusinessTransProvider>(context, listen: false)
+                .brandDTO
+                ?.businessId ??
+            '';
+    String branchId = Provider.of<BusinessTransProvider>(context, listen: false)
+            .filterSelected
+            ?.branchId ??
+        '';
+
+    _bloc.add(
+      TransactionEventGetListBranch(
+          dto: TransactionBranchInputDTO(
+              businessId: businessId, branchId: branchId, offset: 0)),
+    );
   }
 
   @override
   void initState() {
     super.initState();
     _bloc = BlocProvider.of(context);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      initialServices(context);
+    });
   }
-
-  final List<BranchFilterDTO> filters = [];
 
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
-    initialServices(context);
     return Scaffold(
       appBar: const MAppBar(title: 'Lịch sử giao dịch'),
-      body: BlocConsumer<BusinessTransBloc, BusinessTransState>(
-        listener: (context, state) {
-          filters.clear();
-          if (filters.where((element) => element.branchId == 'all').isEmpty) {
-            filters.add(const BranchFilterDTO(
-                branchId: 'all', branchName: 'Tất cả chi nhánh'));
-          }
-          if (filters.length <= 1) {
-            filters.addAll(state.listBranch);
-          }
-        },
-        builder: (context, state) {
-          return Column(
-            children: [
-              //filter search
-              Visibility(
-                visible: filters.isNotEmpty,
-                child: BoxLayout(
-                  width: width - 20,
-                  borderRadius: 5,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                  child: Row(
-                    children: [
-                      const SizedBox(
-                        width: 120,
-                        child: Text(
-                          'Chọn chi nhánh',
-                        ),
-                      ),
-                      const Padding(padding: EdgeInsets.only(left: 10)),
-                      Expanded(
-                        child: Consumer<BusinessInformationProvider>(
-                          builder: (context, provider, child) {
-                            return DropdownButton<BranchFilterDTO>(
+      body: Consumer<BusinessTransProvider>(
+        builder: (context, provider, child) {
+          return BlocConsumer<BusinessTransBloc, BusinessTransState>(
+            listener: (context, state) {
+              if (state.type == TransType.GET_FILTER) {
+                provider.updateFilters(state.listBranch);
+              }
+            },
+            builder: (context, state) {
+              return Column(
+                children: [
+                  //filter search
+                  Visibility(
+                    visible: provider.filters.isNotEmpty,
+                    child: BoxLayout(
+                      width: width - 20,
+                      borderRadius: 5,
+                      margin: const EdgeInsets.only(top: 16),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 15),
+                      child: Row(
+                        children: [
+                          const SizedBox(
+                            width: 120,
+                            child: Text(
+                              'Chọn chi nhánh',
+                            ),
+                          ),
+                          const Padding(padding: EdgeInsets.only(left: 10)),
+                          Expanded(
+                            child: DropdownButton<BranchFilterDTO>(
                               value: provider.filterSelected,
                               isDense: true,
                               isExpanded: true,
                               underline: const SizedBox(),
                               onChanged: (BranchFilterDTO? value) {
-                                if (value == null) {
-                                  provider.updateFilterSelected(
-                                      provider.filterSelected);
-                                } else {
-                                  provider.updateFilterSelected(value);
-                                  _bloc.add(
-                                    TransactionEventGetListBranch(
-                                      dto: TransactionBranchInputDTO(
-                                          businessId: provider.input.businessId,
-                                          branchId: value.branchId,
-                                          offset: 0),
-                                    ),
-                                  );
-                                  provider.updateInput(
-                                    TransactionBranchInputDTO(
-                                        businessId: provider.input.businessId,
-                                        branchId: value.branchId,
+                                provider.updateFilterSelected(value);
+                                _bloc.add(
+                                  TransactionEventGetListBranch(
+                                    dto: TransactionBranchInputDTO(
+                                        businessId:
+                                            provider.brandDTO?.businessId ?? '',
+                                        branchId: value?.branchId ?? '',
                                         offset: 0),
-                                  );
-                                }
+                                  ),
+                                );
+                                scrollController.jumpTo(0.0);
                               },
-                              items: filters
+                              items: provider.filters
                                   .map<DropdownMenuItem<BranchFilterDTO>>(
                                       (BranchFilterDTO value) {
                                 return DropdownMenuItem<BranchFilterDTO>(
@@ -180,62 +189,65 @@ class _BusinessTransactionViewState extends State<_BodyWidget> {
                                   ),
                                 );
                               }).toList(),
-                            );
-                          },
-                        ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ),
-              ),
-              const Padding(
-                padding: EdgeInsets.only(top: 20, bottom: 10, left: 20),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Danh sách giao dịch',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
                     ),
                   ),
-                ),
-              ),
-              Expanded(
-                child: Consumer<BusinessInformationProvider>(
-                  builder: (context, provider, child) {
-                    return (state.listTrans.isEmpty)
+                  const Padding(
+                    padding: EdgeInsets.only(top: 20, bottom: 10, left: 20),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Danh sách giao dịch',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: state.listTrans.isEmpty
                         ? const SizedBox()
-                        : ListView.builder(
-                            shrinkWrap: true,
-                            controller: scrollController,
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            itemCount: state.listTrans.length + 1,
-                            itemBuilder: (context, index) {
-                              return (index == state.listTrans.length &&
-                                      !state.isLoadMore)
-                                  ? const UnconstrainedBox(
+                        : RefreshIndicator(
+                            onRefresh: onRefresh,
+                            child: SingleChildScrollView(
+                              controller: scrollController,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child: Column(
+                                children: [
+                                  Column(
+                                    children: List.generate(
+                                      state.listTrans.length,
+                                      (index) {
+                                        return _buildTransactionItem(
+                                          context: context,
+                                          dto: state.listTrans[index],
+                                        );
+                                      },
+                                    ).toList(),
+                                  ),
+                                  if (!state.isLoadMore)
+                                    const UnconstrainedBox(
                                       child: SizedBox(
-                                        width: 50,
-                                        height: 50,
+                                        width: 30,
+                                        height: 30,
                                         child: CircularProgressIndicator(
                                           color: AppColor.BLUE_TEXT,
                                         ),
                                       ),
                                     )
-                                  : (index == state.listTrans.length &&
-                                          state.isLoadMore)
-                                      ? const SizedBox()
-                                      : _buildTransactionItem(
-                                          context: context,
-                                          dto: state.listTrans[index],
-                                        );
-                            },
-                          );
-                  },
-                ),
-              ),
-            ],
+                                ],
+                              ),
+                            ),
+                          ),
+                  ),
+                ],
+              );
+            },
           );
         },
       ),

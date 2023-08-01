@@ -6,6 +6,10 @@ class ChangeThemeEvent {
   ChangeThemeEvent();
 }
 
+class GetListBankScreen {
+  GetListBankScreen();
+}
+
 class ReloadWallet {
   ReloadWallet();
 }

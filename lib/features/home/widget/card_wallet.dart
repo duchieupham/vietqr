@@ -69,7 +69,7 @@ class CardWallet extends StatelessWidget {
                         )
                       else
                         Text(
-                          '${CurrencyUtils.instance.getCurrencyFormatted(state.introduceDTO!.amount ?? '0')} VND',
+                          '${CurrencyUtils.instance.getCurrencyFormatted(state.introduceDTO!.amount ?? '0')} VQR',
                           style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.w600),
                         ),
@@ -111,31 +111,43 @@ class CardWallet extends StatelessWidget {
 
   Widget _buildListAction(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildItemAction('assets/images/ic-tb-card.png', 'Tài khoản', () {
-          Navigator.pushNamed(context, Routes.SEARCH_BANK);
-        }),
-        _buildItemAction('assets/images/ic-money-add.png', 'Nạp tiền', () {
-          Navigator.pushNamed(context, Routes.TOP_UP);
-        }),
-        _buildItemAction('assets/images/ic-tb-qr.png', 'Quét QR', () async {
-          if (QRScannerHelper.instance.getQrIntro()) {
-            startBarcodeScanStream();
-          } else {
-            await DialogWidget.instance.showFullModalBottomContent(
-              widget: const QRScanWidget(),
-              color: AppColor.BLACK,
-            );
-            startBarcodeScanStream();
-          }
-        }),
-        _buildItemAction(
-          'assets/images/ic-contact.png',
-          'Danh bạ',
-          () {
-            Navigator.pushNamed(context, Routes.PHONE_BOOK);
-          },
+        Expanded(
+          child:
+              _buildItemAction('assets/images/ic-tb-card.png', 'Tài khoản', () {
+            Navigator.pushNamed(context, Routes.SEARCH_BANK);
+          }),
+        ),
+        Expanded(
+          child: _buildItemAction(
+              'assets/images/ic-money-add.png', 'Nạp tiền\ndịch vụ VietQR',
+              () {
+            Navigator.pushNamed(context, Routes.TOP_UP);
+          }),
+        ),
+        Expanded(
+          child: _buildItemAction('assets/images/ic-tb-qr.png', 'Quét QR',
+              () async {
+            if (QRScannerHelper.instance.getQrIntro()) {
+              startBarcodeScanStream();
+            } else {
+              await DialogWidget.instance.showFullModalBottomContent(
+                widget: const QRScanWidget(),
+                color: AppColor.BLACK,
+              );
+              startBarcodeScanStream();
+            }
+          }),
+        ),
+        Expanded(
+          child: _buildItemAction(
+            'assets/images/ic-contact.png',
+            'Danh bạ',
+            () {
+              Navigator.pushNamed(context, Routes.PHONE_BOOK);
+            },
+          ),
         ),
       ],
     );
@@ -153,6 +165,7 @@ class CardWallet extends StatelessWidget {
           ),
           Text(
             title,
+            textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 12),
           )
         ],

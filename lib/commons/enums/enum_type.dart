@@ -179,7 +179,7 @@ enum AddBankType {
 
 enum BankType { QR, NONE, SCAN, BANK, GET_BANK, SCAN_ERROR, SCAN_NOT_FOUND }
 
-enum TransType { NONE, GET_TRANDS }
+enum TransType { NONE, GET_TRANDS ,GET_FILTER}
 
 enum ContactType {
   NONE,

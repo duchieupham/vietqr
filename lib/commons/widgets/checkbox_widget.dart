@@ -5,12 +5,14 @@ class CheckBoxWidget extends StatelessWidget {
   final bool check;
   final double size;
   final VoidCallback function;
+  final Color? color;
 
   const CheckBoxWidget({
     Key? key,
     required this.check,
     required this.size,
     required this.function,
+    this.color,
   }) : super(key: key);
 
   @override
@@ -21,7 +23,7 @@ class CheckBoxWidget extends StatelessWidget {
         (check)
             ? 'assets/images/ic-checked.png'
             : 'assets/images/ic-uncheck.png',
-        color: AppColor.BLUE_TEXT,
+        color: color ?? AppColor.BLUE_TEXT,
         width: size,
         height: size,
         fit: BoxFit.contain,

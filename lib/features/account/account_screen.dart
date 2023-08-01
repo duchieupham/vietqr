@@ -79,17 +79,18 @@ class _AccountScreenState extends State<AccountScreen>
     super.build(context);
     return BlocConsumer<AccountBloc, AccountState>(
       listener: (context, state) {
-        // if (state.status == BlocStatus.LOADING) {
-        //   DialogWidget.instance.openLoadingDialog();
-        // }
-        //
-        // if (state.status == BlocStatus.UNLOADING) {
-        //   Navigator.pop(context);
-        // }
+        if (state.status == BlocStatus.LOADING) {
+          DialogWidget.instance.openLoadingDialog();
+        }
+
+        if (state.status == BlocStatus.UNLOADING) {
+          Navigator.pop(context);
+        }
         if (state.request == AccountType.LOG_OUT) {
           if (Navigator.canPop(context)) {
             Navigator.pop(context);
           }
+
           Navigator.of(context).pushReplacementNamed(Routes.LOGIN);
           widget.voidCallback!();
         }
@@ -107,6 +108,7 @@ class _AccountScreenState extends State<AccountScreen>
           children: [
             _BannerWidget(),
             const SizedBox(height: 30),
+            _FeatureWidget(code: state.introduceDTO?.walletId ?? ''),
             Expanded(
               child: RefreshIndicator(
                 onRefresh: _onRefresh,
@@ -114,7 +116,6 @@ class _AccountScreenState extends State<AccountScreen>
                   physics: const AlwaysScrollableScrollPhysics(),
                   child: Column(
                     children: [
-                      _FeatureWidget(code: state.introduceDTO?.walletId ?? ''),
                       const SizedBox(height: 30),
                       _IntroduceWidget(dto: state.introduceDTO),
                       const SizedBox(height: 20),
@@ -166,7 +167,7 @@ class _AccountScreenState extends State<AccountScreen>
 class _BannerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 230,
       width: MediaQuery.of(context).size.width,
       child: Column(

@@ -30,7 +30,7 @@ class AmbientAvatarWidget extends StatelessWidget {
             fit: BoxFit.cover,
             image: (imageFile != null)
                 ? Image.file(imageFile!).image
-                : ImageUtils.instance.getImageNetworkCache(imgId),
+                : ImageUtils.instance.getImageNetWork(imgId),
           ),
         ),
       );
@@ -46,7 +46,7 @@ class AmbientAvatarWidget extends StatelessWidget {
             fit: BoxFit.cover,
             image: (imageFile != null)
                 ? Image.file(imageFile!).image
-                : ImageUtils.instance.getImageNetworkCache(imgId),
+                : ImageUtils.instance.getImageNetWork(imgId),
           ),
         ),
       ),

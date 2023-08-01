@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
@@ -49,6 +48,8 @@ class _ContactStateState extends State<_ContactState>
 
   final List<Widget> _listScreens = [];
 
+  final searchController = TextEditingController();
+
   List<DataModel> listTab = [
     DataModel(
       title: 'Đã lưu',
@@ -75,7 +76,6 @@ class _ContactStateState extends State<_ContactState>
 
   Future<void> _onRefresh() async {
     _bloc.add(ContactEventGetList());
-    _bloc.add(ContactEventGetListPending());
   }
 
   Future<void> _onRefreshTabSecond() async {
@@ -139,6 +139,13 @@ class _ContactStateState extends State<_ContactState>
             Navigator.pop(context);
           }
 
+          if (state.type == ContactType.GET_LIST) {
+            if (state.listContactDTO.isNotEmpty) {
+              Provider.of<ContactProvider>(context, listen: false)
+                  .updateList(state.listContactDTO);
+            }
+          }
+
           if (state.type == ContactType.SAVE) {
             Fluttertoast.showToast(
               msg: 'Lưu thành công',
@@ -154,6 +161,8 @@ class _ContactStateState extends State<_ContactState>
           if (state.type == ContactType.SUGGEST) {
             Provider.of<ContactProvider>(context, listen: false).updateTab(0);
             _bloc.add(ContactEventGetList());
+            _bloc.add(ContactEventGetListPending());
+            _animatedToPage(0);
           }
 
           if (state.type == ContactType.SCAN) {
@@ -188,13 +197,14 @@ class _ContactStateState extends State<_ContactState>
                       children: List.generate(listTab.length, (index) {
                         DataModel model = listTab.elementAt(index);
                         return _buildTab(
-                          onTap: () {
-                            _animatedToPage(index);
-                          },
-                          text: model.title,
-                          isSuggest: index == 1,
-                          isSelect: provider.tab == model.index,
-                        );
+                            onTap: () {
+                              _animatedToPage(index);
+                            },
+                            text: model.title,
+                            isSuggest: index == 1,
+                            isSelect: provider.tab == model.index,
+                            textSuggest:
+                                '${state.listContactDTOSuggest.length}');
                       }).toList(),
                     ),
                     Expanded(
@@ -206,7 +216,10 @@ class _ContactStateState extends State<_ContactState>
                           provider.updateTab(index);
                         },
                         children: [
-                          _buildTapFirst(listContactDTO: state.listContactDTO),
+                          _buildTapFirst(
+                            listContactDTO: provider.listSearch,
+                            onChange: provider.onSearch,
+                          ),
                           _buildTapSecond(list: state.listContactDTOSuggest),
                         ],
                       ),
@@ -244,7 +257,10 @@ class _ContactStateState extends State<_ContactState>
     return const SizedBox.shrink();
   }
 
-  Widget _buildTapFirst({required List<ContactDTO> listContactDTO}) {
+  Widget _buildTapFirst({
+    required List<ContactDTO> listContactDTO,
+    ValueChanged<String>? onChange,
+  }) {
     return Column(
       children: [
         const SizedBox(height: 10),
@@ -252,12 +268,12 @@ class _ContactStateState extends State<_ContactState>
           isObscureText: false,
           maxLines: 1,
           fillColor: AppColor.WHITE,
-          // controller: provider.contentController,
+          controller: searchController,
           hintText: 'Tìm kiếm danh bạ',
           inputType: TextInputType.text,
           prefixIcon: const Icon(Icons.search),
           keyboardAction: TextInputAction.next,
-          onChange: (value) {},
+          onChange: onChange,
         ),
         const SizedBox(height: 30),
         Expanded(
@@ -481,6 +497,7 @@ class _ContactStateState extends State<_ContactState>
     GestureTapCallback? onTap,
     bool isSuggest = false,
     bool isSelect = false,
+    required String textSuggest,
   }) {
     return GestureDetector(
       onTap: onTap,
@@ -500,24 +517,24 @@ class _ContactStateState extends State<_ContactState>
               text,
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
             ),
-            // if (isSuggest)
-            //   Container(
-            //     padding: const EdgeInsets.all(4),
-            //     margin: const EdgeInsets.only(left: 4),
-            //     width: 20,
-            //     height: 20,
-            //     alignment: Alignment.center,
-            //     decoration: BoxDecoration(
-            //         color: AppColor.BLUE_TEXT.withOpacity(0.4),
-            //         borderRadius: BorderRadius.circular(100)),
-            //     child: const Text(
-            //       '1',
-            //       style: TextStyle(
-            //           fontSize: 10,
-            //           fontWeight: FontWeight.w400,
-            //           color: AppColor.BLUE_TEXT),
-            //     ),
-            //   ),
+            if (isSuggest)
+              Container(
+                padding: const EdgeInsets.all(4),
+                margin: const EdgeInsets.only(left: 4),
+                width: 20,
+                height: 20,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                    color: AppColor.BLUE_TEXT.withOpacity(0.4),
+                    borderRadius: BorderRadius.circular(100)),
+                child: Text(
+                  textSuggest,
+                  style: const TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w400,
+                      color: AppColor.BLUE_TEXT),
+                ),
+              ),
           ],
         ),
       ),

@@ -3,6 +3,7 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/widgets/checkbox_widget.dart';
 import 'package:vierqr/commons/widgets/sub_header_widget.dart';
 import 'package:vierqr/layouts/box_layout.dart';
+import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/services/providers/shortcut_provider.dart';
 import 'package:vierqr/services/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
@@ -18,8 +19,8 @@ class ThemeSettingView extends StatelessWidget {
   //asset UI list
   static final List<String> _assetList = [
     'assets/images/ic-light-theme.png',
-    // 'assets/images/ic-dark-theme.png',
-    // 'assets/images/ic-system-theme.png',
+    'assets/images/ic-dark-theme.png',
+    'assets/images/ic-system-theme.png',
   ];
 
   @override
@@ -31,166 +32,94 @@ class ThemeSettingView extends StatelessWidget {
       viewportFraction: 0.65,
     );
     return Scaffold(
+      appBar: const MAppBar(title: 'Cài đặt giao diện'),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const SubHeader(title: 'Giao diện'),
-          Expanded(
-            child: ListView(
-              children: [
-                //UI view
-                Container(
-                  margin: const EdgeInsets.only(top: 30, bottom: 60),
-                  width: width,
-                  height: 200,
-                  child: PageView.builder(
-                    controller: _themeUIController,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: _assetList.length,
-                    itemBuilder: (context, index) {
-                      return Image.asset(
-                        _assetList[index],
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.contain,
-                      );
-                    },
-                  ),
-                ),
-                //
-                Container(
-                  width: width,
-                  margin: const EdgeInsets.only(left: 20, right: 20),
-                  padding: const EdgeInsets.only(left: 20, right: 20),
-                  decoration: AppColor.cardDecoration(context),
-                  child: ListView.separated(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: _assetList.length,
-                    itemBuilder: (context, index) {
-                      return InkWell(
-                        onTap: () async {
-                          await _themeProvider.updateThemeByIndex(index);
-                          _themeUIController.animateToPage(
-                              _themeProvider.getThemeIndex(),
-                              duration: const Duration(milliseconds: 200),
-                              curve: Curves.easeInToLinear);
-                        },
-                        child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: 50,
-                          alignment: Alignment.centerLeft,
-                          child: Row(
-                            children: [
-                              Text(getTitleTheme(index)),
-                              const Spacer(),
-                              //check box
-                              Consumer<ThemeProvider>(
-                                builder: (context, provider, child) {
-                                  return CheckBoxWidget(
-                                    check: (provider.getThemeIndex() == index),
-                                    size: 25,
-                                    function: () {},
-                                  );
-                                },
-                              )
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                    separatorBuilder: (context, index) {
-                      return const Divider(
-                        color: AppColor.GREY_TEXT,
-                        height: 0.5,
-                      );
-                    },
-                  ),
-                ),
-                const Padding(padding: EdgeInsets.only(top: 30)),
-                BoxLayout(
-                  width: width,
-                  margin: const EdgeInsets.symmetric(horizontal: 20),
-                  padding: const EdgeInsets.only(
-                      left: 20, right: 10, top: 5, bottom: 5),
-                  child: Row(
-                    children: [
-                      const Text('Phím tắt:'),
-                      const Padding(padding: EdgeInsets.only(left: 10)),
-                      Consumer<ShortcutProvider>(
-                          builder: (context, provider, child) {
-                        return Text(
-                          (provider.enableShortcut) ? 'Hiện' : 'Ẩn',
-                          style: const TextStyle(color: AppColor.GREY_TEXT),
-                        );
-                      }),
-                      const Spacer(),
-                      Consumer<ShortcutProvider>(
-                        builder: (context, provider, child) {
-                          return Transform.scale(
-                            scale: 0.8,
-                            child: CupertinoSwitch(
-                              value: provider.enableShortcut,
-                              activeColor: AppColor.BLUE_TEXT,
-                              onChanged: ((_) {
-                                provider.updateEnableShortcut(
-                                    !provider.enableShortcut);
-                              }),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-                const Padding(padding: EdgeInsets.only(top: 30)),
-                // BoxLayout(
-                //   width: width,
-                //   margin: const EdgeInsets.symmetric(horizontal: 20),
-                //   padding:
-                //       const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                //   child: Column(
-                //     crossAxisAlignment: CrossAxisAlignment.start,
-                //     children: [
-                //       const Text('Hiển thị TK ngân hàng:'),
-                //       const Padding(padding: EdgeInsets.only(bottom: 30)),
-                //       Consumer<BankArrangementProvider>(
-                //         builder: (context, provider, child) {
-                //           return Row(
-                //             children: [
-                //               _buildElementBankArr(
-                //                 context: context,
-                //                 width: width / 2 - 50,
-                //                 text: 'Ngăn xếp',
-                //                 imageAsset: 'assets/images/ic-bank-stack.png',
-                //                 isSelected: provider.type == 0,
-                //                 function: () {
-                //                   provider.updateBankArr(0);
-                //                 },
-                //               ),
-                //               const Padding(padding: EdgeInsets.only(left: 10)),
-                //               _buildElementBankArr(
-                //                 context: context,
-                //                 width: width / 2 - 50,
-                //                 text: 'Trượt',
-                //                 imageAsset: 'assets/images/ic-bank-slide.png',
-                //                 isSelected: provider.type == 1,
-                //                 function: () {
-                //                   provider.updateBankArr(1);
-                //                 },
-                //               ),
-                //             ],
-                //           );
-                //         },
-                //       ),
-                //     ],
-                //   ),
-                // ),
-                // const Padding(padding: EdgeInsets.only(top: 30)),
-              ],
+          Container(
+            margin: const EdgeInsets.only(top: 30, bottom: 60),
+            width: width,
+            height: 200,
+            child: PageView.builder(
+              controller: _themeUIController,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: _assetList.length,
+              itemBuilder: (context, index) {
+                return Image.asset(
+                  _assetList[index],
+                  width: 100,
+                  height: 100,
+                  fit: BoxFit.contain,
+                );
+              },
             ),
           ),
+          //
+          Container(
+            width: width,
+            margin: const EdgeInsets.symmetric(horizontal: 20),
+            decoration: AppColor.cardDecoration(context,
+                color: AppColor.gray.withOpacity(0.1)),
+            child: ListView.separated(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: _assetList.length,
+              itemBuilder: (context, index) {
+                return Consumer<ThemeProvider>(
+                    builder: (context, provider, child) {
+                  return InkWell(
+                    onTap: () async {
+                      // await _themeProvider.updateThemeByIndex(index);
+                      // _themeUIController.animateToPage(
+                      //     _themeProvider.getThemeIndex(),
+                      //     duration: const Duration(milliseconds: 200),
+                      //     curve: Curves.easeInToLinear);
+                    },
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: 50,
+                      decoration: index == provider.getThemeIndex()
+                          ? const BoxDecoration(
+                              color: AppColor.WHITE,
+                              borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(12)))
+                          : null,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      alignment: Alignment.centerLeft,
+                      child: Row(
+                        children: [
+                          Text(getTitleTheme(index)),
+                          const Spacer(),
+                          //check box
+                          CheckBoxWidget(
+                            check: (provider.getThemeIndex() == index),
+                            size: 25,
+                            color: !(provider.getThemeIndex() == index)
+                                ? AppColor.gray.withOpacity(0.5)
+                                : null,
+                            function: () {},
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                });
+              },
+              separatorBuilder: (context, index) {
+                return Divider(
+                  color: AppColor.gray.withOpacity(0.6),
+                  height: 0.5,
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: 16),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Text(
+                'Hệ thống sớm mang lại phần tuỳ chỉnh giao diện để người dùng cá nhân hoá giáo diện của mình.'),
+          )
         ],
       ),
     );

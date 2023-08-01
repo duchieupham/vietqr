@@ -31,9 +31,7 @@ class ScanQrProvider extends ChangeNotifier {
 
     controller = cameraController;
 
-    cameraController.addListener(() {
-      notifyListeners();
-    });
+    cameraController.addListener(() {});
 
     try {
       await cameraController.initialize();

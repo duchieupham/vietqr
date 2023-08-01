@@ -6,7 +6,6 @@ import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/commons/widgets/sub_header_widget.dart';
 import 'package:vierqr/features/top_up/blocs/top_up_bloc.dart';
 import 'package:vierqr/features/top_up/events/scan_qr_event.dart';
 import 'package:vierqr/features/top_up/states/top_up_state.dart';
@@ -23,7 +22,7 @@ class TopUpScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const MAppBar(title: 'Nạp tiền'),
+      appBar: const MAppBar(title: 'Dịch vụ VietQR'),
       body: ChangeNotifierProvider(
         create: (context) => TopUpProvider(),
         child: BlocProvider<TopUpBloc>(
@@ -64,14 +63,63 @@ class TopUpScreen extends StatelessWidget {
                         const SizedBox(
                           height: 28,
                         ),
-                        _buildTemplateSection('Số tiền cần nạp',
+                        _buildTemplateSection('Số tiền dịch vụ VietQR cần nạp',
                             child: _buildTopUp())
                       ],
                     ),
                   ),
                   Consumer<TopUpProvider>(builder: (context, provider, child) {
+                    return Container(
+                      padding: const EdgeInsets.fromLTRB(
+                          20.0, 16, 20, kToolbarHeight),
+                      color: AppColor.WHITE,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('Tổng tiền cần thanh toán:'),
+                                Text(
+                                  '${provider.money} VND',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              FocusManager.instance.primaryFocus?.unfocus();
+                              Map<String, dynamic> data = {};
+                              data['phoneNo'] =
+                                  UserInformationHelper.instance.getPhoneNo();
+                              data['amount'] =
+                                  provider.money.replaceAll('.', '');
+                              data['transType'] = 'C';
+                              BlocProvider.of<TopUpBloc>(context)
+                                  .add(TopUpEventCreateQR(data: data));
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 8),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  color: AppColor.BLUE_TEXT),
+                              child: const Text(
+                                'Thanh toán',
+                                style: TextStyle(color: AppColor.WHITE),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+
                     return MButtonWidget(
                       title: 'Thanh toán',
+                      margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                       isEnable: provider.errorMoney.isEmpty,
                       colorEnableText: provider.errorMoney.isEmpty
                           ? AppColor.WHITE
@@ -86,6 +134,16 @@ class TopUpScreen extends StatelessWidget {
                         BlocProvider.of<TopUpBloc>(context)
                             .add(TopUpEventCreateQR(data: data));
                       },
+                      child: Row(
+                        children: [
+                          Column(
+                            children: [
+                              const Text('Tổng tiền cần thanh toán:'),
+                              Text('${provider.money} VND'),
+                            ],
+                          )
+                        ],
+                      ),
                     );
                   }),
                 ],
@@ -179,55 +237,184 @@ class TopUpScreen extends StatelessWidget {
   }
 
   Widget _buildTopUp() {
-    return Consumer<TopUpProvider>(builder: (context, provider, child) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          MTextFieldCustom(
-            isObscureText: false,
-            maxLines: 1,
-            value: provider.money,
-            fillColor: AppColor.WHITE,
-            autoFocus: true,
-            hintText: 'Nhập số tiền muốn nạp',
-            inputType: TextInputType.number,
-            keyboardAction: TextInputAction.next,
-            onChange: provider.updateMoney,
-            suffixIcon: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: const [
-                Text(
-                  'VND',
-                  style: TextStyle(fontSize: 14, color: AppColor.gray),
-                ),
+    return Consumer<TopUpProvider>(
+      builder: (context, provider, child) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            MTextFieldCustom(
+              isObscureText: false,
+              maxLines: 1,
+              value: provider.money,
+              fillColor: AppColor.WHITE,
+              autoFocus: true,
+              hintText: 'Nhập số tiền muốn nạp',
+              inputType: TextInputType.number,
+              keyboardAction: TextInputAction.next,
+              onChange: provider.updateMoney,
+              suffixIcon: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: const [
+                  Text(
+                    'VQR',
+                    style: TextStyle(fontSize: 14, color: AppColor.gray),
+                  ),
+                ],
+              ),
+              inputFormatter: [
+                FilteringTextInputFormatter.digitsOnly,
               ],
             ),
-            inputFormatter: [
-              FilteringTextInputFormatter.digitsOnly,
+            if (provider.errorMoney.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Text(
+                  provider.errorMoney,
+                  style:
+                      const TextStyle(fontSize: 13, color: AppColor.RED_TEXT),
+                ),
+              ),
+            const SizedBox(height: 16),
+            _buildSuggestMoney(provider),
+            const SizedBox(height: 28),
+            _buildTemplateSection('Phương thức thanh toán',
+                child: _buildPaymentMethods()),
+            const SizedBox(height: 30),
+            _buildSuggest(),
+            const SizedBox(height: 16),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildSuggest() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: AppColor.BLUE_TEXT.withOpacity(0.3),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: const [
+              Icon(Icons.info_outline, color: AppColor.BLUE_TEXT),
+              SizedBox(width: 4),
+              Expanded(
+                child: Text(
+                  'Lưu ý về Nạp tiền dịch vụ VietQR:',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: AppColor.BLUE_TEXT,
+                    fontSize: 15,
+                  ),
+                ),
+              )
             ],
           ),
-          if (provider.errorMoney.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(top: 4),
-              child: Text(
-                provider.errorMoney,
-                style: const TextStyle(fontSize: 13, color: AppColor.RED_TEXT),
+          const SizedBox(height: 8),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                '- ',
+                style: TextStyle(
+                  fontSize: 13,
+                  color: AppColor.BLACK,
+                ),
               ),
-            ),
-          const SizedBox(
-            height: 16,
+              Expanded(
+                child: RichText(
+                  text: const TextSpan(
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: AppColor.BLACK,
+                      height: 1.4,
+                    ),
+                    children: [
+                      TextSpan(text: 'Hãy xem kỹ '),
+                      TextSpan(
+                        text: 'các điều khoản và điều kiện',
+                        style: TextStyle(
+                          decoration: TextDecoration.underline,
+                          color: AppColor.BLUE_TEXT,
+                          height: 1.4,
+                        ),
+                      ),
+                      TextSpan(
+                          text:
+                              ' trước khi nạp tiền dịch vụ VietQR vào tài khoản.'),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
-          _buildSuggestMoney(provider),
-          const SizedBox(
-            height: 28,
+          const SizedBox(height: 4),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                '- ',
+                style: TextStyle(
+                  fontSize: 13,
+                  color: AppColor.BLACK,
+                ),
+              ),
+              Expanded(
+                child: RichText(
+                  text: const TextSpan(
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: AppColor.BLACK,
+                      height: 1.4,
+                    ),
+                    children: [
+                      TextSpan(
+                          text:
+                              'Nạp tiền chỉ dùng để mua dịch vụ, không quy đổi lại thành tiền mặt hoặc chuyển nhượng người khác.'),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
-          _buildTemplateSection('Phương thức thanh toán',
-              child: _buildPaymentMethods())
+          const SizedBox(height: 4),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                '- ',
+                style: TextStyle(
+                  fontSize: 13,
+                  color: AppColor.BLACK,
+                ),
+              ),
+              Expanded(
+                child: RichText(
+                  text: const TextSpan(
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: AppColor.BLACK,
+                      height: 1.4,
+                    ),
+                    children: [
+                      TextSpan(
+                          text:
+                              '1.000 VND quy đổi được 1.000 VQR trong hệ thống VietQR VN.'),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ],
-      );
-    });
+      ),
+    );
   }
 
   Widget _buildSuggestMoney(TopUpProvider provider) {
@@ -238,30 +425,36 @@ class TopUpScreen extends StatelessWidget {
           children: [
             Expanded(
               child: _buildItemSuggest(
-                  onChange: (value) {
-                    provider.updateMoney(value);
-                  },
-                  text: '10.000'),
+                onChange: (value) {
+                  provider.updateMoney(value);
+                },
+                text: '10.000',
+                money: provider.money,
+              ),
             ),
             const SizedBox(
               width: 12,
             ),
             Expanded(
               child: _buildItemSuggest(
-                  onChange: (value) {
-                    provider.updateMoney(value);
-                  },
-                  text: '20.000'),
+                onChange: (value) {
+                  provider.updateMoney(value);
+                },
+                text: '20.000',
+                money: provider.money,
+              ),
             ),
             const SizedBox(
               width: 12,
             ),
             Expanded(
               child: _buildItemSuggest(
-                  onChange: (value) {
-                    provider.updateMoney(value);
-                  },
-                  text: '50.000'),
+                onChange: (value) {
+                  provider.updateMoney(value);
+                },
+                text: '50.000',
+                money: provider.money,
+              ),
             ),
           ],
         ),
@@ -272,30 +465,36 @@ class TopUpScreen extends StatelessWidget {
           children: [
             Expanded(
               child: _buildItemSuggest(
-                  onChange: (value) {
-                    provider.updateMoney(value);
-                  },
-                  text: '100.000'),
+                onChange: (value) {
+                  provider.updateMoney(value);
+                },
+                text: '100.000',
+                money: provider.money,
+              ),
             ),
             const SizedBox(
               width: 12,
             ),
             Expanded(
               child: _buildItemSuggest(
-                  onChange: (value) {
-                    provider.updateMoney(value);
-                  },
-                  text: '200.000'),
+                onChange: (value) {
+                  provider.updateMoney(value);
+                },
+                text: '200.000',
+                money: provider.money,
+              ),
             ),
             const SizedBox(
               width: 12,
             ),
             Expanded(
               child: _buildItemSuggest(
-                  onChange: (value) {
-                    provider.updateMoney(value);
-                  },
-                  text: '500.000'),
+                onChange: (value) {
+                  provider.updateMoney(value);
+                },
+                text: '500.000',
+                money: provider.money,
+              ),
             ),
           ],
         ),
@@ -362,27 +561,42 @@ class TopUpScreen extends StatelessWidget {
   Widget _buildItemSuggest({
     ValueChanged<String>? onChange,
     required String text,
+    required String money,
   }) {
     return GestureDetector(
       onTap: () {
         onChange!(text);
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5),
-          border: Border.all(color: AppColor.BLUE_TEXT, width: 0.4),
-          color: AppColor.BLUE_TEXT.withOpacity(0.3),
-        ),
-        child: Text(
-          text,
-          style: const TextStyle(
-            fontWeight: FontWeight.w400,
-            height: 1.4,
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            border: Border.all(color: AppColor.BLUE_TEXT, width: 0.4),
+            color: text == money
+                ? AppColor.BLUE_TEXT.withOpacity(0.3)
+                : AppColor.TRANSPARENT,
           ),
-        ),
-      ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                text,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w400,
+                  height: 1.4,
+                ),
+              ),
+              const SizedBox(width: 2),
+              const Text(
+                'VQR',
+                style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  height: 1.4,
+                ),
+              ),
+            ],
+          )),
     );
   }
 

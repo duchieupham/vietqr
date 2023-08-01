@@ -5,13 +5,15 @@ class TopUpSuccessDTO {
   final String billNumber;
   final String transWalletId;
   final String notificationType;
+  final String time;
 
   const TopUpSuccessDTO(
       {this.amount = '',
       this.billNumber = '',
       this.notificationId = '',
       this.notificationType = '',
-      this.transWalletId = ''});
+      this.transWalletId = '',
+      this.time = ''});
 
   factory TopUpSuccessDTO.fromJson(Map<String, dynamic> json) {
     return TopUpSuccessDTO(
@@ -20,6 +22,7 @@ class TopUpSuccessDTO {
       notificationId: json['notificationId'] ?? '',
       notificationType: json['notificationType'] ?? '',
       transWalletId: json['transWalletId'] ?? '',
+      time: json['time'] ?? '',
     );
   }
 }
