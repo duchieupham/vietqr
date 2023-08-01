@@ -15,12 +15,13 @@ import 'package:vierqr/models/related_transaction_receive_dto.dart';
 import 'states/trans_history_state.dart';
 
 class TransHistoryScreen extends StatelessWidget {
-  const TransHistoryScreen({super.key});
+  final String bankId;
+  const TransHistoryScreen({super.key, required this.bankId});
 
   @override
   Widget build(BuildContext context) {
-    final arg = ModalRoute.of(context)!.settings.arguments as Map;
-    String bankId = arg['bankId'] ?? '';
+    // final arg = ModalRoute.of(context)!.settings.arguments as Map;
+    // String bankId = arg['bankId'] ?? '';
 
     return BlocProvider(
       create: (context) => TransHistoryBloc(context, bankId),
@@ -70,7 +71,7 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const MAppBar(title: 'Lịch sử giao dịch'),
+      // appBar: const MAppBar(title: 'Lịch sử giao dịch'),
       body: BlocConsumer<TransHistoryBloc, TransHistoryState>(
         listener: (context, state) {
           if (state.status == BlocStatus.LOADING) {
