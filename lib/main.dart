@@ -347,8 +347,8 @@ class _VietQRApp extends State<VietQRApp> {
                       const AddBusinessView(),
                   // Routes.BANK_CARD_DETAIL_VEW: (context) =>
                   //     const BankCardDetailScreen(),
-                  Routes.TRANSACTION_HISTORY_VIEW: (context) =>
-                      const TransHistoryScreen(),
+                  // Routes.TRANSACTION_HISTORY_VIEW: (context) =>
+                  //     const TransHistoryScreen(),
                   Routes.SCAN_QR_VIEW: (context) => const ScanQrScreen(),
                   Routes.PRINTER_SETTING: (context) => PrinterSettingView(),
                   Routes.SEARCH_BANK: (context) => SearchBankView(),

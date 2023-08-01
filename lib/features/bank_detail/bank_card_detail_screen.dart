@@ -25,6 +25,7 @@ import 'package:vierqr/features/bank_detail/page/statistical_page.dart';
 import 'package:vierqr/features/bank_detail/page/transaction_page.dart';
 import 'package:vierqr/features/bank_detail/views/dialog_otp.dart';
 import 'package:vierqr/features/printer/views/printing_view.dart';
+import 'package:vierqr/features/trans_history/trans_history_screen.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/main.dart';
@@ -271,12 +272,7 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                                   bankId: state.bankId ?? '',
                                 ),
                                 Statistical(bankId: state.bankId ?? ''),
-                                Transaction(
-                                  bloc: bankCardBloc,
-                                  refresh: _refresh,
-                                  dto: dto,
-                                  bankId: state.bankId ?? '',
-                                )
+                                TransHistoryScreen(bankId: state.bankId ?? '')
                               ],
                             );
                           });
