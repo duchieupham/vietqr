@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -183,6 +185,7 @@ class _VietQRApp extends State<VietQRApp> {
       NotificationService().showNotification(
         title: message.notification?.title,
         body: message.notification?.body,
+        payload: json.encode(message.data),
       );
 
       //process when receive data
@@ -214,6 +217,16 @@ class _VietQRApp extends State<VietQRApp> {
   void onFcmMessageOpenedApp() {
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       // Xử lý push notification nếu ứng dụng không đang chạy
+      if (message.data['transactionReceiveId'] != null) {
+        Navigator.pushNamed(
+          NavigationService.navigatorKey.currentContext!,
+          Routes.TRANSACTION_DETAIL,
+          arguments: {
+            'transactionId': message.data['transactionReceiveId'],
+            // 'bankId': bankId,
+          },
+        );
+      }
       if (message.notification != null) {
         LOG.info(
             "Push notification clicked: ${message.notification?.title.toString()} - ${message.notification?.body}");
