@@ -48,6 +48,8 @@ class _ContactStateState extends State<_ContactState>
 
   final List<Widget> _listScreens = [];
 
+  final searchController = TextEditingController();
+
   List<DataModel> listTab = [
     DataModel(
       title: 'Đã lưu',
@@ -137,6 +139,13 @@ class _ContactStateState extends State<_ContactState>
             Navigator.pop(context);
           }
 
+          if (state.type == ContactType.GET_LIST) {
+            if (state.listContactDTO.isNotEmpty) {
+              Provider.of<ContactProvider>(context, listen: false)
+                  .updateList(state.listContactDTO);
+            }
+          }
+
           if (state.type == ContactType.SAVE) {
             Fluttertoast.showToast(
               msg: 'Lưu thành công',
@@ -207,7 +216,10 @@ class _ContactStateState extends State<_ContactState>
                           provider.updateTab(index);
                         },
                         children: [
-                          _buildTapFirst(listContactDTO: state.listContactDTO),
+                          _buildTapFirst(
+                            listContactDTO: provider.listSearch,
+                            onChange: provider.onSearch,
+                          ),
                           _buildTapSecond(list: state.listContactDTOSuggest),
                         ],
                       ),
@@ -245,7 +257,10 @@ class _ContactStateState extends State<_ContactState>
     return const SizedBox.shrink();
   }
 
-  Widget _buildTapFirst({required List<ContactDTO> listContactDTO}) {
+  Widget _buildTapFirst({
+    required List<ContactDTO> listContactDTO,
+    ValueChanged<String>? onChange,
+  }) {
     return Column(
       children: [
         const SizedBox(height: 10),
@@ -253,12 +268,12 @@ class _ContactStateState extends State<_ContactState>
           isObscureText: false,
           maxLines: 1,
           fillColor: AppColor.WHITE,
-          // controller: provider.contentController,
+          controller: searchController,
           hintText: 'Tìm kiếm danh bạ',
           inputType: TextInputType.text,
           prefixIcon: const Icon(Icons.search),
           keyboardAction: TextInputAction.next,
-          onChange: (value) {},
+          onChange: onChange,
         ),
         const SizedBox(height: 30),
         Expanded(

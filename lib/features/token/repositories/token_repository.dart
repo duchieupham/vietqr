@@ -58,6 +58,7 @@ class TokenRepository {
         );
         if (response.statusCode == 200) {
           result = true;
+          await AccountHelper.instance.setFcmToken(newToken);
         }
       } else {
         result = true;
