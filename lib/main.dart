@@ -380,7 +380,8 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.PHONE_BOOK: (context) => const ContactScreen(),
                   // Routes.PHONE_BOOK: (context) => const SavePhoneBookScreen(),
                   Routes.TOP_UP: (context) => const TopUpScreen(),
-                  Routes.CONTACT_US_SCREEN: (context) => ContactUSScreen(),
+                  Routes.CONTACT_US_SCREEN: (context) =>
+                      const ContactUSScreen(),
                 },
                 onGenerateRoute: (settings) {
                   if (settings.name == Routes.BUSINESS_INFORMATION_VIEW) {
