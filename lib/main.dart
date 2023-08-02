@@ -40,6 +40,7 @@ import 'package:vierqr/features/dashboard/theme_setting.dart';
 import 'package:vierqr/features/generate_qr/views/qr_share_view.dart';
 import 'package:vierqr/features/home/blocs/home_bloc.dart';
 import 'package:vierqr/features/introduce/views/introduce_screen.dart';
+import 'package:vierqr/features/mobile_recharge/mobile_recharge_screen.dart';
 import 'package:vierqr/features/notification/views/notification_view.dart';
 import 'package:vierqr/features/personal/views/national_information_view.dart';
 import 'package:vierqr/features/printer/blocs/printer_bloc.dart';
@@ -380,6 +381,8 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.PHONE_BOOK: (context) => const ContactScreen(),
                   // Routes.PHONE_BOOK: (context) => const SavePhoneBookScreen(),
                   Routes.TOP_UP: (context) => const TopUpScreen(),
+                  Routes.MOBILE_RECHARGE: (context) => MobileRechargeScreen(),
+
                   Routes.CONTACT_US_SCREEN: (context) =>
                       const ContactUSScreen(),
                 },
