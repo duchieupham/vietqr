@@ -422,6 +422,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           .isValidValidation()) {
                         String userIP =
                             await UserInformationUtils.instance.getIPAddress();
+
                         AccountLoginDTO dto = AccountLoginDTO(
                           phoneNo: phone,
                           password:

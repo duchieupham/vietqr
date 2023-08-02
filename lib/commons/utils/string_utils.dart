@@ -134,7 +134,7 @@ class StringUtils {
     if (value == null) {
       return '0';
     }
-    var numberFormat = NumberFormat.decimalPattern('vi-VI');
+    var numberFormat = NumberFormat.decimalPattern('en');
     return numberFormat.format(value);
   }
 }

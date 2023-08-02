@@ -481,7 +481,8 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                 if (provider.imageFile == null)
                                   GestureDetector(
                                     onTap: () async {
-                                      FocusManager.instance.primaryFocus?.unfocus();
+                                      FocusManager.instance.primaryFocus
+                                          ?.unfocus();
                                       await Permission.mediaLibrary.request();
                                       await imagePicker
                                           .pickImage(
@@ -539,7 +540,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                           : AppColor.GREY_TEXT,
                       onTap: () {
                         FocusManager.instance.primaryFocus?.unfocus();
-                        String money = provider.money.replaceAll('.', '');
+                        String money = provider.money.replaceAll(',', '');
 
                         String formattedName = StringUtils.instance
                             .removeDiacritic(StringUtils.instance
