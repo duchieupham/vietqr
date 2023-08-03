@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
@@ -8,6 +9,8 @@ import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
+import 'package:http/http.dart' as http;
+import 'package:vierqr/models/response_message_dto.dart';
 
 class DashboardRepository {
   const DashboardRepository();
@@ -104,6 +107,42 @@ class DashboardRepository {
     } catch (e) {
       LOG.error(e.toString());
     }
+    return result;
+  }
+
+  Future<ResponseMessageDTO> sendReport({
+    List<XFile>? list,
+    Map<String, dynamic>? data,
+  }) async {
+    ResponseMessageDTO result =
+        const ResponseMessageDTO(status: '', message: '');
+    try {
+      final String url = '${EnvConfig.getUrl()}api/report';
+
+      final List<http.MultipartFile> files = [];
+      if (list != null) {
+        for (var element in list) {
+          final imageFile =
+              await http.MultipartFile.fromPath('image', element.path);
+
+          files.add(imageFile);
+        }
+      }
+      final response = await BaseAPIClient.postMultipartAPI(
+        url: url,
+        fields: data!,
+        files: files,
+      );
+      if (response.statusCode == 200 || response.statusCode == 400) {
+        var data = jsonDecode(response.body);
+        result = ResponseMessageDTO.fromJson(data);
+      } else {
+        result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+
     return result;
   }
 }

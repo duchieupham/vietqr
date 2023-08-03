@@ -25,7 +25,7 @@ class LoginProvider with ChangeNotifier {
   }
 
   void updatePhone(String value) {
-    phone = value;
+    phone = value.replaceAll(" ", "");
 
     if (phone.length == 9) {
       if (phone[0] != '0') {

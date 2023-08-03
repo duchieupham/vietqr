@@ -283,34 +283,37 @@ class _BankScreenState extends State<_BankScreen>
   Widget _buildListSection() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        children: [
-          Expanded(
-            child: _buildSection('assets/images/ic-qr-white.png', () async {
-              if (QRScannerHelper.instance.getQrIntro()) {
-                // Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
-                startBarcodeScanStream();
-              } else {
-                await DialogWidget.instance.showFullModalBottomContent(
-                  widget: const QRScanWidget(),
-                  color: AppColor.BLACK,
-                );
-                if (!mounted) return;
-                startBarcodeScanStream();
-              }
-            },
-                title: 'Copy mã QR',
-                des: 'Quét mã VietQR để thêm/Liên kết TK ngân hàng'),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: _buildSection('assets/images/ic-contact.png', () async {
-              Navigator.pushNamed(context, Routes.PHONE_BOOK);
-            },
-                title: 'Danh bạ QR',
-                des: 'Lưu trữ các loại QR để sử dụng cho nhiều mục đích'),
-          ),
-        ],
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: _buildSection('assets/images/ic-qr-white.png', () async {
+                if (QRScannerHelper.instance.getQrIntro()) {
+                  // Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
+                  startBarcodeScanStream();
+                } else {
+                  await DialogWidget.instance.showFullModalBottomContent(
+                    widget: const QRScanWidget(),
+                    color: AppColor.BLACK,
+                  );
+                  if (!mounted) return;
+                  startBarcodeScanStream();
+                }
+              },
+                  title: 'Copy mã QR',
+                  des: 'Quét mã VietQR để thêm/Liên kết TK ngân hàng'),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: _buildSection('assets/images/ic-contact.png', () async {
+                Navigator.pushNamed(context, Routes.PHONE_BOOK);
+              },
+                  title: 'Danh bạ QR',
+                  des: 'Lưu trữ các loại QR để sử dụng cho nhiều mục đích'),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -354,7 +357,7 @@ class _BankScreenState extends State<_BankScreen>
                           title,
                           style: const TextStyle(
                               fontWeight: FontWeight.w600,
-                              fontSize: 15,
+                              fontSize: 12,
                               height: 1.4),
                         ),
                       ),
@@ -367,7 +370,7 @@ class _BankScreenState extends State<_BankScreen>
                         child: const Icon(
                           Icons.arrow_forward_ios,
                           color: AppColor.GREY_HIGHLIGHT,
-                          size: 12,
+                          size: 10,
                         ),
                       )
                     ],
@@ -376,7 +379,7 @@ class _BankScreenState extends State<_BankScreen>
                   Text(
                     des,
                     style: const TextStyle(
-                        fontSize: 12, color: AppColor.GREY_TEXT),
+                        fontSize: 10, color: AppColor.GREY_TEXT),
                   ),
                 ],
               ),

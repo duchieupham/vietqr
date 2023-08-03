@@ -10,6 +10,7 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/file_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
+import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/ambient_avatar_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/account/blocs/account_bloc.dart';
@@ -111,7 +112,6 @@ class _AccountScreenState extends State<AccountScreen>
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 _BannerWidget(),
-                const SizedBox(height: 30),
                 _FeatureWidget(code: state.introduceDTO?.walletId ?? ''),
                 const SizedBox(height: 30),
                 _IntroduceWidget(dto: state.introduceDTO),
@@ -163,7 +163,7 @@ class _BannerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 230,
+      height: MediaQuery.of(context).size.height * 0.28,
       width: MediaQuery.of(context).size.width,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -182,7 +182,8 @@ class _BannerWidget extends StatelessWidget {
           ),
           const SizedBox(height: 2),
           Text(
-            UserInformationHelper.instance.getPhoneNo(),
+            StringUtils.instance.formatPhoneNumberVN(
+                UserInformationHelper.instance.getPhoneNo()),
             style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
@@ -451,7 +452,7 @@ class _SupportWidget extends StatelessWidget {
               children: [
                 GestureDetector(
                   onTap: () async {
-                    Navigator.pushNamed(context, Routes.CONTACT_US_SCREEN);
+                    Navigator.pushNamed(context, Routes.REPORT_SCREEN);
                   },
                   child: Row(
                     children: [
