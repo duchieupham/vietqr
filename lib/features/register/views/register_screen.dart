@@ -129,9 +129,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
                                 PhoneWidget(
-                                  onChanged: (value) {
-                                    provider.updatePhone(value);
-                                  },
+                                  onChanged: provider.updatePhone,
                                   phoneController: _phoneNoController,
                                 ),
                                 Visibility(

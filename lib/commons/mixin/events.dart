@@ -6,6 +6,12 @@ class ChangeThemeEvent {
   ChangeThemeEvent();
 }
 
+class ChangeBottomBarEvent {
+  final int page;
+
+  ChangeBottomBarEvent(this.page);
+}
+
 class GetListBankScreen {
   GetListBankScreen();
 }

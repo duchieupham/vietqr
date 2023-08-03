@@ -43,8 +43,10 @@ class RegisterProvider with ChangeNotifier {
   }
 
   void updatePhone(String value) {
-    if (value.isNotEmpty) {
-      phoneNoController.value = phoneNoController.value.copyWith(text: value);
+    String phone = value.replaceAll(" ", "");
+
+    if (phone.isNotEmpty) {
+      phoneNoController.value = phoneNoController.value.copyWith(text: phone);
       _isPhoneErr = false;
     } else {
       _isPhoneErr = true;

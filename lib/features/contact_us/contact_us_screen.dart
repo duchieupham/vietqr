@@ -1,11 +1,9 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/commons/enums/textfield_type.dart';
-import 'package:vierqr/commons/widgets/textfield_custom.dart';
+import 'package:vierqr/commons/utils/string_utils.dart';
 
 class ContactUSScreen extends StatefulWidget {
   const ContactUSScreen({super.key});
@@ -22,13 +20,13 @@ class _ContactUSScreenState extends State<ContactUSScreen> {
         child: Column(
           children: [
             SizedBox(
-              height: 250,
+              height: MediaQuery.of(context).size.height * 0.3,
               width: MediaQuery.of(context).size.width,
               child: Stack(
                 children: [
                   Center(
                     child: Container(
-                      height: 250,
+                      height: MediaQuery.of(context).size.height * 0.3,
                       width: MediaQuery.of(context).size.width,
                       decoration: const BoxDecoration(
                         image: DecorationImage(
@@ -59,7 +57,7 @@ class _ContactUSScreenState extends State<ContactUSScreen> {
                     child: Align(
                       alignment: Alignment.center,
                       child: Container(
-                        height: 100,
+                        height: MediaQuery.of(context).size.height * 0.12,
                         width: MediaQuery.of(context).size.width / 2,
                         margin: const EdgeInsets.only(top: 50),
                         decoration: const BoxDecoration(
@@ -72,6 +70,21 @@ class _ContactUSScreenState extends State<ContactUSScreen> {
                       ),
                     ),
                   ),
+                  Positioned(
+                    top: kToolbarHeight,
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: IconButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        padding: const EdgeInsets.only(left: 20),
+                        icon: const Icon(
+                          Icons.arrow_back_ios,
+                          color: Colors.black,
+                          size: 18,
+                        ),
+                      ),
+                    ),
+                  )
                 ],
               ),
             ),
@@ -85,7 +98,7 @@ class _ContactUSScreenState extends State<ContactUSScreen> {
                     textAlign: TextAlign.start,
                     style: const TextStyle(
                       height: 1.4,
-                      fontSize: 15,
+                      fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -95,7 +108,7 @@ class _ContactUSScreenState extends State<ContactUSScreen> {
                     textAlign: TextAlign.start,
                     style: TextStyle(
                       height: 1.4,
-                      fontSize: 20,
+                      fontSize: 16,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -108,13 +121,14 @@ class _ContactUSScreenState extends State<ContactUSScreen> {
                         textAlign: TextAlign.start,
                         style: TextStyle(
                           height: 1.4,
-                          fontSize: 16,
+                          fontSize: 15,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 10),
                       _buildItem(
-                          value: formatPhoneNumberVN(phoneGroup),
+                          value: StringUtils.instance
+                              .formatPhoneNumberVN(phoneGroup),
                           icon: const Icon(Icons.phone,
                               size: 12, color: AppColor.WHITE),
                           onTap: () {
@@ -122,7 +136,8 @@ class _ContactUSScreenState extends State<ContactUSScreen> {
                           }),
                       const SizedBox(height: 10),
                       _buildItem(
-                          value: formatPhoneNumberVN(phoneIndividual),
+                          value: StringUtils.instance
+                              .formatPhoneNumberVN(phoneIndividual),
                           icon: const Icon(Icons.phone,
                               size: 12, color: AppColor.WHITE),
                           onTap: () {
@@ -139,7 +154,7 @@ class _ContactUSScreenState extends State<ContactUSScreen> {
                         textAlign: TextAlign.start,
                         style: TextStyle(
                           height: 1.4,
-                          fontSize: 16,
+                          fontSize: 15,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -163,7 +178,7 @@ class _ContactUSScreenState extends State<ContactUSScreen> {
                         textAlign: TextAlign.start,
                         style: TextStyle(
                           height: 1.4,
-                          fontSize: 16,
+                          fontSize: 15,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -191,7 +206,7 @@ class _ContactUSScreenState extends State<ContactUSScreen> {
                         textAlign: TextAlign.start,
                         style: TextStyle(
                           height: 1.4,
-                          fontSize: 16,
+                          fontSize: 15,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -238,18 +253,6 @@ class _ContactUSScreenState extends State<ContactUSScreen> {
     }
   }
 
-  String formatPhoneNumberVN(String phoneNumber) {
-    String numericString = phoneNumber.replaceAll(RegExp(r'[^0-9]'), '');
-
-    if (numericString.length >= 10) {
-      return phoneNumber.replaceAllMapped(RegExp(r'(\d{3})(\d{3})(\d+)'),
-          (Match m) => "${m[1]} ${m[2]} ${m[3]}");
-      return '${numericString.substring(0, 3)} ${numericString.substring(3, 6)} ${numericString.substring(6)}';
-    } else {
-      return numericString;
-    }
-  }
-
   Widget _buildItem(
       {required String value,
       String textButton = 'Gọi ngay',
@@ -269,7 +272,7 @@ class _ContactUSScreenState extends State<ContactUSScreen> {
               textAlign: TextAlign.start,
               style: const TextStyle(
                 height: 1.4,
-                fontSize: 16,
+                fontSize: 15,
               ),
             ),
           ),

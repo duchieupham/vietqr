@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 
 class PhoneWidget extends StatefulWidget {
   final ValueChanged<String>? onChanged;
@@ -156,6 +157,12 @@ class _BodyWidget extends State<PhoneWidget> {
                       ),
                     ),
                   ),
+                  inputFormatters: [
+                    PhoneInputFormatter(
+                      allowEndlessPhone: false,
+                      defaultCountryCode: "VN",
+                    )
+                  ],
                 ),
               ),
             ],

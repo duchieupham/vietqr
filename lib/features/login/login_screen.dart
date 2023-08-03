@@ -7,6 +7,7 @@ import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/encrypt_utils.dart';
+import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/phone_widget.dart';
 import 'package:vierqr/features/login/blocs/login_bloc.dart';
@@ -200,7 +201,10 @@ class _LoginState extends State<_Login> {
                                         ),
                                         const SizedBox(height: 4),
                                         Text(
-                                          state.infoUserDTO?.phoneNo ?? '',
+                                          StringUtils.instance
+                                              .formatPhoneNumberVN(
+                                                  state.infoUserDTO?.phoneNo ??
+                                                      ''),
                                           style: const TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold,
@@ -331,13 +335,13 @@ class _LoginState extends State<_Login> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     SizedBox(
-                      height: 250,
+                      height: MediaQuery.of(context).size.height * 0.3,
                       width: MediaQuery.of(context).size.width,
                       child: Stack(
                         children: [
                           Center(
                             child: Container(
-                              height: 250,
+                              height: MediaQuery.of(context).size.height * 0.3,
                               width: MediaQuery.of(context).size.width,
                               decoration: const BoxDecoration(
                                 image: DecorationImage(

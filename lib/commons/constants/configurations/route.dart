@@ -38,4 +38,5 @@ class Routes {
   static const String QR_TOP_UP = '/qr_top_up';
   static const String MOBILE_RECHARGE = '/mobile_recharge';
   static const String CONTACT_US_SCREEN = '/contact_us_screen';
+  static const String REPORT_SCREEN = '/report_screen';
 }

@@ -1,11 +1,8 @@
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
-import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
-import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/home/widget/card_wallet.dart';

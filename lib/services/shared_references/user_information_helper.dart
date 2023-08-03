@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/account_information_dto.dart';
 import 'package:vierqr/models/introduce_dto.dart';
@@ -9,6 +10,7 @@ class UserInformationHelper {
 
   static const UserInformationHelper _instance =
       UserInformationHelper._privateConsrtructor();
+
   static UserInformationHelper get instance => _instance;
 
   Future<void> initialUserInformationHelper() async {
