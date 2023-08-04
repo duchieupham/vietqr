@@ -177,22 +177,6 @@ class NationalInformationView extends StatelessWidget {
                         height: 40,
                         isEnable: true,
                         margin: EdgeInsets.zero,
-                        widget: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Icon(
-                              Icons.person_outline_rounded,
-                              color: AppColor.WHITE,
-                              size: 20,
-                            ),
-                            SizedBox(width: 4),
-                            Text(
-                              'Cập nhật thông tin cá nhân',
-                              style: TextStyle(
-                                  fontSize: 14, color: AppColor.WHITE),
-                            )
-                          ],
-                        ),
                         title: '',
                         onTap: () {
                           int gender = (dto.gender.trim() == 'Nam') ? 0 : 1;
@@ -220,6 +204,22 @@ class NationalInformationView extends StatelessWidget {
                             ),
                           );
                         },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Icon(
+                              Icons.person_outline_rounded,
+                              color: AppColor.WHITE,
+                              size: 20,
+                            ),
+                            SizedBox(width: 4),
+                            Text(
+                              'Cập nhật thông tin cá nhân',
+                              style: TextStyle(
+                                  fontSize: 14, color: AppColor.WHITE),
+                            )
+                          ],
+                        ),
                       ),
                     ),
                     const Padding(padding: EdgeInsets.only(left: 10)),

@@ -1,9 +1,13 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 // import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -921,11 +925,34 @@ class _StackedList extends State<StackedList> {
     );
   }
 
+  final MethodChannel platformChannel = const MethodChannel('scan_qr_code');
+
+  Future<void> _pickAndProcessQRImage() async {
+    final imagePicker = ImagePicker();
+    final pickedFile = await imagePicker.getImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      // Gửi ảnh được chọn xuống native để xử lý
+      File imageFile = File(pickedFile.path);
+      Uint8List imageBytes = await imageFile.readAsBytes();
+      String base64Image = base64Encode(imageBytes);
+
+      try {
+        final data = await platformChannel
+            .invokeMethod('processQRImage', {'imageData': base64Image});
+        print('$data');
+      } on PlatformException catch (e) {
+        print('Error sending QR image to native: ${e.message}');
+      }
+    }
+  }
+
   Widget _buildAddBankCard(double width) {
     return GestureDetector(
       onTap: () async {
+        // _pickAndProcessQRImage();
         await Navigator.pushNamed(context, Routes.ADD_BANK_CARD);
-        widget.getListBank();
+        // widget.getListBank();
       },
       child: Container(
         width: width,

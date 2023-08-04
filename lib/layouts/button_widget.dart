@@ -11,7 +11,7 @@ class MButtonWidget extends StatelessWidget {
   final Color? colorEnableText;
   final Color? colorDisableText;
   final double? height;
-  final Widget? widget;
+  final Widget? child;
   final double? width;
   final double? fontSize;
 
@@ -25,7 +25,7 @@ class MButtonWidget extends StatelessWidget {
     this.colorDisableBgr,
     this.colorEnableText,
     this.height,
-    this.widget,
+    this.child,
     this.width,
     this.colorDisableText,
     this.fontSize = 14,
@@ -41,7 +41,7 @@ class MButtonWidget extends StatelessWidget {
           Container(
             alignment: Alignment.center,
             margin: margin ??
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             height: height ?? 40,
             width: width,
             decoration: BoxDecoration(
@@ -50,7 +50,7 @@ class MButtonWidget extends StatelessWidget {
                   ? colorEnableBgr ?? AppColor.BLUE_TEXT
                   : colorDisableBgr ?? AppColor.WHITE,
             ),
-            child: widget ??
+            child: child ??
                 Text(
                   title,
                   style: TextStyle(

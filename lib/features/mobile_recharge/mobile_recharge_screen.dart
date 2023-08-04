@@ -31,7 +31,7 @@ class MobileRechargeScreen extends StatelessWidget {
   String getIdImage(List<NetworkProviders> list) {
     String imgId = '';
     AccountInformationDTO accountInformationDTO =
-        UserInformationHelper.instance.getAccountInformation();
+    UserInformationHelper.instance.getAccountInformation();
     for (var element in list) {
       if (accountInformationDTO.carrierTypeId == element.id) {
         imgId = element.imgId;
@@ -44,7 +44,7 @@ class MobileRechargeScreen extends StatelessWidget {
   initNetworkProviders(
       List<NetworkProviders> list, TopUpProvider topUpProvider) {
     AccountInformationDTO accountInformationDTO =
-        UserInformationHelper.instance.getAccountInformation();
+    UserInformationHelper.instance.getAccountInformation();
     for (var element in list) {
       if (accountInformationDTO.carrierTypeId == element.id) {
         topUpProvider.initNetworkProviders(element);
@@ -60,7 +60,7 @@ class MobileRechargeScreen extends StatelessWidget {
         create: (context) => TopUpProvider(),
         child: BlocProvider<MobileRechargeBloc>(
           create: (context) =>
-              MobileRechargeBloc()..add(MobileRechargeGetListType()),
+          MobileRechargeBloc()..add(MobileRechargeGetListType()),
           child: BlocConsumer<MobileRechargeBloc, MobileRechargeState>(
             listener: (context, state) {
               if (state is MobileRechargeMobileMoneyLoadingState) {
@@ -83,7 +83,7 @@ class MobileRechargeScreen extends StatelessWidget {
                 DialogWidget.instance.openMsgDialog(
                     title: 'Nạp tiền thất bại',
                     msg:
-                        ErrorUtils.instance.getErrorMessage(state.dto.message));
+                    ErrorUtils.instance.getErrorMessage(state.dto.message));
               }
             },
             builder: (context, state) {
@@ -103,7 +103,7 @@ class MobileRechargeScreen extends StatelessWidget {
                                   .instance
                                   .getAccountInformation(),
                               phoneNumber:
-                                  UserInformationHelper.instance.getPhoneNo()),
+                              UserInformationHelper.instance.getPhoneNo()),
                         ),
                         const SizedBox(
                           height: 28,
@@ -115,7 +115,7 @@ class MobileRechargeScreen extends StatelessWidget {
                   Consumer<TopUpProvider>(builder: (context, provider, child) {
                     return Container(
                       padding:
-                          const EdgeInsets.fromLTRB(0, 16, 0, kToolbarHeight),
+                      const EdgeInsets.fromLTRB(0, 16, 0, kToolbarHeight),
                       color: AppColor.WHITE,
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -141,11 +141,11 @@ class MobileRechargeScreen extends StatelessWidget {
                                   },
                                   child: Text(
                                     int.parse(UserInformationHelper.instance
-                                                    .getWalletInfo()
-                                                    .amount ??
-                                                '0') <
-                                            int.parse(provider.money
-                                                .replaceAll(',', ''))
+                                        .getWalletInfo()
+                                        .amount ??
+                                        '0') <
+                                        int.parse(provider.money
+                                            .replaceAll(',', ''))
                                         ? 'Không đủ thanh toán.\n Nạp ngay'
                                         : 'Nạp thêm',
                                     textAlign: TextAlign.center,
@@ -171,7 +171,7 @@ class MobileRechargeScreen extends StatelessWidget {
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    CrossAxisAlignment.start,
                                     children: [
                                       const Text(
                                         'Tổng tiền cần thanh toán:',
@@ -211,9 +211,9 @@ class MobileRechargeScreen extends StatelessWidget {
                                             data['carrierTypeId'] =
                                                 provider.networkProviders.id;
                                             BlocProvider.of<MobileRechargeBloc>(
-                                                    context)
+                                                context)
                                                 .add(MobileRechargeMobileMoney(
-                                                    data: data));
+                                                data: data));
                                           },
                                         ));
                                   },
@@ -247,7 +247,7 @@ class MobileRechargeScreen extends StatelessWidget {
 
   Widget _buildPhoneNumber(BuildContext context,
       {required AccountInformationDTO accountInformationDTO,
-      required String phoneNumber}) {
+        required String phoneNumber}) {
     double height = MediaQuery.of(context).size.height;
     return Container(
       padding: const EdgeInsets.fromLTRB(8, 8, 20, 12),
@@ -261,11 +261,11 @@ class MobileRechargeScreen extends StatelessWidget {
               Consumer<TopUpProvider>(builder: (context, provider, child) {
                 return BlocConsumer<MobileRechargeBloc, MobileRechargeState>(
                     listener: (context, state) {
-                  if (state is MobileRechargeGetListTypeSuccessState) {
-                    initNetworkProviders(state.list, provider);
-                    provider.init(state.list);
-                  }
-                }, builder: (context, state) {
+                      if (state is MobileRechargeGetListTypeSuccessState) {
+                        initNetworkProviders(state.list, provider);
+                        provider.init(state.list);
+                      }
+                    }, builder: (context, state) {
                   String imgId = provider.networkProviders.imgId;
                   if (imgId.isNotEmpty) {
                     return GestureDetector(
@@ -293,7 +293,7 @@ class MobileRechargeScreen extends StatelessWidget {
                             fit: BoxFit.cover,
                             image: provider.networkProviders.imgId.isNotEmpty
                                 ? ImageUtils.instance.getImageNetWork(
-                                    provider.networkProviders.imgId)
+                                provider.networkProviders.imgId)
                                 : ImageUtils.instance.getImageNetWork(imgId),
                           ),
                         ),
@@ -317,7 +317,7 @@ class MobileRechargeScreen extends StatelessWidget {
                           height: 22,
                           child: TextField(
                             controller:
-                                TextEditingController(text: phoneNumber),
+                            TextEditingController(text: phoneNumber),
                             readOnly: true,
                             focusNode: myFocusNode,
                             style: const TextStyle(
@@ -484,7 +484,7 @@ class MobileRechargeScreen extends StatelessWidget {
                 text,
                 style: TextStyle(
                     fontWeight:
-                        text == money ? FontWeight.w600 : FontWeight.w400,
+                    text == money ? FontWeight.w600 : FontWeight.w400,
                     height: 1.4,
                     color: text == money ? AppColor.BLUE_TEXT : AppColor.BLACK),
               ),
@@ -537,18 +537,18 @@ class MobileRechargeScreen extends StatelessWidget {
               width: 0.5, color: AppColor.GREY_TEXT.withOpacity(0.3)),
           image: provider.networkProviders.imgId.isNotEmpty
               ? DecorationImage(
-                  fit: BoxFit.cover,
-                  image: ImageUtils.instance
-                      .getImageNetWork(provider.networkProviders.imgId),
-                )
+            fit: BoxFit.cover,
+            image: ImageUtils.instance
+                .getImageNetWork(provider.networkProviders.imgId),
+          )
               : null,
         ),
         child: provider.networkProviders.imgId.isEmpty
             ? const Text(
-                'Chọn nhà\nmạng',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 10),
-              )
+          'Chọn nhà\nmạng',
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 10),
+        )
             : const SizedBox.shrink(),
       ),
     );

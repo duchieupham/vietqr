@@ -411,7 +411,11 @@ class _BodyWidgetState extends State<_BodyWidget> {
                         if (dto?.status != 0)
                           Expanded(
                             child: MButtonWidget(
-                              widget: Row(
+                              title: '',
+                              isEnable: true,
+                              margin: const EdgeInsets.only(left: 20),
+                              onTap: onPaid,
+                              child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: const [
                                   Icon(
@@ -428,16 +432,27 @@ class _BodyWidgetState extends State<_BodyWidget> {
                                   ),
                                 ],
                               ),
-                              title: '',
-                              isEnable: true,
-                              margin: const EdgeInsets.only(left: 20),
-                              onTap: onPaid,
                             ),
                           )
                         else if (dto?.status == 0)
                           Expanded(
                             child: MButtonWidget(
-                              widget: Row(
+                              title: '',
+                              isEnable: true,
+                              margin: const EdgeInsets.only(left: 20),
+                              onTap: () {
+                                QRRecreateDTO qrRecreateDTO = QRRecreateDTO(
+                                  bankId: dto?.bankId ?? '',
+                                  amount: (dto?.amount ?? '').toString(),
+                                  content: dto?.content ?? '',
+                                  userId: UserInformationHelper.instance
+                                      .getUserId(),
+                                  newTransaction: false,
+                                );
+                                _bloc.add(
+                                    TransEventQRRegenerate(dto: qrRecreateDTO));
+                              },
+                              child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Image.asset(
@@ -456,21 +471,6 @@ class _BodyWidgetState extends State<_BodyWidget> {
                                   ),
                                 ],
                               ),
-                              title: '',
-                              isEnable: true,
-                              margin: const EdgeInsets.only(left: 20),
-                              onTap: () {
-                                QRRecreateDTO qrRecreateDTO = QRRecreateDTO(
-                                  bankId: dto?.bankId ?? '',
-                                  amount: (dto?.amount ?? '').toString(),
-                                  content: dto?.content ?? '',
-                                  userId: UserInformationHelper.instance
-                                      .getUserId(),
-                                  newTransaction: false,
-                                );
-                                _bloc.add(
-                                    TransEventQRRegenerate(dto: qrRecreateDTO));
-                              },
                             ),
                           ),
                         const SizedBox(width: 10),

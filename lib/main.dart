@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:camera/camera.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -61,7 +62,6 @@ import 'package:vierqr/features/top_up/qr_top_up.dart';
 import 'package:vierqr/features/top_up/top_up_screen.dart';
 import 'package:vierqr/features/top_up/widget/pop_up_top_up_sucsess.dart';
 import 'package:vierqr/features/transaction/transaction_detail_screen.dart';
-import 'package:vierqr/features/trans_history/trans_history_screen.dart';
 import 'package:vierqr/features/transaction/widgets/transaction_sucess_widget.dart';
 import 'package:vierqr/models/notification_transaction_success_dto.dart';
 import 'package:vierqr/models/contact_dto.dart';
@@ -97,6 +97,7 @@ import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 //Share Preferences
 late SharedPreferences sharedPrefs;
+List<CameraDescription> cameras = [];
 
 //go into EnvConfig to change env
 void main() async {
@@ -111,6 +112,7 @@ void main() async {
   } else {
     await Firebase.initializeApp();
   }
+  cameras = await availableCameras();
   LOG.verbose('Config Environment: ${EnvConfig.getEnv()}');
   runApp(const VietQRApp());
 }

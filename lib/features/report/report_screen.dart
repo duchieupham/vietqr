@@ -36,7 +36,7 @@ class _ReportScreenState extends State<ReportScreen> {
     DataModel(title: 'Liên kết TK Ngân hàng', type: 1),
     DataModel(title: 'Nạp tiền dịch vụ VietQR', type: 2),
     DataModel(title: 'Nạp tiền điện thoại', type: 3),
-    DataModel(title: 'Doanh nghiệp và chia sẻ bdsd', type: 4),
+    DataModel(title: 'Doanh nghiệp và chia sẻ BĐSD', type: 4),
     DataModel(title: 'khác', type: 5),
   ];
 

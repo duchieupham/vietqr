@@ -5,9 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
-import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/commons/widgets/sub_header_widget.dart';
 import 'package:vierqr/features/top_up/blocs/top_up_bloc.dart';
 import 'package:vierqr/features/top_up/events/scan_qr_event.dart';
 import 'package:vierqr/features/top_up/states/top_up_state.dart';
@@ -121,16 +119,6 @@ class TopUpScreen extends StatelessWidget {
 
                     return MButtonWidget(
                       title: 'Thanh toán',
-                      widget: Row(
-                        children: [
-                          Column(
-                            children: [
-                              Text('Tổng tiền cần thanh toán:'),
-                              Text('${provider.money} VND'),
-                            ],
-                          )
-                        ],
-                      ),
                       margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                       isEnable: provider.errorMoney.isEmpty,
                       colorEnableText: provider.errorMoney.isEmpty
@@ -146,6 +134,16 @@ class TopUpScreen extends StatelessWidget {
                         BlocProvider.of<TopUpBloc>(context)
                             .add(TopUpEventCreateQR(data: data));
                       },
+                      child: Row(
+                        children: [
+                          Column(
+                            children: [
+                              const Text('Tổng tiền cần thanh toán:'),
+                              Text('${provider.money} VND'),
+                            ],
+                          )
+                        ],
+                      ),
                     );
                   }),
                 ],
