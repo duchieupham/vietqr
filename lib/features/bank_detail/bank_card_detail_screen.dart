@@ -1,23 +1,10 @@
-import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
-import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
-import 'package:vierqr/commons/utils/currency_utils.dart';
-import 'package:vierqr/commons/utils/image_utils.dart';
-import 'package:vierqr/commons/utils/platform_utils.dart';
-import 'package:vierqr/commons/utils/printer_utils.dart';
-import 'package:vierqr/commons/utils/share_utils.dart';
-import 'package:vierqr/commons/utils/time_utils.dart';
-import 'package:vierqr/commons/utils/transaction_utils.dart';
-import 'package:vierqr/commons/widgets/button_icon_widget.dart';
-import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/commons/widgets/divider_widget.dart';
-import 'package:vierqr/commons/widgets/viet_qr.dart';
 import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
 import 'package:vierqr/features/bank_detail/page/info_page.dart';
@@ -30,16 +17,9 @@ import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
-import 'package:vierqr/models/bank_account_dto.dart';
-import 'package:vierqr/models/bank_account_remove_dto.dart';
-import 'package:vierqr/models/bank_type_dto.dart';
-import 'package:vierqr/models/bluetooth_printer_dto.dart';
-import 'package:vierqr/models/business_item_dto.dart';
 import 'package:vierqr/models/confirm_otp_bank_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
-import 'package:vierqr/services/providers/action_share_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
-import 'package:vierqr/services/sqflite/local_database.dart';
 
 import '../../services/providers/account_bank_detail_provider.dart';
 import 'states/bank_card_state.dart';
@@ -100,6 +80,7 @@ class _BankCardDetailState extends State<BankCardDetailState> {
     caiValue: '',
   );
   final otpController = TextEditingController();
+
   Future<void> _refresh() async {
     bankCardBloc.add(const BankCardGetDetailEvent());
   }
@@ -124,53 +105,53 @@ class _BankCardDetailState extends State<BankCardDetailState> {
       body: ChangeNotifierProvider(
         create: (_) => AccountBankDetailProvider(),
         child: Consumer<AccountBankDetailProvider>(
-            builder: (context, provider, child) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              children: [
-                Row(
-                  children: listTitle.map((title) {
-                    int index = listTitle.indexOf(title);
-                    return GestureDetector(
-                      onTap: () {
-                        pageController.animateToPage(index,
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.ease);
-                        provider.changeCurrentPage(index);
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.only(right: 20),
-                        padding: const EdgeInsets.only(bottom: 4, top: 12),
-                        decoration: BoxDecoration(
-                            border: Border(
-                                bottom: BorderSide(
-                                    color: index == provider.currentPage
-                                        ? AppColor.BLUE_TEXT
-                                        : Colors.transparent))),
-                        child: Text(
-                          title,
-                          style: const TextStyle(fontSize: 16),
+          builder: (context, provider, child) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                children: [
+                  Row(
+                    children: listTitle.map((title) {
+                      int index = listTitle.indexOf(title);
+                      return GestureDetector(
+                        onTap: () {
+                          pageController.animateToPage(index,
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.ease);
+                          provider.changeCurrentPage(index);
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.only(right: 20),
+                          padding: const EdgeInsets.only(bottom: 4, top: 12),
+                          decoration: BoxDecoration(
+                              border: Border(
+                                  bottom: BorderSide(
+                                      color: index == provider.currentPage
+                                          ? AppColor.BLUE_TEXT
+                                          : Colors.transparent))),
+                          child: Text(
+                            title,
+                            style: const TextStyle(fontSize: 16),
+                          ),
                         ),
-                      ),
-                    );
-                  }).toList(),
-                ),
-                const SizedBox(
-                  height: 12,
-                ),
-                Expanded(
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(
+                    height: 12,
+                  ),
+                  Expanded(
                     child: StreamBuilder<bool>(
-                        stream: notificationController.stream,
-                        builder: (BuildContext context,
-                            AsyncSnapshot<bool> snapshot) {
-                          if (snapshot.hasData) {
-                            if (snapshot.data == true) {
-                              bankCardBloc.add(const BankCardGetDetailEvent());
-                            }
+                      stream: notificationController.stream,
+                      builder:
+                          (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                        if (snapshot.hasData) {
+                          if (snapshot.data == true) {
+                            bankCardBloc.add(const BankCardGetDetailEvent());
                           }
-                          return BlocConsumer<BankCardBloc, BankCardState>(
-                              listener: (context, state) async {
+                        }
+                        return BlocConsumer<BankCardBloc, BankCardState>(
+                          listener: (context, state) async {
                             if (state.status == BlocStatus.LOADING) {
                               DialogWidget.instance.openLoadingDialog();
                             }
@@ -257,7 +238,8 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                                 state.request != BankDetailType.NONE) {
                               bankCardBloc.add(UpdateEvent());
                             }
-                          }, builder: (context, state) {
+                          },
+                          builder: (context, state) {
                             return PageView(
                               controller: pageController,
                               onPageChanged: (index) {
@@ -275,12 +257,16 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                                 TransHistoryScreen(bankId: state.bankId ?? '')
                               ],
                             );
-                          });
-                        })),
-              ],
-            ),
-          );
-        }),
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }

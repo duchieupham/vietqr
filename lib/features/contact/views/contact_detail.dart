@@ -87,103 +87,104 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
                 )
               ],
             ),
-            body: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(
-                        left: 30, right: 30, top: 50, bottom: 16),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: AppColor.WHITE,
-                      borderRadius: const BorderRadius.all(Radius.circular(16)),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Theme.of(context).shadowColor.withOpacity(0.1),
-                          spreadRadius: 2,
-                          blurRadius: 4,
-                          offset: const Offset(1, 2),
+            body: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(
+                          left: 30, right: 30, top: 50, bottom: 16),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: AppColor.WHITE,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(16)),
+                        boxShadow: [
+                          BoxShadow(
+                            color:
+                                Theme.of(context).shadowColor.withOpacity(0.1),
+                            spreadRadius: 2,
+                            blurRadius: 4,
+                            offset: const Offset(1, 2),
+                          ),
+                        ],
+                      ),
+                      child: QrImage(
+                        data: state.contactDetailDTO.value ?? '',
+                        version: QrVersions.auto,
+                        embeddedImage: const AssetImage(
+                            'assets/images/ic-viet-qr-small.png'),
+                        embeddedImageStyle: QrEmbeddedImageStyle(
+                          size: const Size(30, 30),
                         ),
+                      ),
+                    ),
+                    Text(
+                      state.contactDetailDTO.nickName ?? '',
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.w600),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      children: [
+                        const Text(
+                          "Loại QR",
+                          style: TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                        const Spacer(),
+                        _buildTypeQr(state.contactDetailDTO)
                       ],
                     ),
-                    child: QrImage(
-                      data: state.contactDetailDTO.value ?? '',
-                      version: QrVersions.auto,
-                      embeddedImage: const AssetImage(
-                          'assets/images/ic-viet-qr-small.png'),
-                      embeddedImageStyle: QrEmbeddedImageStyle(
-                        size: const Size(30, 30),
-                      ),
+                    const SizedBox(
+                      height: 12,
                     ),
-                  ),
-                  Text(
-                    state.contactDetailDTO.nickName ?? '',
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.w600),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    children: [
-                      const Text(
-                        "Loại QR",
+                    const Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Ghi chú",
                         style: TextStyle(fontWeight: FontWeight.w600),
                       ),
-                      const Spacer(),
-                      _buildTypeQr(state.contactDetailDTO)
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  const Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Ghi chú",
-                      style: TextStyle(fontWeight: FontWeight.w600),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 12, horizontal: 16),
-                    alignment: Alignment.centerLeft,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color: AppColor.WHITE,
+                    const SizedBox(
+                      height: 8,
                     ),
-                    child: Text(state.contactDetailDTO.additionalData ?? ''),
-                  ),
-                  const Spacer(),
-                  MButtonWidget(
-                      onTap: () {
-                        DialogWidget.instance.openMsgDialog(
-                          title: 'Xoá liên hệ',
-                          msg: 'Bạn có chắc chắn muốn xoá liên hệ này?',
-                          isSecondBT: true,
-                          functionConfirm: () {
-                            Navigator.of(context).pop();
-                            BlocProvider.of<ContactBloc>(context)
-                                .add(RemoveContactEvent(id: widget.dto.id));
-                          },
-                        );
-                      },
-                      height: 40,
-                      width: double.infinity,
-                      title: 'Xoá thông tin',
-                      margin: EdgeInsets.zero,
-                      isEnable: true,
-                      colorEnableText: AppColor.RED_TEXT,
-                      fontSize: 14,
-                      colorEnableBgr: AppColor.WHITE),
-                  const SizedBox(
-                    height: 20,
-                  )
-                ],
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 16),
+                      alignment: Alignment.centerLeft,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        color: AppColor.WHITE,
+                      ),
+                      child: Text(state.contactDetailDTO.additionalData ?? ''),
+                    ),
+                    const Spacer(),
+                    MButtonWidget(
+                        onTap: () {
+                          DialogWidget.instance.openMsgDialog(
+                            title: 'Xoá liên hệ',
+                            msg: 'Bạn có chắc chắn muốn xoá liên hệ này?',
+                            isSecondBT: true,
+                            functionConfirm: () {
+                              Navigator.of(context).pop();
+                              BlocProvider.of<ContactBloc>(context)
+                                  .add(RemoveContactEvent(id: widget.dto.id));
+                            },
+                          );
+                        },
+                        height: 40,
+                        width: double.infinity,
+                        title: 'Xoá thông tin',
+                        margin: EdgeInsets.zero,
+                        isEnable: true,
+                        colorEnableText: AppColor.RED_TEXT,
+                        fontSize: 14,
+                        colorEnableBgr: AppColor.WHITE),
+                  ],
+                ),
               ),
             ),
           );

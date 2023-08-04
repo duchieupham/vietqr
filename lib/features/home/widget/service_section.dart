@@ -1,7 +1,9 @@
+import 'package:android_intent_plus/android_intent.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/utils/log.dart';
+import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 
 class ServiceSection extends StatelessWidget {
@@ -41,6 +43,26 @@ class ServiceSection extends StatelessWidget {
             title: 'Tính năng đang bảo trì',
             msg: 'Vui lòng thử lại sau',
           );
+        }),
+        _buildItemService('assets/images/logo-vqr-k.png', 'VietQR Kiot\n',
+            () async {
+          if (PlatformUtils.instance.isAndroidApp()) {
+            final intent = AndroidIntent(
+                action: 'action_view',
+                data: Uri.encodeFull(
+                    'https://play.google.com/store/apps/details?id=com.vietqr.kiot&hl=en_US'),
+                package: 'com.vietqr.kiot');
+            intent.launch();
+          } else if (PlatformUtils.instance.isIOsApp()) {
+            await DialogWidget.instance.openMsgDialog(
+              title: 'Thông báo',
+              msg:
+                  'Chúng tôi đang bảo trì VietQR Kiot cho nền tảng iOS. Tính năng này sẽ sớm phụ vụ quý khách.',
+              function: () {
+                Navigator.pop(context);
+              },
+            );
+          }
         }),
       ],
     );

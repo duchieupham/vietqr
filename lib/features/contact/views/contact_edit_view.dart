@@ -69,53 +69,62 @@ class _ContactEditViewState extends State<ContactEditView> {
         builder: (context, state) {
           return Scaffold(
             appBar: const MAppBar(title: 'Cập nhật danh bạ', actions: []),
-            body: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+            body: SafeArea(
               child: Column(
                 children: [
-                  TextFieldCustom(
-                    isObscureText: false,
-                    maxLines: 1,
-                    fillColor: AppColor.WHITE,
-                    controller: nickNameController,
-                    textFieldType: TextfieldType.LABEL,
-                    title: 'Biệt danh',
-                    hintText: '',
-                    inputType: TextInputType.text,
-                    keyboardAction: TextInputAction.next,
-                    onChange: (value) {},
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 30),
+                      child: Column(
+                        children: [
+                          TextFieldCustom(
+                            isObscureText: false,
+                            maxLines: 1,
+                            fillColor: AppColor.WHITE,
+                            controller: nickNameController,
+                            textFieldType: TextfieldType.LABEL,
+                            title: 'Biệt danh',
+                            hintText: '',
+                            inputType: TextInputType.text,
+                            keyboardAction: TextInputAction.next,
+                            onChange: (value) {},
+                          ),
+                          const SizedBox(height: 30),
+                          TextFieldCustom(
+                            isObscureText: false,
+                            maxLines: 1,
+                            fillColor: AppColor.WHITE,
+                            textFieldType: TextfieldType.LABEL,
+                            title: 'Ghi chú',
+                            controller: suggestController,
+                            hintText: '',
+                            inputType: TextInputType.text,
+                            keyboardAction: TextInputAction.next,
+                            onChange: (value) {},
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                  const SizedBox(height: 30),
-                  TextFieldCustom(
-                    isObscureText: false,
-                    maxLines: 1,
-                    fillColor: AppColor.WHITE,
-                    textFieldType: TextfieldType.LABEL,
-                    title: 'Ghi chú',
-                    controller: suggestController,
-                    hintText: '',
-                    inputType: TextInputType.text,
-                    keyboardAction: TextInputAction.next,
-                    onChange: (value) {},
+                  MButtonWidget(
+                    title: 'Cập nhật thông tin',
+                    isEnable: true,
+                    onTap: () async {
+                      FocusManager.instance.primaryFocus?.unfocus();
+                      if (!mounted) return;
+                      Map<String, dynamic> data = {
+                        "id": widget.contactDetailDTO.id ?? '',
+                        "nickName": nickNameController.text,
+                        "type": widget.contactDetailDTO.type ?? 0,
+                        "additionalData": suggestController.text,
+                      };
+
+                      context.read<ContactBloc>().add(UpdateContactEvent(data));
+                    },
                   ),
                 ],
               ),
-            ),
-            bottomSheet: MButtonWidget(
-              title: 'Cập nhật thông tin',
-              isEnable: true,
-              onTap: () async {
-                FocusManager.instance.primaryFocus?.unfocus();
-                if (!mounted) return;
-                Map<String, dynamic> data = {
-                  "id": widget.contactDetailDTO.id ?? '',
-                  "nickName": nickNameController.text,
-                  "type": widget.contactDetailDTO.type ?? 0,
-                  "additionalData": suggestController.text,
-                };
-
-                context.read<ContactBloc>().add(UpdateContactEvent(data));
-              },
             ),
           );
         },
