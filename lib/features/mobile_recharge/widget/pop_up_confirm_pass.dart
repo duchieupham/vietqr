@@ -19,10 +19,13 @@ class PopupConfirmPassword extends StatelessWidget {
       child: Consumer<ConfirmPassProvider>(builder: (context, provider, child) {
         return Column(
           children: [
+            const SizedBox(
+              height: 24,
+            ),
             const Text(
               'Xác nhận lại mật khẩu',
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 17,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -35,7 +38,7 @@ class PopupConfirmPassword extends StatelessWidget {
                 fontSize: 12,
               ),
             ),
-            const Padding(padding: EdgeInsets.only(top: 20)),
+            const Padding(padding: EdgeInsets.only(top: 32)),
             PinCodeInput(
               obscureText: true,
               controller: _passEditingController,

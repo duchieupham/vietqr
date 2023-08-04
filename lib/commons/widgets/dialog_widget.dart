@@ -731,6 +731,7 @@ class DialogWidget {
       double? heightPopup,
       EdgeInsets? margin,
       EdgeInsets? padding,
+      double? widthPopup,
       double radius = 15}) {
     final BuildContext context = NavigationService.navigatorKey.currentContext!;
     final double width = MediaQuery.of(context).size.width;
@@ -742,18 +743,20 @@ class DialogWidget {
         return Material(
           color: AppColor.TRANSPARENT,
           child: Center(
-            child: Container(
-              width: width - 20,
-              height: heightPopup ?? height * 0.8,
-              alignment: Alignment.center,
-              padding: padding ??
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              margin: margin,
-              decoration: BoxDecoration(
-                color: Theme.of(context).cardColor,
-                borderRadius: BorderRadius.circular(radius),
+            child: UnconstrainedBox(
+              child: Container(
+                width: widthPopup ?? width - 100,
+                height: heightPopup ?? height * 0.8,
+                alignment: Alignment.center,
+                padding: padding ??
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                margin: margin,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).cardColor,
+                  borderRadius: BorderRadius.circular(radius),
+                ),
+                child: child,
               ),
-              child: child,
             ),
           ),
         );
