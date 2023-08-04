@@ -514,6 +514,7 @@ class _StackedList extends State<StackedList> {
     super.initState();
     _accountBloc = BlocProvider.of(context);
     _accountBloc.add(InitAccountEvent());
+    _accountBloc.add(GetUserInformation());
     _subscription = eventBus.on<ReloadWallet>().listen((_) {
       _accountBloc.add(InitAccountEvent());
     });
