@@ -39,65 +39,72 @@ class _RechargeSuccessState extends State<RechargeSuccess> {
     final double width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: const MAppBar(title: 'Nạp tiền điện thoại'),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(
-            width: width * 0.6,
-            height: 150,
-            child: rive.RiveAnimation.asset(
-              'assets/rives/success_ani.riv',
-              fit: BoxFit.fitWidth,
-              antialiasing: false,
-              animations: const [Stringify.SUCCESS_ANI_INITIAL_STATE],
-              onInit: _onRiveInit,
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(
+              height: 40,
             ),
-          ),
-          Expanded(
-            child: Column(
-              children: [
-                const Padding(padding: EdgeInsets.only(top: 20)),
-                const Text(
-                  'Nạp điện thoại thành công',
-                  style: TextStyle(
-                    fontSize: 18,
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.center,
-                  child: Text(
-                    '+ ${widget.money} VND',
-                    style: const TextStyle(
+            SizedBox(
+              width: width * 0.6,
+              height: 150,
+              child: rive.RiveAnimation.asset(
+                'assets/rives/success_ani.riv',
+                fit: BoxFit.fitWidth,
+                antialiasing: false,
+                animations: const [Stringify.SUCCESS_ANI_INITIAL_STATE],
+                onInit: _onRiveInit,
+              ),
+            ),
+            Expanded(
+              child: Column(
+                children: [
+                  const Padding(padding: EdgeInsets.only(top: 20)),
+                  const Text(
+                    'Nạp điện thoại thành công',
+                    style: TextStyle(
                       fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                      color: AppColor.BLUE_TEXT,
                     ),
                   ),
-                ),
-                const Padding(padding: EdgeInsets.only(top: 20)),
-                Text(
-                  'Quý khách đã nạp thành công số tiền +${widget.money} VND cho số điện thoại ${widget.phoneNo}. Cảm ơn quý khách đã sử dụng dịch vụ của VietQR VN',
-                  textAlign: TextAlign.center,
-                )
-              ],
+                  Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      '+ ${widget.money} VND',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                        color: AppColor.BLUE_TEXT,
+                      ),
+                    ),
+                  ),
+                  const Padding(padding: EdgeInsets.only(top: 20)),
+                  Text(
+                    'Quý khách đã nạp thành công số tiền +${widget.money} VND cho số điện thoại ${widget.phoneNo}. Cảm ơn quý khách đã sử dụng dịch vụ của VietQR VN',
+                    textAlign: TextAlign.center,
+                  )
+                ],
+              ),
             ),
-          ),
-          MButtonWidget(
-              title: 'Trang chủ',
-              colorEnableText: AppColor.WHITE,
-              colorEnableBgr: AppColor.BLUE_TEXT,
-              isEnable: true,
-              onTap: () {
-                _doEndAnimation();
-                eventBus.fire(ReloadWallet());
-                Future.delayed(const Duration(milliseconds: 500), () {
-                  Navigator.of(context).pop();
-                  if (Navigator.canPop(context)) {
+            MButtonWidget(
+                title: 'Trang chủ',
+                colorEnableText: AppColor.WHITE,
+                colorEnableBgr: AppColor.BLUE_TEXT,
+                isEnable: true,
+                margin: const EdgeInsets.only(bottom: 20),
+                onTap: () {
+                  _doEndAnimation();
+                  eventBus.fire(ReloadWallet());
+                  Future.delayed(const Duration(milliseconds: 500), () {
                     Navigator.of(context).pop();
-                  }
-                });
-              })
-        ],
+                    if (Navigator.canPop(context)) {
+                      Navigator.of(context).pop();
+                    }
+                  });
+                })
+          ],
+        ),
       ),
     );
   }
