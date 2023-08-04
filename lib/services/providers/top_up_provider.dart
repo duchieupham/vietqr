@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
+import 'package:vierqr/models/account_information_dto.dart';
 import 'package:vierqr/models/network_providers_dto.dart';
+import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class TopUpProvider extends ChangeNotifier {
   String _money = StringUtils.formatNumber(50000);
@@ -22,6 +24,14 @@ class TopUpProvider extends ChangeNotifier {
 
   init(List<NetworkProviders> list) {
     _listNetworkProviders = list;
+    AccountInformationDTO accountInformationDTO =
+        UserInformationHelper.instance.getAccountInformation();
+    for (var element in list) {
+      if (accountInformationDTO.carrierTypeId == element.id) {
+        _networkProviders = element;
+      }
+    }
+    notifyListeners();
   }
 
   void updateRechargeType(int type) {

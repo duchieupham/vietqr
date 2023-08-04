@@ -41,17 +41,6 @@ class MobileRechargeScreen extends StatelessWidget {
     return imgId;
   }
 
-  initNetworkProviders(
-      List<NetworkProviders> list, TopUpProvider topUpProvider) {
-    AccountInformationDTO accountInformationDTO =
-        UserInformationHelper.instance.getAccountInformation();
-    for (var element in list) {
-      if (accountInformationDTO.carrierTypeId == element.id) {
-        topUpProvider.initNetworkProviders(element);
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,6 +74,10 @@ class MobileRechargeScreen extends StatelessWidget {
                     title: 'Nạp tiền thất bại',
                     msg:
                         ErrorUtils.instance.getErrorMessage(state.dto.message));
+              }
+              if (state is MobileRechargeGetListTypeSuccessState) {
+                Provider.of<TopUpProvider>(context, listen: false)
+                    .init(state.list);
               }
             },
             builder: (context, state) {
@@ -192,7 +185,8 @@ class MobileRechargeScreen extends StatelessWidget {
                                         ?.unfocus();
 
                                     DialogWidget.instance.openWidgetDialog(
-                                        heightPopup: 280,
+                                        heightPopup: 320,
+                                        widthPopup: 320,
                                         margin: const EdgeInsets.only(
                                             left: 32, right: 32, bottom: 48),
                                         radius: 20,
@@ -260,51 +254,43 @@ class MobileRechargeScreen extends StatelessWidget {
           Row(
             children: [
               Consumer<TopUpProvider>(builder: (context, provider, child) {
-                return BlocConsumer<MobileRechargeBloc, MobileRechargeState>(
-                    listener: (context, state) {
-                  if (state is MobileRechargeGetListTypeSuccessState) {
-                    initNetworkProviders(state.list, provider);
-                    provider.init(state.list);
-                  }
-                }, builder: (context, state) {
-                  String imgId = provider.networkProviders.imgId;
-                  if (imgId.isNotEmpty) {
-                    return GestureDetector(
-                      onTap: () {
-                        DialogWidget.instance.showModalBottomContent(
-                          context: context,
-                          widget: ListNetWorkProvider(
-                            list: provider.listNetworkProviders,
-                            onTap: (networkProviders) {
-                              provider.updateNetworkProviders(networkProviders);
-                            },
-                          ),
-                          height: height * 0.6,
-                        );
-                      },
-                      child: Container(
-                        width: 45,
-                        height: 45,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
-                          border: Border.all(
-                              width: 0.5,
-                              color: AppColor.GREY_TEXT.withOpacity(0.3)),
-                          image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: provider.networkProviders.imgId.isNotEmpty
-                                ? ImageUtils.instance.getImageNetWork(
-                                    provider.networkProviders.imgId)
-                                : ImageUtils.instance.getImageNetWork(imgId),
-                          ),
+                String imgId = provider.networkProviders.imgId;
+                if (imgId.isNotEmpty) {
+                  return GestureDetector(
+                    onTap: () {
+                      DialogWidget.instance.showModalBottomContent(
+                        context: context,
+                        widget: ListNetWorkProvider(
+                          list: provider.listNetworkProviders,
+                          onTap: (networkProviders) {
+                            provider.updateNetworkProviders(networkProviders);
+                          },
+                        ),
+                        height: height * 0.6,
+                      );
+                    },
+                    child: Container(
+                      width: 45,
+                      height: 45,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        border: Border.all(
+                            width: 0.5,
+                            color: AppColor.GREY_TEXT.withOpacity(0.3)),
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: provider.networkProviders.imgId.isNotEmpty
+                              ? ImageUtils.instance.getImageNetWork(
+                                  provider.networkProviders.imgId)
+                              : ImageUtils.instance.getImageNetWork(imgId),
                         ),
                       ),
-                    );
-                  } else {
-                    return _buildBlankLogo(
-                        context, provider.listNetworkProviders, provider);
-                  }
-                });
+                    ),
+                  );
+                } else {
+                  return _buildBlankLogo(
+                      context, provider.listNetworkProviders, provider);
+                }
               }),
               const Padding(padding: EdgeInsets.only(left: 10)),
               Expanded(
@@ -313,20 +299,25 @@ class MobileRechargeScreen extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        SizedBox(
-                          width: 94,
-                          height: 22,
-                          child: TextField(
-                            controller:
-                                TextEditingController(text: phoneNumber),
-                            readOnly: true,
-                            focusNode: myFocusNode,
-                            style: const TextStyle(
-                                fontWeight: FontWeight.w600, fontSize: 16),
-                            decoration: const InputDecoration(
-                                contentPadding: EdgeInsets.zero),
-                          ),
-                        ),
+                        Text(
+                          phoneNumber,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.w600, fontSize: 16),
+                        )
+                        // SizedBox(
+                        //   width: 94,
+                        //   height: 22,
+                        //   child: TextField(
+                        //     controller:
+                        //         TextEditingController(text: phoneNumber),
+                        //     readOnly: true,
+                        //     focusNode: myFocusNode,
+                        //     style: const TextStyle(
+                        //         fontWeight: FontWeight.w600, fontSize: 16),
+                        //     decoration: const InputDecoration(
+                        //         contentPadding: EdgeInsets.zero),
+                        //   ),
+                        // ),
 
                         // GestureDetector(
                         //   onTap: () {

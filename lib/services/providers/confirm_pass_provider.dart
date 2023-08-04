@@ -7,8 +7,6 @@ import 'package:vierqr/main.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
-import '../../commons/enums/error_type.dart';
-
 class ConfirmPassProvider extends ChangeNotifier {
   MobileRechargeRepository mobileRechargeRepository =
       const MobileRechargeRepository();
