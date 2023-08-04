@@ -98,9 +98,6 @@ class _RechargeSuccessState extends State<RechargeSuccess> {
                   eventBus.fire(ReloadWallet());
                   Future.delayed(const Duration(milliseconds: 500), () {
                     Navigator.of(context).pop();
-                    if (Navigator.canPop(context)) {
-                      Navigator.of(context).pop();
-                    }
                   });
                 })
           ],

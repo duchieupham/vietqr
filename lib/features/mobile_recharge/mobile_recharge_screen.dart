@@ -69,6 +69,7 @@ class MobileRechargeScreen extends StatelessWidget {
               if (state is MobileRechargeMobileMoneySuccessState) {
                 eventBus.fire(ReloadWallet());
                 Navigator.pop(context);
+                Navigator.pop(context);
                 Map<String, dynamic> arguments = {};
                 arguments['money'] =
                     Provider.of<TopUpProvider>(context, listen: false).money;
@@ -193,6 +194,7 @@ class MobileRechargeScreen extends StatelessWidget {
                                         heightPopup: 280,
                                         margin: const EdgeInsets.only(
                                             left: 32, right: 32, bottom: 48),
+                                        radius: 20,
                                         child: PopupConfirmPassword(
                                           onConfirmSuccess: (otp) {
                                             Navigator.of(context).pop();

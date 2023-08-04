@@ -718,7 +718,8 @@ class DialogWidget {
       {required Widget child,
       double? heightPopup,
       EdgeInsets? margin,
-      EdgeInsets? padding}) {
+      EdgeInsets? padding,
+      double radius = 15}) {
     final BuildContext context = NavigationService.navigatorKey.currentContext!;
     final double width = MediaQuery.of(context).size.width;
     final double height = MediaQuery.of(context).size.height;
@@ -738,7 +739,7 @@ class DialogWidget {
               margin: margin,
               decoration: BoxDecoration(
                 color: Theme.of(context).cardColor,
-                borderRadius: BorderRadius.circular(15),
+                borderRadius: BorderRadius.circular(radius),
               ),
               child: child,
             ),

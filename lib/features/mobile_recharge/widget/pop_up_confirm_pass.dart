@@ -57,17 +57,16 @@ class PopupConfirmPassword extends StatelessWidget {
             const Spacer(),
             MButtonWidget(
                 title: 'Xác nhận',
-                colorEnableText:
-                    provider.completedInput ? AppColor.WHITE : AppColor.BLACK,
-                colorEnableBgr: provider.completedInput
-                    ? AppColor.BLUE_TEXT
-                    : AppColor.GREY_BUTTON,
+                colorEnableText: AppColor.WHITE,
+                colorEnableBgr: AppColor.BLUE_TEXT,
                 margin: EdgeInsets.zero,
                 isEnable: true,
                 onTap: () {
                   if (provider.completedInput) {
                     provider.requestPayment(provider.pass,
                         onConfirmSuccess: onConfirmSuccess);
+                  } else {
+                    provider.updateErrorPass(true);
                   }
                 }),
             const SizedBox(
