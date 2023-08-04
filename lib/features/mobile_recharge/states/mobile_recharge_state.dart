@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:vierqr/models/network_providers_dto.dart';
 import 'package:vierqr/models/respone_top_up_dto.dart';
+import 'package:vierqr/models/response_message_dto.dart';
 
 class MobileRechargeState extends Equatable {
   const MobileRechargeState();
@@ -26,10 +27,12 @@ class MobileRechargeGetListTypeSuccessState extends MobileRechargeState {
 
 class MobileRechargeGetListTypeFailedState extends MobileRechargeState {}
 
-class MobileRechargeCreateQrSuccessState extends MobileRechargeState {
-  final ResponseTopUpDTO dto;
+class MobileRechargeMobileMoneyLoadingState extends MobileRechargeState {}
 
-  const MobileRechargeCreateQrSuccessState({
+class MobileRechargeMobileMoneySuccessState extends MobileRechargeState {
+  final ResponseMessageDTO dto;
+
+  const MobileRechargeMobileMoneySuccessState({
     required this.dto,
   });
 
@@ -37,4 +40,13 @@ class MobileRechargeCreateQrSuccessState extends MobileRechargeState {
   List<Object?> get props => [dto];
 }
 
-class MobileRechargeCreateQrFailedState extends MobileRechargeState {}
+class MobileRechargeMobileMoneyFailedState extends MobileRechargeState {
+  final ResponseMessageDTO dto;
+
+  const MobileRechargeMobileMoneyFailedState({
+    required this.dto,
+  });
+
+  @override
+  List<Object?> get props => [dto];
+}

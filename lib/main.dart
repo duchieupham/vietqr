@@ -42,6 +42,7 @@ import 'package:vierqr/features/generate_qr/views/qr_share_view.dart';
 import 'package:vierqr/features/home/blocs/home_bloc.dart';
 import 'package:vierqr/features/introduce/views/introduce_screen.dart';
 import 'package:vierqr/features/mobile_recharge/mobile_recharge_screen.dart';
+import 'package:vierqr/features/mobile_recharge/widget/recharege_success.dart';
 import 'package:vierqr/features/notification/views/notification_view.dart';
 import 'package:vierqr/features/personal/views/national_information_view.dart';
 import 'package:vierqr/features/printer/blocs/printer_bloc.dart';
@@ -424,6 +425,19 @@ class _VietQRApp extends State<VietQRApp> {
                       builder: (context) {
                         return QRTopUpScreen(
                           dto: dto,
+                        );
+                      },
+                    );
+                  }
+                  if (settings.name == Routes.RECHARGE_SUCCESS) {
+                    Map<String, dynamic> data =
+                        settings.arguments as Map<String, dynamic>;
+
+                    return MaterialPageRoute(
+                      builder: (context) {
+                        return RechargeSuccess(
+                          phoneNo: data['phoneNo'],
+                          money: data['money'],
                         );
                       },
                     );

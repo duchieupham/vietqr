@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/events.dart';
+import 'package:vierqr/commons/utils/encrypt_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';

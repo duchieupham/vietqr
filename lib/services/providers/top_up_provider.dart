@@ -11,8 +11,26 @@ class TopUpProvider extends ChangeNotifier {
 
   String get errorMoney => _errorMoney;
 
+  List<NetworkProviders> _listNetworkProviders = [];
+  List<NetworkProviders> get listNetworkProviders => _listNetworkProviders;
+
   NetworkProviders _networkProviders = const NetworkProviders();
   NetworkProviders get networkProviders => _networkProviders;
+
+  int _rechargeType = 3;
+  int get rechargeType => _rechargeType;
+
+  init(List<NetworkProviders> list) {
+    _listNetworkProviders = list;
+  }
+
+  void updateRechargeType(int type) {
+    _rechargeType = type;
+  }
+
+  initNetworkProviders(NetworkProviders value) {
+    _networkProviders = value;
+  }
 
   void updateNetworkProviders(NetworkProviders value) {
     _networkProviders = value;
