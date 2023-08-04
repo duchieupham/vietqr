@@ -509,7 +509,7 @@ class DialogWidget {
         });
   }
 
-  void openLoadingDialog() async {
+  void openLoadingDialog({String msg = ''}) async {
     if (!isPopLoading) {
       isPopLoading = true;
       return await showDialog(
@@ -557,8 +557,20 @@ class DialogWidget {
                           color: Theme.of(context).cardColor.withOpacity(0.9),
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        child: const CircularProgressIndicator(
-                          color: AppColor.BLUE_TEXT,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const CircularProgressIndicator(
+                              color: AppColor.BLUE_TEXT,
+                            ),
+                            if (msg.isNotEmpty) ...[
+                              Padding(padding: EdgeInsets.only(top: 30)),
+                              Text(
+                                msg,
+                                textAlign: TextAlign.center,
+                              ),
+                            ]
+                          ],
                         ),
                       ),
               ),

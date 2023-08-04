@@ -43,7 +43,7 @@ class ConfirmPassProvider extends ChangeNotifier {
 
   Future requestPayment(String pass,
       {required Function(String) onConfirmSuccess}) async {
-    DialogWidget.instance.openLoadingDialog();
+    DialogWidget.instance.openLoadingDialog(msg: 'Đang xác thực mật khẩu');
     Map<String, dynamic> data = {};
     String passWord = EncryptUtils.instance.encrypted(
       UserInformationHelper.instance.getPhoneNo(),
