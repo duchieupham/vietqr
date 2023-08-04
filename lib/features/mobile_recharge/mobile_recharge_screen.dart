@@ -96,7 +96,7 @@ class MobileRechargeScreen extends StatelessWidget {
                           height: 24,
                         ),
                         _buildTemplateSection(
-                          'Số điệnt thoại',
+                          'Số điện thoại',
                           child: _buildPhoneNumber(context,
                               accountInformationDTO: UserInformationHelper
                                   .instance
@@ -129,7 +129,7 @@ class MobileRechargeScreen extends StatelessWidget {
                                   style: TextStyle(fontSize: 10),
                                 ),
                                 Text(
-                                  '${CurrencyUtils.instance.getCurrencyFormatted(UserInformationHelper.instance.getWalletInfo().amount ?? '0')} VND',
+                                  '${CurrencyUtils.instance.getCurrencyFormatted(UserInformationHelper.instance.getWalletInfo().amount ?? '0')} VQR',
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold),
                                 ),

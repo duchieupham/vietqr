@@ -74,7 +74,7 @@ class ListNetWorkProvider extends StatelessWidget {
   }
 
   Widget _buildItem(NetworkProviders item, BuildContext context) {
-    return GestureDetector(
+    return InkWell(
       onTap: () {
         onTap(item);
         Navigator.pop(context);
