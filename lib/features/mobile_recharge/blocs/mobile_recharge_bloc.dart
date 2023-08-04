@@ -11,6 +11,7 @@ class MobileRechargeBloc
   MobileRechargeBloc() : super(MobileRechargeInitialState()) {
     on<MobileRechargeGetListType>(_getListType);
     on<MobileRechargeMobileMoney>(_getMobileMoney);
+    on<MobileRechargeUpdateType>(_updateTypeMobileCarrier);
   }
 }
 
@@ -51,5 +52,19 @@ void _getMobileMoney(MobileRechargeEvent event, Emitter emit) async {
   } catch (e) {
     LOG.error(e.toString());
     emit(MobileRechargeMobileMoneyFailedState(dto: result));
+  }
+}
+
+void _updateTypeMobileCarrier(MobileRechargeEvent event, Emitter emit) async {
+  ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
+  try {
+    if (event is MobileRechargeUpdateType) {
+      result = await mobileRechargeRepository.updateMobileCarrier(event.data);
+      if (result.status == 'SUCCESS') {
+        emit(RechargeUpdateTypeUpdateSuccessState);
+      }
+    }
+  } catch (e) {
+    LOG.error(e.toString());
   }
 }

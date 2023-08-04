@@ -50,3 +50,5 @@ class MobileRechargeMobileMoneyFailedState extends MobileRechargeState {
   @override
   List<Object?> get props => [dto];
 }
+
+class RechargeUpdateTypeUpdateSuccessState extends MobileRechargeState {}
