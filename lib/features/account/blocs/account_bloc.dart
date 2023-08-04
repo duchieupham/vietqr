@@ -15,6 +15,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     on<InitAccountEvent>(_getPointAccount);
     on<LogoutEventSubmit>(_logOutSubmit);
     on<UpdateAvatarEvent>(_updateAvatar);
+    on<GetUserInformation>(_getUserInformation);
   }
 
   final logoutRepository = const LogoutRepository();
@@ -95,6 +96,20 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
 
       LOG.error(e.toString());
     }
+  }
+}
+
+void _getUserInformation(AccountEvent event, Emitter emit) async {
+  String userId = UserInformationHelper.instance.getUserId();
+  try {
+    if (event is GetUserInformation) {
+      final result = await accRepository.getUserInformation(userId);
+      if (result.userId.isNotEmpty) {
+        await UserInformationHelper.instance.setAccountInformation(result);
+      }
+    }
+  } catch (e) {
+    LOG.error('Error at _getPointAccount: $e');
   }
 }
 

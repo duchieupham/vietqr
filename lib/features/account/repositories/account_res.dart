@@ -5,6 +5,7 @@ import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
+import 'package:vierqr/models/account_information_dto.dart';
 import 'package:vierqr/models/introduce_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:http/http.dart' as http;
@@ -63,6 +64,34 @@ class AccountRepository {
     } catch (e) {
       LOG.error(e.toString());
       result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+    }
+    return result;
+  }
+
+  Future<AccountInformationDTO> getUserInformation(String userId) async {
+    AccountInformationDTO result = AccountInformationDTO(
+        userId: '',
+        firstName: '',
+        middleName: '',
+        lastName: '',
+        birthDate: '',
+        gender: 0,
+        address: '',
+        email: '',
+        imgId: '');
+    try {
+      final String url = '${EnvConfig.getBaseUrl()}user/information/$userId';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        result = AccountInformationDTO.fromJson(data);
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      return result;
     }
     return result;
   }

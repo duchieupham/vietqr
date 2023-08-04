@@ -27,3 +27,5 @@ class UpdateAvatarEvent extends AccountEvent {
   @override
   List<Object?> get props => [userId, imgId, image];
 }
+
+class GetUserInformation extends AccountEvent {}
