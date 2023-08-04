@@ -223,14 +223,14 @@ class _CameraScreenState extends State<CameraScreen>
             onTap: () async {
               if (_currentFlashMode == FlashMode.off) {
                 setState(() {
-                  _currentFlashMode = FlashMode.auto;
+                  _currentFlashMode = FlashMode.torch;
                 });
-                await controller!.setFlashMode(FlashMode.auto);
+                await controller!.setFlashMode(_currentFlashMode);
               } else {
                 setState(() {
                   _currentFlashMode = FlashMode.off;
                 });
-                await controller!.setFlashMode(FlashMode.off);
+                await controller!.setFlashMode(_currentFlashMode);
               }
             },
             child: _currentFlashMode == FlashMode.off
