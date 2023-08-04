@@ -118,7 +118,7 @@ class _DialogOTPViewState extends State<DialogOTPView> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 100),
+                const SizedBox(height: 40),
                 ValueListenableBuilder(
                   valueListenable: countdownProvider,
                   builder: (_, value, child) {

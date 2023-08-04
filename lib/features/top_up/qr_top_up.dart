@@ -30,7 +30,7 @@ class _QRTopUpScreenState extends State<QRTopUpScreen>
     with TickerProviderStateMixin {
   late AnimationController _controller;
   final GlobalKey globalKey = GlobalKey();
-  int timer = 1200;
+  int timer = 1800;
 
   String getCodeOrder() {
     List<String> list = widget.dto.content.split(' ');
@@ -105,7 +105,10 @@ class _QRTopUpScreenState extends State<QRTopUpScreen>
                                 builder: (key) {
                                   return Container(
                                     margin: const EdgeInsets.only(
-                                        top: 0, bottom: 16, left: 30, right: 30),
+                                        top: 0,
+                                        bottom: 16,
+                                        left: 30,
+                                        right: 30),
                                     padding: const EdgeInsets.all(16),
                                     decoration: const BoxDecoration(
                                       color: AppColor.WHITE,
@@ -176,7 +179,8 @@ class _QRTopUpScreenState extends State<QRTopUpScreen>
                               borderRadius: 5,
                               function: () async {
                                 await Future.delayed(
-                                    const Duration(milliseconds: 300), () async {
+                                    const Duration(milliseconds: 300),
+                                    () async {
                                   await ShareUtils.instance
                                       .saveImageToGallery(globalKey)
                                       .then((value) {
@@ -300,7 +304,7 @@ class _QRTopUpScreenState extends State<QRTopUpScreen>
           style: TextStyle(fontSize: 12),
         ),
         const Spacer(),
-        Countdown(
+        CountDown(
           animation: StepTween(
             begin: timer, // THIS IS A USER ENTERED NUMBER
             end: 0,

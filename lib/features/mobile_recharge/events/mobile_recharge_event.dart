@@ -9,10 +9,10 @@ class MobileRechargeEvent extends Equatable {
 
 class MobileRechargeGetListType extends MobileRechargeEvent {}
 
-class MobileRechargeCreateQR extends MobileRechargeEvent {
+class MobileRechargeMobileMoney extends MobileRechargeEvent {
   final Map<String, dynamic> data;
 
-  const MobileRechargeCreateQR({required this.data});
+  const MobileRechargeMobileMoney({required this.data});
 
   @override
   List<Object?> get props => [data];

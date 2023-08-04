@@ -714,7 +714,11 @@ class DialogWidget {
         });
   }
 
-  openWidgetDialog({required Widget child, double? heightPopup}) {
+  openWidgetDialog(
+      {required Widget child,
+      double? heightPopup,
+      EdgeInsets? margin,
+      EdgeInsets? padding}) {
     final BuildContext context = NavigationService.navigatorKey.currentContext!;
     final double width = MediaQuery.of(context).size.width;
     final double height = MediaQuery.of(context).size.height;
@@ -729,7 +733,9 @@ class DialogWidget {
               width: width - 20,
               height: heightPopup ?? height * 0.8,
               alignment: Alignment.center,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              padding: padding ??
+                  const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              margin: margin,
               decoration: BoxDecoration(
                 color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(15),

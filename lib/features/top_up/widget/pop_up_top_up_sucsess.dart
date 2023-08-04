@@ -16,7 +16,7 @@ class PopupTopUpSuccess extends StatelessWidget {
     return Column(
       children: [
         const Text(
-          'Nạp tiền thành công',
+          'Nạp dịch vụ VietQR VN thành công',
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,

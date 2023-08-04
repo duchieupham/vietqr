@@ -4,7 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
+import 'package:vierqr/commons/utils/error_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
@@ -12,12 +14,10 @@ import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/features/mobile_recharge/blocs/mobile_recharge_bloc.dart';
 import 'package:vierqr/features/mobile_recharge/states/mobile_recharge_state.dart';
 import 'package:vierqr/features/mobile_recharge/widget/list_network_providers.dart';
-import 'package:vierqr/features/top_up/blocs/top_up_bloc.dart';
-import 'package:vierqr/features/top_up/events/scan_qr_event.dart';
-import 'package:vierqr/features/top_up/states/top_up_state.dart';
-import 'package:vierqr/layouts/button_widget.dart';
+import 'package:vierqr/features/mobile_recharge/widget/pop_up_confirm_pass.dart';
+import 'package:vierqr/features/mobile_recharge/widget/recharege_success.dart';
+
 import 'package:vierqr/layouts/m_app_bar.dart';
-import 'package:vierqr/layouts/m_text_form_field.dart';
 import 'package:vierqr/models/account_information_dto.dart';
 import 'package:vierqr/models/network_providers_dto.dart';
 import 'package:vierqr/services/providers/top_up_provider.dart';
@@ -41,6 +41,17 @@ class MobileRechargeScreen extends StatelessWidget {
     return imgId;
   }
 
+  initNetworkProviders(
+      List<NetworkProviders> list, TopUpProvider topUpProvider) {
+    AccountInformationDTO accountInformationDTO =
+        UserInformationHelper.instance.getAccountInformation();
+    for (var element in list) {
+      if (accountInformationDTO.carrierTypeId == element.id) {
+        topUpProvider.initNetworkProviders(element);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,7 +62,29 @@ class MobileRechargeScreen extends StatelessWidget {
           create: (context) =>
               MobileRechargeBloc()..add(MobileRechargeGetListType()),
           child: BlocConsumer<MobileRechargeBloc, MobileRechargeState>(
-            listener: (context, state) {},
+            listener: (context, state) {
+              if (state is MobileRechargeMobileMoneyLoadingState) {
+                DialogWidget.instance.openLoadingDialog();
+              }
+              if (state is MobileRechargeMobileMoneySuccessState) {
+                eventBus.fire(ReloadWallet());
+                Navigator.pop(context);
+                Map<String, dynamic> arguments = {};
+                arguments['money'] =
+                    Provider.of<TopUpProvider>(context, listen: false).money;
+                arguments['phoneNo'] =
+                    UserInformationHelper.instance.getPhoneNo();
+                Navigator.of(context)
+                    .pushNamed(Routes.RECHARGE_SUCCESS, arguments: arguments);
+              }
+              if (state is MobileRechargeMobileMoneyFailedState) {
+                Navigator.pop(context);
+                DialogWidget.instance.openMsgDialog(
+                    title: 'Nạp tiền thất bại',
+                    msg:
+                        ErrorUtils.instance.getErrorMessage(state.dto.message));
+              }
+            },
             builder: (context, state) {
               return Column(
                 children: [
@@ -111,7 +144,7 @@ class MobileRechargeScreen extends StatelessWidget {
                                                     .amount ??
                                                 '0') <
                                             int.parse(provider.money
-                                                .replaceAll('.', ''))
+                                                .replaceAll(',', ''))
                                         ? 'Không đủ thanh toán.\n Nạp ngay'
                                         : 'Nạp thêm',
                                     textAlign: TextAlign.center,
@@ -155,15 +188,32 @@ class MobileRechargeScreen extends StatelessWidget {
                                   onTap: () {
                                     FocusManager.instance.primaryFocus
                                         ?.unfocus();
-                                    Map<String, dynamic> data = {};
-                                    data['phoneNo'] = UserInformationHelper
-                                        .instance
-                                        .getPhoneNo();
-                                    data['amount'] =
-                                        provider.money.replaceAll(',', '');
-                                    data['transType'] = 'C';
-                                    // BlocProvider.of<TopUpBloc>(context)
-                                    //     .add(TopUpEventCreateQR(data: data));
+
+                                    DialogWidget.instance.openWidgetDialog(
+                                        heightPopup: 280,
+                                        margin: const EdgeInsets.only(
+                                            left: 32, right: 32, bottom: 48),
+                                        child: PopupConfirmPassword(
+                                          onConfirmSuccess: (otp) {
+                                            Navigator.of(context).pop();
+                                            Map<String, dynamic> data = {};
+                                            data['phoneNo'] =
+                                                UserInformationHelper.instance
+                                                    .getPhoneNo();
+                                            data['userId'] =
+                                                UserInformationHelper.instance
+                                                    .getUserId();
+                                            data['rechargeType'] =
+                                                provider.rechargeType;
+                                            data['otp'] = otp;
+                                            data['carrierTypeId'] =
+                                                provider.networkProviders.id;
+                                            BlocProvider.of<MobileRechargeBloc>(
+                                                    context)
+                                                .add(MobileRechargeMobileMoney(
+                                                    data: data));
+                                          },
+                                        ));
                                   },
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(
@@ -208,51 +258,50 @@ class MobileRechargeScreen extends StatelessWidget {
             children: [
               Consumer<TopUpProvider>(builder: (context, provider, child) {
                 return BlocConsumer<MobileRechargeBloc, MobileRechargeState>(
-                    listener: (context, state) {},
-                    builder: (context, state) {
-                      if (state is MobileRechargeGetListTypeSuccessState) {
-                        String imgId = getIdImage(state.list);
-                        if (imgId.isNotEmpty) {
-                          return GestureDetector(
-                            onTap: () {
-                              DialogWidget.instance.showModalBottomContent(
-                                context: context,
-                                widget: ListNetWorkProvider(
-                                  list: state.list,
-                                  onTap: (networkProviders) {
-                                    provider.updateNetworkProviders(
-                                        networkProviders);
-                                  },
-                                ),
-                                height: height * 0.6,
-                              );
+                    listener: (context, state) {
+                  if (state is MobileRechargeGetListTypeSuccessState) {
+                    initNetworkProviders(state.list, provider);
+                    provider.init(state.list);
+                  }
+                }, builder: (context, state) {
+                  String imgId = provider.networkProviders.imgId;
+                  if (imgId.isNotEmpty) {
+                    return GestureDetector(
+                      onTap: () {
+                        DialogWidget.instance.showModalBottomContent(
+                          context: context,
+                          widget: ListNetWorkProvider(
+                            list: provider.listNetworkProviders,
+                            onTap: (networkProviders) {
+                              provider.updateNetworkProviders(networkProviders);
                             },
-                            child: Container(
-                              width: 45,
-                              height: 45,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                                border: Border.all(
-                                    width: 0.5,
-                                    color: AppColor.GREY_TEXT.withOpacity(0.3)),
-                                image: DecorationImage(
-                                  fit: BoxFit.cover,
-                                  image:
-                                      provider.networkProviders.imgId.isNotEmpty
-                                          ? ImageUtils.instance.getImageNetWork(
-                                              provider.networkProviders.imgId)
-                                          : ImageUtils.instance
-                                              .getImageNetWork(imgId),
-                                ),
-                              ),
-                            ),
-                          );
-                        } else {
-                          return _buildBlankLogo(context, state.list, provider);
-                        }
-                      }
-                      return const SizedBox.shrink();
-                    });
+                          ),
+                          height: height * 0.6,
+                        );
+                      },
+                      child: Container(
+                        width: 45,
+                        height: 45,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          border: Border.all(
+                              width: 0.5,
+                              color: AppColor.GREY_TEXT.withOpacity(0.3)),
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: provider.networkProviders.imgId.isNotEmpty
+                                ? ImageUtils.instance.getImageNetWork(
+                                    provider.networkProviders.imgId)
+                                : ImageUtils.instance.getImageNetWork(imgId),
+                          ),
+                        ),
+                      ),
+                    );
+                  } else {
+                    return _buildBlankLogo(
+                        context, provider.listNetworkProviders, provider);
+                  }
+                });
               }),
               const Padding(padding: EdgeInsets.only(left: 10)),
               Expanded(
@@ -267,6 +316,7 @@ class MobileRechargeScreen extends StatelessWidget {
                           child: TextField(
                             controller:
                                 TextEditingController(text: phoneNumber),
+                            readOnly: true,
                             focusNode: myFocusNode,
                             style: const TextStyle(
                                 fontWeight: FontWeight.w600, fontSize: 16),
@@ -274,15 +324,16 @@ class MobileRechargeScreen extends StatelessWidget {
                                 contentPadding: EdgeInsets.zero),
                           ),
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            myFocusNode.requestFocus();
-                          },
-                          child: Image.asset(
-                            'assets/images/ic-edit-personal-setting.png',
-                            height: 25,
-                          ),
-                        ),
+
+                        // GestureDetector(
+                        //   onTap: () {
+                        //     myFocusNode.requestFocus();
+                        //   },
+                        //   child: Image.asset(
+                        //     'assets/images/ic-edit-personal-setting.png',
+                        //     height: 25,
+                        //   ),
+                        // ),
                       ],
                     ),
                     Text(
@@ -307,48 +358,7 @@ class MobileRechargeScreen extends StatelessWidget {
   Widget _buildTopUp() {
     return Consumer<TopUpProvider>(
       builder: (context, provider, child) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            MTextFieldCustom(
-              isObscureText: false,
-              maxLines: 1,
-              value: provider.money,
-              fillColor: AppColor.WHITE,
-              autoFocus: true,
-              hintText: 'Nhập số tiền muốn nạp',
-              inputType: TextInputType.number,
-              keyboardAction: TextInputAction.next,
-              onChange: provider.updateMoney,
-              suffixIcon: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: const [
-                  Text(
-                    'VND',
-                    style: TextStyle(fontSize: 14, color: AppColor.gray),
-                  ),
-                ],
-              ),
-              inputFormatter: [
-                FilteringTextInputFormatter.digitsOnly,
-              ],
-            ),
-            if (provider.errorMoney.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 4),
-                child: Text(
-                  provider.errorMoney,
-                  style:
-                      const TextStyle(fontSize: 13, color: AppColor.RED_TEXT),
-                ),
-              ),
-            const SizedBox(height: 16),
-            _buildSuggestMoney(provider),
-            const SizedBox(height: 16),
-          ],
-        );
+        return _buildSuggestMoney(provider);
       },
     );
   }
@@ -363,8 +373,9 @@ class MobileRechargeScreen extends StatelessWidget {
               child: _buildItemSuggest(
                 onChange: (value) {
                   provider.updateMoney(value);
+                  provider.updateRechargeType(1);
                 },
-                text: '10.000',
+                text: '10,000',
                 money: provider.money,
               ),
             ),
@@ -375,8 +386,9 @@ class MobileRechargeScreen extends StatelessWidget {
               child: _buildItemSuggest(
                 onChange: (value) {
                   provider.updateMoney(value);
+                  provider.updateRechargeType(2);
                 },
-                text: '20.000',
+                text: '20,000',
                 money: provider.money,
               ),
             ),
@@ -387,8 +399,9 @@ class MobileRechargeScreen extends StatelessWidget {
               child: _buildItemSuggest(
                 onChange: (value) {
                   provider.updateMoney(value);
+                  provider.updateRechargeType(3);
                 },
-                text: '50.000',
+                text: '50,000',
                 money: provider.money,
               ),
             ),
@@ -403,8 +416,9 @@ class MobileRechargeScreen extends StatelessWidget {
               child: _buildItemSuggest(
                 onChange: (value) {
                   provider.updateMoney(value);
+                  provider.updateRechargeType(4);
                 },
-                text: '100.000',
+                text: '100,000',
                 money: provider.money,
               ),
             ),
@@ -415,8 +429,9 @@ class MobileRechargeScreen extends StatelessWidget {
               child: _buildItemSuggest(
                 onChange: (value) {
                   provider.updateMoney(value);
+                  provider.updateRechargeType(5);
                 },
-                text: '200.000',
+                text: '200,000',
                 money: provider.money,
               ),
             ),
@@ -427,8 +442,9 @@ class MobileRechargeScreen extends StatelessWidget {
               child: _buildItemSuggest(
                 onChange: (value) {
                   provider.updateMoney(value);
+                  provider.updateRechargeType(6);
                 },
-                text: '500.000',
+                text: '500,000',
                 money: provider.money,
               ),
             ),
