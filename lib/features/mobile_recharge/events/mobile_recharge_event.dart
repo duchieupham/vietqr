@@ -17,3 +17,12 @@ class MobileRechargeMobileMoney extends MobileRechargeEvent {
   @override
   List<Object?> get props => [data];
 }
+
+class MobileRechargeUpdateType extends MobileRechargeEvent {
+  final Map<String, dynamic> data;
+
+  const MobileRechargeUpdateType({required this.data});
+
+  @override
+  List<Object?> get props => [data];
+}

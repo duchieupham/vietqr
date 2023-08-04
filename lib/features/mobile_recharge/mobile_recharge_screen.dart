@@ -41,6 +41,39 @@ class MobileRechargeScreen extends StatelessWidget {
     return imgId;
   }
 
+  updateMobileCarrierType(BuildContext context) {
+    Map<String, dynamic> param = {};
+
+    param['userId'] = UserInformationHelper.instance.getUserId();
+    param['carrierTypeId'] =
+        Provider.of<TopUpProvider>(context, listen: false).networkProviders.id;
+    BlocProvider.of<MobileRechargeBloc>(context)
+        .add(MobileRechargeUpdateType(data: param));
+  }
+
+  updateInformationUser(BuildContext context) {
+    AccountInformationDTO accountInformationDTO =
+        UserInformationHelper.instance.getAccountInformation();
+    AccountInformationDTO accountInformationDTONew = AccountInformationDTO(
+        userId: accountInformationDTO.userId,
+        firstName: accountInformationDTO.firstName,
+        middleName: accountInformationDTO.middleName,
+        lastName: accountInformationDTO.lastName,
+        birthDate: accountInformationDTO.birthDate,
+        gender: accountInformationDTO.gender,
+        address: accountInformationDTO.address,
+        email: accountInformationDTO.email,
+        imgId: accountInformationDTO.imgId,
+        nationalDate: accountInformationDTO.nationalDate,
+        nationalId: accountInformationDTO.nationalId,
+        oldNationalId: accountInformationDTO.oldNationalId,
+        carrierTypeId: Provider.of<TopUpProvider>(context, listen: false)
+            .networkProviders
+            .id);
+    UserInformationHelper.instance
+        .setAccountInformation(accountInformationDTONew);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,11 +85,15 @@ class MobileRechargeScreen extends StatelessWidget {
               MobileRechargeBloc()..add(MobileRechargeGetListType()),
           child: BlocConsumer<MobileRechargeBloc, MobileRechargeState>(
             listener: (context, state) {
+              if (state is RechargeUpdateTypeUpdateSuccessState) {
+                updateInformationUser(context);
+              }
               if (state is MobileRechargeMobileMoneyLoadingState) {
                 DialogWidget.instance
                     .openLoadingDialog(msg: 'Đang thực hiện thanh toán');
               }
               if (state is MobileRechargeMobileMoneySuccessState) {
+                updateMobileCarrierType(context);
                 eventBus.fire(ReloadWallet());
                 Navigator.pop(context);
                 Navigator.pop(context);
