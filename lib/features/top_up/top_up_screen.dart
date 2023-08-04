@@ -96,7 +96,7 @@ class TopUpScreen extends StatelessWidget {
                               data['phoneNo'] =
                                   UserInformationHelper.instance.getPhoneNo();
                               data['amount'] =
-                                  provider.money.replaceAll('.', '');
+                                  provider.money.replaceAll(',', '');
                               data['transType'] = 'C';
                               BlocProvider.of<TopUpBloc>(context)
                                   .add(TopUpEventCreateQR(data: data));
@@ -428,7 +428,7 @@ class TopUpScreen extends StatelessWidget {
                 onChange: (value) {
                   provider.updateMoney(value);
                 },
-                text: '10.000',
+                text: '10,000',
                 money: provider.money,
               ),
             ),
@@ -440,7 +440,7 @@ class TopUpScreen extends StatelessWidget {
                 onChange: (value) {
                   provider.updateMoney(value);
                 },
-                text: '20.000',
+                text: '20,000',
                 money: provider.money,
               ),
             ),
@@ -452,7 +452,7 @@ class TopUpScreen extends StatelessWidget {
                 onChange: (value) {
                   provider.updateMoney(value);
                 },
-                text: '50.000',
+                text: '50,000',
                 money: provider.money,
               ),
             ),
@@ -468,7 +468,7 @@ class TopUpScreen extends StatelessWidget {
                 onChange: (value) {
                   provider.updateMoney(value);
                 },
-                text: '100.000',
+                text: '100,000',
                 money: provider.money,
               ),
             ),
@@ -480,7 +480,7 @@ class TopUpScreen extends StatelessWidget {
                 onChange: (value) {
                   provider.updateMoney(value);
                 },
-                text: '200.000',
+                text: '200,000',
                 money: provider.money,
               ),
             ),
@@ -492,7 +492,7 @@ class TopUpScreen extends StatelessWidget {
                 onChange: (value) {
                   provider.updateMoney(value);
                 },
-                text: '500.000',
+                text: '500,000',
                 money: provider.money,
               ),
             ),
@@ -572,28 +572,32 @@ class TopUpScreen extends StatelessWidget {
           alignment: Alignment.center,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
-            border: Border.all(color: AppColor.BLUE_TEXT, width: 0.4),
+            border: text == money
+                ? Border.all(color: AppColor.BLUE_TEXT, width: 0.8)
+                : Border.all(color: AppColor.WHITE, width: 0.8),
             color: text == money
                 ? AppColor.BLUE_TEXT.withOpacity(0.3)
-                : AppColor.TRANSPARENT,
+                : AppColor.WHITE,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
                 text,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w400,
-                  height: 1.4,
-                ),
+                style: TextStyle(
+                    fontWeight:
+                        text == money ? FontWeight.w600 : FontWeight.w400,
+                    height: 1.4,
+                    color: text == money ? AppColor.BLUE_TEXT : AppColor.BLACK),
               ),
               const SizedBox(width: 2),
-              const Text(
+              Text(
                 'VQR',
                 style: TextStyle(
-                  fontWeight: FontWeight.w400,
-                  height: 1.4,
-                ),
+                    fontWeight:
+                        text == money ? FontWeight.w600 : FontWeight.w400,
+                    height: 1.4,
+                    color: text == money ? AppColor.BLUE_TEXT : AppColor.BLACK),
               ),
             ],
           )),

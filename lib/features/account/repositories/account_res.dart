@@ -22,6 +22,7 @@ class AccountRepository {
       );
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
+        UserInformationHelper.instance.setWalletInfo(response.body);
         return IntroduceDTO.fromJson(data);
       }
     } catch (e) {

@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:camera/camera.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -29,9 +32,9 @@ import 'package:vierqr/features/business/blocs/business_member_bloc.dart';
 import 'package:vierqr/features/business/views/add_business_view.dart';
 import 'package:vierqr/features/business/views/business_information_view.dart';
 import 'package:vierqr/features/business/views/business_transaction_view.dart';
-import 'package:vierqr/features/camera_demo/camera_demo.dart';
 import 'package:vierqr/features/contact/contact_screen.dart';
 import 'package:vierqr/features/contact/views/contact_detail.dart';
+import 'package:vierqr/features/contact_us/contact_us_screen.dart';
 import 'package:vierqr/features/create_qr/create_qr_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/dashboard_screen.dart';
@@ -39,6 +42,8 @@ import 'package:vierqr/features/dashboard/theme_setting.dart';
 import 'package:vierqr/features/generate_qr/views/qr_share_view.dart';
 import 'package:vierqr/features/home/blocs/home_bloc.dart';
 import 'package:vierqr/features/introduce/views/introduce_screen.dart';
+import 'package:vierqr/features/mobile_recharge/mobile_recharge_screen.dart';
+import 'package:vierqr/features/mobile_recharge/widget/recharege_success.dart';
 import 'package:vierqr/features/notification/views/notification_view.dart';
 import 'package:vierqr/features/personal/views/national_information_view.dart';
 import 'package:vierqr/features/printer/blocs/printer_bloc.dart';
@@ -50,12 +55,13 @@ import 'package:vierqr/features/bank_card/blocs/bank_manage_bloc.dart';
 import 'package:vierqr/features/personal/blocs/user_edit_bloc.dart';
 import 'package:vierqr/features/personal/views/user_edit_view.dart';
 import 'package:vierqr/features/personal/views/user_update_password_view.dart';
+import 'package:vierqr/features/report/report_screen.dart';
+import 'package:vierqr/features/scan_qr/scan_qr_screen.dart';
 import 'package:vierqr/features/token/blocs/token_bloc.dart';
 import 'package:vierqr/features/top_up/qr_top_up.dart';
 import 'package:vierqr/features/top_up/top_up_screen.dart';
 import 'package:vierqr/features/top_up/widget/pop_up_top_up_sucsess.dart';
 import 'package:vierqr/features/transaction/transaction_detail_screen.dart';
-import 'package:vierqr/features/trans_history/trans_history_screen.dart';
 import 'package:vierqr/features/transaction/widgets/transaction_sucess_widget.dart';
 import 'package:vierqr/models/notification_transaction_success_dto.dart';
 import 'package:vierqr/models/contact_dto.dart';
@@ -160,6 +166,14 @@ class _VietQRApp extends State<VietQRApp> {
   @override
   void initState() {
     super.initState();
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark, // For Android (dark icons)
+        statusBarBrightness: Brightness.light, // For iOS (dark icons)
+      ),
+    );
+
     if (notificationController.isClosed) {
       notificationController = BehaviorSubject<bool>();
     }
@@ -186,6 +200,7 @@ class _VietQRApp extends State<VietQRApp> {
       NotificationService().showNotification(
         title: message.notification?.title,
         body: message.notification?.body,
+        payload: json.encode(message.data),
       );
 
       //process when receive data
@@ -217,6 +232,16 @@ class _VietQRApp extends State<VietQRApp> {
   void onFcmMessageOpenedApp() {
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       // Xử lý push notification nếu ứng dụng không đang chạy
+      if (message.data['transactionReceiveId'] != null) {
+        Navigator.pushNamed(
+          NavigationService.navigatorKey.currentContext!,
+          Routes.TRANSACTION_DETAIL,
+          arguments: {
+            'transactionId': message.data['transactionReceiveId'],
+            // 'bankId': bankId,
+          },
+        );
+      }
       if (message.notification != null) {
         LOG.info(
             "Push notification clicked: ${message.notification?.title.toString()} - ${message.notification?.body}");
@@ -350,8 +375,8 @@ class _VietQRApp extends State<VietQRApp> {
                       const AddBusinessView(),
                   // Routes.BANK_CARD_DETAIL_VEW: (context) =>
                   //     const BankCardDetailScreen(),
-                  Routes.TRANSACTION_HISTORY_VIEW: (context) =>
-                      const TransHistoryScreen(),
+                  // Routes.TRANSACTION_HISTORY_VIEW: (context) =>
+                  //     const TransHistoryScreen(),
                   Routes.SCAN_QR_VIEW: (context) => const ScanQrScreen(),
                   Routes.PRINTER_SETTING: (context) => PrinterSettingView(),
                   Routes.SEARCH_BANK: (context) => SearchBankView(),
@@ -369,6 +394,11 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.PHONE_BOOK: (context) => const ContactScreen(),
                   // Routes.PHONE_BOOK: (context) => const SavePhoneBookScreen(),
                   Routes.TOP_UP: (context) => const TopUpScreen(),
+                  Routes.MOBILE_RECHARGE: (context) => MobileRechargeScreen(),
+
+                  Routes.CONTACT_US_SCREEN: (context) =>
+                      const ContactUSScreen(),
+                  Routes.REPORT_SCREEN: (context) => const ReportScreen(),
                 },
                 onGenerateRoute: (settings) {
                   if (settings.name == Routes.BUSINESS_INFORMATION_VIEW) {
@@ -397,6 +427,19 @@ class _VietQRApp extends State<VietQRApp> {
                       builder: (context) {
                         return QRTopUpScreen(
                           dto: dto,
+                        );
+                      },
+                    );
+                  }
+                  if (settings.name == Routes.RECHARGE_SUCCESS) {
+                    Map<String, dynamic> data =
+                        settings.arguments as Map<String, dynamic>;
+
+                    return MaterialPageRoute(
+                      builder: (context) {
+                        return RechargeSuccess(
+                          phoneNo: data['phoneNo'],
+                          money: data['money'],
                         );
                       },
                     );

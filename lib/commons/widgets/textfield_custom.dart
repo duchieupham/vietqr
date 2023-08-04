@@ -6,6 +6,7 @@ import 'package:vierqr/commons/enums/textfield_type.dart';
 
 class TextFieldCustom extends StatefulWidget {
   final String hintText;
+  final Color? hintColor;
   final TextEditingController? controller;
   final ValueChanged<String>? onChange;
   final VoidCallback? onEditingComplete;
@@ -31,6 +32,8 @@ class TextFieldCustom extends StatefulWidget {
   final List<TextInputFormatter>? inputFormatter;
   final Widget? prefixIcon;
   final Widget? suffixIcon;
+  final GestureTapCallback? onTap;
+  final EdgeInsetsGeometry? contentPadding;
 
   //Border textfield
   final bool isRequired;
@@ -41,8 +44,9 @@ class TextFieldCustom extends StatefulWidget {
     required this.hintText,
     this.controller,
     this.fillColor,
+    this.hintColor,
     required this.keyboardAction,
-    required this.onChange,
+    this.onChange,
     required this.inputType,
     required this.isObscureText,
     this.fontSize,
@@ -66,6 +70,8 @@ class TextFieldCustom extends StatefulWidget {
     this.prefixIcon,
     this.suffixIcon,
     this.isRequired = false,
+    this.onTap,
+    this.contentPadding,
   }) : super(key: key);
 
   @override
@@ -100,80 +106,89 @@ class _TextFieldWidgetState extends State<TextFieldCustom> {
         hintStyle: TextStyle(
           fontSize: (widget.fontSize != null) ? widget.fontSize : 14,
           color: (widget.title != null)
-              ? AppColor.GREY_TEXT
+              ? widget.hintColor != null
+                  ? (widget.hintColor)
+                  : AppColor.GREY_TEXT
               : Theme.of(context).hintColor,
         ),
         prefixIcon: widget.prefixIcon,
         suffixIcon: widget.suffixIcon,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+        contentPadding:
+            widget.contentPadding ?? const EdgeInsets.symmetric(horizontal: 16),
         fillColor: widget.fillColor ?? AppColor.WHITE,
         filled: true,
       ),
     );
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        if (widget.textFieldType != null &&
-            widget.textFieldType == TextfieldType.LABEL) ...[
-          Row(
-            children: [
-              SizedBox(
-                child: Text(
-                  widget.title ?? '',
-                  style: TextStyle(
-                    fontSize: (widget.fontSize != null) ? widget.fontSize : 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 4),
-              if (widget.isRequired)
-                Text(
-                  '*',
-                  style: TextStyle(
-                    fontSize: (widget.fontSize != null) ? widget.fontSize : 14,
-                    fontWeight: FontWeight.bold,
-                    color: AppColor.RED_EC1010,
-                  ),
-                ),
-            ],
-          ),
-          if (widget.unTitle != null) ...[
-            const SizedBox(height: 4),
-            Text(
-              widget.unTitle ?? '',
-              style: const TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.w400,
-                height: 1.4,
-              ),
-            ),
-          ]
-        ],
-        const SizedBox(height: 8),
-        Container(
-          alignment: Alignment.centerLeft,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              textFiledTypeLabel,
-              if (_msgError != null && !widget.isShowToast)
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.only(left: 10),
+    return GestureDetector(
+      onTap: widget.onTap,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (widget.textFieldType != null &&
+              widget.textFieldType == TextfieldType.LABEL) ...[
+            Row(
+              children: [
+                SizedBox(
                   child: Text(
-                    _msgError!,
-                    maxLines: 2,
-                    textAlign: TextAlign.start,
-                    overflow: TextOverflow.ellipsis,
-                    style: widget.errorStyle ?? Styles.errorStyle(fontSize: 12),
+                    widget.title ?? '',
+                    style: TextStyle(
+                      fontSize:
+                          (widget.fontSize != null) ? widget.fontSize : 14,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-            ],
+                const SizedBox(width: 4),
+                if (widget.isRequired)
+                  Text(
+                    '*',
+                    style: TextStyle(
+                      fontSize:
+                          (widget.fontSize != null) ? widget.fontSize : 14,
+                      fontWeight: FontWeight.bold,
+                      color: AppColor.RED_EC1010,
+                    ),
+                  ),
+              ],
+            ),
+            if (widget.unTitle != null) ...[
+              const SizedBox(height: 4),
+              Text(
+                widget.unTitle ?? '',
+                style: const TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w400,
+                  height: 1.4,
+                ),
+              ),
+            ]
+          ],
+          const SizedBox(height: 8),
+          Container(
+            alignment: Alignment.centerLeft,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                textFiledTypeLabel,
+                if (_msgError != null && !widget.isShowToast)
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Text(
+                      _msgError!,
+                      maxLines: 2,
+                      textAlign: TextAlign.start,
+                      overflow: TextOverflow.ellipsis,
+                      style:
+                          widget.errorStyle ?? Styles.errorStyle(fontSize: 12),
+                    ),
+                  ),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

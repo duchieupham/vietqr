@@ -12,6 +12,7 @@ class AccountInformationDTO {
   final String address;
   final String email;
   final String imgId;
+  final String carrierTypeId;
 
   const AccountInformationDTO({
     required this.userId,
@@ -26,6 +27,7 @@ class AccountInformationDTO {
     this.nationalDate = '',
     this.oldNationalId = '',
     this.nationalId = '',
+    this.carrierTypeId = '',
   });
 
   factory AccountInformationDTO.fromJson(Map<String, dynamic> json) {
@@ -42,6 +44,7 @@ class AccountInformationDTO {
       nationalDate: json['nationalDate'] ?? '',
       oldNationalId: json['oldNationalId'] ?? '',
       nationalId: json['nationalId'] ?? '',
+      carrierTypeId: json['carrierTypeId'] ?? '',
     );
   }
 
@@ -59,6 +62,7 @@ class AccountInformationDTO {
     data['nationalId'] = nationalId;
     data['oldNationalId'] = oldNationalId;
     data['nationalDate'] = nationalDate;
+    data['carrierTypeId'] = carrierTypeId;
     return data;
   }
 
@@ -76,7 +80,7 @@ class AccountInformationDTO {
     data['"nationalDate"'] = (nationalDate == '') ? '""' : '"$nationalDate"';
     data['"oldNationalId"'] = (oldNationalId == '') ? '""' : '"$oldNationalId"';
     data['"nationalId"'] = (nationalId == '') ? '""' : '"$nationalId"';
-
+    data['"carrierTypeId"'] = (carrierTypeId == '') ? '""' : '"$carrierTypeId"';
     return data;
   }
 }

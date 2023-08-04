@@ -201,7 +201,8 @@ class _ContactStateState extends State<_ContactState>
                               _animatedToPage(index);
                             },
                             text: model.title,
-                            isSuggest: index == 1,
+                            isSuggest: index == 1 &&
+                                state.listContactDTOSuggest.isNotEmpty,
                             isSelect: provider.tab == model.index,
                             textSuggest:
                                 '${state.listContactDTOSuggest.length}');

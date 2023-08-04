@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/events.dart';
+import 'package:vierqr/commons/utils/encrypt_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
@@ -55,6 +58,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
     with WidgetsBindingObserver, AutomaticKeepAliveClientMixin {
   //page controller
   late PageController _pageController;
+  StreamSubscription? _subscription;
 
   //list page
   final List<Widget> _listScreens = [];
@@ -106,6 +110,10 @@ class _DashBoardScreen extends State<DashBoardScreen>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       initialServices(context);
       listenNewNotification();
+    });
+
+    _subscription = eventBus.on<ChangeBottomBarEvent>().listen((data) {
+      _animatedToPage(data.page);
     });
   }
 

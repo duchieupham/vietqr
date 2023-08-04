@@ -86,6 +86,45 @@ class ErrorUtils {
       case ErrorType.E23:
         result = 'TK đã đăng ký nhận BĐSD';
         break;
+      case ErrorType.E46:
+        result = 'Có vấn đề xảy ra khi thực hiện yêu cầu. Vui lòng thử lại sau';
+        break;
+      case ErrorType.E55:
+        result = 'Xác nhận mật khẩu sai.';
+        break;
+      case ErrorType.E56:
+        result = 'Hệ thống đang xảy ra vấn đề. Vui lòng thử lại sau.';
+        break;
+      case ErrorType.E57:
+        result =
+            'Số điện thoại không đúng định dạng. Vui lòng kiểm tra lại thông tin trên và thực hiện lại.';
+        break;
+      case ErrorType.E58:
+        result =
+            'Nhà mạng không hợp lệ. Vui lòng kiểm tra lại thông tin trên và thực hiện lại.';
+        break;
+      case ErrorType.E59:
+        result = 'Hệ thống đang xảy ra vấn đề. Vui lòng thử lại sau.';
+        break;
+      case ErrorType.E60:
+        result = 'Hệ thống đang xảy ra vấn đề. Vui lòng thử lại sau.';
+        break;
+      case ErrorType.E61:
+        result =
+            'Số dư VQR không đủ. Vui lòng nạp thêm VQR để thực hiện nạp tiền điện thoại';
+        break;
+      case ErrorType.E62:
+        result = 'Giao dịch thất bại.';
+        break;
+      case ErrorType.E63:
+        result = 'Hệ thống nạp tiền đang bảo trì. Vui lòng thử lại sau';
+        break;
+      case ErrorType.E64:
+        result = 'Hệ thống nạp tiền đang bận. Vui lòng thử lại sau';
+        break;
+      case ErrorType.E65:
+        result = 'Xác thực thất bại. Vui lòng thử lại sau';
+        break;
       case ErrorType.C03:
         result = 'Tài khoản này đã được thêm trước đó';
         break;

@@ -1,5 +1,10 @@
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/utils/log.dart';
+import 'package:vierqr/main.dart';
 
 class NotificationService {
   final FlutterLocalNotificationsPlugin notificationsPlugin =
@@ -35,7 +40,20 @@ class NotificationService {
 
     await notificationsPlugin.initialize(
       initializationSetting,
+
       onDidReceiveNotificationResponse: (details) async {
+        Map<String, dynamic> data = json.decode(details.payload!);
+        if (data['transactionReceiveId'] != null) {
+          Navigator.pushNamed(
+            NavigationService.navigatorKey.currentContext!,
+            Routes.TRANSACTION_DETAIL,
+            arguments: {
+              'transactionId': data['transactionReceiveId'],
+              // 'bankId': bankId,
+            },
+          );
+        }
+
         LOG.info('onDidReceiveNotificationResponse: ${details.payload}');
       },
       // onDidReceiveBackgroundNotificationResponse: (details) {
@@ -64,11 +82,7 @@ class NotificationService {
 
   Future showNotification(
       {int id = 0, String? title, String? body, String? payload}) async {
-    return notificationsPlugin.show(
-      id,
-      title,
-      body,
-      await notificationDetails(),
-    );
+    return notificationsPlugin
+        .show(id, title, body, await notificationDetails(), payload: payload);
   }
 }

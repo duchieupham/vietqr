@@ -1,13 +1,16 @@
 import 'dart:convert';
 
+import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/account_information_dto.dart';
+import 'package:vierqr/models/introduce_dto.dart';
 
 class UserInformationHelper {
   const UserInformationHelper._privateConsrtructor();
 
   static const UserInformationHelper _instance =
       UserInformationHelper._privateConsrtructor();
+
   static UserInformationHelper get instance => _instance;
 
   Future<void> initialUserInformationHelper() async {
@@ -73,6 +76,15 @@ class UserInformationHelper {
   AccountInformationDTO getAccountInformation() {
     return AccountInformationDTO.fromJson(
         json.decode(sharedPrefs.getString('ACCOUNT_INFORMATION')!));
+  }
+
+  Future<void> setWalletInfo(String info) async {
+    await sharedPrefs.setString('WALLET_INFO', info);
+  }
+
+  IntroduceDTO getWalletInfo() {
+    return IntroduceDTO.fromJson(
+        json.decode(sharedPrefs.getString('WALLET_INFO')!));
   }
 
   String getUserId() {

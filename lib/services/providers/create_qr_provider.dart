@@ -75,9 +75,9 @@ class CreateQRProvider with ChangeNotifier {
     errorAmount = null;
     if (value.isNotEmpty) {
       _isAmountErr = true;
-      int data = int.parse(value.replaceAll('.', ''));
+      int data = int.parse(value.replaceAll(',', ''));
       if (data < 1000) {
-        errorAmount = 'Số tiền phải lớn hơn 1.000';
+        errorAmount = 'Số tiền phải lớn hơn 1,000';
         _isAmountErr = false;
       }
       money = StringUtils.formatNumber(data);

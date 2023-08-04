@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
+import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/textfield_custom.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
@@ -71,7 +72,8 @@ class AccountLinkView extends StatelessWidget {
                 color: AppColor.BLUE_TEXT.withOpacity(0.3),
               ),
               child: Text(
-                UserInformationHelper.instance.getPhoneNo(),
+                StringUtils.instance.formatPhoneNumberVN(
+                    UserInformationHelper.instance.getPhoneNo()),
                 style: const TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w400,
