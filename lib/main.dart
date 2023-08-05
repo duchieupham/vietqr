@@ -56,7 +56,7 @@ import 'package:vierqr/features/personal/blocs/user_edit_bloc.dart';
 import 'package:vierqr/features/personal/views/user_edit_view.dart';
 import 'package:vierqr/features/personal/views/user_update_password_view.dart';
 import 'package:vierqr/features/report/report_screen.dart';
-import 'package:vierqr/features/scan_qr/scan_qr_screen.dart';
+import 'package:vierqr/features/scan_qr/scan_qr_lib.dart';
 import 'package:vierqr/features/token/blocs/token_bloc.dart';
 import 'package:vierqr/features/top_up/qr_top_up.dart';
 import 'package:vierqr/features/top_up/top_up_screen.dart';
