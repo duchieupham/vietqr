@@ -184,6 +184,7 @@ class _VietQRApp extends State<VietQRApp> {
     onFcmMessageOpenedApp();
     //
     requestNotificationPermission();
+    handleMessageOnBackground();
   }
 
   void requestNotificationPermission() async {
@@ -247,6 +248,25 @@ class _VietQRApp extends State<VietQRApp> {
             "Push notification clicked: ${message.notification?.title.toString()} - ${message.notification?.body}");
       }
     });
+  }
+
+  void handleMessageOnBackground() {
+    FirebaseMessaging.instance.getInitialMessage().then(
+      (remoteMessage) {
+        if (remoteMessage != null) {
+          if (remoteMessage.data['transactionReceiveId'] != null) {
+            Navigator.pushNamed(
+              NavigationService.navigatorKey.currentContext!,
+              Routes.TRANSACTION_DETAIL,
+              arguments: {
+                'transactionId': remoteMessage.data['transactionReceiveId'],
+                // 'bankId': bankId,
+              },
+            );
+          }
+        }
+      },
+    );
   }
 
   @override
