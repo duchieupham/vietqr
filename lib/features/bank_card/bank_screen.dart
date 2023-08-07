@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -35,6 +36,7 @@ import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
 import 'package:vierqr/layouts/box_layout.dart';
+import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
@@ -512,12 +514,33 @@ class _StackedList extends State<StackedList> {
   @override
   void initState() {
     super.initState();
+
     _accountBloc = BlocProvider.of(context);
     _accountBloc.add(InitAccountEvent());
     _accountBloc.add(GetUserInformation());
     _subscription = eventBus.on<ReloadWallet>().listen((_) {
       _accountBloc.add(InitAccountEvent());
     });
+    handleMessageOnBackground();
+  }
+
+  void handleMessageOnBackground() {
+    FirebaseMessaging.instance.getInitialMessage().then(
+      (remoteMessage) {
+        if (remoteMessage != null) {
+          if (remoteMessage.data['transactionReceiveId'] != null) {
+            Navigator.pushNamed(
+              NavigationService.navigatorKey.currentContext!,
+              Routes.TRANSACTION_DETAIL,
+              arguments: {
+                'transactionId': remoteMessage.data['transactionReceiveId'],
+                // 'bankId': bankId,
+              },
+            );
+          }
+        }
+      },
+    );
   }
 
   List<Color> fillListColor(List<Color> colors) {
