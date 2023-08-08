@@ -164,7 +164,9 @@ class QRScannerUtils {
             ),
           );
 
-          onCallBack!();
+          if (onCallBack != null) {
+            onCallBack();
+          }
           break;
         case TypeContact.Other:
           if (typeQR == TypeQR.QR_LINK) {
@@ -230,7 +232,9 @@ class QRScannerUtils {
               ),
             );
           }
-          onCallBack!();
+          if (onCallBack != null) {
+            onCallBack();
+          }
 
           break;
         case TypeContact.ERROR:
