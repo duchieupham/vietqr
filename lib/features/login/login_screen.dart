@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:nfc_manager/nfc_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
@@ -46,6 +47,8 @@ class _LoginState extends State<_Login> {
   final passController = TextEditingController();
 
   String code = '';
+  bool isNFCAvailable = false;
+  String data = '';
 
   Uuid uuid = const Uuid();
 
@@ -56,6 +59,19 @@ class _LoginState extends State<_Login> {
     super.initState();
     _bloc = BlocProvider.of(context);
     code = uuid.v1();
+    initNFC();
+  }
+
+  void initNFC() async {
+    isNFCAvailable = await NfcManager.instance.isAvailable();
+    setState(() {});
+    NfcManager.instance.startSession(
+      alertMessage: 'alert',
+      onDiscovered: (tag) async {
+        data = tag.data.toString();
+        setState(() {});
+      },
+    );
   }
 
   @override
@@ -390,6 +406,8 @@ class _LoginState extends State<_Login> {
                         ],
                       ),
                     ),
+                    Text('NFC available: $isNFCAvailable'),
+                    Text('DATA NFC: $data'),
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 20, vertical: 20),
