@@ -69,7 +69,7 @@ class CardWallet extends StatelessWidget {
                         )
                       else
                         Text(
-                          '${CurrencyUtils.instance.getCurrencyFormatted(state.introduceDTO!.amount ?? '0')} VQR',
+                          '${CurrencyUtils.instance.getCurrencyFormatted(state.introduceDTO?.amount ?? '0')} VQR',
                           style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.w600),
                         ),
@@ -92,7 +92,7 @@ class CardWallet extends StatelessWidget {
                       ),
                       const Spacer(),
                       Text(
-                        state.introduceDTO!.point ?? '0',
+                        state.introduceDTO?.point ?? '0',
                         style: const TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w600),
                       ),

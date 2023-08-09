@@ -15,6 +15,7 @@ class ScanQrState extends Equatable {
   final String? codeQR;
   final TypeContact typeContact;
   final BankNameInformationDTO? informationDTO;
+  final bool isScanAll;
 
   const ScanQrState({
     this.status = BlocStatus.NONE,
@@ -27,6 +28,7 @@ class ScanQrState extends Equatable {
     this.codeQR,
     this.typeContact = TypeContact.NONE,
     this.informationDTO,
+    this.isScanAll = true,
   });
 
   ScanQrState copyWith({
@@ -40,6 +42,7 @@ class ScanQrState extends Equatable {
     TypeContact? typeContact,
     BankNameInformationDTO? informationDTO,
     TypeQR? typeQR,
+    bool? isScanAll,
   }) {
     return ScanQrState(
       status: status ?? this.status,
@@ -52,6 +55,7 @@ class ScanQrState extends Equatable {
       codeQR: codeQR ?? this.codeQR,
       typeContact: typeContact ?? this.typeContact,
       informationDTO: informationDTO ?? this.informationDTO,
+      isScanAll: isScanAll ?? this.isScanAll,
     );
   }
 
@@ -67,6 +71,7 @@ class ScanQrState extends Equatable {
         typeContact,
         informationDTO,
         typeQR,
+        isScanAll,
       ];
 }
 

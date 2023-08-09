@@ -73,6 +73,7 @@ class _BankScreenState extends State<_BankScreen>
 
   late BusinessInformationBloc businessInformationBloc;
   late BankBloc _bloc;
+  late AccountBloc _accountBloc;
 
   String userId = UserInformationHelper.instance.getUserId();
 
@@ -81,6 +82,7 @@ class _BankScreenState extends State<_BankScreen>
   initialServices(BuildContext context) {
     businessInformationBloc = BlocProvider.of(context);
     _bloc = BlocProvider.of(context);
+    _accountBloc = BlocProvider.of(context);
     Provider.of<BankCardSelectProvider>(context, listen: false).reset();
   }
 
@@ -104,6 +106,7 @@ class _BankScreenState extends State<_BankScreen>
 
   Future<void> _refresh() async {
     initData();
+    _accountBloc.add(InitAccountEvent());
     // refreshController.refreshCompleted();
   }
 
@@ -906,7 +909,7 @@ class _StackedList extends State<StackedList> {
                         Row(
                           children: [
                             Text(
-                              'Số dư : ${CurrencyUtils.instance.getCurrencyFormatted(state.introduceDTO!.amount ?? '0')} VQR - Điểm thưởng: ${state.introduceDTO!.point ?? '0'} ',
+                              'Số dư : ${CurrencyUtils.instance.getCurrencyFormatted(state.introduceDTO?.amount ?? '0')} VQR - Điểm thưởng: ${state.introduceDTO?.point ?? '0'} ',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
@@ -976,7 +979,7 @@ class _StackedList extends State<StackedList> {
       onTap: () async {
         // _pickAndProcessQRImage();
         await Navigator.pushNamed(context, Routes.ADD_BANK_CARD);
-        // widget.getListBank();
+        widget.getListBank();
       },
       child: Container(
         width: width,

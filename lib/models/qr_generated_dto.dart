@@ -10,7 +10,7 @@ class QRGeneratedDTO {
   final String? transactionId;
   final int? existing;
   final String? bankTypeId;
-  final bool? isNaviAddBank;
+  final bool isNaviAddBank;
 
   const QRGeneratedDTO({
     required this.bankCode,

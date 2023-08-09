@@ -91,7 +91,7 @@ class DialogWidget {
                           height: 30,
                           text: 'Đóng',
                           textColor: AppColor.WHITE,
-                          bgColor: AppColor.GREEN,
+                          bgColor: AppColor.BLUE_TEXT,
                           borderRadius: 5,
                           function: () {
                             focusNode.dispose();
@@ -411,9 +411,11 @@ class DialogWidget {
   Future showModelBottomSheet({
     BuildContext? context,
     required Widget widget,
-    required double height,
+    double? height,
     double radius = 15,
     EdgeInsetsGeometry? padding,
+    EdgeInsetsGeometry? margin,
+    BorderRadiusGeometry? borderRadius,
   }) async {
     context ??= NavigationService.navigatorKey.currentContext!;
     return showModalBottomSheet(
@@ -428,13 +430,13 @@ class DialogWidget {
           filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
           child: ClipRRect(
             child: Container(
-              margin: const EdgeInsets.only(top: kToolbarHeight),
+              margin: margin ?? const EdgeInsets.only(top: kToolbarHeight),
               padding: padding ??
                   EdgeInsets.only(left: 20, right: 20, bottom: keyboardHeight),
               width: MediaQuery.of(context).size.width - 10,
-              height: height + keyboardHeight,
+              height: height != null ? (height + keyboardHeight) : null,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(radius),
+                borderRadius: borderRadius ?? BorderRadius.circular(radius),
                 color: Theme.of(context).cardColor,
               ),
               child: widget,
@@ -495,7 +497,7 @@ class DialogWidget {
                           width: width,
                           text: 'OK',
                           textColor: AppColor.WHITE,
-                          bgColor: AppColor.GREEN,
+                          bgColor: AppColor.BLUE_TEXT,
                           function: () {
                             Navigator.pop(context);
                           },

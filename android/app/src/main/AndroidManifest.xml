@@ -46,7 +46,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="mbmobile" />
+                <data android:scheme="vietqrmobile" />
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.

@@ -80,9 +80,10 @@ class ServiceSection extends StatelessWidget {
   }
 
   Future<void> _launchUrl() async {
-    final Uri url = Uri.parse('https://l.linklyhq.com/l/1nyVv');
+    const url = "mbmobile://";
+    // final Uri url = Uri.parse('https://l.linklyhq.com/l/1nyVv');
     try {
-      await launchUrl(url, mode: LaunchMode.externalApplication);
+      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
     } catch (e) {
       LOG.error(e.toString());
     }

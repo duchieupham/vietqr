@@ -14,6 +14,20 @@ class ThemeProvider with ChangeNotifier {
 
   int get typeBankArr => _type;
 
+  bool hasConnection = false;
+
+  bool isFirst = false;
+
+  void updateHasConnection(value) {
+    hasConnection = value;
+    notifyListeners();
+  }
+
+  void updateFirst(value) {
+    isFirst = value;
+    notifyListeners();
+  }
+
   Future<void> updateTheme(String mode) async {
     await ThemeHelper.instance.updateTheme(mode);
     _themeSystem = ThemeHelper.instance.getTheme();

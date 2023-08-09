@@ -2,6 +2,7 @@ package com.vietqr.product
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import androidx.annotation.RequiresApi
@@ -16,6 +17,8 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
 import java.util.*
+import kotlin.math.max
+import kotlin.math.min
 
 
 class MainActivity : FlutterActivity() {
@@ -29,7 +32,7 @@ class MainActivity : FlutterActivity() {
             MethodChannel(it, CHANNEL).setMethodCallHandler { call, result ->
                 if (call.method == "processQRImage") {
                     val args = call.arguments as Map<*, *>
-                    val base64Image = args?.get("imageData") as? String
+                    val base64Image = args["imageData"] as? String
                     if (base64Image != null) {
                         val imageBytes = Base64.getDecoder().decode(base64Image)
                         val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
@@ -46,19 +49,6 @@ class MainActivity : FlutterActivity() {
                     result.notImplemented()
                 }
             }
-        }
-    }
-
-    private fun convertXFileToBitmap(xFilePath: String): Bitmap? {
-        return try {
-            val file = File(xFilePath)
-            val fileInputStream = FileInputStream(file)
-            val bitmap = BitmapFactory.decodeStream(fileInputStream)
-            fileInputStream.close()
-            bitmap
-        } catch (e: IOException) {
-            e.printStackTrace()
-            null
         }
     }
 

@@ -3,11 +3,11 @@ import 'dart:io';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
@@ -25,6 +25,7 @@ import 'package:vierqr/commons/widgets/viet_qr.dart';
 import 'package:vierqr/features/create_qr/blocs/create_qr_bloc.dart';
 import 'package:vierqr/features/create_qr/events/create_qr_event.dart';
 import 'package:vierqr/features/create_qr/states/create_qr_state.dart';
+import 'package:vierqr/features/create_qr/views/bottom_sheet_image.dart';
 import 'package:vierqr/features/printer/views/printing_view.dart';
 import 'package:vierqr/features/transaction/widgets/transaction_sucess_widget.dart';
 import 'package:vierqr/layouts/button_widget.dart';
@@ -481,53 +482,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                   ],
                                 ),
                                 const SizedBox(height: 30),
-                                if (provider.imageFile == null)
-                                  GestureDetector(
-                                    onTap: () async {
-                                      FocusManager.instance.primaryFocus
-                                          ?.unfocus();
-                                      await Permission.mediaLibrary.request();
-                                      await imagePicker
-                                          .pickImage(
-                                              source: ImageSource.gallery)
-                                          .then(
-                                        (pickedFile) async {
-                                          if (pickedFile != null) {
-                                            File? file = File(pickedFile.path);
-                                            File? compressedFile = FileUtils
-                                                .instance
-                                                .compressImage(file);
-                                            provider.setImage(compressedFile);
-                                          }
-                                        },
-                                      );
-                                    },
-                                    child: Container(
-                                      height: 40,
-                                      padding: const EdgeInsets.only(
-                                          left: 8, right: 20),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(5),
-                                        color: AppColor.WHITE,
-                                      ),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Image.asset(
-                                              'assets/images/ic-file-blue.png'),
-                                          const SizedBox(width: 8),
-                                          const Text(
-                                            'Định kèm hoá đơn',
-                                            style: TextStyle(
-                                              color: AppColor.BLUE_TEXT,
-                                              fontSize: 14,
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  )
-                                else
+                                if (provider.imageFile != null)
                                   _buildImage(provider.imageFile!)
                               ],
                             ),
@@ -535,33 +490,84 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                         ),
                       ),
                     ),
-                    MButtonWidget(
-                      title: 'Tạo mã QR',
-                      isEnable: provider.amountErr,
-                      colorEnableText: provider.amountErr
-                          ? AppColor.WHITE
-                          : AppColor.GREY_TEXT,
-                      onTap: () {
-                        FocusManager.instance.primaryFocus?.unfocus();
-                        String money = provider.money.replaceAll(',', '');
+                    Column(
+                      children: [
+                        GestureDetector(
+                          onTap: () async {
+                            FocusManager.instance.primaryFocus?.unfocus();
+                            final data = await DialogWidget.instance
+                                .showModelBottomSheet(
+                              context: context,
+                              padding: EdgeInsets.zero,
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 10),
+                              widget: BottomSheetImage(),
+                            );
 
-                        String formattedName = StringUtils.instance
-                            .removeDiacritic(StringUtils.instance
-                                .capitalFirstCharacter(
-                                    provider.contentController.text));
+                            if (data is XFile) {
+                              File? file = File(data.path);
+                              File? compressedFile =
+                                  FileUtils.instance.compressImage(file);
+                              provider.setImage(compressedFile);
+                            }
+                          },
+                          child: Container(
+                            height: 40,
+                            width: width,
+                            alignment: Alignment.center,
+                            margin: const EdgeInsets.symmetric(horizontal: 20),
+                            padding: const EdgeInsets.only(left: 8, right: 20),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: AppColor.WHITE,
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Image.asset('assets/images/ic-file-blue.png'),
+                                const Text(
+                                  'Định kèm hoá đơn',
+                                  style: TextStyle(
+                                    color: AppColor.BLUE_TEXT,
+                                    fontSize: 14,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                        MButtonWidget(
+                          title: 'Tạo mã QR',
+                          isEnable: provider.amountErr,
+                          colorEnableText: provider.amountErr
+                              ? AppColor.WHITE
+                              : AppColor.GREY_TEXT,
+                          onTap: () {
+                            FocusManager.instance.primaryFocus?.unfocus();
+                            String money = provider.money.replaceAll(',', '');
 
-                        QRCreateDTO dto = QRCreateDTO(
-                          bankId: state.bankAccountDTO?.id ?? '',
-                          amount: money,
-                          content: formattedName,
-                          branchId: state.bankAccountDTO?.branchId ?? '',
-                          businessId: state.bankAccountDTO?.businessId ?? '',
-                          userId: UserInformationHelper.instance.getUserId(),
-                        );
+                            String formattedName = StringUtils.instance
+                                .removeDiacritic(StringUtils.instance
+                                    .capitalFirstCharacter(
+                                        provider.contentController.text));
 
-                        _bloc.add(QREventGenerate(dto: dto));
-                      },
+                            QRCreateDTO dto = QRCreateDTO(
+                              bankId: state.bankAccountDTO?.id ?? '',
+                              amount: money,
+                              content: formattedName,
+                              branchId: state.bankAccountDTO?.branchId ?? '',
+                              businessId:
+                                  state.bankAccountDTO?.businessId ?? '',
+                              userId:
+                                  UserInformationHelper.instance.getUserId(),
+                            );
+
+                            _bloc.add(QREventGenerate(dto: dto));
+                          },
+                        ),
+                      ],
                     ),
+                    const SizedBox(height: 30),
                   ],
                 ),
               ),
@@ -576,7 +582,9 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
     String data = await FlutterBarcodeScanner.scanBarcode(
         '#ff6666', 'Cancel', true, ScanMode.DEFAULT);
     if (data.isNotEmpty) {
-      if (data == TypeQR.NEGATIVE_TWO.value) {
+      if (data == TypeQR.NEGATIVE_ONE.value) {
+        return;
+      } else if (data == TypeQR.NEGATIVE_TWO.value) {
         DialogWidget.instance.openMsgDialog(
           title: 'Không thể xác nhận mã QR',
           msg: 'Ảnh QR không đúng định dạng, vui lòng chọn ảnh khác.',
@@ -607,11 +615,12 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     ButtonIconWidget(
                       width: width * 0.2,
                       height: 40,
-                      icon: Icons.print_rounded,
+                      pathIcon: 'assets/images/ic-print-blue.png',
                       title: '',
                       function: () async {
                         onClick(0);
@@ -625,7 +634,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                     ButtonIconWidget(
                       width: width * 0.2,
                       height: 40,
-                      icon: Icons.photo_rounded,
+                      pathIcon: 'assets/images/ic-img-blue.png',
                       title: '',
                       function: () {
                         onClick(1);
@@ -639,7 +648,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                     ButtonIconWidget(
                       width: width * 0.2,
                       height: 40,
-                      icon: Icons.copy_rounded,
+                      pathIcon: 'assets/images/ic-copy-blue.png',
                       title: '',
                       function: () async {
                         onClick(2);
@@ -653,7 +662,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                     ButtonIconWidget(
                       width: width * 0.2,
                       height: 40,
-                      icon: Icons.share_rounded,
+                      pathIcon: 'assets/images/ic-share-blue.png',
                       title: '',
                       function: () {
                         onClick(3);

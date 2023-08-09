@@ -13,8 +13,10 @@ import 'package:vierqr/services/providers/statistical_provider.dart';
 
 class Statistical extends StatelessWidget {
   final String bankId;
+
   Statistical({Key? key, required this.bankId}) : super(key: key);
   ResponseStatisticDTO dto = const ResponseStatisticDTO();
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -25,8 +27,10 @@ class Statistical extends StatelessWidget {
         child: BlocConsumer<StatisticBloc, StatisticState>(
             listener: (context, state) {
           if (state is StatisticGetAllDataSuccessState) {
-            Provider.of<StatisticProvider>(context, listen: false)
-                .updateStatisticDTO(state.listData.first);
+            if (state.listData.isNotEmpty) {
+              Provider.of<StatisticProvider>(context, listen: false)
+                  .updateStatisticDTO(state.listData.first);
+            }
           }
         }, builder: (context, state) {
           if (state is StatisticGetAllDataSuccessState) {

@@ -128,7 +128,7 @@ class QRScannerUtils {
               },
               onTapAdd: () async {
                 if (value is QRGeneratedDTO) {
-                  if (value.isNaviAddBank!) {
+                  if (value.isNaviAddBank) {
                     await Navigator.pushNamed(
                       context,
                       Routes.ADD_BANK_CARD,

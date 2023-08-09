@@ -1,6 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:camera/camera.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -58,7 +61,10 @@ import 'package:vierqr/features/personal/views/user_update_password_view.dart';
 import 'package:vierqr/features/printer/blocs/printer_bloc.dart';
 import 'package:vierqr/features/printer/views/printer_setting_view.dart';
 import 'package:vierqr/features/report/report_screen.dart';
+
 import 'package:vierqr/features/scan_qr/scan_qr_lib.dart';
+
+// import 'package:vierqr/features/scan_qr/scan_qr_screen.dart';
 import 'package:vierqr/features/token/blocs/token_bloc.dart';
 import 'package:vierqr/features/top_up/qr_top_up.dart';
 import 'package:vierqr/features/top_up/top_up_screen.dart';
@@ -116,7 +122,7 @@ void main() async {
   }
   cameras = await availableCameras();
   LOG.verbose('Config Environment: ${EnvConfig.getEnv()}');
-  runApp(const VietQRApp());
+  runApp(VietQRApp());
 }
 
 Future<void> _initialServiceHelper() async {
@@ -164,10 +170,13 @@ class VietQRApp extends StatefulWidget {
 
 class _VietQRApp extends State<VietQRApp> {
   static Widget _mainScreen = const Login();
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<ConnectivityResult> _connectivitySubscription;
 
   @override
   void initState() {
     super.initState();
+    initConnectivity();
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -187,6 +196,53 @@ class _VietQRApp extends State<VietQRApp> {
     //
     requestNotificationPermission();
     handleMessageOnBackground();
+
+    _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+  }
+
+  Future<void> initConnectivity() async {
+    late ConnectivityResult result;
+    try {
+      result = await _connectivity.checkConnectivity();
+    } on PlatformException catch (e) {
+      LOG.error('Couldn\'t check connectivity status $e');
+      return;
+    }
+    if (!mounted) {
+      return Future.value(null);
+    }
+
+    return _updateConnectionStatus(result);
+  }
+
+  Future checkConnection() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        //
+      } else {
+        await DialogWidget.instance.openMsgDialog(
+          title: 'Thông báo',
+          msg: 'Không có kết nối internet, vui lòng thử lại.',
+        );
+      }
+    } on SocketException catch (_) {
+      await DialogWidget.instance.openMsgDialog(
+        title: 'Thông báo',
+        msg: 'Không có kết nối internet, vui lòng thử lại.',
+      );
+    }
+  }
+
+  Future<void> _updateConnectionStatus(ConnectivityResult result) async {
+    if (result == ConnectivityResult.none) {
+      await DialogWidget.instance.openMsgDialog(
+        title: 'Thông báo',
+        msg: 'Không có kết nối internet, vui lòng thử lại.',
+      );
+    } else {
+      checkConnection();
+    }
   }
 
   void requestNotificationPermission() async {
@@ -361,6 +417,7 @@ class _VietQRApp extends State<VietQRApp> {
               if (themeSelect.getThemeIndex() != 0) {
                 themeSelect.updateThemeByIndex(0);
               }
+
               return MaterialApp(
                 navigatorKey: NavigationService.navigatorKey,
                 debugShowCheckedModeBanner: false,
@@ -375,7 +432,7 @@ class _VietQRApp extends State<VietQRApp> {
                 },
                 initialRoute: '/',
                 routes: {
-                  Routes.APP: (context) => const VietQRApp(),
+                  Routes.APP: (context) => VietQRApp(),
                   Routes.LOGIN: (context) => const Login(),
                   Routes.DASHBOARD: (context) => const DashBoardScreen(),
                   Routes.USER_EDIT: (context) => const UserEditView(),
@@ -506,5 +563,11 @@ class _VietQRApp extends State<VietQRApp> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _connectivitySubscription.cancel();
+    super.dispose();
   }
 }

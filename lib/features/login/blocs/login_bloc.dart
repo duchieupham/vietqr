@@ -27,7 +27,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
               request: LoginType.TOAST,
               status: BlocStatus.UNLOADING));
         } else {
-          emit(state.copyWith(request: LoginType.ERROR));
+          emit(state.copyWith(
+              request: LoginType.ERROR,
+              msg: 'Sai mật khẩu. Vui lòng kiểm tra lại mật khẩu của bạn'));
         }
       }
     } catch (e) {

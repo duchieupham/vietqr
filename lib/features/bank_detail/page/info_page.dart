@@ -34,6 +34,7 @@ class InfoDetailBankAccount extends StatelessWidget {
   final AccountBankDetailDTO dto;
   final QRGeneratedDTO qrGeneratedDTO;
   final String bankId;
+
   const InfoDetailBankAccount(
       {Key? key,
       required this.bloc,
@@ -42,6 +43,7 @@ class InfoDetailBankAccount extends StatelessWidget {
       required this.qrGeneratedDTO,
       required this.bankId})
       : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -87,7 +89,6 @@ class InfoDetailBankAccount extends StatelessWidget {
                               color: AppColor.GREY_TEXT,
                             ),
                           ),
-                          const Padding(padding: EdgeInsets.only(top: 10)),
                         ],
                         if (dto.nationalId.isNotEmpty) ...[
                           Padding(
@@ -159,9 +160,8 @@ class InfoDetailBankAccount extends StatelessWidget {
                     _buildBusinessInformation(context, dto.businessDetails),
                   ],
                   const Padding(padding: EdgeInsets.only(bottom: 16)),
-                  if (dto.authenticated &&
-                      (UserInformationHelper.instance.getUserId() ==
-                          dto.userId)) ...[
+                  if ((UserInformationHelper.instance.getUserId() ==
+                      dto.userId)) ...[
                     _buildTitle(title: 'Thiết lập nâng cao'),
                     BoxLayout(
                       width: width,
@@ -171,31 +171,33 @@ class InfoDetailBankAccount extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          ButtonIconWidget(
-                            width: width,
-                            height: 40,
-                            bgColor: AppColor.TRANSPARENT,
-                            textColor: AppColor.BLUE_TEXT,
-                            icon: Icons.remove_circle_outline,
-                            iconSize: 18,
-                            customPaddingIcon: const EdgeInsets.only(right: 20),
-                            alignment: Alignment.centerLeft,
-                            title: 'Huỷ liên kết TK ngân hàng',
-                            function: () {
-                              DialogWidget.instance.openMsgDialog(
-                                title: 'Huỷ liên kết',
-                                msg: 'Bạn có chắc chắn muốn huỷ liên kết?',
-                                isSecondBT: true,
-                                functionConfirm: () {
-                                  Navigator.of(context).pop();
-                                  bloc.add(
-                                    BankCardEventUnlink(
-                                        accountNumber: dto.bankAccount),
-                                  );
-                                },
-                              );
-                            },
-                          ),
+                          if (dto.authenticated)
+                            ButtonIconWidget(
+                              width: width,
+                              height: 40,
+                              bgColor: AppColor.TRANSPARENT,
+                              textColor: AppColor.BLUE_TEXT,
+                              icon: Icons.remove_circle_outline,
+                              iconSize: 18,
+                              customPaddingIcon:
+                                  const EdgeInsets.only(right: 20),
+                              alignment: Alignment.centerLeft,
+                              title: 'Huỷ liên kết TK ngân hàng',
+                              function: () {
+                                DialogWidget.instance.openMsgDialog(
+                                  title: 'Huỷ liên kết',
+                                  msg: 'Bạn có chắc chắn muốn huỷ liên kết?',
+                                  isSecondBT: true,
+                                  functionConfirm: () {
+                                    Navigator.of(context).pop();
+                                    bloc.add(
+                                      BankCardEventUnlink(
+                                          accountNumber: dto.bankAccount),
+                                    );
+                                  },
+                                );
+                              },
+                            ),
                           ButtonIconWidget(
                             width: width,
                             height: 40,
@@ -240,7 +242,8 @@ class InfoDetailBankAccount extends StatelessWidget {
           width: width,
           height: 40,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               ButtonIconWidget(
                 width: width * 0.2,

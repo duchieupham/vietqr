@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
+import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
@@ -66,23 +67,28 @@ class _HomeScreen extends State<HomeScreen> {
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: SizedBox(
-        width: width,
-        height: height,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: ListView(
-            children: [
-              CardWallet(
-                startBarcodeScanStream: () {
-                  startBarcodeScanStream();
-                },
-              ),
-              const SizedBox(
-                height: 24,
-              ),
-              const ServiceSection()
-            ],
+      body: RefreshIndicator(
+        onRefresh: () async {
+          eventBus.fire(ReloadWallet());
+        },
+        child: SizedBox(
+          width: width,
+          height: height,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: ListView(
+              children: [
+                CardWallet(
+                  startBarcodeScanStream: () {
+                    startBarcodeScanStream();
+                  },
+                ),
+                const SizedBox(
+                  height: 24,
+                ),
+                const ServiceSection()
+              ],
+            ),
           ),
         ),
       ),

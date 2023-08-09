@@ -20,11 +20,11 @@ class ResponseStatisticDTO {
     return ResponseStatisticDTO(
       date: json['date'] ?? '',
       month: json['month'] ?? '',
-      totalCashIn: json['totalCashIn'] ?? '',
-      totalCashOut: json['totalCashOut'] ?? '',
-      totalTrans: json['totalTrans'] ?? '',
-      totalTransC: json['totalTransC'] ?? '',
-      totalTransD: json['totalTransD'] ?? '',
+      totalCashIn: json['totalCashIn'] ?? 0,
+      totalCashOut: json['totalCashOut'] ?? 0,
+      totalTrans: json['totalTrans'] ?? 0,
+      totalTransC: json['totalTransC'] ?? 0,
+      totalTransD: json['totalTransD'] ?? 0,
     );
   }
 }

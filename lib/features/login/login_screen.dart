@@ -45,6 +45,8 @@ class _LoginState extends State<_Login> {
   final phoneNoController = TextEditingController();
   final passController = TextEditingController();
 
+  final passFocus = FocusNode();
+
   String code = '';
 
   Uuid uuid = const Uuid();
@@ -112,11 +114,14 @@ class _LoginState extends State<_Login> {
           Navigator.of(context).pop();
           //pop loading dialog
           //show msg dialog
-          DialogWidget.instance.openMsgDialog(
-            title: 'Đăng nhập không thành công',
+          await DialogWidget.instance.openMsgDialog(
+            title: 'Không thể đăng nhập',
             msg: state.msg ?? '',
             // 'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập.',
           );
+
+          passController.clear();
+          passFocus.requestFocus();
         }
         if (state.request == LoginType.REGISTER) {
           final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
@@ -239,6 +244,7 @@ class _LoginState extends State<_Login> {
                                   obscureText: true,
                                   controller: passController,
                                   autoFocus: true,
+                                  focusNode: passFocus,
                                   onChanged: provider.onChangePin,
                                   onCompleted: (value) {
                                     AccountLoginDTO dto = AccountLoginDTO(
