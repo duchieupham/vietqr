@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
@@ -26,6 +27,7 @@ import 'package:vierqr/models/bank_card_request_otp.dart';
 import 'package:vierqr/models/bank_name_search_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/confirm_otp_bank_dto.dart';
+import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/register_authentication_dto.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
@@ -302,7 +304,68 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
             return LayoutBuilder(
               builder: (context, constraint) {
                 return Scaffold(
-                  appBar: const MAppBar(title: 'Thêm tài khoản'),
+                  appBar: MAppBar(
+                    title: 'Thêm tài khoản',
+                    actions: [
+                      GestureDetector(
+                        onTap: () async {
+                          final data = await Navigator.pushNamed(
+                              context, Routes.SCAN_QR_VIEW,
+                              arguments: {'isScanAll': false});
+                          if (data is Map<String, dynamic>) {
+                            if (!mounted) return;
+                            final type = data['type'];
+                            final typeQR = data['typeQR'];
+                            final value = data['data'];
+                            final bankTypeDTO = data['bankTypeDTO'];
+                            if (type == TypeContact.Bank) {
+                              if (value != null && value is QRGeneratedDTO) {
+                                bankAccountController.value =
+                                    bankAccountController.value
+                                        .copyWith(text: value.bankAccount);
+                                nameController.value = nameController.value
+                                    .copyWith(text: value.userBankName);
+                                if (nameController.text.isNotEmpty) {
+                                  Provider.of<AddBankProvider>(context,
+                                          listen: false)
+                                      .updateEdit(false);
+                                }
+                                if (bankTypeDTO != null &&
+                                    bankTypeDTO is BankTypeDTO) {
+                                  Provider.of<AddBankProvider>(context,
+                                          listen: false)
+                                      .updateSelectBankType(bankTypeDTO,
+                                          update: bankAccountController
+                                                  .text.isNotEmpty &&
+                                              nameController.text.isNotEmpty);
+                                  Provider.of<AddBankProvider>(context,
+                                          listen: false)
+                                      .updateValidUserBankName(
+                                          nameController.text);
+                                }
+                              }
+                            } else {
+                              DialogWidget.instance.openMsgDialog(
+                                title: 'Không thể xác nhận mã QR',
+                                msg:
+                                    'Không tìm thấy thông tin trong đoạn mã QR. Vui lòng kiểm tra lại thông tin.',
+                                function: () {
+                                  Navigator.pop(context);
+                                },
+                              );
+                            }
+                          }
+                          // _bloc.add(ContactEventGetList());
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Image.asset(
+                            'assets/images/ic-tb-qr.png',
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
                   body: SafeArea(
                     child: Column(
                       children: [

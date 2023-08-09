@@ -7,6 +7,7 @@ import 'package:vierqr/commons/widgets/sub_header_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_widget.dart';
 import 'package:vierqr/features/bank_detail/bank_card_detail_screen.dart';
 import 'package:vierqr/layouts/box_layout.dart';
+import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/services/providers/bank_card_select_provider.dart';
 import 'package:vierqr/services/providers/search_clear_provider.dart';
@@ -27,164 +28,137 @@ class SearchBankView extends StatelessWidget {
     final bankCardProvider =
         Provider.of<BankCardSelectProvider>(context, listen: false);
     return Scaffold(
+      appBar: MAppBar(
+        title: 'Tìm kiếm TK ngân hàng',
+        onPressed: () {
+          FocusManager.instance.primaryFocus?.unfocus();
+          reset(context: context);
+          Future.delayed(const Duration(milliseconds: 200), () {
+            Navigator.of(context).pop();
+          });
+        },
+        callBackHome: () {
+          reset(context: context);
+          Navigator.of(context).popUntil((route) => route.isFirst);
+        },
+      ),
       body: Column(
         children: [
-          // SizedBox(
-          //   width: width,
-          //   height: 50,
-          //   child: Row(
-          //     children: [
-          //       const SizedBox(
-          //         width: 80,
-          //         height: 50,
-          //       ),
-          //       Expanded(
-          //         child: Container(
-          //           alignment: Alignment.center,
-          //           child: const Text(
-          //             'TK ngân hàng',
-          //             style: TextStyle(
-          //               fontWeight: FontWeight.w500,
-          //               fontSize: 15,
-          //             ),
-          //           ),
-          //         ),
-          //       ),
-          //       InkWell(
-          //         onTap: () {
-          //           reset(context: context);
-          //           Navigator.pop(context);
-          //         },
-          //         child: Container(
-          //           width: 80,
-          //           alignment: Alignment.centerRight,
-          //           child: const Text(
-          //             'Xong',
-          //             style: TextStyle(
-          //               color: DefaultTheme.GREEN,
-          //             ),
-          //           ),
-          //         ),
-          //       ),
-          //     ],
-          //   ),
-          // ),
-          // DividerWidget(width: width),
-          SubHeader(
-            title: 'Tìm kiếm TK ngân hàng',
-            function: () {
-              FocusManager.instance.primaryFocus?.unfocus();
-              reset(context: context);
-              Future.delayed(const Duration(milliseconds: 200), () {
-                Navigator.of(context).pop();
-              });
-            },
-            callBackHome: () {
-              reset(context: context);
-              Navigator.of(context).popUntil((route) => route.isFirst);
-            },
-          ),
           Expanded(
             child: Consumer<BankCardSelectProvider>(
               builder: (context, provider, child) {
-                return (provider.searchBanks.isNotEmpty)
-                    ? Column(
-                        children: [
-                          const Padding(padding: EdgeInsets.only(top: 10)),
-                          Expanded(
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: provider.searchBanks.length,
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                              itemBuilder: (context, index) {
-                                return _buildCardItem(
-                                  context: context,
-                                  index: index,
-                                  dto: provider.searchBanks[index],
-                                  color: provider.searchColors[index],
-                                );
-                              },
+                if (provider.banks.isEmpty) {
+                  return Center(
+                    child: Text(
+                      'Chưa có tài khoản ngân hàng nào được thêm',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  );
+                } else {
+                  return (provider.searchBanks.isNotEmpty)
+                      ? Column(
+                          children: [
+                            const Padding(padding: EdgeInsets.only(top: 10)),
+                            Expanded(
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: provider.searchBanks.length,
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 20),
+                                itemBuilder: (context, index) {
+                                  return _buildCardItem(
+                                    context: context,
+                                    index: index,
+                                    dto: provider.searchBanks[index],
+                                    color: provider.searchColors[index],
+                                  );
+                                },
+                              ),
                             ),
-                          ),
-                        ],
-                      )
-                    : Column(
-                        children: [
-                          const Padding(padding: EdgeInsets.only(top: 10)),
-                          Expanded(
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: provider.banks.length,
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                              itemBuilder: (context, index) {
-                                return _buildCardItem(
-                                  context: context,
-                                  index: index,
-                                  dto: provider.banks[index],
-                                  color: provider.colors[index],
-                                );
-                              },
+                          ],
+                        )
+                      : Column(
+                          children: [
+                            const Padding(padding: EdgeInsets.only(top: 10)),
+                            Expanded(
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: provider.banks.length,
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 20),
+                                itemBuilder: (context, index) {
+                                  return _buildCardItem(
+                                    context: context,
+                                    index: index,
+                                    dto: provider.banks[index],
+                                    color: provider.colors[index],
+                                  );
+                                },
+                              ),
                             ),
-                          ),
-                        ],
-                      );
+                          ],
+                        );
+                }
               },
             ),
           ),
           const Padding(padding: EdgeInsets.only(top: 20)),
-          BoxLayout(
-            width: width - 40,
-            borderRadius: 50,
-            alignment: Alignment.center,
-            bgColor: Theme.of(context).cardColor,
-            // margin: const EdgeInsets.symmetric(horizontal: 20),
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.search_rounded,
-                  size: 15,
-                  color: Theme.of(context).hintColor,
-                ),
-                Expanded(
-                  child: Form(
-                    key: _formKey,
-                    child: TextFieldWidget(
-                      width: width,
-                      hintText: 'Nhập để tìm kiếm',
-                      controller: searchController,
-                      keyboardAction: TextInputAction.done,
-                      autoFocus: true,
-                      onChange: (value) {
-                        search(bankCardProvider);
-                      },
-                      inputType: TextInputType.text,
-                      isObscureText: false,
+          Consumer<BankCardSelectProvider>(
+            builder: (context, provider, child) {
+              return BoxLayout(
+                width: width - 40,
+                borderRadius: 50,
+                alignment: Alignment.center,
+                bgColor: Theme.of(context).cardColor,
+                // margin: const EdgeInsets.symmetric(horizontal: 20),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.search_rounded,
+                      size: 15,
+                      color: Theme.of(context).hintColor,
                     ),
-                  ),
-                ),
-                ValueListenableBuilder(
-                  valueListenable: _searchClearProvider,
-                  builder: (_, provider, child) {
-                    return Visibility(
-                      visible: provider == true,
-                      child: InkWell(
-                        onTap: () {
-                          reset(context: context);
-                        },
-                        child: Icon(
-                          Icons.close_rounded,
-                          size: 15,
-                          color: Theme.of(context).hintColor,
+                    Expanded(
+                      child: Form(
+                        key: _formKey,
+                        child: TextFieldWidget(
+                          width: width,
+                          hintText: 'Nhập để tìm kiếm',
+                          controller: searchController,
+                          keyboardAction: TextInputAction.done,
+                          autoFocus: provider.banks.isNotEmpty,
+                          onChange: (value) {
+                            search(bankCardProvider);
+                          },
+                          inputType: TextInputType.text,
+                          isObscureText: false,
                         ),
                       ),
-                    );
-                  },
+                    ),
+                    ValueListenableBuilder(
+                      valueListenable: _searchClearProvider,
+                      builder: (_, provider, child) {
+                        return Visibility(
+                          visible: provider == true,
+                          child: InkWell(
+                            onTap: () {
+                              reset(context: context);
+                            },
+                            child: Icon(
+                              Icons.close_rounded,
+                              size: 15,
+                              color: Theme.of(context).hintColor,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              );
+            },
           ),
           const Padding(padding: EdgeInsets.only(bottom: 10)),
         ],
@@ -243,6 +217,7 @@ class SearchBankView extends StatelessWidget {
     return (dto.id.isNotEmpty)
         ? InkWell(
             onTap: () {
+              FocusManager.instance.primaryFocus?.unfocus();
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => BankCardDetailScreen(bankId: dto.id),

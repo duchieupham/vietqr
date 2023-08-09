@@ -18,8 +18,14 @@ class ScanQrScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isScanAll = true;
+    if (ModalRoute.of(context)!.settings.arguments != null) {
+      final args = ModalRoute.of(context)!.settings.arguments as Map;
+      isScanAll = args['isScanAll'] ?? true;
+    }
+
     return BlocProvider(
-      create: (context) => ScanQrBloc(),
+      create: (context) => ScanQrBloc(isScanAll),
       child: _BodyWidget(),
     );
   }

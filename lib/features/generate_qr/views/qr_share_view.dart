@@ -86,8 +86,8 @@ class QRShareView extends StatelessWidget {
             top: (height > 700 && PlatformUtils.instance.isIOsApp()) ? 20 : 0,
             child: Container(
               width: width,
-              padding: const EdgeInsets.only(left: 10, bottom: 20),
-              height: 80,
+              padding: const EdgeInsets.only(
+                  left: 10, bottom: 20, top: kToolbarHeight),
               decoration: const BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage('assets/images/bgr-header.png'),
@@ -95,36 +95,39 @@ class QRShareView extends StatelessWidget {
                 ),
               ),
               alignment: Alignment.bottomLeft,
-              child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-                InkWell(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: const SizedBox(
-                    width: 40,
-                    height: 20,
-                    child: Icon(
-                      Icons.arrow_back_ios_rounded,
-                      size: 20,
-                      color: AppColor.BLACK,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: const SizedBox(
+                      width: 40,
+                      height: 20,
+                      child: Icon(
+                        Icons.arrow_back_ios_rounded,
+                        size: 20,
+                        color: AppColor.BLACK,
+                      ),
                     ),
                   ),
-                ),
-                const Spacer(),
-                const Text(
-                  'Chia sẻ mã QR',
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: AppColor.BLACK,
-                    fontWeight: FontWeight.w500,
+                  const Spacer(),
+                  const Text(
+                    'Chia sẻ mã QR',
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: AppColor.BLACK,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
-                const Spacer(),
-                const SizedBox(
-                  width: 40,
-                  height: 20,
-                ),
-              ]),
+                  const Spacer(),
+                  const SizedBox(
+                    width: 40,
+                    height: 20,
+                  ),
+                ],
+              ),
             ),
           ),
           Positioned(

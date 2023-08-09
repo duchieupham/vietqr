@@ -34,7 +34,7 @@ class ScanQrScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ScanQrBloc(),
+      create: (context) => ScanQrBloc(true),
       child: ChangeNotifierProvider(
         create: (context) => ScanQrProvider(),
         child: const CameraScreen(),

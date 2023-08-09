@@ -8,12 +8,16 @@ class MAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final List<Widget>? actions;
   final bool isLeading;
+  final VoidCallback? onPressed;
+  final VoidCallback? callBackHome;
 
   const MAppBar({
     Key? key,
     required this.title,
     this.actions,
     this.isLeading = true,
+    this.onPressed,
+    this.callBackHome,
   })  : preferredSize = const Size.fromHeight(60),
         super(key: key);
 
@@ -43,7 +47,11 @@ class MAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
         leading: isLeading
             ? IconButton(
-                onPressed: () => _handleBack(context),
+                onPressed: (onPressed == null)
+                    ? () => _handleBack(context)
+                    : () {
+                        onPressed!();
+                      },
                 padding: const EdgeInsets.only(left: 20),
                 icon: const Icon(
                   Icons.arrow_back_ios,
@@ -58,9 +66,12 @@ class MAppBar extends StatelessWidget implements PreferredSizeWidget {
         actions: actions ??
             [
               GestureDetector(
-                onTap: () {
-                  Navigator.of(context).popUntil((route) => route.isFirst);
-                },
+                onTap: (callBackHome == null)
+                    ? () {
+                        Navigator.of(context)
+                            .popUntil((route) => route.isFirst);
+                      }
+                    : callBackHome,
                 child: Container(
                   width: 50,
                   height: 40,
@@ -77,5 +88,8 @@ class MAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
-  _handleBack(BuildContext context) => Navigator.of(context).pop();
+  _handleBack(BuildContext context) {
+    FocusManager.instance.primaryFocus?.unfocus();
+    Navigator.of(context).pop();
+  }
 }
