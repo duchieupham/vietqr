@@ -71,10 +71,10 @@ class ServiceSection extends StatelessWidget {
             context, 'assets/images/logo-telegram.png', 'Telegram', () async {
           Navigator.pushNamed(context, Routes.CONNECT_TELEGRAM);
         }),
-        // _buildItemService(context, 'assets/images/logo-lark.png', 'Lark',
-        //     () async {
-        //   Navigator.pushNamed(context, Routes.CONNECT_TELEGRAM);
-        // }),
+        _buildItemService(context, 'assets/images/logo-lark.png', 'Lark',
+            () async {
+          Navigator.pushNamed(context, Routes.CONNECT_TELEGRAM);
+        }),
       ],
     );
   }

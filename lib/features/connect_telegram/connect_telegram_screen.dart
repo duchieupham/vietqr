@@ -111,6 +111,9 @@ class ConnectTelegramScreen extends StatelessWidget {
                       'Chat ID',
                       style: TextStyle(fontSize: 12),
                     ),
+                    const SizedBox(
+                      width: 2,
+                    ),
                     Text(
                       dto.chatId,
                       style: TextStyle(fontWeight: FontWeight.bold),
