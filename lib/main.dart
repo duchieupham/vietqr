@@ -6,6 +6,7 @@ import 'package:camera/camera.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,7 +15,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
@@ -23,6 +23,7 @@ import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/account/blocs/account_bloc.dart';
 import 'package:vierqr/features/add_bank/add_bank_screen.dart';
+import 'package:vierqr/features/bank_card/blocs/bank_manage_bloc.dart';
 import 'package:vierqr/features/bank_card/views/search_bank_view.dart';
 import 'package:vierqr/features/bank_member/blocs/bank_member_bloc.dart';
 import 'package:vierqr/features/bank_member/views/bank_member_view.dart';
@@ -35,6 +36,8 @@ import 'package:vierqr/features/business/blocs/business_member_bloc.dart';
 import 'package:vierqr/features/business/views/add_business_view.dart';
 import 'package:vierqr/features/business/views/business_information_view.dart';
 import 'package:vierqr/features/business/views/business_transaction_view.dart';
+import 'package:vierqr/features/connect_telegram/connect_telegram_screen.dart';
+import 'package:vierqr/features/connect_telegram/widget/connect_screen.dart';
 import 'package:vierqr/features/contact/contact_screen.dart';
 import 'package:vierqr/features/contact/views/contact_detail.dart';
 import 'package:vierqr/features/contact_us/contact_us_screen.dart';
@@ -45,19 +48,18 @@ import 'package:vierqr/features/dashboard/theme_setting.dart';
 import 'package:vierqr/features/generate_qr/views/qr_share_view.dart';
 import 'package:vierqr/features/home/blocs/home_bloc.dart';
 import 'package:vierqr/features/introduce/views/introduce_screen.dart';
+import 'package:vierqr/features/login/login_screen.dart';
+import 'package:vierqr/features/logout/blocs/log_out_bloc.dart';
 import 'package:vierqr/features/mobile_recharge/mobile_recharge_screen.dart';
 import 'package:vierqr/features/mobile_recharge/widget/recharege_success.dart';
-import 'package:vierqr/features/notification/views/notification_view.dart';
-import 'package:vierqr/features/personal/views/national_information_view.dart';
-import 'package:vierqr/features/printer/blocs/printer_bloc.dart';
-import 'package:vierqr/features/printer/views/printer_setting_view.dart';
-import 'package:vierqr/features/logout/blocs/log_out_bloc.dart';
 import 'package:vierqr/features/notification/blocs/notification_bloc.dart';
-import 'package:vierqr/features/login/login_screen.dart';
-import 'package:vierqr/features/bank_card/blocs/bank_manage_bloc.dart';
+import 'package:vierqr/features/notification/views/notification_view.dart';
 import 'package:vierqr/features/personal/blocs/user_edit_bloc.dart';
+import 'package:vierqr/features/personal/views/national_information_view.dart';
 import 'package:vierqr/features/personal/views/user_edit_view.dart';
 import 'package:vierqr/features/personal/views/user_update_password_view.dart';
+import 'package:vierqr/features/printer/blocs/printer_bloc.dart';
+import 'package:vierqr/features/printer/views/printer_setting_view.dart';
 import 'package:vierqr/features/report/report_screen.dart';
 
 import 'package:vierqr/features/scan_qr/scan_qr_lib.dart';
@@ -69,8 +71,8 @@ import 'package:vierqr/features/top_up/top_up_screen.dart';
 import 'package:vierqr/features/top_up/widget/pop_up_top_up_sucsess.dart';
 import 'package:vierqr/features/transaction/transaction_detail_screen.dart';
 import 'package:vierqr/features/transaction/widgets/transaction_sucess_widget.dart';
-import 'package:vierqr/models/notification_transaction_success_dto.dart';
 import 'package:vierqr/models/contact_dto.dart';
+import 'package:vierqr/models/notification_transaction_success_dto.dart';
 import 'package:vierqr/models/respone_top_up_dto.dart';
 import 'package:vierqr/models/top_up_sucsess_dto.dart';
 import 'package:vierqr/services/local_notification/notification_service.dart';
@@ -472,6 +474,9 @@ class _VietQRApp extends State<VietQRApp> {
                   // Routes.PHONE_BOOK: (context) => const SavePhoneBookScreen(),
                   Routes.TOP_UP: (context) => const TopUpScreen(),
                   Routes.MOBILE_RECHARGE: (context) => MobileRechargeScreen(),
+                  Routes.CONNECT_TELEGRAM: (context) => ConnectTelegramScreen(),
+                  Routes.CONNECT_STEP_TELE_SCREEN: (context) =>
+                      ConnectTeleStepScreen(),
 
                   Routes.CONTACT_US_SCREEN: (context) =>
                       const ContactUSScreen(),
