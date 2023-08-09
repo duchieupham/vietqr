@@ -87,10 +87,12 @@ class _IntroduceBottomSheetState extends State<IntroduceBottomSheet> {
             ),
           ),
           DividerWidget(width: width - 32),
+          const SizedBox(
+            height: 28,
+          ),
           Expanded(
-            child: Container(
+            child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              margin: const EdgeInsets.only(top: 60),
               child: Column(
                 children: [
                   Expanded(

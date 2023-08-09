@@ -195,8 +195,8 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                     builder: (key) {
                       return Container(
                         color: AppColor.GREY_BG,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
+                        child: ListView(
+                          padding: EdgeInsets.zero,
                           children: [
                             Padding(
                               padding: const EdgeInsets.symmetric(
@@ -246,6 +246,9 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                 );
                               },
                             ),
+                            const SizedBox(
+                              height: 120,
+                            )
                           ],
                         ),
                       );

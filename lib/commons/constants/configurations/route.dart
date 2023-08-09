@@ -40,4 +40,6 @@ class Routes {
   static const String CONTACT_US_SCREEN = '/contact_us_screen';
   static const String REPORT_SCREEN = '/report_screen';
   static const String RECHARGE_SUCCESS = '/recharge_success';
+  static const String CONNECT_TELEGRAM = '/connect_telegram';
+  static const String CONNECT_STEP_TELE_SCREEN = '/connect_step_tele_screen';
 }

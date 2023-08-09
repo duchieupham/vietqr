@@ -68,7 +68,7 @@ class MyQRBottomSheet extends StatelessWidget {
               children: [
                 Container(
                   margin: const EdgeInsets.only(
-                      left: 45, right: 45, top: 0, bottom: 16),
+                      left: 55, right: 55, top: 0, bottom: 16),
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: AppColor.WHITE,

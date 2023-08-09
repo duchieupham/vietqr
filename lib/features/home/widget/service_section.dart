@@ -28,24 +28,27 @@ class ServiceSection extends StatelessWidget {
   }
 
   Widget _buildListService(BuildContext context) {
-    return Row(
+    return Wrap(
+      runSpacing: 16,
       children: [
         _buildItemService(
-            'assets/images/ic-phone-money.png', 'Nạp tiền\nđiện thoại', () {
+            context, 'assets/images/ic-phone-money.png', 'Nạp tiền\nđiện thoại',
+            () {
           Navigator.pushNamed(context, Routes.MOBILE_RECHARGE);
         }),
-        _buildItemService('assets/images/ic-mb.png', 'Mở TK\nMB Bank', () {
+        _buildItemService(context, 'assets/images/ic-mb.png', 'Mở TK\nMB Bank',
+            () {
           _launchUrl();
         }),
-        _buildItemService('assets/images/ic-login-web.png', 'Đăng nhập\nweb',
-            () {
+        _buildItemService(
+            context, 'assets/images/ic-login-web.png', 'Đăng nhập\nweb', () {
           DialogWidget.instance.openMsgDialog(
             title: 'Tính năng đang bảo trì',
             msg: 'Vui lòng thử lại sau',
           );
         }),
-        _buildItemService('assets/images/logo-vqr-k.png', 'VietQR Kiot\n',
-            () async {
+        _buildItemService(
+            context, 'assets/images/logo-vqr-k.png', 'VietQR Kiot\n', () async {
           if (PlatformUtils.instance.isAndroidApp()) {
             final intent = AndroidIntent(
                 action: 'action_view',
@@ -64,6 +67,14 @@ class ServiceSection extends StatelessWidget {
             );
           }
         }),
+        _buildItemService(
+            context, 'assets/images/logo-telegram.png', 'Telegram', () async {
+          Navigator.pushNamed(context, Routes.CONNECT_TELEGRAM);
+        }),
+        // _buildItemService(context, 'assets/images/logo-lark.png', 'Lark',
+        //     () async {
+        //   Navigator.pushNamed(context, Routes.CONNECT_TELEGRAM);
+        // }),
       ],
     );
   }
@@ -77,11 +88,13 @@ class ServiceSection extends StatelessWidget {
     }
   }
 
-  Widget _buildItemService(String pathIcon, String title, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.only(right: 20),
+  Widget _buildItemService(
+      BuildContext context, String pathIcon, String title, VoidCallback onTap) {
+    double width = MediaQuery.of(context).size.width;
+    return SizedBox(
+      width: getDeviceType() == 'phone' ? width / 5 - 7 : 70,
+      child: GestureDetector(
+        onTap: onTap,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -101,5 +114,10 @@ class ServiceSection extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String getDeviceType() {
+    final data = MediaQueryData.fromWindow(WidgetsBinding.instance.window);
+    return data.size.shortestSide < 600 ? 'phone' : 'tablet';
   }
 }
