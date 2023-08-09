@@ -563,7 +563,8 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                           },
                         ),
                       ],
-                    )
+                    ),
+                    const SizedBox(height: 30),
                   ],
                 ),
               ),
