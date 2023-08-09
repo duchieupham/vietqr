@@ -7,7 +7,10 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 class AddVietQrPage extends StatelessWidget {
   const AddVietQrPage({Key? key}) : super(key: key);
   Future<void> _launchUrl(String url) async {
-    if (!await launchUrl(Uri.parse(url))) {
+    if (!await launchUrl(
+      Uri.parse(url),
+      mode: LaunchMode.externalApplication,
+    )) {
       throw Exception('Could not launch $url');
     }
   }
