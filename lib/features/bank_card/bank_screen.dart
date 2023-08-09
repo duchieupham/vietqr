@@ -979,7 +979,7 @@ class _StackedList extends State<StackedList> {
       onTap: () async {
         // _pickAndProcessQRImage();
         await Navigator.pushNamed(context, Routes.ADD_BANK_CARD);
-        // widget.getListBank();
+        widget.getListBank();
       },
       child: Container(
         width: width,

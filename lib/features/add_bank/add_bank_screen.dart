@@ -325,7 +325,8 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                                         .copyWith(text: value.bankAccount);
                                 nameController.value = nameController.value
                                     .copyWith(text: value.userBankName);
-                                if (nameController.text.isNotEmpty) {
+                                if (nameController.text.isNotEmpty &&
+                                    !value.isNaviAddBank) {
                                   Provider.of<AddBankProvider>(context,
                                           listen: false)
                                       .updateEdit(false);

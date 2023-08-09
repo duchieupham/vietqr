@@ -96,6 +96,7 @@ class AddBankProvider with ChangeNotifier {
         _isInvalidBankAccount = false;
         errorTk = 'Số thẻ/tài khoản không hợp lệ.';
       } else {
+        isEdit = true;
         _isInvalidBankAccount = true;
       }
     }

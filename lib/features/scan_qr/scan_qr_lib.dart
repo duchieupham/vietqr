@@ -80,7 +80,7 @@ class _ScanQrScreenState extends State<_BodyWidget> {
             qrCode: state.codeQR ?? '',
             imgId: state.bankTypeDTO?.imageId ?? '',
             bankTypeId: state.bankTypeDTO?.id ?? '',
-            isNaviAddBank: state.informationDTO?.isNaviAddBank!,
+            isNaviAddBank: state.informationDTO?.isNaviAddBank ?? false,
           );
 
           if (!mounted) return;

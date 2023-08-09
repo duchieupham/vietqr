@@ -2,7 +2,7 @@ class BankNameInformationDTO {
   final String accountName;
   final String customerName;
   final String customerShortName;
-  final bool? isNaviAddBank;
+  final bool isNaviAddBank;
 
   const BankNameInformationDTO({
     required this.accountName,
