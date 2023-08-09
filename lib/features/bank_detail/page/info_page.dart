@@ -34,6 +34,7 @@ class InfoDetailBankAccount extends StatelessWidget {
   final AccountBankDetailDTO dto;
   final QRGeneratedDTO qrGeneratedDTO;
   final String bankId;
+
   const InfoDetailBankAccount(
       {Key? key,
       required this.bloc,
@@ -42,6 +43,7 @@ class InfoDetailBankAccount extends StatelessWidget {
       required this.qrGeneratedDTO,
       required this.bankId})
       : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -240,7 +242,8 @@ class InfoDetailBankAccount extends StatelessWidget {
           width: width,
           height: 40,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               ButtonIconWidget(
                 width: width * 0.2,

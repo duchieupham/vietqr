@@ -27,7 +27,9 @@ import 'events/mobile_recharge_event.dart';
 
 class MobileRechargeScreen extends StatelessWidget {
   MobileRechargeScreen({super.key});
+
   late FocusNode myFocusNode = FocusNode();
+
   String getIdImage(List<NetworkProviders> list) {
     String imgId = '';
     AccountInformationDTO accountInformationDTO =
@@ -337,7 +339,7 @@ class MobileRechargeScreen extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          phoneNumber,
+                          StringUtils.instance.formatPhoneNumberVN(phoneNumber),
                           style: const TextStyle(
                               fontWeight: FontWeight.w600, fontSize: 16),
                         )

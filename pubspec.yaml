@@ -54,7 +54,7 @@ dependencies:
   uuid: ^3.0.7
   # geolocator: ^9.0.2
   crypto: ^3.0.2
-  path_provider: ^2.0.11
+  path_provider: ^2.0.15
   share_plus: ^6.3.0
   carousel_slider: ^4.1.1
   mobile_scanner: ^3.2.0
@@ -92,6 +92,9 @@ dependencies:
   flutter_multi_formatter: ^2.11.6
   #  uni_links: ^0.5.1
   android_intent_plus: ^4.0.2
+  connectivity_plus: ^4.0.2
+  photo_gallery: ^2.0.0
+
 
 dependency_overrides:
   image: ^3.0.2
