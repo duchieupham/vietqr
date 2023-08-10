@@ -55,7 +55,7 @@ class SearchBankView extends StatelessWidget {
                     ),
                   );
                 } else {
-                  return (provider.searchBanks.isNotEmpty)
+                  return (searchController.text.isNotEmpty)
                       ? Column(
                           children: [
                             const Padding(padding: EdgeInsets.only(top: 10)),
