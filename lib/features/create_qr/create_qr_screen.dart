@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -492,23 +491,26 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                     ),
                     Column(
                       children: [
+                        const SizedBox(height: 12),
                         GestureDetector(
                           onTap: () async {
-                            FocusManager.instance.primaryFocus?.unfocus();
-                            final data = await DialogWidget.instance
-                                .showModelBottomSheet(
-                              context: context,
-                              padding: EdgeInsets.zero,
-                              margin:
-                                  const EdgeInsets.symmetric(horizontal: 10),
-                              widget: BottomSheetImage(),
-                            );
+                            if (provider.imageFile == null) {
+                              FocusManager.instance.primaryFocus?.unfocus();
+                              final data = await DialogWidget.instance
+                                  .showModelBottomSheet(
+                                context: context,
+                                padding: EdgeInsets.zero,
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 10),
+                                widget: BottomSheetImage(),
+                              );
 
-                            if (data is XFile) {
-                              File? file = File(data.path);
-                              File? compressedFile =
-                                  FileUtils.instance.compressImage(file);
-                              provider.setImage(compressedFile);
+                              if (data is XFile) {
+                                File? file = File(data.path);
+                                File? compressedFile =
+                                    FileUtils.instance.compressImage(file);
+                                provider.setImage(compressedFile);
+                              }
                             }
                           },
                           child: Container(
@@ -524,11 +526,18 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Image.asset('assets/images/ic-file-blue.png'),
-                                const Text(
-                                  'Định kèm hoá đơn',
+                                Image.asset(
+                                  'assets/images/ic-file-blue.png',
+                                  color: provider.imageFile == null
+                                      ? AppColor.BLUE_TEXT
+                                      : AppColor.GREY_TEXT,
+                                ),
+                                Text(
+                                  'Đính kèm hoá đơn',
                                   style: TextStyle(
-                                    color: AppColor.BLUE_TEXT,
+                                    color: provider.imageFile == null
+                                        ? AppColor.BLUE_TEXT
+                                        : AppColor.GREY_TEXT,
                                     fontSize: 14,
                                   ),
                                 )
@@ -567,7 +576,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 16),
                   ],
                 ),
               ),

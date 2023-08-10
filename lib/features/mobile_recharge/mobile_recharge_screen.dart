@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
@@ -15,8 +14,6 @@ import 'package:vierqr/features/mobile_recharge/blocs/mobile_recharge_bloc.dart'
 import 'package:vierqr/features/mobile_recharge/states/mobile_recharge_state.dart';
 import 'package:vierqr/features/mobile_recharge/widget/list_network_providers.dart';
 import 'package:vierqr/features/mobile_recharge/widget/pop_up_confirm_pass.dart';
-import 'package:vierqr/features/mobile_recharge/widget/recharege_success.dart';
-
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/account_information_dto.dart';
 import 'package:vierqr/models/network_providers_dto.dart';
@@ -211,7 +208,7 @@ class MobileRechargeScreen extends StatelessWidget {
                                         style: TextStyle(fontSize: 12),
                                       ),
                                       Text(
-                                        '${provider.money} VND',
+                                        '${provider.money} VQR',
                                         style: const TextStyle(
                                             fontWeight: FontWeight.bold),
                                       ),
