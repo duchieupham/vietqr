@@ -27,6 +27,35 @@ class InfoTeleDTO {
   }
 }
 
+class InfoLarkDTO {
+  final String id;
+  final String webhook;
+  final String userId;
+  final List<BankConnectedDTO> banks;
+
+  const InfoLarkDTO({
+    this.webhook = '',
+    this.id = '',
+    this.userId = '',
+    required this.banks,
+  });
+
+  factory InfoLarkDTO.fromJson(Map<String, dynamic> json) {
+    List<BankConnectedDTO> banks = [];
+    if (json['banks'] != null) {
+      json['banks'].forEach((v) {
+        banks.add(BankConnectedDTO.fromJson(v));
+      });
+    }
+    return InfoLarkDTO(
+      webhook: json['webhook'] ?? '',
+      id: json['id'] ?? '',
+      userId: json['userId'] ?? '',
+      banks: banks,
+    );
+  }
+}
+
 class BankConnectedDTO {
   final String bankAccount;
   final String userBankName;

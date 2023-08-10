@@ -1,0 +1,92 @@
+import 'dart:convert';
+
+import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/enums/authentication_type.dart';
+import 'package:vierqr/commons/utils/base_api.dart';
+import 'package:vierqr/commons/utils/log.dart';
+import 'package:vierqr/models/response_message_dto.dart';
+
+import '../../../models/info_tele_dto.dart';
+
+class ConnectLarkRepository {
+  const ConnectLarkRepository();
+
+  Future<ResponseMessageDTO> insertLark(Map<String, dynamic> data) async {
+    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    try {
+      final String url = '${EnvConfig.getBaseUrl()}service/lark';
+      final response = await BaseAPIClient.postAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+        body: data,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        result = ResponseMessageDTO.fromJson(data);
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return result;
+  }
+
+  Future<ResponseMessageDTO> sendFirstMessage(String webHook) async {
+    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    try {
+      final String url =
+          '${EnvConfig.getBaseUrl()}service/lark/send-message?webhook=$webHook';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        result = ResponseMessageDTO.fromJson(data);
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return result;
+  }
+
+  Future<List<InfoLarkDTO>> getInformation(String userId) async {
+    List<InfoLarkDTO> result = [];
+    try {
+      final String url =
+          '${EnvConfig.getBaseUrl()}service/lark/information?userId=$userId';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        result = data
+            .map<InfoLarkDTO>((json) => InfoLarkDTO.fromJson(json))
+            .toList();
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return result;
+  }
+
+  Future<ResponseMessageDTO> remove(String idConnect) async {
+    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    try {
+      final String url =
+          '${EnvConfig.getBaseUrl()}service/lark/remove?id=$idConnect';
+      final response = await BaseAPIClient.deleteAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+        body: null,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        result = ResponseMessageDTO.fromJson(data);
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return result;
+  }
+}
