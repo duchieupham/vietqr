@@ -22,7 +22,7 @@ class ServiceSection extends StatelessWidget {
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
         ),
         const SizedBox(
-          height: 8,
+          height: 10,
         ),
         _buildListService(context)
       ],
@@ -31,8 +31,16 @@ class ServiceSection extends StatelessWidget {
 
   Widget _buildListService(BuildContext context) {
     return Wrap(
-      runSpacing: 16,
+      runSpacing: 20,
       children: [
+        _buildItemService(
+            context, 'assets/images/logo-bdsd-3D.png', 'Đăng ký\nnhận BĐSD',
+            () {
+          DialogWidget.instance.openMsgDialog(
+            title: 'Tính năng đang bảo trì',
+            msg: 'Vui lòng thử lại sau',
+          );
+        }),
         _buildItemService(context, 'assets/images/logo-mobile-money-3D.png',
             'Nạp tiền\nđiện thoại', () {
           Navigator.pushNamed(context, Routes.MOBILE_RECHARGE);
@@ -70,10 +78,11 @@ class ServiceSection extends StatelessWidget {
           }
         }),
         _buildItemService(
-            context, 'assets/images/logo-telegram.png', 'Telegram', () async {
+            context, 'assets/images/logo-telegram-dash.png', 'Telegram',
+            () async {
           Navigator.pushNamed(context, Routes.CONNECT_TELEGRAM);
         }),
-        _buildItemService(context, 'assets/images/logo-lark.png', 'Lark',
+        _buildItemService(context, 'assets/images/logo-lark-dash.png', 'Lark',
             () async {
           Navigator.pushNamed(context, Routes.CONNECT_LARK);
         }),
@@ -108,15 +117,15 @@ class ServiceSection extends StatelessWidget {
           children: [
             Image.asset(
               pathIcon,
-              height: 36,
+              height: 45,
             ),
             const SizedBox(
-              height: 4,
+              height: 8,
             ),
             Text(
               title,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 12),
+              style: const TextStyle(fontSize: 10),
             )
           ],
         ),

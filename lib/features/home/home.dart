@@ -84,7 +84,7 @@ class _HomeScreen extends State<HomeScreen> {
                   },
                 ),
                 const SizedBox(
-                  height: 24,
+                  height: 30,
                 ),
                 const ServiceSection()
               ],

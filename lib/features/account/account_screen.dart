@@ -33,7 +33,7 @@ class IconData {
 List<IconData> listIcon = [
   IconData(
     url: 'assets/images/ic-my-qr-setting.png',
-    name: 'QR của tôi',
+    name: 'My QR',
   ),
   IconData(
     url: 'assets/images/ic-edit-personal-setting.png',
@@ -324,9 +324,9 @@ class _FeatureWidget extends StatelessWidget {
     return Column(
       children: [
         Container(
-          width: 40,
-          height: 40,
-          padding: const EdgeInsets.all(8),
+          width: 45,
+          height: 45,
+          padding: const EdgeInsets.all(5),
           decoration: const BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(30)),
             color: AppColor.WHITE,
@@ -336,7 +336,7 @@ class _FeatureWidget extends StatelessWidget {
             child: Image.asset(data.url),
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 10),
         Text(
           data.name,
           style: const TextStyle(fontSize: 12),

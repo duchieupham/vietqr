@@ -160,12 +160,12 @@ class CardWallet extends StatelessWidget {
         children: [
           Image.asset(
             pathIcon,
-            height: 38,
+            height: 35,
           ),
           Text(
             title,
             textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 12),
+            style: const TextStyle(fontSize: 11),
           )
         ],
       ),
