@@ -36,6 +36,7 @@ import 'package:vierqr/features/business/blocs/business_member_bloc.dart';
 import 'package:vierqr/features/business/views/add_business_view.dart';
 import 'package:vierqr/features/business/views/business_information_view.dart';
 import 'package:vierqr/features/business/views/business_transaction_view.dart';
+import 'package:vierqr/features/connect_lark/connect_lark_screen.dart';
 import 'package:vierqr/features/connect_telegram/connect_telegram_screen.dart';
 import 'package:vierqr/features/connect_telegram/widget/connect_screen.dart';
 import 'package:vierqr/features/contact/contact_screen.dart';
@@ -61,9 +62,7 @@ import 'package:vierqr/features/personal/views/user_update_password_view.dart';
 import 'package:vierqr/features/printer/blocs/printer_bloc.dart';
 import 'package:vierqr/features/printer/views/printer_setting_view.dart';
 import 'package:vierqr/features/report/report_screen.dart';
-
 import 'package:vierqr/features/scan_qr/scan_qr_lib.dart';
-
 // import 'package:vierqr/features/scan_qr/scan_qr_screen.dart';
 import 'package:vierqr/features/token/blocs/token_bloc.dart';
 import 'package:vierqr/features/top_up/qr_top_up.dart';
@@ -102,6 +101,8 @@ import 'package:vierqr/services/shared_references/event_bloc_helper.dart';
 import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
 import 'package:vierqr/services/shared_references/theme_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
+
+import 'features/connect_lark/widget/connect_screen.dart';
 
 //Share Preferences
 late SharedPreferences sharedPrefs;
@@ -475,9 +476,12 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.TOP_UP: (context) => const TopUpScreen(),
                   Routes.MOBILE_RECHARGE: (context) => MobileRechargeScreen(),
                   Routes.CONNECT_TELEGRAM: (context) => ConnectTelegramScreen(),
+
                   Routes.CONNECT_STEP_TELE_SCREEN: (context) =>
                       ConnectTeleStepScreen(),
-
+                  Routes.CONNECT_STEP_LARK_SCREEN: (context) =>
+                      ConnectLarkStepScreen(),
+                  Routes.CONNECT_LARK: (context) => ConnectLarkScreen(),
                   Routes.CONTACT_US_SCREEN: (context) =>
                       const ContactUSScreen(),
                   Routes.REPORT_SCREEN: (context) => const ReportScreen(),

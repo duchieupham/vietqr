@@ -73,7 +73,7 @@ class ServiceSection extends StatelessWidget {
         }),
         _buildItemService(context, 'assets/images/logo-lark.png', 'Lark',
             () async {
-          Navigator.pushNamed(context, Routes.CONNECT_TELEGRAM);
+          Navigator.pushNamed(context, Routes.CONNECT_LARK);
         }),
       ],
     );
