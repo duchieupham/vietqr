@@ -1,5 +1,8 @@
 import 'dart:async';
 import 'dart:ui';
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/numeral.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
@@ -11,8 +14,6 @@ import 'package:vierqr/commons/widgets/pin_widget.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_information_dto.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:vierqr/services/providers/pin_provider.dart';
 
 class DialogWidget {
@@ -747,7 +748,7 @@ class DialogWidget {
           child: Center(
             child: UnconstrainedBox(
               child: Container(
-                width: widthPopup ?? width - 100,
+                width: widthPopup ?? width - 40,
                 height: heightPopup ?? height * 0.8,
                 alignment: Alignment.center,
                 padding: padding ??

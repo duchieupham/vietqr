@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -80,8 +82,13 @@ class ServiceSection extends StatelessWidget {
   }
 
   Future<void> _launchUrl() async {
-    const url = "mbmobile://";
-    // final Uri url = Uri.parse('https://l.linklyhq.com/l/1nyVv');
+    String url = '';
+    if (Platform.isAndroid) {
+      url = 'https://play.google.com/store/search?q=mbbank&c=apps&hl=vi-VN';
+    } else {
+      url = 'https://apps.apple.com/vn/app/mb-bank/id1205807363?l=vi';
+    }
+
     try {
       await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
     } catch (e) {
