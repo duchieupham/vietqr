@@ -33,9 +33,8 @@ class ServiceSection extends StatelessWidget {
     return Wrap(
       runSpacing: 16,
       children: [
-        _buildItemService(
-            context, 'assets/images/ic-phone-money.png', 'Nạp tiền\nđiện thoại',
-            () {
+        _buildItemService(context, 'assets/images/logo-mobile-money-3D.png',
+            'Nạp tiền\nđiện thoại', () {
           Navigator.pushNamed(context, Routes.MOBILE_RECHARGE);
         }),
         _buildItemService(context, 'assets/images/ic-mb.png', 'Mở TK\nMB Bank',
@@ -43,7 +42,8 @@ class ServiceSection extends StatelessWidget {
           _launchUrl();
         }),
         _buildItemService(
-            context, 'assets/images/ic-login-web.png', 'Đăng nhập\nweb', () {
+            context, 'assets/images/logo-login-web-3D.png', 'Đăng nhập\nweb',
+            () {
           DialogWidget.instance.openMsgDialog(
             title: 'Tính năng đang bảo trì',
             msg: 'Vui lòng thử lại sau',
