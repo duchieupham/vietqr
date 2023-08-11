@@ -42,8 +42,6 @@ import 'package:vierqr/services/providers/bank_card_select_provider.dart';
 import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
-import '../../commons/helper/media_helper.dart';
-
 class BankScreen extends StatelessWidget {
   const BankScreen({super.key});
 
@@ -93,7 +91,6 @@ class _BankScreenState extends State<_BankScreen>
   void initState() {
     super.initState();
     initialServices(context);
-    MediaHelper.instance.playAudio({});
     WidgetsBinding.instance.addPostFrameCallback((_) {
       initData();
     });
