@@ -47,6 +47,7 @@ import 'package:vierqr/features/create_qr/create_qr_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/dashboard_screen.dart';
 import 'package:vierqr/features/dashboard/theme_setting.dart';
+import 'package:vierqr/features/dashboard/widget/disconnect_widget.dart';
 import 'package:vierqr/features/generate_qr/views/qr_share_view.dart';
 import 'package:vierqr/features/home/blocs/home_bloc.dart';
 import 'package:vierqr/features/introduce/views/introduce_screen.dart';
@@ -222,26 +223,32 @@ class _VietQRApp extends State<VietQRApp> {
     try {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        //
+        return true;
       } else {
-        await DialogWidget.instance.openMsgDialog(
-          title: 'Thông báo',
-          msg: 'Không có kết nối internet, vui lòng thử lại.',
+        await DialogWidget.instance.showFullModalBottomContent(
+          isDissmiss: false,
+          widget: DisconnectWidget(
+            function: initConnectivity,
+          ),
         );
       }
     } on SocketException catch (_) {
-      await DialogWidget.instance.openMsgDialog(
-        title: 'Thông báo',
-        msg: 'Không có kết nối internet, vui lòng thử lại.',
+      await DialogWidget.instance.showFullModalBottomContent(
+        isDissmiss: false,
+        widget: DisconnectWidget(
+          function: initConnectivity,
+        ),
       );
     }
   }
 
   Future<void> _updateConnectionStatus(ConnectivityResult result) async {
     if (result == ConnectivityResult.none) {
-      await DialogWidget.instance.openMsgDialog(
-        title: 'Thông báo',
-        msg: 'Không có kết nối internet, vui lòng thử lại.',
+      await DialogWidget.instance.showFullModalBottomContent(
+        isDissmiss: false,
+        widget: DisconnectWidget(
+          function: initConnectivity,
+        ),
       );
     } else {
       checkConnection();
