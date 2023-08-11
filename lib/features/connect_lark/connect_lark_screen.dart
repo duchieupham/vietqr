@@ -196,7 +196,7 @@ class ConnectLarkScreen extends StatelessWidget {
         InkWell(
           onTap: () {
             DialogWidget.instance.openMsgDialog(
-              title: 'Huỷ kết nối Telegram',
+              title: 'Huỷ kết nối Lark',
               msg: 'Bạn có chắc chắn muốn huỷ liên kết?',
               isSecondBT: true,
               functionConfirm: () {

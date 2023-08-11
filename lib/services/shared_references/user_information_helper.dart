@@ -1,9 +1,10 @@
 import 'dart:convert';
 
-import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/account_information_dto.dart';
 import 'package:vierqr/models/introduce_dto.dart';
+
+import '../../models/setting_account_sto.dart';
 
 class UserInformationHelper {
   const UserInformationHelper._privateConsrtructor();
@@ -56,6 +57,10 @@ class UserInformationHelper {
         'ACCOUNT_INFORMATION', dto.toSPJson().toString());
   }
 
+  Future<void> setAccountSetting(SettingAccountDTO dto) async {
+    await sharedPrefs.setString('ACCOUNT_SETTING', dto.toSPJson().toString());
+  }
+
   Future<void> setImageId(String imgId) async {
     AccountInformationDTO dto = AccountInformationDTO.fromJson(
         json.decode(sharedPrefs.getString('ACCOUNT_INFORMATION')!));
@@ -76,6 +81,11 @@ class UserInformationHelper {
   AccountInformationDTO getAccountInformation() {
     return AccountInformationDTO.fromJson(
         json.decode(sharedPrefs.getString('ACCOUNT_INFORMATION')!));
+  }
+
+  SettingAccountDTO getAccountSetting() {
+    return SettingAccountDTO.fromJson(
+        json.decode(sharedPrefs.getString('ACCOUNT_SETTING')!));
   }
 
   Future<void> setWalletInfo(String info) async {

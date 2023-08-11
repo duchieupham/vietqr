@@ -16,8 +16,8 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/account/blocs/account_bloc.dart';
 import 'package:vierqr/features/account/events/account_event.dart';
 import 'package:vierqr/features/account/states/account_state.dart';
-import 'package:vierqr/features/account/widget/my_QR_bottom_sheet.dart';
 import 'package:vierqr/features/account/views/dialog_my_qr.dart';
+import 'package:vierqr/features/account/widget/my_QR_bottom_sheet.dart';
 import 'package:vierqr/features/personal/views/introduce_bottom_sheet.dart';
 import 'package:vierqr/models/introduce_dto.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
@@ -530,6 +530,30 @@ class _SettingWidget extends StatelessWidget {
             ),
             child: Column(
               children: [
+                GestureDetector(
+                  onTap: () async {
+                    Navigator.pushNamed(context, Routes.SETTING_BDSD);
+                  },
+                  child: Row(
+                    children: [
+                      Image.asset(
+                        'assets/images/ic-setting-bdsd.png',
+                        width: 30,
+                        height: 30,
+                      ),
+                      const SizedBox(width: 8),
+                      const Expanded(
+                        child: Text(
+                          'Cài đặt nhận biến động số dư',
+                          style: TextStyle(
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(),
                 GestureDetector(
                   onTap: () async {
                     if (PlatformUtils.instance.isPhysicalDevice()) {

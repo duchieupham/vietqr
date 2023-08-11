@@ -29,3 +29,14 @@ class UpdateAvatarEvent extends AccountEvent {
 }
 
 class GetUserInformation extends AccountEvent {}
+
+class UpdateVoiceSetting extends AccountEvent {
+  final Map<String, dynamic> param;
+
+  UpdateVoiceSetting({
+    required this.param,
+  });
+
+  @override
+  List<Object?> get props => [param];
+}
