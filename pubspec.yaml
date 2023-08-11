@@ -94,8 +94,8 @@ dependencies:
   android_intent_plus: ^4.0.2
   connectivity_plus: ^4.0.2
   photo_gallery: ^2.0.0
-#  just_audio: ^0.9.34
-  audioplayers: ^4.1.0
+  just_audio: ^0.9.32
+#  audioplayers: ^4.1.0
 dependency_overrides:
   image: ^3.0.2
 
