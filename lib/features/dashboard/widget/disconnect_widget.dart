@@ -1,14 +1,17 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/features/token/blocs/token_bloc.dart';
 import 'package:vierqr/features/token/events/token_event.dart';
 
 class DisconnectWidget extends StatelessWidget {
-  final TokenBloc tokenBloc;
+  final VoidCallback function;
 
   const DisconnectWidget({
     super.key,
-    required this.tokenBloc,
+    required this.function,
   });
 
   @override
@@ -43,9 +46,15 @@ class DisconnectWidget extends StatelessWidget {
           height: 40,
           icon: Icons.refresh_rounded,
           title: 'Thử lại',
-          function: () {
-            tokenBloc.add(const TokenEventCheckValid());
-            Navigator.pop(context);
+          function: () async {
+            try {
+              final result = await InternetAddress.lookup('google.com');
+              if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+                Navigator.of(context).pop();
+              }
+            } on SocketException catch (_) {
+              LOG.error('connect failed');
+            }
           },
           bgColor: Theme.of(context).canvasColor,
           textColor: Theme.of(context).hintColor,

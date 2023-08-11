@@ -218,14 +218,14 @@ class _DashBoardScreen extends State<DashBoardScreen>
             ),
           );
         }
-        if (state is SystemConnectionFailedState) {
-          DialogWidget.instance.showFullModalBottomContent(
-            isDissmiss: false,
-            widget: DisconnectWidget(
-              tokenBloc: _tokenBloc,
-            ),
-          );
-        }
+        // if (state is SystemConnectionFailedState) {
+        //   DialogWidget.instance.showFullModalBottomContent(
+        //     isDissmiss: false,
+        //     widget: DisconnectWidget(
+        //       tokenBloc: _tokenBloc,
+        //     ),
+        //   );
+        // }
         if (state is TokenExpiredState) {
           DialogWidget.instance.openMsgDialog(
               title: 'Phiên đăng nhập hết hạn',
