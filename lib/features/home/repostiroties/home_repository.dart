@@ -9,6 +9,8 @@ import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 
+import '../../../models/response_message_dto.dart';
+
 class HomeRepository {
   const HomeRepository();
 
@@ -99,6 +101,26 @@ class HomeRepository {
           address: data[5],
           dateValid: TimeUtils.instance.convertDateString(data[6]),
         );
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return result;
+  }
+
+  Future<ResponseMessageDTO> voiceTransaction(
+      Map<String, dynamic> param) async {
+    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    try {
+      final String url = '${EnvConfig.getBaseUrl()}voice/transaction';
+      final response = await BaseAPIClient.postAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+        body: param,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        result = ResponseMessageDTO.fromJson(data);
       }
     } catch (e) {
       LOG.error(e.toString());

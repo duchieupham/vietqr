@@ -16,6 +16,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     on<LogoutEventSubmit>(_logOutSubmit);
     on<UpdateAvatarEvent>(_updateAvatar);
     on<GetUserInformation>(_getUserInformation);
+    on<UpdateVoiceSetting>(_updateVoiceSetting);
   }
 
   final logoutRepository = const LogoutRepository();
@@ -106,6 +107,28 @@ void _getUserInformation(AccountEvent event, Emitter emit) async {
       final result = await accRepository.getUserInformation(userId);
       if (result.userId.isNotEmpty) {
         await UserInformationHelper.instance.setAccountInformation(result);
+      }
+      final settingAccount = await accRepository.getSettingAccount(userId);
+      if (settingAccount.userId.isNotEmpty) {
+        await UserInformationHelper.instance.setAccountSetting(settingAccount);
+      }
+    }
+  } catch (e) {
+    LOG.error('Error at _getPointAccount: $e');
+  }
+}
+
+void _updateVoiceSetting(AccountEvent event, Emitter emit) async {
+  String userId = UserInformationHelper.instance.getUserId();
+  try {
+    if (event is UpdateVoiceSetting) {
+      bool updateStatus = await accRepository.updateVoiceSetting(event.param);
+      if (updateStatus) {
+        final settingAccount = await accRepository.getSettingAccount(userId);
+        if (settingAccount.userId.isNotEmpty) {
+          await UserInformationHelper.instance
+              .setAccountSetting(settingAccount);
+        }
       }
     }
   } catch (e) {

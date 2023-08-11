@@ -19,6 +19,7 @@ import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/helper/media_helper.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/account/blocs/account_bloc.dart';
@@ -63,6 +64,7 @@ import 'package:vierqr/features/printer/blocs/printer_bloc.dart';
 import 'package:vierqr/features/printer/views/printer_setting_view.dart';
 import 'package:vierqr/features/report/report_screen.dart';
 import 'package:vierqr/features/scan_qr/scan_qr_lib.dart';
+import 'package:vierqr/features/setting_bdsd/setting_bdsd_screen.dart';
 // import 'package:vierqr/features/scan_qr/scan_qr_screen.dart';
 import 'package:vierqr/features/token/blocs/token_bloc.dart';
 import 'package:vierqr/features/top_up/qr_top_up.dart';
@@ -278,6 +280,12 @@ class _VietQRApp extends State<VietQRApp> {
         if (message.data['notificationType'] != null &&
             message.data['notificationType'] ==
                 Stringify.NOTI_TYPE_UPDATE_TRANSACTION) {
+          Map<String, dynamic> param = {};
+          param['userId'] = UserInformationHelper.instance.getUserId();
+          param['amount'] = message.data['amount'];
+          param['type'] = 0;
+          param['transactionId'] = message.data['transactionReceiveId'];
+          MediaHelper.instance.playAudio(param);
           DialogWidget.instance.openWidgetDialog(
             child: TransactionSuccessWidget(
               dto: NotificationTransactionSuccessDTO.fromJson(message.data),
@@ -485,6 +493,7 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.CONTACT_US_SCREEN: (context) =>
                       const ContactUSScreen(),
                   Routes.REPORT_SCREEN: (context) => const ReportScreen(),
+                  Routes.SETTING_BDSD: (context) => const SettingBDSD(),
                 },
                 onGenerateRoute: (settings) {
                   if (settings.name == Routes.BUSINESS_INFORMATION_VIEW) {
