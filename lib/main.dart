@@ -22,7 +22,6 @@ import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/helper/media_helper.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/features/account/blocs/account_bloc.dart';
 import 'package:vierqr/features/add_bank/add_bank_screen.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_manage_bloc.dart';
 import 'package:vierqr/features/bank_card/views/search_bank_view.dart';
@@ -46,10 +45,10 @@ import 'package:vierqr/features/contact_us/contact_us_screen.dart';
 import 'package:vierqr/features/create_qr/create_qr_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/dashboard_screen.dart';
+import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/dashboard/theme_setting.dart';
 import 'package:vierqr/features/dashboard/widget/disconnect_widget.dart';
 import 'package:vierqr/features/generate_qr/views/qr_share_view.dart';
-import 'package:vierqr/features/home/blocs/home_bloc.dart';
 import 'package:vierqr/features/introduce/views/introduce_screen.dart';
 import 'package:vierqr/features/login/login_screen.dart';
 import 'package:vierqr/features/logout/blocs/log_out_bloc.dart';
@@ -66,8 +65,8 @@ import 'package:vierqr/features/printer/views/printer_setting_view.dart';
 import 'package:vierqr/features/report/report_screen.dart';
 import 'package:vierqr/features/scan_qr/scan_qr_lib.dart';
 import 'package:vierqr/features/setting_bdsd/setting_bdsd_screen.dart';
+
 // import 'package:vierqr/features/scan_qr/scan_qr_screen.dart';
-import 'package:vierqr/features/token/blocs/token_bloc.dart';
 import 'package:vierqr/features/top_up/qr_top_up.dart';
 import 'package:vierqr/features/top_up/top_up_screen.dart';
 import 'package:vierqr/features/top_up/widget/pop_up_top_up_sucsess.dart';
@@ -87,16 +86,13 @@ import 'package:vierqr/services/providers/bank_select_provider.dart';
 import 'package:vierqr/services/providers/business_inforamtion_provider.dart';
 import 'package:vierqr/services/providers/create_qr_page_select_provider.dart';
 import 'package:vierqr/services/providers/home_tab_provider.dart';
-import 'package:vierqr/services/providers/login_provider.dart';
 import 'package:vierqr/services/providers/memeber_manage_provider.dart';
-import 'package:vierqr/services/providers/page_select_provider.dart';
+import 'package:vierqr/features/dashboard/blocs/dash_board_provider.dart';
 import 'package:vierqr/services/providers/pin_provider.dart';
-import 'package:vierqr/services/providers/search_clear_provider.dart';
 import 'package:vierqr/services/providers/shortcut_provider.dart';
 import 'package:vierqr/services/providers/suggestion_widget_provider.dart';
-import 'package:vierqr/services/providers/theme_provider.dart';
+import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
-import 'package:vierqr/services/providers/verify_otp_provider.dart';
 import 'package:vierqr/services/shared_references/account_helper.dart';
 import 'package:vierqr/services/shared_references/bank_arrangement_helper.dart';
 import 'package:vierqr/services/shared_references/create_qr_helper.dart';
@@ -363,17 +359,12 @@ class _VietQRApp extends State<VietQRApp> {
           BlocProvider<NotificationBloc>(
             create: (BuildContext context) => NotificationBloc(context),
           ),
-          BlocProvider<HomeBloc>(
-            create: (BuildContext context) => HomeBloc(context),
-          ),
           BlocProvider<DashBoardBloc>(
-            create: (BuildContext context) => DashBoardBloc(context),
+            create: (BuildContext context) =>
+                DashBoardBloc(context)..add(GetPointEvent()),
           ),
           BlocProvider<BusinessBloc>(
             create: (BuildContext context) => BusinessBloc(context),
-          ),
-          BlocProvider<TokenBloc>(
-            create: (BuildContext context) => TokenBloc(),
           ),
           BlocProvider<BankMemberBloc>(
             create: (BuildContext context) => BankMemberBloc(),
@@ -393,14 +384,11 @@ class _VietQRApp extends State<VietQRApp> {
           BlocProvider<PrinterBloc>(
             create: (BuildContext context) => PrinterBloc(),
           ),
-          BlocProvider<AccountBloc>(
-            create: (BuildContext context) => AccountBloc(),
-          ),
         ],
         child: MultiProvider(
           providers: [
-            ChangeNotifierProvider(create: (context) => ThemeProvider()),
-            ChangeNotifierProvider(create: (context) => PageSelectProvider()),
+            ChangeNotifierProvider(create: (context) => AuthProvider()),
+            ChangeNotifierProvider(create: (context) => DashBoardProvider()),
             ChangeNotifierProvider(
                 create: (context) => CreateQRPageSelectProvider()),
             ChangeNotifierProvider(create: (context) => BankAccountProvider()),
@@ -420,18 +408,15 @@ class _VietQRApp extends State<VietQRApp> {
                 create: (context) => BankCardSelectProvider()),
             ChangeNotifierProvider(create: (context) => ActionShareProvider()),
             ChangeNotifierProvider(create: (context) => AvatarProvider()),
-            ChangeNotifierProvider(create: (context) => ValidProvider()),
-            ChangeNotifierProvider(create: (context) => SearchProvider()),
-            ChangeNotifierProvider(create: (context) => VerifyOtpProvider()),
           ],
-          child: Consumer<ThemeProvider>(
-            builder: (context, themeSelect, child) {
-              if (themeSelect.typeBankArr != 0) {
-                themeSelect.updateBankArr(0);
+          child: Consumer<AuthProvider>(
+            builder: (context, authProvider, child) {
+              if (authProvider.typeBankArr != 0) {
+                authProvider.updateBankArr(0);
               }
 
-              if (themeSelect.getThemeIndex() != 0) {
-                themeSelect.updateThemeByIndex(0);
+              if (authProvider.getThemeIndex() != 0) {
+                authProvider.updateThemeByIndex(0);
               }
 
               return MaterialApp(
@@ -454,24 +439,16 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.USER_EDIT: (context) => const UserEditView(),
                   Routes.UPDATE_PASSWORD: (context) =>
                       const UserUpdatePassword(),
-                  // Routes.BANK_MANAGE: (context) => const BankManageView(),
                   Routes.UI_SETTING: (context) => const ThemeSettingView(),
-                  // Routes.TRANSACTION_HISTORY: (context) =>
-                  //     const TransactionHistory(),
                   Routes.ADD_BANK_CARD: (context) => const AddBankScreen(),
                   Routes.SELECT_BANK_TYPE: (context) =>
                       const SelectBankTypeScreen(),
                   Routes.BANK_MEMBER_VIEW: (context) => const BankMemberView(),
                   Routes.QR_SHARE_VIEW: (context) => QRShareView(),
-                  // Routes.QR_GENERATED: (context) => const QRGenerated(),
                   Routes.BUSINESS_INFORMATION_VIEW: (context) =>
                       const BusinessInformationView(),
                   Routes.ADD_BUSINESS_VIEW: (context) =>
                       const AddBusinessView(),
-                  // Routes.BANK_CARD_DETAIL_VEW: (context) =>
-                  //     const BankCardDetailScreen(),
-                  // Routes.TRANSACTION_HISTORY_VIEW: (context) =>
-                  //     const TransHistoryScreen(),
                   Routes.SCAN_QR_VIEW: (context) => const ScanQrScreen(),
                   Routes.PRINTER_SETTING: (context) => PrinterSettingView(),
                   Routes.SEARCH_BANK: (context) => SearchBankView(),
@@ -487,11 +464,9 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.CREATE_QR: (context) => const CreateQrScreen(),
                   Routes.INTRODUCE_SCREEN: (context) => const IntroduceScreen(),
                   Routes.PHONE_BOOK: (context) => const ContactScreen(),
-                  // Routes.PHONE_BOOK: (context) => const SavePhoneBookScreen(),
                   Routes.TOP_UP: (context) => const TopUpScreen(),
                   Routes.MOBILE_RECHARGE: (context) => MobileRechargeScreen(),
                   Routes.CONNECT_TELEGRAM: (context) => ConnectTelegramScreen(),
-
                   Routes.CONNECT_STEP_TELE_SCREEN: (context) =>
                       ConnectTeleStepScreen(),
                   Routes.CONNECT_STEP_LARK_SCREEN: (context) =>
@@ -572,11 +547,14 @@ class _VietQRApp extends State<VietQRApp> {
                   //  Locale('en'), // English
                   Locale('vi'), // Vietnamese
                 ],
-                home: Title(
-                  title: 'VietQR',
-                  color: AppColor.BLACK,
-                  child: _mainScreen,
-                ),
+                home: Builder(builder: (context) {
+                  authProvider.getAppInfo();
+                  return Title(
+                    title: 'VietQR',
+                    color: AppColor.BLACK,
+                    child: _mainScreen,
+                  );
+                }),
               );
             },
           ),

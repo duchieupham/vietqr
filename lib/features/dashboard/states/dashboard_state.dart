@@ -2,11 +2,8 @@ import 'package:equatable/equatable.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/models/bank_name_information_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
+import 'package:vierqr/models/introduce_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
-
-
-
-
 
 class DashBoardState extends Equatable {
   final String? msg;
@@ -22,6 +19,8 @@ class DashBoardState extends Equatable {
   final List<BankTypeDTO>? listBanks;
   final BankNameInformationDTO? informationDTO;
   final TypeContact typeContact;
+  final IntroduceDTO? introduceDTO;
+  final TokenType typeToken;
 
   const DashBoardState({
     this.msg,
@@ -37,6 +36,8 @@ class DashBoardState extends Equatable {
     this.bankAccount = '',
     this.informationDTO,
     this.typeContact = TypeContact.NONE,
+    this.introduceDTO,
+    this.typeToken = TokenType.NONE,
   });
 
   DashBoardState copyWith({
@@ -53,6 +54,8 @@ class DashBoardState extends Equatable {
     TypeQR? typeQR,
     BankNameInformationDTO? informationDTO,
     TypeContact? typeContact,
+    IntroduceDTO? introduceDTO,
+    TokenType? typeToken,
   }) {
     return DashBoardState(
       status: status ?? this.status,
@@ -68,6 +71,8 @@ class DashBoardState extends Equatable {
       listBanks: listBanks ?? this.listBanks,
       informationDTO: informationDTO ?? this.informationDTO,
       typeContact: typeContact ?? this.typeContact,
+      introduceDTO: introduceDTO ?? this.introduceDTO,
+      typeToken: typeToken ?? this.typeToken,
     );
   }
 

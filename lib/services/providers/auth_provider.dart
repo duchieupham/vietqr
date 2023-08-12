@@ -1,9 +1,12 @@
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/models/introduce_dto.dart';
 import 'package:vierqr/services/shared_references/bank_arrangement_helper.dart';
 import 'package:vierqr/services/shared_references/theme_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
-class ThemeProvider with ChangeNotifier {
+class AuthProvider with ChangeNotifier {
   String _themeSystem = ThemeHelper.instance.getTheme();
 
   get themeSystem => _themeSystem;
@@ -17,6 +20,28 @@ class ThemeProvider with ChangeNotifier {
   bool hasConnection = false;
 
   bool isFirst = false;
+
+  PackageInfo? packageInfo;
+
+  String get userId => UserInformationHelper.instance.getUserId();
+
+  IntroduceDTO? introduceDTO;
+
+  bool isUpdateVersion = false;
+
+  void updateIntroduceDTO(value) {
+    introduceDTO = value;
+    notifyListeners();
+  }
+
+  void getAppInfo() async {
+    if (packageInfo != null) {
+      return;
+    }
+    PackageInfo data = await PackageInfo.fromPlatform();
+    packageInfo = data;
+    notifyListeners();
+  }
 
   void updateHasConnection(value) {
     hasConnection = value;
@@ -65,6 +90,11 @@ class ThemeProvider with ChangeNotifier {
     await BankArrangementHelper.instance.updateBankArr(value);
     _type = BankArrangementHelper.instance.getBankArr();
     // eventBus.fire(ChangeThemeEvent());
+    notifyListeners();
+  }
+
+  void onClose() {
+    isUpdateVersion = false;
     notifyListeners();
   }
 }

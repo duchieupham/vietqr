@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/features/account/blocs/account_bloc.dart';
-import 'package:vierqr/features/account/states/account_state.dart';
+import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:vierqr/services/providers/wallet_provider.dart';
 import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
 
@@ -52,58 +50,58 @@ class CardWallet extends StatelessWidget {
         const Text('Số dư: ',
             style: TextStyle(color: AppColor.GREY_TEXT, fontSize: 13)),
         Expanded(
-          child: BlocConsumer<AccountBloc, AccountState>(
-              listener: (context, state) {},
-              builder: (context, state) {
-                return Consumer<WalletProvider>(
-                    builder: (context, provider, child) {
-                  return Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      if (provider.isHide)
-                        const Text(
-                          '********',
-                          style: TextStyle(
-                            fontSize: 16,
-                          ),
-                        )
-                      else
-                        Text(
-                          '${CurrencyUtils.instance.getCurrencyFormatted(state.introduceDTO?.amount ?? '0')} VQR',
-                          style: const TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w600),
+          child: Consumer<AuthProvider>(
+            builder: (context, state, child) {
+              return Consumer<WalletProvider>(
+                  builder: (context, provider, child) {
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    if (provider.isHide)
+                      const Text(
+                        '********',
+                        style: TextStyle(
+                          fontSize: 16,
                         ),
-                      const SizedBox(
-                        width: 4,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          provider.updateHideAmount(!provider.isHide);
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 4),
-                          child: Image.asset(
-                            provider.isHide
-                                ? 'assets/images/ic-hide.png'
-                                : 'assets/images/ic-unhide.png',
-                            height: 15,
-                          ),
-                        ),
-                      ),
-                      const Spacer(),
+                      )
+                    else
                       Text(
-                        state.introduceDTO?.point ?? '0',
+                        '${CurrencyUtils.instance.getCurrencyFormatted(state.introduceDTO?.amount ?? '0')} VQR',
                         style: const TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w600),
                       ),
-                      Image.asset(
-                        'assets/images/ic_point.png',
-                        height: 18,
-                      )
-                    ],
-                  );
-                });
-              }),
+                    const SizedBox(
+                      width: 4,
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        provider.updateHideAmount(!provider.isHide);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 4),
+                        child: Image.asset(
+                          provider.isHide
+                              ? 'assets/images/ic-hide.png'
+                              : 'assets/images/ic-unhide.png',
+                          height: 15,
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      state.introduceDTO?.point ?? '0',
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.w600),
+                    ),
+                    Image.asset(
+                      'assets/images/ic_point.png',
+                      height: 18,
+                    )
+                  ],
+                );
+              });
+            },
+          ),
         ),
       ],
     );

@@ -12,11 +12,13 @@ import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/dashboard/repostiroties/dashboard_repository.dart';
 import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
+import 'package:vierqr/features/token/blocs/token_bloc.dart';
 import 'package:vierqr/models/bank_name_information_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/models/viet_qr_scanned_dto.dart';
+import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
     with BaseManager {
@@ -24,7 +26,11 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
   final BuildContext context;
 
   DashBoardBloc(this.context) : super(const DashBoardState()) {
+    on<TokenEventCheckValid>(_checkValidToken);
+    on<TokenFcmUpdateEvent>(_updateFcmToken);
+    on<TokenEventLogout>(_logout);
     on<PermissionEventGetStatus>(_getPermissionStatus);
+    on<GetPointEvent>(_getPointAccount);
     on<PermissionEventRequest>(_requestPermissions);
     on<ScanQrEventGetBankType>(_getBankType);
     on<DashBoardEventSearchName>(_searchBankName);
@@ -32,6 +38,111 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
     on<DashBoardCheckExistedEvent>(_checkExistedBank);
     on<DashBoardEventInsertUnauthenticated>(_insertBankCardUnauthenticated);
     on<UpdateEvent>(_updateEvent);
+  }
+
+  void _checkValidToken(DashBoardEvent event, Emitter emit) async {
+    try {
+      if (event is TokenEventCheckValid) {
+        emit(state.copyWith(
+            status: BlocStatus.NONE, request: DashBoardType.NONE));
+        int check = await tokenRepository.checkValidToken();
+        TokenType type = TokenType.NONE;
+        if (check == 0) {
+          type = TokenType.InValid;
+        } else if (check == 1) {
+          type = TokenType.Valid;
+        } else if (check == 2) {
+          type = TokenType.MainSystem;
+        } else if (check == 3) {
+          type = TokenType.Internet;
+        } else if (check == 4) {
+          type = TokenType.Expired;
+        }
+
+        emit(state.copyWith(
+            status: BlocStatus.NONE,
+            request: DashBoardType.TOKEN,
+            typeToken: type));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+          status: BlocStatus.NONE,
+          request: DashBoardType.TOKEN,
+          typeToken: TokenType.InValid));
+    }
+  }
+
+  void _logout(DashBoardEvent event, Emitter emit) async {
+    try {
+      if (event is TokenEventLogout) {
+        emit(state.copyWith(
+            status: BlocStatus.NONE, request: DashBoardType.NONE));
+        bool check = await logoutRepository.logout();
+        TokenType type = TokenType.NONE;
+        if (check) {
+          type = TokenType.Logout;
+        } else {
+          type = TokenType.Logout_failed;
+        }
+
+        emit(state.copyWith(
+            status: BlocStatus.NONE,
+            request: DashBoardType.TOKEN,
+            typeToken: type));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+          status: BlocStatus.NONE,
+          request: DashBoardType.TOKEN,
+          typeToken: TokenType.Logout_failed));
+    }
+  }
+
+  void _updateFcmToken(DashBoardEvent event, Emitter emit) async {
+    try {
+      if (event is TokenFcmUpdateEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.NONE, request: DashBoardType.NONE));
+        bool check = await tokenRepository.updateFcmToken();
+        TokenType type = TokenType.NONE;
+        if (check) {
+          type = TokenType.Fcm_success;
+        } else {
+          type = TokenType.Fcm_failed;
+        }
+        emit(state.copyWith(
+            status: BlocStatus.NONE,
+            request: DashBoardType.TOKEN,
+            typeToken: type));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+          status: BlocStatus.NONE,
+          request: DashBoardType.TOKEN,
+          typeToken: TokenType.Fcm_failed));
+    }
+  }
+
+  void _getPointAccount(DashBoardEvent event, Emitter emit) async {
+    try {
+      emit(
+          state.copyWith(status: BlocStatus.NONE, request: DashBoardType.NONE));
+      if (event is GetPointEvent) {
+        final result = await dashBoardRepository.getPointAccount(userId);
+        await UserInformationHelper.instance.setWalletId(result.walletId!);
+        emit(state.copyWith(
+          introduceDTO: result,
+          status: BlocStatus.NONE,
+          request: DashBoardType.POINT,
+        ));
+      }
+    } catch (e) {
+      LOG.error('Error at _getPointAccount: $e');
+      emit(state.copyWith(msg: '', status: BlocStatus.ERROR));
+    }
   }
 
   void _getPermissionStatus(DashBoardEvent event, Emitter emit) async {

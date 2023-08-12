@@ -1,10 +1,6 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
@@ -12,8 +8,6 @@ import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/events.dart';
-import 'package:vierqr/commons/utils/encrypt_utils.dart';
-import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
@@ -26,26 +20,21 @@ import 'package:vierqr/features/business/views/business_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
 import 'package:vierqr/features/dashboard/widget/background_app_bar_home.dart';
-import 'package:vierqr/features/dashboard/widget/disconnect_widget.dart';
 import 'package:vierqr/features/dashboard/widget/maintain_widget.dart';
 import 'package:vierqr/features/home/home.dart';
 import 'package:vierqr/features/notification/blocs/notification_bloc.dart';
 import 'package:vierqr/features/notification/events/notification_event.dart';
 import 'package:vierqr/features/notification/states/notification_state.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
-import 'package:vierqr/features/token/blocs/token_bloc.dart';
-import 'package:vierqr/features/token/events/token_event.dart';
-import 'package:vierqr/features/token/states/token_state.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_card_insert_unauthenticated.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/services/providers/account_balance_home_provider.dart';
 import 'package:vierqr/services/providers/avatar_provider.dart';
 import 'package:vierqr/services/providers/bank_card_select_provider.dart';
-import 'package:vierqr/services/providers/page_select_provider.dart';
-import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/features/dashboard/blocs/dash_board_provider.dart';
 import 'package:vierqr/services/providers/suggestion_widget_provider.dart';
-import 'package:vierqr/services/providers/theme_provider.dart';
+import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
@@ -63,6 +52,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
   //page controller
   late PageController _pageController;
   StreamSubscription? _subscription;
+  StreamSubscription? _subReloadWallet;
 
   //list page
   final List<Widget> _listScreens = [];
@@ -72,7 +62,6 @@ class _DashBoardScreen extends State<DashBoardScreen>
 
   //blocs
   late DashBoardBloc _dashBoardBloc;
-  late TokenBloc _tokenBloc;
   late NotificationBloc _notificationBloc;
 
   //notification count
@@ -89,26 +78,18 @@ class _DashBoardScreen extends State<DashBoardScreen>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _dashBoardBloc = BlocProvider.of(context);
-    _tokenBloc = BlocProvider.of(context);
     _notificationBloc = BlocProvider.of(context);
     _pageController = PageController(
       initialPage:
-          Provider.of<PageSelectProvider>(context, listen: false).indexSelected,
+          Provider.of<DashBoardProvider>(context, listen: false).indexSelected,
       keepPage: true,
     );
     _listScreens.addAll(
       [
-        // const BankCardSelectView(key: PageStorageKey('QR_GENERATOR_PAGE')),
         const BankScreen(key: PageStorageKey('QR_GENERATOR_PAGE')),
         const HomeScreen(key: PageStorageKey('HOME_PAGE')),
         const BusinessScreen(key: PageStorageKey('SMS_LIST_PAGE')),
-        // if (PlatformUtils.instance.isAndroidApp()) const IntroduceScreen(),
-        AccountScreen(
-          key: const PageStorageKey('USER_SETTING_PAGE'),
-          voidCallback: () {
-            _animatedToPage(0);
-          },
-        ),
+        const AccountScreen(key: const PageStorageKey('USER_SETTING_PAGE')),
       ],
     );
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -118,6 +99,10 @@ class _DashBoardScreen extends State<DashBoardScreen>
 
     _subscription = eventBus.on<ChangeBottomBarEvent>().listen((data) {
       _animatedToPage(data.page);
+    });
+
+    _subReloadWallet = eventBus.on<ReloadWallet>().listen((_) {
+      _dashBoardBloc.add(GetPointEvent());
     });
   }
 
@@ -142,7 +127,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
 
   void initialServices(BuildContext context) {
     checkUserInformation();
-    _tokenBloc.add(const TokenEventCheckValid());
+    _dashBoardBloc.add(const TokenEventCheckValid());
     _dashBoardBloc.add(const PermissionEventRequest());
     _notificationBloc.add(NotificationGetCounterEvent());
   }
@@ -170,6 +155,10 @@ class _DashBoardScreen extends State<DashBoardScreen>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _subscription?.cancel();
+    _subscription = null;
+    _subReloadWallet?.cancel();
+    _subReloadWallet = null;
     super.dispose();
   }
 
@@ -192,7 +181,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
 
   void _updateFcmToken(bool isFromLogin) {
     if (!isFromLogin) {
-      _tokenBloc.add(const TokenFcmUpdateEvent());
+      _dashBoardBloc.add(const TokenFcmUpdateEvent());
     }
   }
 
@@ -205,220 +194,211 @@ class _DashBoardScreen extends State<DashBoardScreen>
       isFromLogin = arg['isFromLogin'] ?? false;
     }
 
-    return BlocListener<TokenBloc, TokenState>(
-      listener: (context, state) {
-        if (state is TokenValidState) {
-          _updateFcmToken(isFromLogin);
+    return BlocListener<DashBoardBloc, DashBoardState>(
+      listener: (context, state) async {
+        if (state.status == BlocStatus.LOADING) {
+          DialogWidget.instance.openLoadingDialog();
         }
-        if (state is SystemMaintainState) {
-          DialogWidget.instance.showFullModalBottomContent(
-            isDissmiss: false,
-            widget: MaintainWidget(
-              tokenBloc: _tokenBloc,
-            ),
+
+        if (state.status == BlocStatus.UNLOADING) {
+          Navigator.pop(context);
+        }
+
+        if (state.request == DashBoardType.POINT) {
+          Provider.of<AuthProvider>(context, listen: false)
+              .updateIntroduceDTO(state.introduceDTO);
+        }
+
+        if (state.request == DashBoardType.TOKEN) {
+          if (state.typeToken == TokenType.Valid) {
+            _updateFcmToken(isFromLogin);
+          } else if (state.typeToken == TokenType.MainSystem) {
+            await DialogWidget.instance.showFullModalBottomContent(
+              isDissmiss: false,
+              widget: MaintainWidget(tokenBloc: _dashBoardBloc),
+            );
+          } else if (state.typeToken == TokenType.Expired) {
+            await DialogWidget.instance.openMsgDialog(
+                title: 'Phiên đăng nhập hết hạn',
+                msg: 'Vui lòng đăng nhập lại ứng dụng',
+                function: () {
+                  Navigator.pop(context);
+                  _dashBoardBloc.add(TokenEventLogout());
+                });
+          } else if (state.typeToken == TokenType.Logout) {
+            Navigator.of(context).pushReplacementNamed(Routes.LOGIN);
+          } else if (state.typeToken == TokenType.Logout_failed) {
+            await DialogWidget.instance.openMsgDialog(
+              title: 'Không thể đăng xuất',
+              msg: 'Vui lòng thử lại sau.',
+            );
+          }
+        }
+
+        if (state.typePermission == DashBoardTypePermission.Request) {
+          _dashBoardBloc.add(const PermissionEventGetStatus());
+        }
+        if (state.typePermission == DashBoardTypePermission.CameraDenied) {
+          Future.delayed(const Duration(milliseconds: 0), () {
+            Provider.of<SuggestionWidgetProvider>(context, listen: false)
+                .updateCameraSuggestion(true);
+          });
+        }
+        if (state.typePermission == DashBoardTypePermission.CameraAllow) {
+          Future.delayed(const Duration(milliseconds: 0), () {
+            Provider.of<SuggestionWidgetProvider>(context, listen: false)
+                .updateCameraSuggestion(false);
+          });
+        }
+        if (state.typePermission == DashBoardTypePermission.Allow) {
+          Future.delayed(const Duration(milliseconds: 0), () {
+            Provider.of<SuggestionWidgetProvider>(context, listen: false)
+                .updateCameraSuggestion(false);
+          });
+        }
+
+        if (state.request == DashBoardType.ADD_BOOK_CONTACT) {
+          if (!mounted) return;
+          Navigator.pop(context);
+          Fluttertoast.showToast(
+            msg: 'Đã thêm vào danh bạ',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.TOP,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Theme.of(context).cardColor,
+            textColor: Theme.of(context).hintColor,
+            fontSize: 15,
+            webBgColor: 'rgba(255, 255, 255)',
+            webPosition: 'center',
           );
+
+          Future.delayed(const Duration(milliseconds: 400), () {
+            Navigator.pushNamed(context, Routes.PHONE_BOOK);
+          });
         }
-        // if (state is SystemConnectionFailedState) {
-        //   DialogWidget.instance.showFullModalBottomContent(
-        //     isDissmiss: false,
-        //     widget: DisconnectWidget(
-        //       tokenBloc: _tokenBloc,
-        //     ),
-        //   );
-        // }
-        if (state is TokenExpiredState) {
+        if (state.request == DashBoardType.ADD_BOOK_CONTACT_EXIST) {
           DialogWidget.instance.openMsgDialog(
-              title: 'Phiên đăng nhập hết hạn',
-              msg: 'Vui lòng đăng nhập lại ứng dụng',
-              function: () {
+            title: 'Thất bại',
+            msg: 'Tài khoản đã tồn tại trong danh bạ',
+            function: () {
+              if (Navigator.canPop(context)) {
                 Navigator.pop(context);
-                _tokenBloc.add(TokenEventLogout());
-              });
-        }
-        if (state is TokenExpiredLogoutState) {
-          Navigator.of(context).pushReplacementNamed(Routes.LOGIN);
-        }
-        if (state is TokenLogoutFailedState) {
-          DialogWidget.instance.openMsgDialog(
-            title: 'Không thể đăng xuất',
-            msg: 'Vui lòng thử lại sau.',
+              }
+            },
           );
+        }
+
+        if (state.request == DashBoardType.EXIST_BANK) {
+          String userId = UserInformationHelper.instance.getUserId();
+          String formattedName = StringUtils.instance.removeDiacritic(
+              StringUtils.instance.capitalFirstCharacter(
+                  state.informationDTO?.accountName ?? ''));
+          BankCardInsertUnauthenticatedDTO dto =
+              BankCardInsertUnauthenticatedDTO(
+            bankTypeId: state.bankTypeDTO?.id ?? '',
+            userId: userId,
+            userBankName: formattedName,
+            bankAccount: state.bankAccount,
+          );
+          _dashBoardBloc.add(DashBoardEventInsertUnauthenticated(dto: dto));
+        }
+
+        if (state.request == DashBoardType.INSERT_BANK) {
+          if (!mounted) return;
+          eventBus.fire(ChangeThemeEvent());
+          Navigator.of(context).pop(true);
+        }
+
+        if (state.request == DashBoardType.ERROR) {
+          await DialogWidget.instance
+              .openMsgDialog(title: 'Không thể thêm TK', msg: state.msg ?? '');
+        }
+
+        if (state.status != BlocStatus.NONE ||
+            state.request != DashBoardType.NONE ||
+            state.typeQR != TypeQR.NONE ||
+            state.typePermission == DashBoardTypePermission.None) {
+          _dashBoardBloc.add(UpdateEvent());
         }
       },
-      child: BlocListener<DashBoardBloc, DashBoardState>(
-        listener: (context, state) async {
-          if (state.status == BlocStatus.LOADING) {
-            DialogWidget.instance.openLoadingDialog();
-          }
-
-          if (state.status == BlocStatus.UNLOADING) {
-            Navigator.pop(context);
-          }
-          if (state.typePermission == DashBoardTypePermission.Request) {
-            _dashBoardBloc.add(const PermissionEventGetStatus());
-          }
-          if (state.typePermission == DashBoardTypePermission.CameraDenied) {
-            Future.delayed(const Duration(milliseconds: 0), () {
-              Provider.of<SuggestionWidgetProvider>(context, listen: false)
-                  .updateCameraSuggestion(true);
-            });
-          }
-          if (state.typePermission == DashBoardTypePermission.CameraAllow) {
-            Future.delayed(const Duration(milliseconds: 0), () {
-              Provider.of<SuggestionWidgetProvider>(context, listen: false)
-                  .updateCameraSuggestion(false);
-            });
-          }
-          if (state.typePermission == DashBoardTypePermission.Allow) {
-            Future.delayed(const Duration(milliseconds: 0), () {
-              Provider.of<SuggestionWidgetProvider>(context, listen: false)
-                  .updateCameraSuggestion(false);
-            });
-          }
-
-          if (state.request == DashBoardType.ADD_BOOK_CONTACT) {
-            if (!mounted) return;
-            Navigator.pop(context);
-            Fluttertoast.showToast(
-              msg: 'Đã thêm vào danh bạ',
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.TOP,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Theme.of(context).cardColor,
-              textColor: Theme.of(context).hintColor,
-              fontSize: 15,
-              webBgColor: 'rgba(255, 255, 255)',
-              webPosition: 'center',
-            );
-
-            Future.delayed(const Duration(milliseconds: 400), () {
-              Navigator.pushNamed(context, Routes.PHONE_BOOK);
-            });
-          }
-          if (state.request == DashBoardType.ADD_BOOK_CONTACT_EXIST) {
-            DialogWidget.instance.openMsgDialog(
-              title: 'Thất bại',
-              msg: 'Tài khoản đã tồn tại trong danh bạ',
-              function: () {
-                if (Navigator.canPop(context)) {
-                  Navigator.pop(context);
-                }
-              },
-            );
-          }
-
-          if (state.request == DashBoardType.EXIST_BANK) {
-            String userId = UserInformationHelper.instance.getUserId();
-            String formattedName = StringUtils.instance.removeDiacritic(
-                StringUtils.instance.capitalFirstCharacter(
-                    state.informationDTO?.accountName ?? ''));
-            BankCardInsertUnauthenticatedDTO dto =
-                BankCardInsertUnauthenticatedDTO(
-              bankTypeId: state.bankTypeDTO?.id ?? '',
-              userId: userId,
-              userBankName: formattedName,
-              bankAccount: state.bankAccount,
-            );
-            _dashBoardBloc.add(DashBoardEventInsertUnauthenticated(dto: dto));
-          }
-
-          if (state.request == DashBoardType.INSERT_BANK) {
-            if (!mounted) return;
-            eventBus.fire(ChangeThemeEvent());
-            Navigator.of(context).pop(true);
-          }
-
-          if (state.request == DashBoardType.ERROR) {
-            await DialogWidget.instance.openMsgDialog(
-                title: 'Không thể thêm TK', msg: state.msg ?? '');
-          }
-
-          if (state.status != BlocStatus.NONE ||
-              state.request != DashBoardType.NONE ||
-              state.typeQR != TypeQR.NONE ||
-              state.typePermission == DashBoardTypePermission.None) {
-            _dashBoardBloc.add(UpdateEvent());
-          }
-        },
-        child: Scaffold(
-          body: Stack(
-            children: [
-              _buildAppBar(),
-              Column(
-                children: [
-                  Expanded(
-                    child: Consumer<PageSelectProvider>(
-                        builder: (context, page, child) {
-                      return Padding(
-                        padding: (page.indexSelected == 3)
-                            ? EdgeInsets.zero
-                            : const EdgeInsets.only(top: 110),
-                        child: SizedBox(
-                          height: MediaQuery.of(context).size.height,
-                          child: Listener(
-                            onPointerMove: (moveEvent) {
-                              if (moveEvent.delta.dx > 0) {
-                                Provider.of<PageSelectProvider>(context,
-                                        listen: false)
-                                    .updateMoveEvent(TypeMoveEvent.RIGHT);
-                              } else {
-                                Provider.of<PageSelectProvider>(context,
-                                        listen: false)
-                                    .updateMoveEvent(TypeMoveEvent.LEFT);
-                              }
+      child: Scaffold(
+        body: Stack(
+          children: [
+            _buildAppBar(),
+            Column(
+              children: [
+                Expanded(
+                  child: Consumer<DashBoardProvider>(
+                      builder: (context, page, child) {
+                    return Padding(
+                      padding: (page.indexSelected == 3)
+                          ? EdgeInsets.zero
+                          : const EdgeInsets.only(top: 110),
+                      child: SizedBox(
+                        height: MediaQuery.of(context).size.height,
+                        child: Listener(
+                          onPointerMove: (moveEvent) {
+                            if (moveEvent.delta.dx > 0) {
+                              Provider.of<DashBoardProvider>(context,
+                                      listen: false)
+                                  .updateMoveEvent(TypeMoveEvent.RIGHT);
+                            } else {
+                              Provider.of<DashBoardProvider>(context,
+                                      listen: false)
+                                  .updateMoveEvent(TypeMoveEvent.LEFT);
+                            }
+                          },
+                          child: PageView(
+                            key: const PageStorageKey('PAGE_VIEW'),
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            controller: _pageController,
+                            onPageChanged: (index) async {
+                              Provider.of<DashBoardProvider>(context,
+                                      listen: false)
+                                  .updateIndex(index);
                             },
-                            child: PageView(
-                              key: const PageStorageKey('PAGE_VIEW'),
-                              physics: const AlwaysScrollableScrollPhysics(),
-                              controller: _pageController,
-                              onPageChanged: (index) async {
-                                Provider.of<PageSelectProvider>(context,
-                                        listen: false)
-                                    .updateIndex(index);
-                              },
-                              children: _listScreens,
-                            ),
+                            children: _listScreens,
                           ),
                         ),
-                      );
-                    }),
-                  ),
-                ],
+                      ),
+                    );
+                  }),
+                ),
+              ],
+            ),
+          ],
+        ),
+        bottomNavigationBar: Consumer<DashBoardProvider>(
+          builder: (context, page, child) {
+            return Container(
+              padding: const EdgeInsets.only(bottom: 12),
+              decoration: const BoxDecoration(
+                border:
+                    Border(top: BorderSide(color: AppColor.GREY_TOP_TAB_BAR)),
               ),
-            ],
-          ),
-          bottomNavigationBar: Consumer<PageSelectProvider>(
-            builder: (context, page, child) {
-              return Container(
-                padding: const EdgeInsets.only(bottom: 12),
-                decoration: const BoxDecoration(
-                  border:
-                      Border(top: BorderSide(color: AppColor.GREY_TOP_TAB_BAR)),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: List.generate(
-                    page.listItem.length,
-                    (index) {
-                      var item = page.listItem.elementAt(index);
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: List.generate(
+                  page.listItem.length,
+                  (index) {
+                    var item = page.listItem.elementAt(index);
 
-                      String url = (item.index == page.indexSelected)
-                          ? item.assetsActive
-                          : item.assetsUnActive;
+                    String url = (item.index == page.indexSelected)
+                        ? item.assetsActive
+                        : item.assetsUnActive;
 
-                      return _buildShortcut(
-                        index: item.index,
-                        url: url,
-                        label: item.label,
-                        context: context,
-                        select: item.index == page.indexSelected,
-                      );
-                    },
-                  ).toList(),
-                ),
-              );
-            },
-          ),
+                    return _buildShortcut(
+                      index: item.index,
+                      url: url,
+                      label: item.label,
+                      context: context,
+                      select: item.index == page.indexSelected,
+                    );
+                  },
+                ).toList(),
+              ),
+            );
+          },
         ),
       ),
     );
@@ -487,7 +467,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
       );
     } catch (e) {
       _pageController = PageController(
-        initialPage: Provider.of<PageSelectProvider>(context, listen: false)
+        initialPage: Provider.of<DashBoardProvider>(context, listen: false)
             .indexSelected,
         keepPage: true,
       );
@@ -546,7 +526,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
     return BackgroundAppBarHome(
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 25),
-        child: Consumer<PageSelectProvider>(builder: (context, page, child) {
+        child: Consumer<DashBoardProvider>(builder: (context, page, child) {
           if (page.indexSelected == 3) {
             return const SizedBox.shrink();
           }
@@ -643,7 +623,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
               const Padding(padding: EdgeInsets.only(left: 5)),
               GestureDetector(
                   onTap: () {
-                    Provider.of<PageSelectProvider>(context, listen: false)
+                    Provider.of<DashBoardProvider>(context, listen: false)
                         .updateIndex(4);
 
                     _animatedToPage(4);

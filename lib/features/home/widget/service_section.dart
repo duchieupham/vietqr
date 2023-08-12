@@ -86,6 +86,8 @@ class ServiceSection extends StatelessWidget {
             () async {
           Navigator.pushNamed(context, Routes.CONNECT_LARK);
         }),
+        _buildItemService(context, 'assets/images/logo-check-app-version.png',
+            'Kiểm tra phiên bản App', () async {}),
       ],
     );
   }

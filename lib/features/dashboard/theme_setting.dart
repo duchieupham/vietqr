@@ -1,11 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/widgets/checkbox_widget.dart';
-import 'package:vierqr/commons/widgets/sub_header_widget.dart';
-import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
-import 'package:vierqr/services/providers/shortcut_provider.dart';
-import 'package:vierqr/services/providers/theme_provider.dart';
+import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -14,7 +10,7 @@ class ThemeSettingView extends StatelessWidget {
 
   //theme UI controller
   static late PageController _themeUIController;
-  static late ThemeProvider _themeProvider;
+  static late AuthProvider _themeProvider;
 
   //asset UI list
   static final List<String> _assetList = [
@@ -26,7 +22,7 @@ class ThemeSettingView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    _themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    _themeProvider = Provider.of<AuthProvider>(context, listen: false);
     _themeUIController = PageController(
       initialPage: _themeProvider.getThemeIndex(),
       viewportFraction: 0.65,
@@ -66,7 +62,7 @@ class ThemeSettingView extends StatelessWidget {
               shrinkWrap: true,
               itemCount: _assetList.length,
               itemBuilder: (context, index) {
-                return Consumer<ThemeProvider>(
+                return Consumer<AuthProvider>(
                     builder: (context, provider, child) {
                   return InkWell(
                     onTap: () async {

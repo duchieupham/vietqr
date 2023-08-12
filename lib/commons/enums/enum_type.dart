@@ -179,7 +179,7 @@ enum AddBankType {
 
 enum BankType { QR, NONE, SCAN, BANK, GET_BANK, SCAN_ERROR, SCAN_NOT_FOUND }
 
-enum TransType { NONE, GET_TRANDS ,GET_FILTER}
+enum TransType { NONE, GET_TRANDS, GET_FILTER }
 
 enum ContactType {
   NONE,
@@ -219,6 +219,8 @@ enum DashBoardType {
   ERROR,
   EXIST_BANK,
   INSERT_BANK,
+  POINT,
+  TOKEN,
 }
 
 enum DashBoardTypePermission {
@@ -232,7 +234,7 @@ enum DashBoardTypePermission {
   Error,
 }
 
-enum HomeType { GET_BANK, NONE, SCAN_ERROR, SCAN_NOT_FOUND, SCAN }
+enum HomeType { NONE, GET_BANK, SCAN_ERROR, SCAN_NOT_FOUND, SCAN, POINT }
 
 enum TypePermission {
   None,
@@ -257,4 +259,17 @@ enum ScanType {
   SCAN_ERROR,
   SCAN_NOT_FOUND,
   SEARCH_NAME,
+}
+
+enum TokenType {
+  NONE,
+  InValid,
+  Valid,
+  MainSystem,
+  Internet,
+  Expired,
+  Logout,
+  Logout_failed,
+  Fcm_success,
+  Fcm_failed,
 }

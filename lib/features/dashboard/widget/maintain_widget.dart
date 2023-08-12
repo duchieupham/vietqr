@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
-import 'package:vierqr/features/token/blocs/token_bloc.dart';
-import 'package:vierqr/features/token/events/token_event.dart';
+import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
+import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 
 class MaintainWidget extends StatelessWidget {
-  final TokenBloc tokenBloc;
+  final DashBoardBloc tokenBloc;
 
   const MaintainWidget({
     super.key,
@@ -44,7 +44,7 @@ class MaintainWidget extends StatelessWidget {
           icon: Icons.refresh_rounded,
           title: 'Thử lại',
           function: () {
-            tokenBloc.add(const TokenEventCheckValid());
+            tokenBloc.add(TokenEventCheckValid());
             Navigator.pop(context);
           },
           bgColor: Theme.of(context).canvasColor,
