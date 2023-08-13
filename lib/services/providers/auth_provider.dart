@@ -142,14 +142,22 @@ class AuthProvider with ChangeNotifier {
       int packageVer = int.parse(packageInfo!.version.replaceAll('.', ''));
       int packageBuild = int.parse(packageInfo!.buildNumber);
       if (PlatformUtils.instance.isIOsApp()) {
-        if (packageVer < appInfoDTO!.iosVer ||
-            packageBuild < appInfoDTO!.buildIos) {
+        if (packageVer == appInfoDTO!.iosVer) {
+          if (packageBuild < appInfoDTO!.buildIos) {
+            isUpdateVersion = true;
+            notifyListeners();
+          }
+        } else if (packageVer < appInfoDTO!.iosVer) {
           isUpdateVersion = true;
           notifyListeners();
         }
       } else if (PlatformUtils.instance.isAndroidApp()) {
-        if (packageVer < appInfoDTO!.adrVer ||
-            packageBuild < appInfoDTO!.buildAdr) {
+        if (packageVer == appInfoDTO!.adrVer) {
+          if (packageBuild < appInfoDTO!.buildAdr) {
+            isUpdateVersion = true;
+            notifyListeners();
+          }
+        } else if (packageVer < appInfoDTO!.adrVer) {
           isUpdateVersion = true;
           notifyListeners();
         }
