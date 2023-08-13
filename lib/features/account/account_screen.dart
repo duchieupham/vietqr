@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/file_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
@@ -18,8 +19,10 @@ import 'package:vierqr/features/account/events/account_event.dart';
 import 'package:vierqr/features/account/states/account_state.dart';
 import 'package:vierqr/features/account/views/dialog_my_qr.dart';
 import 'package:vierqr/features/account/widget/my_QR_bottom_sheet.dart';
+import 'package:vierqr/features/dashboard/blocs/dash_board_provider.dart';
 import 'package:vierqr/features/personal/views/introduce_bottom_sheet.dart';
 import 'package:vierqr/models/introduce_dto.dart';
+import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
@@ -49,16 +52,24 @@ List<IconData> listIcon = [
   ),
 ];
 
-class AccountScreen extends StatefulWidget {
-  final VoidCallback? voidCallback;
-
-  const AccountScreen({super.key, this.voidCallback});
+class AccountScreen extends StatelessWidget {
+  const AccountScreen({super.key});
 
   @override
-  State<AccountScreen> createState() => _AccountScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider<AccountBloc>(
+      create: (BuildContext context) => AccountBloc(context),
+      child: _AccountScreen(),
+    );
+  }
 }
 
-class _AccountScreenState extends State<AccountScreen>
+class _AccountScreen extends StatefulWidget {
+  @override
+  State<_AccountScreen> createState() => _AccountScreenState();
+}
+
+class _AccountScreenState extends State<_AccountScreen>
     with AutomaticKeepAliveClientMixin {
   late AccountBloc _accountBloc;
 
@@ -66,13 +77,11 @@ class _AccountScreenState extends State<AccountScreen>
   void initState() {
     super.initState();
     _accountBloc = BlocProvider.of(context);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _accountBloc.add(InitAccountEvent());
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {});
   }
 
   Future<void> _onRefresh() async {
-    _accountBloc.add(InitAccountEvent());
+    eventBus.fire(ReloadWallet());
   }
 
   @override
@@ -93,8 +102,9 @@ class _AccountScreenState extends State<AccountScreen>
           }
 
           Navigator.of(context).pushReplacementNamed(Routes.LOGIN);
-          widget.voidCallback!();
+          eventBus.fire(ChangeBottomBarEvent(0));
         }
+
         if (state.status == BlocStatus.ERROR) {
           if (!mounted) return;
           DialogWidget.instance.openMsgDialog(
@@ -112,9 +122,9 @@ class _AccountScreenState extends State<AccountScreen>
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 _BannerWidget(),
-                _FeatureWidget(code: state.introduceDTO?.walletId ?? ''),
+                _FeatureWidget(),
                 const SizedBox(height: 30),
-                _IntroduceWidget(dto: state.introduceDTO),
+                _IntroduceWidget(),
                 const SizedBox(height: 30),
                 _SettingWidget(),
                 const SizedBox(height: 30),
@@ -135,21 +145,31 @@ class _AccountScreenState extends State<AccountScreen>
         Navigator.of(context).popUntil((route) => route.isFirst);
         _accountBloc.add(LogoutEventSubmit());
       },
-      child: Container(
-        alignment: Alignment.center,
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(10)),
-          color: Theme.of(context).cardColor,
-        ),
-        child: const Text(
-          'Đăng xuất',
-          style: TextStyle(
-            color: AppColor.RED_TEXT,
-            fontSize: 14,
+      child: Column(
+        children: [
+          Consumer<AuthProvider>(
+            builder: (context, provider, child) {
+              return Text(
+                  'Phiên bản ứng dụng: ${provider.packageInfo?.version ?? ''}');
+            },
           ),
-        ),
+          Container(
+            alignment: Alignment.center,
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(10)),
+              color: Theme.of(context).cardColor,
+            ),
+            child: const Text(
+              'Đăng xuất',
+              style: TextStyle(
+                color: AppColor.RED_TEXT,
+                fontSize: 14,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -221,10 +241,6 @@ class _BannerWidget extends StatelessWidget {
 }
 
 class _FeatureWidget extends StatelessWidget {
-  final String code;
-
-  _FeatureWidget({required this.code});
-
   final ImagePicker imagePicker = ImagePicker();
 
   void onTap(BuildContext context, int index) {
@@ -347,81 +363,82 @@ class _FeatureWidget extends StatelessWidget {
 }
 
 class _IntroduceWidget extends StatelessWidget {
-  final IntroduceDTO? dto;
-
-  const _IntroduceWidget({this.dto});
-
   @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(Radius.circular(10)),
-        color: Theme.of(context).cardColor,
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              const Text(
-                'Điểm thưởng : ',
-                style: TextStyle(
-                  color: AppColor.GREY_TEXT,
-                  fontSize: 14,
-                ),
-              ),
-              Text(
-                dto?.point ?? '0',
-                style: const TextStyle(fontSize: 16),
-              ),
-              Image.asset(
-                'assets/images/ic_point.png',
-                width: 20,
-                height: 20,
-              ),
-            ],
+    return Consumer<AuthProvider>(
+      builder: (context, provider, child) {
+        return Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(Radius.circular(10)),
+            color: Theme.of(context).cardColor,
           ),
-          const Divider(),
-          GestureDetector(
-            onTap: () async {
-              await DialogWidget.instance.showModelBottomSheet(
-                context: context,
-                padding: EdgeInsets.zero,
-                widget: IntroduceBottomSheet(introduceDTO: dto),
-                height: height * 0.6,
-              );
-            },
-            child: Row(
-              children: [
-                Image.asset(
-                  'assets/images/ic_share_code.png',
-                  width: 30,
-                  height: 30,
-                ),
-                const SizedBox(width: 8),
-                const Expanded(
-                  child: Text(
-                    'Giới thiệu VietQR VN',
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  const Text(
+                    'Điểm thưởng : ',
                     style: TextStyle(
+                      color: AppColor.GREY_TEXT,
                       fontSize: 14,
                     ),
                   ),
-                ),
-                Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(16)),
-                    color: AppColor.GREY_BG,
+                  Text(
+                    provider.introduceDTO?.point ?? '0',
+                    style: const TextStyle(fontSize: 16),
                   ),
-                  child: const Icon(Icons.arrow_forward_ios, size: 12),
-                )
-              ],
-            ),
+                  Image.asset(
+                    'assets/images/ic_point.png',
+                    width: 20,
+                    height: 20,
+                  ),
+                ],
+              ),
+              const Divider(),
+              GestureDetector(
+                onTap: () async {
+                  await DialogWidget.instance.showModelBottomSheet(
+                    context: context,
+                    padding: EdgeInsets.zero,
+                    widget: IntroduceBottomSheet(
+                        introduceDTO: provider.introduceDTO),
+                    height: height * 0.6,
+                  );
+                },
+                child: Row(
+                  children: [
+                    Image.asset(
+                      'assets/images/ic_share_code.png',
+                      width: 30,
+                      height: 30,
+                    ),
+                    const SizedBox(width: 8),
+                    const Expanded(
+                      child: Text(
+                        'Giới thiệu VietQR VN',
+                        style: TextStyle(
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(16)),
+                        color: AppColor.GREY_BG,
+                      ),
+                      child: const Icon(Icons.arrow_forward_ios, size: 12),
+                    )
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

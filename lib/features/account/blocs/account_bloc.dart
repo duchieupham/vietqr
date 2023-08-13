@@ -1,43 +1,25 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/commons/mixin/base_manager.dart';
 import 'package:vierqr/commons/utils/error_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/account/events/account_event.dart';
 import 'package:vierqr/features/account/repositories/account_res.dart';
 import 'package:vierqr/features/account/states/account_state.dart';
-import 'package:vierqr/features/logout/repositories/log_out_repository.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
-class AccountBloc extends Bloc<AccountEvent, AccountState> {
-  AccountBloc() : super(const AccountState()) {
-    on<InitAccountEvent>(_getPointAccount);
+class AccountBloc extends Bloc<AccountEvent, AccountState> with BaseManager {
+  @override
+  final BuildContext context;
+
+  AccountBloc(this.context) : super(const AccountState()) {
     on<LogoutEventSubmit>(_logOutSubmit);
     on<UpdateAvatarEvent>(_updateAvatar);
     on<GetUserInformation>(_getUserInformation);
     on<UpdateVoiceSetting>(_updateVoiceSetting);
-  }
-
-  final logoutRepository = const LogoutRepository();
-
-  void _getPointAccount(AccountEvent event, Emitter emit) async {
-    String userId = UserInformationHelper.instance.getUserId();
-    try {
-      emit(state.copyWith(status: BlocStatus.NONE, request: AccountType.NONE));
-      if (event is InitAccountEvent) {
-        final result = await accRepository.getPointAccount(userId);
-        await UserInformationHelper.instance.setWalletId(result.walletId!);
-        emit(state.copyWith(
-          introduceDTO: result,
-          status: BlocStatus.NONE,
-          request: AccountType.POINT,
-        ));
-      }
-    } catch (e) {
-      LOG.error('Error at _getPointAccount: $e');
-      emit(state.copyWith(msg: '', status: BlocStatus.ERROR));
-    }
   }
 
   void _logOutSubmit(AccountEvent event, Emitter emit) async {
@@ -45,7 +27,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
       if (event is LogoutEventSubmit) {
         emit(state.copyWith(
             status: BlocStatus.LOADING, request: AccountType.NONE));
-        bool check = await logoutRepository.logout();
+        bool check = await accRepository.logout();
         if (check) {
           emit(state.copyWith(
             status: BlocStatus.UNLOADING,

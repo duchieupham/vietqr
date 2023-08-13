@@ -7,24 +7,22 @@ import 'package:vierqr/models/business_member_dto.dart';
 class AddBusinessProvider with ChangeNotifier {
   bool _isInitial = false;
   final List<BusinessMemberDTO> _memberList = [];
+
+  List<BusinessMemberDTO> get memberList => _memberList;
+
   final List<BranchTextController> _branchTextControllers = [];
-  File? _imageFile;
+
   File? _coverImageFile;
 
   bool get isInitial => _isInitial;
-  List<BusinessMemberDTO> get memberList => _memberList;
+
   List<BranchTextController> get branchTextControllers =>
       _branchTextControllers;
-  File? get imageFile => _imageFile;
+
   File? get coverImageFile => _coverImageFile;
 
   void setInitial(bool value) {
     _isInitial = value;
-    notifyListeners();
-  }
-
-  void setImage(File? file) {
-    _imageFile = file;
     notifyListeners();
   }
 
@@ -33,8 +31,8 @@ class AddBusinessProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void addMemberList(BusinessMemberDTO dto) {
-    _memberList.add(dto);
+  void addMemberList(List<BusinessMemberDTO> dto) {
+    _memberList.addAll(dto);
     notifyListeners();
   }
 
@@ -57,7 +55,6 @@ class AddBusinessProvider with ChangeNotifier {
     _isInitial = false;
     _memberList.clear();
     _branchTextControllers.clear();
-    _imageFile = null;
     _coverImageFile = null;
   }
 

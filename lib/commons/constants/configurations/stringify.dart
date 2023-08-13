@@ -1,5 +1,7 @@
 // ignore_for_file: constant_identifier_names
 
+import 'package:vierqr/commons/utils/platform_utils.dart';
+
 class Stringify {
   //ROLE CARD MEMBER
   static const int CARD_TYPE_BUSINESS = 1;
@@ -27,4 +29,9 @@ class Stringify {
   static const String NOTI_TYPE_NEW_TRANSACTION = "N04";
   static const String NOTI_TYPE_UPDATE_TRANSACTION = "N05";
   static const String NOTI_TYPE_TOPUP = "N10";
+
+  //
+  static final String urlStore = PlatformUtils.instance.isAndroidApp()
+      ? 'https://play.google.com/store/apps/details?id=com.vietqr.product&hl=en_US&pli=1'
+      : 'https://apps.apple.com/vn/app/qr-vn/id1595737575?l=vi';
 }

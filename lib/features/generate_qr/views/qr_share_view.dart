@@ -9,7 +9,7 @@ import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
 import 'package:vierqr/commons/widgets/viet_qr.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
-import 'package:vierqr/services/providers/action_share_provider.dart';
+import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:vierqr/services/providers/water_mark_provider.dart';
 
 class QRShareView extends StatelessWidget {
@@ -21,12 +21,11 @@ class QRShareView extends StatelessWidget {
   void initialServices(
       BuildContext context, String action, QRGeneratedDTO dto) async {
     bool isShowShareSheet =
-        Provider.of<ActionShareProvider>(context, listen: false).showAction;
+        Provider.of<AuthProvider>(context, listen: false).showActionShare;
     if (action == 'SHARE') {
       if (!isShowShareSheet) {
         await Future.delayed(const Duration(milliseconds: 0), () {
-          Provider.of<ActionShareProvider>(context, listen: false)
-              .updateAction(true);
+          Provider.of<AuthProvider>(context, listen: false).updateAction(true);
         });
 
         _waterMarkProvider.updateWaterMark(true);
@@ -39,8 +38,7 @@ class QRShareView extends StatelessWidget {
     } else if (action == 'SAVE') {
       if (!isShowShareSheet) {
         await Future.delayed(const Duration(milliseconds: 0), () {
-          Provider.of<ActionShareProvider>(context, listen: false)
-              .updateAction(true);
+          Provider.of<AuthProvider>(context, listen: false).updateAction(true);
         });
         _waterMarkProvider.updateWaterMark(true);
         await Future.delayed(const Duration(milliseconds: 300), () async {

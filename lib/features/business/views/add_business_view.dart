@@ -25,21 +25,34 @@ import 'package:vierqr/models/branch_text_controller_dto.dart';
 import 'package:vierqr/models/business_information_insert_dto.dart';
 import 'package:vierqr/models/business_member_dto.dart';
 import 'package:vierqr/services/providers/add_business_provider.dart';
+import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class AddBusinessView extends StatelessWidget {
-  static final TextEditingController businessNameContorller =
-      TextEditingController();
-  static final TextEditingController addressController =
-      TextEditingController();
-  static final TextEditingController taxCodeController =
-      TextEditingController();
-  static final TextEditingController memberController = TextEditingController();
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (context) => AddBusinessProvider(),
+      child: _AddBusinessView(),
+    );
+  }
+}
 
-  static final ImagePicker imagePicker = ImagePicker();
-  static late BusinessInformationBloc businessInformationBloc;
+class _AddBusinessView extends StatefulWidget {
+  @override
+  State<_AddBusinessView> createState() => _AddBusinessViewState();
+}
 
-  const AddBusinessView({super.key});
+class _AddBusinessViewState extends State<_AddBusinessView> {
+  final businessNameController = TextEditingController();
+
+  final addressController = TextEditingController();
+
+  final taxCodeController = TextEditingController();
+
+  final imagePicker = ImagePicker();
+
+  late BusinessInformationBloc businessInformationBloc;
 
   void initialServices(BuildContext context) {
     if (!Provider.of<AddBusinessProvider>(context, listen: false).isInitial) {
@@ -64,7 +77,7 @@ class AddBusinessView extends StatelessWidget {
       );
       Future.delayed(const Duration(milliseconds: 0), () {
         Provider.of<AddBusinessProvider>(context, listen: false)
-            .addMemberList(memberDTO);
+            .addMemberList([memberDTO]);
         Provider.of<AddBusinessProvider>(context, listen: false)
             .setInitial(true);
       });
@@ -159,7 +172,7 @@ class AddBusinessView extends StatelessWidget {
                   Positioned(
                     bottom: 0,
                     left: width * 0.5 - 40,
-                    child: Consumer<AddBusinessProvider>(
+                    child: Consumer<AuthProvider>(
                       builder: (context, provider, child) {
                         return Container(
                           width: 80,
@@ -286,8 +299,7 @@ class AddBusinessView extends StatelessWidget {
                               File? file = File(pickedFile.path);
                               File? compressedFile =
                                   FileUtils.instance.compressImage(file);
-                              Provider.of<AddBusinessProvider>(context,
-                                      listen: false)
+                              Provider.of<AuthProvider>(context, listen: false)
                                   .setImage(compressedFile);
                             }
                           },
@@ -331,7 +343,7 @@ class AddBusinessView extends StatelessWidget {
                           title: 'Tên doanh nghiệp \u002A',
                           hintText: 'Nhập tên doanh nghiệp',
                           fontSize: 13,
-                          controller: businessNameContorller,
+                          controller: businessNameController,
                           inputType: TextInputType.text,
                           keyboardAction: TextInputAction.next,
                           onChange: (text) {},
@@ -382,17 +394,26 @@ class AddBusinessView extends StatelessWidget {
                         const Spacer(),
                         InkWell(
                           onTap: () async {
-                            await DialogWidget.instance.showModalBottomContent(
+                            final data = await DialogWidget.instance
+                                .showModalBottomContent(
+                              isDismissible: false,
                               widget: AddBusinessMemberWidget(
-                                memberController: memberController,
+                                list: Provider.of<AddBusinessProvider>(context,
+                                        listen: false)
+                                    .memberList,
                               ),
                               height: height * 0.4,
                             );
+                            if (data != null) {
+                              Provider.of<AddBusinessProvider>(context,
+                                      listen: false)
+                                  .addMemberList(data);
+                            }
                           },
                           child: const Text(
                             'Thêm thành viên',
                             style: TextStyle(
-                              color: AppColor.GREEN,
+                              color: AppColor.BLUE_TEXT,
                               decoration: TextDecoration.underline,
                             ),
                           ),
@@ -444,7 +465,7 @@ class AddBusinessView extends StatelessWidget {
                           child: const Text(
                             'Thêm chi nhánh',
                             style: TextStyle(
-                              color: AppColor.GREEN,
+                              color: AppColor.BLUE_TEXT,
                               decoration: TextDecoration.underline,
                             ),
                           ),
@@ -489,7 +510,7 @@ class AddBusinessView extends StatelessWidget {
                   List<MemberBusinessInsertDTO> members = [];
                   List<BranchBusinessInsertDTO> branchs = [];
                   File? image =
-                      Provider.of<AddBusinessProvider>(context, listen: false)
+                      Provider.of<AuthProvider>(context, listen: false)
                           .imageFile;
                   File? coverImage =
                       Provider.of<AddBusinessProvider>(context, listen: false)
@@ -523,7 +544,7 @@ class AddBusinessView extends StatelessWidget {
                   BusinessInformationInsertDTO dto =
                       BusinessInformationInsertDTO(
                     userId: userId,
-                    name: businessNameContorller.text,
+                    name: businessNameController.text,
                     address: addressController.text,
                     taxCode: taxCodeController.text,
                     image: image,
@@ -708,7 +729,7 @@ class AddBusinessView extends StatelessWidget {
     List<BranchTextController> branchList =
         Provider.of<AddBusinessProvider>(context, listen: false)
             .branchTextControllers;
-    if (businessNameContorller.text.isEmpty) {
+    if (businessNameController.text.isEmpty) {
       if (!isOpenDialog) {
         isOpenDialog = true;
         DialogWidget.instance.openMsgDialog(
@@ -772,9 +793,8 @@ class AddBusinessView extends StatelessWidget {
     Future.delayed(const Duration(milliseconds: 0), () {
       Provider.of<AddBusinessProvider>(context, listen: false).reset();
     });
-    businessNameContorller.clear();
+    businessNameController.clear();
     addressController.clear();
     taxCodeController.clear();
-    memberController.clear();
   }
 }

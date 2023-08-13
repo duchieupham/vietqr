@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/user_repository.dart';
-import 'package:vierqr/services/providers/theme_provider.dart';
+import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 ///1. quản lý view chung mà 80% các màn dùng: appbar, dialog confirm, button...
@@ -24,7 +25,10 @@ mixin BaseManager {
   String get userId => UserInformationHelper.instance.getUserId();
 
   int get getTypeBankArr =>
-      Provider.of<ThemeProvider>(context, listen: false).typeBankArr;
+      Provider.of<AuthProvider>(context, listen: false).typeBankArr;
+
+  PackageInfo? get packageInfo =>
+      Provider.of<AuthProvider>(context, listen: false).packageInfo;
 }
 
 class AlwaysDisabledFocusNode extends FocusNode {

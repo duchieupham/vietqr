@@ -1,7 +1,8 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
+import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
@@ -11,8 +12,7 @@ import 'package:vierqr/features/home/widget/service_section.dart';
 
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/services/providers/account_balance_home_provider.dart';
-
-import 'blocs/home_bloc.dart';
+import 'package:vierqr/services/providers/auth_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -26,7 +26,6 @@ class _HomeScreen extends State<HomeScreen> {
   final FocusNode focusNode = FocusNode();
 
   //blocs
-  late HomeBloc _homeBloc;
 
   NationalScannerDTO? identityDTO;
 
@@ -37,7 +36,6 @@ class _HomeScreen extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _homeBloc = BlocProvider.of(context);
   }
 
   void startBarcodeScanStream() async {
@@ -71,25 +69,77 @@ class _HomeScreen extends State<HomeScreen> {
         onRefresh: () async {
           eventBus.fire(ReloadWallet());
         },
-        child: SizedBox(
-          width: width,
-          height: height,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: ListView(
-              children: [
-                CardWallet(
-                  startBarcodeScanStream: () {
-                    startBarcodeScanStream();
-                  },
+        child: Stack(
+          children: [
+            SizedBox(
+              width: width,
+              height: height,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: ListView(
+                  children: [
+                    CardWallet(
+                      startBarcodeScanStream: () {
+                        startBarcodeScanStream();
+                      },
+                    ),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    const ServiceSection()
+                  ],
                 ),
-                const SizedBox(
-                  height: 30,
-                ),
-                const ServiceSection()
-              ],
+              ),
             ),
-          ),
+            Consumer<AuthProvider>(
+              builder: (context, provider, child) {
+                if (provider.isUpdateVersion) {
+                  return Positioned(
+                    bottom: 24,
+                    right: 10,
+                    child: SizedBox(
+                      width: 100,
+                      height: 105,
+                      child: Stack(
+                        children: [
+                          GestureDetector(
+                            onTap: () async {
+                              Uri uri = Uri.parse(Stringify.urlStore);
+                              if (!await launchUrl(uri,
+                                  mode: LaunchMode.externalApplication)) {}
+                            },
+                            child: Positioned(
+                              bottom: 0,
+                              child: Image.asset(
+                                'assets/images/banner-update.png',
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            right: 0,
+                            top: 0,
+                            child: GestureDetector(
+                              onTap: provider.onClose,
+                              child: Image.asset(
+                                'assets/images/ic-close-banner.png',
+                                width: 24,
+                                height: 24,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                }
+                return SizedBox.shrink();
+              },
+            )
+          ],
         ),
       ),
     );

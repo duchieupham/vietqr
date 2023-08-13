@@ -95,6 +95,7 @@ dependencies:
   connectivity_plus: ^4.0.2
   photo_gallery: ^2.0.0
   just_audio: ^0.9.32
+  package_info_plus:
 #  audioplayers: ^4.1.0
 dependency_overrides:
   image: ^3.0.2

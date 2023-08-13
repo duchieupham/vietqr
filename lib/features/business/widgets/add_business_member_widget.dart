@@ -14,27 +14,41 @@ import 'package:vierqr/models/business_member_dto.dart';
 import 'package:vierqr/services/providers/add_business_provider.dart';
 import 'package:vierqr/services/providers/search_clear_provider.dart';
 
-class AddBusinessMemberWidget extends StatelessWidget {
-  final TextEditingController memberController;
+class AddBusinessMemberWidget extends StatefulWidget {
+  final List<BusinessMemberDTO> list;
+
+  AddBusinessMemberWidget({super.key, required this.list});
+
+  @override
+  State<AddBusinessMemberWidget> createState() =>
+      _AddBusinessMemberWidgetState();
+}
+
+class _AddBusinessMemberWidgetState extends State<AddBusinessMemberWidget> {
+  final searchClearProvider = SearchClearProvider(false);
+  final memberController = TextEditingController();
+  List<BusinessMemberDTO> list = [];
 
   static late BusinessMemberBloc businessMemberBloc;
 
-  static final SearchClearProvider searchClearProvider =
-      SearchClearProvider(false);
-
-  const AddBusinessMemberWidget({
-    super.key,
-    required this.memberController,
-  });
-
   void initialServices(BuildContext context) {
     businessMemberBloc = BlocProvider.of(context);
+    if (widget.list.isNotEmpty) {
+      setState(() {
+        list = widget.list;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initialServices(context);
   }
 
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
-    initialServices(context);
     return SizedBox(
       width: width,
       child: Column(
@@ -64,7 +78,7 @@ class AddBusinessMemberWidget extends StatelessWidget {
                 InkWell(
                   onTap: () {
                     reset(context);
-                    Navigator.pop(context);
+                    Navigator.pop(context, list);
                   },
                   child: Container(
                     width: 80,
@@ -200,12 +214,18 @@ class AddBusinessMemberWidget extends StatelessWidget {
     );
   }
 
+  bool isExistedMember(String userId) {
+    bool result = false;
+    if (list.where((element) => element.userId == userId).isNotEmpty) {
+      result = true;
+    }
+    return result;
+  }
+
   Widget _buildSearchItem(
       {required BuildContext context, required BusinessMemberDTO dto}) {
     final double width = MediaQuery.of(context).size.width;
-    final bool isExistedMember =
-        Provider.of<AddBusinessProvider>(context, listen: false)
-            .isExistedMember(dto.userId);
+    final bool isExisted = isExistedMember(dto.userId);
     return Container(
       width: width,
       margin: const EdgeInsets.symmetric(vertical: 10),
@@ -239,7 +259,7 @@ class AddBusinessMemberWidget extends StatelessWidget {
               ],
             ),
           ),
-          (isExistedMember)
+          (isExisted)
               ? Container(
                   padding:
                       const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
@@ -271,16 +291,16 @@ class AddBusinessMemberWidget extends StatelessWidget {
                       status: dto.status,
                       existed: 0,
                     );
-                    Provider.of<AddBusinessProvider>(context, listen: false)
-                        .addMemberList(result);
-                    reset(context);
+                    setState(() {
+                      list.add(result);
+                    });
                   },
                   child: Container(
                     padding:
                         const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
-                      color: AppColor.GREEN,
+                      color: AppColor.BLUE_TEXT,
                     ),
                     child: Row(children: const [
                       Icon(

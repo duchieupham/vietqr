@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/models/bottom_nav_dto.dart';
 
-class PageSelectProvider with ChangeNotifier {
+class DashBoardProvider with ChangeNotifier {
   int _indexSelected = 0;
   int _notificationCount = 0;
 

@@ -74,3 +74,23 @@ class DashBoardEventInsertUnauthenticated extends DashBoardEvent {
 }
 
 class UpdateEvent extends DashBoardEvent {}
+
+class GetPointEvent extends DashBoardEvent {}
+
+class GetVersionAppEvent extends DashBoardEvent {}
+
+class TokenEventCheckValid extends DashBoardEvent {
+  const TokenEventCheckValid();
+
+  @override
+  List<Object?> get props => [];
+}
+
+class TokenFcmUpdateEvent extends DashBoardEvent {
+  const TokenFcmUpdateEvent();
+
+  @override
+  List<Object?> get props => [];
+}
+
+class TokenEventLogout extends DashBoardEvent {}

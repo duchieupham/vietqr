@@ -24,19 +24,24 @@ import 'package:vierqr/models/business_item_dto.dart';
 import 'package:vierqr/models/related_transaction_receive_dto.dart';
 import 'package:vierqr/services/providers/dashboard_provider.dart';
 
-class BusinessScreen extends StatefulWidget {
-  final AsyncCallback? voidCallback;
-
-  const BusinessScreen({
-    Key? key,
-    this.voidCallback,
-  }) : super(key: key);
+class BusinessScreen extends StatelessWidget {
+  const BusinessScreen({Key? key}) : super(key: key);
 
   @override
-  State<BusinessScreen> createState() => _BusinessScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider<BusinessBloc>(
+      create: (BuildContext context) => BusinessBloc(context),
+      child: _BusinessScreen(),
+    );
+  }
 }
 
-class _BusinessScreenState extends State<BusinessScreen>
+class _BusinessScreen extends StatefulWidget {
+  @override
+  State<_BusinessScreen> createState() => _BusinessScreenState();
+}
+
+class _BusinessScreenState extends State<_BusinessScreen>
     with AutomaticKeepAliveClientMixin {
   late BusinessBloc _businessBloc;
   final carouselController = CarouselController();

@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+
 // import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
@@ -20,9 +21,6 @@ import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/viet_qr_widget.dart';
-import 'package:vierqr/features/account/blocs/account_bloc.dart';
-import 'package:vierqr/features/account/events/account_event.dart';
-import 'package:vierqr/features/account/states/account_state.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
@@ -38,6 +36,7 @@ import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/qr_create_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
+import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:vierqr/services/providers/bank_card_select_provider.dart';
 import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
@@ -49,7 +48,10 @@ class BankScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<BankBloc>(
       create: (BuildContext context) => BankBloc(context),
-      child: const _BankScreen(),
+      child: ChangeNotifierProvider(
+        create: (context) => BankCardSelectProvider(),
+        child: const _BankScreen(),
+      ),
     );
   }
 }
@@ -69,7 +71,6 @@ class _BankScreenState extends State<_BankScreen>
 
   late BusinessInformationBloc businessInformationBloc;
   late BankBloc _bloc;
-  late AccountBloc _accountBloc;
 
   String userId = UserInformationHelper.instance.getUserId();
 
@@ -78,11 +79,13 @@ class _BankScreenState extends State<_BankScreen>
   initialServices(BuildContext context) {
     businessInformationBloc = BlocProvider.of(context);
     _bloc = BlocProvider.of(context);
-    _accountBloc = BlocProvider.of(context);
     Provider.of<BankCardSelectProvider>(context, listen: false).reset();
   }
 
-  initData() {
+  initData({bool isRefresh = false}) {
+    if (isRefresh) {
+      context.read<DashBoardBloc>().add(GetPointEvent());
+    }
     _bloc.add(BankCardEventGetList());
     _bloc.add(LoadDataBankEvent());
   }
@@ -102,37 +105,13 @@ class _BankScreenState extends State<_BankScreen>
 
   Future<void> _refresh() async {
     initData();
-    _accountBloc.add(InitAccountEvent());
-    // refreshController.refreshCompleted();
-  }
-
-  void onLoading() async {
-    // refreshController.loadComplete();
   }
 
   List<BankAccountDTO> fillListBankAccount(List<BankAccountDTO> list) {
-    // if (list.isNotEmpty) {
-    //   if (list.length > 3) {
-    //     return [
-    //       list[0],
-    //       list[1],
-    //       list[2],
-    //     ];
-    //   }
-    // }
     return list;
   }
 
   List<Color> fillListListColor(List<Color> list) {
-    // if (list.isNotEmpty) {
-    //   if (list.length > 3) {
-    //     return [
-    //       list[0],
-    //       list[1],
-    //       list[2],
-    //     ];
-    //   }
-    // }
     return list;
   }
 
@@ -163,17 +142,6 @@ class _BankScreenState extends State<_BankScreen>
                   'Sử dụng tạo mã QR, đối soát giao dịch',
                   style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
                 ),
-                // GestureDetector(
-                //   onTap: () {},
-                //   child: const Text(
-                //     'Tất cả',
-                //     style: TextStyle(
-                //       decoration: TextDecoration.underline,
-                //       fontSize: 13,
-                //       color: AppColor.BLUE_TEXT,
-                //     ),
-                //   ),
-                // ),
               ],
             ),
           ),
@@ -239,10 +207,6 @@ class _BankScreenState extends State<_BankScreen>
                     ),
                   );
                 }
-                Provider.of<BankCardSelectProvider>(context, listen: false)
-                    .updateBanks(state.listBanks);
-                Provider.of<BankCardSelectProvider>(context, listen: false)
-                    .updateColors(state.colors);
                 return buildList(
                   maxListHeight,
                   state.listBanks,
@@ -503,23 +467,13 @@ class StackedList extends StatefulWidget {
 }
 
 class _StackedList extends State<StackedList> {
-  // final refreshController = RefreshController(initialRefresh: false);
-
-  late AccountBloc _accountBloc;
-  StreamSubscription? _subscription;
-
   _StackedList();
 
   @override
   void initState() {
     super.initState();
+    // _accountBloc.add(GetUserInformation());
 
-    _accountBloc = BlocProvider.of(context);
-    _accountBloc.add(InitAccountEvent());
-    _accountBloc.add(GetUserInformation());
-    _subscription = eventBus.on<ReloadWallet>().listen((_) {
-      _accountBloc.add(InitAccountEvent());
-    });
     handleMessageOnBackground();
   }
 
@@ -581,13 +535,6 @@ class _StackedList extends State<StackedList> {
     listBankAccount = [otd, ...listBank, otd2];
 
     return listBankAccount;
-  }
-
-  @override
-  void dispose() {
-    _subscription?.cancel();
-    _subscription = null;
-    super.dispose();
   }
 
   @override
@@ -885,50 +832,40 @@ class _StackedList extends State<StackedList> {
                             AssetImage('assets/images/ic-viet-qr-small.png'))),
               ),
               const Padding(padding: EdgeInsets.only(left: 10)),
-              BlocConsumer<AccountBloc, AccountState>(
-                listener: (context, state) {},
-                builder: (context, state) {
-                  if (state.request == AccountType.POINT) {
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Padding(padding: EdgeInsets.only(top: 5)),
-                        const Text(
-                          'VietQR',
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              fontSize: 15,
+              Consumer<AuthProvider>(
+                builder: (context, provider, child) {
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Padding(padding: EdgeInsets.only(top: 5)),
+                      const Text(
+                        'VietQR',
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            fontSize: 15,
+                            color: AppColor.WHITE,
+                            fontWeight: FontWeight.w600),
+                      ),
+                      Row(
+                        children: [
+                          Text(
+                            'Số dư : ${CurrencyUtils.instance.getCurrencyFormatted(provider.introduceDTO?.amount ?? '0')} VQR - Điểm thưởng: ${provider.introduceDTO?.point ?? '0'} ',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
                               color: AppColor.WHITE,
-                              fontWeight: FontWeight.w600),
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              'Số dư : ${CurrencyUtils.instance.getCurrencyFormatted(state.introduceDTO?.amount ?? '0')} VQR - Điểm thưởng: ${state.introduceDTO?.point ?? '0'} ',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                color: AppColor.WHITE,
-                                fontSize: 13,
-                              ),
+                              fontSize: 13,
                             ),
-                            Image.asset(
-                              'assets/images/ic_point.png',
-                              height: 16,
-                              color: AppColor.WHITE,
-                            )
-                          ],
-                        ),
-                      ],
-                    );
-                  }
-                  return const SizedBox(
-                    width: 30,
-                    height: 30,
-                    child: CircularProgressIndicator(
-                      color: AppColor.BLUE_TEXT,
-                    ),
+                          ),
+                          Image.asset(
+                            'assets/images/ic_point.png',
+                            height: 16,
+                            color: AppColor.WHITE,
+                          )
+                        ],
+                      ),
+                    ],
                   );
                 },
               ),
@@ -952,7 +889,7 @@ class _StackedList extends State<StackedList> {
 
   Future<void> _pickAndProcessQRImage() async {
     final imagePicker = ImagePicker();
-    final pickedFile = await imagePicker.getImage(source: ImageSource.gallery);
+    final pickedFile = await imagePicker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
       // Gửi ảnh được chọn xuống native để xử lý
