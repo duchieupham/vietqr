@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
+import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/events.dart';
@@ -48,7 +50,10 @@ class DashBoardScreen extends StatefulWidget {
 }
 
 class _DashBoardScreen extends State<DashBoardScreen>
-    with WidgetsBindingObserver, AutomaticKeepAliveClientMixin {
+    with
+        WidgetsBindingObserver,
+        AutomaticKeepAliveClientMixin,
+        SingleTickerProviderStateMixin {
   //page controller
   late PageController _pageController;
   StreamSubscription? _subscription;
@@ -70,8 +75,11 @@ class _DashBoardScreen extends State<DashBoardScreen>
   NationalScannerDTO? identityDTO;
 
   //providers
-  final AccountBalanceHomeProvider accountBalanceHomeProvider =
-      AccountBalanceHomeProvider('');
+  final accountBalanceHomeProvider = AccountBalanceHomeProvider('');
+
+  late AnimationController _animationController;
+  late Animation<double> animation;
+  late CurvedAnimation curve;
 
   @override
   void initState() {
@@ -104,7 +112,34 @@ class _DashBoardScreen extends State<DashBoardScreen>
     _subReloadWallet = eventBus.on<ReloadWallet>().listen((_) {
       _dashBoardBloc.add(GetPointEvent());
     });
+
+    // init();
   }
+
+  // init() {
+  //   if (!mounted) {
+  //     return;
+  //   }
+  //   _animationController = AnimationController(
+  //     duration: const Duration(seconds: 1),
+  //     vsync: this,
+  //   );
+  //   curve = CurvedAnimation(
+  //     parent: _animationController,
+  //     curve: const Interval(
+  //       0.5,
+  //       1.0,
+  //       curve: Curves.fastOutSlowIn,
+  //     ),
+  //   );
+  //   animation = Tween<double>(
+  //     begin: 0,
+  //     end: 1,
+  //   ).animate(curve);
+  //   WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+  //     _animationController.forward();
+  //   });
+  // }
 
   void startBarcodeScanStream() async {
     final data = await Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
@@ -159,6 +194,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
     _subscription = null;
     _subReloadWallet?.cancel();
     _subReloadWallet = null;
+    _animationController.dispose();
     super.dispose();
   }
 
@@ -371,6 +407,54 @@ class _DashBoardScreen extends State<DashBoardScreen>
                 ),
               ],
             ),
+            Consumer<AuthProvider>(
+              builder: (context, provider, child) {
+                if (provider.isUpdateVersion) {
+                  return Positioned(
+                    bottom: 24,
+                    right: 10,
+                    child: SizedBox(
+                      width: 100,
+                      height: 105,
+                      child: Stack(
+                        children: [
+                          Positioned(
+                            bottom: 0,
+                            child: GestureDetector(
+                              onTap: () async {
+                                Uri uri = Uri.parse(Stringify.urlStore);
+                                if (!await launchUrl(uri,
+                                    mode: LaunchMode.externalApplication)) {}
+                              },
+                              child: Image.asset(
+                                'assets/images/banner-update.png',
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            right: 0,
+                            top: 0,
+                            child: GestureDetector(
+                              onTap: provider.onClose,
+                              child: Image.asset(
+                                'assets/images/ic-close-banner.png',
+                                width: 24,
+                                height: 24,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                }
+                return SizedBox.shrink();
+              },
+            )
           ],
         ),
         bottomNavigationBar: Consumer<DashBoardProvider>(

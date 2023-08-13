@@ -69,77 +69,25 @@ class _HomeScreen extends State<HomeScreen> {
         onRefresh: () async {
           eventBus.fire(ReloadWallet());
         },
-        child: Stack(
-          children: [
-            SizedBox(
-              width: width,
-              height: height,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: ListView(
-                  children: [
-                    CardWallet(
-                      startBarcodeScanStream: () {
-                        startBarcodeScanStream();
-                      },
-                    ),
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    const ServiceSection()
-                  ],
+        child: SizedBox(
+          width: width,
+          height: height,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: ListView(
+              children: [
+                CardWallet(
+                  startBarcodeScanStream: () {
+                    startBarcodeScanStream();
+                  },
                 ),
-              ),
+                const SizedBox(
+                  height: 30,
+                ),
+                const ServiceSection()
+              ],
             ),
-            Consumer<AuthProvider>(
-              builder: (context, provider, child) {
-                if (provider.isUpdateVersion) {
-                  return Positioned(
-                    bottom: 24,
-                    right: 10,
-                    child: SizedBox(
-                      width: 100,
-                      height: 105,
-                      child: Stack(
-                        children: [
-                          GestureDetector(
-                            onTap: () async {
-                              Uri uri = Uri.parse(Stringify.urlStore);
-                              if (!await launchUrl(uri,
-                                  mode: LaunchMode.externalApplication)) {}
-                            },
-                            child: Positioned(
-                              bottom: 0,
-                              child: Image.asset(
-                                'assets/images/banner-update.png',
-                                width: 100,
-                                height: 100,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            right: 0,
-                            top: 0,
-                            child: GestureDetector(
-                              onTap: provider.onClose,
-                              child: Image.asset(
-                                'assets/images/ic-close-banner.png',
-                                width: 24,
-                                height: 24,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  );
-                }
-                return SizedBox.shrink();
-              },
-            )
-          ],
+          ),
         ),
       ),
     );

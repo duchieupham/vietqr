@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
+import 'package:vierqr/commons/utils/log.dart';
+import 'package:vierqr/features/account/blocs/account_bloc.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
@@ -10,13 +12,31 @@ import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/services/providers/setting_bdsd_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
-import '../account/blocs/account_bloc.dart';
-import '../account/events/account_event.dart';
-import '../account/states/account_state.dart';
 import '../bank_card/states/bank_state.dart';
 
-class SettingBDSD extends StatelessWidget {
+class SettingBDSD extends StatefulWidget {
   const SettingBDSD({Key? key}) : super(key: key);
+
+  @override
+  State<SettingBDSD> createState() => _SettingBDSDState();
+}
+
+class _SettingBDSDState extends State<SettingBDSD> {
+  void _updateVoiceSetting(param) async {
+    String userId = UserInformationHelper.instance.getUserId();
+    try {
+      bool updateStatus = await accRepository.updateVoiceSetting(param);
+      if (updateStatus) {
+        final settingAccount = await accRepository.getSettingAccount(userId);
+        if (settingAccount.userId.isNotEmpty) {
+          await UserInformationHelper.instance
+              .setAccountSetting(settingAccount);
+        }
+      }
+    } catch (e) {
+      LOG.error('Error at _getPointAccount: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,107 +44,104 @@ class SettingBDSD extends StatelessWidget {
       appBar: const MAppBar(title: 'Nhận BĐSD'),
       body: ChangeNotifierProvider(
         create: (context) => SettingBDSDProvider(),
-        child: BlocConsumer<AccountBloc, AccountState>(
-            listener: (context, state) {},
-            builder: (context, state) {
-              return Consumer<SettingBDSDProvider>(
-                  builder: (context, provider, child) {
-                return ListView(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-                  children: [
-                    Text(
-                      'Cài đặt giọng nói',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    _buildBgItem(
-                        customPadding:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                'Giọng nói được kích hoạt khi nhận thông báo Biến động số dư trong ứng dụng VietQR',
-                                style: TextStyle(fontSize: 12),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 8,
-                            ),
-                            Text(
-                              provider.enableVoice ? 'Bật' : 'Tắt',
-                              style: TextStyle(
-                                  fontSize: 12, color: AppColor.GREY_TEXT),
-                            ),
-                            Switch(
-                              value: provider.enableVoice,
-                              activeColor: AppColor.BLUE_TEXT,
-                              onChanged: (bool value) {
-                                provider.updateOpenVoice(value);
-                                Map<String, dynamic> param = {};
-                                param['userId'] =
-                                    UserInformationHelper.instance.getUserId();
-                                param['value'] = value ? 1 : 0;
-                                param['type'] = 0;
-                                BlocProvider.of<AccountBloc>(context)
-                                    .add(UpdateVoiceSetting(param: param));
-                              },
-                            ),
-                          ],
-                        )),
-                    _buildBgNote(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            '- Giọng nói thông báo biến động số dư hoạt động khi bạn đang sử dụng ứng dụng.',
-                            style: TextStyle(fontSize: 11),
-                          ),
-                          Text(
-                            '- Các trường hợp chạy nền, tắt ứng dụng thì giọng nói sẽ không hoạt động.',
-                            style: TextStyle(fontSize: 11),
-                          ),
-                          Text(
-                            '- Âm lượng thiết bị của bạn phải luôn bật.',
-                            style: TextStyle(fontSize: 11),
-                          )
-                        ],
+        child: Consumer<SettingBDSDProvider>(
+          builder: (context, provider, child) {
+            return ListView(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+              children: [
+                Text(
+                  'Cài đặt giọng nói',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                _buildBgItem(
+                  customPadding:
+                      EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Giọng nói được kích hoạt khi nhận thông báo Biến động số dư trong ứng dụng VietQR',
+                          style: TextStyle(fontSize: 12),
+                        ),
                       ),
-                    ),
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    // Text(
-                    //   'Danh sách tài khoản nhận biến động số dư',
-                    //   style: TextStyle(fontWeight: FontWeight.bold),
-                    // ),
-                    // _buildListBank(context, provider),
-                    // _buildBgNote(
-                    //   child: Column(
-                    //     crossAxisAlignment: CrossAxisAlignment.start,
-                    //     mainAxisSize: MainAxisSize.min,
-                    //     children: [
-                    //       Text(
-                    //         '- Biến động số dư được bật khi bạn cho phép tính năng này hoạt động.',
-                    //         style: TextStyle(fontSize: 11),
-                    //       ),
-                    //       const SizedBox(
-                    //         height: 8,
-                    //       ),
-                    //       Text(
-                    //         '- Danh sách tài khoản ngân hàng khả dụng để nhận biến động số dư là các tài khoản ngân hàng đã được liên kết với hệ thống VietQR VN.',
-                    //         style: TextStyle(fontSize: 11),
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
-                    // const SizedBox(
-                    //   height: 40,
-                    // ),
-                  ],
-                );
-              });
-            }),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      Text(
+                        provider.enableVoice ? 'Bật' : 'Tắt',
+                        style:
+                            TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
+                      ),
+                      Switch(
+                        value: provider.enableVoice,
+                        activeColor: AppColor.BLUE_TEXT,
+                        onChanged: (bool value) {
+                          provider.updateOpenVoice(value);
+                          Map<String, dynamic> param = {};
+                          param['userId'] =
+                              UserInformationHelper.instance.getUserId();
+                          param['value'] = value ? 1 : 0;
+                          param['type'] = 0;
+                          _updateVoiceSetting(param);
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                _buildBgNote(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '- Giọng nói thông báo biến động số dư hoạt động khi bạn đang sử dụng ứng dụng.',
+                        style: TextStyle(fontSize: 11),
+                      ),
+                      Text(
+                        '- Các trường hợp chạy nền, tắt ứng dụng thì giọng nói sẽ không hoạt động.',
+                        style: TextStyle(fontSize: 11),
+                      ),
+                      Text(
+                        '- Âm lượng thiết bị của bạn phải luôn bật.',
+                        style: TextStyle(fontSize: 11),
+                      )
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                // Text(
+                //   'Danh sách tài khoản nhận biến động số dư',
+                //   style: TextStyle(fontWeight: FontWeight.bold),
+                // ),
+                // _buildListBank(context, provider),
+                // _buildBgNote(
+                //   child: Column(
+                //     crossAxisAlignment: CrossAxisAlignment.start,
+                //     mainAxisSize: MainAxisSize.min,
+                //     children: [
+                //       Text(
+                //         '- Biến động số dư được bật khi bạn cho phép tính năng này hoạt động.',
+                //         style: TextStyle(fontSize: 11),
+                //       ),
+                //       const SizedBox(
+                //         height: 8,
+                //       ),
+                //       Text(
+                //         '- Danh sách tài khoản ngân hàng khả dụng để nhận biến động số dư là các tài khoản ngân hàng đã được liên kết với hệ thống VietQR VN.',
+                //         style: TextStyle(fontSize: 11),
+                //       ),
+                //     ],
+                //   ),
+                // ),
+                // const SizedBox(
+                //   height: 40,
+                // ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
