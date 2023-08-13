@@ -376,10 +376,12 @@ class DialogWidget {
     required double height,
     double radius = 15,
     EdgeInsetsGeometry? padding,
+    bool isDismissible = true,
   }) async {
     context ??= NavigationService.navigatorKey.currentContext!;
     return await showModalBottomSheet(
         isScrollControlled: true,
+        isDismissible: isDismissible,
         enableDrag: false,
         context: context,
         backgroundColor: AppColor.TRANSPARENT,

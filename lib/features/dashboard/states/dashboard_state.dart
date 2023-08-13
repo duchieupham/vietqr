@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/bank_name_information_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/introduce_dto.dart';
@@ -20,6 +21,7 @@ class DashBoardState extends Equatable {
   final BankNameInformationDTO? informationDTO;
   final TypeContact typeContact;
   final IntroduceDTO? introduceDTO;
+  final AppInfoDTO? appInfoDTO;
   final TokenType typeToken;
 
   const DashBoardState({
@@ -37,6 +39,7 @@ class DashBoardState extends Equatable {
     this.informationDTO,
     this.typeContact = TypeContact.NONE,
     this.introduceDTO,
+    this.appInfoDTO,
     this.typeToken = TokenType.NONE,
   });
 
@@ -56,6 +59,7 @@ class DashBoardState extends Equatable {
     TypeContact? typeContact,
     IntroduceDTO? introduceDTO,
     TokenType? typeToken,
+    AppInfoDTO? appInfoDTO,
   }) {
     return DashBoardState(
       status: status ?? this.status,
@@ -72,6 +76,7 @@ class DashBoardState extends Equatable {
       informationDTO: informationDTO ?? this.informationDTO,
       typeContact: typeContact ?? this.typeContact,
       introduceDTO: introduceDTO ?? this.introduceDTO,
+      appInfoDTO: appInfoDTO ?? this.appInfoDTO,
       typeToken: typeToken ?? this.typeToken,
     );
   }

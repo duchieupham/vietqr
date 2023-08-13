@@ -1,32 +1,97 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:palette_generator/palette_generator.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
-import 'package:vierqr/commons/widgets/sub_header_widget.dart';
+import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/widgets/textfield_widget.dart';
 import 'package:vierqr/features/bank_detail/bank_card_detail_screen.dart';
+import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
+import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
-import 'package:vierqr/services/providers/bank_card_select_provider.dart';
 import 'package:vierqr/services/providers/search_clear_provider.dart';
+import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
-class SearchBankView extends StatelessWidget {
-  static final SearchClearProvider _searchClearProvider =
-      SearchClearProvider(false);
-
-  final TextEditingController searchController = TextEditingController();
-
-  static final _formKey = GlobalKey<FormState>();
-
+class SearchBankView extends StatefulWidget {
   SearchBankView({super.key});
+
+  @override
+  State<SearchBankView> createState() => _SearchBankViewState();
+}
+
+class _SearchBankViewState extends State<SearchBankView> {
+  final _searchClearProvider = SearchClearProvider(false);
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController searchController = TextEditingController();
+  List<BankAccountDTO> banks = [];
+  List<BankAccountDTO> searchBanks = [];
+  List<Color> listColors = [];
+  List<Color> searchColors = [];
+  String msg = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _getBankAccounts();
+  }
+
+  void _getBankAccounts() async {
+    String userId = UserInformationHelper.instance.getUserId();
+
+    try {
+      List<BankAccountDTO> list =
+          await bankCardRepository.getListBankAccount(userId);
+      final List<Color> colors = [];
+      PaletteGenerator? paletteGenerator;
+      BuildContext context = NavigationService.navigatorKey.currentContext!;
+      if (list.isNotEmpty) {
+        List<BankAccountDTO> listLinked =
+            list.where((e) => e.isAuthenticated).toList();
+        List<BankAccountDTO> listNotLinked =
+            list.where((e) => !e.isAuthenticated).toList();
+
+        list = [...listLinked, ...listNotLinked];
+
+        for (BankAccountDTO dto in list) {
+          NetworkImage image = ImageUtils.instance.getImageNetWork(dto.imgId);
+          paletteGenerator = await PaletteGenerator.fromImageProvider(image);
+          if (paletteGenerator.dominantColor != null) {
+            colors.add(paletteGenerator.dominantColor!.color);
+          } else {
+            if (!mounted) return;
+            colors.add(Theme.of(context).cardColor);
+          }
+        }
+      }
+      setState(() {
+        banks = list;
+        listColors = colors;
+      });
+    } catch (e) {
+      LOG.error(e.toString());
+      setState(() {
+        msg = 'Không thể tải danh sách. Vui lòng kiểm tra lại kết nối';
+      });
+    }
+  }
+
+  void updateSearchColors(List<Color> value) {
+    setState(() {
+      searchColors = value;
+    });
+  }
+
+  void updateSearchBanks(List<BankAccountDTO> value) {
+    setState(() {
+      searchBanks = value;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
-    final bankCardProvider =
-        Provider.of<BankCardSelectProvider>(context, listen: false);
     return Scaffold(
       appBar: MAppBar(
         title: 'Tìm kiếm TK ngân hàng',
@@ -45,120 +110,109 @@ class SearchBankView extends StatelessWidget {
       body: Column(
         children: [
           Expanded(
-            child: Consumer<BankCardSelectProvider>(
-              builder: (context, provider, child) {
-                if (provider.banks.isEmpty) {
-                  return Center(
+            child: (banks.isEmpty)
+                ? Center(
                     child: Text(
                       'Chưa có tài khoản ngân hàng nào được thêm',
                       style: TextStyle(fontSize: 16),
                     ),
-                  );
-                } else {
-                  return (searchController.text.isNotEmpty)
-                      ? Column(
-                          children: [
-                            const Padding(padding: EdgeInsets.only(top: 10)),
-                            Expanded(
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: provider.searchBanks.length,
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 20),
-                                itemBuilder: (context, index) {
-                                  return _buildCardItem(
-                                    context: context,
-                                    index: index,
-                                    dto: provider.searchBanks[index],
-                                    color: provider.searchColors[index],
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
-                        )
-                      : Column(
-                          children: [
-                            const Padding(padding: EdgeInsets.only(top: 10)),
-                            Expanded(
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                itemCount: provider.banks.length,
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 20),
-                                itemBuilder: (context, index) {
-                                  return _buildCardItem(
-                                    context: context,
-                                    index: index,
-                                    dto: provider.banks[index],
-                                    color: provider.colors[index],
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
-                        );
-                }
-              },
-            ),
-          ),
-          const Padding(padding: EdgeInsets.only(top: 20)),
-          Consumer<BankCardSelectProvider>(
-            builder: (context, provider, child) {
-              return BoxLayout(
-                width: width - 40,
-                borderRadius: 50,
-                alignment: Alignment.center,
-                bgColor: Theme.of(context).cardColor,
-                // margin: const EdgeInsets.symmetric(horizontal: 20),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.search_rounded,
-                      size: 15,
-                      color: Theme.of(context).hintColor,
-                    ),
-                    Expanded(
-                      child: Form(
-                        key: _formKey,
-                        child: TextFieldWidget(
-                          width: width,
-                          hintText: 'Nhập để tìm kiếm',
-                          controller: searchController,
-                          keyboardAction: TextInputAction.done,
-                          autoFocus: provider.banks.isNotEmpty,
-                          onChange: (value) {
-                            search(bankCardProvider);
-                          },
-                          inputType: TextInputType.text,
-                          isObscureText: false,
-                        ),
-                      ),
-                    ),
-                    ValueListenableBuilder(
-                      valueListenable: _searchClearProvider,
-                      builder: (_, provider, child) {
-                        return Visibility(
-                          visible: provider == true,
-                          child: InkWell(
-                            onTap: () {
-                              reset(context: context);
-                            },
-                            child: Icon(
-                              Icons.close_rounded,
-                              size: 15,
-                              color: Theme.of(context).hintColor,
+                  )
+                : (searchController.text.isNotEmpty)
+                    ? Column(
+                        children: [
+                          const Padding(padding: EdgeInsets.only(top: 10)),
+                          Expanded(
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: searchBanks.length,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              itemBuilder: (context, index) {
+                                return _buildCardItem(
+                                  context: context,
+                                  index: index,
+                                  dto: searchBanks[index],
+                                  color: searchColors[index],
+                                );
+                              },
                             ),
                           ),
-                        );
-                      },
-                    ),
-                  ],
+                        ],
+                      )
+                    : Column(
+                        children: [
+                          const Padding(padding: EdgeInsets.only(top: 10)),
+                          Expanded(
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: banks.length,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              itemBuilder: (context, index) {
+                                return _buildCardItem(
+                                  context: context,
+                                  index: index,
+                                  dto: banks[index],
+                                  color: listColors[index],
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+          ),
+          const Padding(padding: EdgeInsets.only(top: 20)),
+          BoxLayout(
+            width: width - 40,
+            borderRadius: 50,
+            alignment: Alignment.center,
+            bgColor: Theme.of(context).cardColor,
+            // margin: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.search_rounded,
+                  size: 15,
+                  color: Theme.of(context).hintColor,
                 ),
-              );
-            },
+                Expanded(
+                  child: Form(
+                    key: _formKey,
+                    child: TextFieldWidget(
+                      width: width,
+                      hintText: 'Nhập để tìm kiếm',
+                      controller: searchController,
+                      keyboardAction: TextInputAction.done,
+                      autoFocus: banks.isNotEmpty,
+                      onChange: (value) {
+                        search();
+                      },
+                      inputType: TextInputType.text,
+                      isObscureText: false,
+                    ),
+                  ),
+                ),
+                ValueListenableBuilder(
+                  valueListenable: _searchClearProvider,
+                  builder: (_, provider, child) {
+                    return Visibility(
+                      visible: provider == true,
+                      child: InkWell(
+                        onTap: () {
+                          reset(context: context);
+                        },
+                        child: Icon(
+                          Icons.close_rounded,
+                          size: 15,
+                          color: Theme.of(context).hintColor,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
           const Padding(padding: EdgeInsets.only(bottom: 10)),
         ],
@@ -166,7 +220,7 @@ class SearchBankView extends StatelessWidget {
     );
   }
 
-  void search(BankCardSelectProvider bankCardProvider) {
+  void search() {
     if (searchController.text.isNotEmpty) {
       _searchClearProvider.updateClearSearch(true);
     } else {
@@ -176,34 +230,30 @@ class SearchBankView extends StatelessWidget {
     if (searchController.text.length >= 2) {
       List<BankAccountDTO> resultBanks = [];
       List<Color> resultColors = [];
-      if (bankCardProvider.banks.isNotEmpty) {
-        for (int i = 0; i < bankCardProvider.banks.length; i++) {
-          if (bankCardProvider.banks[i].bankAccount
-                  .contains(searchController.text.trim()) ||
-              bankCardProvider.banks[i].userBankName
+      if (banks.isNotEmpty) {
+        for (int i = 0; i < banks.length; i++) {
+          if (banks[i].bankAccount.contains(searchController.text.trim()) ||
+              banks[i]
+                  .userBankName
                   .toUpperCase()
                   .contains(searchController.text.trim().toUpperCase())) {
-            resultBanks.add(bankCardProvider.banks[i]);
-            resultColors.add(bankCardProvider.colors[i]);
+            resultBanks.add(banks[i]);
+            resultColors.add(listColors[i]);
           }
         }
       }
 
-      bankCardProvider.updateSearchBanks(resultBanks);
-      bankCardProvider.updateSearchColors(resultColors);
+      updateSearchBanks(resultBanks);
+      updateSearchColors(resultColors);
     } else {
-      bankCardProvider.updateSearchBanks([]);
-      bankCardProvider.updateSearchColors([]);
+      updateSearchBanks([]);
+      updateSearchColors([]);
     }
   }
 
   void reset({required BuildContext context}) {
-    final bankCardProvider =
-        Provider.of<BankCardSelectProvider>(context, listen: false);
     searchController.clear();
     _searchClearProvider.updateClearSearch(false);
-    bankCardProvider.updateSearchBanks([]);
-    bankCardProvider.updateSearchColors([]);
   }
 
   Widget _buildCardItem({

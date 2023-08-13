@@ -1,8 +1,8 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
+import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
@@ -102,13 +102,20 @@ class _HomeScreen extends State<HomeScreen> {
                       height: 105,
                       child: Stack(
                         children: [
-                          Positioned(
-                            bottom: 0,
-                            child: Image.asset(
-                              'assets/images/banner-update.png',
-                              width: 100,
-                              height: 100,
-                              fit: BoxFit.cover,
+                          GestureDetector(
+                            onTap: () async {
+                              Uri uri = Uri.parse(Stringify.urlStore);
+                              if (!await launchUrl(uri,
+                                  mode: LaunchMode.externalApplication)) {}
+                            },
+                            child: Positioned(
+                              bottom: 0,
+                              child: Image.asset(
+                                'assets/images/banner-update.png',
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                           Positioned(

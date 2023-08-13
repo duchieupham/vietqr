@@ -16,6 +16,7 @@ class PrinterEventCheckPairing extends PrinterEvent {}
 
 class PrinterEventScan extends PrinterEvent {
   final PrinterBloc printerBloc;
+
   const PrinterEventScan({
     required this.printerBloc,
   });

@@ -8,7 +8,6 @@ import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/account/events/account_event.dart';
 import 'package:vierqr/features/account/repositories/account_res.dart';
 import 'package:vierqr/features/account/states/account_state.dart';
-import 'package:vierqr/features/logout/repositories/log_out_repository.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
@@ -23,14 +22,12 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> with BaseManager {
     on<UpdateVoiceSetting>(_updateVoiceSetting);
   }
 
-  final logoutRepository = const LogoutRepository();
-
   void _logOutSubmit(AccountEvent event, Emitter emit) async {
     try {
       if (event is LogoutEventSubmit) {
         emit(state.copyWith(
             status: BlocStatus.LOADING, request: AccountType.NONE));
-        bool check = await logoutRepository.logout();
+        bool check = await accRepository.logout();
         if (check) {
           emit(state.copyWith(
             status: BlocStatus.UNLOADING,

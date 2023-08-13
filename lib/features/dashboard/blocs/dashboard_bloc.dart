@@ -8,11 +8,11 @@ import 'package:vierqr/commons/utils/check_utils.dart';
 import 'package:vierqr/commons/utils/error_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
+import 'package:vierqr/features/account/blocs/account_bloc.dart';
 import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/dashboard/repostiroties/dashboard_repository.dart';
 import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
-import 'package:vierqr/features/token/blocs/token_bloc.dart';
 import 'package:vierqr/models/bank_name_information_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
@@ -31,6 +31,7 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
     on<TokenEventLogout>(_logout);
     on<PermissionEventGetStatus>(_getPermissionStatus);
     on<GetPointEvent>(_getPointAccount);
+    on<GetVersionAppEvent>(_getVersionApp);
     on<PermissionEventRequest>(_requestPermissions);
     on<ScanQrEventGetBankType>(_getBankType);
     on<DashBoardEventSearchName>(_searchBankName);
@@ -45,7 +46,7 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
       if (event is TokenEventCheckValid) {
         emit(state.copyWith(
             status: BlocStatus.NONE, request: DashBoardType.NONE));
-        int check = await tokenRepository.checkValidToken();
+        int check = await dashBoardRepository.checkValidToken();
         TokenType type = TokenType.NONE;
         if (check == 0) {
           type = TokenType.InValid;
@@ -78,7 +79,7 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
       if (event is TokenEventLogout) {
         emit(state.copyWith(
             status: BlocStatus.NONE, request: DashBoardType.NONE));
-        bool check = await logoutRepository.logout();
+        bool check = await accRepository.logout();
         TokenType type = TokenType.NONE;
         if (check) {
           type = TokenType.Logout;
@@ -105,7 +106,7 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
       if (event is TokenFcmUpdateEvent) {
         emit(state.copyWith(
             status: BlocStatus.NONE, request: DashBoardType.NONE));
-        bool check = await tokenRepository.updateFcmToken();
+        bool check = await dashBoardRepository.updateFcmToken();
         TokenType type = TokenType.NONE;
         if (check) {
           type = TokenType.Fcm_success;
@@ -137,6 +138,24 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
           introduceDTO: result,
           status: BlocStatus.NONE,
           request: DashBoardType.POINT,
+        ));
+      }
+    } catch (e) {
+      LOG.error('Error at _getPointAccount: $e');
+      emit(state.copyWith(msg: '', status: BlocStatus.ERROR));
+    }
+  }
+
+  void _getVersionApp(DashBoardEvent event, Emitter emit) async {
+    try {
+      emit(
+          state.copyWith(status: BlocStatus.NONE, request: DashBoardType.NONE));
+      if (event is GetVersionAppEvent) {
+        final result = await dashBoardRepository.getVersionApp();
+        emit(state.copyWith(
+          appInfoDTO: result,
+          status: BlocStatus.NONE,
+          request: DashBoardType.APP_VERSION,
         ));
       }
     } catch (e) {

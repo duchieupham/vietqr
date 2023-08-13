@@ -221,6 +221,7 @@ enum DashBoardType {
   INSERT_BANK,
   POINT,
   TOKEN,
+  APP_VERSION,
 }
 
 enum DashBoardTypePermission {

@@ -13,8 +13,6 @@ import 'package:vierqr/main.dart';
 import 'package:vierqr/models/account_information_dto.dart';
 import 'package:vierqr/models/password_update_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
-import 'package:vierqr/services/providers/bank_account_provider.dart';
-import 'package:vierqr/services/providers/create_qr_page_select_provider.dart';
 import 'package:vierqr/services/providers/create_qr_provider.dart';
 import 'package:vierqr/services/providers/suggestion_widget_provider.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
@@ -180,8 +178,6 @@ class UserEditRepository {
   Future<void> _resetServices() async {
     BuildContext context = NavigationService.navigatorKey.currentContext!;
     Provider.of<CreateQRProvider>(context, listen: false).reset();
-    Provider.of<CreateQRPageSelectProvider>(context, listen: false).reset();
-    Provider.of<BankAccountProvider>(context, listen: false).reset();
     Provider.of<UserEditProvider>(context, listen: false).reset();
     Provider.of<SuggestionWidgetProvider>(context, listen: false).reset();
     await EventBlocHelper.instance.updateLogoutBefore(true);

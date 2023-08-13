@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
@@ -7,11 +8,14 @@ import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
+import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
+import 'package:vierqr/models/fcm_token_update_dto.dart';
 import 'package:vierqr/models/introduce_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:http/http.dart' as http;
 import 'package:vierqr/models/response_message_dto.dart';
+import 'package:vierqr/services/shared_references/account_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class DashboardRepository {
@@ -166,4 +170,80 @@ class DashboardRepository {
     return IntroduceDTO();
   }
 
+  Future<AppInfoDTO> getVersionApp() async {
+    try {
+      final String url = '${EnvConfig.getBaseUrl()}system-setting';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        UserInformationHelper.instance.setWalletInfo(response.body);
+        return AppInfoDTO.fromJson(data);
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return AppInfoDTO();
+  }
+
+  //return
+  //0: ignore
+  //1: success
+  //2: maintain
+  //3: connection failed
+  //4: token expired
+  Future<int> checkValidToken() async {
+    int result = 0;
+    try {
+      String url = '${EnvConfig.getBaseUrl()}token';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+
+      if (response.statusCode == 200) {
+        result = 1;
+      } else if (response.statusCode == 404 || response.statusCode == 400) {
+        result = 2;
+      } else if (response.statusCode == 403) {
+        result = 4;
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      if (e.toString().contains('Connection failed')) {
+        result = 3;
+      }
+    }
+    return result;
+  }
+
+  Future<bool> updateFcmToken() async {
+    bool result = false;
+    try {
+      String userId = UserInformationHelper.instance.getUserId();
+      String oldToken = AccountHelper.instance.getFcmToken();
+      String newToken = await FirebaseMessaging.instance.getToken() ?? '';
+      if (oldToken.trim() != newToken.trim()) {
+        FcmTokenUpdateDTO dto = FcmTokenUpdateDTO(
+            userId: userId, oldToken: oldToken, newToken: newToken);
+        final String url = '${EnvConfig.getBaseUrl()}fcm-token/update';
+        final response = await BaseAPIClient.postAPI(
+          url: url,
+          body: dto.toJson(),
+          type: AuthenticationType.SYSTEM,
+        );
+        if (response.statusCode == 200) {
+          result = true;
+          await AccountHelper.instance.setFcmToken(newToken);
+        }
+      } else {
+        result = true;
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return result;
+  }
 }

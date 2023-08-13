@@ -34,6 +34,7 @@ import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/models/account_information_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/services/providers/add_business_provider.dart';
+import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:vierqr/services/providers/avatar_provider.dart';
 import 'package:vierqr/services/providers/suggestion_widget_provider.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
@@ -278,7 +279,7 @@ class _UserEditViewState extends State<UserEditView> {
                                     File? file = File(pickedFile.path);
                                     File? compressedFile =
                                         FileUtils.instance.compressImage(file);
-                                    Provider.of<AddBusinessProvider>(context,
+                                    Provider.of<AuthProvider>(context,
                                             listen: false)
                                         .setImage(compressedFile);
                                     await Future.delayed(

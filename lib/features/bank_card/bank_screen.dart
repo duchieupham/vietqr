@@ -48,7 +48,10 @@ class BankScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<BankBloc>(
       create: (BuildContext context) => BankBloc(context),
-      child: const _BankScreen(),
+      child: ChangeNotifierProvider(
+        create: (context) => BankCardSelectProvider(),
+        child: const _BankScreen(),
+      ),
     );
   }
 }
@@ -204,10 +207,6 @@ class _BankScreenState extends State<_BankScreen>
                     ),
                   );
                 }
-                Provider.of<BankCardSelectProvider>(context, listen: false)
-                    .updateBanks(state.listBanks);
-                Provider.of<BankCardSelectProvider>(context, listen: false)
-                    .updateColors(state.colors);
                 return buildList(
                   maxListHeight,
                   state.listBanks,
@@ -890,7 +889,7 @@ class _StackedList extends State<StackedList> {
 
   Future<void> _pickAndProcessQRImage() async {
     final imagePicker = ImagePicker();
-    final pickedFile = await imagePicker.getImage(source: ImageSource.gallery);
+    final pickedFile = await imagePicker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
       // Gửi ảnh được chọn xuống native để xử lý

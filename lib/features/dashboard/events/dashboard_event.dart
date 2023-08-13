@@ -77,6 +77,8 @@ class UpdateEvent extends DashBoardEvent {}
 
 class GetPointEvent extends DashBoardEvent {}
 
+class GetVersionAppEvent extends DashBoardEvent {}
+
 class TokenEventCheckValid extends DashBoardEvent {
   const TokenEventCheckValid();
 

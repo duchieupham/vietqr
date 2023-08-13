@@ -209,6 +209,11 @@ class _DashBoardScreen extends State<DashBoardScreen>
               .updateIntroduceDTO(state.introduceDTO);
         }
 
+        if (state.request == DashBoardType.APP_VERSION) {
+          Provider.of<AuthProvider>(context, listen: false)
+              .updateAppInfoDTO(state.appInfoDTO);
+        }
+
         if (state.request == DashBoardType.TOKEN) {
           if (state.typeToken == TokenType.Valid) {
             _updateFcmToken(isFromLogin);
@@ -479,25 +484,21 @@ class _DashBoardScreen extends State<DashBoardScreen>
   Widget _getTitlePaqe(BuildContext context, int indexSelected) {
     Widget titleWidget = const SizedBox();
     if (indexSelected == 0 || indexSelected == 1 || indexSelected == 2) {
-      titleWidget = Consumer<BankCardSelectProvider>(
-        builder: (context, provider, child) {
-          return ButtonIconWidget(
-            width: double.infinity,
-            height: 40,
-            borderRadius: 40,
-            icon: Icons.search_rounded,
-            iconSize: 18,
-            contentPadding: const EdgeInsets.only(left: 16),
-            alignment: Alignment.centerLeft,
-            title: 'Tài khoản ngân hàng',
-            textSize: 11,
-            function: () {
-              Navigator.pushNamed(context, Routes.SEARCH_BANK);
-            },
-            bgColor: Theme.of(context).cardColor,
-            textColor: Theme.of(context).hintColor,
-          );
+      titleWidget = ButtonIconWidget(
+        width: double.infinity,
+        height: 40,
+        borderRadius: 40,
+        icon: Icons.search_rounded,
+        iconSize: 18,
+        contentPadding: const EdgeInsets.only(left: 16),
+        alignment: Alignment.centerLeft,
+        title: 'Tài khoản ngân hàng',
+        textSize: 11,
+        function: () {
+          Navigator.pushNamed(context, Routes.SEARCH_BANK);
         },
+        bgColor: Theme.of(context).cardColor,
+        textColor: Theme.of(context).hintColor,
       );
     }
 

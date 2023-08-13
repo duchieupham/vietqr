@@ -13,7 +13,6 @@ import 'package:vierqr/features/home/blocs/home_bloc.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
-import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/models/viet_qr_scanned_dto.dart';
 
 class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
