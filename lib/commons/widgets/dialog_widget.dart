@@ -731,6 +731,170 @@ class DialogWidget {
         });
   }
 
+  openCustomMsgDialog({
+    required String title,
+    String? buttonExit,
+    String? buttonConfirm,
+    required String msg,
+    VoidCallback? function,
+    VoidCallback? functionConfirm,
+    bool isSecondBT = false,
+    bool showImageWarning = true,
+    double width = 300,
+    double height = 300,
+    String? url,
+    Widget? buttonColumn,
+  }) {
+    return showDialog(
+        barrierDismissible: false,
+        context: NavigationService.navigatorKey.currentContext!,
+        builder: (BuildContext context) {
+          return Material(
+            color: AppColor.TRANSPARENT,
+            child: Center(
+              child: Container(
+                width: width,
+                height: height,
+                alignment: Alignment.center,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).cardColor,
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (showImageWarning)
+                      url == null
+                          ? Image.asset(
+                              'assets/images/ic-warning.png',
+                              width: 130,
+                              height: 130,
+                            )
+                          : Expanded(
+                              child: Image.asset(
+                                url,
+                                width: 130,
+                                height: 130,
+                              ),
+                            ),
+                    const Padding(padding: EdgeInsets.only(top: 10)),
+                    title.isNotEmpty
+                        ? Text(
+                            title,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                        : const SizedBox(),
+                    const Padding(padding: EdgeInsets.only(top: 10)),
+                    if (msg.isNotEmpty)
+                      SizedBox(
+                        width: 250,
+                        child: Text(
+                          msg,
+                          textAlign: TextAlign.center,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 13,
+                          ),
+                        ),
+                      ),
+                    if (buttonColumn == null) const Spacer(),
+                    buttonColumn != null
+                        ? buttonColumn
+                        : Container(
+                            margin: const EdgeInsets.only(
+                                left: 12, right: 12, top: 30, bottom: 16),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: ButtonWidget(
+                                    height: 40,
+                                    text: buttonExit ?? 'Đóng',
+                                    textColor: isSecondBT
+                                        ? AppColor.BLACK
+                                        : AppColor.WHITE,
+                                    bgColor: isSecondBT
+                                        ? AppColor.GREY_EBEBEB
+                                        : AppColor.BLUE_TEXT,
+                                    borderRadius: 5,
+                                    function: (function != null)
+                                        ? function
+                                        : () {
+                                            Navigator.pop(context);
+                                          },
+                                  ),
+                                ),
+                                if (isSecondBT) ...[
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: ButtonWidget(
+                                      height: 40,
+                                      text: buttonConfirm ?? 'Xác nhận',
+                                      textColor: AppColor.WHITE,
+                                      bgColor: AppColor.BLUE_TEXT,
+                                      borderRadius: 5,
+                                      function: functionConfirm!,
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                    // const Padding(padding: EdgeInsets.only(top: 10)),
+                  ],
+                ),
+              ),
+              // : Container(
+              //     width: 300,
+              //     height: 250,
+              //     alignment: Alignment.center,
+              //     padding: const EdgeInsets.symmetric(horizontal: 40),
+              //     decoration: BoxDecoration(
+              //       color: Theme.of(context).cardColor,
+              //       borderRadius: BorderRadius.circular(20),
+              //     ),
+              //     child: Column(
+              //       mainAxisAlignment: MainAxisAlignment.center,
+              //       crossAxisAlignment: CrossAxisAlignment.center,
+              //       children: [
+              //         const Spacer(),
+              //         Text(
+              //           msg,
+              //           textAlign: TextAlign.center,
+              //           style: const TextStyle(
+              //             fontSize: 16,
+              //           ),
+              //         ),
+              //         const Spacer(),
+              //         ButtonWidget(
+              //           width: 230,
+              //           text: 'OK',
+              //           textColor: DefaultTheme.WHITE,
+              //           bgColor: DefaultTheme.GREEN,
+              //           function: (function != null)
+              //               ? function
+              //               : () {
+              //                   Navigator.pop(context);
+              //                 },
+              //         ),
+              //         const Padding(padding: EdgeInsets.only(bottom: 20)),
+              //       ],
+              //     ),
+              //   ),
+            ),
+          );
+        });
+  }
+
   openWidgetDialog(
       {required Widget child,
       double? heightPopup,

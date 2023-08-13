@@ -472,8 +472,6 @@ class _StackedList extends State<StackedList> {
   @override
   void initState() {
     super.initState();
-    // _accountBloc.add(GetUserInformation());
-
     handleMessageOnBackground();
   }
 

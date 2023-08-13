@@ -252,6 +252,10 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                                   dto: dto,
                                   qrGeneratedDTO: qrGeneratedDTO,
                                   bankId: state.bankId ?? '',
+                                  onChangePage: () {
+                                    provider.changeCurrentPage(2);
+                                    pageController.jumpToPage(2);
+                                  },
                                 ),
                                 Statistical(bankId: state.bankId ?? ''),
                                 TransHistoryScreen(bankId: state.bankId ?? '')

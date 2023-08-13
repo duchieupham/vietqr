@@ -504,14 +504,17 @@ class _VietQRApp extends State<VietQRApp> {
                   //  Locale('en'), // English
                   Locale('vi'), // Vietnamese
                 ],
-                home: Builder(builder: (context) {
-                  authProvider.getAppInfo();
-                  return Title(
-                    title: 'VietQR',
-                    color: AppColor.BLACK,
-                    child: _mainScreen,
-                  );
-                }),
+                home: Builder(
+                  builder: (context) {
+                    authProvider.setContext(context);
+
+                    return Title(
+                      title: 'VietQR',
+                      color: AppColor.BLACK,
+                      child: _mainScreen,
+                    );
+                  },
+                ),
               );
             },
           ),

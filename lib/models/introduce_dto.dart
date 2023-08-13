@@ -19,10 +19,10 @@ class IntroduceDTO {
   factory IntroduceDTO.fromJson(Map<String, dynamic> json) {
     return IntroduceDTO(
       amount: json['amount'] ?? '',
-      point: json['point'] ?? false,
+      point: json['point'] ?? '',
       sharingCode: json['sharingCode'] ?? '',
       walletId: json['walletId'] ?? '',
-      enableService: json['enableService'] ?? '',
+      enableService: json['enableService'] ?? false,
     );
   }
 }

@@ -28,6 +28,7 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
   DashBoardBloc(this.context) : super(const DashBoardState()) {
     on<TokenEventCheckValid>(_checkValidToken);
     on<TokenFcmUpdateEvent>(_updateFcmToken);
+    on<GetUserInformation>(_getUserInformation);
     on<TokenEventLogout>(_logout);
     on<PermissionEventGetStatus>(_getPermissionStatus);
     on<GetPointEvent>(_getPointAccount);
@@ -156,6 +157,7 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
           appInfoDTO: result,
           status: BlocStatus.NONE,
           request: DashBoardType.APP_VERSION,
+          isCheckApp: event.isCheckVer,
         ));
       }
     } catch (e) {
@@ -397,6 +399,24 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
         status: BlocStatus.UNLOADING,
         request: DashBoardType.ERROR,
       ));
+    }
+  }
+
+  void _getUserInformation(DashBoardEvent event, Emitter emit) async {
+    try {
+      if (event is GetUserInformation) {
+        final result = await accRepository.getUserInformation(userId);
+        if (result.userId.isNotEmpty) {
+          await UserInformationHelper.instance.setAccountInformation(result);
+        }
+        final settingAccount = await accRepository.getSettingAccount(userId);
+        if (settingAccount.userId.isNotEmpty) {
+          await UserInformationHelper.instance
+              .setAccountSetting(settingAccount);
+        }
+      }
+    } catch (e) {
+      LOG.error('Error at _getPointAccount: $e');
     }
   }
 

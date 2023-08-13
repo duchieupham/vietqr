@@ -96,6 +96,9 @@ dependencies:
   photo_gallery: ^2.0.0
   just_audio: ^0.9.32
   package_info_plus:
+  float_bubble:
+    git: https://github.com/TrieuCan/float_bubble
+
 #  audioplayers: ^4.1.0
 dependency_overrides:
   image: ^3.0.2

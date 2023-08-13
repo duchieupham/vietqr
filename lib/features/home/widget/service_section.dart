@@ -2,14 +2,29 @@ import 'dart:io';
 
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
+import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
+import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
+import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
+import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
+import 'package:vierqr/features/home/widget/dialog_update.dart';
+import 'package:vierqr/main.dart';
+import 'package:vierqr/services/providers/auth_provider.dart';
 
-class ServiceSection extends StatelessWidget {
+class ServiceSection extends StatefulWidget {
   const ServiceSection({Key? key}) : super(key: key);
+
+  @override
+  State<ServiceSection> createState() => _ServiceSectionState();
+}
+
+class _ServiceSectionState extends State<ServiceSection> {
+  bool isCheckApp = false;
 
   @override
   Widget build(BuildContext context) {
@@ -86,8 +101,20 @@ class ServiceSection extends StatelessWidget {
             () async {
           Navigator.pushNamed(context, Routes.CONNECT_LARK);
         }),
-        _buildItemService(context, 'assets/images/logo-check-app-version.png',
-            'Kiểm tra phiên bản App', () async {}),
+        _buildItemService(
+          context,
+          'assets/images/logo-check-app-version.png',
+          'Kiểm tra phiên bản App',
+          () async {
+            showDialog(
+              barrierDismissible: false,
+              context: NavigationService.navigatorKey.currentContext!,
+              builder: (BuildContext context) {
+                return DialogUpdateView();
+              },
+            );
+          },
+        ),
       ],
     );
   }

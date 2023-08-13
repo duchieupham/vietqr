@@ -142,131 +142,139 @@ class MobileRechargeScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Consumer<TopUpProvider>(builder: (context, provider, child) {
-                    return Container(
-                      padding:
-                          const EdgeInsets.fromLTRB(0, 16, 0, kToolbarHeight),
-                      color: AppColor.WHITE,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                const Text(
-                                  'Số dư tài khoản VietQR: ',
-                                  style: TextStyle(fontSize: 10),
-                                ),
-                                Text(
-                                  '${CurrencyUtils.instance.getCurrencyFormatted(UserInformationHelper.instance.getWalletInfo().amount ?? '0')} VQR',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                const Spacer(),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.pushNamed(context, Routes.TOP_UP);
-                                  },
-                                  child: Text(
-                                    int.parse(UserInformationHelper.instance
-                                                    .getWalletInfo()
-                                                    .amount ??
-                                                '0') <
-                                            int.parse(provider.money
-                                                .replaceAll(',', ''))
-                                        ? 'Không đủ thanh toán.\n Nạp ngay'
-                                        : 'Nạp thêm',
-                                    textAlign: TextAlign.center,
+                  Consumer<TopUpProvider>(
+                    builder: (context, provider, child) {
+                      return Container(
+                        padding:
+                            const EdgeInsets.fromLTRB(0, 16, 0, kToolbarHeight),
+                        color: AppColor.WHITE,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  const Text(
+                                    'Số dư tài khoản VietQR: ',
+                                    style: TextStyle(fontSize: 10),
+                                  ),
+                                  Text(
+                                    '${CurrencyUtils.instance.getCurrencyFormatted(UserInformationHelper.instance.getWalletInfo().amount ?? '0')} VQR',
                                     style: const TextStyle(
-                                        fontSize: 11,
-                                        color: AppColor.BLUE_TEXT),
+                                        fontWeight: FontWeight.bold),
                                   ),
-                                )
-                              ],
+                                  const Spacer(),
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.pushNamed(
+                                          context, Routes.TOP_UP);
+                                    },
+                                    child: Text(
+                                      int.parse(UserInformationHelper.instance
+                                                      .getWalletInfo()
+                                                      .amount ??
+                                                  '0') <
+                                              int.parse(provider.money
+                                                  .replaceAll(',', ''))
+                                          ? 'Không đủ thanh toán.\n Nạp ngay'
+                                          : 'Nạp thêm',
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                          fontSize: 11,
+                                          color: AppColor.BLUE_TEXT),
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 16),
-                            child: DividerWidget(
-                              width: double.infinity,
+                            const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 16),
+                              child: DividerWidget(
+                                width: double.infinity,
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const Text(
-                                        'Tổng tiền cần thanh toán:',
-                                        style: TextStyle(fontSize: 12),
-                                      ),
-                                      Text(
-                                        '${provider.money} VQR',
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    FocusManager.instance.primaryFocus
-                                        ?.unfocus();
-
-                                    DialogWidget.instance.openWidgetDialog(
-                                        heightPopup: 320,
-                                        widthPopup: 320,
-                                        margin: const EdgeInsets.only(
-                                            left: 32, right: 32, bottom: 48),
-                                        radius: 20,
-                                        child: PopupConfirmPassword(
-                                          onConfirmSuccess: (otp) {
-                                            Navigator.of(context).pop();
-                                            Map<String, dynamic> data = {};
-                                            data['phoneNo'] =
-                                                UserInformationHelper.instance
-                                                    .getPhoneNo();
-                                            data['userId'] =
-                                                UserInformationHelper.instance
-                                                    .getUserId();
-                                            data['rechargeType'] =
-                                                provider.rechargeType;
-                                            data['otp'] = otp;
-                                            data['carrierTypeId'] =
-                                                provider.networkProviders.id;
-                                            BlocProvider.of<MobileRechargeBloc>(
-                                                    context)
-                                                .add(MobileRechargeMobileMoney(
-                                                    data: data));
-                                          },
-                                        ));
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20, vertical: 8),
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(5),
-                                        color: AppColor.BLUE_TEXT),
-                                    child: const Text(
-                                      'Thanh toán',
-                                      style: TextStyle(color: AppColor.WHITE),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Text(
+                                          'Tổng tiền cần thanh toán:',
+                                          style: TextStyle(fontSize: 12),
+                                        ),
+                                        Text(
+                                          '${provider.money} VQR',
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                ),
-                              ],
+                                  GestureDetector(
+                                    onTap: () {
+                                      FocusManager.instance.primaryFocus
+                                          ?.unfocus();
+
+                                      DialogWidget.instance.openWidgetDialog(
+                                          heightPopup: 320,
+                                          widthPopup: 320,
+                                          margin: const EdgeInsets.only(
+                                              left: 32, right: 32, bottom: 48),
+                                          radius: 20,
+                                          child: PopupConfirmPassword(
+                                            onConfirmSuccess: (otp) {
+                                              Navigator.of(context).pop();
+                                              Map<String, dynamic> data = {};
+                                              data['phoneNo'] =
+                                                  UserInformationHelper.instance
+                                                      .getPhoneNo();
+                                              data['userId'] =
+                                                  UserInformationHelper.instance
+                                                      .getUserId();
+                                              data['rechargeType'] =
+                                                  provider.rechargeType;
+                                              data['otp'] = otp;
+                                              data['carrierTypeId'] =
+                                                  provider.networkProviders.id;
+                                              BlocProvider.of<
+                                                          MobileRechargeBloc>(
+                                                      context)
+                                                  .add(
+                                                      MobileRechargeMobileMoney(
+                                                          data: data));
+                                            },
+                                          ));
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20, vertical: 8),
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                          color: AppColor.BLUE_TEXT),
+                                      child: const Text(
+                                        'Thanh toán',
+                                        style: TextStyle(color: AppColor.WHITE),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                 ],
               );
             },

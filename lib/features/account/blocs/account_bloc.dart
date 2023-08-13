@@ -18,7 +18,6 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> with BaseManager {
   AccountBloc(this.context) : super(const AccountState()) {
     on<LogoutEventSubmit>(_logOutSubmit);
     on<UpdateAvatarEvent>(_updateAvatar);
-    on<GetUserInformation>(_getUserInformation);
     on<UpdateVoiceSetting>(_updateVoiceSetting);
   }
 
@@ -79,24 +78,6 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> with BaseManager {
 
       LOG.error(e.toString());
     }
-  }
-}
-
-void _getUserInformation(AccountEvent event, Emitter emit) async {
-  String userId = UserInformationHelper.instance.getUserId();
-  try {
-    if (event is GetUserInformation) {
-      final result = await accRepository.getUserInformation(userId);
-      if (result.userId.isNotEmpty) {
-        await UserInformationHelper.instance.setAccountInformation(result);
-      }
-      final settingAccount = await accRepository.getSettingAccount(userId);
-      if (settingAccount.userId.isNotEmpty) {
-        await UserInformationHelper.instance.setAccountSetting(settingAccount);
-      }
-    }
-  } catch (e) {
-    LOG.error('Error at _getPointAccount: $e');
   }
 }
 

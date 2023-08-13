@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
@@ -17,9 +18,15 @@ class AuthProvider with ChangeNotifier {
 
   get themeSystem => _themeSystem;
 
+  BuildContext? context;
+
   File? _imageFile;
 
   File? get imageFile => _imageFile;
+
+  String versionApp = '';
+  bool isCheckApp = false;
+  int isShowToastUpdate = -1;
 
   //type = 0 => stack
   //type = 1 => slide
@@ -57,6 +64,17 @@ class AuthProvider with ChangeNotifier {
 
   List<BusinessMemberDTO> get memberList => _memberList;
 
+  void setContext(BuildContext ctx) async {
+    if (context != null) {
+      return;
+    }
+    context = ctx;
+    PackageInfo data = await PackageInfo.fromPlatform();
+    packageInfo = data;
+    versionApp = packageInfo?.version ?? '';
+    notifyListeners();
+  }
+
   void setImage(File? file) {
     _imageFile = file;
     notifyListeners();
@@ -72,18 +90,17 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void updateAppInfoDTO(value) {
+  void updateAppInfoDTO(value, {bool isCheckApp = false}) {
     appInfoDTO = value;
-    updateVersion();
+    updateVersion(
+      isCheckApp: isCheckApp,
+    );
+    updateIsCheckApp(false);
     notifyListeners();
   }
 
-  void getAppInfo() async {
-    if (packageInfo != null) {
-      return;
-    }
-    PackageInfo data = await PackageInfo.fromPlatform();
-    packageInfo = data;
+  void updateIsCheckApp(value) {
+    isCheckApp = value;
     notifyListeners();
   }
 
@@ -137,7 +154,7 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void updateVersion() {
+  void updateVersion({bool isCheckApp = false}) {
     if (appInfoDTO != null && packageInfo != null) {
       int packageVer = int.parse(packageInfo!.version.replaceAll('.', ''));
       int packageBuild = int.parse(packageInfo!.buildNumber);
@@ -145,23 +162,50 @@ class AuthProvider with ChangeNotifier {
         if (packageVer == appInfoDTO!.iosVer) {
           if (packageBuild < appInfoDTO!.buildIos) {
             isUpdateVersion = true;
-            notifyListeners();
+          }
+          if (isCheckApp) {
+            isShowToastUpdate = 0;
+            Fluttertoast.showToast(
+              msg: 'Không có bản cập nhật nàp',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              backgroundColor: Theme.of(context!).cardColor,
+              textColor: Theme.of(context!).hintColor,
+              fontSize: 15,
+            );
           }
         } else if (packageVer < appInfoDTO!.iosVer) {
           isUpdateVersion = true;
-          notifyListeners();
+          if (isCheckApp) {
+            versionApp = appInfoDTO!.iosVersion!.split('+').first;
+            isShowToastUpdate = 1;
+          }
         }
       } else if (PlatformUtils.instance.isAndroidApp()) {
         if (packageVer == appInfoDTO!.adrVer) {
           if (packageBuild < appInfoDTO!.buildAdr) {
             isUpdateVersion = true;
-            notifyListeners();
+          }
+          if (isCheckApp) {
+            isShowToastUpdate = 0;
+            Fluttertoast.showToast(
+              msg: 'Không có bản cập nhật nàp',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              backgroundColor: Theme.of(context!).cardColor,
+              textColor: Theme.of(context!).hintColor,
+              fontSize: 15,
+            );
           }
         } else if (packageVer < appInfoDTO!.adrVer) {
           isUpdateVersion = true;
-          notifyListeners();
+          if (isCheckApp) {
+            versionApp = appInfoDTO!.androidVersion!.split('+').first;
+            isShowToastUpdate = 1;
+          }
         }
       }
+      notifyListeners();
     }
   }
 

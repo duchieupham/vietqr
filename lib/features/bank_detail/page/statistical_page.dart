@@ -35,7 +35,7 @@ class Statistical extends StatelessWidget {
         }, builder: (context, state) {
           if (state is StatisticGetAllDataSuccessState) {
             return ListView(
-              padding: EdgeInsets.zero,
+              padding: const EdgeInsets.only(top: 12),
               children: [
                 // Container(
                 //   padding: const EdgeInsets.fromLTRB(0, 40, 4, 12),
@@ -62,15 +62,12 @@ class Statistical extends StatelessWidget {
                 //     ],
                 //   ),
                 // ),
-                const SizedBox(
-                  height: 12,
-                ),
                 _buildOverView(state.dto, state.listData)
               ],
             );
           }
           return ListView(
-            padding: EdgeInsets.zero,
+            padding: const EdgeInsets.only(top: 12),
             children: [_buildOverView(dto, [])],
           );
         }),

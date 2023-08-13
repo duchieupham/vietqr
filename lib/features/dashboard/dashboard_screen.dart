@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:float_bubble/float_bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -33,7 +34,6 @@ import 'package:vierqr/models/bank_card_insert_unauthenticated.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/services/providers/account_balance_home_provider.dart';
 import 'package:vierqr/services/providers/avatar_provider.dart';
-import 'package:vierqr/services/providers/bank_card_select_provider.dart';
 import 'package:vierqr/features/dashboard/blocs/dash_board_provider.dart';
 import 'package:vierqr/services/providers/suggestion_widget_provider.dart';
 import 'package:vierqr/services/providers/auth_provider.dart';
@@ -112,34 +112,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
     _subReloadWallet = eventBus.on<ReloadWallet>().listen((_) {
       _dashBoardBloc.add(GetPointEvent());
     });
-
-    // init();
   }
-
-  // init() {
-  //   if (!mounted) {
-  //     return;
-  //   }
-  //   _animationController = AnimationController(
-  //     duration: const Duration(seconds: 1),
-  //     vsync: this,
-  //   );
-  //   curve = CurvedAnimation(
-  //     parent: _animationController,
-  //     curve: const Interval(
-  //       0.5,
-  //       1.0,
-  //       curve: Curves.fastOutSlowIn,
-  //     ),
-  //   );
-  //   animation = Tween<double>(
-  //     begin: 0,
-  //     end: 1,
-  //   ).animate(curve);
-  //   WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-  //     _animationController.forward();
-  //   });
-  // }
 
   void startBarcodeScanStream() async {
     final data = await Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
@@ -164,6 +137,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
     checkUserInformation();
     _dashBoardBloc.add(const TokenEventCheckValid());
     _dashBoardBloc.add(const PermissionEventRequest());
+    _dashBoardBloc.add(GetUserInformation());
     _notificationBloc.add(NotificationGetCounterEvent());
   }
 
@@ -247,7 +221,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
 
         if (state.request == DashBoardType.APP_VERSION) {
           Provider.of<AuthProvider>(context, listen: false)
-              .updateAppInfoDTO(state.appInfoDTO);
+              .updateAppInfoDTO(state.appInfoDTO, isCheckApp: state.isCheckApp);
         }
 
         if (state.request == DashBoardType.TOKEN) {
@@ -409,29 +383,26 @@ class _DashBoardScreen extends State<DashBoardScreen>
             ),
             Consumer<AuthProvider>(
               builder: (context, provider, child) {
-                if (provider.isUpdateVersion) {
-                  return Positioned(
-                    bottom: 24,
-                    right: 10,
+                return Positioned(
+                  child: FloatBubble(
+                    show: provider.isUpdateVersion,
+                    initialAlignment: Alignment.bottomRight,
                     child: SizedBox(
                       width: 100,
                       height: 105,
                       child: Stack(
                         children: [
-                          Positioned(
-                            bottom: 0,
-                            child: GestureDetector(
-                              onTap: () async {
-                                Uri uri = Uri.parse(Stringify.urlStore);
-                                if (!await launchUrl(uri,
-                                    mode: LaunchMode.externalApplication)) {}
-                              },
-                              child: Image.asset(
-                                'assets/images/banner-update.png',
-                                width: 100,
-                                height: 100,
-                                fit: BoxFit.cover,
-                              ),
+                          GestureDetector(
+                            onTap: () async {
+                              Uri uri = Uri.parse(Stringify.urlStore);
+                              if (!await launchUrl(uri,
+                                  mode: LaunchMode.externalApplication)) {}
+                            },
+                            child: Image.asset(
+                              'assets/images/banner-update.png',
+                              width: 100,
+                              height: 100,
+                              fit: BoxFit.cover,
                             ),
                           ),
                           Positioned(
@@ -450,9 +421,8 @@ class _DashBoardScreen extends State<DashBoardScreen>
                         ],
                       ),
                     ),
-                  );
-                }
-                return SizedBox.shrink();
+                  ),
+                );
               },
             )
           ],

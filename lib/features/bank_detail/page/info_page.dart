@@ -33,15 +33,17 @@ class InfoDetailBankAccount extends StatelessWidget {
   final AccountBankDetailDTO dto;
   final QRGeneratedDTO qrGeneratedDTO;
   final String bankId;
+  final GestureTapCallback? onChangePage;
 
-  const InfoDetailBankAccount(
-      {Key? key,
-      required this.bloc,
-      required this.refresh,
-      required this.dto,
-      required this.qrGeneratedDTO,
-      required this.bankId})
-      : super(key: key);
+  const InfoDetailBankAccount({
+    Key? key,
+    required this.bloc,
+    required this.refresh,
+    required this.dto,
+    required this.qrGeneratedDTO,
+    required this.bankId,
+    this.onChangePage,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +58,27 @@ class InfoDetailBankAccount extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   VietQr(qrGeneratedDTO: qrGeneratedDTO),
+                  GestureDetector(
+                    onTap: onChangePage,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 20),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        color: AppColor.WHITE,
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(child: Text('Lịch sử giao dịch')),
+                          Image.asset(
+                            'assets/images/ic-next-blue.png',
+                            width: 24,
+                            height: 24,
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
                   const Padding(padding: EdgeInsets.only(top: 20)),
                   _buildTitle(title: 'Thông tin liên kết'),
                   BoxLayout(

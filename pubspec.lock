@@ -457,6 +457,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.62.0"
+  float_bubble:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: "628cbaafbbc677e726dba56c9f10209ae524d473"
+      url: "https://github.com/TrieuCan/float_bubble"
+    source: git
+    version: "0.0.2"
   flutter:
     dependency: "direct main"
     description: flutter

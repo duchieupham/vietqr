@@ -77,7 +77,14 @@ class UpdateEvent extends DashBoardEvent {}
 
 class GetPointEvent extends DashBoardEvent {}
 
-class GetVersionAppEvent extends DashBoardEvent {}
+class GetVersionAppEvent extends DashBoardEvent {
+  final bool isCheckVer;
+
+  GetVersionAppEvent({this.isCheckVer = false});
+
+  @override
+  List<Object?> get props => [isCheckVer];
+}
 
 class TokenEventCheckValid extends DashBoardEvent {
   const TokenEventCheckValid();
@@ -94,3 +101,5 @@ class TokenFcmUpdateEvent extends DashBoardEvent {
 }
 
 class TokenEventLogout extends DashBoardEvent {}
+
+class GetUserInformation extends DashBoardEvent {}

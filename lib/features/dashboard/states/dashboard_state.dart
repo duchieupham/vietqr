@@ -23,6 +23,7 @@ class DashBoardState extends Equatable {
   final IntroduceDTO? introduceDTO;
   final AppInfoDTO? appInfoDTO;
   final TokenType typeToken;
+  final bool isCheckApp;
 
   const DashBoardState({
     this.msg,
@@ -41,6 +42,7 @@ class DashBoardState extends Equatable {
     this.introduceDTO,
     this.appInfoDTO,
     this.typeToken = TokenType.NONE,
+    this.isCheckApp = false,
   });
 
   DashBoardState copyWith({
@@ -60,6 +62,7 @@ class DashBoardState extends Equatable {
     IntroduceDTO? introduceDTO,
     TokenType? typeToken,
     AppInfoDTO? appInfoDTO,
+    bool? isCheckApp,
   }) {
     return DashBoardState(
       status: status ?? this.status,
@@ -78,6 +81,7 @@ class DashBoardState extends Equatable {
       introduceDTO: introduceDTO ?? this.introduceDTO,
       appInfoDTO: appInfoDTO ?? this.appInfoDTO,
       typeToken: typeToken ?? this.typeToken,
+      isCheckApp: isCheckApp ?? this.isCheckApp,
     );
   }
 

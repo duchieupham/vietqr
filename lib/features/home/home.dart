@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
-import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
@@ -12,7 +10,6 @@ import 'package:vierqr/features/home/widget/service_section.dart';
 
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/services/providers/account_balance_home_provider.dart';
-import 'package:vierqr/services/providers/auth_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
