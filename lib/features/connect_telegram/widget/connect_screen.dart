@@ -73,6 +73,11 @@ class _ConnectTeleStepScreenState extends State<_ConnectTeleStepScreen> {
                 }
                 if (state is InsertTeleSuccessState) {
                   Navigator.pop(context);
+                  String chatId = Provider.of<ConnectTelegramProvider>(context,
+                          listen: false)
+                      .chatId;
+                  BlocProvider.of<ConnectTelegramBloc>(context)
+                      .add(SendFirstMessage(chatId: chatId));
                   Navigator.pop(context);
                   Navigator.push(
                       context,
