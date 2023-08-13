@@ -263,11 +263,7 @@ class ConnectTelegramScreen extends StatelessWidget {
             margin: EdgeInsets.zero,
             colorEnableText: AppColor.WHITE,
             onTap: () async {
-              await Navigator.pushNamed(
-                  context, Routes.CONNECT_STEP_TELE_SCREEN);
-              BlocProvider.of<ConnectTelegramBloc>(context).add(
-                  GetInformationTeleConnect(
-                      userId: UserInformationHelper.instance.getUserId()));
+              Navigator.pushNamed(context, Routes.CONNECT_STEP_TELE_SCREEN);
             },
           ),
           const SizedBox(

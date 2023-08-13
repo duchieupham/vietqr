@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/error_utils.dart';
@@ -12,29 +11,59 @@ import 'package:vierqr/features/connect_telegram/page/add_vietQr_bot.dart';
 import 'package:vierqr/features/connect_telegram/page/choose_bank_page.dart';
 import 'package:vierqr/features/connect_telegram/page/setting_telegram_page.dart';
 import 'package:vierqr/features/connect_telegram/states/conect_telegram_state.dart';
+import 'package:vierqr/features/connect_telegram/widget/success_screen.dart';
 import 'package:vierqr/layouts/button_widget.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/services/providers/connect_telegram_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
-class ConnectTeleStepScreen extends StatefulWidget {
-  const ConnectTeleStepScreen({super.key});
-
+class ConnectTeleStepScreen extends StatelessWidget {
   @override
-  State<ConnectTeleStepScreen> createState() => _ConnectTeleStepScreenState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+        create: (context) => ConnectTelegramProvider(),
+        child: _ConnectTeleStepScreen());
+  }
 }
 
-class _ConnectTeleStepScreenState extends State<ConnectTeleStepScreen> {
+class _ConnectTeleStepScreen extends StatefulWidget {
+  const _ConnectTeleStepScreen({super.key});
+
+  @override
+  State<_ConnectTeleStepScreen> createState() => _ConnectTeleStepScreenState();
+}
+
+class _ConnectTeleStepScreenState extends State<_ConnectTeleStepScreen> {
   final PageController pageController = PageController();
+
+  void handleBackButton(BuildContext context) {
+    FocusManager.instance.primaryFocus?.unfocus();
+    if (pageController.page! > 0.0) {
+      Provider.of<ConnectTelegramProvider>(context, listen: false)
+          .updateStep(pageController.page!.toInt());
+      pageController.previousPage(
+          duration: const Duration(milliseconds: 300), curve: Curves.ease);
+    } else {
+      Navigator.of(context).pop();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const MAppBar(title: 'Kết nối Telegram'),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: ChangeNotifierProvider(
-          create: (context) => ConnectTelegramProvider(),
+    return WillPopScope(
+      onWillPop: () async {
+        handleBackButton(context);
+        return false;
+      },
+      child: Scaffold(
+        appBar: MAppBar(
+          title: 'Kết nối Telegram',
+          onPressed: () {
+            handleBackButton(context);
+          },
+        ),
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: BlocProvider<ConnectTelegramBloc>(
             create: (context) => ConnectTelegramBloc(),
             child: BlocConsumer<ConnectTelegramBloc, ConnectTelegramState>(
@@ -44,23 +73,11 @@ class _ConnectTeleStepScreenState extends State<ConnectTeleStepScreen> {
                 }
                 if (state is InsertTeleSuccessState) {
                   Navigator.pop(context);
-                  String chatId = Provider.of<ConnectTelegramProvider>(context,
-                          listen: false)
-                      .chatId;
-                  BlocProvider.of<ConnectTelegramBloc>(context)
-                      .add(SendFirstMessage(chatId: chatId));
-                  BlocProvider.of<ConnectTelegramBloc>(context).add(
-                      GetInformationTeleConnect(
-                          userId: UserInformationHelper.instance.getUserId()));
-                  Fluttertoast.showToast(
-                    msg: 'Thêm liên kết thành công',
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.BOTTOM,
-                    backgroundColor: Theme.of(context).cardColor,
-                    textColor: Theme.of(context).hintColor,
-                    fontSize: 14,
-                  );
                   Navigator.pop(context);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ConnectTelegramSuccess()));
                 }
                 if (state is InsertTeleFailedState) {
                   Navigator.pop(context);
@@ -136,12 +153,16 @@ class _ConnectTeleStepScreenState extends State<ConnectTeleStepScreen> {
         margin: EdgeInsets.zero,
         colorEnableText: AppColor.WHITE,
         onTap: () {
-          Map<String, dynamic> data = {};
-          data['chatId'] = provider.chatId;
-          data['userId'] = UserInformationHelper.instance.getUserId();
-          data['bankIds'] = provider.bankIds;
-          BlocProvider.of<ConnectTelegramBloc>(context)
-              .add(InsertTelegram(data: data));
+          if (provider.chatId.isEmpty) {
+            provider.updateChatId(provider.chatId);
+          } else {
+            Map<String, dynamic> data = {};
+            data['chatId'] = provider.chatId;
+            data['userId'] = UserInformationHelper.instance.getUserId();
+            data['bankIds'] = provider.bankIds;
+            BlocProvider.of<ConnectTelegramBloc>(context)
+                .add(InsertTelegram(data: data));
+          }
         },
       );
     });

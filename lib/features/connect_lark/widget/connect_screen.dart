@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/error_utils.dart';
@@ -10,6 +9,7 @@ import 'package:vierqr/features/connect_lark/blocs/connect_lark_bloc.dart';
 import 'package:vierqr/features/connect_lark/page/choose_bank_page.dart';
 import 'package:vierqr/features/connect_lark/page/create_webhook.dart';
 import 'package:vierqr/features/connect_lark/page/setting_lark_page.dart';
+import 'package:vierqr/features/connect_lark/widget/success_screen.dart';
 import 'package:vierqr/layouts/button_widget.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
@@ -18,24 +18,52 @@ import '../../../services/providers/connect_lark_provider.dart';
 import '../events/connect_lark_event.dart';
 import '../states/conect_lark_state.dart';
 
-class ConnectLarkStepScreen extends StatefulWidget {
-  const ConnectLarkStepScreen({super.key});
-
+class ConnectLarkStepScreen extends StatelessWidget {
   @override
-  State<ConnectLarkStepScreen> createState() => _ConnectLarkStepScreenState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+        create: (context) => ConnectLarkProvider(),
+        child: _ConnectLarkStepScreen());
+  }
 }
 
-class _ConnectLarkStepScreenState extends State<ConnectLarkStepScreen> {
+class _ConnectLarkStepScreen extends StatefulWidget {
+  const _ConnectLarkStepScreen({super.key});
+
+  @override
+  State<_ConnectLarkStepScreen> createState() => _ConnectLarkStepScreenState();
+}
+
+class _ConnectLarkStepScreenState extends State<_ConnectLarkStepScreen> {
   final PageController pageController = PageController();
+  void handleBackButton(BuildContext context) {
+    FocusManager.instance.primaryFocus?.unfocus();
+    if (pageController.page! > 0.0) {
+      Provider.of<ConnectLarkProvider>(context, listen: false)
+          .updateStep(pageController.page!.toInt());
+      pageController.previousPage(
+          duration: const Duration(milliseconds: 300), curve: Curves.ease);
+    } else {
+      Navigator.of(context).pop();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const MAppBar(title: 'Kết nối Lark'),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: ChangeNotifierProvider(
-          create: (context) => ConnectLarkProvider(),
+    return WillPopScope(
+      onWillPop: () async {
+        handleBackButton(context);
+        return false;
+      },
+      child: Scaffold(
+        appBar: MAppBar(
+          title: 'Kết nối Lark',
+          onPressed: () {
+            handleBackButton(context);
+          },
+        ),
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: BlocProvider<ConnectLarkBloc>(
             create: (context) => ConnectLarkBloc(),
             child: BlocConsumer<ConnectLarkBloc, ConnectLarkState>(
@@ -50,16 +78,11 @@ class _ConnectLarkStepScreenState extends State<ConnectLarkStepScreen> {
                           .webHook;
                   BlocProvider.of<ConnectLarkBloc>(context)
                       .add(SendFirstMessage(webhook: webhook));
-
-                  Fluttertoast.showToast(
-                    msg: 'Thêm liên kết thành công',
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.BOTTOM,
-                    backgroundColor: Theme.of(context).cardColor,
-                    textColor: Theme.of(context).hintColor,
-                    fontSize: 14,
-                  );
                   Navigator.pop(context);
+
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return ConnectLarkSuccess();
+                  }));
                 }
                 if (state is InsertLarkFailedState) {
                   Navigator.pop(context);

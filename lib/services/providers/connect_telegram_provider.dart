@@ -19,6 +19,14 @@ class ConnectTelegramProvider extends ChangeNotifier {
   String get chatId => _chatId;
   bool _errChatId = false;
   bool get errChatId => _errChatId;
+
+  addAll(String bankId) {
+    _chooseAllBank = true;
+    if (!_bankIds.contains(bankId)) {
+      _bankIds.add(bankId);
+    }
+  }
+
   void updateChatId(String value) {
     _chatId = value;
     if (_chatId.isEmpty || _chatId[0] != '-') {

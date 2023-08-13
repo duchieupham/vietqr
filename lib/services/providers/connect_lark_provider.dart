@@ -20,6 +20,14 @@ class ConnectLarkProvider extends ChangeNotifier {
 
   bool _errorWebhook = false;
   bool get errorWebhook => _errorWebhook;
+
+  addAll(String bankId) {
+    _chooseAllBank = true;
+    if (!_bankIds.contains(bankId)) {
+      _bankIds.add(bankId);
+    }
+  }
+
   void updateWebHook(String value) {
     _webHook = value;
     if (_webHook.isEmpty || !_webHook.contains('https://')) {

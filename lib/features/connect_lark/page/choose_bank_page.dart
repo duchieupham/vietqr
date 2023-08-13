@@ -25,6 +25,10 @@ class ChooseBankPage extends StatelessWidget {
             List<BankAccountDTO> listBank = state.listBanks
                 .where((dto) => dto.userId == userId && dto.isAuthenticated)
                 .toList();
+            listBank.forEach((dto) {
+              Provider.of<ConnectLarkProvider>(context, listen: false)
+                  .addAll(dto.id);
+            });
             return Consumer<ConnectLarkProvider>(
                 builder: (context, provider, child) {
               return Column(

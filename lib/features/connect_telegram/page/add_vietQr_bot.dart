@@ -47,23 +47,50 @@ class AddVietQrPage extends StatelessWidget {
           height: 12,
         ),
         _buildBgItem(
-            RichText(
-              text: TextSpan(
-                text: 'Sao chép thông tin ',
-                style: TextStyle(fontSize: 12, color: AppColor.BLACK),
-                children: const <TextSpan>[
-                  TextSpan(
-                      text: 'chat id',
-                      style:
-                          TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                  TextSpan(
-                    text: ' của bạn.',
-                    style: TextStyle(fontSize: 12),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                RichText(
+                  text: TextSpan(
+                    text: 'Sao chép thông tin ',
+                    style: TextStyle(fontSize: 12, color: AppColor.BLACK),
+                    children: const <TextSpan>[
+                      TextSpan(
+                          text: 'chat id',
+                          style: TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.bold)),
+                      TextSpan(
+                        text: ' của bạn.',
+                        style: TextStyle(fontSize: 12),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(
+                  height: 2,
+                ),
+                RichText(
+                  text: TextSpan(
+                    text: '(chat id ',
+                    style: TextStyle(
+                        fontSize: 12,
+                        color: AppColor.BLACK,
+                        fontWeight: FontWeight.bold),
+                    children: const <TextSpan>[
+                      TextSpan(
+                          text: 'của nhóm Telegram sẽ có định dạng ',
+                          style: TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.normal)),
+                      TextSpan(
+                        text: '-xxxxxxxxxx)',
+                        style: TextStyle(fontSize: 12),
+                      ),
+                    ],
+                  ),
+                )
+              ],
             ),
-            height: 60),
+            height: 62),
         const SizedBox(
           height: 40,
         ),
@@ -152,7 +179,13 @@ class AddVietQrPage extends StatelessWidget {
               Text(
                 '@vietqrbot',
                 style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
-              )
+              ),
+              const Spacer(),
+              Image.asset(
+                'assets/images/ic-copy-bot.png',
+                width: 25,
+                height: 25,
+              ),
             ],
           ),
         ),
@@ -188,7 +221,13 @@ class AddVietQrPage extends StatelessWidget {
               Text(
                 '@raw_data_bot',
                 style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-              )
+              ),
+              const Spacer(),
+              Image.asset(
+                'assets/images/ic-copy-bot.png',
+                width: 25,
+                height: 25,
+              ),
             ],
           ),
         ),
