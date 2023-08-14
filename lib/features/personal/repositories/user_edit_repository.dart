@@ -177,7 +177,6 @@ class UserEditRepository {
 
   Future<void> _resetServices() async {
     BuildContext context = NavigationService.navigatorKey.currentContext!;
-    Provider.of<CreateQRProvider>(context, listen: false).reset();
     Provider.of<UserEditProvider>(context, listen: false).reset();
     Provider.of<SuggestionWidgetProvider>(context, listen: false).reset();
     await EventBlocHelper.instance.updateLogoutBefore(true);

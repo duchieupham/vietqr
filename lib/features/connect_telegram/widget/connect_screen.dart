@@ -136,40 +136,63 @@ class _ConnectTeleStepScreenState extends State<_ConnectTeleStepScreen> {
 
   Widget _buildButton() {
     return Consumer<ConnectTelegramProvider>(
-        builder: (context, provider, child) {
-      if (provider.curStep < 3) {
-        return MButtonWidget(
-          title: 'Tiếp theo',
-          isEnable: true,
-          margin: EdgeInsets.zero,
-          colorEnableText: AppColor.WHITE,
-          onTap: () {
-            int page = provider.curStep + 1;
-            pageController.animateToPage(provider.curStep,
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.ease);
-            provider.updateStep(page);
-          },
+      builder: (context, provider, child) {
+        return Row(
+          children: [
+            Expanded(
+              child: MButtonWidget(
+                title: 'Trở về',
+                isEnable: true,
+                margin: EdgeInsets.zero,
+                colorEnableBgr: AppColor.WHITE,
+                colorEnableText: AppColor.BLUE_TEXT,
+                onTap: () {
+                  handleBackButton(context);
+                },
+              ),
+            ),
+            const SizedBox(width: 10),
+            if (provider.curStep < 3)
+              Expanded(
+                child: MButtonWidget(
+                  title: 'Tiếp theo',
+                  isEnable: true,
+                  margin: EdgeInsets.zero,
+                  colorEnableText: AppColor.WHITE,
+                  onTap: () {
+                    int page = provider.curStep + 1;
+                    pageController.animateToPage(provider.curStep,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.ease);
+                    provider.updateStep(page);
+                  },
+                ),
+              )
+            else
+              Expanded(
+                child: MButtonWidget(
+                  title: 'Xác nhận',
+                  isEnable: true,
+                  margin: EdgeInsets.zero,
+                  colorEnableText: AppColor.WHITE,
+                  onTap: () {
+                    if (provider.chatId.isEmpty) {
+                      provider.updateChatId(provider.chatId);
+                    } else {
+                      Map<String, dynamic> data = {};
+                      data['chatId'] = provider.chatId;
+                      data['userId'] =
+                          UserInformationHelper.instance.getUserId();
+                      data['bankIds'] = provider.bankIds;
+                      BlocProvider.of<ConnectTelegramBloc>(context)
+                          .add(InsertTelegram(data: data));
+                    }
+                  },
+                ),
+              ),
+          ],
         );
-      }
-      return MButtonWidget(
-        title: 'Xác nhận',
-        isEnable: true,
-        margin: EdgeInsets.zero,
-        colorEnableText: AppColor.WHITE,
-        onTap: () {
-          if (provider.chatId.isEmpty) {
-            provider.updateChatId(provider.chatId);
-          } else {
-            Map<String, dynamic> data = {};
-            data['chatId'] = provider.chatId;
-            data['userId'] = UserInformationHelper.instance.getUserId();
-            data['bankIds'] = provider.bankIds;
-            BlocProvider.of<ConnectTelegramBloc>(context)
-                .add(InsertTelegram(data: data));
-          }
-        },
-      );
-    });
+      },
+    );
   }
 }

@@ -36,6 +36,7 @@ class _ConnectLarkStepScreen extends StatefulWidget {
 
 class _ConnectLarkStepScreenState extends State<_ConnectLarkStepScreen> {
   final PageController pageController = PageController();
+
   void handleBackButton(BuildContext context) {
     FocusManager.instance.primaryFocus?.unfocus();
     if (pageController.page! > 0.0) {
@@ -134,35 +135,59 @@ class _ConnectLarkStepScreenState extends State<_ConnectLarkStepScreen> {
   }
 
   Widget _buildButton() {
-    return Consumer<ConnectLarkProvider>(builder: (context, provider, child) {
-      if (provider.curStep < 3) {
-        return MButtonWidget(
-          title: 'Tiếp theo',
-          isEnable: true,
-          margin: EdgeInsets.zero,
-          colorEnableText: AppColor.WHITE,
-          onTap: () {
-            int page = provider.curStep + 1;
-            pageController.animateToPage(provider.curStep,
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.ease);
-            provider.updateStep(page);
-          },
+    return Consumer<ConnectLarkProvider>(
+      builder: (context, provider, child) {
+        return Row(
+          children: [
+            Expanded(
+              child: MButtonWidget(
+                title: 'Trở về',
+                isEnable: true,
+                margin: EdgeInsets.zero,
+                colorEnableBgr: AppColor.WHITE,
+                colorEnableText: AppColor.BLUE_TEXT,
+                onTap: () {
+                  handleBackButton(context);
+                },
+              ),
+            ),
+            const SizedBox(width: 10),
+            if (provider.curStep < 3)
+              Expanded(
+                child: MButtonWidget(
+                  title: 'Tiếp theo',
+                  isEnable: true,
+                  margin: EdgeInsets.zero,
+                  colorEnableText: AppColor.WHITE,
+                  onTap: () {
+                    int page = provider.curStep + 1;
+                    pageController.animateToPage(provider.curStep,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.ease);
+                    provider.updateStep(page);
+                  },
+                ),
+              )
+            else
+              Expanded(
+                child: MButtonWidget(
+                  title: 'Xác nhận',
+                  isEnable: true,
+                  margin: EdgeInsets.zero,
+                  colorEnableText: AppColor.WHITE,
+                  onTap: () {
+                    Map<String, dynamic> data = {};
+                    data['webhook'] = provider.webHook;
+                    data['userId'] = UserInformationHelper.instance.getUserId();
+                    data['bankIds'] = provider.bankIds;
+                    BlocProvider.of<ConnectLarkBloc>(context)
+                        .add(InsertLark(data: data));
+                  },
+                ),
+              ),
+          ],
         );
-      }
-      return MButtonWidget(
-        title: 'Xác nhận',
-        isEnable: true,
-        margin: EdgeInsets.zero,
-        colorEnableText: AppColor.WHITE,
-        onTap: () {
-          Map<String, dynamic> data = {};
-          data['webhook'] = provider.webHook;
-          data['userId'] = UserInformationHelper.instance.getUserId();
-          data['bankIds'] = provider.bankIds;
-          BlocProvider.of<ConnectLarkBloc>(context).add(InsertLark(data: data));
-        },
-      );
-    });
+      },
+    );
   }
 }

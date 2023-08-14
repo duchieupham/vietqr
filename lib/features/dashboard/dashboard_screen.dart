@@ -77,9 +77,6 @@ class _DashBoardScreen extends State<DashBoardScreen>
   //providers
   final accountBalanceHomeProvider = AccountBalanceHomeProvider('');
 
-  late AnimationController _animationController;
-  late Animation<double> animation;
-  late CurvedAnimation curve;
 
   @override
   void initState() {
@@ -168,7 +165,6 @@ class _DashBoardScreen extends State<DashBoardScreen>
     _subscription = null;
     _subReloadWallet?.cancel();
     _subReloadWallet = null;
-    _animationController.dispose();
     super.dispose();
   }
 
