@@ -113,16 +113,12 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
               msg: CheckUtils.instance.getCheckMessage(result.message)));
         } else {
           emit(state.copyWith(
-            request: AddBankType.ERROR,
-            status: BlocStatus.UNLOADING,
-          ));
+              request: AddBankType.ERROR, status: BlocStatus.UNLOADING));
         }
       }
     } catch (e) {
       LOG.error(e.toString());
-      emit(state.copyWith(
-        request: AddBankType.ERROR,
-      ));
+      emit(state.copyWith(request: AddBankType.ERROR));
     }
   }
 

@@ -213,10 +213,6 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
             }
 
             if (state.request == AddBankType.ERROR) {
-              if (Provider.of<AddBankProvider>(context, listen: false).step ==
-                  0) {
-                nameController.clear();
-              }
               await DialogWidget.instance.openMsgDialog(
                   title: 'Không thể thêm TK', msg: state.msg ?? '');
               if (!mounted) return;
@@ -225,10 +221,6 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
             }
 
             if (state.request == AddBankType.ERROR_SYSTEM) {
-              if (Provider.of<AddBankProvider>(context, listen: false).step ==
-                  0) {
-                nameController.clear();
-              }
               await DialogWidget.instance.openMsgDialog(
                   title: 'Không thể liên kết TK', msg: state.msg ?? '');
               if (!mounted) return;
