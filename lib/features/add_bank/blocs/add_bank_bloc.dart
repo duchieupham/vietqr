@@ -189,23 +189,31 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
             ),
           );
         } else {
-          emit(
-            state.copyWith(
-              msg: ErrorUtils.instance
-                  .getErrorMessage(responseMessageDTO.message),
-              request: AddBankType.ERROR,
+          if (responseMessageDTO.message == 'E05') {
+            emit(state.copyWith(
+              msg:
+                  'Vui lòng kiểm tra thông tin đã khớp với thông tin khai báo MB Bank',
+              request: AddBankType.ERROR_SYSTEM,
               status: BlocStatus.UNLOADING,
-            ),
-          );
+            ));
+          } else {
+            emit(
+              state.copyWith(
+                msg: ErrorUtils.instance
+                    .getErrorMessage(responseMessageDTO.message),
+                request: AddBankType.ERROR,
+                status: BlocStatus.UNLOADING,
+              ),
+            );
+          }
         }
       }
     } catch (e) {
       LOG.error(e.toString());
-      ResponseMessageDTO responseMessageDTO =
-          const ResponseMessageDTO(status: 'FAILED', message: 'E05');
       emit(state.copyWith(
-        msg: ErrorUtils.instance.getErrorMessage(responseMessageDTO.message),
-        request: AddBankType.ERROR,
+        msg:
+            'Vui lòng kiểm tra thông tin đã khớp với thông tin khai báo MB Bank',
+        request: AddBankType.ERROR_SYSTEM,
         status: BlocStatus.UNLOADING,
       ));
     }

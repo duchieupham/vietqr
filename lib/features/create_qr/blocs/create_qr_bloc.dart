@@ -146,11 +146,19 @@ class CreateQRBloc extends Bloc<CreateQREvent, CreateQRState> with BaseManager {
           ),
         );
       } else if (event.code.isNotEmpty) {
-        emit(state.copyWith(
-          barCode: event.code.substring(0, 50),
-          type: CreateQRType.SCAN_QR,
-          status: BlocStatus.UNLOADING,
-        ));
+        if (event.code.length > 50) {
+          emit(state.copyWith(
+            barCode: event.code.substring(0, 50),
+            type: CreateQRType.SCAN_QR,
+            status: BlocStatus.UNLOADING,
+          ));
+        } else {
+          emit(state.copyWith(
+            barCode: event.code,
+            type: CreateQRType.SCAN_QR,
+            status: BlocStatus.UNLOADING,
+          ));
+        }
       } else {
         emit(state.copyWith(
           type: CreateQRType.SCAN_NOT_FOUND,

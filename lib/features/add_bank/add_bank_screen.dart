@@ -224,6 +224,18 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                   .updateEnableName(true);
             }
 
+            if (state.request == AddBankType.ERROR_SYSTEM) {
+              if (Provider.of<AddBankProvider>(context, listen: false).step ==
+                  0) {
+                nameController.clear();
+              }
+              await DialogWidget.instance.openMsgDialog(
+                  title: 'Không thể liên kết TK', msg: state.msg ?? '');
+              if (!mounted) return;
+              Provider.of<AddBankProvider>(context, listen: false)
+                  .updateEnableName(true);
+            }
+
             if (state.request == AddBankType.REQUEST_BANK) {
               if (!mounted) return;
               Navigator.of(context).pop();
@@ -796,7 +808,9 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
     String data = await FlutterBarcodeScanner.scanBarcode(
         '#ff6666', 'Cancel', true, ScanMode.DEFAULT);
     if (data.isNotEmpty) {
-      if (data == TypeQR.NEGATIVE_TWO.value) {
+      if (data == TypeQR.NEGATIVE_ONE.value) {
+        return;
+      } else if (data == TypeQR.NEGATIVE_TWO.value) {
         DialogWidget.instance.openMsgDialog(
           title: 'Không thể xác nhận mã QR',
           msg: 'Ảnh QR không đúng định dạng, vui lòng chọn ảnh khác.',

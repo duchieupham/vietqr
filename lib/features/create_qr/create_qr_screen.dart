@@ -421,64 +421,48 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                   onChange: (value) {},
                                 ),
                                 const SizedBox(height: 8),
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text(
-                                      'Mẫu nội dung: ',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w400,
-                                        height: 1.4,
+                                SizedBox(
+                                  width: width,
+                                  child: Wrap(
+                                    alignment: WrapAlignment.start,
+                                    spacing: 6,
+                                    runSpacing: 10,
+                                    children: [
+                                      _buildItemSuggest(
+                                        text: 'Thanh toan',
+                                        onChange: provider.updateSuggest,
                                       ),
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Expanded(
-                                      child: SizedBox(
-                                        width: width,
-                                        child: Wrap(
-                                          alignment: WrapAlignment.start,
-                                          spacing: 6,
-                                          runSpacing: 10,
-                                          children: [
-                                            _buildItemSuggest(
-                                              text: 'Thanh toan',
-                                              onChange: provider.updateSuggest,
-                                            ),
-                                            _buildItemSuggest(
-                                              onChange: provider.updateSuggest,
-                                              text:
-                                                  'Chuyen khoan den ${state.bankAccountDTO?.bankAccount ?? ''}',
-                                            ),
-                                            if (state.bankAccountDTO?.type ==
-                                                1) ...[
-                                              _buildItemSuggest(
-                                                onChange:
-                                                    provider.updateSuggest,
-                                                text:
-                                                    'Thanh toan cho ${state.bankAccountDTO?.businessName ?? ''}',
-                                              ),
-                                              _buildItemSuggest(
-                                                onChange:
-                                                    provider.updateSuggest,
-                                                text:
-                                                    'Giao dich ${state.bankAccountDTO?.branchName ?? ''}',
-                                              ),
-                                            ],
-                                            if (state.bankAccountDTO?.type ==
-                                                0) ...[
-                                              _buildItemSuggest(
-                                                onChange:
-                                                    provider.updateSuggest,
-                                                text:
-                                                    'Chuyen khoan cho ${state.bankAccountDTO?.userBankName ?? ''}',
-                                              ),
-                                            ],
-                                          ],
+                                      _buildItemSuggest(
+                                        onChange: provider.updateSuggest,
+                                        text:
+                                        'Chuyen khoan den ${state.bankAccountDTO?.bankAccount ?? ''}',
+                                      ),
+                                      if (state.bankAccountDTO?.type ==
+                                          1) ...[
+                                        _buildItemSuggest(
+                                          onChange:
+                                          provider.updateSuggest,
+                                          text:
+                                          'Thanh toan cho ${state.bankAccountDTO?.businessName ?? ''}',
                                         ),
-                                      ),
-                                    ),
-                                  ],
+                                        _buildItemSuggest(
+                                          onChange:
+                                          provider.updateSuggest,
+                                          text:
+                                          'Giao dich ${state.bankAccountDTO?.branchName ?? ''}',
+                                        ),
+                                      ],
+                                      if (state.bankAccountDTO?.type ==
+                                          0) ...[
+                                        _buildItemSuggest(
+                                          onChange:
+                                          provider.updateSuggest,
+                                          text:
+                                          'Chuyen khoan cho ${state.bankAccountDTO?.userBankName ?? ''}',
+                                        ),
+                                      ],
+                                    ],
+                                  ),
                                 ),
                                 const SizedBox(height: 30),
                                 if (provider.imageFile != null)

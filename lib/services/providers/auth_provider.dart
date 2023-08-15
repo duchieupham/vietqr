@@ -166,7 +166,7 @@ class AuthProvider with ChangeNotifier {
           if (isCheckApp) {
             isShowToastUpdate = 0;
             Fluttertoast.showToast(
-              msg: 'Không có bản cập nhật nàp',
+              msg: 'Không có bản cập nhật nào',
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.CENTER,
               backgroundColor: Theme.of(context!).cardColor,
@@ -189,7 +189,7 @@ class AuthProvider with ChangeNotifier {
           if (isCheckApp) {
             isShowToastUpdate = 0;
             Fluttertoast.showToast(
-              msg: 'Không có bản cập nhật nàp',
+              msg: 'Không có bản cập nhật nào',
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.CENTER,
               backgroundColor: Theme.of(context!).cardColor,
