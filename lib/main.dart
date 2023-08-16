@@ -378,6 +378,8 @@ class _VietQRApp extends State<VietQRApp> {
                 authProvider.updateThemeByIndex(0);
               }
 
+
+
               return MaterialApp(
                 navigatorKey: NavigationService.navigatorKey,
                 debugShowCheckedModeBanner: false,

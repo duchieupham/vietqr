@@ -21,8 +21,12 @@ class LoginProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void updateQuickLogin(value) {
-    isQuickLogin = value;
+  void updateQuickLogin(value, {bool isLoginAccount = false}) {
+    if (isLoginAccount) {
+      isQuickLogin = 1;
+    } else {
+      isQuickLogin = value;
+    }
     notifyListeners();
   }
 
