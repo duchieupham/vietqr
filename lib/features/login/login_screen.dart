@@ -40,7 +40,7 @@ class Login extends StatelessWidget {
       create: (BuildContext context) => LoginBloc(),
       child: ChangeNotifierProvider<LoginProvider>(
         create: (_) =>
-            LoginProvider()..updateQuickLogin(1, isLoginAccount: isCheck),
+            LoginProvider()..updateQuickLogin(0, isLoginAccount: isCheck),
         child: _Login(),
       ),
     );
