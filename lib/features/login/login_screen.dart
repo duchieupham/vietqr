@@ -246,6 +246,10 @@ class _LoginState extends State<_Login> {
                           .setLoginAccount(listString);
 
                       auth.updateInfoUser();
+
+                      if (list.isEmpty) {
+                        provider.updateQuickLogin(0);
+                      }
                     },
                     onQuickLogin: (dto) {
                       provider.updateQuickLogin(2);
