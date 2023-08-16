@@ -77,7 +77,6 @@ class _DashBoardScreen extends State<DashBoardScreen>
   //providers
   final accountBalanceHomeProvider = AccountBalanceHomeProvider('');
 
-
   @override
   void initState() {
     super.initState();
@@ -134,6 +133,11 @@ class _DashBoardScreen extends State<DashBoardScreen>
     checkUserInformation();
     _dashBoardBloc.add(const TokenEventCheckValid());
     _dashBoardBloc.add(const PermissionEventRequest());
+    if (Provider.of<AuthProvider>(context, listen: false).introduceDTO ==
+        null) {
+      _dashBoardBloc.add(GetPointEvent());
+    }
+    _dashBoardBloc.add(GetVersionAppEvent());
     _dashBoardBloc.add(GetUserInformation());
     _notificationBloc.add(NotificationGetCounterEvent());
   }

@@ -80,15 +80,19 @@ class LoginAccountScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          Column(
-            children: List.generate(list.length, (index) {
-              return GestureDetector(
-                onTap: () {
-                  onQuickLogin!(list[index]);
-                },
-                child: _buildItem(list[index],index),
-              );
-            }).toList(),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: List.generate(list.length, (index) {
+                  return GestureDetector(
+                    onTap: () {
+                      onQuickLogin!(list[index]);
+                    },
+                    child: _buildItem(list[index], index),
+                  );
+                }).toList(),
+              ),
+            ),
           ),
           const SizedBox(height: 10),
           GestureDetector(
@@ -123,7 +127,7 @@ class LoginAccountScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildItem(InfoUserDTO dto,int index) {
+  Widget _buildItem(InfoUserDTO dto, int index) {
     return Container(
       margin: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
       decoration: BoxDecoration(
@@ -147,7 +151,7 @@ class LoginAccountScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      dto.fullName,
+                      dto.fullName.trim(),
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,

@@ -11,6 +11,7 @@ import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
+import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/file_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
@@ -152,6 +153,7 @@ class _UserEditViewState extends State<UserEditView> {
                       Navigator.of(context).popUntil((route) => route.isFirst);
                     }
                     Navigator.of(context).pushReplacementNamed(Routes.LOGIN);
+                    eventBus.fire(ChangeBottomBarEvent(0));
                   }
                   if (state is UserDeactiveFailedState) {
                     //pop loading dialog

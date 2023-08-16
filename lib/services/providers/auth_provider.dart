@@ -5,8 +5,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/models/app_info_dto.dart';
-import 'package:vierqr/models/bank_account_dto.dart';
-import 'package:vierqr/models/business_member_dto.dart';
+import 'package:vierqr/models/info_user_dto.dart';
 import 'package:vierqr/models/introduce_dto.dart';
 import 'package:vierqr/services/shared_references/bank_arrangement_helper.dart';
 import 'package:vierqr/services/shared_references/theme_helper.dart';
@@ -28,21 +27,17 @@ class AuthProvider with ChangeNotifier {
   bool isCheckApp = false;
   int isShowToastUpdate = -1;
 
+  List<InfoUserDTO> listInfoUsers = [];
+
   //type = 0 => stack
   //type = 1 => slide
   int _type = BankArrangementHelper.instance.getBankArr();
 
   int get typeBankArr => _type;
 
-  bool hasConnection = false;
-
-  bool isFirst = false;
-
   PackageInfo? packageInfo;
 
   AppInfoDTO? appInfoDTO;
-
-  String get userId => UserInformationHelper.instance.getUserId();
 
   IntroduceDTO? introduceDTO;
 
@@ -52,18 +47,6 @@ class AuthProvider with ChangeNotifier {
 
   bool get showActionShare => _showActionShare;
 
-  List<BankAccountDTO> _banks = [];
-
-  List<BankAccountDTO> get banks => _banks;
-
-  List<BankAccountDTO> _searchBanks = [];
-
-  List<BankAccountDTO> get searchBanks => _searchBanks;
-
-  List<BusinessMemberDTO> _memberList = [];
-
-  List<BusinessMemberDTO> get memberList => _memberList;
-
   void setContext(BuildContext ctx) async {
     if (context != null) {
       return;
@@ -72,6 +55,15 @@ class AuthProvider with ChangeNotifier {
     PackageInfo data = await PackageInfo.fromPlatform();
     packageInfo = data;
     versionApp = packageInfo?.version ?? '';
+
+    listInfoUsers =
+        await await UserInformationHelper.instance.getLoginAccount();
+    notifyListeners();
+  }
+
+  void updateInfoUser() async {
+    listInfoUsers =
+        await await UserInformationHelper.instance.getLoginAccount();
     notifyListeners();
   }
 
@@ -101,16 +93,6 @@ class AuthProvider with ChangeNotifier {
 
   void updateIsCheckApp(value) {
     isCheckApp = value;
-    notifyListeners();
-  }
-
-  void updateHasConnection(value) {
-    hasConnection = value;
-    notifyListeners();
-  }
-
-  void updateFirst(value) {
-    isFirst = value;
     notifyListeners();
   }
 
@@ -211,6 +193,17 @@ class AuthProvider with ChangeNotifier {
 
   void onClose() {
     isUpdateVersion = false;
+    notifyListeners();
+  }
+
+  void reset() {
+    introduceDTO = null;
+    _imageFile = null;
+    isUpdateVersion = false;
+    _showActionShare = false;
+    versionApp = '';
+    isCheckApp = false;
+    isShowToastUpdate = -1;
     notifyListeners();
   }
 }
