@@ -37,6 +37,7 @@ class TopUpProvider extends ChangeNotifier {
     _listNetworkProviders = list;
     AccountInformationDTO accountInformationDTO =
         UserInformationHelper.instance.getAccountInformation();
+
     for (var element in list) {
       if (accountInformationDTO.carrierTypeId == element.id) {
         _networkProviders = element;
@@ -52,11 +53,16 @@ class TopUpProvider extends ChangeNotifier {
   void updateInfoUser(ContactDTO dto) {
     _phoneNo = dto.phoneNo;
     _nameUser = dto.nickname;
-    _listNetworkProviders.forEach((element) {
-      if (element.id == dto.carrierTypeId) {
-        _networkProviders = element;
-      }
-    });
+
+    if (dto.carrierTypeId.isEmpty) {
+      _networkProviders = NetworkProviders(imgId: '');
+    } else {
+      _listNetworkProviders.forEach((element) {
+        if (element.id == dto.carrierTypeId) {
+          _networkProviders = element;
+        }
+      });
+    }
 
     notifyListeners();
   }

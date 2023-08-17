@@ -8,6 +8,12 @@ class ContactProvider extends ChangeNotifier {
   List<ContactDTO> listContactDTO = [];
   List<ContactDTO> listSearch = [];
 
+  String phoneNo = '';
+  void updatePhoneNo(String value) {
+    phoneNo = value;
+    notifyListeners();
+  }
+
   void updateTab(value) {
     tab = value;
     notifyListeners();
