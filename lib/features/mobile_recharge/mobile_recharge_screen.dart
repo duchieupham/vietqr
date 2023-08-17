@@ -209,11 +209,12 @@ class MobileRechargeScreen extends StatelessWidget {
                                     },
                                     child: Text(
                                       int.parse(UserInformationHelper.instance
-                                                      .getWalletInfo()
-                                                      .amount ??
-                                                  '0') <
-                                              int.parse(provider.money
-                                                  .replaceAll(',', ''))
+                                                          .getWalletInfo()
+                                                          .amount ??
+                                                      '0') <
+                                                  int.parse(provider.money
+                                                      .replaceAll(',', '')) &&
+                                              provider.paymentTypeMethod == 0
                                           ? 'Không đủ thanh toán.\n Nạp ngay'
                                           : 'Nạp thêm',
                                       textAlign: TextAlign.center,
@@ -259,12 +260,13 @@ class MobileRechargeScreen extends StatelessWidget {
                                       FocusManager.instance.primaryFocus
                                           ?.unfocus();
                                       if (int.parse(UserInformationHelper
-                                                  .instance
-                                                  .getWalletInfo()
-                                                  .amount ??
-                                              '0') >=
-                                          int.parse(provider.money
-                                              .replaceAll(',', ''))) {
+                                                      .instance
+                                                      .getWalletInfo()
+                                                      .amount ??
+                                                  '0') >=
+                                              int.parse(provider.money
+                                                  .replaceAll(',', '')) ||
+                                          provider.paymentTypeMethod == 1) {
                                         DialogWidget.instance.openWidgetDialog(
                                             heightPopup: 320,
                                             widthPopup: 320,
@@ -311,25 +313,30 @@ class MobileRechargeScreen extends StatelessWidget {
                                           borderRadius:
                                               BorderRadius.circular(5),
                                           color: int.parse(UserInformationHelper
-                                                          .instance
-                                                          .getWalletInfo()
-                                                          .amount ??
-                                                      '0') <
-                                                  int.parse(provider.money
-                                                      .replaceAll(',', ''))
+                                                              .instance
+                                                              .getWalletInfo()
+                                                              .amount ??
+                                                          '0') <
+                                                      int.parse(provider.money
+                                                          .replaceAll(
+                                                              ',', '')) &&
+                                                  provider.paymentTypeMethod ==
+                                                      0
                                               ? AppColor.GREY_BUTTON
                                               : AppColor.BLUE_TEXT),
                                       child: Text(
                                         'Thanh toán',
                                         style: TextStyle(
-                                            color: int.parse(
-                                                        UserInformationHelper
+                                            color: int.parse(UserInformationHelper
                                                                 .instance
                                                                 .getWalletInfo()
                                                                 .amount ??
                                                             '0') <
-                                                    int.parse(provider.money
-                                                        .replaceAll(',', ''))
+                                                        int.parse(provider.money
+                                                            .replaceAll(
+                                                                ',', '')) &&
+                                                    provider.paymentTypeMethod ==
+                                                        0
                                                 ? AppColor.BLACK
                                                 : AppColor.WHITE),
                                       ),
