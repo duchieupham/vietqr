@@ -5,13 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
-import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
-import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
-import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/home/widget/dialog_update.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/services/providers/auth_provider.dart';
@@ -39,7 +35,35 @@ class _ServiceSectionState extends State<ServiceSection> {
         const SizedBox(
           height: 10,
         ),
-        _buildListService(context)
+        _buildListService(context),
+        const SizedBox(
+          height: 12,
+        ),
+        const Text(
+          'Mạng xã hội',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        _buildSocialNetwork(context)
+      ],
+    );
+  }
+
+  Widget _buildSocialNetwork(BuildContext context) {
+    return Wrap(
+      runSpacing: 20,
+      children: [
+        _buildItemService(
+            context, 'assets/images/logo-telegram-dash.png', 'Telegram',
+            () async {
+          Navigator.pushNamed(context, Routes.CONNECT_TELEGRAM);
+        }),
+        _buildItemService(context, 'assets/images/logo-lark-dash.png', 'Lark',
+            () async {
+          Navigator.pushNamed(context, Routes.CONNECT_LARK);
+        }),
       ],
     );
   }
@@ -92,29 +116,21 @@ class _ServiceSectionState extends State<ServiceSection> {
             );
           }
         }),
-        _buildItemService(
-            context, 'assets/images/logo-telegram-dash.png', 'Telegram',
+        if (Provider.of<AuthProvider>(context, listen: false).isUpdateVersion)
+          _buildItemService(
+            context,
+            'assets/images/logo-check-app-version.png',
+            'Kiểm tra phiên bản App',
             () async {
-          Navigator.pushNamed(context, Routes.CONNECT_TELEGRAM);
-        }),
-        _buildItemService(context, 'assets/images/logo-lark-dash.png', 'Lark',
-            () async {
-          Navigator.pushNamed(context, Routes.CONNECT_LARK);
-        }),
-        _buildItemService(
-          context,
-          'assets/images/logo-check-app-version.png',
-          'Kiểm tra phiên bản App',
-          () async {
-            showDialog(
-              barrierDismissible: false,
-              context: NavigationService.navigatorKey.currentContext!,
-              builder: (BuildContext context) {
-                return DialogUpdateView();
-              },
-            );
-          },
-        ),
+              showDialog(
+                barrierDismissible: false,
+                context: NavigationService.navigatorKey.currentContext!,
+                builder: (BuildContext context) {
+                  return DialogUpdateView();
+                },
+              );
+            },
+          ),
       ],
     );
   }
