@@ -10,16 +10,20 @@ import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
+import 'package:vierqr/features/contact/blocs/contact_bloc.dart';
 import 'package:vierqr/features/mobile_recharge/blocs/mobile_recharge_bloc.dart';
 import 'package:vierqr/features/mobile_recharge/states/mobile_recharge_state.dart';
+import 'package:vierqr/features/mobile_recharge/widget/bottom_sheet_search_user.dart';
 import 'package:vierqr/features/mobile_recharge/widget/list_network_providers.dart';
 import 'package:vierqr/features/mobile_recharge/widget/pop_up_confirm_pass.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/account_information_dto.dart';
 import 'package:vierqr/models/network_providers_dto.dart';
+import 'package:vierqr/models/respone_top_up_dto.dart';
 import 'package:vierqr/services/providers/top_up_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
+import '../contact/blocs/contact_provider.dart';
 import 'events/mobile_recharge_event.dart';
 
 class MobileRechargeScreen extends StatelessWidget {
@@ -76,6 +80,7 @@ class MobileRechargeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: const MAppBar(title: 'Nạp tiền điện thoại'),
       body: ChangeNotifierProvider(
         create: (context) => TopUpProvider(),
@@ -96,13 +101,38 @@ class MobileRechargeScreen extends StatelessWidget {
                 eventBus.fire(ReloadWallet());
                 Navigator.pop(context);
                 Navigator.pop(context);
-                Map<String, dynamic> arguments = {};
-                arguments['money'] =
-                    Provider.of<TopUpProvider>(context, listen: false).money;
-                arguments['phoneNo'] =
-                    UserInformationHelper.instance.getPhoneNo();
-                Navigator.of(context)
-                    .pushNamed(Routes.RECHARGE_SUCCESS, arguments: arguments);
+                if (Provider.of<TopUpProvider>(context, listen: false)
+                        .paymentTypeMethod ==
+                    1) {
+                  List<String> listParam = state.dto.message.split('*');
+                  Map<String, dynamic> param = {};
+                  ResponseTopUpDTO dto = ResponseTopUpDTO(
+                      imgId: listParam[1],
+                      content: listParam[0],
+                      qrCode: listParam[2],
+                      amount: Provider.of<TopUpProvider>(context, listen: false)
+                          .money);
+                  param['dto'] = dto;
+                  param['phoneNo'] =
+                      Provider.of<TopUpProvider>(context, listen: false)
+                          .phoneNo;
+                  param['nwProviders'] =
+                      Provider.of<TopUpProvider>(context, listen: false)
+                          .networkProviders
+                          .name;
+                  Navigator.pushNamed(context, Routes.QR_MOBILE_CHARGE,
+                      arguments: param);
+                } else {
+                  Map<String, dynamic> arguments = {};
+                  arguments['money'] =
+                      Provider.of<TopUpProvider>(context, listen: false).money;
+                  arguments['phoneNo'] =
+                      Provider.of<TopUpProvider>(context, listen: false)
+                          .phoneNo;
+
+                  Navigator.of(context)
+                      .pushNamed(Routes.RECHARGE_SUCCESS, arguments: arguments);
+                }
               }
               if (state is MobileRechargeMobileMoneyFailedState) {
                 Navigator.pop(context);
@@ -138,7 +168,12 @@ class MobileRechargeScreen extends StatelessWidget {
                         const SizedBox(
                           height: 28,
                         ),
-                        _buildTemplateSection('Mệnh giá', child: _buildTopUp())
+                        _buildTemplateSection('Mệnh giá', child: _buildTopUp()),
+                        const SizedBox(
+                          height: 28,
+                        ),
+                        _buildTemplateSection('Phương thức thanh toán',
+                            child: _buildPaymentMethods()),
                       ],
                     ),
                   ),
@@ -212,7 +247,7 @@ class MobileRechargeScreen extends StatelessWidget {
                                           style: TextStyle(fontSize: 12),
                                         ),
                                         Text(
-                                          '${provider.money} VQR',
+                                          '${provider.money} ${provider.paymentTypeMethod == 1 ? 'VND' : 'VQR'}',
                                           style: const TextStyle(
                                               fontWeight: FontWeight.bold),
                                         ),
@@ -223,36 +258,51 @@ class MobileRechargeScreen extends StatelessWidget {
                                     onTap: () {
                                       FocusManager.instance.primaryFocus
                                           ?.unfocus();
-
-                                      DialogWidget.instance.openWidgetDialog(
-                                          heightPopup: 320,
-                                          widthPopup: 320,
-                                          margin: const EdgeInsets.only(
-                                              left: 32, right: 32, bottom: 48),
-                                          radius: 20,
-                                          child: PopupConfirmPassword(
-                                            onConfirmSuccess: (otp) {
-                                              Navigator.of(context).pop();
-                                              Map<String, dynamic> data = {};
-                                              data['phoneNo'] =
-                                                  UserInformationHelper.instance
-                                                      .getPhoneNo();
-                                              data['userId'] =
-                                                  UserInformationHelper.instance
-                                                      .getUserId();
-                                              data['rechargeType'] =
-                                                  provider.rechargeType;
-                                              data['otp'] = otp;
-                                              data['carrierTypeId'] =
-                                                  provider.networkProviders.id;
-                                              BlocProvider.of<
-                                                          MobileRechargeBloc>(
-                                                      context)
-                                                  .add(
-                                                      MobileRechargeMobileMoney(
-                                                          data: data));
-                                            },
-                                          ));
+                                      if (int.parse(UserInformationHelper
+                                                  .instance
+                                                  .getWalletInfo()
+                                                  .amount ??
+                                              '0') >=
+                                          int.parse(provider.money
+                                              .replaceAll(',', ''))) {
+                                        DialogWidget.instance.openWidgetDialog(
+                                            heightPopup: 320,
+                                            widthPopup: 320,
+                                            margin: const EdgeInsets.only(
+                                                left: 32,
+                                                right: 32,
+                                                bottom: 48),
+                                            radius: 20,
+                                            child: PopupConfirmPassword(
+                                              onConfirmSuccess: (otp) {
+                                                Navigator.of(context).pop();
+                                                Map<String, dynamic> data = {};
+                                                data['phoneNo'] =
+                                                    provider.phoneNo.isNotEmpty
+                                                        ? provider.phoneNo
+                                                        : UserInformationHelper
+                                                            .instance
+                                                            .getPhoneNo();
+                                                data['userId'] =
+                                                    UserInformationHelper
+                                                        .instance
+                                                        .getUserId();
+                                                data['rechargeType'] =
+                                                    provider.rechargeType;
+                                                data['otp'] = otp;
+                                                data['carrierTypeId'] = provider
+                                                    .networkProviders.id;
+                                                data['paymentMethod'] =
+                                                    provider.paymentTypeMethod;
+                                                BlocProvider.of<
+                                                            MobileRechargeBloc>(
+                                                        context)
+                                                    .add(
+                                                        MobileRechargeMobileMoney(
+                                                            data: data));
+                                              },
+                                            ));
+                                      }
                                     },
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(
@@ -260,10 +310,28 @@ class MobileRechargeScreen extends StatelessWidget {
                                       decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(5),
-                                          color: AppColor.BLUE_TEXT),
-                                      child: const Text(
+                                          color: int.parse(UserInformationHelper
+                                                          .instance
+                                                          .getWalletInfo()
+                                                          .amount ??
+                                                      '0') <
+                                                  int.parse(provider.money
+                                                      .replaceAll(',', ''))
+                                              ? AppColor.GREY_BUTTON
+                                              : AppColor.BLUE_TEXT),
+                                      child: Text(
                                         'Thanh toán',
-                                        style: TextStyle(color: AppColor.WHITE),
+                                        style: TextStyle(
+                                            color: int.parse(
+                                                        UserInformationHelper
+                                                                .instance
+                                                                .getWalletInfo()
+                                                                .amount ??
+                                                            '0') <
+                                                    int.parse(provider.money
+                                                        .replaceAll(',', ''))
+                                                ? AppColor.BLACK
+                                                : AppColor.WHITE),
                                       ),
                                     ),
                                   ),
@@ -295,12 +363,12 @@ class MobileRechargeScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(8)),
       child: Column(
         children: [
-          Row(
-            children: [
-              Consumer<TopUpProvider>(builder: (context, provider, child) {
-                String imgId = provider.networkProviders.imgId;
-                if (imgId.isNotEmpty) {
-                  return GestureDetector(
+          Consumer<TopUpProvider>(builder: (context, provider, child) {
+            String imgId = provider.networkProviders.imgId;
+            return Row(
+              children: [
+                if (imgId.isNotEmpty)
+                  GestureDetector(
                     onTap: () {
                       DialogWidget.instance.showModalBottomContent(
                         context: context,
@@ -330,64 +398,92 @@ class MobileRechargeScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                  );
-                } else {
-                  return _buildBlankLogo(
-                      context, provider.listNetworkProviders, provider);
-                }
-              }),
-              const Padding(padding: EdgeInsets.only(left: 10)),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          StringUtils.instance.formatPhoneNumberVN(phoneNumber),
-                          style: const TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 16),
-                        )
-                        // SizedBox(
-                        //   width: 94,
-                        //   height: 22,
-                        //   child: TextField(
-                        //     controller:
-                        //         TextEditingController(text: phoneNumber),
-                        //     readOnly: true,
-                        //     focusNode: myFocusNode,
-                        //     style: const TextStyle(
-                        //         fontWeight: FontWeight.w600, fontSize: 16),
-                        //     decoration: const InputDecoration(
-                        //         contentPadding: EdgeInsets.zero),
-                        //   ),
-                        // ),
-
-                        // GestureDetector(
-                        //   onTap: () {
-                        //     myFocusNode.requestFocus();
-                        //   },
-                        //   child: Image.asset(
-                        //     'assets/images/ic-edit-personal-setting.png',
-                        //     height: 25,
-                        //   ),
-                        // ),
-                      ],
-                    ),
-                    Text(
-                      '${accountInformationDTO.lastName} ${accountInformationDTO.middleName} ${accountInformationDTO.firstName}'
-                          .trim(),
-                      style: const TextStyle(
-                          fontSize: 10, color: AppColor.GREY_TEXT),
-                    ),
-                  ],
+                  )
+                else
+                  _buildBlankLogo(
+                      context, provider.listNetworkProviders, provider),
+                const Padding(padding: EdgeInsets.only(left: 10)),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            provider.phoneNo.isNotEmpty
+                                ? provider.phoneNo
+                                : StringUtils.instance
+                                    .formatPhoneNumberVN(phoneNumber),
+                            style: const TextStyle(
+                                fontWeight: FontWeight.w600, fontSize: 16),
+                          ),
+                          // SizedBox(
+                          //   width: 94,
+                          //   height: 22,
+                          //   child: TextField(
+                          //     controller:
+                          //         TextEditingController(text: phoneNumber),
+                          //     readOnly: true,
+                          //     focusNode: myFocusNode,
+                          //     style: const TextStyle(
+                          //         fontWeight: FontWeight.w600, fontSize: 16),
+                          //     decoration: const InputDecoration(
+                          //         contentPadding: EdgeInsets.zero),
+                          //   ),
+                          // ),
+                        ],
+                      ),
+                      Text(
+                        provider.nameUser.isNotEmpty
+                            ? provider.nameUser
+                            : '${accountInformationDTO.lastName} ${accountInformationDTO.middleName} ${accountInformationDTO.firstName}'
+                                .trim(),
+                        style: const TextStyle(
+                            fontSize: 10, color: AppColor.GREY_TEXT),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const Padding(
-                padding: EdgeInsets.only(left: 5),
-              ),
-            ],
-          ),
+                GestureDetector(
+                  onTap: () {
+                    DialogWidget.instance.showModelBottomSheet(
+                      padding: EdgeInsets.only(
+                          left: 12, right: 12, bottom: 32, top: 12),
+                      height: 500,
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(16),
+                          topRight: Radius.circular(16)),
+                      widget: BlocProvider<ContactBloc>(
+                        create: (context) => ContactBloc(context),
+                        child: ChangeNotifierProvider<ContactProvider>(
+                          create: (context) => ContactProvider(),
+                          child: BottomSheetSearchUser(
+                            chooseContact: (dto) {
+                              Provider.of<TopUpProvider>(context, listen: false)
+                                  .updateInfoUser(dto);
+                            },
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                        color: AppColor.GREY_BUTTON,
+                        borderRadius: BorderRadius.circular(20)),
+                    child: Image.asset(
+                      'assets/images/ic-edit-phone.png',
+                      height: 28,
+                    ),
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(left: 5),
+                ),
+              ],
+            );
+          }),
         ],
       ),
     );
@@ -588,5 +684,148 @@ class MobileRechargeScreen extends StatelessWidget {
             : const SizedBox.shrink(),
       ),
     );
+  }
+
+  Widget _buildPaymentMethods() {
+    return Consumer<TopUpProvider>(builder: (context, provider, child) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          GestureDetector(
+            onTap: () {
+              provider.updatePaymentMethod(1);
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: AppColor.WHITE,
+                border: Border.all(
+                    color: provider.paymentTypeMethod == 1
+                        ? AppColor.BLUE_TEXT
+                        : AppColor.WHITE,
+                    width: 0.5),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Image.asset(
+                      'assets/images/ic-viet-qr.png',
+                      height: 20,
+                    ),
+                  ),
+                  Expanded(
+                      flex: 4,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          Text(
+                            'Mã VietQR VN',
+                            style: TextStyle(fontSize: 15),
+                          ),
+                          SizedBox(
+                            height: 2,
+                          ),
+                          Text(
+                            'Quét mã VietQR để thực hiện thanh toán',
+                            style: TextStyle(
+                                fontSize: 12, color: AppColor.GREY_TEXT),
+                          ),
+                        ],
+                      )),
+                  Container(
+                    height: 10,
+                    width: 10,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                        color: provider.paymentTypeMethod == 1
+                            ? AppColor.BLUE_TEXT
+                            : AppColor.WHITE,
+                        borderRadius: BorderRadius.circular(20)),
+                    child: Container(
+                      height: 5,
+                      width: 5,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          color: AppColor.WHITE,
+                          borderRadius: BorderRadius.circular(20)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 12,
+          ),
+          GestureDetector(
+            onTap: () {
+              provider.updatePaymentMethod(0);
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: AppColor.WHITE,
+                border: Border.all(
+                    color: provider.paymentTypeMethod == 0
+                        ? AppColor.BLUE_TEXT
+                        : AppColor.WHITE,
+                    width: 0.5),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Image.asset(
+                      'assets/images/logo-vqr-unit.png',
+                      height: 20,
+                    ),
+                  ),
+                  Expanded(
+                      flex: 4,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          Text(
+                            'VQR',
+                            style: TextStyle(fontSize: 15),
+                          ),
+                          SizedBox(
+                            height: 2,
+                          ),
+                          Text(
+                            'Thanh toán bằng tiền dịch vụ VQR',
+                            style: TextStyle(
+                                fontSize: 12, color: AppColor.GREY_TEXT),
+                          ),
+                        ],
+                      )),
+                  Container(
+                    height: 10,
+                    width: 10,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                        color: provider.paymentTypeMethod == 0
+                            ? AppColor.BLUE_TEXT
+                            : AppColor.WHITE,
+                        borderRadius: BorderRadius.circular(20)),
+                    child: Container(
+                      height: 5,
+                      width: 5,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          color: AppColor.WHITE,
+                          borderRadius: BorderRadius.circular(20)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      );
+    });
   }
 }

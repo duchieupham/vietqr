@@ -186,6 +186,7 @@ enum ContactType {
   NONE,
   GET_LIST,
   GET_DETAIL,
+  GET_LIST_RECHARGE,
   REMOVE,
   UPDATE,
   ERROR,
@@ -194,6 +195,7 @@ enum ContactType {
   NICK_NAME,
   SCAN,
   SCAN_ERROR,
+  SEARCH_USER,
   OTHER,
 }
 

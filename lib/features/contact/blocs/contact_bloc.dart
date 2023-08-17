@@ -33,6 +33,7 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
           typeQR: typeQR,
         )) {
     on<ContactEventGetList>(_getListContact);
+    on<ContactEventGetListRecharge>(_getListContactRecharge);
     on<ContactEventGetListPending>(_getListContactPending);
     on<ContactEventGetDetail>(_getDetailContact);
     on<RemoveContactEvent>(_removeContact);
@@ -42,6 +43,7 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
     on<UpdateStatusContactEvent>(_updateStatusContact);
     on<GetNickNameContactEvent>(_getNickNameWalletId);
     on<UpdateEventContact>(_updateState);
+    on<SearchUser>(_searchUser);
   }
 
   final repository = ContactRepository();
@@ -57,6 +59,29 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
             state.copyWith(
               listContactDTO: result,
               type: ContactType.GET_LIST,
+            ),
+          );
+        } else {
+          emit(state.copyWith(type: ContactType.NONE));
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(status: BlocStatus.ERROR));
+    }
+  }
+
+  void _getListContactRecharge(ContactEvent event, Emitter emit) async {
+    try {
+      if (event is ContactEventGetListRecharge) {
+        List<ContactDTO> result =
+            await repository.getListContactRecharge(userId);
+        result.sort((a, b) => a.nickname.compareTo(b.nickname));
+        if (result.isNotEmpty) {
+          emit(
+            state.copyWith(
+              listContactDTO: result,
+              type: ContactType.GET_LIST_RECHARGE,
             ),
           );
         } else {
@@ -330,6 +355,25 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
       }
     } catch (e) {
       LOG.error(e.toString());
+    }
+  }
+
+  void _searchUser(ContactEvent event, Emitter emit) async {
+    try {
+      List<ContactDTO> result = [];
+      if (event is SearchUser) {
+        result = await repository.searchUser(event.phoneNo);
+        result.sort((a, b) => a.nickname.compareTo(b.nickname));
+        emit(
+          state.copyWith(
+            listContactDTO: result,
+            type: ContactType.SEARCH_USER,
+          ),
+        );
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(type: ContactType.ERROR));
     }
   }
 }

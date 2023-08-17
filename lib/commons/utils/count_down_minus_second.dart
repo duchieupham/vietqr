@@ -13,11 +13,18 @@ class CountDown extends AnimatedWidget {
     String timerText =
         '${clockTimer.inMinutes.remainder(60).toString()}:${clockTimer.inSeconds.remainder(60).toString().padLeft(2, '0')}';
 
-    return Text(
-      timerText,
-      style: const TextStyle(
-        fontSize: 20,
-        color: AppColor.BLUE_TEXT,
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8,vertical: 4),
+      decoration: BoxDecoration(
+          color: AppColor.BLUE_TEXT.withOpacity(0.2),
+          borderRadius: BorderRadius.circular(8)),
+      child: Text(
+        timerText,
+        style: const TextStyle(
+          fontSize: 20,
+          color: AppColor.BLUE_TEXT,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }

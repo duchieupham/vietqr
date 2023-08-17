@@ -1,17 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/models/account_information_dto.dart';
+import 'package:vierqr/models/contact_dto.dart';
 import 'package:vierqr/models/network_providers_dto.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class TopUpProvider extends ChangeNotifier {
   String _money = StringUtils.formatNumber(50000);
-
   String get money => _money;
 
   String _errorMoney = '';
 
   String get errorMoney => _errorMoney;
+
+  String _phoneNo = UserInformationHelper.instance.getPhoneNo();
+  String get phoneNo => _phoneNo;
+
+  String _carrierTypeId = '';
+  String get carrierTypeId => _carrierTypeId;
+
+  String _nameUser = '';
+  String get nameUser => _nameUser;
 
   List<NetworkProviders> _listNetworkProviders = [];
   List<NetworkProviders> get listNetworkProviders => _listNetworkProviders;
@@ -22,6 +31,8 @@ class TopUpProvider extends ChangeNotifier {
   int _rechargeType = 3;
   int get rechargeType => _rechargeType;
 
+  int _paymentTypeMethod = 0;
+  int get paymentTypeMethod => _paymentTypeMethod;
   init(List<NetworkProviders> list) {
     _listNetworkProviders = list;
     AccountInformationDTO accountInformationDTO =
@@ -36,6 +47,18 @@ class TopUpProvider extends ChangeNotifier {
 
   void updateRechargeType(int type) {
     _rechargeType = type;
+  }
+
+  void updateInfoUser(ContactDTO dto) {
+    _phoneNo = dto.phoneNo;
+    _nameUser = dto.nickname;
+    _listNetworkProviders.forEach((element) {
+      if (element.id == dto.carrierTypeId) {
+        _networkProviders = element;
+      }
+    });
+
+    notifyListeners();
   }
 
   initNetworkProviders(NetworkProviders value) {
@@ -64,6 +87,11 @@ class TopUpProvider extends ChangeNotifier {
       _money = StringUtils.formatNumber(data);
     }
 
+    notifyListeners();
+  }
+
+  void updatePaymentMethod(int type) {
+    _paymentTypeMethod = type;
     notifyListeners();
   }
 }
