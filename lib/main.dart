@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:camera/camera.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -44,7 +42,6 @@ import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/dashboard_screen.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/dashboard/theme_setting.dart';
-import 'package:vierqr/features/dashboard/widget/disconnect_widget.dart';
 import 'package:vierqr/features/generate_qr/views/qr_share_view.dart';
 import 'package:vierqr/features/introduce/views/introduce_screen.dart';
 import 'package:vierqr/features/login/login_screen.dart';
@@ -155,13 +152,10 @@ class VietQRApp extends StatefulWidget {
 
 class _VietQRApp extends State<VietQRApp> {
   static Widget _mainScreen = const Login();
-  final Connectivity _connectivity = Connectivity();
-  late StreamSubscription<ConnectivityResult> _connectivitySubscription;
 
   @override
   void initState() {
     super.initState();
-    initConnectivity();
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -181,59 +175,6 @@ class _VietQRApp extends State<VietQRApp> {
     //
     requestNotificationPermission();
     handleMessageOnBackground();
-
-    _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
-  }
-
-  Future<void> initConnectivity() async {
-    late ConnectivityResult result;
-    try {
-      result = await _connectivity.checkConnectivity();
-    } on PlatformException catch (e) {
-      LOG.error('Couldn\'t check connectivity status $e');
-      return;
-    }
-    if (!mounted) {
-      return Future.value(null);
-    }
-
-    return _updateConnectionStatus(result);
-  }
-
-  Future checkConnection() async {
-    try {
-      final result = await InternetAddress.lookup('google.com');
-      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        return true;
-      } else {
-        await DialogWidget.instance.showFullModalBottomContent(
-          isDissmiss: false,
-          widget: DisconnectWidget(
-            function: initConnectivity,
-          ),
-        );
-      }
-    } on SocketException catch (_) {
-      await DialogWidget.instance.showFullModalBottomContent(
-        isDissmiss: false,
-        widget: DisconnectWidget(
-          function: initConnectivity,
-        ),
-      );
-    }
-  }
-
-  Future<void> _updateConnectionStatus(ConnectivityResult result) async {
-    if (result == ConnectivityResult.none) {
-      await DialogWidget.instance.showFullModalBottomContent(
-        isDissmiss: false,
-        widget: DisconnectWidget(
-          function: initConnectivity,
-        ),
-      );
-    } else {
-      checkConnection();
-    }
   }
 
   void requestNotificationPermission() async {
@@ -389,8 +330,6 @@ class _VietQRApp extends State<VietQRApp> {
               if (authProvider.getThemeIndex() != 0) {
                 authProvider.updateThemeByIndex(0);
               }
-
-
 
               return MaterialApp(
                 navigatorKey: NavigationService.navigatorKey,
@@ -558,7 +497,6 @@ class _VietQRApp extends State<VietQRApp> {
 
   @override
   void dispose() {
-    _connectivitySubscription.cancel();
     super.dispose();
   }
 }

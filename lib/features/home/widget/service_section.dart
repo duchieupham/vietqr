@@ -37,7 +37,7 @@ class _ServiceSectionState extends State<ServiceSection> {
         ),
         _buildListService(context),
         const SizedBox(
-          height: 12,
+          height: 30,
         ),
         const Text(
           'Mạng xã hội',

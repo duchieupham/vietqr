@@ -277,3 +277,9 @@ enum TokenType {
   Fcm_success,
   Fcm_failed,
 }
+
+enum TypeInternet {
+  NONE,
+  CONNECT,
+  DISCONNECT,
+}

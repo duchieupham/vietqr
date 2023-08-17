@@ -16,6 +16,15 @@ class DashBoardProvider with ChangeNotifier {
 
   get moveEvent => _moveEvent;
 
+  TypeInternet type = TypeInternet.NONE;
+  bool isInternet = false;
+
+  void updateInternet(value, typeInternet) {
+    type = typeInternet;
+    isInternet = value;
+    notifyListeners();
+  }
+
   updateMoveEvent(value) {
     if (_moveEvent == value) {
       return;

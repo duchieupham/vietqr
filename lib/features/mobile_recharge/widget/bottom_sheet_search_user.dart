@@ -29,7 +29,7 @@ class BottomSheetSearchUser extends StatelessWidget {
               width: 32,
             ),
             Text(
-              'Thay đổi số điện thoại',
+              'Nạp tiền điện thoại',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -52,7 +52,7 @@ class BottomSheetSearchUser extends StatelessWidget {
           maxLines: 1,
           fillColor: AppColor.GREY_BUTTON,
           // controller: searchController,
-          hintText: 'Tìm kiếm danh bạ',
+          hintText: 'Tìm kiếm số điện thoại',
           inputType: TextInputType.number,
           prefixIcon: const Icon(Icons.search),
           keyboardAction: TextInputAction.done,
