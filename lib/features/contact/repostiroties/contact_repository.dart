@@ -198,7 +198,7 @@ class ContactRepository {
                   id: json['id'],
                   carrierTypeId: json['carrierTypeId'],
                   nickname:
-                      json['lastName'] + json['middleName'] + json['firstName'],
+                      '${json['lastName']} ${json['middleName']} ${json['firstName']}',
                   status: 0,
                   type: 0,
                   description: '',
