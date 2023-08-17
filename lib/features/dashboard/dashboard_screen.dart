@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:float_bubble/float_bubble.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
@@ -11,6 +14,7 @@ import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/events.dart';
+import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
@@ -77,10 +81,14 @@ class _DashBoardScreen extends State<DashBoardScreen>
   //providers
   final accountBalanceHomeProvider = AccountBalanceHomeProvider('');
 
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<ConnectivityResult> _connectivitySubscription;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    initConnectivity();
     _dashBoardBloc = BlocProvider.of(context);
     _notificationBloc = BlocProvider.of(context);
     _pageController = PageController(
@@ -108,6 +116,8 @@ class _DashBoardScreen extends State<DashBoardScreen>
     _subReloadWallet = eventBus.on<ReloadWallet>().listen((_) {
       _dashBoardBloc.add(GetPointEvent());
     });
+
+    _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
   }
 
   void startBarcodeScanStream() async {
@@ -127,6 +137,71 @@ class _DashBoardScreen extends State<DashBoardScreen>
         },
       );
     }
+  }
+
+  Future<void> initConnectivity() async {
+    late ConnectivityResult result;
+    try {
+      result = await _connectivity.checkConnectivity();
+    } on PlatformException catch (e) {
+      LOG.error('Couldn\'t check connectivity status $e');
+      return;
+    }
+    if (!mounted) {
+      return Future.value(null);
+    }
+
+    return _updateConnectionStatus(result);
+  }
+
+  Future checkConnection() async {
+    bool isInternet =
+        Provider.of<DashBoardProvider>(context, listen: false).isInternet;
+
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        if (isInternet) {
+          Provider.of<DashBoardProvider>(context, listen: false)
+              .updateInternet(false, TypeInternet.CONNECT);
+          _onChangeInternet(false);
+        }
+      } else {
+        if (!isInternet) {
+          Provider.of<DashBoardProvider>(context, listen: false)
+              .updateInternet(true, TypeInternet.DISCONNECT);
+          _onChangeInternet(true);
+        }
+      }
+    } on SocketException catch (_) {
+      if (!isInternet) {
+        Provider.of<DashBoardProvider>(context, listen: false)
+            .updateInternet(true, TypeInternet.DISCONNECT);
+        _onChangeInternet(true);
+      }
+    }
+  }
+
+  Future<void> _updateConnectionStatus(ConnectivityResult result) async {
+    bool isInternet =
+        Provider.of<DashBoardProvider>(context, listen: false).isInternet;
+    if (result == ConnectivityResult.none) {
+      if (!isInternet) {
+        Provider.of<DashBoardProvider>(context, listen: false)
+            .updateInternet(true, TypeInternet.DISCONNECT);
+        _onChangeInternet(true);
+      }
+    } else {
+      checkConnection();
+    }
+  }
+
+  Future _onChangeInternet(bool isInternet) async {
+    await Future.delayed(Duration(seconds: 3)).then((v) {
+      if (!mounted) return;
+      Provider.of<DashBoardProvider>(context, listen: false)
+          .updateInternet(isInternet, TypeInternet.NONE);
+    });
   }
 
   void initialServices(BuildContext context) {
@@ -169,6 +244,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
     _subscription = null;
     _subReloadWallet?.cancel();
     _subReloadWallet = null;
+    _connectivitySubscription.cancel();
     super.dispose();
   }
 
@@ -421,6 +497,62 @@ class _DashBoardScreen extends State<DashBoardScreen>
                         ],
                       ),
                     ),
+                  ),
+                );
+              },
+            ),
+            Consumer<DashBoardProvider>(
+              builder: (context, page, child) {
+                return Positioned(
+                  bottom: 10,
+                  left: 20,
+                  right: 20,
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 350),
+                    child: page.type == TypeInternet.CONNECT
+                        ? Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 6, horizontal: 8),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: AppColor.BLACK_DARK.withOpacity(0.95)),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.wifi,
+                                  color: AppColor.GREEN,
+                                ),
+                                const SizedBox(width: 10),
+                                Text(
+                                  'Đã có kết nối internet',
+                                  style: TextStyle(color: AppColor.WHITE),
+                                )
+                              ],
+                            ),
+                          )
+                        : page.type == TypeInternet.DISCONNECT
+                            ? Container(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 6, horizontal: 8),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    color:
+                                        AppColor.BLACK_DARK.withOpacity(0.95)),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.wifi_off,
+                                      color: AppColor.error700,
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      'Mất kết nối internet',
+                                      style: TextStyle(color: AppColor.WHITE),
+                                    )
+                                  ],
+                                ),
+                              )
+                            : const SizedBox(),
                   ),
                 );
               },

@@ -58,28 +58,7 @@ class InfoDetailBankAccount extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   VietQr(qrGeneratedDTO: qrGeneratedDTO),
-                  GestureDetector(
-                    onTap: onChangePage,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 12, horizontal: 20),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: AppColor.WHITE,
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(child: Text('Lịch sử giao dịch')),
-                          Image.asset(
-                            'assets/images/ic-next-blue.png',
-                            width: 24,
-                            height: 24,
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                  const Padding(padding: EdgeInsets.only(top: 20)),
+                  const Padding(padding: EdgeInsets.only(top: 16)),
                   _buildTitle(title: 'Thông tin liên kết'),
                   BoxLayout(
                     width: width,
@@ -240,7 +219,7 @@ class InfoDetailBankAccount extends StatelessWidget {
                               } else {
                                 BankAccountRemoveDTO bankAccountRemoveDTO =
                                     BankAccountRemoveDTO(
-                                  bankId: bankId ?? '',
+                                  bankId: bankId,
                                   type: dto.type,
                                   isAuthenticated: dto.authenticated,
                                 );
@@ -373,46 +352,68 @@ class InfoDetailBankAccount extends StatelessWidget {
         const Padding(
           padding: EdgeInsets.only(top: 10),
         ),
-        ButtonIconWidget(
-          width: width - 40,
-          height: 40,
-          icon: Icons.add_rounded,
-          title: 'Tạo QR giao dịch',
-          function: () {
-            BankAccountDTO bankAccountDTO = BankAccountDTO(
-              id: dto.id,
-              bankAccount: dto.bankAccount,
-              userBankName: dto.userBankName,
-              bankCode: dto.bankCode,
-              bankName: dto.bankName,
-              imgId: dto.imgId,
-              type: dto.type,
-              branchId: (dto.businessDetails.isEmpty)
-                  ? ''
-                  : dto.businessDetails.first.branchDetails.first.branchId,
-              businessId: (dto.businessDetails.isEmpty)
-                  ? ''
-                  : dto.businessDetails.first.businessId,
-              branchName: (dto.businessDetails.isEmpty)
-                  ? ''
-                  : dto.businessDetails.first.branchDetails.first.branchName,
-              businessName: (dto.businessDetails.isEmpty)
-                  ? ''
-                  : dto.businessDetails.first.businessName,
-              isAuthenticated: dto.authenticated,
-            );
-            Navigator.pushNamed(
-              context,
-              Routes.CREATE_QR,
-              arguments: {'bankInfo': bankAccountDTO},
-            );
-          },
-          textColor: AppColor.WHITE,
-          bgColor: AppColor.BLUE_TEXT,
+        Row(
+          children: [
+            ButtonIconWidget(
+              height: 40,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+              iconSize: 28,
+              pathIcon: 'assets/images/ic-trans-history.png',
+              bgColor: AppColor.WHITE,
+              textSize: 12,
+              title: 'Lịch sử giao dịch',
+              function: () {
+                onChangePage!();
+              },
+              textColor: AppColor.BLUE_TEXT,
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: ButtonIconWidget(
+                height: 40,
+                icon: Icons.add_rounded,
+                textSize: 12,
+                title: 'Tạo QR giao dịch',
+                function: () {
+                  BankAccountDTO bankAccountDTO = BankAccountDTO(
+                    id: dto.id,
+                    bankAccount: dto.bankAccount,
+                    userBankName: dto.userBankName,
+                    bankCode: dto.bankCode,
+                    bankName: dto.bankName,
+                    imgId: dto.imgId,
+                    type: dto.type,
+                    branchId: (dto.businessDetails.isEmpty)
+                        ? ''
+                        : dto
+                            .businessDetails.first.branchDetails.first.branchId,
+                    businessId: (dto.businessDetails.isEmpty)
+                        ? ''
+                        : dto.businessDetails.first.businessId,
+                    branchName: (dto.businessDetails.isEmpty)
+                        ? ''
+                        : dto.businessDetails.first.branchDetails.first
+                            .branchName,
+                    businessName: (dto.businessDetails.isEmpty)
+                        ? ''
+                        : dto.businessDetails.first.businessName,
+                    isAuthenticated: dto.authenticated,
+                  );
+                  Navigator.pushNamed(
+                    context,
+                    Routes.CREATE_QR,
+                    arguments: {'bankInfo': bankAccountDTO},
+                  );
+                },
+                textColor: AppColor.WHITE,
+                bgColor: AppColor.BLUE_TEXT,
+              ),
+            ),
+          ],
         ),
         Padding(
             padding: EdgeInsets.only(
-                bottom: (PlatformUtils.instance.isIOsApp()) ? 20 : 10)),
+                bottom: (PlatformUtils.instance.isIOsApp()) ? 20 : 20)),
       ],
     );
   }
