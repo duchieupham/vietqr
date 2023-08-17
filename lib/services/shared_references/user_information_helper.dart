@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/account_information_dto.dart';
+import 'package:vierqr/models/info_user_dto.dart';
 import 'package:vierqr/models/introduce_dto.dart';
 
 import '../../models/setting_account_sto.dart';
@@ -104,5 +105,15 @@ class UserInformationHelper {
   String getUserFullname() {
     return ('${getAccountInformation().lastName} ${getAccountInformation().middleName} ${getAccountInformation().firstName}')
         .trim();
+  }
+
+  Future<void> setLoginAccount(List<String> list) async {
+    await sharedPrefs.setStringList('LOGIN_ACCOUNT', list);
+  }
+
+  List<InfoUserDTO> getLoginAccount() {
+    return ListLoginAccountDTO.fromJson(
+            sharedPrefs.getStringList('LOGIN_ACCOUNT'))
+        .list;
   }
 }

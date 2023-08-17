@@ -3,6 +3,7 @@
 class Routes {
   static const String APP = '/app';
   static const String LOGIN = '/login';
+  static const String LOGIN_ACCOUNT = '/login_account';
   static const String REGISTER = '/register';
   static const String DASHBOARD = '/dashboard';
   static const String CREATE_QR = '/createQR';

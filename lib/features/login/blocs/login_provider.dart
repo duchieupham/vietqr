@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
+import 'package:vierqr/models/info_user_dto.dart';
+import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class LoginProvider with ChangeNotifier {
   bool isEnableButton = false;
@@ -7,10 +9,24 @@ class LoginProvider with ChangeNotifier {
   String phone = '';
   String? errorPhone;
 
-  bool isQuickLogin = false;
+  InfoUserDTO? infoUserDTO;
 
-  void updateQuickLogin(value) {
-    isQuickLogin = value;
+  //0: trang login ban đầu
+  // 1: trang login gần nhất
+  //2 : quickLogin
+  int isQuickLogin = 0;
+
+  void updateInfoUser(value) {
+    infoUserDTO = value;
+    notifyListeners();
+  }
+
+  void updateQuickLogin(value, {bool isLoginAccount = false}) {
+    if (isLoginAccount) {
+      isQuickLogin = 1;
+    } else {
+      isQuickLogin = value;
+    }
     notifyListeners();
   }
 
@@ -39,15 +55,6 @@ class LoginProvider with ChangeNotifier {
       isEnableButton = true;
     }
 
-    notifyListeners();
-  }
-
-  void onChangePin(String value) {
-    if (value.length >= 6) {
-      isButtonLogin = true;
-    } else {
-      isButtonLogin = false;
-    }
     notifyListeners();
   }
 }
