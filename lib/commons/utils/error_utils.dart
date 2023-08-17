@@ -125,6 +125,9 @@ class ErrorUtils {
       case ErrorType.E65:
         result = 'Xác thực thất bại. Vui lòng thử lại sau';
         break;
+      case ErrorType.E70:
+        result = 'Phương thức thanh toán không hợp lệ';
+        break;
       case ErrorType.C03:
         result = 'Tài khoản này đã được thêm trước đó';
         break;

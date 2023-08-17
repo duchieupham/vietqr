@@ -8,6 +8,8 @@ class ContactEvent extends Equatable {
 
 class ContactEventGetList extends ContactEvent {}
 
+class ContactEventGetListRecharge extends ContactEvent {}
+
 class ContactEventGetListPending extends ContactEvent {}
 
 class ContactEventGetDetail extends ContactEvent {
@@ -67,3 +69,11 @@ class UpdateStatusContactEvent extends ContactEvent {
 class GetNickNameContactEvent extends ContactEvent {}
 
 class UpdateEventContact extends ContactEvent {}
+
+class SearchUser extends ContactEvent {
+  final String phoneNo;
+  SearchUser(this.phoneNo);
+
+  @override
+  List<Object?> get props => [phoneNo];
+}

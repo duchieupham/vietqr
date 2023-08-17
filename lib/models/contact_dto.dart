@@ -5,6 +5,8 @@ class ContactDTO {
   int type;
   String imgId;
   String description;
+  String phoneNo;
+  String carrierTypeId;
 
   ContactDTO({
     required this.id,
@@ -13,15 +15,19 @@ class ContactDTO {
     required this.type,
     required this.imgId,
     required this.description,
+    required this.phoneNo,
+    required this.carrierTypeId,
   });
 
   factory ContactDTO.fromJson(Map<String, dynamic> json) => ContactDTO(
-        id: json["id"],
-        nickname: json["nickname"],
-        status: json["status"],
-        type: json["type"],
-        imgId: json["imgId"],
-        description: json["description"],
+        id: json["id"] ?? '',
+        nickname: json["nickname"] ?? '',
+        status: json["status"] ?? 0,
+        type: json["type"] ?? 0,
+        imgId: json["imgId"] ?? '',
+        description: json["description"] ?? '',
+        phoneNo: json["phoneNo"] ?? '',
+        carrierTypeId: json["carrierTypeId"] ?? '',
       );
 
   Map<String, dynamic> toJson() => {
@@ -31,5 +37,7 @@ class ContactDTO {
         "type": type,
         "imgId": imgId,
         "description": description,
+        "phoneNo": phoneNo,
+        "carrierTypeId": carrierTypeId,
       };
 }

@@ -34,8 +34,12 @@ class TopUpScreen extends StatelessWidget {
               }
               if (state is TopUpCreateQrSuccessState) {
                 Navigator.pop(context);
+                Map<String, dynamic> param = {};
+                param['dto'] = state.dto;
+                param['phoneNo'] = UserInformationHelper.instance.getPhoneNo();
+                Navigator.pop(context);
                 Navigator.pushNamed(context, Routes.QR_TOP_UP,
-                    arguments: state.dto);
+                    arguments: param);
               }
               if (state is TopUpCreateQrFailedState) {
                 Navigator.pop(context);

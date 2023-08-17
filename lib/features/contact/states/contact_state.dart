@@ -16,20 +16,21 @@ class ContactState extends Equatable {
   final String? nickName;
   final String? bankAccount;
   final BankTypeDTO? bankTypeDTO;
+  final ContactDTO? userSearch;
 
-  const ContactState({
-    required this.listContactDTO,
-    required this.listContactDTOSuggest,
-    required this.contactDetailDTO,
-    this.status = BlocStatus.NONE,
-    this.type = ContactType.NONE,
-    this.msg,
-    required this.qrCode,
-    this.typeQR = TypeContact.NONE,
-    this.nickName,
-    this.bankAccount,
-    this.bankTypeDTO,
-  });
+  const ContactState(
+      {required this.listContactDTO,
+      required this.listContactDTOSuggest,
+      required this.contactDetailDTO,
+      this.status = BlocStatus.NONE,
+      this.type = ContactType.NONE,
+      this.msg,
+      required this.qrCode,
+      this.typeQR = TypeContact.NONE,
+      this.nickName,
+      this.bankAccount,
+      this.bankTypeDTO,
+      this.userSearch});
 
   ContactState copyWith(
       {BlocStatus? status,
@@ -42,6 +43,7 @@ class ContactState extends Equatable {
       TypeContact? typeQR,
       String? nickName,
       String? bankAccount,
+      ContactDTO? userSearch,
       BankTypeDTO? bankTypeDTO}) {
     return ContactState(
       status: status ?? this.status,
@@ -56,6 +58,7 @@ class ContactState extends Equatable {
       nickName: nickName ?? this.nickName,
       bankAccount: bankAccount ?? this.bankAccount,
       bankTypeDTO: bankTypeDTO ?? this.bankTypeDTO,
+      userSearch: userSearch ?? this.userSearch,
     );
   }
 
@@ -72,5 +75,6 @@ class ContactState extends Equatable {
         nickName,
         bankAccount,
         bankTypeDTO,
+        userSearch,
       ];
 }

@@ -158,4 +158,58 @@ class ContactRepository {
     }
     return nickName;
   }
+
+  Future<List<ContactDTO>> getListContactRecharge(userId) async {
+    List<ContactDTO> list = [];
+    try {
+      String url = '${EnvConfig.getBaseUrl()}contact/recharge?userId=$userId';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        if (data != null) {
+          list = data
+              .map<ContactDTO>((json) => ContactDTO.fromJson(json))
+              .toList();
+        }
+      }
+    } catch (e) {
+      LOG.error('Error at requestPermissions - PermissionRepository: $e');
+    }
+    return list;
+  }
+
+  Future<List<ContactDTO>> searchUser(String phoneNo) async {
+    List<ContactDTO> list = [];
+    try {
+      String url = '${EnvConfig.getBaseUrl()}accounts/list/search/$phoneNo';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        if (data != null) {
+          list = data
+              .map<ContactDTO>((json) => ContactDTO(
+                  imgId: json['imgId'],
+                  id: json['id'],
+                  carrierTypeId: json['carrierTypeId'],
+                  nickname:
+                      json['lastName'] + json['middleName'] + json['firstName'],
+                  status: 0,
+                  type: 0,
+                  description: '',
+                  phoneNo: json['phoneNo']))
+              .toList();
+        }
+      }
+    } catch (e) {
+      LOG.error('Error at requestPermissions - PermissionRepository: $e');
+      return list;
+    }
+    return list;
+  }
 }

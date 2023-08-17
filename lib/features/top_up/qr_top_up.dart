@@ -10,7 +10,6 @@ import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
-import 'package:vierqr/commons/widgets/sub_header_widget.dart';
 import 'package:vierqr/features/top_up/blocs/top_up_bloc.dart';
 import 'package:vierqr/features/top_up/states/top_up_state.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
@@ -19,8 +18,8 @@ import 'package:vierqr/services/providers/top_up_provider.dart';
 
 class QRTopUpScreen extends StatefulWidget {
   final ResponseTopUpDTO dto;
-
-  const QRTopUpScreen({super.key, required this.dto});
+  final String phoneNo;
+  const QRTopUpScreen({super.key, required this.dto, required this.phoneNo});
 
   @override
   State<QRTopUpScreen> createState() => _QRTopUpScreenState();
@@ -98,61 +97,83 @@ class _QRTopUpScreenState extends State<QRTopUpScreen>
                       child: SingleChildScrollView(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const SizedBox(height: 16),
-                            RepaintBoundaryWidget(
-                                globalKey: globalKey,
-                                builder: (key) {
-                                  return Container(
-                                    margin: const EdgeInsets.only(
-                                        top: 0,
-                                        bottom: 16,
-                                        left: 30,
-                                        right: 30),
-                                    padding: const EdgeInsets.all(16),
-                                    decoration: const BoxDecoration(
-                                      color: AppColor.WHITE,
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(20)),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: QrImage(
-                                            data: widget.dto.qrCode,
-                                            version: QrVersions.auto,
-                                            embeddedImage: const AssetImage(
-                                                'assets/images/ic-viet-qr-small.png'),
-                                            embeddedImageStyle:
-                                                QrEmbeddedImageStyle(
-                                              size: const Size(30, 30),
-                                            ),
+                            Container(
+                              decoration: const BoxDecoration(
+                                color: AppColor.WHITE,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8)),
+                              ),
+                              child: Column(
+                                children: [
+                                  RepaintBoundaryWidget(
+                                      globalKey: globalKey,
+                                      builder: (key) {
+                                        return Container(
+                                          margin: const EdgeInsets.only(
+                                              top: 0, left: 30, right: 30),
+                                          padding: const EdgeInsets.all(16),
+                                          decoration: const BoxDecoration(
+                                            color: AppColor.WHITE,
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(20)),
                                           ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 20),
-                                          child: Row(
+                                          child: Column(
                                             children: [
-                                              Image.asset(
-                                                'assets/images/ic-viet-qr.png',
-                                                height: 28,
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: QrImage(
+                                                  data: widget.dto.qrCode,
+                                                  version: QrVersions.auto,
+                                                  embeddedImage: const AssetImage(
+                                                      'assets/images/ic-viet-qr-small.png'),
+                                                  embeddedImageStyle:
+                                                      QrEmbeddedImageStyle(
+                                                    size: const Size(30, 30),
+                                                  ),
+                                                ),
                                               ),
-                                              const Spacer(),
-                                              Image.asset(
-                                                'assets/images/ic-napas247.png',
-                                                height: 30,
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 20),
+                                                child: Row(
+                                                  children: [
+                                                    Image.asset(
+                                                      'assets/images/ic-viet-qr.png',
+                                                      height: 28,
+                                                    ),
+                                                    const Spacer(),
+                                                    Image.asset(
+                                                      'assets/images/ic-napas247.png',
+                                                      height: 30,
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
                                             ],
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                }),
+                                        );
+                                      }),
+                                  const Text(
+                                    'Thanh toán qua ứng dụng Ngân hàng/ Ví điện tử',
+                                  ),
+                                  const SizedBox(
+                                    height: 16,
+                                  )
+                                ],
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
                             const Text(
-                              'Thanh toán qua ứng dụng Ngân hàng/ Ví điện tử',
+                              'Chi tiết giao dịch',
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                             _buildInfoBill(),
                             const SizedBox(height: 30),
@@ -242,30 +263,62 @@ class _QRTopUpScreenState extends State<QRTopUpScreen>
           borderRadius: BorderRadius.circular(8), color: AppColor.WHITE),
       child: Column(
         children: [
-          Text(
-            '+ ${StringUtils.formatNumber(int.parse(widget.dto.amount))} VQR',
-            style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: AppColor.ORANGE_DARK),
-          ),
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'Số tiền cần thanh toán',
+                style: TextStyle(fontSize: 12),
+              ),
+              const Spacer(),
+              Text(
+                ' ${StringUtils.formatNumber(int.parse(widget.dto.amount))} VND',
+                style: const TextStyle(
+                    fontWeight: FontWeight.bold, color: AppColor.ORANGE_DARK),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              const Text(
+                'Dịch vụ',
+                style: TextStyle(fontSize: 12),
+              ),
+              const Spacer(),
+              Text(
+                'Nạp tiền dịch vụ VietQR',
+                style: TextStyle(fontSize: 12),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              const Text(
+                'Nạp cho tài khoản',
+                style: TextStyle(fontSize: 12),
+              ),
+              const Spacer(),
+              Text(
+                widget.phoneNo,
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
             children: [
               const Text(
                 'Thanh toán đơn hàng ',
                 style: TextStyle(color: AppColor.BLACK),
               ),
+              const Spacer(),
               Text(
                 getCodeOrder(),
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ],
           ),
-          const SizedBox(
-            height: 32,
-          ),
+          const SizedBox(height: 16),
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
@@ -280,7 +333,7 @@ class _QRTopUpScreenState extends State<QRTopUpScreen>
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 16),
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
@@ -289,7 +342,7 @@ class _QRTopUpScreenState extends State<QRTopUpScreen>
               Image.asset('assets/images/logo-mb.png', height: 20),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           _buildCountDown(),
         ],
       ),
@@ -442,7 +495,7 @@ class _QRTopUpScreenState extends State<QRTopUpScreen>
           const SizedBox(height: 4),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               Text(
                 '- ',
                 style: TextStyle(
@@ -452,12 +505,26 @@ class _QRTopUpScreenState extends State<QRTopUpScreen>
                 ),
               ),
               Expanded(
-                child: Text(
-                  'Vui lòng không chỉnh sửa nội dung chuyển khoản, điều này có thể ảnh hưởng tới hệ thống nạp tiền.',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: AppColor.BLACK,
-                    height: 1.4,
+                child: RichText(
+                  text: TextSpan(
+                    text: 'Vui lòng không chỉnh sửa ',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: AppColor.BLACK,
+                      height: 1.4,
+                    ),
+                    children: const <TextSpan>[
+                      TextSpan(
+                          text: 'số tiền ',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      TextSpan(text: 'và '),
+                      TextSpan(
+                          text: 'nội dung ',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      TextSpan(
+                          text:
+                              'chuyển khoản, điều này có thể ảnh hưởng tới hệ thống nạp tiền.'),
+                    ],
                   ),
                 ),
               ),

@@ -39,6 +39,7 @@ import 'package:vierqr/features/contact/contact_screen.dart';
 import 'package:vierqr/features/contact/views/contact_detail.dart';
 import 'package:vierqr/features/contact_us/contact_us_screen.dart';
 import 'package:vierqr/features/create_qr/create_qr_screen.dart';
+import 'package:vierqr/features/dashboard/blocs/dash_board_provider.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/dashboard_screen.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
@@ -48,6 +49,7 @@ import 'package:vierqr/features/generate_qr/views/qr_share_view.dart';
 import 'package:vierqr/features/introduce/views/introduce_screen.dart';
 import 'package:vierqr/features/login/login_screen.dart';
 import 'package:vierqr/features/mobile_recharge/mobile_recharge_screen.dart';
+import 'package:vierqr/features/mobile_recharge/qr_mobile_recharge.dart';
 import 'package:vierqr/features/mobile_recharge/widget/recharege_success.dart';
 import 'package:vierqr/features/notification/blocs/notification_bloc.dart';
 import 'package:vierqr/features/notification/views/notification_view.dart';
@@ -59,7 +61,6 @@ import 'package:vierqr/features/printer/views/printer_setting_screen.dart';
 import 'package:vierqr/features/report/report_screen.dart';
 import 'package:vierqr/features/scan_qr/scan_qr_lib.dart';
 import 'package:vierqr/features/setting_bdsd/setting_bdsd_screen.dart';
-
 // import 'package:vierqr/features/scan_qr/scan_qr_screen.dart';
 import 'package:vierqr/features/top_up/qr_top_up.dart';
 import 'package:vierqr/features/top_up/top_up_screen.dart';
@@ -71,12 +72,11 @@ import 'package:vierqr/models/notification_transaction_success_dto.dart';
 import 'package:vierqr/models/respone_top_up_dto.dart';
 import 'package:vierqr/models/top_up_sucsess_dto.dart';
 import 'package:vierqr/services/local_notification/notification_service.dart';
+import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:vierqr/services/providers/avatar_provider.dart';
 import 'package:vierqr/services/providers/business_inforamtion_provider.dart';
-import 'package:vierqr/features/dashboard/blocs/dash_board_provider.dart';
 import 'package:vierqr/services/providers/pin_provider.dart';
 import 'package:vierqr/services/providers/suggestion_widget_provider.dart';
-import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
 import 'package:vierqr/services/shared_references/account_helper.dart';
 import 'package:vierqr/services/shared_references/bank_arrangement_helper.dart';
@@ -257,9 +257,21 @@ class _VietQRApp extends State<VietQRApp> {
       if (message.data.isNotEmpty) {
         if (message.data['notificationType'] != null &&
             message.data['notificationType'] == Stringify.NOTI_TYPE_TOPUP) {
-          DialogWidget.instance.openWidgetDialog(
-            heightPopup: 300,
-            child: PopupTopUpSuccess(
+          DialogWidget.instance.showModelBottomSheet(
+            padding: EdgeInsets.only(left: 12, right: 12, bottom: 32, top: 12),
+            height: 500,
+            widget: PopupTopUpSuccess(
+              dto: TopUpSuccessDTO.fromJson(message.data),
+            ),
+          );
+        }
+        if (message.data['notificationType'] != null &&
+            message.data['notificationType'] ==
+                Stringify.NOTI_TYPE_MOBILE_RECHARGE) {
+          DialogWidget.instance.showModelBottomSheet(
+            padding: EdgeInsets.only(left: 12, right: 12, bottom: 32, top: 12),
+            height: 500,
+            widget: PopupTopUpSuccess(
               dto: TopUpSuccessDTO.fromJson(message.data),
             ),
           );
@@ -454,13 +466,32 @@ class _VietQRApp extends State<VietQRApp> {
                     );
                   }
                   if (settings.name == Routes.QR_TOP_UP) {
-                    ResponseTopUpDTO dto =
-                        settings.arguments as ResponseTopUpDTO;
+                    Map<String, dynamic> param =
+                        settings.arguments as Map<String, dynamic>;
+                    ResponseTopUpDTO dto = param['dto'] as ResponseTopUpDTO;
+                    String phoneNo = param['phoneNo'] as String;
 
                     return MaterialPageRoute(
                       builder: (context) {
                         return QRTopUpScreen(
                           dto: dto,
+                          phoneNo: phoneNo,
+                        );
+                      },
+                    );
+                  }
+                  if (settings.name == Routes.QR_MOBILE_CHARGE) {
+                    Map<String, dynamic> param =
+                        settings.arguments as Map<String, dynamic>;
+                    ResponseTopUpDTO dto = param['dto'] as ResponseTopUpDTO;
+                    String phoneNo = param['phoneNo'] as String;
+                    String nwProviders = param['nwProviders'] as String;
+                    return MaterialPageRoute(
+                      builder: (context) {
+                        return QRMobileRechargeScreen(
+                          dto: dto,
+                          phoneNo: phoneNo,
+                          nwProviders: nwProviders,
                         );
                       },
                     );
