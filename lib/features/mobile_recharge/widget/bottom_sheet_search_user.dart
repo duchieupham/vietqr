@@ -57,6 +57,8 @@ class BottomSheetSearchUser extends StatelessWidget {
           prefixIcon: const Icon(Icons.search),
           keyboardAction: TextInputAction.done,
           onChange: (value) {
+            Provider.of<ContactProvider>(context, listen: false)
+                .updatePhoneNo(value);
             if (value.length >= 5) {
               _bloc.add(SearchUser(value));
             } else if (value.isEmpty) {
@@ -90,7 +92,20 @@ class BottomSheetSearchUser extends StatelessWidget {
             return Consumer<ContactProvider>(
                 builder: (context, provider, child) {
               if (provider.listSearch.isEmpty) {
-                return const SizedBox.shrink();
+                ContactDTO dto = ContactDTO(
+                    id: '',
+                    nickname: 'Không xác định',
+                    status: 0,
+                    type: 0,
+                    imgId: '',
+                    description: '',
+                    phoneNo: provider.phoneNo,
+                    carrierTypeId: '');
+                if (provider.phoneNo.isNotEmpty) {
+                  return _buildItemSave(context, dto: dto);
+                } else {
+                  return SizedBox.shrink();
+                }
               }
               return ListView.separated(
                 itemCount: provider.listSearch.length,
@@ -154,10 +169,12 @@ class BottomSheetSearchUser extends StatelessWidget {
           color: AppColor.WHITE,
         ),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               width: 35,
               height: 35,
+              margin: EdgeInsets.only(top: 2),
               decoration: BoxDecoration(
                 color: AppColor.WHITE,
                 borderRadius: BorderRadius.circular(40),
