@@ -80,7 +80,7 @@ class LoginAccountScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          Expanded(
+          Container(
             child: SingleChildScrollView(
               child: Column(
                 children: List.generate(list.length, (index) {

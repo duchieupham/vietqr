@@ -95,6 +95,15 @@ class _BodyWidgetState extends State<_BodyWidget> {
                 'qr': state.qrGeneratedDTO,
               },
             );
+          } else {
+            Navigator.pushNamed(
+              context,
+              Routes.CREATE_QR,
+              arguments: {
+                'qr': state.qrGeneratedDTO,
+                'page': 1,
+              },
+            );
           }
         }
       },

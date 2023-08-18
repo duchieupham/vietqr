@@ -82,7 +82,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
   final accountBalanceHomeProvider = AccountBalanceHomeProvider('');
 
   final Connectivity _connectivity = Connectivity();
-  late StreamSubscription<ConnectivityResult> _connectivitySubscription;
+  StreamSubscription<ConnectivityResult>? _connectivitySubscription;
 
   @override
   void initState() {
@@ -244,7 +244,9 @@ class _DashBoardScreen extends State<DashBoardScreen>
     _subscription = null;
     _subReloadWallet?.cancel();
     _subReloadWallet = null;
-    _connectivitySubscription.cancel();
+    if (_connectivitySubscription != null) {
+      _connectivitySubscription!.cancel();
+    }
     super.dispose();
   }
 

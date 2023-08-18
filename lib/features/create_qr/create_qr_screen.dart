@@ -51,16 +51,22 @@ class CreateQrScreen extends StatelessWidget {
     final args = ModalRoute.of(context)!.settings.arguments as Map;
     BankAccountDTO? data;
     QRGeneratedDTO? qrDto;
+    int page = 0;
     if (args.containsKey('bankInfo')) {
       data = args['bankInfo'];
-    } else if (args.containsKey('qr')) {
+    }
+    if (args.containsKey('qr')) {
       qrDto = args['qr'];
+    }
+
+    if (args.containsKey('page')) {
+      page = args['page'];
     }
 
     return BlocProvider<CreateQRBloc>(
       create: (_) => CreateQRBloc(context, data, qrDto),
       child: ChangeNotifierProvider(
-        create: (context) => CreateQRProvider(),
+        create: (context) => CreateQRProvider()..updatePage(page),
         child: _CreateQRScreen(),
       ),
     );
@@ -435,30 +441,25 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                       _buildItemSuggest(
                                         onChange: provider.updateSuggest,
                                         text:
-                                        'Chuyen khoan den ${state.bankAccountDTO?.bankAccount ?? ''}',
+                                            'Chuyen khoan den ${state.bankAccountDTO?.bankAccount ?? ''}',
                                       ),
-                                      if (state.bankAccountDTO?.type ==
-                                          1) ...[
+                                      if (state.bankAccountDTO?.type == 1) ...[
                                         _buildItemSuggest(
-                                          onChange:
-                                          provider.updateSuggest,
+                                          onChange: provider.updateSuggest,
                                           text:
-                                          'Thanh toan cho ${state.bankAccountDTO?.businessName ?? ''}',
+                                              'Thanh toan cho ${state.bankAccountDTO?.businessName ?? ''}',
                                         ),
                                         _buildItemSuggest(
-                                          onChange:
-                                          provider.updateSuggest,
+                                          onChange: provider.updateSuggest,
                                           text:
-                                          'Giao dich ${state.bankAccountDTO?.branchName ?? ''}',
+                                              'Giao dich ${state.bankAccountDTO?.branchName ?? ''}',
                                         ),
                                       ],
-                                      if (state.bankAccountDTO?.type ==
-                                          0) ...[
+                                      if (state.bankAccountDTO?.type == 0) ...[
                                         _buildItemSuggest(
-                                          onChange:
-                                          provider.updateSuggest,
+                                          onChange: provider.updateSuggest,
                                           text:
-                                          'Chuyen khoan cho ${state.bankAccountDTO?.userBankName ?? ''}',
+                                              'Chuyen khoan cho ${state.bankAccountDTO?.userBankName ?? ''}',
                                         ),
                                       ],
                                     ],
