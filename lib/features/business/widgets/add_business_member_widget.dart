@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
@@ -11,7 +10,6 @@ import 'package:vierqr/features/business/states/business_member_state.dart';
 import 'package:vierqr/layouts/border_layout.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/models/business_member_dto.dart';
-import 'package:vierqr/services/providers/add_business_provider.dart';
 import 'package:vierqr/services/providers/search_clear_provider.dart';
 
 class AddBusinessMemberWidget extends StatefulWidget {

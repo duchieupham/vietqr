@@ -27,7 +27,7 @@ class ConnectTeleStepScreen extends StatelessWidget {
 }
 
 class _ConnectTeleStepScreen extends StatefulWidget {
-  const _ConnectTeleStepScreen({super.key});
+  const _ConnectTeleStepScreen();
 
   @override
   State<_ConnectTeleStepScreen> createState() => _ConnectTeleStepScreenState();

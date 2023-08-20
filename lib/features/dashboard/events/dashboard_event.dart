@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:vierqr/models/add_contact_dto.dart';
 import 'package:vierqr/models/bank_card_insert_unauthenticated.dart';
 import 'package:vierqr/models/bank_name_search_dto.dart';
+import 'package:vierqr/models/qr_generated_dto.dart';
 
 class DashBoardEvent extends Equatable {
   const DashBoardEvent();
@@ -52,16 +53,14 @@ class DashBoardEventAddContact extends DashBoardEvent {
 }
 
 class DashBoardCheckExistedEvent extends DashBoardEvent {
-  final String bankAccount;
-  final String bankTypeId;
+  final QRGeneratedDTO dto;
 
   const DashBoardCheckExistedEvent({
-    required this.bankAccount,
-    required this.bankTypeId,
+    required this.dto,
   });
 
   @override
-  List<Object?> get props => [bankAccount, bankTypeId];
+  List<Object?> get props => [dto];
 }
 
 class DashBoardEventInsertUnauthenticated extends DashBoardEvent {

@@ -51,8 +51,6 @@ class StepProgressView extends StatelessWidget {
       var circleColor =
           (i == 0 || _curStep > i) ? AppColor.BLUE_TEXT : AppColor.GREY_BUTTON;
       var lineColor = _curStep > i + 1 ? _activeColor : _inactiveColor;
-      var iconColor =
-          (i == 0 || _curStep > i + 1) ? _activeColor : _inactiveColor;
       var textColor =
           (i == 0 || _curStep > i) ? AppColor.WHITE : AppColor.GREY_TEXT;
       list.add(

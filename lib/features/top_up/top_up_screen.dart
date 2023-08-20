@@ -9,7 +9,6 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/top_up/blocs/top_up_bloc.dart';
 import 'package:vierqr/features/top_up/events/scan_qr_event.dart';
 import 'package:vierqr/features/top_up/states/top_up_state.dart';
-import 'package:vierqr/layouts/button_widget.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
 import 'package:vierqr/models/account_information_dto.dart';
@@ -72,84 +71,56 @@ class TopUpScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Consumer<TopUpProvider>(builder: (context, provider, child) {
-                    return Container(
-                      padding: const EdgeInsets.fromLTRB(
-                          20.0, 16, 20, kToolbarHeight),
-                      color: AppColor.WHITE,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text('Tổng tiền cần thanh toán:'),
-                                Text(
-                                  '${provider.money} VND',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              FocusManager.instance.primaryFocus?.unfocus();
-                              Map<String, dynamic> data = {};
-                              data['phoneNo'] =
-                                  UserInformationHelper.instance.getPhoneNo();
-                              data['amount'] =
-                                  provider.money.replaceAll(',', '');
-                              data['transType'] = 'C';
-                              BlocProvider.of<TopUpBloc>(context)
-                                  .add(TopUpEventCreateQR(data: data));
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 8),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5),
-                                  color: AppColor.BLUE_TEXT),
-                              child: const Text(
-                                'Thanh toán',
-                                style: TextStyle(color: AppColor.WHITE),
+                  Consumer<TopUpProvider>(
+                    builder: (context, provider, child) {
+                      return Container(
+                        padding: const EdgeInsets.fromLTRB(20.0, 16, 20, 30),
+                        color: AppColor.WHITE,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text('Tổng tiền cần thanh toán:'),
+                                  Text(
+                                    '${provider.money} VND',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    );
-
-                    return MButtonWidget(
-                      title: 'Thanh toán',
-                      margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                      isEnable: provider.errorMoney.isEmpty,
-                      colorEnableText: provider.errorMoney.isEmpty
-                          ? AppColor.WHITE
-                          : AppColor.GREY_TEXT,
-                      onTap: () {
-                        FocusManager.instance.primaryFocus?.unfocus();
-                        Map<String, dynamic> data = {};
-                        data['phoneNo'] =
-                            UserInformationHelper.instance.getPhoneNo();
-                        data['amount'] = provider.money.replaceAll('.', '');
-                        data['transType'] = 'C';
-                        BlocProvider.of<TopUpBloc>(context)
-                            .add(TopUpEventCreateQR(data: data));
-                      },
-                      child: Row(
-                        children: [
-                          Column(
-                            children: [
-                              const Text('Tổng tiền cần thanh toán:'),
-                              Text('${provider.money} VND'),
-                            ],
-                          )
-                        ],
-                      ),
-                    );
-                  }),
+                            GestureDetector(
+                              onTap: () {
+                                FocusManager.instance.primaryFocus?.unfocus();
+                                Map<String, dynamic> data = {};
+                                data['phoneNo'] =
+                                    UserInformationHelper.instance.getPhoneNo();
+                                data['amount'] =
+                                    provider.money.replaceAll(',', '');
+                                data['transType'] = 'C';
+                                BlocProvider.of<TopUpBloc>(context)
+                                    .add(TopUpEventCreateQR(data: data));
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 8),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    color: AppColor.BLUE_TEXT),
+                                child: const Text(
+                                  'Thanh toán',
+                                  style: TextStyle(color: AppColor.WHITE),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                 ],
               );
             },

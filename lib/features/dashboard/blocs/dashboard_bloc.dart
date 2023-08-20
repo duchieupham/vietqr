@@ -346,10 +346,12 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
       if (event is DashBoardCheckExistedEvent) {
         emit(state.copyWith(
             status: BlocStatus.LOADING, request: DashBoardType.NONE));
-        final ResponseMessageDTO result = await bankCardRepository
-            .checkExistedBank(event.bankAccount, event.bankTypeId);
+        final ResponseMessageDTO result =
+            await bankCardRepository.checkExistedBank(
+                event.dto.bankAccount, event.dto.bankTypeId ?? '');
         if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
-          emit(state.copyWith(request: DashBoardType.EXIST_BANK));
+          emit(state.copyWith(
+              request: DashBoardType.EXIST_BANK, qrDto: event.dto));
         } else if (result.status == Stringify.RESPONSE_STATUS_CHECK) {
           emit(state.copyWith(
               request: DashBoardType.ERROR,

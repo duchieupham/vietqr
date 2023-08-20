@@ -439,7 +439,8 @@ class DialogWidget {
               width: MediaQuery.of(context).size.width - 10,
               height: height != null ? (height + keyboardHeight) : null,
               decoration: BoxDecoration(
-                borderRadius: borderRadius ?? BorderRadius.circular(radius),
+                borderRadius: borderRadius ??
+                    BorderRadius.vertical(top: Radius.circular(radius)),
                 color: Theme.of(context).cardColor,
               ),
               child: widget,

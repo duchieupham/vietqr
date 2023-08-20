@@ -111,7 +111,6 @@ class QRScannerUtils {
           DialogWidget.instance.showModelBottomSheet(
             context: context,
             padding: EdgeInsets.zero,
-            height: MediaQuery.of(context).size.height * 0.90,
             widget: DialogScanBank(
               dto: value,
               onTapSave: () {
@@ -143,8 +142,7 @@ class QRScannerUtils {
                     eventBus.fire(ChangeThemeEvent());
                   } else {
                     onTapAdd!({
-                      'bankAccount': value.bankAccount,
-                      'bankTypeId': value.bankTypeId,
+                      'data': value,
                     });
                   }
                 }
@@ -173,7 +171,6 @@ class QRScannerUtils {
             await DialogWidget.instance.showModelBottomSheet(
               context: context,
               padding: EdgeInsets.zero,
-              height: MediaQuery.of(context).size.height * 0.70,
               widget: DialogScanURL(
                 code: value ?? '',
                 onTapSave: () async {
@@ -204,7 +201,6 @@ class QRScannerUtils {
             await DialogWidget.instance.showModelBottomSheet(
               context: context,
               padding: EdgeInsets.zero,
-              height: MediaQuery.of(context).size.height * 0.70,
               widget: DialogScanOther(
                 code: value ?? '',
                 onTapSave: () async {

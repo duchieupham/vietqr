@@ -1,16 +1,14 @@
 import 'dart:io';
 import 'dart:math';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:vierqr/commons/utils/log.dart';
 
 class FileUtils {
-  const FileUtils._privateConsrtructor();
+  const FileUtils._privateConstructor();
 
-  static const FileUtils _instance = FileUtils._privateConsrtructor();
+  static const FileUtils _instance = FileUtils._privateConstructor();
 
   static FileUtils get instance => _instance;
   static const int kb = 1024;

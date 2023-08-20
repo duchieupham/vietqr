@@ -15,7 +15,6 @@ import 'package:vierqr/models/introduce_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/models/setting_account_sto.dart';
 import 'package:vierqr/services/providers/auth_provider.dart';
-import 'package:vierqr/services/providers/suggestion_widget_provider.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
 import 'package:vierqr/services/shared_references/account_helper.dart';
 import 'package:vierqr/services/shared_references/event_bloc_helper.dart';
@@ -165,7 +164,6 @@ class AccountRepository {
   Future<void> _resetServices() async {
     BuildContext context = NavigationService.navigatorKey.currentContext!;
     Provider.of<UserEditProvider>(context, listen: false).reset();
-    Provider.of<SuggestionWidgetProvider>(context, listen: false).reset();
     Provider.of<AuthProvider>(context, listen: false).reset();
     await EventBlocHelper.instance.updateLogoutBefore(true);
     await UserInformationHelper.instance.initialUserInformationHelper();

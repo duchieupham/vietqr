@@ -5,6 +5,7 @@ import 'package:vierqr/models/bank_name_information_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/introduce_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
+import 'package:vierqr/models/qr_generated_dto.dart';
 
 class DashBoardState extends Equatable {
   final String? msg;
@@ -15,15 +16,13 @@ class DashBoardState extends Equatable {
   final NationalScannerDTO? nationalScannerDTO;
   final String? codeQR;
   final String? barCode;
-  final BankTypeDTO? bankTypeDTO;
-  final String bankAccount;
   final List<BankTypeDTO>? listBanks;
-  final BankNameInformationDTO? informationDTO;
   final TypeContact typeContact;
   final IntroduceDTO? introduceDTO;
   final AppInfoDTO? appInfoDTO;
   final TokenType typeToken;
   final bool isCheckApp;
+  final QRGeneratedDTO? qrDto;
 
   const DashBoardState({
     this.msg,
@@ -35,14 +34,12 @@ class DashBoardState extends Equatable {
     this.codeQR,
     this.barCode,
     this.listBanks,
-    this.bankTypeDTO,
-    this.bankAccount = '',
-    this.informationDTO,
     this.typeContact = TypeContact.NONE,
     this.introduceDTO,
     this.appInfoDTO,
     this.typeToken = TokenType.NONE,
     this.isCheckApp = false,
+    this.qrDto,
   });
 
   DashBoardState copyWith({
@@ -63,6 +60,7 @@ class DashBoardState extends Equatable {
     TokenType? typeToken,
     AppInfoDTO? appInfoDTO,
     bool? isCheckApp,
+    QRGeneratedDTO? qrDto,
   }) {
     return DashBoardState(
       status: status ?? this.status,
@@ -72,16 +70,14 @@ class DashBoardState extends Equatable {
       nationalScannerDTO: nationalScannerDTO ?? this.nationalScannerDTO,
       codeQR: codeQR ?? this.codeQR,
       barCode: barCode ?? this.barCode,
-      bankTypeDTO: bankTypeDTO ?? this.bankTypeDTO,
-      bankAccount: bankAccount ?? this.bankAccount,
       request: request ?? this.request,
       listBanks: listBanks ?? this.listBanks,
-      informationDTO: informationDTO ?? this.informationDTO,
       typeContact: typeContact ?? this.typeContact,
       introduceDTO: introduceDTO ?? this.introduceDTO,
       appInfoDTO: appInfoDTO ?? this.appInfoDTO,
       typeToken: typeToken ?? this.typeToken,
       isCheckApp: isCheckApp ?? this.isCheckApp,
+      qrDto: qrDto ?? this.qrDto,
     );
   }
 
@@ -94,11 +90,9 @@ class DashBoardState extends Equatable {
         nationalScannerDTO,
         codeQR,
         barCode,
-        bankTypeDTO,
-        bankAccount,
         request,
         listBanks,
-        informationDTO,
         typeContact,
+        qrDto,
       ];
 }

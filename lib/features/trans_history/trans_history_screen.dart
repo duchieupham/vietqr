@@ -6,16 +6,15 @@ import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/commons/utils/transaction_utils.dart';
-import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/trans_history/blocs/trans_history_bloc.dart';
 import 'package:vierqr/features/trans_history/events/trans_history_event.dart';
-import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/related_transaction_receive_dto.dart';
 
 import 'states/trans_history_state.dart';
 
 class TransHistoryScreen extends StatelessWidget {
   final String bankId;
+
   const TransHistoryScreen({super.key, required this.bankId});
 
   @override
@@ -91,40 +90,47 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
             );
           }
 
-          return (state.list.isEmpty)
-              ? const SizedBox()
-              : RefreshIndicator(
-                  onRefresh: onRefresh,
-                  child: SingleChildScrollView(
-                    controller: scrollController,
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Column(
-                      children: [
-                        Column(
-                          children: List.generate(
-                            state.list.length,
-                            (index) {
-                              return _buildElement(
-                                context: context,
-                                dto: state.list[index],
-                              );
-                            },
-                          ).toList(),
-                        ),
-                        if (!state.isLoadMore)
-                          const UnconstrainedBox(
-                            child: SizedBox(
-                              width: 30,
-                              height: 30,
-                              child: CircularProgressIndicator(
-                                color: AppColor.BLUE_TEXT,
-                              ),
-                            ),
-                          )
-                      ],
+          if ((state.list.isEmpty)) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 100.0),
+              child: const Center(
+                child: Text('Không có giao dịch nào'),
+              ),
+            );
+          } else {
+            return RefreshIndicator(
+              onRefresh: onRefresh,
+              child: SingleChildScrollView(
+                controller: scrollController,
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  children: [
+                    Column(
+                      children: List.generate(
+                        state.list.length,
+                        (index) {
+                          return _buildElement(
+                            context: context,
+                            dto: state.list[index],
+                          );
+                        },
+                      ).toList(),
                     ),
-                  ),
-                );
+                    if (!state.isLoadMore)
+                      const UnconstrainedBox(
+                        child: SizedBox(
+                          width: 30,
+                          height: 30,
+                          child: CircularProgressIndicator(
+                            color: AppColor.BLUE_TEXT,
+                          ),
+                        ),
+                      )
+                  ],
+                ),
+              ),
+            );
+          }
         },
       ),
     );

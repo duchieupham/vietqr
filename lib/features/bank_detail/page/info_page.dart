@@ -45,6 +45,8 @@ class InfoDetailBankAccount extends StatelessWidget {
     this.onChangePage,
   }) : super(key: key);
 
+  String get userId => UserInformationHelper.instance.getUserId();
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -115,7 +117,8 @@ class InfoDetailBankAccount extends StatelessWidget {
                         ],
                         const SizedBox(height: 10),
                         if (!dto.authenticated &&
-                            dto.bankCode.trim().toUpperCase() == 'MB') ...[
+                            dto.bankCode.trim().toUpperCase() == 'MB' &&
+                            (userId == dto.userId)) ...[
                           DividerWidget(width: width),
                           const SizedBox(height: 10),
                           ButtonIconWidget(
@@ -151,18 +154,17 @@ class InfoDetailBankAccount extends StatelessWidget {
                             textColor: AppColor.GREEN,
                           ),
                         ],
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 16),
                       ],
                     ),
                   ),
                   if (dto.authenticated && dto.businessDetails.isNotEmpty) ...[
-                    const Padding(padding: EdgeInsets.only(top: 24)),
+                    const SizedBox(height: 24),
                     _buildTitle(title: 'Thông tin doanh nghiệp'),
                     _buildBusinessInformation(context, dto.businessDetails),
                   ],
-                  const Padding(padding: EdgeInsets.only(bottom: 16)),
-                  if ((UserInformationHelper.instance.getUserId() ==
-                      dto.userId)) ...[
+                  if (userId == dto.userId) ...[
+                    const SizedBox(height: 16),
                     _buildTitle(title: 'Thiết lập nâng cao'),
                     BoxLayout(
                       width: width,
@@ -232,7 +234,7 @@ class InfoDetailBankAccount extends StatelessWidget {
                       ),
                     )
                   ],
-                  const Padding(padding: EdgeInsets.only(bottom: 50)),
+                  const SizedBox(height: 24),
                 ],
               ),
             ),
@@ -253,8 +255,7 @@ class InfoDetailBankAccount extends StatelessWidget {
                 title: '',
                 function: () async {
                   BluetoothPrinterDTO bluetoothPrinterDTO =
-                      await LocalDatabase.instance.getBluetoothPrinter(
-                          UserInformationHelper.instance.getUserId());
+                      await LocalDatabase.instance.getBluetoothPrinter(userId);
                   if (bluetoothPrinterDTO.id.isNotEmpty) {
                     bool isPrinting = false;
                     if (!isPrinting) {

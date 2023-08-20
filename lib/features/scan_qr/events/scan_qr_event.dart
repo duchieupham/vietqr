@@ -25,3 +25,17 @@ class ScanQrEventSearchName extends ScanQrEvent {
   @override
   List<Object?> get props => [dto];
 }
+
+class PermissionEventRequest extends ScanQrEvent {
+  const PermissionEventRequest();
+
+  @override
+  List<Object?> get props => [];
+}
+
+class PermissionEventGetStatus extends ScanQrEvent {
+  const PermissionEventGetStatus();
+
+  @override
+  List<Object?> get props => [];
+}

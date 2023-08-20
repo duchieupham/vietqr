@@ -46,8 +46,6 @@ class _ContactStateState extends State<_ContactState>
   late ContactBloc _bloc;
   late PageController _pageController;
 
-  final List<Widget> _listScreens = [];
-
   final searchController = TextEditingController();
 
   List<DataModel> listTab = [
@@ -111,9 +109,9 @@ class _ContactStateState extends State<_ContactState>
                     onTapSave: (data) async {
                   _bloc.add(SaveContactEvent(dto: data));
                 }, onTapAdd: (data) {
-                  context.read<DashBoardBloc>().add(DashBoardCheckExistedEvent(
-                      bankAccount: data['bankAccount'],
-                      bankTypeId: data['bankTypeId']));
+                  context
+                      .read<DashBoardBloc>()
+                      .add(DashBoardCheckExistedEvent(dto: data['data']));
                 }, onCallBack: () {
                   _bloc.add(ContactEventGetList());
                 });
@@ -276,7 +274,7 @@ class _ContactStateState extends State<_ContactState>
           keyboardAction: TextInputAction.next,
           onChange: onChange,
         ),
-        const SizedBox(height: 30),
+        const SizedBox(height: 20),
         Expanded(
           child: RefreshIndicator(
             onRefresh: _onRefresh,

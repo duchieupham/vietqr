@@ -21,8 +21,8 @@ class VietQr extends StatelessWidget {
     final width = MediaQuery.of(context).size.width;
     return Container(
       width: width,
-      margin: const EdgeInsets.symmetric(vertical: 16),
-      padding: const EdgeInsets.only(bottom: 30, left: 20, right: 20),
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.only(bottom: 20, left: 20, right: 20),
       decoration: const BoxDecoration(
         image: DecorationImage(
           image: AssetImage('assets/images/bg_napas_qr.png'),

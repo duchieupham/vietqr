@@ -48,9 +48,9 @@ class _HomeScreen extends State<HomeScreen> {
               .add(DashBoardEventAddContact(dto: data));
         },
         onTapAdd: (data) {
-          context.read<DashBoardBloc>().add(DashBoardCheckExistedEvent(
-              bankAccount: data['bankAccount'],
-              bankTypeId: data['bankTypeId']));
+          context
+              .read<DashBoardBloc>()
+              .add(DashBoardCheckExistedEvent(dto: data['data']));
         },
       );
     }

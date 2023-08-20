@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:vierqr/models/bank_account_dto.dart';
 
 class BankCardSelectProvider with ChangeNotifier {
   int _selectedIndex = 0;

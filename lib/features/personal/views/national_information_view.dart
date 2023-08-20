@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/ambient_avatar_widget.dart';
@@ -15,7 +14,6 @@ import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/layouts/button_widget.dart';
 import 'package:vierqr/models/account_information_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
-import 'package:vierqr/services/providers/suggestion_widget_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class NationalInformationView extends StatelessWidget {
@@ -153,9 +151,6 @@ class NationalInformationView extends StatelessWidget {
                           if (!isPop) {
                             Navigator.of(context).pop();
                           }
-                          Provider.of<SuggestionWidgetProvider>(context,
-                                  listen: false)
-                              .updateUserUpdating(false);
                           Fluttertoast.showToast(
                             msg: 'Cập nhật thông tin thành công',
                             toastLength: Toast.LENGTH_SHORT,

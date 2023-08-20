@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/layouts/button_widget.dart';
 import 'package:rive/rive.dart' as rive;
 

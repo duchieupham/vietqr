@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/layouts/button_widget.dart';
 
@@ -50,7 +49,7 @@ class DialogScanOther extends StatelessWidget {
               ],
             ),
           ),
-          const Spacer(),
+          const SizedBox(height: 20),
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 40),
             padding: const EdgeInsets.all(20),
@@ -78,7 +77,7 @@ class DialogScanOther extends StatelessWidget {
               color: AppColor.BLACK,
             ),
           ),
-          const Spacer(),
+          const SizedBox(height: 20),
           MButtonWidget(
             title: 'Lưu vào danh bạ',
             onTap: onTapSave,

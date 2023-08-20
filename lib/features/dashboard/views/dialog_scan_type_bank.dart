@@ -14,11 +14,12 @@ class DialogScanBank extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final height = MediaQuery.of(context).size.height;
     return Container(
       width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
+      height: height,
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      margin: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         color: AppColor.WHITE,
@@ -26,7 +27,7 @@ class DialogScanBank extends StatelessWidget {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.only(left: 16, right: 16, top: 10),
             child: Row(
               children: [
                 const Icon(Icons.clear, color: Colors.transparent, size: 20),
@@ -57,20 +58,32 @@ class DialogScanBank extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: VietQr(qrGeneratedDTO: dto),
           ),
-          const Spacer(),
-          MButtonWidget(
-            title: 'Thêm TK ngân hàng',
-            onTap: onTapAdd,
-            isEnable: true,
-            margin: const EdgeInsets.only(left: 20,right: 20,bottom: 10),
-          ),
-          MButtonWidget(
-            title: 'Lưu vào danh bạ',
-            onTap: onTapSave,
-            colorEnableBgr: AppColor.GREY_F1F2F5,
-            colorEnableText: AppColor.BLUE_TEXT,
-            isEnable: true,
-            margin: const EdgeInsets.symmetric(horizontal: 20),
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: MButtonWidget(
+                    title: 'Thêm TK ngân hàng',
+                    onTap: onTapAdd,
+                    isEnable: true,
+                    margin: EdgeInsets.zero,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: MButtonWidget(
+                    title: 'Lưu TK',
+                    onTap: onTapSave,
+                    colorEnableBgr: AppColor.GREY_F1F2F5,
+                    colorEnableText: AppColor.BLUE_TEXT,
+                    isEnable: true,
+                    margin: EdgeInsets.zero,
+                  ),
+                )
+              ],
+            ),
           )
         ],
       ),

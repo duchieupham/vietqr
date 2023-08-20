@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/contact/save_contact_screen.dart';
 import 'package:vierqr/features/scan_qr/blocs/scan_qr_bloc.dart';
 import 'package:vierqr/features/scan_qr/states/scan_qr_state.dart';
+import 'package:vierqr/features/scan_qr/widgets/general_dialog.dart';
 import 'package:vierqr/models/bank_name_search_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 
@@ -45,14 +48,43 @@ class _ScanQrScreenState extends State<_BodyWidget> {
     _bloc = BlocProvider.of(context);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      startBarcodeScanStream();
+      onScanQr();
     });
+  }
+
+  Future<void> onScanQr() async {
+    if (await _checkLocationPermission()) {
+      startBarcodeScanStream();
+    } else {
+      Navigator.of(context).pop();
+    }
+  }
+
+  Future<bool> _checkLocationPermission() async {
+    int startRequestTime = DateTime.now().millisecondsSinceEpoch;
+    var locationPermission = await Permission.camera.request();
+    int endRequestTime = DateTime.now().millisecondsSinceEpoch;
+    if (locationPermission.isGranted) {
+      return true;
+    }
+
+    if (locationPermission.isDenied) {
+      return false;
+    }
+    if (locationPermission.isPermanentlyDenied &&
+        endRequestTime - startRequestTime < 300) {
+      await NavigatorUtils.showGeneralDialog(
+        context: context,
+        child: GeneralDialog(),
+      );
+    }
+    return locationPermission.isGranted;
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ScanQrBloc, ScanQrState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state.status == BlocStatus.LOADING) {
           DialogWidget.instance.openLoadingDialog();
         }

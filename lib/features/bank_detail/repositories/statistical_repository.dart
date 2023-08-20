@@ -3,9 +3,6 @@ import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
-import 'package:vierqr/commons/utils/time_utils.dart';
-import 'package:vierqr/models/national_scanner_dto.dart';
-import 'package:vierqr/models/respone_top_up_dto.dart';
 import 'package:vierqr/models/statistical_dto.dart';
 
 class StatisticRepository {

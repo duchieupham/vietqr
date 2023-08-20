@@ -28,7 +28,7 @@ class ConnectLarkStepScreen extends StatelessWidget {
 }
 
 class _ConnectLarkStepScreen extends StatefulWidget {
-  const _ConnectLarkStepScreen({super.key});
+  const _ConnectLarkStepScreen();
 
   @override
   State<_ConnectLarkStepScreen> createState() => _ConnectLarkStepScreenState();

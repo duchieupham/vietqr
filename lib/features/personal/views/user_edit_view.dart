@@ -36,7 +36,6 @@ import 'package:vierqr/models/account_information_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:vierqr/services/providers/avatar_provider.dart';
-import 'package:vierqr/services/providers/suggestion_widget_provider.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
 import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
@@ -169,9 +168,6 @@ class _UserEditViewState extends State<UserEditView> {
                     Navigator.pop(context);
                     Provider.of<AvatarProvider>(context, listen: false)
                         .rebuildAvatar();
-                    Provider.of<SuggestionWidgetProvider>(context,
-                            listen: false)
-                        .updateUserUpdating(false);
                     Navigator.pop(context);
                   }
                   if (state is UserEditAvatarFailedState) {
@@ -193,12 +189,6 @@ class _UserEditViewState extends State<UserEditView> {
                   if (state is UserEditSuccessfulState) {
                     //pop loading dialog
                     Navigator.of(context).pop();
-                    //
-                    if (_firstNameController.text != 'Undefined') {
-                      Provider.of<SuggestionWidgetProvider>(context,
-                              listen: false)
-                          .updateUserUpdating(false);
-                    }
                     Provider.of<UserEditProvider>(context, listen: false)
                         .reset();
                     Navigator.of(context).pushAndRemoveUntil(

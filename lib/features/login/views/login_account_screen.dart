@@ -22,6 +22,7 @@ class LoginAccountScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -80,30 +81,40 @@ class LoginAccountScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          Container(
+          Expanded(
             child: SingleChildScrollView(
               child: Column(
-                children: List.generate(list.length, (index) {
-                  return GestureDetector(
-                    onTap: () {
-                      onQuickLogin!(list[index]);
-                    },
-                    child: _buildItem(list[index], index),
-                  );
-                }).toList(),
+                children: [
+                  Container(
+                    child: Column(
+                      children: List.generate(list.length, (index) {
+                        return GestureDetector(
+                          onTap: () {
+                            onQuickLogin!(list[index]);
+                          },
+                          child: _buildItem(list[index], index),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  GestureDetector(
+                    onTap: onBackLogin,
+                    child: const Text(
+                      'Đăng nhập bằng tài khoản khác',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 15, color: AppColor.BLUE_TEXT),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
-          const SizedBox(height: 10),
-          GestureDetector(
-            onTap: onBackLogin,
-            child: const Text(
-              'Đăng nhập bằng tài khoản khác',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 15, color: AppColor.BLUE_TEXT),
-            ),
-          ),
-          const Spacer(),
+        ],
+      ),
+      bottomSheet: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
           GestureDetector(
             onTap: onRegister,
             child: Container(

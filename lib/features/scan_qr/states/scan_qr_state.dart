@@ -43,6 +43,7 @@ class ScanQrState extends Equatable {
     BankNameInformationDTO? informationDTO,
     TypeQR? typeQR,
     bool? isScanAll,
+    DashBoardTypePermission? typePermission,
   }) {
     return ScanQrState(
       status: status ?? this.status,

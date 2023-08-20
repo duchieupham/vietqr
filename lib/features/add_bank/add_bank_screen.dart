@@ -319,7 +319,6 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                           if (data is Map<String, dynamic>) {
                             if (!mounted) return;
                             final type = data['type'];
-                            final typeQR = data['typeQR'];
                             final value = data['data'];
                             final bankTypeDTO = data['bankTypeDTO'];
                             if (type == TypeContact.Bank) {
@@ -1011,38 +1010,35 @@ class _BuildButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: MButtonWidget(
-                title: 'Lưu tài khoản',
-                isEnable: isEnableBTSave,
-                colorEnableBgr: AppColor.WHITE,
-                colorEnableText: AppColor.BLUE_TEXT,
-                margin: const EdgeInsets.only(left: 20, top: 20, bottom: 20),
-                onTap: onTapSave,
-              ),
+    return Padding(
+      padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
+      child: Row(
+        children: [
+          Expanded(
+            child: MButtonWidget(
+              title: 'Lưu tài khoản',
+              isEnable: isEnableBTSave,
+              colorEnableBgr: AppColor.WHITE,
+              colorEnableText: AppColor.BLUE_TEXT,
+              margin: EdgeInsets.zero,
+              onTap: onTapSave,
             ),
-            const SizedBox(width: 20),
-            Expanded(
-              child: MButtonWidget(
-                title: 'Liên kết',
-                colorDisableBgr: AppColor.GREY_EBEBEB,
-                colorDisableText: AppColor.GREY_TEXT,
-                colorEnableBgr: AppColor.BLUE_TEXT,
-                colorEnableText: AppColor.WHITE,
-                margin: const EdgeInsets.only(right: 20, top: 20, bottom: 20),
-                isEnable: isEnableBTLK,
-                onTap: onTapLK,
-              ),
+          ),
+          const SizedBox(width: 20),
+          Expanded(
+            child: MButtonWidget(
+              title: 'Liên kết',
+              colorDisableBgr: AppColor.GREY_EBEBEB,
+              colorDisableText: AppColor.GREY_TEXT,
+              colorEnableBgr: AppColor.BLUE_TEXT,
+              colorEnableText: AppColor.WHITE,
+              margin: EdgeInsets.zero,
+              isEnable: isEnableBTLK,
+              onTap: onTapLK,
             ),
-          ],
-        )
-      ],
+          ),
+        ],
+      ),
     );
   }
 }

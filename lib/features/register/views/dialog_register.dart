@@ -24,7 +24,7 @@ class _DialogRegisterState extends State<DialogRegister> {
       color: Colors.transparent,
       child: Container(
         width: 300,
-        height: 350,
+        height: 300,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           color: AppColor.WHITE,

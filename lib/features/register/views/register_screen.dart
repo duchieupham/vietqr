@@ -4,17 +4,14 @@ import 'package:vierqr/commons/utils/encrypt_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/utils/user_information_utils.dart';
-import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/phone_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_custom.dart';
-import 'package:vierqr/commons/widgets/textfield_widget.dart';
 import 'package:vierqr/features/register/blocs/register_bloc.dart';
 import 'package:vierqr/features/register/events/register_event.dart';
-import 'package:vierqr/features/register/frame/register_frame.dart';
 import 'package:vierqr/features/register/states/register_state.dart';
 import 'package:vierqr/features/register/views/dialog_register.dart';
-import 'package:vierqr/layouts/border_layout.dart';
+import 'package:vierqr/layouts/button_widget.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/account_login_dto.dart';
 import 'package:vierqr/services/providers/register_provider.dart';
@@ -52,16 +49,9 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final _phoneNoController = TextEditingController();
+  final focusNode = FocusNode();
 
-  final _passwordController = TextEditingController();
-
-  final _confirmPassController = TextEditingController();
-
-  bool _isChangePhone = false;
-
-  bool _isChangePass = false;
-
-  final FocusNode focusNode = FocusNode();
+  final controller = ScrollController();
 
   // final auth = FirebaseAuth.instance;
 
@@ -82,9 +72,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
     });
   }
 
+  double heights = 0.0;
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
+    final viewInsets = EdgeInsets.fromWindowPadding(
+        WidgetsBinding.instance.window.viewInsets,
+        WidgetsBinding.instance.window.devicePixelRatio);
+
+    if (heights < viewInsets.bottom) {
+      heights = viewInsets.bottom;
+    }
+
     return BlocConsumer<RegisterBloc, RegisterState>(
       listener: (context, state) async {
         if (state is RegisterLoadingState) {
@@ -114,229 +114,120 @@ class _RegisterScreenState extends State<RegisterScreen> {
           },
           child: Scaffold(
             appBar: const MAppBar(title: 'Đăng ký'),
+            resizeToAvoidBottomInset: false,
             body: Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
-                  if (PlatformUtils.instance.isWeb())
-                    const SizedBox(height: 10),
-                  Expanded(child: Consumer<RegisterProvider>(
+                  Consumer<RegisterProvider>(
                     builder: (context, provider, child) {
-                      return RegisterFrame(
-                        mobileChildren: Column(
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                PhoneWidget(
-                                  onChanged: provider.updatePhone,
-                                  phoneController: _phoneNoController,
+                      return Expanded(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              PhoneWidget(
+                                onChanged: provider.updatePhone,
+                                phoneController: _phoneNoController,
+                              ),
+                              Visibility(
+                                visible: provider.phoneErr,
+                                child: const Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 5, top: 5, right: 30),
+                                  child: Text(
+                                    'Số điện thoại không đúng định dạng.',
+                                    style: TextStyle(
+                                        color: AppColor.RED_TEXT, fontSize: 13),
+                                  ),
                                 ),
-                                Visibility(
-                                  visible: provider.phoneErr,
-                                  child: const Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 5, top: 5, right: 30),
-                                    child: Text(
-                                      'Số điện thoại không đúng định dạng.',
+                              ),
+                              const SizedBox(height: 30),
+                              RichText(
+                                text: const TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: 'Mật khẩu ',
                                       style: TextStyle(
-                                          color: AppColor.RED_TEXT,
-                                          fontSize: 13),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColor.BLACK,
+                                      ),
                                     ),
-                                  ),
-                                ),
-                                const SizedBox(height: 30),
-                                RichText(
-                                  text: const TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text: 'Mật khẩu ',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppColor.BLACK,
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: '*',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppColor.RED_EC1010,
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: ' (Bao gồm 6 số)',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: AppColor.BLACK,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                SizedBox(
-                                  height: 40,
-                                  child: PinCodeInput(
-                                    autoFocus: true,
-                                    obscureText: true,
-                                    onChanged: (value) {
-                                      provider.updatePassword(value);
-                                    },
-                                  ),
-                                ),
-                                Visibility(
-                                  visible: provider.passwordErr,
-                                  child: const Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 5, top: 5, right: 30),
-                                    child: Text(
-                                      'Mật khẩu bao gồm 6 số.',
+                                    TextSpan(
+                                      text: '*',
                                       style: TextStyle(
-                                          color: AppColor.RED_TEXT,
-                                          fontSize: 13),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColor.RED_EC1010,
+                                      ),
                                     ),
-                                  ),
+                                    TextSpan(
+                                      text: ' (Bao gồm 6 số)',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: AppColor.BLACK,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(height: 30),
-                                TextFieldCustom(
-                                  isObscureText: false,
-                                  maxLines: 1,
-                                  textFieldType: TextfieldType.LABEL,
-                                  title: 'Mã giới thiệu',
-                                  hintText: 'Nhập mã giới thiệu của bạn bè',
-                                  controller: provider.introduceController,
-                                  inputType: TextInputType.text,
-                                  keyboardAction: TextInputAction.next,
-                                  onChange: (value) {
-                                    provider.updateIntroduce(value);
+                              ),
+                              const SizedBox(height: 10),
+                              SizedBox(
+                                height: 40,
+                                child: PinCodeInput(
+                                  autoFocus: true,
+                                  obscureText: true,
+                                  onChanged: (value) {
+                                    provider.updatePassword(value);
                                   },
                                 ),
-                              ],
-                            ),
-                          ],
+                              ),
+                              Visibility(
+                                visible: provider.passwordErr,
+                                child: const Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 5, top: 5, right: 30),
+                                  child: Text(
+                                    'Mật khẩu bao gồm 6 số.',
+                                    style: TextStyle(
+                                        color: AppColor.RED_TEXT, fontSize: 13),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 30),
+                              TextFieldCustom(
+                                isObscureText: false,
+                                maxLines: 1,
+                                textFieldType: TextfieldType.LABEL,
+                                title: 'Mã giới thiệu',
+                                hintText: 'Nhập mã giới thiệu của bạn bè',
+                                controller: provider.introduceController,
+                                inputType: TextInputType.text,
+                                keyboardAction: TextInputAction.next,
+                                onChange: provider.updateIntroduce,
+                              ),
+                            ],
+                          ),
                         ),
-                        webChildren: [
-                          Align(
-                            alignment: Alignment.center,
-                            child: SizedBox(
-                              width: 150,
-                              height: 150,
-                              child: Image.asset(
-                                'assets/images/ic-viet-qr.png',
-                              ),
-                            ),
-                          ),
-                          BorderLayout(
-                            width: width,
-                            isError: provider.phoneErr,
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: TextFieldWidget(
-                              width: width,
-                              isObscureText: false,
-                              maxLines: 1,
-                              textfieldType: TextfieldType.LABEL,
-                              title: 'Số điện thoại',
-                              titleWidth: 100,
-                              hintText: '090 123 4567',
-                              controller: _phoneNoController,
-                              inputType: TextInputType.number,
-                              keyboardAction: TextInputAction.next,
-                              onChange: (value) {
-                                _isChangePhone = true;
-                              },
-                            ),
-                          ),
-                          Visibility(
-                            visible: provider.phoneErr,
-                            child: const Padding(
-                              padding:
-                                  EdgeInsets.only(left: 10, top: 5, right: 30),
-                              child: Text(
-                                'Số điện thoại không đúng định dạng.',
-                                style: TextStyle(
-                                    color: AppColor.RED_TEXT, fontSize: 13),
-                              ),
-                            ),
-                          ),
-                          const Padding(padding: EdgeInsets.only(top: 10)),
-                          BorderLayout(
-                            width: width,
-                            isError: provider.passwordErr,
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: TextFieldWidget(
-                              width: width,
-                              isObscureText: true,
-                              maxLines: 1,
-                              textfieldType: TextfieldType.LABEL,
-                              title: 'Mật khẩu',
-                              titleWidth: 100,
-                              hintText: 'Bao gồm 6 số',
-                              controller: _passwordController,
-                              inputType: TextInputType.number,
-                              keyboardAction: TextInputAction.next,
-                              onChange: (value) {
-                                _isChangePass = true;
-                              },
-                            ),
-                          ),
-                          Visibility(
-                            visible: provider.passwordErr,
-                            child: const Padding(
-                              padding:
-                                  EdgeInsets.only(left: 10, top: 5, right: 30),
-                              child: Text(
-                                'Mật khẩu bao gồm 6 số.',
-                                style: TextStyle(
-                                    color: AppColor.RED_TEXT, fontSize: 13),
-                              ),
-                            ),
-                          ),
-                          const Padding(padding: EdgeInsets.only(top: 10)),
-                          BorderLayout(
-                            width: width,
-                            isError: provider.confirmPassErr,
-                            padding: const EdgeInsets.symmetric(horizontal: 10),
-                            child: TextFieldWidget(
-                              width: width,
-                              isObscureText: true,
-                              maxLines: 1,
-                              textfieldType: TextfieldType.LABEL,
-                              title: 'Xác nhận lại',
-                              titleWidth: 100,
-                              hintText: 'Xác nhận lại Mật khẩu',
-                              controller: _confirmPassController,
-                              inputType: TextInputType.number,
-                              keyboardAction: TextInputAction.next,
-                              onChange: (value) {
-                                _isChangePass = true;
-                              },
-                            ),
-                          ),
-                          Visibility(
-                            visible: provider.confirmPassErr,
-                            child: const Padding(
-                              padding:
-                                  EdgeInsets.only(left: 10, top: 5, right: 30),
-                              child: Text(
-                                'Xác nhận Mật khẩu không trùng khớp.',
-                                style: TextStyle(
-                                    color: AppColor.RED_TEXT, fontSize: 13),
-                              ),
-                            ),
-                          ),
-                          const Padding(padding: EdgeInsets.only(top: 50)),
-                          _buildButtonSubmit(context, width),
-                        ],
                       );
                     },
-                  )),
+                  ),
+                  const SizedBox(height: 20),
                   (PlatformUtils.instance.checkResize(width))
                       ? const SizedBox()
-                      : Padding(
-                          padding: const EdgeInsets.only(bottom: 20, top: 10),
-                          child: _buildButtonSubmit(context, width),
+                      : Consumer<RegisterProvider>(
+                          builder: (context, provider, child) {
+                            return Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                _buildButtonSubmit(context, heights),
+                                if (!provider.isShowButton)
+                                  SizedBox(height: viewInsets.bottom),
+                                const SizedBox(height: 10),
+                              ],
+                            );
+                          },
                         ),
                 ],
               ),
@@ -363,87 +254,79 @@ class _RegisterScreenState extends State<RegisterScreen> {
             : null);
   }
 
-  Widget _buildButtonSubmit(BuildContext context, double width) {
-    return ButtonWidget(
-      width: width - 40,
-      text: 'Đăng ký',
-      textColor: AppColor.WHITE,
-      bgColor: AppColor.BLUE_TEXT,
-      borderRadius: 5,
-      function: () async {
-        String phone = Provider.of<RegisterProvider>(context, listen: false)
-            .phoneNoController
-            .text;
+  Widget _buildButtonSubmit(BuildContext context, double height) {
+    return Consumer<RegisterProvider>(
+      builder: (context, provider, child) {
+        return MButtonWidget(
+          title: 'Đăng ký',
+          isEnable: provider.isEnableButton(),
+          margin: EdgeInsets.zero,
+          onTap: () async {
+            provider.updateHeight(height, true);
 
-        String password = Provider.of<RegisterProvider>(context, listen: false)
-            .passwordController
-            .text;
-        String confirmPassword =
-            Provider.of<RegisterProvider>(context, listen: false)
-                .confirmPassController
-                .text;
+            String phone = provider.phoneNoController.text;
 
-        String sharingCode =
-            Provider.of<RegisterProvider>(context, listen: false)
-                .introduceController
-                .text;
+            String password = provider.passwordController.text;
+            String confirmPassword = provider.confirmPassController.text;
 
-        Provider.of<RegisterProvider>(context, listen: false).updateErrs(
-          phoneErr: (StringUtils.instance.isValidatePhone(phone)!),
-          passErr: (!StringUtils.instance.isNumeric(password) ||
-              (password.length != 6)),
-          confirmPassErr: !StringUtils.instance
-              .isValidConfirmText(password, confirmPassword),
-        );
+            String sharingCode = provider.introduceController.text;
 
-        if (Provider.of<RegisterProvider>(context, listen: false).isValid()) {
-          await showGeneralDialog(
-            context: context,
-            barrierLabel: "Barrier",
-            barrierDismissible: true,
-            barrierColor: Colors.black.withOpacity(0.5),
-            transitionDuration: const Duration(milliseconds: 700),
-            pageBuilder: (_, __, ___) {
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  DialogRegister(
-                    passController:
-                        Provider.of<RegisterProvider>(context, listen: false)
-                            .passwordController,
-                    onChanged: (value) {
-                      Provider.of<RegisterProvider>(context, listen: false)
-                          .updateRePass(value);
-                    },
-                    onTap: () async {
-                      if (Provider.of<RegisterProvider>(context, listen: false)
-                          .isValidValidation()) {
-                        String userIP =
-                            await UserInformationUtils.instance.getIPAddress();
+            provider.updateErrs(
+              phoneErr: (StringUtils.instance.isValidatePhone(phone)!),
+              passErr: (!StringUtils.instance.isNumeric(password) ||
+                  (password.length != 6)),
+              confirmPassErr: !StringUtils.instance
+                  .isValidConfirmText(password, confirmPassword),
+            );
 
-                        AccountLoginDTO dto = AccountLoginDTO(
-                          phoneNo: phone,
-                          password:
-                              EncryptUtils.instance.encrypted(phone, password),
-                          device: userIP,
-                          fcmToken: '',
-                          sharingCode: sharingCode,
-                          platform: PlatformUtils.instance.isIOsApp()
-                              ? 'MOBILE'
-                              : 'MOBILE_ADR',
-                        );
-                        if (!mounted) return;
-                        context
-                            .read<RegisterBloc>()
-                            .add(RegisterEventSubmit(dto: dto));
-                      }
-                    },
-                  ),
-                ],
+            if (provider.isValid()) {
+              await showGeneralDialog(
+                context: context,
+                barrierLabel: "Barrier",
+                barrierDismissible: true,
+                barrierColor: Colors.black.withOpacity(0.5),
+                transitionDuration: const Duration(milliseconds: 700),
+                pageBuilder: (_, __, ___) {
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      DialogRegister(
+                        passController: provider.passwordController,
+                        onChanged: (value) {
+                          provider.updateRePass(value);
+                        },
+                        onTap: () async {
+                          if (provider.isValidValidation()) {
+                            String userIP = await UserInformationUtils.instance
+                                .getIPAddress();
+
+                            AccountLoginDTO dto = AccountLoginDTO(
+                              phoneNo: phone,
+                              password: EncryptUtils.instance
+                                  .encrypted(phone, password),
+                              device: userIP,
+                              fcmToken: '',
+                              sharingCode: sharingCode,
+                              platform: PlatformUtils.instance.isIOsApp()
+                                  ? 'MOBILE'
+                                  : 'MOBILE_ADR',
+                            );
+                            if (!mounted) return;
+                            context
+                                .read<RegisterBloc>()
+                                .add(RegisterEventSubmit(dto: dto));
+                          }
+                        },
+                      ),
+                      SizedBox(height: provider.height - kToolbarHeight),
+                    ],
+                  );
+                },
               );
-            },
-          );
-        }
+              provider.updateHeight(0.0, false);
+            }
+          },
+        );
       },
     );
   }

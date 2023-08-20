@@ -1,6 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:vierqr/models/bank_type_dto.dart';
-import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/models/respone_top_up_dto.dart';
 
 class TopUpState extends Equatable {

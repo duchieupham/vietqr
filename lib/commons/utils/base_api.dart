@@ -124,9 +124,7 @@ class BaseAPIClient {
   }
 
   static Map<String, String>? _getHeader(
-      {AuthenticationType? type,
-      Map<String, String>? header,
-      String? clientMessageId}) {
+      {AuthenticationType? type, Map<String, String>? header}) {
     Map<String, String>? result = {};
     type ??= AuthenticationType.NONE;
     final String token = AccountHelper.instance.getToken();

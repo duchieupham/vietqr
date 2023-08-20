@@ -7,10 +7,10 @@ import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/features/bank_detail/blocs/statistical_bloc.dart';
 import 'package:vierqr/features/bank_detail/events/statistical_event.dart';
 import 'package:vierqr/features/bank_detail/states/statistical_state.dart';
-import 'package:vierqr/features/bank_detail/views/line_chart.dart';
 import 'package:vierqr/models/statistical_dto.dart';
 import 'package:vierqr/services/providers/statistical_provider.dart';
 
+// ignore: must_be_immutable
 class Statistical extends StatelessWidget {
   final String bankId;
 

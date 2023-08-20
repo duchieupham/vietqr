@@ -7,7 +7,6 @@ import 'package:vierqr/main.dart';
 
 class ScanQrProvider extends ChangeNotifier {
   CameraController? controller;
-  FlashMode? _currentFlashMode;
   bool isResetCamera = false;
   File? file;
 
@@ -39,7 +38,6 @@ class ScanQrProvider extends ChangeNotifier {
       LOG.error('Error initializing camera: $e');
     }
 
-    _currentFlashMode = controller!.value.flashMode;
 
     notifyListeners();
   }

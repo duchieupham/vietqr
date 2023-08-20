@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:carousel_slider/carousel_slider.dart';
@@ -8,7 +6,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 // import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -241,9 +238,9 @@ class _BankScreenState extends State<_BankScreen>
               .add(DashBoardEventAddContact(dto: data));
         },
         onTapAdd: (data) {
-          context.read<DashBoardBloc>().add(DashBoardCheckExistedEvent(
-              bankAccount: data['bankAccount'],
-              bankTypeId: data['bankTypeId']));
+          context
+              .read<DashBoardBloc>()
+              .add(DashBoardCheckExistedEvent(dto: data['data']));
         },
       );
     }
@@ -885,25 +882,6 @@ class _StackedList extends State<StackedList> {
 
   final MethodChannel platformChannel = const MethodChannel('scan_qr_code');
 
-  Future<void> _pickAndProcessQRImage() async {
-    final imagePicker = ImagePicker();
-    final pickedFile = await imagePicker.pickImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      // Gửi ảnh được chọn xuống native để xử lý
-      File imageFile = File(pickedFile.path);
-      Uint8List imageBytes = await imageFile.readAsBytes();
-      String base64Image = base64Encode(imageBytes);
-
-      try {
-        final data = await platformChannel
-            .invokeMethod('processQRImage', {'imageData': base64Image});
-        print('$data');
-      } on PlatformException catch (e) {
-        print('Error sending QR image to native: ${e.message}');
-      }
-    }
-  }
 
   Widget _buildAddBankCard(double width) {
     return GestureDetector(

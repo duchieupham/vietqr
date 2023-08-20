@@ -263,6 +263,7 @@ enum ScanType {
   SCAN_ERROR,
   SCAN_NOT_FOUND,
   SEARCH_NAME,
+  PERMISSION,
 }
 
 enum TokenType {

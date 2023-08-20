@@ -27,8 +27,6 @@ class AuthProvider with ChangeNotifier {
   bool isCheckApp = false;
   int isShowToastUpdate = -1;
 
-  List<InfoUserDTO> listInfoUsers = [];
-
   //type = 0 => stack
   //type = 1 => slide
   int _type = BankArrangementHelper.instance.getBankArr();
@@ -55,15 +53,6 @@ class AuthProvider with ChangeNotifier {
     PackageInfo data = await PackageInfo.fromPlatform();
     packageInfo = data;
     versionApp = packageInfo?.version ?? '';
-
-    listInfoUsers =
-        await await UserInformationHelper.instance.getLoginAccount();
-    notifyListeners();
-  }
-
-  void updateInfoUser() async {
-    listInfoUsers =
-        await await UserInformationHelper.instance.getLoginAccount();
     notifyListeners();
   }
 

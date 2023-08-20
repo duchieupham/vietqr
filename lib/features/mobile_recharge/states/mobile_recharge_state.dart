@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:vierqr/models/network_providers_dto.dart';
-import 'package:vierqr/models/respone_top_up_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 
 class MobileRechargeState extends Equatable {

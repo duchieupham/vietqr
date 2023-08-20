@@ -39,8 +39,6 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
 
   String message = '';
 
-  TypeAddMember _typeMember = TypeAddMember.MORE;
-
   static BusinessMemberDTO dtoDefault = BusinessMemberDTO(
     userId: '',
     status: '',
@@ -181,7 +179,6 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
                         message = '';
                         setState(() {
                           _dto = dtoDefault;
-                          _typeMember = TypeAddMember.MORE;
                         });
                       }
                     },
@@ -333,7 +330,6 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
     searchClearProvider.updateClearSearch(false);
     setState(() {
       _dto = dtoDefault;
-      _typeMember = dtoDefault.typeMember;
     });
   }
 
@@ -348,16 +344,12 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
 
   void _insertMember(dto) async {
     try {
-      setState(() {
-        _typeMember = TypeAddMember.AWAIT;
-      });
+      setState(() {});
       final ResponseMessageDTO result =
           await branchRepository.insertMember(dto);
       if (!mounted) return;
       if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
-        setState(() {
-          _typeMember = TypeAddMember.ADDED;
-        });
+        setState(() {});
       } else {
         ErrorUtils.instance.getErrorMessage(result.message);
       }
@@ -380,7 +372,6 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
         message = result.message;
         setState(() {
           _dto = dtoDefault;
-          _typeMember = dtoDefault.typeMember;
         });
       } else {
         BusinessMemberDTO result = responseDTO;

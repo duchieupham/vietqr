@@ -29,6 +29,8 @@ class _PolicyViewState extends State<PolicyView> {
     return Material(
       color: Colors.transparent,
       child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
           GestureDetector(
             onTap: () {
@@ -40,133 +42,132 @@ class _PolicyViewState extends State<PolicyView> {
               color: Colors.transparent,
             ),
           ),
-          Expanded(
-            child: Container(
-              alignment: Alignment.bottomCenter,
-              width: MediaQuery.of(context).size.width - 10,
-              height: MediaQuery.of(context).size.height * 0.8,
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(40)),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.clear, color: Colors.transparent),
-                      const Expanded(
-                        child: DefaultTextStyle(
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: AppColor.BLACK,
-                          ),
-                          child: Text(
-                            'Điều khoản dịch vụ',
-                          ),
+          Container(
+            alignment: Alignment.bottomCenter,
+            width: MediaQuery.of(context).size.width - 10,
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+                color: Colors.white, borderRadius: BorderRadius.circular(40)),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.clear, color: Colors.transparent),
+                    const Expanded(
+                      child: DefaultTextStyle(
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: AppColor.BLACK,
+                        ),
+                        child: Text(
+                          'Điều khoản dịch vụ',
                         ),
                       ),
-                      GestureDetector(
-                        child: const Icon(Icons.clear),
-                        onTap: () {
-                          Navigator.of(context).pop();
-                        },
-                      )
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  DividerWidget(
-                    width: MediaQuery.of(context).size.width,
-                  ),
-                  const SizedBox(height: 30),
-                  Expanded(
-                    child: RichText(
-                      textAlign: TextAlign.left,
-                      text: TextSpan(
-                        style: const TextStyle(
+                    ),
+                    GestureDetector(
+                      child: const Icon(Icons.clear),
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                    )
+                  ],
+                ),
+                const SizedBox(height: 8),
+                DividerWidget(
+                  width: MediaQuery.of(context).size.width,
+                ),
+                const SizedBox(height: 30),
+                RichText(
+                  textAlign: TextAlign.left,
+                  text: TextSpan(
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: AppColor.BLACK,
+                      height: 1.4,
+                    ),
+                    children: [
+                      const TextSpan(
+                        text: 'Kính gửi Quý Khách hàng\n',
+                      ),
+                      //
+                      const TextSpan(
+                        text: 'MB Bank và BLUECOM (',
+                      ),
+                      const TextSpan(
+                        text: 'VietQR VN',
+                        style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
+                          color: AppColor.BLUE_TEXT,
+                          height: 1.4,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                      const TextSpan(
+                        text: ') ',
+                      ),
+                      const TextSpan(
+                        text: 'xin gửi đến Quý Khách\n',
+                      ),
+                      //
+                      const TextSpan(
+                        text:
+                            'Điều khoản và điều kiện sử dụng dịch vụ nhận biến động số dư trên tài khoản số “',
+                      ),
+                      const TextSpan(
+                        text: '1123355589',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
                           color: AppColor.BLACK,
                           height: 1.4,
                         ),
-                        children: [
-                          const TextSpan(
-                            text: 'Kính gửi Quý Khách hàng\n',
-                          ),
-                          //
-                          const TextSpan(
-                            text: 'MB Bank và BLUECOM (',
-                          ),
-                          const TextSpan(
-                            text: 'VietQR VN',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: AppColor.BLUE_TEXT,
-                              height: 1.4,
-                              decoration: TextDecoration.underline,
-                            ),
-                          ),
-                          const TextSpan(
-                            text: ') ',
-                          ),
-                          const TextSpan(
-                            text: 'xin gửi đến Quý Khách\n',
-                          ),
-                          //
-                          const TextSpan(
-                            text:
-                                'Điều khoản và điều kiện sử dụng dịch vụ nhận biến động số dư trên tài khoản số “',
-                          ),
-                          const TextSpan(
-                            text: '1123355589',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: AppColor.BLACK,
-                              height: 1.4,
-                            ),
-                          ),
-                          const TextSpan(
-                            text: '” của Quý Khách mở tại ngân hàng MB Bank.\n',
-                          ),
-                          const TextSpan(
-                            text:
-                                'Căn cứ theo hợp đồng Hợp tác số 01/2023/HĐDV/MB-BLUECOM ký ngày 09 tháng 03 năm 2023.\n',
-                          ),
-                          const TextSpan(
-                            text: 'Chi tiết tại đường link: ',
-                          ),
-                          TextSpan(
-                            text: 'https://vietqr.vn/mbbank-dkdv\n\n',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: AppColor.BLUE_TEXT,
-                              height: 1.4,
-                              decoration: TextDecoration.underline,
-                            ),
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () async {
-                                await launch(
-                                  'https://vietqr.vn/mbbank-dkdv',
-                                  forceSafariVC: false,
-                                );
-                              },
-                          ),
-                          const TextSpan(
-                            text:
-                                'Quý Khách vui lòng xác nhận đã đọc, hiểu và đồng ý sử dụng dịch vụ bằng cách nhập mã OTP do ngân hàng TMCP Quân Đội gửi đến số điện thoại của Quý Khách.\n\n',
-                          ),
-                          const TextSpan(
-                            text:
-                                'Xin cảm ơn Quý khách đã sử dụng dịch vụ của chúng tôi.',
-                          ),
-                        ],
                       ),
-                    ),
+                      const TextSpan(
+                        text: '” của Quý Khách mở tại ngân hàng MB Bank.\n',
+                      ),
+                      const TextSpan(
+                        text:
+                            'Căn cứ theo hợp đồng Hợp tác số 01/2023/HĐDV/MB-BLUECOM ký ngày 09 tháng 03 năm 2023.\n',
+                      ),
+                      const TextSpan(
+                        text: 'Chi tiết tại đường link: ',
+                      ),
+                      TextSpan(
+                        text: 'https://vietqr.vn/mbbank-dkdv\n\n',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          color: AppColor.BLUE_TEXT,
+                          height: 1.4,
+                          decoration: TextDecoration.underline,
+                        ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () async {
+                            // ignore: deprecated_member_use
+                            await launch(
+                              'https://vietqr.vn/mbbank-dkdv',
+                              forceSafariVC: false,
+                            );
+                          },
+                      ),
+                      const TextSpan(
+                        text:
+                            'Quý Khách vui lòng xác nhận đã đọc, hiểu và đồng ý sử dụng dịch vụ bằng cách nhập mã OTP do ngân hàng TMCP Quân Đội gửi đến số điện thoại của Quý Khách.\n\n',
+                      ),
+                      const TextSpan(
+                        text:
+                            'Xin cảm ơn Quý khách đã sử dụng dịch vụ của chúng tôi.',
+                      ),
+                    ],
                   ),
-                  Row(
+                ),
+                const SizedBox(height: 60),
+                IntrinsicHeight(
+                  child: Row(
                     children: [
                       Checkbox(
                         checkColor: AppColor.BLUE_TEXT,
@@ -188,29 +189,31 @@ class _PolicyViewState extends State<PolicyView> {
                           });
                         },
                       ),
-                      const DefaultTextStyle(
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: AppColor.BLACK,
-                        ),
-                        child: Text(
-                          'Tôi đã đọc và đồng ý với các điều khoản',
+                      Expanded(
+                        child: const DefaultTextStyle(
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: AppColor.BLACK,
+                          ),
+                          child: Text(
+                            'Tôi đã đọc và đồng ý với các điều khoản',
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  MButtonWidget(
-                    title: 'Xác nhận',
-                    isEnable: true,
-                    colorEnableBgr: AppColor.BLUE_TEXT,
-                    colorEnableText: AppColor.WHITE,
-                    margin: const EdgeInsets.only(left: 20, right: 20),
-                    onTap: widget.onTap,
-                  ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 8),
+                MButtonWidget(
+                  title: 'Xác nhận',
+                  isEnable: true,
+                  colorEnableBgr: AppColor.BLUE_TEXT,
+                  colorEnableText: AppColor.WHITE,
+                  margin: const EdgeInsets.only(left: 20, right: 20),
+                  onTap: widget.onTap,
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 24),

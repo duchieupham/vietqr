@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:permission_handler/permission_handler.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
@@ -61,6 +62,36 @@ class ScanQrRepository {
       }
     } catch (e) {
       LOG.error(e.toString());
+    }
+    return result;
+  }
+
+  //Check permissions
+  Future<Map<String, PermissionStatus>> checkPermissions() async {
+    Map<String, PermissionStatus> result = {};
+    try {
+      PermissionStatus cameraPermission = await Permission.camera.status;
+      result['camera'] = cameraPermission;
+    } catch (e) {
+      LOG.error('');
+    }
+    return result;
+  }
+
+  //Request permissions
+  Future<bool> requestPermissions() async {
+    bool result = false;
+    try {
+      PermissionStatus cameraPermission = await Permission.camera.status;
+      LOG.info('CAMERA PERMISSION: $cameraPermission');
+      if (!cameraPermission.isGranted) {
+        await Permission.camera.request().then((value) async {
+          cameraPermission = await Permission.camera.status;
+          LOG.error('CAMERA PERMISSION after access: $cameraPermission');
+        });
+      }
+    } catch (e) {
+      LOG.error('Error at requestPermissions - PermissionRepository: $e');
     }
     return result;
   }

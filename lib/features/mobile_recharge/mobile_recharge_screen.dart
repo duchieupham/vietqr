@@ -26,6 +26,7 @@ import 'package:vierqr/services/shared_references/user_information_helper.dart';
 import '../contact/blocs/contact_provider.dart';
 import 'events/mobile_recharge_event.dart';
 
+// ignore: must_be_immutable
 class MobileRechargeScreen extends StatelessWidget {
   MobileRechargeScreen({super.key});
 

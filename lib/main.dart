@@ -73,7 +73,6 @@ import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:vierqr/services/providers/avatar_provider.dart';
 import 'package:vierqr/services/providers/business_inforamtion_provider.dart';
 import 'package:vierqr/services/providers/pin_provider.dart';
-import 'package:vierqr/services/providers/suggestion_widget_provider.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
 import 'package:vierqr/services/shared_references/account_helper.dart';
 import 'package:vierqr/services/shared_references/bank_arrangement_helper.dart';
@@ -315,8 +314,6 @@ class _VietQRApp extends State<VietQRApp> {
             ChangeNotifierProvider(create: (context) => DashBoardProvider()),
             ChangeNotifierProvider(create: (context) => PinProvider()),
             ChangeNotifierProvider(create: (context) => UserEditProvider()),
-            ChangeNotifierProvider(
-                create: (context) => SuggestionWidgetProvider()),
             ChangeNotifierProvider(
                 create: (context) => BusinessInformationProvider()),
             ChangeNotifierProvider(create: (context) => AvatarProvider()),

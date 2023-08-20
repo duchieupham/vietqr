@@ -10,23 +10,34 @@ class LoginProvider with ChangeNotifier {
   String? errorPhone;
 
   InfoUserDTO? infoUserDTO;
+  List<InfoUserDTO> listInfoUsers = [];
 
   //0: trang login ban đầu
   // 1: trang login gần nhất
   //2 : quickLogin
   int isQuickLogin = 0;
 
+  init() async {
+    listInfoUsers = await UserInformationHelper.instance.getLoginAccount();
+    if (listInfoUsers.isNotEmpty) {
+      isQuickLogin = 1;
+    }
+    notifyListeners();
+  }
+
+  void updateListInfoUser() async {
+    listInfoUsers =
+        await await UserInformationHelper.instance.getLoginAccount();
+    notifyListeners();
+  }
+
   void updateInfoUser(value) {
     infoUserDTO = value;
     notifyListeners();
   }
 
-  void updateQuickLogin(value, {bool isLoginAccount = false}) {
-    if (isLoginAccount) {
-      isQuickLogin = 1;
-    } else {
-      isQuickLogin = value;
-    }
+  void updateQuickLogin(value) {
+    isQuickLogin = value;
     notifyListeners();
   }
 

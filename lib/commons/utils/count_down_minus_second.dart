@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 
+// ignore: must_be_immutable
 class CountDown extends AnimatedWidget {
   CountDown({Key? key, required this.animation})
       : super(key: key, listenable: animation);

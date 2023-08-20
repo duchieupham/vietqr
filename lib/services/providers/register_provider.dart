@@ -32,6 +32,17 @@ class RegisterProvider with ChangeNotifier {
 
   static const String countryCode = '+84';
 
+  double height = 0;
+  bool isShowButton = false;
+
+  void updateHeight(value, showBT) {
+    if (height == 0) {
+      height = value;
+    }
+    isShowButton = showBT;
+    notifyListeners();
+  }
+
   void updateVerifyId(value) {
     _verificationId = value;
     notifyListeners();
@@ -81,6 +92,14 @@ class RegisterProvider with ChangeNotifier {
 
   bool isValid() {
     return !_isPhoneErr && !_isPasswordErr;
+  }
+
+  bool isEnableButton() {
+    if (phoneNoController.text.isNotEmpty &&
+        passwordController.text.isNotEmpty) {
+      return true;
+    }
+    return false;
   }
 
   void reset() {

@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -50,7 +52,7 @@ class DialogScanURL extends StatelessWidget {
               ],
             ),
           ),
-          const Spacer(),
+          const SizedBox(height: 12),
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 40),
             padding: const EdgeInsets.all(20),

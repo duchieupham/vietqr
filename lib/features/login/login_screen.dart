@@ -21,7 +21,6 @@ import 'package:vierqr/models/account_login_dto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/models/info_user_dto.dart';
-import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class Login extends StatelessWidget {
@@ -29,18 +28,10 @@ class Login extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isCheck = false;
-    if (Provider.of<AuthProvider>(context, listen: false)
-        .listInfoUsers
-        .isNotEmpty) {
-      isCheck = true;
-    }
-
     return BlocProvider<LoginBloc>(
       create: (BuildContext context) => LoginBloc(),
       child: ChangeNotifierProvider<LoginProvider>(
-        create: (_) =>
-            LoginProvider()..updateQuickLogin(0, isLoginAccount: isCheck),
+        create: (_) => LoginProvider()..init(),
         child: _Login(),
       ),
     );
@@ -143,8 +134,7 @@ class _LoginState extends State<_Login> {
                 });
 
                 await UserInformationHelper.instance.setLoginAccount(list);
-                Provider.of<AuthProvider>(context, listen: false)
-                    .updateInfoUser();
+                provider.updateListInfoUser();
               }
 
               Navigator.of(context).popUntil((route) => route.isFirst);
@@ -225,70 +215,66 @@ class _LoginState extends State<_Login> {
           },
           builder: (context, state) {
             if (provider.isQuickLogin == 1) {
-              return Consumer<AuthProvider>(
-                builder: (context, auth, child) {
-                  return LoginAccountScreen(
-                    list: auth.listInfoUsers,
-                    onRemoveAccount: (dto) async {
-                      List<String> listString = [];
-                      List<InfoUserDTO> list = auth.listInfoUsers;
-                      list.removeAt(dto);
-                      if (list.length >= 2) {
-                        list.sort((a, b) =>
-                            a.expiryAsDateTime.compareTo(b.expiryAsDateTime));
-                      }
+              return LoginAccountScreen(
+                list: provider.listInfoUsers,
+                onRemoveAccount: (dto) async {
+                  List<String> listString = [];
+                  List<InfoUserDTO> list = provider.listInfoUsers;
+                  list.removeAt(dto);
+                  if (list.length >= 2) {
+                    list.sort((a, b) =>
+                        a.expiryAsDateTime.compareTo(b.expiryAsDateTime));
+                  }
 
-                      list.forEach((element) {
-                        listString.add(element.toSPJson().toString());
-                      });
+                  list.forEach((element) {
+                    listString.add(element.toSPJson().toString());
+                  });
 
-                      await UserInformationHelper.instance
-                          .setLoginAccount(listString);
+                  await UserInformationHelper.instance
+                      .setLoginAccount(listString);
 
-                      auth.updateInfoUser();
+                  provider.updateListInfoUser();
 
-                      if (list.isEmpty) {
-                        provider.updateQuickLogin(0);
-                      }
-                    },
-                    onQuickLogin: (dto) {
-                      provider.updateQuickLogin(2);
-                      provider.updateInfoUser(dto);
-                    },
-                    onBackLogin: () {
-                      provider.updateInfoUser(null);
-                      provider.updateQuickLogin(0);
-                    },
-                    onRegister: () async {
-                      provider.updateInfoUser(null);
-                      final data = await Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => Register(phoneNo: ''),
-                          settings: const RouteSettings(
-                            name: Routes.REGISTER,
-                          ),
-                        ),
-                      );
-
-                      if (data is Map) {
-                        AccountLoginDTO dto = AccountLoginDTO(
-                          phoneNo: data['phone'],
-                          password: EncryptUtils.instance.encrypted(
-                            data['phone'],
-                            data['password'],
-                          ),
-                          device: '',
-                          fcmToken: '',
-                          platform: '',
-                          sharingCode: '',
-                        );
-                        if (!mounted) return;
-                        context
-                            .read<LoginBloc>()
-                            .add(LoginEventByPhone(dto: dto, isToast: true));
-                      }
-                    },
+                  if (list.isEmpty) {
+                    provider.updateQuickLogin(0);
+                  }
+                },
+                onQuickLogin: (dto) {
+                  provider.updateQuickLogin(2);
+                  provider.updateInfoUser(dto);
+                },
+                onBackLogin: () {
+                  provider.updateInfoUser(null);
+                  provider.updateQuickLogin(0);
+                },
+                onRegister: () async {
+                  provider.updateInfoUser(null);
+                  final data = await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => Register(phoneNo: ''),
+                      settings: const RouteSettings(
+                        name: Routes.REGISTER,
+                      ),
+                    ),
                   );
+
+                  if (data is Map) {
+                    AccountLoginDTO dto = AccountLoginDTO(
+                      phoneNo: data['phone'],
+                      password: EncryptUtils.instance.encrypted(
+                        data['phone'],
+                        data['password'],
+                      ),
+                      device: '',
+                      fcmToken: '',
+                      platform: '',
+                      sharingCode: '',
+                    );
+                    if (!mounted) return;
+                    context
+                        .read<LoginBloc>()
+                        .add(LoginEventByPhone(dto: dto, isToast: true));
+                  }
                 },
               );
             }
@@ -369,74 +355,84 @@ class _LoginState extends State<_Login> {
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 20),
-                    child: Column(
-                      children: [
-                        PhoneWidget(
-                          phoneController: phoneNoController,
-                          onChanged: provider.updatePhone,
-                        ),
-                        Visibility(
-                          visible: provider.errorPhone != null,
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                left: 5, top: 5, right: 30),
-                            child: Text(
-                              provider.errorPhone ?? '',
-                              textAlign: TextAlign.left,
-                              style: const TextStyle(
-                                  color: AppColor.RED_TEXT, fontSize: 13),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 20),
+                            child: Column(
+                              children: [
+                                PhoneWidget(
+                                  phoneController: phoneNoController,
+                                  onChanged: provider.updatePhone,
+                                ),
+                                Visibility(
+                                  visible: provider.errorPhone != null,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 5, top: 5, right: 30),
+                                    child: Text(
+                                      provider.errorPhone ?? '',
+                                      textAlign: TextAlign.left,
+                                      style: const TextStyle(
+                                          color: AppColor.RED_TEXT, fontSize: 13),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 8),
+                        ],
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 8),
-                ],
-              ),
-              bottomSheet: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Consumer<AuthProvider>(
-                    builder: (context, auth, child) {
-                      if (auth.listInfoUsers.isNotEmpty) {
-                        return Container(
-                          alignment: Alignment.center,
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: GestureDetector(
-                            onTap: () async {
-                              provider.updateQuickLogin(1);
-                            },
-                            child: const Text(
-                              'Đăng nhập bằng tài khoản trước đó',
-                              style: TextStyle(color: AppColor.BLUE_TEXT),
-                            ),
-                          ),
-                        );
-                      } else {
-                        return const SizedBox();
-                      }
-                    },
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Consumer<LoginProvider>(
+                        builder: (context, auth, child) {
+                          if (auth.listInfoUsers.isNotEmpty) {
+                            return Container(
+                              alignment: Alignment.center,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child: GestureDetector(
+                                onTap: () async {
+                                  provider.updateQuickLogin(1);
+                                },
+                                child: const Text(
+                                  'Đăng nhập bằng tài khoản trước đó',
+                                  style: TextStyle(color: AppColor.BLUE_TEXT),
+                                ),
+                              ),
+                            );
+                          } else {
+                            return const SizedBox();
+                          }
+                        },
+                      ),
+                      const SizedBox(height: 8),
+                      MButtonWidget(
+                        title: 'Tiếp tục',
+                        isEnable: provider.isEnableButton,
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 8),
+                        colorEnableText: provider.isEnableButton
+                            ? AppColor.WHITE
+                            : AppColor.GREY_TEXT,
+                        onTap: () {
+                          FocusManager.instance.primaryFocus?.unfocus();
+                          _bloc
+                              .add(CheckExitsPhoneEvent(phone: provider.phone));
+                        },
+                      ),
+                      const SizedBox(height: 24)
+                    ],
                   ),
-                  const SizedBox(height: 10),
-                  MButtonWidget(
-                    title: 'Tiếp tục',
-                    isEnable: provider.isEnableButton,
-                    margin:
-                        const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                    colorEnableText: provider.isEnableButton
-                        ? AppColor.WHITE
-                        : AppColor.GREY_TEXT,
-                    onTap: () {
-                      FocusManager.instance.primaryFocus?.unfocus();
-                      _bloc.add(CheckExitsPhoneEvent(phone: provider.phone));
-                    },
-                  ),
-                  const SizedBox(height: 24)
                 ],
               ),
             );

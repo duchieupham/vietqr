@@ -13,7 +13,6 @@ class PopupConfirmPassword extends StatelessWidget {
   final TextEditingController _passEditingController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    final double width = MediaQuery.of(context).size.width;
     return ChangeNotifierProvider(
       create: (context) => ConfirmPassProvider(),
       child: Consumer<ConfirmPassProvider>(builder: (context, provider, child) {

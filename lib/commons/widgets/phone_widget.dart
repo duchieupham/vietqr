@@ -18,14 +18,11 @@ class PhoneWidget extends StatefulWidget {
 }
 
 class _BodyWidget extends State<PhoneWidget> {
-  dynamic _selectedCountryCode;
-  final List<String> _countryCodes = ['+84'];
   late FocusNode myFocusPhone;
 
   @override
   void initState() {
     super.initState();
-    _selectedCountryCode = _countryCodes.first;
     myFocusPhone = FocusNode();
   }
 

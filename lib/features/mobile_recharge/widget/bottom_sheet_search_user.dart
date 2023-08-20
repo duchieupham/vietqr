@@ -17,7 +17,6 @@ class BottomSheetSearchUser extends StatelessWidget {
       : super(key: key);
   @override
   Widget build(BuildContext context) {
-    final double width = MediaQuery.of(context).size.width;
     late ContactBloc _bloc = BlocProvider.of(context);
     _bloc.add(ContactEventGetListRecharge());
     return Column(

@@ -59,7 +59,7 @@ class ListLoginAccountDTO {
     }
     try {
       list = datas.map((f) => InfoUserDTO.fromJson(json.decode(f))).toList();
-    } catch (e, stack) {}
+    } catch (e) {}
     return ListLoginAccountDTO(list: list);
   }
 }

@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/commons/utils/error_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
@@ -37,7 +36,6 @@ class _SelectBankConnectBranchWidgetState
     extends State<SelectBankConnectBranchWidget> {
   List<AccountBankConnectBranchDTO> list = [];
   List<Color> _colors = [];
-  String _msgError = '';
   bool _isConnectBank = false;
 
   String userId = UserInformationHelper.instance.getUserId();
@@ -324,17 +322,11 @@ class _SelectBankConnectBranchWidgetState
           _isConnectBank = true;
         });
       } else {
-        setState(() {
-          _msgError = ErrorUtils.instance.getErrorMessage(result.message);
-        });
+        setState(() {});
       }
     } catch (e) {
-      ResponseMessageDTO result =
-          const ResponseMessageDTO(status: 'FAILED', message: 'E05');
       LOG.error(e.toString());
-      setState(() {
-        _msgError = ErrorUtils.instance.getErrorMessage(result.message);
-      });
+      setState(() {});
     }
   }
 }

@@ -30,6 +30,7 @@ class CalButtonWidget extends StatelessWidget {
         height: (height != null) ? height : size * 3 / 4,
         alignment: Alignment.center,
         decoration: BoxDecoration(
+          // ignore: deprecated_member_use
           color: (color != null) ? color : Theme.of(context).buttonColor,
           borderRadius: BorderRadius.circular(10),
         ),

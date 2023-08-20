@@ -6,7 +6,6 @@ import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/transaction/events/transaction_event.dart';
 import 'package:vierqr/features/transaction/repositories/transaction_repository.dart';
 import 'package:vierqr/features/transaction/states/transaction_state.dart';
-import 'package:vierqr/models/business_detail_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/transaction_receive_dto.dart';
 

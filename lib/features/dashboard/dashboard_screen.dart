@@ -40,7 +40,6 @@ import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/services/providers/account_balance_home_provider.dart';
 import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:vierqr/services/providers/avatar_provider.dart';
-import 'package:vierqr/services/providers/suggestion_widget_provider.dart';
 import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
@@ -131,9 +130,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
           _dashBoardBloc.add(DashBoardEventAddContact(dto: data));
         },
         onTapAdd: (data) {
-          _dashBoardBloc.add(DashBoardCheckExistedEvent(
-              bankAccount: data['bankAccount'],
-              bankTypeId: data['bankTypeId']));
+          _dashBoardBloc.add(DashBoardCheckExistedEvent(dto: data['data']));
         },
       );
     }
@@ -207,7 +204,6 @@ class _DashBoardScreen extends State<DashBoardScreen>
   void initialServices(BuildContext context) {
     checkUserInformation();
     _dashBoardBloc.add(const TokenEventCheckValid());
-    _dashBoardBloc.add(const PermissionEventRequest());
     if (Provider.of<AuthProvider>(context, listen: false).introduceDTO ==
         null) {
       _dashBoardBloc.add(GetPointEvent());
@@ -232,7 +228,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       if (!PlatformUtils.instance.isWeb()) {
-        _dashBoardBloc.add(const PermissionEventGetStatus());
+        // _dashBoardBloc.add(const PermissionEventGetStatus());
       }
     }
   }
@@ -252,19 +248,19 @@ class _DashBoardScreen extends State<DashBoardScreen>
 
 //check user information is updated before or not
   void checkUserInformation() {
-    String firstName =
-        UserInformationHelper.instance.getAccountInformation().firstName;
-    if (firstName != 'Undefined') {
-      Future.delayed(const Duration(milliseconds: 0), () {
-        Provider.of<SuggestionWidgetProvider>(context, listen: false)
-            .updateUserUpdating(false);
-      });
-    } else {
-      Future.delayed(const Duration(milliseconds: 0), () {
-        Provider.of<SuggestionWidgetProvider>(context, listen: false)
-            .updateUserUpdating(true);
-      });
-    }
+    // String firstName =
+    //     UserInformationHelper.instance.getAccountInformation().firstName;
+    // if (firstName != 'Undefined') {
+    //   Future.delayed(const Duration(milliseconds: 0), () {
+    //     Provider.of<SuggestionWidgetProvider>(context, listen: false)
+    //         .updateUserUpdating(false);
+    //   });
+    // } else {
+    //   Future.delayed(const Duration(milliseconds: 0), () {
+    //     Provider.of<SuggestionWidgetProvider>(context, listen: false)
+    //         .updateUserUpdating(true);
+    //   });
+    // }
   }
 
   void _updateFcmToken(bool isFromLogin) {
@@ -328,28 +324,6 @@ class _DashBoardScreen extends State<DashBoardScreen>
           }
         }
 
-        if (state.typePermission == DashBoardTypePermission.Request) {
-          _dashBoardBloc.add(const PermissionEventGetStatus());
-        }
-        if (state.typePermission == DashBoardTypePermission.CameraDenied) {
-          Future.delayed(const Duration(milliseconds: 0), () {
-            Provider.of<SuggestionWidgetProvider>(context, listen: false)
-                .updateCameraSuggestion(true);
-          });
-        }
-        if (state.typePermission == DashBoardTypePermission.CameraAllow) {
-          Future.delayed(const Duration(milliseconds: 0), () {
-            Provider.of<SuggestionWidgetProvider>(context, listen: false)
-                .updateCameraSuggestion(false);
-          });
-        }
-        if (state.typePermission == DashBoardTypePermission.Allow) {
-          Future.delayed(const Duration(milliseconds: 0), () {
-            Provider.of<SuggestionWidgetProvider>(context, listen: false)
-                .updateCameraSuggestion(false);
-          });
-        }
-
         if (state.request == DashBoardType.ADD_BOOK_CONTACT) {
           if (!mounted) return;
           Navigator.pop(context);
@@ -384,14 +358,14 @@ class _DashBoardScreen extends State<DashBoardScreen>
         if (state.request == DashBoardType.EXIST_BANK) {
           String userId = UserInformationHelper.instance.getUserId();
           String formattedName = StringUtils.instance.removeDiacritic(
-              StringUtils.instance.capitalFirstCharacter(
-                  state.informationDTO?.accountName ?? ''));
+              StringUtils.instance
+                  .capitalFirstCharacter(state.qrDto?.userBankName ?? ''));
           BankCardInsertUnauthenticatedDTO dto =
               BankCardInsertUnauthenticatedDTO(
-            bankTypeId: state.bankTypeDTO?.id ?? '',
+            bankTypeId: state.qrDto?.bankTypeId ?? '',
             userId: userId,
             userBankName: formattedName,
-            bankAccount: state.bankAccount,
+            bankAccount: state.qrDto?.bankAccount ?? '',
           );
           _dashBoardBloc.add(DashBoardEventInsertUnauthenticated(dto: dto));
         }
@@ -400,6 +374,14 @@ class _DashBoardScreen extends State<DashBoardScreen>
           if (!mounted) return;
           eventBus.fire(ChangeThemeEvent());
           Navigator.of(context).pop(true);
+          Fluttertoast.showToast(
+            msg: 'Thêm TK thành công',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Theme.of(context).cardColor,
+            textColor: Theme.of(context).cardColor,
+            fontSize: 15,
+          );
         }
 
         if (state.request == DashBoardType.ERROR) {

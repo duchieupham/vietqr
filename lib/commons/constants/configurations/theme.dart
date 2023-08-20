@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 class AppColor {
   //COLOR
   static const Color BLACK = Color(0xFF000000);
+  static const Color textBlack = Color(0xff393939);
   static const Color BLACK_DARK = Color(0xFF1B1C1E);
   static const Color BLACK_BUTTON = Color(0xFF303030);
   static const Color BLACK_LIGHT = Color(0xFF464646);

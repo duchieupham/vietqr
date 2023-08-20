@@ -68,6 +68,7 @@ class _ConfirmOTPViewState extends State<ConfirmOTPView> {
           height: 40,
           child: PinCodeInput(
             obscureText: false,
+            autoFocus: true,
             controller: widget.otpController,
             onChanged: widget.onChangeOTP,
             length: 8,

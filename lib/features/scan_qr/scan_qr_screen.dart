@@ -61,8 +61,6 @@ class _CameraScreenState extends State<CameraScreen>
 
   FlashMode _currentFlashMode = FlashMode.off;
 
-  double _minAvailableZoom = 1.0;
-  double _maxAvailableZoom = 1.0;
   double _currentZoomLevel = 1.0;
 
   final int _intervalInSeconds = 5;
@@ -136,14 +134,6 @@ class _CameraScreenState extends State<CameraScreen>
 
     try {
       await cameraController.initialize();
-
-      cameraController
-          .getMaxZoomLevel()
-          .then((value) => _maxAvailableZoom = value);
-
-      cameraController
-          .getMinZoomLevel()
-          .then((value) => _minAvailableZoom = value);
 
       await controller!.setFlashMode(_currentFlashMode);
     } on CameraException catch (e) {
@@ -219,8 +209,6 @@ class _CameraScreenState extends State<CameraScreen>
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final deviceRatio = size.width / size.height;
     return Scaffold(
       appBar: MAppBar(
         title: 'Quét QR',
