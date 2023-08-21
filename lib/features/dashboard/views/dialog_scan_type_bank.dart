@@ -14,10 +14,8 @@ class DialogScanBank extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height;
     return Container(
       width: MediaQuery.of(context).size.width,
-      height: height,
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       margin: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
@@ -25,6 +23,7 @@ class DialogScanBank extends StatelessWidget {
         color: AppColor.WHITE,
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
             padding: const EdgeInsets.only(left: 16, right: 16, top: 10),
@@ -84,7 +83,8 @@ class DialogScanBank extends StatelessWidget {
                 )
               ],
             ),
-          )
+          ),
+          const SizedBox(height: 20),
         ],
       ),
     );
