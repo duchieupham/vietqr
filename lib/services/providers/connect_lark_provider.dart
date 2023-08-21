@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ConnectLarkProvider extends ChangeNotifier {
   bool _chooseAllBank = false;
@@ -20,7 +21,8 @@ class ConnectLarkProvider extends ChangeNotifier {
 
   bool _errorWebhook = false;
   bool get errorWebhook => _errorWebhook;
-
+  String _clipboardText = '';
+  String get clipboardText => _clipboardText;
   addAll(String bankId) {
     _chooseAllBank = true;
     if (!_bankIds.contains(bankId)) {
@@ -30,7 +32,8 @@ class ConnectLarkProvider extends ChangeNotifier {
 
   void updateWebHook(String value) {
     _webHook = value;
-    if (_webHook.isEmpty || !_webHook.contains('https://')) {
+    if (_webHook.isEmpty ||
+        !(_webHook.contains('https://') || _webHook.contains('http://'))) {
       _errorWebhook = true;
     } else {
       _errorWebhook = false;
@@ -64,5 +67,21 @@ class ConnectLarkProvider extends ChangeNotifier {
     }
     print('--------------------------$bankIds');
     notifyListeners();
+  }
+
+  void getClipBoardData() async {
+    ClipboardData? data = await Clipboard.getData(Clipboard.kTextPlain);
+
+    if (data?.text?.isNotEmpty ?? false) {
+      String textCopied = data?.text! ?? '';
+      if (textCopied.contains('http://') || textCopied.contains('https://')) {
+        _clipboardText = textCopied;
+        notifyListeners();
+      }
+    }
+  }
+
+  clearClipBoardData() {
+    _clipboardText = '';
   }
 }
