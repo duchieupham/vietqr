@@ -146,6 +146,15 @@ class CardWallet extends StatelessWidget {
             },
           ),
         ),
+        Expanded(
+          child: _buildItemAction(
+            'assets/images/ic-history-transaction-wallet.png',
+            'Lịch sử GD',
+            () {
+              Navigator.pushNamed(context, Routes.TRANSACTION_WALLET);
+            },
+          ),
+        ),
       ],
     );
   }

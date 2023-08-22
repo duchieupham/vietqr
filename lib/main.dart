@@ -83,6 +83,7 @@ import 'package:vierqr/services/shared_references/theme_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 import 'features/connect_lark/widget/connect_screen.dart';
+import 'features/transaction_wallet/trans_wallet_screen.dart';
 
 //Share Preferences
 late SharedPreferences sharedPrefs;
@@ -383,6 +384,8 @@ class _VietQRApp extends State<VietQRApp> {
                       const ContactUSScreen(),
                   Routes.REPORT_SCREEN: (context) => const ReportScreen(),
                   Routes.SETTING_BDSD: (context) => const SettingBDSD(),
+                  Routes.TRANSACTION_WALLET: (context) =>
+                      const TransWalletScreen(),
                 },
                 onGenerateRoute: (settings) {
                   if (settings.name == Routes.BUSINESS_INFORMATION_VIEW) {

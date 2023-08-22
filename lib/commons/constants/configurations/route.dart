@@ -46,4 +46,5 @@ class Routes {
   static const String CONNECT_STEP_TELE_SCREEN = '/connect_step_tele_screen';
   static const String CONNECT_STEP_LARK_SCREEN = '/connect_step_lark_screen';
   static const String SETTING_BDSD = '/setting_bdsd';
+  static const String TRANSACTION_WALLET = '/transaction_wallet';
 }
