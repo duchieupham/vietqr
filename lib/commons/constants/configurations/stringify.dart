@@ -30,8 +30,9 @@ class Stringify {
   static const String NOTI_TYPE_UPDATE_TRANSACTION = "N05";
   static const String NOTI_TYPE_TOPUP = "N10";
   static const String NOTI_TYPE_MOBILE_RECHARGE = "N11";
+
   //
   static final String urlStore = PlatformUtils.instance.isAndroidApp()
       ? 'https://play.google.com/store/apps/details?id=com.vietqr.product&hl=en_US&pli=1'
-      : 'https://apps.apple.com/vn/app/qr-vn/id1595737575?l=vi';
+      : 'https://apps.apple.com/vn/app/vietqr-vn/id6447118484?l=vi';
 }

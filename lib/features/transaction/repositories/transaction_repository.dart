@@ -15,15 +15,15 @@ import 'package:vierqr/models/transaction_receive_dto.dart';
 class TransactionRepository {
   const TransactionRepository();
 
-  Future<List<RelatedTransactionReceiveDTO>> getTransactionByBankId(
+  Future<List<RelatedTransactionReceiveDTO>> getTrans(
       TransactionInputDTO dto) async {
     List<RelatedTransactionReceiveDTO> result = [];
     try {
-      final String url = '${EnvConfig.getBaseUrl()}transaction/list';
+      final String url =
+          '${EnvConfig.getBaseUrl()}transactions?bankId=${dto.bankId}&status=${dto.status}&offset=${dto.offset}';
 
-      final response = await BaseAPIClient.postAPI(
+      final response = await BaseAPIClient.getAPI(
         url: url,
-        body: dto.toJson(),
         type: AuthenticationType.SYSTEM,
       );
       if (response.statusCode == 200) {

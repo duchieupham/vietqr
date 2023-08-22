@@ -19,9 +19,6 @@ class TransHistoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final arg = ModalRoute.of(context)!.settings.arguments as Map;
-    // String bankId = arg['bankId'] ?? '';
-
     return BlocProvider(
       create: (context) => TransHistoryBloc(context, bankId),
       child: const _BodyWidget(),
@@ -54,23 +51,32 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
     final maxScroll = scrollController.position.maxScrollExtent;
     if (scrollController.offset >= maxScroll &&
         !scrollController.position.outOfRange) {
-      _bloc.add(TransactionEventFetch());
+      _bloc.add(TransactionEventFetch(model.type));
     }
   }
 
   void initData(BuildContext context) {
     scrollController.addListener(_loadMore);
-    _bloc.add(TransactionEventGetList());
+    _bloc.add(TransactionEventGetList(model.type));
   }
 
   Future<void> onRefresh() async {
-    _bloc.add(TransactionEventGetList());
+    _bloc.add(TransactionEventGetList(model.type));
   }
+
+  bool isEnableBT = false;
+  DataModel model = DataModel(title: 'Tất cả', type: 9);
+
+  final List<DataModel> list = [
+    DataModel(title: 'Tất cả', type: 9),
+    DataModel(title: 'Chờ thanh toán', type: 0),
+    DataModel(title: 'Thành công', type: 1),
+    DataModel(title: 'Đã huỷ', type: 2),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: const MAppBar(title: 'Lịch sử giao dịch'),
       body: BlocConsumer<TransHistoryBloc, TransHistoryState>(
         listener: (context, state) {
           if (state.status == BlocStatus.LOADING) {
@@ -82,55 +88,142 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
           }
         },
         builder: (context, state) {
-          if (state.status == BlocStatus.LOADING) {
-            return const Center(
-              child: CircularProgressIndicator(
-                color: AppColor.BLUE_TEXT,
-              ),
-            );
-          }
-
-          if ((state.list.isEmpty)) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 100.0),
-              child: const Center(
-                child: Text('Không có giao dịch nào'),
-              ),
-            );
-          } else {
-            return RefreshIndicator(
-              onRefresh: onRefresh,
-              child: SingleChildScrollView(
-                controller: scrollController,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  children: [
-                    Column(
-                      children: List.generate(
-                        state.list.length,
-                        (index) {
-                          return _buildElement(
-                            context: context,
-                            dto: state.list[index],
-                          );
-                        },
-                      ).toList(),
+          return Stack(
+            children: [
+              Column(
+                children: [
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: AppColor.WHITE,
                     ),
-                    if (!state.isLoadMore)
-                      const UnconstrainedBox(
-                        child: SizedBox(
-                          width: 30,
-                          height: 30,
+                    child: Row(
+                      children: [
+                        Text(
+                          'Trạng thái giao dịch',
+                          style: TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.w500),
+                        ),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: _onHandleTap,
+                            child: Container(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 16.0),
+                              color: Colors.transparent,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    '${model.title}',
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  const Icon(
+                                    Icons.expand_more,
+                                    color: AppColor.BLACK,
+                                    size: 16,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Container(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Danh sách giao dịch',
+                      style:
+                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  if (state.status == BlocStatus.LOADING)
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 100),
+                        child: const Center(
                           child: CircularProgressIndicator(
                             color: AppColor.BLUE_TEXT,
                           ),
                         ),
+                      ),
+                    )
+                  else ...[
+                    if (state.list.isEmpty)
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 100),
+                          child: const Center(
+                            child: Text('Không có giao dịch nào'),
+                          ),
+                        ),
                       )
+                    else
+                      Expanded(
+                        child: RefreshIndicator(
+                          onRefresh: onRefresh,
+                          child: SingleChildScrollView(
+                            controller: scrollController,
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Column(
+                              children: [
+                                Column(
+                                  children: List.generate(
+                                    state.list.length,
+                                    (index) {
+                                      return _buildElement(
+                                        context: context,
+                                        dto: state.list[index],
+                                      );
+                                    },
+                                  ).toList(),
+                                ),
+                                if (!state.isLoadMore)
+                                  const UnconstrainedBox(
+                                    child: SizedBox(
+                                      width: 30,
+                                      height: 30,
+                                      child: CircularProgressIndicator(
+                                        color: AppColor.BLUE_TEXT,
+                                      ),
+                                    ),
+                                  )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
                   ],
-                ),
+                ],
               ),
-            );
-          }
+              enableList
+                  ? Container(
+                      padding: EdgeInsets.only(left: 20),
+                      child: Row(
+                        children: [
+                          Text(
+                            'Trạng thái giao dịch',
+                            style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                color: AppColor.TRANSPARENT),
+                          ),
+                          const SizedBox(width: 30),
+                          Expanded(child: _buildSearchList()),
+                        ],
+                      ),
+                    )
+                  : Container(),
+            ],
+          );
         },
       ),
     );
@@ -214,4 +307,89 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
       ),
     );
   }
+
+  bool enableList = false;
+
+  _onChanged(int index) {
+    setState(() {
+      enableList = !enableList;
+      if (model != list[index]) {
+        model = list[index];
+        _bloc.add(TransactionEventGetList(model.type));
+      }
+    });
+  }
+
+  _onHandleTap() {
+    setState(() {
+      enableList = !enableList;
+    });
+  }
+
+  Widget _buildSearchList() => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(5)),
+              color: Colors.white,
+              boxShadow: <BoxShadow>[
+                BoxShadow(
+                  color: Theme.of(context).shadowColor.withOpacity(0.2),
+                  spreadRadius: 0,
+                  blurRadius: 4,
+                  offset: const Offset(1, 2),
+                ),
+              ],
+            ),
+            child: ListView.builder(
+              padding: EdgeInsets.zero,
+              shrinkWrap: true,
+              scrollDirection: Axis.vertical,
+              physics: const BouncingScrollPhysics(
+                  parent: NeverScrollableScrollPhysics()),
+              itemCount: list.length,
+              itemBuilder: (context, position) {
+                return InkWell(
+                  onTap: () {
+                    _onChanged(position);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20.0, vertical: 16.0),
+                    decoration: BoxDecoration(
+                      border: position != (list.length - 1)
+                          ? const Border(
+                              bottom: BorderSide(
+                                  color: AppColor.GREY_TEXT, width: 0.5))
+                          : null,
+                    ),
+                    child: Row(
+                      children: [
+                        Text(
+                          list[position].title,
+                          style: const TextStyle(color: Colors.black),
+                        ),
+                        if (position == 0)
+                          const Icon(
+                            Icons.expand_less,
+                            color: AppColor.BLACK,
+                            size: 16,
+                          ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      );
+}
+
+class DataModel {
+  final String title;
+  final int type;
+
+  DataModel({required this.title, required this.type});
 }
