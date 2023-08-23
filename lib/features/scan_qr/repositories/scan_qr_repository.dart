@@ -95,4 +95,24 @@ class ScanQrRepository {
     }
     return result;
   }
+
+  Future<String> getNickname(walletId) async {
+    String nickName = '';
+    try {
+      String url = '${EnvConfig.getBaseUrl()}contact/scan-result/$walletId';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        if (data != null) {
+          nickName = data['nickname'];
+        }
+      }
+    } catch (e) {
+      LOG.error('Error at requestPermissions - PermissionRepository: $e');
+    }
+    return nickName;
+  }
 }
