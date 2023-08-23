@@ -6,6 +6,7 @@ class MButtonWidget extends StatelessWidget {
   final GestureTapCallback? onTap;
   final bool isEnable;
   final EdgeInsetsGeometry? margin;
+  final EdgeInsetsGeometry? padding;
   final Color? colorEnableBgr;
   final Color? colorDisableBgr;
   final Color? colorEnableText;
@@ -19,6 +20,7 @@ class MButtonWidget extends StatelessWidget {
     super.key,
     required this.title,
     this.margin,
+    this.padding,
     this.onTap,
     this.isEnable = false,
     this.colorEnableBgr,
@@ -42,6 +44,7 @@ class MButtonWidget extends StatelessWidget {
             alignment: Alignment.center,
             margin: margin ??
                 const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            padding: padding,
             height: height ?? 40,
             width: width,
             decoration: BoxDecoration(

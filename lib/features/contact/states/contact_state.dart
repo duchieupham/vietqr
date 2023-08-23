@@ -3,6 +3,7 @@ import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/contact_detail_dto.dart';
 import 'package:vierqr/models/contact_dto.dart';
+import 'package:vierqr/models/qr_generated_dto.dart';
 
 class ContactState extends Equatable {
   final List<ContactDTO> listContactDTO;
@@ -17,34 +18,42 @@ class ContactState extends Equatable {
   final String? bankAccount;
   final BankTypeDTO? bankTypeDTO;
   final ContactDTO? userSearch;
+  final String? imgId;
+  final QRGeneratedDTO? dto;
 
-  const ContactState(
-      {required this.listContactDTO,
-      required this.listContactDTOSuggest,
-      required this.contactDetailDTO,
-      this.status = BlocStatus.NONE,
-      this.type = ContactType.NONE,
-      this.msg,
-      required this.qrCode,
-      this.typeQR = TypeContact.NONE,
-      this.nickName,
-      this.bankAccount,
-      this.bankTypeDTO,
-      this.userSearch});
+  const ContactState({
+    required this.listContactDTO,
+    required this.listContactDTOSuggest,
+    required this.contactDetailDTO,
+    this.status = BlocStatus.NONE,
+    this.type = ContactType.NONE,
+    this.msg,
+    required this.qrCode,
+    this.typeQR = TypeContact.NONE,
+    this.nickName,
+    this.bankAccount,
+    this.bankTypeDTO,
+    this.userSearch,
+    this.imgId,
+    this.dto,
+  });
 
-  ContactState copyWith(
-      {BlocStatus? status,
-      ContactType? type,
-      String? msg,
-      List<ContactDTO>? listContactDTO,
-      List<ContactDTO>? listContactDTOSuggest,
-      ContactDetailDTO? contactDetailDTO,
-      String? qrCode,
-      TypeContact? typeQR,
-      String? nickName,
-      String? bankAccount,
-      ContactDTO? userSearch,
-      BankTypeDTO? bankTypeDTO}) {
+  ContactState copyWith({
+    BlocStatus? status,
+    ContactType? type,
+    String? msg,
+    List<ContactDTO>? listContactDTO,
+    List<ContactDTO>? listContactDTOSuggest,
+    ContactDetailDTO? contactDetailDTO,
+    String? qrCode,
+    TypeContact? typeQR,
+    String? nickName,
+    String? bankAccount,
+    ContactDTO? userSearch,
+    BankTypeDTO? bankTypeDTO,
+    String? imgId,
+    QRGeneratedDTO? dto,
+  }) {
     return ContactState(
       status: status ?? this.status,
       type: type ?? this.type,
@@ -59,6 +68,8 @@ class ContactState extends Equatable {
       bankAccount: bankAccount ?? this.bankAccount,
       bankTypeDTO: bankTypeDTO ?? this.bankTypeDTO,
       userSearch: userSearch ?? this.userSearch,
+      imgId: imgId ?? this.imgId,
+      dto: dto ?? this.dto,
     );
   }
 

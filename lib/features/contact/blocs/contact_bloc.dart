@@ -14,6 +14,7 @@ import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/contact_detail_dto.dart';
 import 'package:vierqr/models/contact_dto.dart';
+import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/models/viet_qr_scanned_dto.dart';
 
@@ -23,14 +24,17 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
 
   final String qrCode;
   final TypeContact typeQR;
+  final QRGeneratedDTO? dto;
 
-  ContactBloc(this.context, {this.qrCode = '', this.typeQR = TypeContact.NONE})
+  ContactBloc(this.context,
+      {this.qrCode = '', this.typeQR = TypeContact.NONE, this.dto})
       : super(ContactState(
           listContactDTO: const [],
           listContactDTOSuggest: const [],
           contactDetailDTO: ContactDetailDTO(),
           qrCode: qrCode,
           typeQR: typeQR,
+          dto: dto,
         )) {
     on<InitDataEvent>(_getNickNameWalletId);
     on<ContactEventGetList>(_getListContact);
@@ -53,18 +57,18 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
     try {
       if (event is ContactEventGetList) {
         emit(state.copyWith(status: BlocStatus.NONE, type: ContactType.NONE));
-        List<ContactDTO> result = await repository.getListSaveContact(userId);
+        int type = event.type ?? 9;
+        int offset = event.offset ?? 0;
+
+        List<ContactDTO> result =
+            await repository.getListSaveContact(userId, type, offset * 20);
         result.sort((a, b) => a.nickname.compareTo(b.nickname));
-        if (result.isNotEmpty) {
-          emit(
-            state.copyWith(
-              listContactDTO: result,
-              type: ContactType.GET_LIST,
-            ),
-          );
-        } else {
-          emit(state.copyWith(type: ContactType.NONE));
-        }
+        emit(
+          state.copyWith(
+            listContactDTO: result,
+            type: ContactType.GET_LIST,
+          ),
+        );
       }
     } catch (e) {
       LOG.error(e.toString());
@@ -208,8 +212,8 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
       if (event is SaveContactEvent) {
         emit(
             state.copyWith(status: BlocStatus.LOADING, type: ContactType.NONE));
-        ResponseMessageDTO result =
-            await bankCardRepository.addContact(event.dto);
+        ResponseMessageDTO result = await bankCardRepository
+            .addContact(event.dto, file: event.dto.image);
         if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
           emit(state.copyWith(
               status: BlocStatus.UNLOADING, type: ContactType.SAVE));
@@ -255,11 +259,19 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
         if (typeQR == TypeContact.VietQR_ID) {
           emit(state.copyWith(status: BlocStatus.NONE, type: ContactType.NONE));
           final result = await repository.getNickname(qrCode);
+          String nickName = '';
+          String imgId = '';
+          if (result.containsKey('nickname')) {
+            nickName = result['nickname'];
+          }
+
+          if (result.containsKey('imgId')) {
+            imgId = result['imgId'];
+          }
+
           emit(
             state.copyWith(
-              type: ContactType.NICK_NAME,
-              nickName: result,
-            ),
+                type: ContactType.NICK_NAME, nickName: nickName, imgId: imgId),
           );
         } else if (typeQR == TypeContact.Bank) {
           VietQRScannedDTO vietQRScannedDTO =
