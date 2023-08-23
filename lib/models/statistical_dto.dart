@@ -35,4 +35,8 @@ class ResponseStatisticDTO {
 
     return tempDate;
   }
+
+  String getMonth() {
+    return month.substring(5);
+  }
 }

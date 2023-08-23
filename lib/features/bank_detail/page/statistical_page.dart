@@ -7,9 +7,10 @@ import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/features/bank_detail/blocs/statistical_bloc.dart';
 import 'package:vierqr/features/bank_detail/events/statistical_event.dart';
 import 'package:vierqr/features/bank_detail/states/statistical_state.dart';
-import 'package:vierqr/features/bank_detail/views/line_chart.dart';
 import 'package:vierqr/models/statistical_dto.dart';
 import 'package:vierqr/services/providers/statistical_provider.dart';
+
+import '../views/line_chart.dart';
 
 // ignore: must_be_immutable
 class Statistical extends StatelessWidget {
@@ -38,9 +39,10 @@ class Statistical extends StatelessWidget {
             return ListView(
               padding: const EdgeInsets.only(top: 12),
               children: [
-                // LineChart(
-                //   listData: state.listData,
-                // ),
+                LineChart(
+                  listData: state.listData,
+                ),
+                const SizedBox(height: 24,),
                 // Container(
                 //   padding: const EdgeInsets.fromLTRB(0, 40, 4, 12),
                 //   width: MediaQuery.of(context).size.width,
