@@ -271,7 +271,8 @@ class _buildVietQRID extends StatelessWidget {
           const SizedBox(height: 24),
           TextFieldCustom(
             isObscureText: false,
-            maxLines: 1,
+            maxLines: 5,
+            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
             fillColor: AppColor.WHITE,
             controller: suggestController,
             isRequired: false,
@@ -282,6 +283,13 @@ class _buildVietQRID extends StatelessWidget {
             keyboardAction: TextInputAction.next,
             // onChange: provider.onChangeName,
           ),
+          const SizedBox(height: 24),
+          Text(
+            'Màu sắc thẻ QR',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 16),
+
         ],
       ),
     );
