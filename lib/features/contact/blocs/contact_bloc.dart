@@ -32,6 +32,7 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
           qrCode: qrCode,
           typeQR: typeQR,
         )) {
+    on<InitDataEvent>(_getNickNameWalletId);
     on<ContactEventGetList>(_getListContact);
     on<ContactEventGetListRecharge>(_getListContactRecharge);
     on<ContactEventGetListPending>(_getListContactPending);

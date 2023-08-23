@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
@@ -26,17 +25,20 @@ class SaveContactScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ContactBloc(context, qrCode: code, typeQR: typeQR),
+      create: (context) => ContactBloc(context, qrCode: code, typeQR: typeQR)
+        ..add(InitDataEvent()),
       child: ChangeNotifierProvider<ContactProvider>(
         create: (context) => ContactProvider(),
-        child: const _BodyWidget(),
+        child: _BodyWidget(typeQR),
       ),
     );
   }
 }
 
 class _BodyWidget extends StatefulWidget {
-  const _BodyWidget();
+  final TypeContact typeQR;
+
+  const _BodyWidget(this.typeQR);
 
   @override
   State<_BodyWidget> createState() => _SaveContactScreenState();
@@ -91,7 +93,7 @@ class _SaveContactScreenState extends State<_BodyWidget> {
                 FocusManager.instance.primaryFocus?.unfocus();
               },
               child: Scaffold(
-                appBar: const MAppBar(title: 'Lưu danh bạ'),
+                appBar: const MAppBar(title: 'Thêm thẻ QR'),
                 body: SafeArea(
                   child: Column(
                     children: [
@@ -101,86 +103,72 @@ class _SaveContactScreenState extends State<_BodyWidget> {
                               horizontal: 20, vertical: 20),
                           child: Column(
                             children: [
-                              Container(
-                                margin:
-                                    const EdgeInsets.symmetric(horizontal: 40),
-                                padding: const EdgeInsets.all(20),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(25),
-                                  color: AppColor.WHITE,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey.withOpacity(0.3),
-                                      spreadRadius: 5,
-                                      blurRadius: 7,
-                                      offset: const Offset(0, 3),
+                              const SizedBox(height: 30),
+                              if (state.typeQR == TypeContact.VietQR_ID)
+                                _buildVietQRID(
+                                  type: state.typeQR,
+                                  nameController: nameController,
+                                  suggestController: suggestController,
+                                  onChange: provider.onChangeName,
+                                )
+                              else if (state.typeQR == TypeContact.Bank)
+                                _buildBankView()
+                              else ...[
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text(
+                                      'Loại QR',
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 40, vertical: 12),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(5),
+                                        color: AppColor.WHITE,
+                                      ),
+                                      child: Text(
+                                        state.typeQR.typeName,
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400),
+                                      ),
                                     ),
                                   ],
                                 ),
-                                child: QrImage(
-                                  data: state.qrCode,
-                                  version: QrVersions.auto,
-                                  embeddedImage: const AssetImage(
-                                      'assets/images/ic-viet-qr-small.png'),
-                                  embeddedImageStyle: QrEmbeddedImageStyle(
-                                    size: const Size(30, 30),
-                                  ),
+                                const SizedBox(height: 30),
+                                TextFieldCustom(
+                                  isObscureText: false,
+                                  maxLines: 1,
+                                  fillColor: AppColor.WHITE,
+                                  controller: nameController,
+                                  isRequired: true,
+                                  title: 'Biệt danh',
+                                  textFieldType: TextfieldType.LABEL,
+                                  hintText: 'Nhập tên',
+                                  inputType: TextInputType.text,
+                                  keyboardAction: TextInputAction.next,
+                                  onChange: provider.onChangeName,
                                 ),
-                              ),
-                              const SizedBox(height: 30),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text(
-                                    'Loại QR',
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 40, vertical: 12),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5),
-                                      color: AppColor.WHITE,
-                                    ),
-                                    child: Text(
-                                      state.typeQR.typeName,
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w400),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 30),
-                              TextFieldCustom(
-                                isObscureText: false,
-                                maxLines: 1,
-                                fillColor: AppColor.WHITE,
-                                controller: nameController,
-                                isRequired: true,
-                                title: 'Biệt danh',
-                                textFieldType: TextfieldType.LABEL,
-                                hintText: 'Nhập tên',
-                                inputType: TextInputType.text,
-                                keyboardAction: TextInputAction.next,
-                                onChange: provider.onChangeName,
-                              ),
-                              const SizedBox(height: 30),
-                              TextFieldCustom(
-                                isObscureText: false,
-                                maxLines: 1,
-                                fillColor: AppColor.WHITE,
-                                controller: suggestController,
-                                title: 'Ghi chú',
-                                textFieldType: TextfieldType.LABEL,
-                                hintText: 'Đoạn ghi chú cho thông tin danh bạ',
-                                inputType: TextInputType.text,
-                                keyboardAction: TextInputAction.next,
-                                onChange: provider.onChangeSuggest,
-                              ),
+                                const SizedBox(height: 30),
+                                TextFieldCustom(
+                                  isObscureText: false,
+                                  maxLines: 1,
+                                  fillColor: AppColor.WHITE,
+                                  controller: suggestController,
+                                  title: 'Ghi chú',
+                                  textFieldType: TextfieldType.LABEL,
+                                  hintText:
+                                      'Đoạn ghi chú cho thông tin danh bạ',
+                                  inputType: TextInputType.text,
+                                  keyboardAction: TextInputAction.next,
+                                  onChange: provider.onChangeSuggest,
+                                ),
+                              ]
                             ],
                           ),
                         ),
@@ -215,6 +203,165 @@ class _SaveContactScreenState extends State<_BodyWidget> {
           },
         );
       },
+    );
+  }
+}
+
+class _buildVietQRID extends StatelessWidget {
+  final TypeContact type;
+  final TextEditingController nameController;
+  final TextEditingController suggestController;
+  final ValueChanged<String>? onChange;
+
+  const _buildVietQRID(
+      {required this.type,
+      required this.nameController,
+      required this.suggestController,
+      this.onChange});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(
+        children: [
+          Row(
+            children: [
+              ClipOval(
+                child: SizedBox(
+                  width: 50,
+                  height: 50,
+                  child: Image.asset('assets/images/ic-avatar.png'),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                nameController.text,
+                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          TextFieldCustom(
+            isObscureText: false,
+            maxLines: 1,
+            fillColor: AppColor.gray.withOpacity(0.3),
+            isRequired: false,
+            enable: false,
+            title: 'Loại QR',
+            textFieldType: TextfieldType.LABEL,
+            hintText: type.typeName,
+            hintColor: AppColor.BLACK,
+            inputType: TextInputType.text,
+            keyboardAction: TextInputAction.next,
+          ),
+          const SizedBox(height: 24),
+          TextFieldCustom(
+            isObscureText: false,
+            maxLines: 1,
+            fillColor: AppColor.WHITE,
+            controller: nameController,
+            isRequired: true,
+            title: 'Tên',
+            textFieldType: TextfieldType.LABEL,
+            hintText: 'Nhập tên',
+            inputType: TextInputType.text,
+            keyboardAction: TextInputAction.next,
+            onChange: onChange,
+          ),
+          const SizedBox(height: 24),
+          TextFieldCustom(
+            isObscureText: false,
+            maxLines: 5,
+            contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+            fillColor: AppColor.WHITE,
+            controller: suggestController,
+            isRequired: false,
+            title: 'Mô tả QR',
+            textFieldType: TextfieldType.LABEL,
+            hintText: 'Nhập mô tả cho mã QR của bạn',
+            inputType: TextInputType.text,
+            keyboardAction: TextInputAction.next,
+            // onChange: provider.onChangeName,
+          ),
+          const SizedBox(height: 24),
+          Text(
+            'Màu sắc thẻ QR',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 16),
+
+        ],
+      ),
+    );
+  }
+}
+
+class _buildBankView extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(
+        children: [
+          Row(
+            children: [
+              ClipOval(
+                child: SizedBox(
+                  width: 50,
+                  height: 50,
+                  child: Image.asset('assets/images/ic-avatar.png'),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                'CAN QUANG TRIEU',
+                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          TextFieldCustom(
+            isObscureText: false,
+            maxLines: 1,
+            fillColor: AppColor.gray.withOpacity(0.3),
+            isRequired: false,
+            enable: false,
+            title: 'Loại QR',
+            textFieldType: TextfieldType.LABEL,
+            hintText: '',
+            hintColor: AppColor.BLACK,
+            inputType: TextInputType.text,
+            keyboardAction: TextInputAction.next,
+          ),
+          const SizedBox(height: 24),
+          TextFieldCustom(
+            isObscureText: false,
+            maxLines: 1,
+            fillColor: AppColor.WHITE,
+            // controller: nameController,
+            isRequired: true,
+            title: 'Tên',
+            textFieldType: TextfieldType.LABEL,
+            hintText: 'Nhập tên',
+            inputType: TextInputType.text,
+            keyboardAction: TextInputAction.next,
+            // onChange: provider.onChangeName,
+          ),
+          const SizedBox(height: 24),
+          TextFieldCustom(
+            isObscureText: false,
+            maxLines: 1,
+            fillColor: AppColor.WHITE,
+            // controller: nameController,
+            isRequired: false,
+            title: 'Mô tả QR',
+            textFieldType: TextfieldType.LABEL,
+            hintText: 'Nhập mô tả cho mã QR của bạn',
+            inputType: TextInputType.text,
+            keyboardAction: TextInputAction.next,
+            // onChange: provider.onChangeName,
+          ),
+        ],
+      ),
     );
   }
 }

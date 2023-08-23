@@ -152,6 +152,7 @@ class _ScanQrScreenState extends State<_BodyWidget> {
               },
             );
           } else if (state.typeQR == TypeQR.QR_ID) {
+            // _bloc.add(ScanQrEventGetNickName(code: state.codeQR ?? ''));
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(

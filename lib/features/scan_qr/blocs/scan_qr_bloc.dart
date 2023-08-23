@@ -15,11 +15,24 @@ class ScanQrBloc extends Bloc<ScanQrEvent, ScanQrState> {
   ScanQrBloc(this.isScanAll) : super(ScanQrState(isScanAll: isScanAll)) {
     on<ScanQrEventGetBankType>(_getBankType);
     on<ScanQrEventSearchName>(_searchBankName);
+    on<ScanQrEventGetNickName>(_getNickName);
   }
 
   final bool isScanAll;
 
   final _repository = const ScanQrRepository();
+
+  void _getNickName(ScanQrEvent event, Emitter emit) async {
+    try {
+      if (event is ScanQrEventGetNickName) {
+        state.copyWith(request: ScanType.NONE, status: BlocStatus.NONE);
+        final nickName = await _repository.getNickname(event.code);
+        state.copyWith();
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+  }
 
   void _getBankType(ScanQrEvent event, Emitter emit) async {
     try {
