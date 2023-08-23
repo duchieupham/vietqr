@@ -370,14 +370,7 @@ class _ContactStateState extends State<_ContactState>
                 color: AppColor.WHITE,
                 borderRadius: BorderRadius.circular(40),
                 border: Border.all(color: AppColor.GREY_LIGHT.withOpacity(0.3)),
-                image: dto?.type == 2
-                    ? DecorationImage(
-                        image: ImageUtils.instance
-                            .getImageNetWork(dto?.imgId ?? ''),
-                        fit: BoxFit.contain)
-                    : const DecorationImage(
-                        image: AssetImage('assets/images/ic-viet-qr-small.png'),
-                        fit: BoxFit.contain),
+                image: getImage(dto?.type ?? 0, dto?.imgId ?? ''),
               ),
             ),
             const SizedBox(width: 10),
@@ -410,6 +403,19 @@ class _ContactStateState extends State<_ContactState>
         ),
       ),
     );
+  }
+
+  DecorationImage getImage(int type, String imageId) {
+    if (type == 2 || type == 3) {
+      if (imageId.isNotEmpty) {
+        return DecorationImage(
+            image: ImageUtils.instance.getImageNetWork(imageId),
+            fit: BoxFit.cover);
+      }
+    }
+    return const DecorationImage(
+        image: AssetImage('assets/images/ic-viet-qr-small.png'),
+        fit: BoxFit.contain);
   }
 
   Widget _buildTapSecond({required List<ContactDTO> list}) {

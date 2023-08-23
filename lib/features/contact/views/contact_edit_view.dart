@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
@@ -13,6 +17,8 @@ import 'package:vierqr/features/contact/states/contact_state.dart';
 import 'package:vierqr/layouts/button_widget.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/contact_detail_dto.dart';
+
+import '../../../commons/utils/file_utils.dart';
 
 // ignore: must_be_immutable
 class ContactEditView extends StatefulWidget {
@@ -30,6 +36,9 @@ class _ContactEditViewState extends State<ContactEditView> {
   final nickNameController = TextEditingController();
   final suggestController = TextEditingController();
   int typeColorCard = 0;
+  String imageLogoId = '';
+  File? logo;
+  final ImagePicker imagePicker = ImagePicker();
   List<CardQrColor> listCardColor = [
     CardQrColor(type: 0, pathImage: 'assets/images/color-type-0.png'),
     CardQrColor(type: 1, pathImage: 'assets/images/color-type-1.png'),
@@ -41,10 +50,27 @@ class _ContactEditViewState extends State<ContactEditView> {
   @override
   void initState() {
     super.initState();
+    typeColorCard = widget.contactDetailDTO.type ?? 0;
+    imageLogoId = widget.contactDetailDTO.imgId ?? '';
     WidgetsBinding.instance.addPostFrameCallback((_) {
       nickNameController.text = widget.contactDetailDTO.nickName ?? '';
       suggestController.text = widget.contactDetailDTO.additionalData ?? '';
     });
+  }
+
+  void onChangeLogo(BuildContext context) async {
+    await Permission.mediaLibrary.request();
+    await imagePicker.pickImage(source: ImageSource.gallery).then(
+      (pickedFile) async {
+        if (pickedFile != null) {
+          File? file = File(pickedFile.path);
+
+          setState(() {
+            logo = FileUtils.instance.compressImage(file);
+          });
+        }
+      },
+    );
   }
 
   @override
@@ -218,11 +244,14 @@ class _ContactEditViewState extends State<ContactEditView> {
                                       widget.contactDetailDTO.type.toString(),
                                   "additionalData": suggestController.text,
                                   "colorType": typeColorCard.toString(),
+                                  "imgId": widget.contactDetailDTO.type == 3
+                                      ? imageLogoId
+                                      : '',
                                 };
 
                                 context
                                     .read<ContactBloc>()
-                                    .add(UpdateContactEvent(data));
+                                    .add(UpdateContactEvent(data, logo));
                               },
                             ),
                           ),
@@ -354,16 +383,67 @@ class _ContactEditViewState extends State<ContactEditView> {
         ),
       );
     }
-
-    return Container(
-      width: 100,
+    return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12),
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        color: AppColor.WHITE,
+      child: Row(
+        children: [
+          if (logo != null)
+            Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: AppColor.WHITE,
+                image:
+                    DecorationImage(image: FileImage(logo!), fit: BoxFit.cover),
+              ),
+            )
+          else
+            Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: AppColor.WHITE,
+                image: dto.imgId!.isNotEmpty
+                    ? DecorationImage(
+                        image: ImageUtils.instance
+                            .getImageNetWork(dto.imgId ?? ''))
+                    : const DecorationImage(
+                        image: AssetImage('assets/images/ic-viet-qr-small.png'),
+                        fit: BoxFit.contain),
+              ),
+            ),
+          const SizedBox(
+            width: 8,
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Logo QR giúp bạn tìm thẻ nhanh hơn',
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(color: AppColor.GREY_TEXT),
+              ),
+              const SizedBox(
+                height: 4,
+              ),
+              MButtonWidget(
+                width: 120,
+                height: 30,
+                title: 'Đổi logo QR',
+                isEnable: true,
+                colorEnableBgr: AppColor.BLUE_TEXT.withOpacity(0.3),
+                colorEnableText: AppColor.BLUE_TEXT,
+                margin: EdgeInsets.zero,
+                onTap: () async {
+                  onChangeLogo(context);
+                },
+              )
+            ],
+          ),
+        ],
       ),
-      child: const Text('VietQR ID'),
     );
   }
 
@@ -398,15 +478,18 @@ class _ContactEditViewState extends State<ContactEditView> {
       );
     }
 
-    return Container(
-      width: 100,
-      padding: const EdgeInsets.symmetric(vertical: 12),
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        color: AppColor.WHITE,
-      ),
-      child: const Text('VietQR ID'),
+    return TextFieldCustom(
+      isObscureText: false,
+      maxLines: 1,
+      fillColor: AppColor.GREY_TEXT.withOpacity(0.1),
+      controller: TextEditingController(text: 'Khác'),
+      textFieldType: TextfieldType.LABEL,
+      title: 'Loại QR',
+      hintText: '',
+      readOnly: true,
+      inputType: TextInputType.text,
+      keyboardAction: TextInputAction.next,
+      onChange: (value) {},
     );
   }
 }

@@ -186,7 +186,8 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
             type: ContactType.REMOVE,
           ),
         );
-        ResponseMessageDTO result = await repository.updateContact(event.query);
+        ResponseMessageDTO result =
+            await repository.updateContact(event.query, event.image);
         if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
           emit(state.copyWith(
               status: BlocStatus.UNLOADING, type: ContactType.UPDATE));

@@ -439,10 +439,10 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
               decoration: BoxDecoration(
                 color: AppColor.WHITE,
                 borderRadius: BorderRadius.circular(40),
-                image: dto?.type == 2
+                image: dto.type == 2
                     ? DecorationImage(
                         image: ImageUtils.instance
-                            .getImageNetWork(dto?.imgId ?? ''),
+                            .getImageNetWork(dto.imgId ?? ''),
                         fit: BoxFit.contain)
                     : const DecorationImage(
                         image: AssetImage('assets/images/ic-viet-qr-small.png'),
@@ -486,16 +486,38 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
             decoration: BoxDecoration(
               color: AppColor.WHITE,
               borderRadius: BorderRadius.circular(40),
-              image: dto?.type == 2
+              image: dto.imgId?.isNotEmpty ?? false
                   ? DecorationImage(
                       image:
-                          ImageUtils.instance.getImageNetWork(dto?.imgId ?? ''),
-                      fit: BoxFit.contain)
+                          ImageUtils.instance.getImageNetWork(dto.imgId ?? ''),
+                      fit: BoxFit.cover)
                   : const DecorationImage(
                       image: AssetImage('assets/images/ic-viet-qr-small.png'),
                       fit: BoxFit.contain),
             ),
           ),
+          SizedBox(
+            width: 8,
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  dto.nickName ?? '',
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Text(
+                  'Thẻ khác',
+                  style: TextStyle(fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+          buttonEdit,
         ],
       ),
     );

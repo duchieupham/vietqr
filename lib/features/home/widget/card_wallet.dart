@@ -139,15 +139,6 @@ class CardWallet extends StatelessWidget {
         ),
         Expanded(
           child: _buildItemAction(
-            'assets/images/ic-contact.png',
-            'Danh bạ',
-            () {
-              Navigator.pushNamed(context, Routes.PHONE_BOOK);
-            },
-          ),
-        ),
-        Expanded(
-          child: _buildItemAction(
             'assets/images/ic-history-transaction-wallet.png',
             'Lịch sử GD',
             () {
