@@ -23,6 +23,7 @@ class TextFieldCustom extends StatefulWidget {
   final FocusNode? focusNode;
   final int? maxLines;
   final int? maxLength;
+
   final TextAlign? textAlign;
   final Function(PointerDownEvent)? onTapOutside;
   final bool isShowToast;
@@ -34,7 +35,7 @@ class TextFieldCustom extends StatefulWidget {
   final Widget? suffixIcon;
   final GestureTapCallback? onTap;
   final EdgeInsetsGeometry? contentPadding;
-
+  final bool readOnly;
   //Border textfield
   final bool isRequired;
   final Color? fillColor;
@@ -72,6 +73,7 @@ class TextFieldCustom extends StatefulWidget {
     this.isRequired = false,
     this.onTap,
     this.contentPadding,
+    this.readOnly = false,
   }) : super(key: key);
 
   @override
@@ -95,6 +97,7 @@ class _TextFieldWidgetState extends State<TextFieldCustom> {
       onTapOutside: widget.onTapOutside,
       maxLength: widget.maxLength,
       enabled: widget.enable,
+      readOnly: widget.readOnly,
       autofocus: widget.autoFocus ?? false,
       focusNode: widget.focusNode,
       keyboardType: widget.inputType,

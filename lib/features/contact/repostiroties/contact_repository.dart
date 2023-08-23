@@ -99,11 +99,11 @@ class ContactRepository {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
-      String url = '${EnvConfig.getBaseUrl()}contact/update';
-      final response = await BaseAPIClient.postAPI(
+      String url = '${EnvConfig.getBaseUrl()}contact-qr/update';
+      final response = await BaseAPIClient.postMultipartAPI(
         url: url,
-        type: AuthenticationType.SYSTEM,
-        body: query,
+        fields: query,
+        files: [],
       );
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
