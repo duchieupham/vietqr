@@ -8,7 +8,49 @@ class ContactProvider extends ChangeNotifier {
   List<ContactDTO> listContactDTO = [];
   List<ContactDTO> listSearch = [];
 
+  final List<DataModel> listCategories = [
+    DataModel(
+      title: 'Tất cả',
+      url: 'assets/images/ic-contact-bank-blue.png',
+      type: 9,
+    ),
+    DataModel(
+      title: 'Ngân hàng',
+      url: 'assets/images/ic-tb-card-selected.png',
+      type: 2,
+    ),
+    DataModel(
+      title: 'VietQR ID',
+      url: 'assets/images/ic-contact-vietqr-id-blue.png',
+      type: 1,
+    ),
+    DataModel(
+      title: 'Khác',
+      url: 'assets/images/qr-contact-other-blue.png',
+      type: 3,
+    ),
+    DataModel(
+      title: 'Gợi ý',
+      url: 'assets/images/ic-contact-suggest-blue.png',
+      type: 0,
+    ),
+  ];
+
+  DataModel? category;
+
   String phoneNo = '';
+
+  void updateCategory({DataModel? value, bool isFirst = false}) {
+    if (isFirst) {
+      category = listCategories.first;
+    } else {
+      if (value == category) return;
+      category = value;
+    }
+
+    notifyListeners();
+  }
+
   void updatePhoneNo(String value) {
     phoneNo = value;
     notifyListeners();
@@ -51,4 +93,16 @@ class ContactProvider extends ChangeNotifier {
     }
     notifyListeners();
   }
+}
+
+class DataModel {
+  final String title;
+  final String url;
+  final int type;
+
+  DataModel({
+    required this.title,
+    required this.url,
+    required this.type,
+  });
 }

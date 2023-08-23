@@ -23,7 +23,7 @@ import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/account/account_screen.dart';
 import 'package:vierqr/features/bank_card/bank_screen.dart';
-import 'package:vierqr/features/business/views/business_screen.dart';
+import 'package:vierqr/features/contact/contact_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/dash_board_provider.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
@@ -99,7 +99,8 @@ class _DashBoardScreen extends State<DashBoardScreen>
       [
         const BankScreen(key: PageStorageKey('QR_GENERATOR_PAGE')),
         const HomeScreen(key: PageStorageKey('HOME_PAGE')),
-        const BusinessScreen(key: PageStorageKey('SMS_LIST_PAGE')),
+        const ContactScreen(key: PageStorageKey('CONTACT_PAGE')),
+        // const BusinessScreen(key: PageStorageKey('SMS_LIST_PAGE')),
         const AccountScreen(key: const PageStorageKey('USER_SETTING_PAGE')),
       ],
     );
