@@ -25,6 +25,7 @@ class DialogFeatureWidget extends StatefulWidget {
   final String code;
   final GlobalKey? globalKey;
   final BankTypeDTO? bankTypeDTO;
+  final bool isSmall;
 
   const DialogFeatureWidget({
     super.key,
@@ -34,6 +35,7 @@ class DialogFeatureWidget extends StatefulWidget {
     this.type = TypeQR.NONE,
     this.globalKey,
     this.bankTypeDTO,
+    this.isSmall = false,
   });
 
   @override
@@ -54,8 +56,8 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 16),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         color: AppColor.WHITE,
@@ -67,12 +69,18 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Row(
               children: [
-                Icon(Icons.clear, color: AppColor.TRANSPARENT, size: 20),
+                Icon(
+                  Icons.clear,
+                  color: AppColor.TRANSPARENT,
+                  size: widget.isSmall ? 16 : 20,
+                ),
                 Expanded(
                   child: Text(
                     'Mã QR',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                    style: TextStyle(
+                        fontSize: widget.isSmall ? 14 : 16,
+                        fontWeight: FontWeight.w600),
                   ),
                 ),
                 GestureDetector(
@@ -82,13 +90,13 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
                   child: Icon(
                     Icons.clear,
                     color: AppColor.GREY_TEXT,
-                    size: 20,
+                    size: widget.isSmall ? 16 : 20,
                   ),
                 )
               ],
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 8),
           if (widget.type == TypeQR.QR_LINK)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -124,9 +132,11 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
             Text(
               widget.typeQR.dialogName,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
+              style: TextStyle(
+                  fontSize: widget.isSmall ? 12 : 15,
+                  fontWeight: FontWeight.w400),
             ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: List.generate(_list.length, (index) {
@@ -280,6 +290,11 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
   }
 
   Widget _buildItem(DataModel model, index) {
+    final height = MediaQuery.of(context).size.height;
+    double size = 40;
+    if (height < 800) {
+      size = 28;
+    }
     return Column(
       children: [
         Container(
@@ -289,8 +304,8 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
           ),
           child: Image.asset(
             model.url,
-            width: 40,
-            height: 40,
+            width: size,
+            height: size,
             color:
                 index == 0 ? AppColor.WHITE : AppColor.BLACK.withOpacity(0.35),
           ),
@@ -299,7 +314,7 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
         Text(
           model.title,
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 15),
+          style: TextStyle(fontSize: height < 800 ? 12 : 15),
         ),
       ],
     );

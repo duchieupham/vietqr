@@ -7,7 +7,6 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
-import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
@@ -33,138 +32,153 @@ class _MyQRBottomSheetState extends State<MyQRBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        RepaintBoundaryWidget(
-            globalKey: globalKey,
-            builder: (key) {
-              return Container(
-                margin: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  gradient: getBgGradient(colorType),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _buildTypeQr(
-                        typeQR: TypeContact.VietQR_ID,
-                        name: UserInformationHelper.instance.getUserFullname()),
-                    Container(
-                      width: double.infinity,
-                      height: 1,
-                      color: AppColor.greyF0F0F0,
-                    ),
-                    Stack(
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.only(
-                              left: 40, right: 40, top: 30, bottom: 30),
-                          decoration: BoxDecoration(
-                            color: AppColor.WHITE,
+    final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
+    bool isSmall = height < 800;
+
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          RepaintBoundaryWidget(
+              globalKey: globalKey,
+              builder: (key) {
+                return Container(
+                  margin: isSmall
+                      ? EdgeInsets.symmetric(horizontal: 40, vertical: 16)
+                      : EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    gradient: getBgGradient(colorType),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _buildTypeQr(
+                          typeQR: TypeContact.VietQR_ID,
+                          name:
+                              UserInformationHelper.instance.getUserFullname()),
+                      Container(
+                        width: double.infinity,
+                        height: 1,
+                        color: AppColor.greyF0F0F0,
+                      ),
+                      Stack(
+                        children: [
+                          Container(
+                            margin: isSmall
+                                ? const EdgeInsets.only(
+                                    left: 20, right: 20, top: 15, bottom: 15)
+                                : const EdgeInsets.only(
+                                    left: 40, right: 40, top: 30, bottom: 30),
+                            decoration: BoxDecoration(
+                              color: AppColor.WHITE,
+                            ),
+                            child: QrImage(
+                              data:
+                                  UserInformationHelper.instance.getWalletId(),
+                              version: QrVersions.auto,
+                              size: isSmall ? width / 2 : null,
+                            ),
                           ),
-                          child: QrImage(
-                            data: UserInformationHelper.instance.getWalletId(),
-                            version: QrVersions.auto,
-                          ),
-                        ),
-                        Positioned.fill(
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Container(
-                              width: 30.0,
-                              height: 30.0,
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                    fit: BoxFit.cover,
-                                    image: ImageUtils.instance.getImageNetWork(
-                                        UserInformationHelper.instance
-                                            .getAccountInformation()
-                                            .imgId)),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(100)),
-                                color: Colors.redAccent,
+                          Positioned.fill(
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Container(
+                                width: 30.0,
+                                height: 30.0,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                      fit: BoxFit.cover,
+                                      image: ImageUtils.instance
+                                          .getImageNetWork(UserInformationHelper
+                                              .instance
+                                              .getAccountInformation()
+                                              .imgId)),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(100)),
+                                  color: Colors.redAccent,
+                                ),
                               ),
                             ),
                           ),
+                        ],
+                      ),
+                      Text(
+                        UserInformationHelper.instance.getUserFullname(),
+                        style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: AppColor.WHITE),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                  ),
+                );
+              }),
+          Container(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 16),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              color: AppColor.WHITE,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Row(
+                    children: [
+                      Icon(Icons.clear, color: AppColor.TRANSPARENT, size: 20),
+                      Expanded(
+                        child: Text(
+                          'My QR',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w600),
                         ),
-                      ],
-                    ),
-                    Text(
-                      UserInformationHelper.instance.getUserFullname(),
-                      style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: AppColor.WHITE),
-                    ),
-                    const SizedBox(height: 16),
-                  ],
-                ),
-              );
-            }),
-        Container(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-          margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 16),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            color: AppColor.WHITE,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Row(
-                  children: [
-                    Icon(Icons.clear, color: AppColor.TRANSPARENT, size: 20),
-                    Expanded(
-                      child: Text(
-                        'Mã QR',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w600),
                       ),
-                    ),
-                    GestureDetector(
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: Icon(
+                          Icons.clear,
+                          color: AppColor.GREY_TEXT,
+                          size: 20,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  'Cùng chia sẻ mã QR của bạn',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: List.generate(_list.length, (index) {
+                    return GestureDetector(
                       onTap: () {
-                        Navigator.pop(context);
+                        dataModel = _list[index];
+                        onHandle(index);
                       },
-                      child: Icon(
-                        Icons.clear,
-                        color: AppColor.GREY_TEXT,
-                        size: 20,
+                      child: _buildItem(
+                        _list[index],
+                        index,
                       ),
-                    )
-                  ],
+                    );
+                  }).toList(),
                 ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                'Cùng chia sẻ mã QR của bạn',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
-              ),
-              const SizedBox(height: 24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: List.generate(_list.length, (index) {
-                  return GestureDetector(
-                    onTap: () {
-                      dataModel = _list[index];
-                      onHandle(index);
-                    },
-                    child: _buildItem(
-                      _list[index],
-                      index,
-                    ),
-                  );
-                }).toList(),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

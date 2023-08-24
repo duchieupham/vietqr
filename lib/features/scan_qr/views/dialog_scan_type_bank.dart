@@ -16,26 +16,29 @@ class DialogScanBank extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        RepaintBoundaryWidget(
-          globalKey: globalKey,
-          builder: (key) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30),
-              child: VietQr(qrGeneratedDTO: dto),
-            );
-          },
-        ),
-        DialogFeatureWidget(
-          dto: dto,
-          typeQR: TypeContact.Bank,
-          code: dto.qrCode,
-          globalKey: globalKey,
-          bankTypeDTO: bankTypeDTO,
-        ),
-      ],
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          RepaintBoundaryWidget(
+            globalKey: globalKey,
+            builder: (key) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30),
+                child: VietQr(qrGeneratedDTO: dto),
+              );
+            },
+          ),
+          DialogFeatureWidget(
+            dto: dto,
+            typeQR: TypeContact.Bank,
+            code: dto.qrCode,
+            globalKey: globalKey,
+            bankTypeDTO: bankTypeDTO,
+            isSmall: true,
+          ),
+        ],
+      ),
     );
   }
 }

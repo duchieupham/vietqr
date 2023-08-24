@@ -22,83 +22,97 @@ class DialogScanTypeID extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        RepaintBoundaryWidget(
-          globalKey: globalKey,
-          builder: (key) {
-            return Container(
-              margin: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                gradient: getBgGradient(dto.colorType),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildTypeQr(typeQR: typeQR, name: dto.nickName),
-                  Container(
-                    width: double.infinity,
-                    height: 1,
-                    color: AppColor.greyF0F0F0,
-                  ),
-                  Stack(
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.only(
-                            left: 40, right: 40, top: 30, bottom: 30),
-                        decoration: BoxDecoration(
-                          color: AppColor.WHITE,
+    final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
+    bool isSmall = height < 800;
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          RepaintBoundaryWidget(
+            globalKey: globalKey,
+            builder: (key) {
+              return Container(
+                margin: isSmall
+                    ? EdgeInsets.symmetric(horizontal: 40, vertical: 16)
+                    : EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  gradient: getBgGradient(dto.colorType),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildTypeQr(typeQR: typeQR, name: dto.nickName),
+                    Container(
+                      width: double.infinity,
+                      height: 1,
+                      color: AppColor.greyF0F0F0,
+                    ),
+                    Stack(
+                      children: [
+                        Container(
+                          margin: isSmall
+                              ? const EdgeInsets.only(
+                                  left: 20, right: 20, top: 15, bottom: 15)
+                              : const EdgeInsets.only(
+                                  left: 40, right: 40, top: 30, bottom: 30),
+                          decoration: BoxDecoration(
+                            color: AppColor.WHITE,
+                          ),
+                          child: QrImage(
+                            data: dto.code ?? '',
+                            version: QrVersions.auto,
+                            size: isSmall ? width / 2 : null,
+                          ),
                         ),
-                        child: QrImage(
-                            data: dto.code ?? '', version: QrVersions.auto),
-                      ),
-                      Positioned.fill(
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Container(
-                            width: 30.0,
-                            height: 30.0,
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                  fit: BoxFit.cover,
-                                  image: ImageUtils.instance
-                                      .getImageNetWork(dto.imgId)),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(100)),
-                              color: Colors.redAccent,
+                        Positioned.fill(
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Container(
+                              width: 30.0,
+                              height: 30.0,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    fit: BoxFit.cover,
+                                    image: ImageUtils.instance
+                                        .getImageNetWork(dto.imgId)),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(100)),
+                                color: Colors.redAccent,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  Text(
-                    dto.nickName,
-                    style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: AppColor.WHITE),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    dto.phone ?? '',
-                    style: TextStyle(color: AppColor.WHITE),
-                  ),
-                  const SizedBox(height: 16),
-                ],
-              ),
-            );
-          },
-        ),
-        DialogFeatureWidget(
-          dto: dto,
-          typeQR: typeQR,
-          code: dto.code ?? '',
-          globalKey: globalKey,
-        ),
-      ],
+                      ],
+                    ),
+                    Text(
+                      dto.nickName,
+                      style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: AppColor.WHITE),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      dto.phone ?? '',
+                      style: TextStyle(color: AppColor.WHITE),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                ),
+              );
+            },
+          ),
+          DialogFeatureWidget(
+            dto: dto,
+            typeQR: typeQR,
+            code: dto.code ?? '',
+            globalKey: globalKey,
+            isSmall: isSmall,
+          ),
+        ],
+      ),
     );
   }
 

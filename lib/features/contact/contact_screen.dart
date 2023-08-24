@@ -401,7 +401,6 @@ class _ContactStateState extends State<_ContactState>
       onTap: () async {
         await Navigator.pushNamed(context, Routes.PHONE_BOOK_DETAIL,
             arguments: dto);
-        _bloc.add(ContactEventGetList());
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),

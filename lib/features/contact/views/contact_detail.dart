@@ -48,6 +48,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
     qrCode: '',
     imgId: '',
   );
+
   Future<void> share({required QRGeneratedDTO dto}) async {
     await Future.delayed(const Duration(milliseconds: 200), () async {
       await ShareUtils.instance.shareImage(
@@ -155,7 +156,18 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
                     Expanded(
                       child: ListView(
                         children: [
-                          _buildViewCard(state.contactDetailDTO, context)
+                          if (state.status == BlocStatus.LOADING)
+                            const Center(
+                              child: SizedBox(
+                                width: 30,
+                                height: 30,
+                                child: CircularProgressIndicator(
+                                  color: AppColor.BLUE_TEXT,
+                                ),
+                              ),
+                            )
+                          else
+                            _buildViewCard(state.contactDetailDTO, context)
                         ],
                       ),
                     ),
