@@ -11,10 +11,12 @@ import 'package:vierqr/models/contact_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 
 class ContactRepository {
-  Future<List<ContactDTO>> getListSaveContact(userId) async {
+  Future<List<ContactDTO>> getListSaveContact(userId, type, offset) async {
     List<ContactDTO> list = [];
     try {
-      String url = '${EnvConfig.getBaseUrl()}contact/list-approved/$userId';
+      String url =
+          '${EnvConfig.getBaseUrl()}contact/list?userId=$userId&type=$type&offset=$offset';
+
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -146,8 +148,8 @@ class ContactRepository {
     return result;
   }
 
-  Future<String> getNickname(walletId) async {
-    String nickName = '';
+  Future<Map> getNickname(walletId) async {
+    Map mapData = {};
     try {
       String url = '${EnvConfig.getBaseUrl()}contact/scan-result/$walletId';
       final response = await BaseAPIClient.getAPI(
@@ -157,13 +159,13 @@ class ContactRepository {
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         if (data != null) {
-          nickName = data['nickname'];
+          mapData = data;
         }
       }
     } catch (e) {
       LOG.error('Error at requestPermissions - PermissionRepository: $e');
     }
-    return nickName;
+    return mapData;
   }
 
   Future<List<ContactDTO>> getListContactRecharge(userId) async {

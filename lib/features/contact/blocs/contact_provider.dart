@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:vierqr/models/contact_dto.dart';
 
@@ -7,6 +9,15 @@ class ContactProvider extends ChangeNotifier {
 
   List<ContactDTO> listContactDTO = [];
   List<ContactDTO> listSearch = [];
+
+  String colorType = '0';
+
+  // Màu thẻ QR:
+  // 0 = xanh default
+  // 1 = xanh lá
+  // 2 = tím
+  // 3 = cam
+  // 4 = hồng
 
   final List<DataModel> listCategories = [
     DataModel(
@@ -38,7 +49,26 @@ class ContactProvider extends ChangeNotifier {
 
   DataModel? category;
 
+  int offset = 0;
+
   String phoneNo = '';
+
+  File? file;
+
+  void updateFile(value) {
+    file = value;
+    notifyListeners();
+  }
+
+  void updateOffset(value) {
+    offset = value;
+    notifyListeners();
+  }
+
+  void updateColorType(value) {
+    colorType = value;
+    notifyListeners();
+  }
 
   void updateCategory({DataModel? value, bool isFirst = false}) {
     if (isFirst) {
@@ -93,6 +123,14 @@ class ContactProvider extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  final List<String> listColor = [
+    'assets/images/color-type-0.png',
+    'assets/images/color-type-1.png',
+    'assets/images/color-type-2.png',
+    'assets/images/color-type-3.png',
+    'assets/images/color-type-4.png',
+  ];
 }
 
 class DataModel {

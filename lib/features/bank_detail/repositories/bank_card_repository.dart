@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
@@ -20,6 +21,7 @@ import 'package:vierqr/models/qr_create_list_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/register_authentication_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
+import 'package:http/http.dart' as http;
 
 class BankCardRepository {
   const BankCardRepository();
@@ -387,16 +389,29 @@ class BankCardRepository {
     return result;
   }
 
-  Future<ResponseMessageDTO> addContact(AddContactDTO dto) async {
+  Future<ResponseMessageDTO> addContact(AddContactDTO dto, {File? file}) async {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}contact';
-      final response = await BaseAPIClient.postAPI(
+      final String url = '${EnvConfig.getBaseUrl()}contact-qr';
+
+      Map<String, dynamic> body = {};
+
+      body = dto.toJson();
+
+      final List<http.MultipartFile> files = [];
+
+      if (file != null) {
+        final imageFile = await http.MultipartFile.fromPath('image', file.path);
+        files.add(imageFile);
+      }
+
+      final response = await BaseAPIClient.postMultipartAPI(
         url: url,
-        body: dto.toJson(),
-        type: AuthenticationType.SYSTEM,
+        fields: body,
+        files: files,
       );
+
       if (response.statusCode == 200 || response.statusCode == 400) {
         var data = jsonDecode(response.body);
         result = ResponseMessageDTO.fromJson(data);

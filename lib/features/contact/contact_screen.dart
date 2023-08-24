@@ -48,6 +48,7 @@ class _ContactStateState extends State<_ContactState>
   final searchController = TextEditingController();
 
   final scrollController = ScrollController();
+  final controller = ScrollController();
 
   @override
   void initState() {
@@ -60,9 +61,23 @@ class _ContactStateState extends State<_ContactState>
       _bloc.add(ContactEventGetList());
       _bloc.add(ContactEventGetListPending());
     });
+
+    controller.addListener(_loadMore);
+  }
+
+  _loadMore() async {
+    int type =
+        Provider.of<ContactProvider>(context, listen: false).category!.type;
+    int offset = Provider.of<ContactProvider>(context, listen: false).offset;
+
+    final maxScroll = controller.position.maxScrollExtent;
+    if (controller.offset >= maxScroll && !controller.position.outOfRange) {
+      _bloc.add(ContactEventGetList(type: type, offset: offset));
+    }
   }
 
   Future<void> _onRefresh() async {
+    Provider.of<ContactProvider>(context, listen: false).updateOffset(0);
     _bloc.add(ContactEventGetList());
   }
 
@@ -98,10 +113,10 @@ class _ContactStateState extends State<_ContactState>
           }
 
           if (state.type == ContactType.GET_LIST) {
-            if (state.listContactDTO.isNotEmpty) {
-              Provider.of<ContactProvider>(context, listen: false)
-                  .updateList(state.listContactDTO);
-            }
+            Provider.of<ContactProvider>(context, listen: false)
+                .updateList(state.listContactDTO);
+            Provider.of<ContactProvider>(context, listen: false).updateOffset(
+                Provider.of<ContactProvider>(context, listen: false).offset++);
           }
 
           if (state.type == ContactType.SAVE) {
@@ -181,7 +196,10 @@ class _ContactStateState extends State<_ContactState>
                             return GestureDetector(
                               onTap: () {
                                 provider.updateCategory(value: model);
-                                scrollController.jumpTo(0);
+                                _bloc.add(ContactEventGetList(
+                                    type: provider.category?.type));
+                                if (scrollController.hasClients)
+                                  scrollController.jumpTo(0.0);
                               },
                               child: _buildCategory(
                                 title: model.title,
@@ -196,7 +214,8 @@ class _ContactStateState extends State<_ContactState>
                         if (provider.category!.type == 0)
                           Expanded(
                             child: _buildTapSecond(
-                                list: state.listContactDTOSuggest),
+                              list: state.listContactDTOSuggest,
+                            ),
                           )
                         else
                           Expanded(
@@ -223,10 +242,15 @@ class _ContactStateState extends State<_ContactState>
                             context.read<DashBoardBloc>().add(
                                 DashBoardCheckExistedEvent(dto: data['data']));
                           }, onCallBack: () {
-                            _bloc.add(ContactEventGetList());
+                            _bloc.add(
+                              ContactEventGetList(
+                                type: provider.category?.type,
+                              ),
+                            );
                           });
                         }
-                        _bloc.add(ContactEventGetList());
+                        _bloc.add(
+                            ContactEventGetList(type: provider.category?.type));
                       },
                       child: Container(
                         width: 50,
@@ -423,6 +447,7 @@ class _ContactStateState extends State<_ContactState>
       return RefreshIndicator(
         onRefresh: _onRefreshTabSecond,
         child: SingleChildScrollView(
+          controller: controller,
           child: Container(
             margin: const EdgeInsets.only(top: 16),
             child: Column(

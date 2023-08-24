@@ -1,11 +1,15 @@
+import 'dart:io';
+
 class AddContactDTO {
   final String? additionalData;
   final String? nickName;
-  final int? type;
+  final String? type;
+  final String? colorType;
   final String? value;
   final String? userId;
   final String? bankTypeId;
   final String? bankAccount;
+  final File? image;
 
   AddContactDTO({
     this.additionalData,
@@ -13,16 +17,18 @@ class AddContactDTO {
     this.type,
     this.value,
     this.userId,
+    this.colorType,
     this.bankTypeId,
     this.bankAccount,
+    this.image,
   });
 
-  factory AddContactDTO.fromJson(Map<String, dynamic> json) =>
-      AddContactDTO(
+  factory AddContactDTO.fromJson(Map<String, dynamic> json) => AddContactDTO(
         additionalData: json["additionalData"],
         nickName: json["nickName"],
         type: json["type"],
         value: json["value"],
+        colorType: json["colorType"],
         userId: json["userId"],
         bankTypeId: json["bankTypeId"],
         bankAccount: json["bankAccount"],
@@ -34,6 +40,7 @@ class AddContactDTO {
         "type": type,
         "value": value,
         "userId": userId,
+        "colorType": colorType,
         "bankTypeId": bankTypeId,
         "bankAccount": bankAccount,
       };
