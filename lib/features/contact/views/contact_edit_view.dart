@@ -87,6 +87,10 @@ class _ContactEditViewState extends State<ContactEditView> {
             Navigator.of(context).pop();
           }
 
+          if (state.type == ContactType.REMOVE) {
+            Navigator.of(context).popUntil((route) => route.isFirst);
+          }
+
           if (state.type == ContactType.UPDATE) {
             Fluttertoast.showToast(
               msg: 'Cập nhật thông tin thành công',
@@ -504,5 +508,6 @@ class _ContactEditViewState extends State<ContactEditView> {
 class CardQrColor {
   final int type;
   final String pathImage;
+
   CardQrColor({required this.type, required this.pathImage});
 }

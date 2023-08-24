@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/log.dart';
@@ -10,24 +12,40 @@ import 'package:vierqr/models/bank_name_information_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/models/viet_qr_scanned_dto.dart';
+import 'package:vierqr/models/vietqr_dto.dart';
 
 class ScanQrBloc extends Bloc<ScanQrEvent, ScanQrState> {
   ScanQrBloc(this.isScanAll) : super(ScanQrState(isScanAll: isScanAll)) {
     on<ScanQrEventGetBankType>(_getBankType);
     on<ScanQrEventSearchName>(_searchBankName);
-    on<ScanQrEventGetNickName>(_getNickName);
+    on<ScanQrEventGetNickName>(_getNickNameWalletId);
   }
 
   final bool isScanAll;
 
   final _repository = const ScanQrRepository();
 
-  void _getNickName(ScanQrEvent event, Emitter emit) async {
+  void _getNickNameWalletId(ScanQrEvent event, Emitter emit) async {
     try {
       if (event is ScanQrEventGetNickName) {
-        state.copyWith(request: ScanType.NONE, status: BlocStatus.NONE);
-        final nickName = await _repository.getNickname(event.code);
-        state.copyWith();
+        emit(
+            state.copyWith(status: BlocStatus.LOADING, request: ScanType.NONE));
+        final VietQRDTO dto = await _repository.getNickname(event.code);
+
+        final random = Random();
+
+        int data = random.nextInt(5);
+
+        dto.setColorType(data);
+        dto.setCode(event.code);
+
+        emit(
+          state.copyWith(
+            status: BlocStatus.UNLOADING,
+            request: ScanType.NICK_NAME,
+            vietQRDTO: dto,
+          ),
+        );
       }
     } catch (e) {
       LOG.error(e.toString());
@@ -100,11 +118,14 @@ class ScanQrBloc extends Bloc<ScanQrEvent, ScanQrState> {
               emit(state.copyWith(request: ScanType.SCAN_NOT_FOUND));
             }
           } else if (typeQR == TypeQR.QR_ID) {
-            emit(state.copyWith(
+            emit(
+              state.copyWith(
                 codeQR: event.code,
                 request: ScanType.SCAN,
                 typeQR: TypeQR.QR_ID,
-                typeContact: TypeContact.VietQR_ID));
+                typeContact: TypeContact.VietQR_ID,
+              ),
+            );
           } else if (typeQR == TypeQR.QR_BARCODE) {
             if (event.code.isNotEmpty) {
               emit(state.copyWith(

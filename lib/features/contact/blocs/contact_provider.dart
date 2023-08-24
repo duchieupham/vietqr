@@ -19,34 +19,6 @@ class ContactProvider extends ChangeNotifier {
   // 3 = cam
   // 4 = hồng
 
-  final List<DataModel> listCategories = [
-    DataModel(
-      title: 'Tất cả',
-      url: 'assets/images/ic-contact-bank-blue.png',
-      type: 9,
-    ),
-    DataModel(
-      title: 'Ngân hàng',
-      url: 'assets/images/ic-tb-card-selected.png',
-      type: 2,
-    ),
-    DataModel(
-      title: 'VietQR ID',
-      url: 'assets/images/ic-contact-vietqr-id-blue.png',
-      type: 1,
-    ),
-    DataModel(
-      title: 'Khác',
-      url: 'assets/images/qr-contact-other-blue.png',
-      type: 3,
-    ),
-    DataModel(
-      title: 'Gợi ý',
-      url: 'assets/images/ic-contact-suggest-blue.png',
-      type: 0,
-    ),
-  ];
-
   DataModel? category;
 
   int offset = 0;
@@ -130,6 +102,34 @@ class ContactProvider extends ChangeNotifier {
     'assets/images/color-type-2.png',
     'assets/images/color-type-3.png',
     'assets/images/color-type-4.png',
+  ];
+
+  final List<DataModel> listCategories = [
+    DataModel(
+      title: 'Tất cả',
+      url: 'assets/images/ic-contact-bank-blue.png',
+      type: 9,
+    ),
+    DataModel(
+      title: 'Ngân hàng',
+      url: 'assets/images/ic-tb-card-selected.png',
+      type: 2,
+    ),
+    DataModel(
+      title: 'VietQR ID',
+      url: 'assets/images/ic-contact-vietqr-id-blue.png',
+      type: 1,
+    ),
+    DataModel(
+      title: 'Khác',
+      url: 'assets/images/qr-contact-other-blue.png',
+      type: 3,
+    ),
+    DataModel(
+      title: 'Gợi ý',
+      url: 'assets/images/ic-contact-suggest-blue.png',
+      type: 0,
+    ),
   ];
 }
 

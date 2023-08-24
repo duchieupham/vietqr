@@ -14,9 +14,9 @@ import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/contact_detail_dto.dart';
 import 'package:vierqr/models/contact_dto.dart';
-import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/models/viet_qr_scanned_dto.dart';
+import 'package:vierqr/models/vietqr_dto.dart';
 
 class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
   @override
@@ -24,7 +24,7 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
 
   final String qrCode;
   final TypeContact typeQR;
-  final QRGeneratedDTO? dto;
+  final dynamic dto;
 
   ContactBloc(this.context,
       {this.qrCode = '', this.typeQR = TypeContact.NONE, this.dto})
@@ -259,21 +259,17 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
       if (event is GetNickNameContactEvent) {
         if (typeQR == TypeContact.VietQR_ID) {
           emit(state.copyWith(status: BlocStatus.NONE, type: ContactType.NONE));
-          final result = await repository.getNickname(qrCode);
-          String nickName = '';
-          String imgId = '';
-          if (result.containsKey('nickname')) {
-            nickName = result['nickname'];
-          }
+          if (dto is VietQRDTO) {
+            VietQRDTO data = dto;
 
-          if (result.containsKey('imgId')) {
-            imgId = result['imgId'];
+            emit(
+              state.copyWith(
+                type: ContactType.NICK_NAME,
+                nickName: data.nickName,
+                imgId: data.imgId,
+              ),
+            );
           }
-
-          emit(
-            state.copyWith(
-                type: ContactType.NICK_NAME, nickName: nickName, imgId: imgId),
-          );
         } else if (typeQR == TypeContact.Bank) {
           VietQRScannedDTO vietQRScannedDTO =
               QRScannerUtils.instance.getBankAccountFromQR(qrCode);

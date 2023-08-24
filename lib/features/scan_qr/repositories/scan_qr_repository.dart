@@ -8,6 +8,7 @@ import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
+import 'package:vierqr/models/vietqr_dto.dart';
 
 class ScanQrRepository {
   const ScanQrRepository();
@@ -96,8 +97,9 @@ class ScanQrRepository {
     return result;
   }
 
-  Future<String> getNickname(walletId) async {
-    String nickName = '';
+  Future<VietQRDTO> getNickname(walletId) async {
+    VietQRDTO dto = VietQRDTO(nickName: '', imgId: '');
+
     try {
       String url = '${EnvConfig.getBaseUrl()}contact/scan-result/$walletId';
       final response = await BaseAPIClient.getAPI(
@@ -107,12 +109,12 @@ class ScanQrRepository {
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         if (data != null) {
-          nickName = data['nickname'];
+          dto = VietQRDTO.fromJson(data);
         }
       }
     } catch (e) {
       LOG.error('Error at requestPermissions - PermissionRepository: $e');
     }
-    return nickName;
+    return dto;
   }
 }

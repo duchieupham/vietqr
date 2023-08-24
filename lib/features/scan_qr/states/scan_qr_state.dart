@@ -3,6 +3,7 @@ import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/models/bank_name_information_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
+import 'package:vierqr/models/vietqr_dto.dart';
 
 class ScanQrState extends Equatable {
   final BlocStatus status;
@@ -16,6 +17,7 @@ class ScanQrState extends Equatable {
   final TypeContact typeContact;
   final BankNameInformationDTO? informationDTO;
   final bool isScanAll;
+  final VietQRDTO? vietQRDTO;
 
   const ScanQrState({
     this.status = BlocStatus.NONE,
@@ -29,6 +31,7 @@ class ScanQrState extends Equatable {
     this.typeContact = TypeContact.NONE,
     this.informationDTO,
     this.isScanAll = true,
+    this.vietQRDTO,
   });
 
   ScanQrState copyWith({
@@ -44,6 +47,7 @@ class ScanQrState extends Equatable {
     TypeQR? typeQR,
     bool? isScanAll,
     DashBoardTypePermission? typePermission,
+    VietQRDTO? vietQRDTO,
   }) {
     return ScanQrState(
       status: status ?? this.status,
@@ -57,6 +61,7 @@ class ScanQrState extends Equatable {
       typeContact: typeContact ?? this.typeContact,
       informationDTO: informationDTO ?? this.informationDTO,
       isScanAll: isScanAll ?? this.isScanAll,
+      vietQRDTO: vietQRDTO ?? this.vietQRDTO,
     );
   }
 
