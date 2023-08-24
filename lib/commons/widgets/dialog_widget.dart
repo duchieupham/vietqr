@@ -420,11 +420,13 @@ class DialogWidget {
     EdgeInsetsGeometry? margin,
     BorderRadiusGeometry? borderRadius,
     Color? bgrColor,
+    bool isDismissible = false,
   }) async {
     context ??= NavigationService.navigatorKey.currentContext!;
     return showModalBottomSheet(
       isScrollControlled: true,
       enableDrag: false,
+      isDismissible: isDismissible,
       useRootNavigator: true,
       context: context,
       backgroundColor: AppColor.TRANSPARENT,

@@ -115,42 +115,7 @@ class QRScannerUtils {
             bgrColor: AppColor.TRANSPARENT,
             widget: DialogScanBank(
               dto: value,
-              onTapSave: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => SaveContactScreen(
-                      code: value.qrCode,
-                      typeQR: type,
-                      dto: value,
-                    ),
-                  ),
-                );
-
-                // onTapSave!(dto);
-              },
-              onTapAdd: () async {
-                if (value is QRGeneratedDTO) {
-                  if (value.isNaviAddBank) {
-                    await Navigator.pushNamed(
-                      context,
-                      Routes.ADD_BANK_CARD,
-                      arguments: {
-                        'step': 0,
-                        'bankDTO': bankTypeDTO,
-                        'bankAccount': value.bankAccount,
-                        'name': ''
-                      },
-                    );
-
-                    eventBus.fire(ChangeThemeEvent());
-                  } else {
-                    onTapAdd!({
-                      'data': value,
-                    });
-                  }
-                }
-              },
+              bankTypeDTO: bankTypeDTO,
             ),
           );
           break;

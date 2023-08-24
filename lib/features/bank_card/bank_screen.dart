@@ -254,7 +254,8 @@ class _BankScreenState extends State<_BankScreen>
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Expanded(
-              child: _buildSection('assets/images/ic-qr-white.png', () async {
+              child: _buildSection('assets/images/qr-contact-other-blue.png',
+                  () async {
                 if (QRScannerHelper.instance.getQrIntro()) {
                   // Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
                   startBarcodeScanStream();
@@ -272,11 +273,13 @@ class _BankScreenState extends State<_BankScreen>
             ),
             const SizedBox(width: 8),
             Expanded(
-              child: _buildSection('assets/images/ic-contact.png', () async {
-                Navigator.pushNamed(context, Routes.PHONE_BOOK);
+              child: _buildSection('assets/images/ic-bankaccount-blue.png',
+                  () async {
+                await Navigator.pushNamed(context, Routes.ADD_BANK_CARD);
+                getListBank(context);
               },
-                  title: 'Danh bạ QR',
-                  des: 'Lưu trữ các loại QR để sử dụng cho nhiều mục đích'),
+                  title: 'Thêm TK',
+                  des: 'Thêm hoặc liên kết TK ngân hàng để nhận BDSD'),
             ),
           ],
         ),
@@ -293,23 +296,23 @@ class _BankScreenState extends State<_BankScreen>
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
           color: Theme.of(context).cardColor,
-          boxShadow: [
-            BoxShadow(
-              color: AppColor.GREY_LIGHT.withOpacity(0.3),
-              spreadRadius: 1,
-              blurRadius: 5,
-              offset: const Offset(0, 0), // changes position of shadow
-            ),
-          ],
+          // boxShadow: [
+          //   BoxShadow(
+          //     color: AppColor.GREY_LIGHT.withOpacity(0.3),
+          //     spreadRadius: 1,
+          //     blurRadius: 5,
+          //     offset: const Offset(0, 0), // changes position of shadow
+          //   ),
+          // ],
         ),
         child: Row(
           children: [
             Image.asset(
               pathIcon,
               width: 40,
-              height: 30,
+              height: 40,
               color: AppColor.BLUE_TEXT,
-              fit: BoxFit.contain,
+              fit: BoxFit.cover,
             ),
             Expanded(
               child: Column(
@@ -881,7 +884,6 @@ class _StackedList extends State<StackedList> {
   }
 
   final MethodChannel platformChannel = const MethodChannel('scan_qr_code');
-
 
   Widget _buildAddBankCard(double width) {
     return GestureDetector(

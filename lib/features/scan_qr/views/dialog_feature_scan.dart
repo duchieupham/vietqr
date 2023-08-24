@@ -2,13 +2,19 @@
 
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/contact/save_contact_screen.dart';
+import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
+import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
+import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/vietqr_dto.dart';
 
@@ -18,6 +24,7 @@ class DialogFeatureWidget extends StatefulWidget {
   final TypeQR? type;
   final String code;
   final GlobalKey? globalKey;
+  final BankTypeDTO? bankTypeDTO;
 
   const DialogFeatureWidget({
     super.key,
@@ -26,6 +33,7 @@ class DialogFeatureWidget extends StatefulWidget {
     required this.code,
     this.type = TypeQR.NONE,
     this.globalKey,
+    this.bankTypeDTO,
   });
 
   @override
@@ -36,6 +44,11 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
   @override
   void initState() {
     super.initState();
+    if (widget.typeQR == TypeContact.Bank) {
+      DataModel data = DataModel(
+          title: 'Lưu TK', url: 'assets/images/ic-tb-card-selected.png');
+      _list.first = data;
+    }
   }
 
   @override
@@ -125,7 +138,7 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
                 },
                 child: _buildItem(
                   _list[index],
-                  isSelect: dataModel == _list[index],
+                  index,
                 ),
               );
             }).toList(),
@@ -138,7 +151,11 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
   void onHandle(int index) async {
     switch (index) {
       case 0:
-        onSaveQR();
+        if (widget.typeQR == TypeContact.Bank) {
+          onSaveTK();
+        } else {
+          onSaveQR();
+        }
         return;
       case 1:
         onSaveImage();
@@ -150,6 +167,30 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
       default:
         share(dto: widget.dto);
         return;
+    }
+  }
+
+  void onSaveTK() async {
+    if (widget.dto is QRGeneratedDTO) {
+      QRGeneratedDTO value = widget.dto;
+      if (value.isNaviAddBank) {
+        await Navigator.pushNamed(
+          context,
+          Routes.ADD_BANK_CARD,
+          arguments: {
+            'step': 0,
+            'bankDTO': widget.bankTypeDTO,
+            'bankAccount': value.bankAccount,
+            'name': ''
+          },
+        );
+
+        eventBus.fire(ChangeThemeEvent());
+      } else {
+        context
+            .read<DashBoardBloc>()
+            .add(DashBoardCheckExistedEvent(dto: value));
+      }
     }
   }
 
@@ -238,20 +279,20 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
     });
   }
 
-  Widget _buildItem(DataModel model, {bool isSelect = false}) {
+  Widget _buildItem(DataModel model, index) {
     return Column(
       children: [
         Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(100),
-            color:
-                isSelect ? AppColor.BLUE_TEXT : AppColor.gray.withOpacity(0.4),
+            color: index == 0 ? AppColor.BLUE_TEXT : AppColor.GREY_F1F2F5,
           ),
           child: Image.asset(
             model.url,
-            width: 50,
-            height: 50,
-            color: isSelect ? AppColor.WHITE : AppColor.BLACK.withOpacity(0.6),
+            width: 40,
+            height: 40,
+            color:
+                index == 0 ? AppColor.WHITE : AppColor.BLACK.withOpacity(0.35),
           ),
         ),
         const SizedBox(height: 8),
@@ -266,7 +307,7 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
 
   DataModel? dataModel;
 
-  final List<DataModel> _list = [
+  List<DataModel> _list = [
     DataModel(title: 'Lưu thẻ QR', url: 'assets/images/ic-qr-wallet-grey.png'),
     DataModel(title: 'Lưu ảnh', url: 'assets/images/ic-img-blue.png'),
     DataModel(title: 'Sao chép', url: 'assets/images/ic_copy.png'),

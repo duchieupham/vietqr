@@ -29,6 +29,7 @@ import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
 import 'package:vierqr/features/business/blocs/business_member_bloc.dart';
 import 'package:vierqr/features/business/views/add_business_view.dart';
 import 'package:vierqr/features/business/views/business_information_view.dart';
+import 'package:vierqr/features/business/views/business_screen.dart';
 import 'package:vierqr/features/business/views/business_transaction_view.dart';
 import 'package:vierqr/features/connect_lark/connect_lark_screen.dart';
 import 'package:vierqr/features/connect_telegram/connect_telegram_screen.dart';
@@ -58,6 +59,7 @@ import 'package:vierqr/features/printer/views/printer_setting_screen.dart';
 import 'package:vierqr/features/report/report_screen.dart';
 import 'package:vierqr/features/scan_qr/scan_qr_lib.dart';
 import 'package:vierqr/features/setting_bdsd/setting_bdsd_screen.dart';
+
 // import 'package:vierqr/features/scan_qr/scan_qr_screen.dart';
 import 'package:vierqr/features/top_up/qr_top_up.dart';
 import 'package:vierqr/features/top_up/top_up_screen.dart';
@@ -386,6 +388,7 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.SETTING_BDSD: (context) => const SettingBDSD(),
                   Routes.TRANSACTION_WALLET: (context) =>
                       const TransWalletScreen(),
+                  Routes.BUSINESS: (context) => const BusinessScreen(),
                 },
                 onGenerateRoute: (settings) {
                   if (settings.name == Routes.BUSINESS_INFORMATION_VIEW) {

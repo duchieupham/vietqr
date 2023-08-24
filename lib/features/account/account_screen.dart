@@ -248,8 +248,9 @@ class _FeatureWidget extends StatelessWidget {
           context: context,
           padding: const EdgeInsets.symmetric(horizontal: 8),
           radius: 15,
+          bgrColor: AppColor.TRANSPARENT,
+          isDismissible: true,
           widget: MyQRBottomSheet(),
-          height: MediaQuery.of(context).size.height * 0.7,
         );
         break;
       case 1:

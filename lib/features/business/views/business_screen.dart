@@ -18,6 +18,7 @@ import 'package:vierqr/features/business/blocs/business_bloc.dart';
 import 'package:vierqr/features/business/events/business_event.dart';
 import 'package:vierqr/features/business/states/business_state.dart';
 import 'package:vierqr/features/business/widgets/select_branch_widget.dart';
+import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/business_detail_dto.dart';
 import 'package:vierqr/models/business_item_dto.dart';
 import 'package:vierqr/models/related_transaction_receive_dto.dart';
@@ -96,97 +97,107 @@ class _BusinessScreenState extends State<_BusinessScreen>
               isSecondBT: false,
             );
           }
-        },
-        builder: (context, state) {
+
           if (state.status == BlocStatus.SUCCESS) {
             Provider.of<DashboardProvider>(context, listen: false)
                 .updateBusinessLength(state.list.length);
           }
-
-          if (state.list.isEmpty) {
-            return _buildListBlank();
-          } else {
-            return SizedBox(
-              width: width,
-              height: height,
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 20),
-                child: Stack(
-                  children: [
-                    Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            bottom: 12, left: 16, right: 16),
-                        child: Image.asset(
-                          'assets/images/bg-business.png',
-                          width: width,
-                          fit: BoxFit.fitWidth,
-                        ),
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Container(
-                        height: height * 0.5,
-                        padding: const EdgeInsets.only(
-                            bottom: 12, left: 16, right: 16),
-                        width: width,
-                        color: Theme.of(context)
-                            .scaffoldBackgroundColor
-                            .withOpacity(0.8),
-                      ),
-                    ),
-                    Positioned(
-                      top: 60,
-                      left: 0,
-                      right: 0,
-                      child: Column(
+        },
+        builder: (context, state) {
+          return Scaffold(
+            appBar: const MAppBar(title: 'Doanh nghiệp'),
+            body: state.status == BlocStatus.LOADING
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : SizedBox(
+                    width: width,
+                    height: height,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 20),
+                      child: Stack(
                         children: [
-                          _buildBusinessWidget(context, state.list),
-                          Consumer<DashboardProvider>(
-                              builder: (context, provider, child) {
-                            return _buildButtonList(context,
-                                dto: state.list[provider.businessSelect]);
-                          }),
-                          const SizedBox(
-                            height: 12,
-                          ),
-                          _buildIndicatorDot(),
-                          const SizedBox(
-                            height: 12,
-                          ),
-                          Row(
-                            children: [
-                              const Spacer(),
-                              ButtonWidget(
-                                width: 170,
-                                height: 40,
-                                text: 'Tạo doanh nghiệp',
-                                textColor: AppColor.WHITE,
-                                bgColor: AppColor.BLUE_TEXT,
-                                borderRadius: 20,
-                                enableShadow: true,
-                                function: () async {
-                                  await Navigator.pushNamed(
-                                      context, Routes.ADD_BUSINESS_VIEW);
-                                  _refresh();
-                                },
+                          Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  bottom: 12, left: 16, right: 16),
+                              child: Image.asset(
+                                'assets/images/bg-business.png',
+                                width: width,
+                                fit: BoxFit.fitWidth,
                               ),
-                              const Spacer(),
-                            ],
+                            ),
                           ),
+                          Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Container(
+                              height: height * 0.5,
+                              padding: const EdgeInsets.only(
+                                  bottom: 12, left: 16, right: 16),
+                              width: width,
+                              color: Theme.of(context)
+                                  .scaffoldBackgroundColor
+                                  .withOpacity(0.8),
+                            ),
+                          ),
+                          state.list.isNotEmpty
+                              ? Positioned(
+                                  top: 60,
+                                  left: 0,
+                                  right: 0,
+                                  child: Column(
+                                    children: [
+                                      _buildBusinessWidget(context, state.list),
+                                      Consumer<DashboardProvider>(
+                                          builder: (context, provider, child) {
+                                        return _buildButtonList(context,
+                                            dto: state
+                                                .list[provider.businessSelect]);
+                                      }),
+                                      const SizedBox(
+                                        height: 12,
+                                      ),
+                                      _buildIndicatorDot(),
+                                      const SizedBox(
+                                        height: 12,
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : Center(
+                                  child:
+                                      Text('Bạn chưa thuộc doanh nghiệp nào'),
+                                ),
+                          Positioned(
+                            bottom: 20,
+                            right: 0,
+                            left: 0,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ButtonWidget(
+                                  width: 170,
+                                  height: 40,
+                                  text: 'Tạo doanh nghiệp',
+                                  textColor: AppColor.WHITE,
+                                  bgColor: AppColor.BLUE_TEXT,
+                                  borderRadius: 20,
+                                  enableShadow: true,
+                                  function: () async {
+                                    await Navigator.pushNamed(
+                                        context, Routes.ADD_BUSINESS_VIEW);
+                                    _refresh();
+                                  },
+                                ),
+                              ],
+                            ),
+                          )
                         ],
                       ),
                     ),
-                    // _buildSuggestion(context),
-
-                    // const Padding(padding: EdgeInsets.only(bottom: 100)),
-                  ],
-                ),
-              ),
-            );
-          }
+                  ),
+          );
         },
       ),
     );
@@ -252,43 +263,28 @@ class _BusinessScreenState extends State<_BusinessScreen>
                 ),
               ),
               Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: Row(
-                    children: [
-                      const Spacer(),
-                      ButtonWidget(
-                        width: 170,
-                        height: 40,
-                        text: 'Tạo doanh nghiệp',
-                        textColor: AppColor.WHITE,
-                        bgColor: AppColor.BLUE_TEXT,
-                        borderRadius: 20,
-                        enableShadow: true,
-                        function: () {
-                          Navigator.pushNamed(
-                              context, Routes.ADD_BUSINESS_VIEW);
-                        },
-                      ),
-                      // Expanded(
-                      //   child: UnconstrainedBox(
-                      //     child: ButtonIconWidget(
-                      //       width: 40,
-                      //       height: 40,
-                      //       icon: Icons.question_mark_sharp,
-                      //       title: '',
-                      //       function: () async {},
-                      //       bgColor: Theme.of(context).cardColor,
-                      //       textColor: AppColor.BLUE_TEXT,
-                      //       borderRadius: 30,
-                      //       enableShadow: true,
-                      //     ),
-                      //   ),
-                      // )
-                      const Spacer(),
-                    ],
-                  ))
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Row(
+                  children: [
+                    const Spacer(),
+                    ButtonWidget(
+                      width: 170,
+                      height: 40,
+                      text: 'Tạo doanh nghiệp',
+                      textColor: AppColor.WHITE,
+                      bgColor: AppColor.BLUE_TEXT,
+                      borderRadius: 20,
+                      enableShadow: true,
+                      function: () {
+                        Navigator.pushNamed(context, Routes.ADD_BUSINESS_VIEW);
+                      },
+                    ),
+                    const Spacer(),
+                  ],
+                ),
+              )
             ],
           ),
           const SizedBox(
