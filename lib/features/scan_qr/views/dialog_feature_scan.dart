@@ -128,7 +128,7 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
             ),
           const SizedBox(height: 24),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: List.generate(_list.length, (index) {
               return GestureDetector(
                 onTap: () {

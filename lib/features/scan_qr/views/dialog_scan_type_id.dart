@@ -26,57 +26,72 @@ class DialogScanTypeID extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         RepaintBoundaryWidget(
-            globalKey: globalKey,
-            builder: (key) {
-              return Container(
-                margin: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  gradient: getBgGradient(dto.colorType),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _buildTypeQr(
-                        imgId: dto.imgId, typeQR: typeQR, name: dto.nickName),
-                    Container(
-                      width: double.infinity,
-                      height: 1,
-                      color: AppColor.greyF0F0F0,
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(
-                          left: 40, right: 40, top: 30, bottom: 30),
-                      decoration: BoxDecoration(
-                        color: AppColor.WHITE,
+          globalKey: globalKey,
+          builder: (key) {
+            return Container(
+              margin: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                gradient: getBgGradient(dto.colorType),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildTypeQr(typeQR: typeQR, name: dto.nickName),
+                  Container(
+                    width: double.infinity,
+                    height: 1,
+                    color: AppColor.greyF0F0F0,
+                  ),
+                  Stack(
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(
+                            left: 40, right: 40, top: 30, bottom: 30),
+                        decoration: BoxDecoration(
+                          color: AppColor.WHITE,
+                        ),
+                        child: QrImage(
+                            data: dto.code ?? '', version: QrVersions.auto),
                       ),
-                      child: QrImage(
-                        data: dto.code ?? '',
-                        version: QrVersions.auto,
-                        embeddedImage: const AssetImage(
-                            'assets/images/ic-viet-qr-small.png'),
-                        embeddedImageStyle: QrEmbeddedImageStyle(
-                          size: const Size(30, 30),
+                      Positioned.fill(
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Container(
+                            width: 30.0,
+                            height: 30.0,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                  fit: BoxFit.cover,
+                                  image: ImageUtils.instance
+                                      .getImageNetWork(dto.imgId)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(100)),
+                              color: Colors.redAccent,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                    Text(
-                      dto.nickName,
-                      style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: AppColor.WHITE),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      dto.phone ?? '',
-                      style: TextStyle(color: AppColor.WHITE),
-                    ),
-                    const SizedBox(height: 16),
-                  ],
-                ),
-              );
-            }),
+                    ],
+                  ),
+                  Text(
+                    dto.nickName,
+                    style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: AppColor.WHITE),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    dto.phone ?? '',
+                    style: TextStyle(color: AppColor.WHITE),
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              ),
+            );
+          },
+        ),
         DialogFeatureWidget(
           dto: dto,
           typeQR: typeQR,
@@ -88,9 +103,7 @@ class DialogScanTypeID extends StatelessWidget {
   }
 
   Widget _buildTypeQr(
-      {String? imgId,
-      TypeContact typeQR = TypeContact.NONE,
-      required String name}) {
+      {TypeContact typeQR = TypeContact.NONE, required String name}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
@@ -101,13 +114,9 @@ class DialogScanTypeID extends StatelessWidget {
             decoration: BoxDecoration(
               color: AppColor.WHITE,
               borderRadius: BorderRadius.circular(40),
-              image: imgId != null
-                  ? DecorationImage(
-                      image: ImageUtils.instance.getImageNetWork(imgId ?? ''),
-                      fit: BoxFit.contain)
-                  : const DecorationImage(
-                      image: AssetImage('assets/images/ic-viet-qr-small.png'),
-                      fit: BoxFit.contain),
+              image: const DecorationImage(
+                  image: AssetImage('assets/images/ic-viet-qr-small.png'),
+                  fit: BoxFit.contain),
             ),
           ),
           SizedBox(

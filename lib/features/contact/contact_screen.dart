@@ -214,20 +214,35 @@ class _ContactStateState extends State<_ContactState>
                           }).toList(),
                         ),
                       ),
-                      if (provider.category != null)
-                        if (provider.category!.type == 0)
-                          Expanded(
-                            child: _buildTapSecond(
-                              list: state.listContactDTOSuggest,
-                            ),
-                          )
-                        else
-                          Expanded(
-                            child: _buildTapFirst(
-                              listContactDTO: provider.listSearch,
-                              onChange: provider.onSearch,
+                      if (state.isLoading)
+                        Expanded(
+                          child: const Center(
+                            child: SizedBox(
+                              width: 30,
+                              height: 30,
+                              child: CircularProgressIndicator(
+                                color: AppColor.BLUE_TEXT,
+                              ),
                             ),
                           ),
+                        )
+                      else ...[
+                        if (provider.category != null)
+                          if (provider.category!.type == 0)
+                            Expanded(
+                              child: _buildTapSecond(
+                                list: state.listContactDTOSuggest,
+                              ),
+                            )
+                          else
+                            Expanded(
+                              child: _buildTapFirst(
+                                listContactDTO: provider.listSearch,
+                                colors: state.colors,
+                                onChange: provider.onSearch,
+                              ),
+                            ),
+                      ]
                     ],
                   ),
                   Positioned(
@@ -307,6 +322,7 @@ class _ContactStateState extends State<_ContactState>
 
   Widget _buildTapFirst({
     required List<ContactDTO> listContactDTO,
+    required List<Color> colors,
     ValueChanged<String>? onChange,
   }) {
     return Padding(
@@ -361,11 +377,13 @@ class _ContactStateState extends State<_ContactState>
                               style:
                                   const TextStyle(fontWeight: FontWeight.bold)),
                         ),
-                        _buildItemSave(dto: listContactDTO[index]),
+                        _buildItemSave(
+                            dto: listContactDTO[index], color: colors[index]),
                       ],
                     );
                   }
-                  return _buildItemSave(dto: listContactDTO[index]);
+                  return _buildItemSave(
+                      dto: listContactDTO[index], color: colors[index]);
                 },
               ),
             ),
@@ -375,7 +393,10 @@ class _ContactStateState extends State<_ContactState>
     );
   }
 
-  Widget _buildItemSave({required ContactDTO? dto}) {
+  Widget _buildItemSave({
+    required ContactDTO? dto,
+    required Color? color,
+  }) {
     return GestureDetector(
       onTap: () async {
         await Navigator.pushNamed(context, Routes.PHONE_BOOK_DETAIL,
@@ -417,10 +438,10 @@ class _ContactStateState extends State<_ContactState>
                   ),
                   Text(
                     dto?.description ?? '',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w400,
-                      color: AppColor.BLUE_TEXT,
+                      color: color,
                       height: 1.4,
                     ),
                   ),
