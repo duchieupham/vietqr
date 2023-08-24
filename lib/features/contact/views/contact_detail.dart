@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
+import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
 import 'package:vierqr/features/contact/blocs/contact_bloc.dart';
 import 'package:vierqr/features/contact/events/contact_event.dart';
 import 'package:vierqr/features/contact/states/contact_state.dart';
@@ -20,6 +20,7 @@ import 'package:vierqr/services/sqflite/local_database.dart';
 
 import '../../../commons/utils/printer_utils.dart';
 import '../../../commons/widgets/button_icon_widget.dart';
+import '../../../commons/widgets/viet_qr.dart';
 import '../../../models/qr_generated_dto.dart';
 import '../../../services/shared_references/user_information_helper.dart';
 import '../../printer/views/printing_view.dart';
@@ -36,6 +37,45 @@ class ContactDetailScreen extends StatefulWidget {
 }
 
 class _ContactDetailScreenState extends State<ContactDetailScreen> {
+  final GlobalKey globalKey = GlobalKey();
+  QRGeneratedDTO qrGeneratedDTO = const QRGeneratedDTO(
+    bankCode: '',
+    bankName: '',
+    bankAccount: '',
+    userBankName: '',
+    amount: '',
+    content: '',
+    qrCode: '',
+    imgId: '',
+  );
+  Future<void> share({required QRGeneratedDTO dto}) async {
+    await Future.delayed(const Duration(milliseconds: 200), () async {
+      await ShareUtils.instance.shareImage(
+        key: globalKey,
+        textSharing: ShareUtils.instance.getTextSharing(dto),
+      );
+    });
+  }
+
+  void actionServices(
+      BuildContext context, String action, QRGeneratedDTO dto) async {
+    if (action == 'SAVE') {
+      await Future.delayed(const Duration(milliseconds: 300), () async {
+        await ShareUtils.instance.saveImageToGallery(globalKey).then((value) {
+          Fluttertoast.showToast(
+            msg: 'Đã lưu ảnh',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            backgroundColor: Theme.of(context).cardColor,
+            textColor: Theme.of(context).hintColor,
+            fontSize: 15,
+          );
+          // Navigator.pop(context);
+        });
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider<ContactBloc>(
@@ -44,7 +84,16 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
       child: BlocConsumer<ContactBloc, ContactState>(
         listener: (context, state) {
           if (state.status == BlocStatus.UNLOADING) {
-            // Navigator.pop(context);
+            qrGeneratedDTO = QRGeneratedDTO(
+              bankCode: state.contactDetailDTO.bankShortName ?? '',
+              bankName: state.contactDetailDTO.bankName ?? '',
+              bankAccount: state.contactDetailDTO.bankAccount ?? '',
+              userBankName: state.contactDetailDTO.nickName ?? '',
+              amount: '',
+              content: '',
+              qrCode: state.contactDetailDTO.value ?? '',
+              imgId: state.contactDetailDTO.imgId ?? '',
+            );
           }
 
           if (state.type == ContactType.REMOVE) {
@@ -67,108 +116,51 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
           return Scaffold(
             appBar: MAppBar(
               title: 'Thẻ QR',
+              actions: state.contactDetailDTO.type == 2
+                  ? [
+                      GestureDetector(
+                        onTap: () async {
+                          final data = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ContactEditView(
+                                  contactDetailDTO: state.contactDetailDTO),
+                              // settings: RouteSettings(name: ContactEditView.routeName),
+                            ),
+                          );
+
+                          if (!mounted) return;
+                          if (data is bool) {
+                            BlocProvider.of<ContactBloc>(context)
+                                .add(ContactEventGetDetail(id: widget.dto.id));
+                          }
+                        },
+                        child: Image.asset(
+                          'assets/images/ic-edit.png',
+                          height: 40,
+                          width: 40,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 12,
+                      )
+                    ]
+                  : null,
             ),
             body: SafeArea(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Stack(
+                child: Column(
                   children: [
-                    ListView(
-                      children: [
-                        Container(
-                          margin: EdgeInsets.symmetric(vertical: 32),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              gradient: state.contactDetailDTO.getBgGradient()),
-                          child: Column(
-                            children: [
-                              _buildTypeQr(state.contactDetailDTO,
-                                  onEdit: () async {
-                                final data = await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => ContactEditView(
-                                        contactDetailDTO:
-                                            state.contactDetailDTO),
-                                    // settings: RouteSettings(name: ContactEditView.routeName),
-                                  ),
-                                );
-
-                                if (!mounted) return;
-                                if (data is bool) {
-                                  BlocProvider.of<ContactBloc>(context).add(
-                                      ContactEventGetDetail(id: widget.dto.id));
-                                }
-                              }),
-                              Container(
-                                width: double.infinity,
-                                height: 1,
-                                color: AppColor.greyF0F0F0,
-                              ),
-                              Container(
-                                margin: const EdgeInsets.only(
-                                    left: 40, right: 40, top: 68, bottom: 32),
-                                decoration: BoxDecoration(
-                                  color: AppColor.WHITE,
-                                ),
-                                child: Stack(
-                                  children: [
-                                    QrImage(
-                                      data: state.contactDetailDTO.value ?? '',
-                                      version: QrVersions.auto,
-                                    ),
-                                    Positioned(
-                                      top: 0,
-                                      bottom: 0,
-                                      right: 0,
-                                      left: 0,
-                                      child: Align(
-                                        alignment: Alignment.center,
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                          child: Image(
-                                            height: 30,
-                                            width: 30,
-                                            fit: BoxFit.cover,
-                                            image: getEmbeddedImageImage(
-                                                state.contactDetailDTO),
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              Text(
-                                state.contactDetailDTO.nickName ?? '',
-                                style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColor.WHITE),
-                              ),
-                              const SizedBox(
-                                height: 4,
-                              ),
-                              Text(
-                                state.contactDetailDTO.additionalData ?? '',
-                                style: TextStyle(color: AppColor.WHITE),
-                              ),
-                              const SizedBox(
-                                height: 100,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 60,
-                        ),
-                      ],
+                    Expanded(
+                      child: ListView(
+                        children: [
+                          _buildViewCard(state.contactDetailDTO, context)
+                        ],
+                      ),
                     ),
-                    Positioned(
-                      bottom: 12,
-                      left: 0,
-                      right: 0,
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 12),
                       child: Column(
                         children: [
                           SizedBox(
@@ -196,29 +188,6 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
                                           DialogWidget.instance
                                               .showFullModalBottomContent(
                                                   widget: const PrintingView());
-                                          QRGeneratedDTO qrGeneratedDTO =
-                                              QRGeneratedDTO(
-                                            bankCode: state.contactDetailDTO
-                                                    .bankShortName ??
-                                                '',
-                                            bankName: state.contactDetailDTO
-                                                    .bankName ??
-                                                '',
-                                            bankAccount: state.contactDetailDTO
-                                                    .bankAccount ??
-                                                '',
-                                            userBankName: state.contactDetailDTO
-                                                    .nickName ??
-                                                '',
-                                            amount: '',
-                                            content: '',
-                                            qrCode:
-                                                state.contactDetailDTO.value ??
-                                                    '',
-                                            imgId:
-                                                state.contactDetailDTO.imgId ??
-                                                    '',
-                                          );
                                           await PrinterUtils.instance
                                               .print(qrGeneratedDTO)
                                               .then((value) {
@@ -247,35 +216,8 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
                                         'assets/images/ic-edit-avatar-setting.png',
                                     title: '',
                                     function: () {
-                                      QRGeneratedDTO qrGeneratedDTO =
-                                          QRGeneratedDTO(
-                                        bankCode: state.contactDetailDTO
-                                                .bankShortName ??
-                                            '',
-                                        bankName:
-                                            state.contactDetailDTO.bankName ??
-                                                '',
-                                        bankAccount: state
-                                                .contactDetailDTO.bankAccount ??
-                                            '',
-                                        userBankName:
-                                            state.contactDetailDTO.nickName ??
-                                                '',
-                                        amount: '',
-                                        content: '',
-                                        qrCode:
-                                            state.contactDetailDTO.value ?? '',
-                                        imgId:
-                                            state.contactDetailDTO.imgId ?? '',
-                                      );
-                                      Navigator.pushNamed(
-                                        context,
-                                        Routes.QR_SHARE_VIEW,
-                                        arguments: {
-                                          'qrGeneratedDTO': qrGeneratedDTO,
-                                          'action': 'SAVE'
-                                        },
-                                      );
+                                      actionServices(
+                                          context, 'SAVE', qrGeneratedDTO);
                                     },
                                     bgColor: Theme.of(context).cardColor,
                                     textColor: AppColor.RED_CALENDAR,
@@ -290,27 +232,6 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
                                     pathIcon: 'assets/images/ic-copy-blue.png',
                                     title: '',
                                     function: () async {
-                                      QRGeneratedDTO qrGeneratedDTO =
-                                          QRGeneratedDTO(
-                                        bankCode: state.contactDetailDTO
-                                                .bankShortName ??
-                                            '',
-                                        bankName:
-                                            state.contactDetailDTO.bankName ??
-                                                '',
-                                        bankAccount: state
-                                                .contactDetailDTO.bankAccount ??
-                                            '',
-                                        userBankName:
-                                            state.contactDetailDTO.nickName ??
-                                                '',
-                                        amount: '',
-                                        content: '',
-                                        qrCode:
-                                            state.contactDetailDTO.value ?? '',
-                                        imgId:
-                                            state.contactDetailDTO.imgId ?? '',
-                                      );
                                       await FlutterClipboard.copy(ShareUtils
                                               .instance
                                               .getTextSharing(qrGeneratedDTO))
@@ -342,33 +263,8 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
                                     height: 40,
                                     pathIcon: 'assets/images/ic-share-blue.png',
                                     title: '',
-                                    function: () {
-                                      QRGeneratedDTO qrGeneratedDTO =
-                                          QRGeneratedDTO(
-                                        bankCode: state.contactDetailDTO
-                                                .bankShortName ??
-                                            '',
-                                        bankName:
-                                            state.contactDetailDTO.bankName ??
-                                                '',
-                                        bankAccount: state
-                                                .contactDetailDTO.bankAccount ??
-                                            '',
-                                        userBankName:
-                                            state.contactDetailDTO.nickName ??
-                                                '',
-                                        amount: '',
-                                        content: '',
-                                        qrCode:
-                                            state.contactDetailDTO.value ?? '',
-                                        imgId:
-                                            state.contactDetailDTO.imgId ?? '',
-                                      );
-                                      Navigator.pushNamed(
-                                          context, Routes.QR_SHARE_VIEW,
-                                          arguments: {
-                                            'qrGeneratedDTO': qrGeneratedDTO
-                                          });
+                                    function: () async {
+                                      await share(dto: qrGeneratedDTO);
                                     },
                                     bgColor: Theme.of(context).cardColor,
                                     textColor: AppColor.BLUE_TEXT,
@@ -393,7 +289,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
   ImageProvider getEmbeddedImageImage(ContactDetailDTO dto) {
     if (dto.type == 1 || dto.type == 3) {
       if (dto.imgId?.isNotEmpty ?? false) {
-        return ImageUtils.instance.getImageNetWork(dto.imgId ?? '');
+        return ImageUtils.instance.getImageNetworkCache(dto.imgId ?? '');
       }
     }
     return const AssetImage('assets/images/ic-viet-qr-small.png');
@@ -516,8 +412,8 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
               borderRadius: BorderRadius.circular(40),
               image: dto.imgId?.isNotEmpty ?? false
                   ? DecorationImage(
-                      image:
-                          ImageUtils.instance.getImageNetWork(dto.imgId ?? ''),
+                      image: ImageUtils.instance
+                          .getImageNetworkCache(dto.imgId ?? ''),
                       fit: BoxFit.cover)
                   : const DecorationImage(
                       image: AssetImage('assets/images/ic-viet-qr-small.png'),
@@ -549,5 +445,146 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
         ],
       ),
     );
+  }
+
+  Widget _buildViewCard(ContactDetailDTO dto, BuildContext contextBloc) {
+    if (dto.type == 2) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          RepaintBoundaryWidget(
+              globalKey: globalKey,
+              builder: (key) {
+                return VietQr(qrGeneratedDTO: qrGeneratedDTO);
+              }),
+          const SizedBox(
+            height: 24,
+          ),
+          Text(
+            'Mô tả QR',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          Container(
+            width: double.infinity,
+            margin: EdgeInsets.symmetric(vertical: 8),
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+                color: AppColor.WHITE, borderRadius: BorderRadius.circular(8)),
+            child: Text(dto.additionalData ?? ''),
+          )
+        ],
+      );
+    } else {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Stack(
+            children: [
+              RepaintBoundaryWidget(
+                  globalKey: globalKey,
+                  builder: (key) {
+                    return Container(
+                      margin: EdgeInsets.symmetric(vertical: 32),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          gradient: dto.getBgGradient()),
+                      child: Column(
+                        children: [
+                          const SizedBox(
+                            height: 60,
+                          ),
+                          Container(
+                            margin: const EdgeInsets.only(
+                                left: 40, right: 40, top: 68, bottom: 32),
+                            decoration: BoxDecoration(
+                              color: AppColor.WHITE,
+                            ),
+                            child: Stack(
+                              children: [
+                                QrImage(
+                                  data: dto.value ?? '',
+                                  version: QrVersions.auto,
+                                ),
+                                Positioned(
+                                  top: 0,
+                                  bottom: 0,
+                                  right: 0,
+                                  left: 0,
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(20),
+                                      child: Image(
+                                        height: 30,
+                                        width: 30,
+                                        fit: BoxFit.cover,
+                                        image: getEmbeddedImageImage(dto),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                          Text(
+                            dto.nickName ?? '',
+                            style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: AppColor.WHITE),
+                          ),
+                          const SizedBox(
+                            height: 4,
+                          ),
+                          Text(
+                            dto.additionalData ?? '',
+                            style: TextStyle(color: AppColor.WHITE),
+                          ),
+                          const SizedBox(
+                            height: 100,
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+              Positioned(
+                  top: 32,
+                  right: 0,
+                  left: 0,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _buildTypeQr(dto, onEdit: () async {
+                        final data = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                ContactEditView(contactDetailDTO: dto),
+                            // settings: RouteSettings(name: ContactEditView.routeName),
+                          ),
+                        );
+
+                        if (!mounted) return;
+                        if (data is bool) {
+                          BlocProvider.of<ContactBloc>(contextBloc)
+                              .add(ContactEventGetDetail(id: widget.dto.id));
+                        }
+                      }),
+                      Container(
+                        width: double.infinity,
+                        height: 1,
+                        color: AppColor.greyF0F0F0,
+                      ),
+                    ],
+                  )),
+            ],
+          ),
+          const SizedBox(
+            height: 60,
+          ),
+        ],
+      );
+    }
   }
 }

@@ -434,7 +434,7 @@ class _ContactStateState extends State<_ContactState>
       if (imageId.isNotEmpty) {
         return DecorationImage(
             image: ImageUtils.instance.getImageNetWork(imageId),
-            fit: BoxFit.cover);
+            fit: type == 2 ? BoxFit.contain : BoxFit.cover);
       }
     }
     return const DecorationImage(

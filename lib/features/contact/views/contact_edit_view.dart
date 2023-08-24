@@ -237,7 +237,7 @@ class _ContactEditViewState extends State<ContactEditView> {
                           ),
                           Expanded(
                             child: MButtonWidget(
-                              title: 'Cập nhật thông tin',
+                              title: 'Cập nhật',
                               isEnable: true,
                               margin: EdgeInsets.zero,
                               onTap: () async {
