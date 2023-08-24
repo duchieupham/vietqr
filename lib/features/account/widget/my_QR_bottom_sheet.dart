@@ -49,9 +49,6 @@ class _MyQRBottomSheetState extends State<MyQRBottomSheet> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     _buildTypeQr(
-                        imgId: UserInformationHelper.instance
-                            .getAccountInformation()
-                            .imgId,
                         typeQR: TypeContact.VietQR_ID,
                         name: UserInformationHelper.instance.getUserFullname()),
                     Container(
@@ -59,21 +56,40 @@ class _MyQRBottomSheetState extends State<MyQRBottomSheet> {
                       height: 1,
                       color: AppColor.greyF0F0F0,
                     ),
-                    Container(
-                      margin: const EdgeInsets.only(
-                          left: 40, right: 40, top: 30, bottom: 30),
-                      decoration: BoxDecoration(
-                        color: AppColor.WHITE,
-                      ),
-                      child: QrImage(
-                        data: UserInformationHelper.instance.getWalletId(),
-                        version: QrVersions.auto,
-                        embeddedImage: const AssetImage(
-                            'assets/images/ic-viet-qr-small.png'),
-                        embeddedImageStyle: QrEmbeddedImageStyle(
-                          size: const Size(30, 30),
+                    Stack(
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(
+                              left: 40, right: 40, top: 30, bottom: 30),
+                          decoration: BoxDecoration(
+                            color: AppColor.WHITE,
+                          ),
+                          child: QrImage(
+                            data: UserInformationHelper.instance.getWalletId(),
+                            version: QrVersions.auto,
+                          ),
                         ),
-                      ),
+                        Positioned.fill(
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Container(
+                              width: 30.0,
+                              height: 30.0,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    fit: BoxFit.cover,
+                                    image: ImageUtils.instance.getImageNetWork(
+                                        UserInformationHelper.instance
+                                            .getAccountInformation()
+                                            .imgId)),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(100)),
+                                color: Colors.redAccent,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     Text(
                       UserInformationHelper.instance.getUserFullname(),
@@ -201,9 +217,7 @@ class _MyQRBottomSheetState extends State<MyQRBottomSheet> {
   }
 
   Widget _buildTypeQr(
-      {String? imgId,
-      TypeContact typeQR = TypeContact.NONE,
-      required String name}) {
+      {TypeContact typeQR = TypeContact.NONE, required String name}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
@@ -214,13 +228,9 @@ class _MyQRBottomSheetState extends State<MyQRBottomSheet> {
             decoration: BoxDecoration(
               color: AppColor.WHITE,
               borderRadius: BorderRadius.circular(40),
-              image: imgId != null
-                  ? DecorationImage(
-                      image: ImageUtils.instance.getImageNetWork(imgId ?? ''),
-                      fit: BoxFit.contain)
-                  : const DecorationImage(
-                      image: AssetImage('assets/images/ic-viet-qr-small.png'),
-                      fit: BoxFit.contain),
+              image: const DecorationImage(
+                  image: AssetImage('assets/images/ic-viet-qr-small.png'),
+                  fit: BoxFit.contain),
             ),
           ),
           SizedBox(
