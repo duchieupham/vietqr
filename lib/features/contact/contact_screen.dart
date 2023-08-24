@@ -171,7 +171,7 @@ class _ContactStateState extends State<_ContactState>
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 30, 20, 16),
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
@@ -183,7 +183,7 @@ class _ContactStateState extends State<_ContactState>
                             Text(
                               'Nơi lưu trữ mã QR của bạn',
                               style: TextStyle(
-                                  fontSize: 14,
+                                  fontSize: 12,
                                   color: AppColor.GREY_TEXT,
                                   height: 1.4),
                             ),
