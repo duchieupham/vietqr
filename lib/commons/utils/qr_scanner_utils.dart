@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
+import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/vietqr/aid.dart';
 import 'package:vierqr/commons/constants/vietqr/viet_qr_id.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
@@ -8,18 +9,18 @@ import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/contact/save_contact_screen.dart';
-import 'package:vierqr/features/dashboard/views/dialog_scan_type_bank.dart';
-import 'package:vierqr/features/dashboard/views/dialog_scan_type_other.dart';
-import 'package:vierqr/features/dashboard/views/dialog_scan_type_url.dart';
+import 'package:vierqr/features/scan_qr/views/dialog_scan_type_bank.dart';
+import 'package:vierqr/features/scan_qr/views/dialog_scan_type_id.dart';
+import 'package:vierqr/features/scan_qr/views/dialog_scan_type_other.dart';
+import 'package:vierqr/features/scan_qr/views/dialog_scan_type_url.dart';
 import 'package:vierqr/models/add_contact_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/viet_qr_scanned_dto.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class QRScannerUtils {
-  const QRScannerUtils._privateConsrtructor();
+  const QRScannerUtils._privateConstructor();
 
-  static const QRScannerUtils _instance = QRScannerUtils._privateConsrtructor();
+  static const QRScannerUtils _instance = QRScannerUtils._privateConstructor();
 
   static QRScannerUtils get instance => _instance;
 
@@ -111,56 +112,21 @@ class QRScannerUtils {
           DialogWidget.instance.showModelBottomSheet(
             context: context,
             padding: EdgeInsets.zero,
+            bgrColor: AppColor.TRANSPARENT,
             widget: DialogScanBank(
               dto: value,
-              onTapSave: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => SaveContactScreen(
-                      code: value.qrCode,
-                      typeQR: type,
-                      dto: value,
-                    ),
-                  ),
-                );
-
-                // onTapSave!(dto);
-              },
-              onTapAdd: () async {
-                if (value is QRGeneratedDTO) {
-                  if (value.isNaviAddBank) {
-                    await Navigator.pushNamed(
-                      context,
-                      Routes.ADD_BANK_CARD,
-                      arguments: {
-                        'step': 0,
-                        'bankDTO': bankTypeDTO,
-                        'bankAccount': value.bankAccount,
-                        'name': ''
-                      },
-                    );
-
-                    eventBus.fire(ChangeThemeEvent());
-                  } else {
-                    onTapAdd!({
-                      'data': value,
-                    });
-                  }
-                }
-              },
+              bankTypeDTO: bankTypeDTO,
             ),
           );
-
           break;
         case TypeContact.VietQR_ID:
-          await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => SaveContactScreen(
-                code: value,
-                typeQR: type,
-              ),
+          await DialogWidget.instance.showModelBottomSheet(
+            context: context,
+            padding: EdgeInsets.zero,
+            bgrColor: AppColor.TRANSPARENT,
+            widget: DialogScanTypeID(
+              dto: value,
+              typeQR: type,
             ),
           );
 
@@ -173,6 +139,7 @@ class QRScannerUtils {
             await DialogWidget.instance.showModelBottomSheet(
               context: context,
               padding: EdgeInsets.zero,
+              bgrColor: AppColor.TRANSPARENT,
               widget: DialogScanURL(
                 code: value ?? '',
                 onTapSave: () async {
@@ -203,6 +170,7 @@ class QRScannerUtils {
             await DialogWidget.instance.showModelBottomSheet(
               context: context,
               padding: EdgeInsets.zero,
+              bgrColor: AppColor.TRANSPARENT,
               widget: DialogScanOther(
                 code: value ?? '',
                 onTapSave: () async {

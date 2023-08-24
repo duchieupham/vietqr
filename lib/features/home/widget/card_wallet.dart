@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/services/providers/auth_provider.dart';
@@ -139,10 +140,10 @@ class CardWallet extends StatelessWidget {
         ),
         Expanded(
           child: _buildItemAction(
-            'assets/images/ic-contact.png',
-            'Danh bạ',
+            'assets/images/ic-qr-wallet-grey.png',
+            'Ví QR',
             () {
-              Navigator.pushNamed(context, Routes.PHONE_BOOK);
+              eventBus.fire(ChangeBottomBarEvent(2));
             },
           ),
         ),

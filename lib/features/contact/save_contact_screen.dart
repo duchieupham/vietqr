@@ -21,12 +21,13 @@ import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/add_contact_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
+import 'package:vierqr/models/vietqr_dto.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class SaveContactScreen extends StatelessWidget {
   final String code;
   final TypeContact typeQR;
-  final QRGeneratedDTO? dto;
+  final dynamic dto;
 
   const SaveContactScreen(
       {super.key, required this.code, required this.typeQR, this.dto});
@@ -88,6 +89,11 @@ class _SaveContactScreenState extends State<_BodyWidget> {
               nameController.value.copyWith(text: state.nickName ?? '');
           Provider.of<ContactProvider>(context, listen: false)
               .onChangeName(state.nickName ?? '');
+          if (state.dto is VietQRDTO) {
+            VietQRDTO data = state.dto;
+            Provider.of<ContactProvider>(context, listen: false)
+                .updateColorType(data.colorType.toString());
+          }
         }
 
         if (state.type == ContactType.SCAN) {
@@ -145,7 +151,7 @@ class _SaveContactScreenState extends State<_BodyWidget> {
                                   dto: state.dto,
                                   bankTypeDto: state.bankTypeDTO,
                                 )
-                              else ...[
+                              else
                                 _buildOtherView(
                                   type: state.typeQR,
                                   nameController: nameController,
@@ -157,7 +163,6 @@ class _SaveContactScreenState extends State<_BodyWidget> {
                                   imgId: provider.file,
                                   onChangeLogo: provider.updateFile,
                                 ),
-                              ]
                             ],
                           ),
                         ),

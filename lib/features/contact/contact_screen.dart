@@ -119,6 +119,10 @@ class _ContactStateState extends State<_ContactState>
                 Provider.of<ContactProvider>(context, listen: false).offset++);
           }
 
+          if (state.type == ContactType.REMOVE) {
+            _bloc.add(ContactEventGetList());
+          }
+
           if (state.type == ContactType.SAVE) {
             Fluttertoast.showToast(
               msg: 'Lưu thành công',
@@ -167,19 +171,19 @@ class _ContactStateState extends State<_ContactState>
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 30, 20, 16),
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             Text(
                               'Ví QR',
                               style: const TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.w600),
+                                  fontSize: 16, fontWeight: FontWeight.w600),
                             ),
                             Text(
                               'Nơi lưu trữ mã QR của bạn',
                               style: TextStyle(
-                                  fontSize: 14,
+                                  fontSize: 12,
                                   color: AppColor.GREY_TEXT,
                                   height: 1.4),
                             ),
@@ -210,20 +214,35 @@ class _ContactStateState extends State<_ContactState>
                           }).toList(),
                         ),
                       ),
-                      if (provider.category != null)
-                        if (provider.category!.type == 0)
-                          Expanded(
-                            child: _buildTapSecond(
-                              list: state.listContactDTOSuggest,
-                            ),
-                          )
-                        else
-                          Expanded(
-                            child: _buildTapFirst(
-                              listContactDTO: provider.listSearch,
-                              onChange: provider.onSearch,
+                      if (state.isLoading)
+                        Expanded(
+                          child: const Center(
+                            child: SizedBox(
+                              width: 30,
+                              height: 30,
+                              child: CircularProgressIndicator(
+                                color: AppColor.BLUE_TEXT,
+                              ),
                             ),
                           ),
+                        )
+                      else ...[
+                        if (provider.category != null)
+                          if (provider.category!.type == 0)
+                            Expanded(
+                              child: _buildTapSecond(
+                                list: state.listContactDTOSuggest,
+                              ),
+                            )
+                          else
+                            Expanded(
+                              child: _buildTapFirst(
+                                listContactDTO: provider.listSearch,
+                                colors: state.colors,
+                                onChange: provider.onSearch,
+                              ),
+                            ),
+                      ]
                     ],
                   ),
                   Positioned(
@@ -303,6 +322,7 @@ class _ContactStateState extends State<_ContactState>
 
   Widget _buildTapFirst({
     required List<ContactDTO> listContactDTO,
+    required List<Color> colors,
     ValueChanged<String>? onChange,
   }) {
     return Padding(
@@ -357,11 +377,13 @@ class _ContactStateState extends State<_ContactState>
                               style:
                                   const TextStyle(fontWeight: FontWeight.bold)),
                         ),
-                        _buildItemSave(dto: listContactDTO[index]),
+                        _buildItemSave(
+                            dto: listContactDTO[index], color: colors[index]),
                       ],
                     );
                   }
-                  return _buildItemSave(dto: listContactDTO[index]);
+                  return _buildItemSave(
+                      dto: listContactDTO[index], color: colors[index]);
                 },
               ),
             ),
@@ -371,12 +393,14 @@ class _ContactStateState extends State<_ContactState>
     );
   }
 
-  Widget _buildItemSave({required ContactDTO? dto}) {
+  Widget _buildItemSave({
+    required ContactDTO? dto,
+    required Color? color,
+  }) {
     return GestureDetector(
       onTap: () async {
         await Navigator.pushNamed(context, Routes.PHONE_BOOK_DETAIL,
             arguments: dto);
-        _bloc.add(ContactEventGetList());
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -394,14 +418,7 @@ class _ContactStateState extends State<_ContactState>
                 color: AppColor.WHITE,
                 borderRadius: BorderRadius.circular(40),
                 border: Border.all(color: AppColor.GREY_LIGHT.withOpacity(0.3)),
-                image: dto?.type == 2
-                    ? DecorationImage(
-                        image: ImageUtils.instance
-                            .getImageNetWork(dto?.imgId ?? ''),
-                        fit: BoxFit.contain)
-                    : const DecorationImage(
-                        image: AssetImage('assets/images/ic-viet-qr-small.png'),
-                        fit: BoxFit.contain),
+                image: getImage(dto?.type ?? 0, dto?.imgId ?? ''),
               ),
             ),
             const SizedBox(width: 10),
@@ -420,10 +437,10 @@ class _ContactStateState extends State<_ContactState>
                   ),
                   Text(
                     dto?.description ?? '',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w400,
-                      color: AppColor.BLUE_TEXT,
+                      color: color,
                       height: 1.4,
                     ),
                   ),
@@ -434,6 +451,19 @@ class _ContactStateState extends State<_ContactState>
         ),
       ),
     );
+  }
+
+  DecorationImage getImage(int type, String imageId) {
+    if (type == 2 || type == 3) {
+      if (imageId.isNotEmpty) {
+        return DecorationImage(
+            image: ImageUtils.instance.getImageNetWork(imageId),
+            fit: type == 2 ? BoxFit.contain : BoxFit.cover);
+      }
+    }
+    return const DecorationImage(
+        image: AssetImage('assets/images/ic-viet-qr-small.png'),
+        fit: BoxFit.contain);
   }
 
   Widget _buildTapSecond({required List<ContactDTO> list}) {

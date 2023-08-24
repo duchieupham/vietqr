@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:http/http.dart' as http;
 import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
@@ -97,15 +99,20 @@ class ContactRepository {
     return result;
   }
 
-  Future<ResponseMessageDTO> updateContact(query) async {
+  Future<ResponseMessageDTO> updateContact(query, File? file) async {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
+    final List<http.MultipartFile> files = [];
+    if (file != null) {
+      final imageFile = await http.MultipartFile.fromPath('image', file.path);
+      files.add(imageFile);
+    }
     try {
       String url = '${EnvConfig.getBaseUrl()}contact-qr/update';
       final response = await BaseAPIClient.postMultipartAPI(
         url: url,
         fields: query,
-        files: [],
+        files: files,
       );
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
@@ -139,26 +146,6 @@ class ContactRepository {
       LOG.error('Error at requestPermissions - PermissionRepository: $e');
     }
     return result;
-  }
-
-  Future<Map> getNickname(walletId) async {
-    Map mapData = {};
-    try {
-      String url = '${EnvConfig.getBaseUrl()}contact/scan-result/$walletId';
-      final response = await BaseAPIClient.getAPI(
-        url: url,
-        type: AuthenticationType.SYSTEM,
-      );
-      if (response.statusCode == 200) {
-        var data = jsonDecode(response.body);
-        if (data != null) {
-          mapData = data;
-        }
-      }
-    } catch (e) {
-      LOG.error('Error at requestPermissions - PermissionRepository: $e');
-    }
-    return mapData;
   }
 
   Future<List<ContactDTO>> getListContactRecharge(userId) async {

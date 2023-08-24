@@ -116,6 +116,14 @@ class _ServiceSectionState extends State<ServiceSection> {
             );
           }
         }),
+        _buildItemService(
+          context,
+          'assets/images/ic-business-3D.png',
+          'Doanh nghiệp',
+          () async {
+            Navigator.pushNamed(context, Routes.BUSINESS);
+          },
+        ),
         if (Provider.of<AuthProvider>(context, listen: false).isUpdateVersion)
           _buildItemService(
             context,

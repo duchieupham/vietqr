@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:palette_generator/palette_generator.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
+import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/base_manager.dart';
 import 'package:vierqr/commons/utils/check_utils.dart';
+import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
@@ -11,12 +14,13 @@ import 'package:vierqr/features/contact/events/contact_event.dart';
 import 'package:vierqr/features/contact/repostiroties/contact_repository.dart';
 import 'package:vierqr/features/contact/states/contact_state.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
+import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/contact_detail_dto.dart';
 import 'package:vierqr/models/contact_dto.dart';
-import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/models/viet_qr_scanned_dto.dart';
+import 'package:vierqr/models/vietqr_dto.dart';
 
 class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
   @override
@@ -24,7 +28,7 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
 
   final String qrCode;
   final TypeContact typeQR;
-  final QRGeneratedDTO? dto;
+  final dynamic dto;
 
   ContactBloc(this.context,
       {this.qrCode = '', this.typeQR = TypeContact.NONE, this.dto})
@@ -35,6 +39,7 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
           qrCode: qrCode,
           typeQR: typeQR,
           dto: dto,
+          colors: const [],
         )) {
     on<InitDataEvent>(_getNickNameWalletId);
     on<ContactEventGetList>(_getListContact);
@@ -56,17 +61,40 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
   void _getListContact(ContactEvent event, Emitter emit) async {
     try {
       if (event is ContactEventGetList) {
-        emit(state.copyWith(status: BlocStatus.NONE, type: ContactType.NONE));
+        List<Color> colors = [];
+        PaletteGenerator? paletteGenerator;
+        BuildContext context = NavigationService.navigatorKey.currentContext!;
+        emit(state.copyWith(
+            status: BlocStatus.NONE, isLoading: true, type: ContactType.NONE));
         int type = event.type ?? 9;
         int offset = event.offset ?? 0;
 
         List<ContactDTO> result =
             await repository.getListSaveContact(userId, type, offset * 20);
         result.sort((a, b) => a.nickname.compareTo(b.nickname));
+        for (ContactDTO dto in result) {
+          if (dto.type == 1) {
+            colors.add(AppColor.BLUE_TEXT);
+          } else if (dto.type == 3) {
+            colors.add(AppColor.GREY_TEXT);
+          } else {
+            NetworkImage image = ImageUtils.instance.getImageNetWork(dto.imgId);
+            paletteGenerator = await PaletteGenerator.fromImageProvider(image);
+            if (paletteGenerator.dominantColor != null) {
+              colors.add(paletteGenerator.dominantColor!.color);
+            } else {
+              if (!mounted) return;
+              colors.add(Theme.of(context).cardColor);
+            }
+          }
+        }
+
         emit(
           state.copyWith(
             listContactDTO: result,
             type: ContactType.GET_LIST,
+            colors: colors,
+            isLoading: false,
           ),
         );
       }
@@ -185,12 +213,10 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
     try {
       if (event is UpdateContactEvent) {
         emit(
-          state.copyWith(
-            status: BlocStatus.LOADING,
-            type: ContactType.REMOVE,
-          ),
+          state.copyWith(status: BlocStatus.LOADING, type: ContactType.NONE),
         );
-        ResponseMessageDTO result = await repository.updateContact(event.query);
+        ResponseMessageDTO result =
+            await repository.updateContact(event.query, event.image);
         if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
           emit(state.copyWith(
               status: BlocStatus.UNLOADING, type: ContactType.UPDATE));
@@ -258,21 +284,17 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
       if (event is GetNickNameContactEvent) {
         if (typeQR == TypeContact.VietQR_ID) {
           emit(state.copyWith(status: BlocStatus.NONE, type: ContactType.NONE));
-          final result = await repository.getNickname(qrCode);
-          String nickName = '';
-          String imgId = '';
-          if (result.containsKey('nickname')) {
-            nickName = result['nickname'];
-          }
+          if (dto is VietQRDTO) {
+            VietQRDTO data = dto;
 
-          if (result.containsKey('imgId')) {
-            imgId = result['imgId'];
+            emit(
+              state.copyWith(
+                type: ContactType.NICK_NAME,
+                nickName: data.nickName,
+                imgId: data.imgId,
+              ),
+            );
           }
-
-          emit(
-            state.copyWith(
-                type: ContactType.NICK_NAME, nickName: nickName, imgId: imgId),
-          );
         } else if (typeQR == TypeContact.Bank) {
           VietQRScannedDTO vietQRScannedDTO =
               QRScannerUtils.instance.getBankAccountFromQR(qrCode);

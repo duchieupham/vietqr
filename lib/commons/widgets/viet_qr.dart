@@ -7,22 +7,24 @@ import 'package:vierqr/models/qr_generated_dto.dart';
 
 class VietQr extends StatelessWidget {
   final QRGeneratedDTO qrGeneratedDTO;
-  final bool? isSmallWidget;
   final String? content;
 
-  const VietQr(
-      {super.key,
-      required this.qrGeneratedDTO,
-      this.isSmallWidget = false,
-      this.content});
+  const VietQr({super.key, required this.qrGeneratedDTO, this.content});
 
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+
+    bool isSmallWidget = height < 800;
     return Container(
       width: width,
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      padding: const EdgeInsets.only(bottom: 20, left: 20, right: 20),
+      margin: height < 800
+          ? EdgeInsets.zero
+          : const EdgeInsets.symmetric(vertical: 8),
+      padding: height < 800
+          ? const EdgeInsets.only(bottom: 16, left: 20, right: 20)
+          : const EdgeInsets.only(bottom: 20, left: 20, right: 20),
       decoration: const BoxDecoration(
         image: DecorationImage(
           image: AssetImage('assets/images/bg_napas_qr.png'),
@@ -34,8 +36,9 @@ class VietQr extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Container(
-            margin:
-                const EdgeInsets.only(left: 8, right: 8, top: 30, bottom: 24),
+            margin: height < 800
+                ? const EdgeInsets.only(left: 8, right: 8, top: 24, bottom: 20)
+                : const EdgeInsets.only(left: 8, right: 8, top: 30, bottom: 24),
             decoration: BoxDecoration(
               color: AppColor.WHITE,
               borderRadius: const BorderRadius.all(Radius.circular(16)),
@@ -51,16 +54,17 @@ class VietQr extends StatelessWidget {
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(top: 24),
+                  padding: const EdgeInsets.only(top: 16),
                   child: Image.asset(
                     'assets/images/ic-viet-qr.png',
-                    width: width * 0.22,
+                    width: height < 800 ? width * 0.15 : width * 0.22,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: QrImage(
+                    size: height < 800 ? width / 2 : null,
                     data: qrGeneratedDTO.qrCode,
                     version: QrVersions.auto,
                     embeddedImage:
@@ -71,13 +75,13 @@ class VietQr extends StatelessWidget {
                   ),
                 ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(left: 24),
                       child: Image.asset(
                         'assets/images/ic-napas247.png',
-                        width: width / 2 * 0.5,
+                        width: height < 800 ? width / 2 * 0.3 : width / 2 * 0.5,
                       ),
                     ),
                     if (qrGeneratedDTO.imgId.isNotEmpty)
@@ -86,12 +90,17 @@ class VietQr extends StatelessWidget {
                         child: Image(
                           image: ImageUtils.instance
                               .getImageNetWork(qrGeneratedDTO.imgId),
-                          width: width / 2 * 0.5,
+                          width: height < 800
+                              ? (width / 2 * 0.3)
+                              : (width / 2 * 0.5),
                           fit: BoxFit.fill,
                         ),
                       )
                     else
-                      SizedBox(width: width / 2 * 0.5),
+                      SizedBox(
+                          width: height < 800
+                              ? (width / 2 * 0.3)
+                              : (width / 2 * 0.5)),
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -117,8 +126,7 @@ class VietQr extends StatelessWidget {
                   qrGeneratedDTO.userBankName.toUpperCase(),
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize:
-                        (isSmallWidget != null && isSmallWidget!) ? 12 : 15,
+                    fontSize: (isSmallWidget) ? 12 : 15,
                     fontWeight: FontWeight.normal,
                   ),
                 ),
@@ -126,9 +134,8 @@ class VietQr extends StatelessWidget {
                 Text(
                   qrGeneratedDTO.bankAccount,
                   style: TextStyle(
-                    fontSize:
-                        (isSmallWidget != null && isSmallWidget!) ? 12 : 15,
-                    fontWeight: FontWeight.w500,
+                    fontSize: (isSmallWidget) ? 12 : 15,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -136,8 +143,7 @@ class VietQr extends StatelessWidget {
                   qrGeneratedDTO.bankName,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize:
-                        (isSmallWidget != null && isSmallWidget!) ? 12 : 15,
+                    fontSize: (isSmallWidget) ? 12 : 15,
                     fontWeight: FontWeight.normal,
                   ),
                 ),
@@ -154,7 +160,7 @@ class VietQr extends StatelessWidget {
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  fontSize: (isSmallWidget != null && isSmallWidget!) ? 12 : 15,
+                  fontSize: (isSmallWidget) ? 12 : 15,
                 ),
               ),
             ),

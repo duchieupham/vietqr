@@ -419,11 +419,14 @@ class DialogWidget {
     EdgeInsetsGeometry? padding,
     EdgeInsetsGeometry? margin,
     BorderRadiusGeometry? borderRadius,
+    Color? bgrColor,
+    bool isDismissible = false,
   }) async {
     context ??= NavigationService.navigatorKey.currentContext!;
     return showModalBottomSheet(
       isScrollControlled: true,
       enableDrag: false,
+      isDismissible: isDismissible,
       useRootNavigator: true,
       context: context,
       backgroundColor: AppColor.TRANSPARENT,
@@ -441,7 +444,7 @@ class DialogWidget {
               decoration: BoxDecoration(
                 borderRadius: borderRadius ??
                     BorderRadius.vertical(top: Radius.circular(radius)),
-                color: Theme.of(context).cardColor,
+                color: bgrColor ?? Theme.of(context).cardColor,
               ),
               child: widget,
             ),

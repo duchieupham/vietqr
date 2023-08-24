@@ -1,4 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
@@ -8,7 +9,6 @@ import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/commons/utils/transaction_utils.dart';
-import 'package:flutter/material.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
@@ -18,6 +18,7 @@ import 'package:vierqr/features/business/blocs/business_bloc.dart';
 import 'package:vierqr/features/business/events/business_event.dart';
 import 'package:vierqr/features/business/states/business_state.dart';
 import 'package:vierqr/features/business/widgets/select_branch_widget.dart';
+import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/business_detail_dto.dart';
 import 'package:vierqr/models/business_item_dto.dart';
 import 'package:vierqr/models/related_transaction_receive_dto.dart';
@@ -96,69 +97,68 @@ class _BusinessScreenState extends State<_BusinessScreen>
               isSecondBT: false,
             );
           }
-        },
-        builder: (context, state) {
+
           if (state.status == BlocStatus.SUCCESS) {
             Provider.of<DashboardProvider>(context, listen: false)
                 .updateBusinessLength(state.list.length);
           }
-
-          if (state.list.isEmpty) {
-            return _buildListBlank();
-          } else {
-            return SizedBox(
-              width: width,
-              height: height,
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 20),
-                child: Stack(
-                  children: [
-                    Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            bottom: 12, left: 16, right: 16),
-                        child: Image.asset(
-                          'assets/images/bg-business.png',
-                          width: width,
-                          fit: BoxFit.fitWidth,
-                        ),
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Container(
-                        height: height * 0.5,
-                        padding: const EdgeInsets.only(
-                            bottom: 12, left: 16, right: 16),
-                        width: width,
-                        color: Theme.of(context)
-                            .scaffoldBackgroundColor
-                            .withOpacity(0.8),
-                      ),
-                    ),
-                    Positioned(
-                      top: 60,
-                      left: 0,
-                      right: 0,
-                      child: Column(
-                        children: [
-                          _buildBusinessWidget(context, state.list),
-                          Consumer<DashboardProvider>(
-                              builder: (context, provider, child) {
-                            return _buildButtonList(context,
-                                dto: state.list[provider.businessSelect]);
-                          }),
-                          const SizedBox(
-                            height: 12,
-                          ),
-                          _buildIndicatorDot(),
-                          const SizedBox(
-                            height: 12,
-                          ),
-                          Row(
+        },
+        builder: (context, state) {
+          return Scaffold(
+            appBar: const MAppBar(title: 'Doanh nghiệp'),
+            body: state.status == BlocStatus.LOADING
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : SizedBox(
+                    width: width,
+                    height: height,
+                    child: Stack(
+                      children: [
+                        state.list.isNotEmpty
+                            ? Positioned(
+                                top: 28,
+                                left: 0,
+                                right: 0,
+                                child: SizedBox(
+                                  height: height - 28,
+                                  child: ListView(
+                                    children: [
+                                      _buildBusinessWidget(context, state.list),
+                                      const SizedBox(
+                                        height: 12,
+                                      ),
+                                      Consumer<DashboardProvider>(
+                                          builder: (context, provider, child) {
+                                        return _buildButtonList(context,
+                                            dto: state
+                                                .list[provider.businessSelect]);
+                                      }),
+                                      const SizedBox(
+                                        height: 28,
+                                      ),
+                                      _buildIndicatorDot(),
+                                      const SizedBox(
+                                        height: 200,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              )
+                            : Padding(
+                                padding: EdgeInsets.only(top: 80),
+                                child: Align(
+                                    alignment: Alignment.topCenter,
+                                    child: Text(
+                                        'Bạn chưa thuộc doanh nghiệp nào')),
+                              ),
+                        Positioned(
+                          bottom: 20,
+                          right: 0,
+                          left: 0,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Spacer(),
                               ButtonWidget(
                                 width: 170,
                                 height: 40,
@@ -173,20 +173,13 @@ class _BusinessScreenState extends State<_BusinessScreen>
                                   _refresh();
                                 },
                               ),
-                              const Spacer(),
                             ],
                           ),
-                        ],
-                      ),
+                        )
+                      ],
                     ),
-                    // _buildSuggestion(context),
-
-                    // const Padding(padding: EdgeInsets.only(bottom: 100)),
-                  ],
-                ),
-              ),
-            );
-          }
+                  ),
+          );
         },
       ),
     );
@@ -203,20 +196,10 @@ class _BusinessScreenState extends State<_BusinessScreen>
             margin: const EdgeInsets.only(right: 8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
-              color: AppColor.GREY_BG,
-              border: Border.all(
-                  width: 1,
-                  color: index == provider.businessSelect
-                      ? AppColor.BLUE_TEXT
-                      : AppColor.GREY_BG),
-              boxShadow: <BoxShadow>[
-                BoxShadow(
-                  color: Theme.of(context).shadowColor.withOpacity(0.6),
-                  spreadRadius: 2,
-                  blurRadius: 2,
-                  offset: const Offset(0, 0),
-                ),
-              ],
+              color: index == provider.businessSelect
+                  ? AppColor.BLUE_TEXT
+                  : AppColor.GREY_BG,
+              border: Border.all(width: 1, color: AppColor.BLUE_TEXT),
             ),
           );
         }).toList(),
@@ -252,43 +235,28 @@ class _BusinessScreenState extends State<_BusinessScreen>
                 ),
               ),
               Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: Row(
-                    children: [
-                      const Spacer(),
-                      ButtonWidget(
-                        width: 170,
-                        height: 40,
-                        text: 'Tạo doanh nghiệp',
-                        textColor: AppColor.WHITE,
-                        bgColor: AppColor.BLUE_TEXT,
-                        borderRadius: 20,
-                        enableShadow: true,
-                        function: () {
-                          Navigator.pushNamed(
-                              context, Routes.ADD_BUSINESS_VIEW);
-                        },
-                      ),
-                      // Expanded(
-                      //   child: UnconstrainedBox(
-                      //     child: ButtonIconWidget(
-                      //       width: 40,
-                      //       height: 40,
-                      //       icon: Icons.question_mark_sharp,
-                      //       title: '',
-                      //       function: () async {},
-                      //       bgColor: Theme.of(context).cardColor,
-                      //       textColor: AppColor.BLUE_TEXT,
-                      //       borderRadius: 30,
-                      //       enableShadow: true,
-                      //     ),
-                      //   ),
-                      // )
-                      const Spacer(),
-                    ],
-                  ))
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Row(
+                  children: [
+                    const Spacer(),
+                    ButtonWidget(
+                      width: 170,
+                      height: 40,
+                      text: 'Tạo doanh nghiệp',
+                      textColor: AppColor.WHITE,
+                      bgColor: AppColor.BLUE_TEXT,
+                      borderRadius: 20,
+                      enableShadow: true,
+                      function: () {
+                        Navigator.pushNamed(context, Routes.ADD_BUSINESS_VIEW);
+                      },
+                    ),
+                    const Spacer(),
+                  ],
+                ),
+              )
             ],
           ),
           const SizedBox(
@@ -302,44 +270,25 @@ class _BusinessScreenState extends State<_BusinessScreen>
   Widget _buildBusinessWidget(
       BuildContext context, List<BusinessItemDTO> listBusinessItemDTO) {
     final double height = MediaQuery.of(context).size.height;
-    return Row(
-      children: [
-        GestureDetector(
-            onTap: () {
-              carouselController.previousPage();
-            },
-            child: Padding(
-              padding: EdgeInsets.only(left: 8, bottom: height * 0.1),
-              child: const Icon(Icons.arrow_back_ios),
-            )),
-        Expanded(
-          child: CarouselSlider(
-              carouselController: carouselController,
-              items: List.generate(listBusinessItemDTO.length, (index) {
-                return _buildBusinessItem(
-                  context: context,
-                  dto: listBusinessItemDTO[index],
-                );
-              }).toList(),
-              options: CarouselOptions(
-                viewportFraction: 1,
-                aspectRatio: 0.8,
-                disableCenter: true,
-                onPageChanged: ((index, reason) {
-                  Provider.of<DashboardProvider>(context, listen: false)
-                      .updateBusinessSelect(index);
-                }),
-              )),
-        ),
-        GestureDetector(
-            onTap: () {
-              carouselController.nextPage();
-            },
-            child: Padding(
-              padding: EdgeInsets.only(right: 8, left: 4, bottom: height * 0.1),
-              child: const Icon(Icons.arrow_forward_ios),
-            )),
-      ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: CarouselSlider(
+          carouselController: carouselController,
+          items: List.generate(listBusinessItemDTO.length, (index) {
+            return _buildBusinessItem(
+              context: context,
+              dto: listBusinessItemDTO[index],
+            );
+          }).toList(),
+          options: CarouselOptions(
+            viewportFraction: 1,
+            aspectRatio: 0.8,
+            disableCenter: true,
+            onPageChanged: ((index, reason) {
+              Provider.of<DashboardProvider>(context, listen: false)
+                  .updateBusinessSelect(index);
+            }),
+          )),
     );
   }
 
@@ -565,7 +514,7 @@ class _BusinessScreenState extends State<_BusinessScreen>
     double height = MediaQuery.of(context).size.height;
     if (dto.role == TypeRole.ADMIN.role) {
       return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32),
+        padding: const EdgeInsets.symmetric(horizontal: 28),
         child: Row(
           children: [
             Expanded(
@@ -607,7 +556,6 @@ class _BusinessScreenState extends State<_BusinessScreen>
                   bgColor: Theme.of(context).cardColor,
                   textColor: AppColor.BLUE_TEXT,
                   borderRadius: 30,
-                  enableShadow: true,
                 ),
               ),
             ),
@@ -619,7 +567,7 @@ class _BusinessScreenState extends State<_BusinessScreen>
                   width: 40,
                   height: 40,
                   pathIcon: 'assets/images/ic-card-blue.png',
-                  title: 'Kết nối tài khoản',
+                  title: 'Kết nối TK',
                   textSize: 11,
                   iconSize: 25,
                   function: () async {
@@ -648,7 +596,6 @@ class _BusinessScreenState extends State<_BusinessScreen>
                   bgColor: Theme.of(context).cardColor,
                   textColor: AppColor.BLUE_TEXT,
                   borderRadius: 30,
-                  enableShadow: true,
                 ),
               ),
             ),
@@ -673,7 +620,6 @@ class _BusinessScreenState extends State<_BusinessScreen>
               bgColor: Theme.of(context).cardColor,
               textColor: AppColor.RED_TEXT,
               borderRadius: 30,
-              enableShadow: true,
             ),
             const SizedBox(
               width: 6,
@@ -691,7 +637,7 @@ class _BusinessScreenState extends State<_BusinessScreen>
     return Stack(
       children: [
         Container(
-          height: 80,
+          height: 60,
           padding: const EdgeInsets.fromLTRB(12, 16, 0, 8),
           decoration: BoxDecoration(
             color: Colors.black26,
@@ -723,7 +669,7 @@ class _BusinessScreenState extends State<_BusinessScreen>
                 end: Alignment.topCenter,
                 tileMode: TileMode.clamp),
           ),
-          padding: const EdgeInsets.fromLTRB(12, 32, 0, 8),
+          padding: const EdgeInsets.fromLTRB(16, 16, 0, 16),
           child: Row(
             children: [
               Container(

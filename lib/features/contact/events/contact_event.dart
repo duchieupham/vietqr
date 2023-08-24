@@ -44,8 +44,8 @@ class RemoveContactEvent extends ContactEvent {
 
 class UpdateContactEvent extends ContactEvent {
   final Map<String, dynamic> query;
-
-  UpdateContactEvent(this.query);
+  final File? image;
+  UpdateContactEvent(this.query, this.image);
 
   @override
   List<Object?> get props => [query];

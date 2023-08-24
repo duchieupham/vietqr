@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/contact_detail_dto.dart';
@@ -19,7 +20,9 @@ class ContactState extends Equatable {
   final BankTypeDTO? bankTypeDTO;
   final ContactDTO? userSearch;
   final String? imgId;
-  final QRGeneratedDTO? dto;
+  final dynamic dto;
+  final List<Color> colors;
+  final bool isLoading;
 
   const ContactState({
     required this.listContactDTO,
@@ -36,6 +39,8 @@ class ContactState extends Equatable {
     this.userSearch,
     this.imgId,
     this.dto,
+    required this.colors,
+    this.isLoading = false,
   });
 
   ContactState copyWith({
@@ -52,7 +57,9 @@ class ContactState extends Equatable {
     ContactDTO? userSearch,
     BankTypeDTO? bankTypeDTO,
     String? imgId,
-    QRGeneratedDTO? dto,
+    dynamic dto,
+    List<Color>? colors,
+    bool? isLoading,
   }) {
     return ContactState(
       status: status ?? this.status,
@@ -70,6 +77,8 @@ class ContactState extends Equatable {
       userSearch: userSearch ?? this.userSearch,
       imgId: imgId ?? this.imgId,
       dto: dto ?? this.dto,
+      colors: colors ?? this.colors,
+      isLoading: isLoading ?? this.isLoading,
     );
   }
 

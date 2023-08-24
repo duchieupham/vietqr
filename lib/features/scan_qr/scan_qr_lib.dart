@@ -123,6 +123,14 @@ class _ScanQrScreenState extends State<_BodyWidget> {
           });
         }
 
+        if (state.request == ScanType.NICK_NAME) {
+          Navigator.of(context).pop({
+            'type': state.typeContact,
+            'typeQR': TypeQR.QR_ID,
+            'data': state.vietQRDTO,
+          });
+        }
+
         if (state.request == ScanType.SCAN) {
           if (state.typeQR == TypeQR.QR_BANK) {
             String transferType = '';
@@ -152,17 +160,7 @@ class _ScanQrScreenState extends State<_BodyWidget> {
               },
             );
           } else if (state.typeQR == TypeQR.QR_ID) {
-            // _bloc.add(ScanQrEventGetNickName(code: state.codeQR ?? ''));
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (_) => SaveContactScreen(
-                  code: state.codeQR ?? '',
-                  typeQR: TypeContact.VietQR_ID,
-                ),
-                // settings: RouteSettings(name: ContactEditView.routeName),
-              ),
-            );
+            _bloc.add(ScanQrEventGetNickName(code: state.codeQR ?? ''));
           } else if (state.typeQR == TypeQR.QR_LINK) {
             Navigator.of(context).pop({
               'type': state.typeContact,
