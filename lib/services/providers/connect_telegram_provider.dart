@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ConnectTelegramProvider extends ChangeNotifier {
   bool _chooseAllBank = false;
@@ -19,6 +20,8 @@ class ConnectTelegramProvider extends ChangeNotifier {
   String get chatId => _chatId;
   bool _errChatId = false;
   bool get errChatId => _errChatId;
+  String _clipboardText = '';
+  String get clipboardText => _clipboardText;
 
   addAll(String bankId) {
     _chooseAllBank = true;
@@ -29,7 +32,7 @@ class ConnectTelegramProvider extends ChangeNotifier {
 
   void updateChatId(String value) {
     _chatId = value;
-    if (_chatId.isEmpty || _chatId[0] != '-') {
+    if (_chatId.isEmpty || double.tryParse(_chatId) == null) {
       _errChatId = true;
     } else {
       _errChatId = false;
@@ -63,5 +66,21 @@ class ConnectTelegramProvider extends ChangeNotifier {
     }
     print('--------------------------$bankIds');
     notifyListeners();
+  }
+
+  void getClipBoardData() async {
+    ClipboardData? data = await Clipboard.getData(Clipboard.kTextPlain);
+
+    if (data?.text?.isNotEmpty ?? false) {
+      String textCopied = data?.text! ?? '';
+      if (double.tryParse(textCopied) != null && textCopied.length > 6) {
+        _clipboardText = textCopied;
+        notifyListeners();
+      }
+    }
+  }
+
+  clearClipBoardData() {
+    _clipboardText = '';
   }
 }

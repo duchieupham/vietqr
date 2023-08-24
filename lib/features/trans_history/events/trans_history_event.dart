@@ -15,6 +15,20 @@ class TransactionEventGetListBranch extends TransHistoryEvent {
   List<Object?> get props => [dto];
 }
 
-class TransactionEventGetList extends TransHistoryEvent {}
+class TransactionEventGetList extends TransHistoryEvent {
+  final int status;
 
-class TransactionEventFetch extends TransHistoryEvent {}
+  TransactionEventGetList(this.status);
+
+  @override
+  List<Object?> get props => [status];
+}
+
+class TransactionEventFetch extends TransHistoryEvent {
+  final int status;
+
+  TransactionEventFetch(this.status);
+
+  @override
+  List<Object?> get props => [status];
+}

@@ -39,3 +39,12 @@ class PermissionEventGetStatus extends ScanQrEvent {
   @override
   List<Object?> get props => [];
 }
+
+class ScanQrEventGetNickName extends ScanQrEvent {
+  final String code;
+
+  const ScanQrEventGetNickName({required this.code});
+
+  @override
+  List<Object?> get props => [code];
+}

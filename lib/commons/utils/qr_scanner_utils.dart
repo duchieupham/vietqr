@@ -113,17 +113,19 @@ class QRScannerUtils {
             padding: EdgeInsets.zero,
             widget: DialogScanBank(
               dto: value,
-              onTapSave: () {
-                AddContactDTO dto = AddContactDTO(
-                  additionalData: 'Đã thêm từ quét QR',
-                  nickName: value.userBankName,
-                  type: type.value,
-                  value: value.qrCode,
-                  userId: UserInformationHelper.instance.getUserId(),
-                  bankTypeId: value.bankTypeId,
-                  bankAccount: value.bankAccount,
+              onTapSave: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => SaveContactScreen(
+                      code: value.qrCode,
+                      typeQR: type,
+                      dto: value,
+                    ),
+                  ),
                 );
-                onTapSave!(dto);
+
+                // onTapSave!(dto);
               },
               onTapAdd: () async {
                 if (value is QRGeneratedDTO) {

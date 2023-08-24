@@ -30,11 +30,12 @@ class TransHistoryBloc extends Bloc<TransHistoryEvent, TransHistoryState>
   void _getTransactions(TransHistoryEvent event, Emitter emit) async {
     try {
       if (event is TransactionEventGetList) {
-        final dto = TransactionInputDTO(bankId: bankId, offset: 0);
+        final dto = TransactionInputDTO(
+            bankId: bankId, offset: 0, status: event.status);
         bool isLoadMore = false;
         emit(state.copyWith(status: BlocStatus.LOADING));
         final List<RelatedTransactionReceiveDTO> result =
-            await transactionRepository.getTransactionByBankId(dto);
+            await transactionRepository.getTrans(dto);
         if (result.isEmpty || result.length < 20) {
           isLoadMore = true;
         }
@@ -60,12 +61,13 @@ class TransHistoryBloc extends Bloc<TransHistoryEvent, TransHistoryState>
         bool isLoadMore = false;
         int offset = state.offset;
         offset += 1;
-        final dto = TransactionInputDTO(bankId: bankId, offset: offset * 20);
+        final dto = TransactionInputDTO(
+            bankId: bankId, offset: offset * 20, status: event.status);
         List<RelatedTransactionReceiveDTO> data = state.list;
         emit(state.copyWith(
             status: BlocStatus.NONE, type: TransHistoryType.NONE));
         final List<RelatedTransactionReceiveDTO> result =
-            await transactionRepository.getTransactionByBankId(dto);
+            await transactionRepository.getTrans(dto);
         if (result.isEmpty || result.length < 20) {
           isLoadMore = true;
         }

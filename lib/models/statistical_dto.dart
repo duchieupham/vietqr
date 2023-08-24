@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class ResponseStatisticDTO {
   final int totalTrans;
   final int totalTransC;
@@ -26,5 +28,15 @@ class ResponseStatisticDTO {
       totalTransC: json['totalTransC'] ?? 0,
       totalTransD: json['totalTransD'] ?? 0,
     );
+  }
+
+  DateTime formatDateMonth() {
+    DateTime tempDate = DateFormat("yyyy-MM-dd hh:mm:ss").parse(month);
+
+    return tempDate;
+  }
+
+  String getMonth() {
+    return month.substring(5);
   }
 }

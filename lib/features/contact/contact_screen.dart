@@ -16,7 +16,6 @@ import 'package:vierqr/features/contact/states/contact_state.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/layouts/button_widget.dart';
-import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/contact_dto.dart';
 
 import 'save_contact_screen.dart';
@@ -29,7 +28,7 @@ class ContactScreen extends StatelessWidget {
     return BlocProvider<ContactBloc>(
       create: (context) => ContactBloc(context),
       child: ChangeNotifierProvider<ContactProvider>(
-        create: (context) => ContactProvider(),
+        create: (context) => ContactProvider()..updateCategory(isFirst: true),
         child: _ContactState(),
       ),
     );
@@ -48,16 +47,8 @@ class _ContactStateState extends State<_ContactState>
 
   final searchController = TextEditingController();
 
-  List<DataModel> listTab = [
-    DataModel(
-      title: 'Đã lưu',
-      index: 0,
-    ),
-    DataModel(
-      title: 'Gợi ý',
-      index: 1,
-    ),
-  ];
+  final scrollController = ScrollController();
+  final controller = ScrollController();
 
   @override
   void initState() {
@@ -70,9 +61,23 @@ class _ContactStateState extends State<_ContactState>
       _bloc.add(ContactEventGetList());
       _bloc.add(ContactEventGetListPending());
     });
+
+    controller.addListener(_loadMore);
+  }
+
+  _loadMore() async {
+    int type =
+        Provider.of<ContactProvider>(context, listen: false).category!.type;
+    int offset = Provider.of<ContactProvider>(context, listen: false).offset;
+
+    final maxScroll = controller.position.maxScrollExtent;
+    if (controller.offset >= maxScroll && !controller.position.outOfRange) {
+      _bloc.add(ContactEventGetList(type: type, offset: offset));
+    }
   }
 
   Future<void> _onRefresh() async {
+    Provider.of<ContactProvider>(context, listen: false).updateOffset(0);
     _bloc.add(ContactEventGetList());
   }
 
@@ -96,37 +101,7 @@ class _ContactStateState extends State<_ContactState>
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      appBar: MAppBar(
-        title: 'Danh bạ',
-        actions: [
-          GestureDetector(
-            onTap: () async {
-              final data =
-                  await Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
-              if (data is Map<String, dynamic>) {
-                if (!mounted) return;
-                await QRScannerUtils.instance.onScanNavi(data, context,
-                    onTapSave: (data) async {
-                  _bloc.add(SaveContactEvent(dto: data));
-                }, onTapAdd: (data) {
-                  context
-                      .read<DashBoardBloc>()
-                      .add(DashBoardCheckExistedEvent(dto: data['data']));
-                }, onCallBack: () {
-                  _bloc.add(ContactEventGetList());
-                });
-              }
-              _bloc.add(ContactEventGetList());
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Image.asset(
-                'assets/images/ic-tb-qr.png',
-              ),
-            ),
-          )
-        ],
-      ),
+      backgroundColor: Colors.transparent,
       body: BlocConsumer<ContactBloc, ContactState>(
         listener: (context, state) async {
           if (state.status == BlocStatus.LOADING) {
@@ -138,10 +113,10 @@ class _ContactStateState extends State<_ContactState>
           }
 
           if (state.type == ContactType.GET_LIST) {
-            if (state.listContactDTO.isNotEmpty) {
-              Provider.of<ContactProvider>(context, listen: false)
-                  .updateList(state.listContactDTO);
-            }
+            Provider.of<ContactProvider>(context, listen: false)
+                .updateList(state.listContactDTO);
+            Provider.of<ContactProvider>(context, listen: false).updateOffset(
+                Provider.of<ContactProvider>(context, listen: false).offset++);
           }
 
           if (state.type == ContactType.SAVE) {
@@ -186,45 +161,109 @@ class _ContactStateState extends State<_ContactState>
         builder: (context, state) {
           return Consumer<ContactProvider>(
             builder: (context, provider, child) {
-              return Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-                child: Column(
-                  children: [
-                    Row(
-                      children: List.generate(listTab.length, (index) {
-                        DataModel model = listTab.elementAt(index);
-                        return _buildTab(
-                            onTap: () {
-                              _animatedToPage(index);
-                            },
-                            text: model.title,
-                            isSuggest: index == 1 &&
-                                state.listContactDTOSuggest.isNotEmpty,
-                            isSelect: provider.tab == model.index,
-                            textSuggest:
-                                '${state.listContactDTOSuggest.length}');
-                      }).toList(),
-                    ),
-                    Expanded(
-                      child: PageView(
-                        key: const PageStorageKey('Page_view_contact'),
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        controller: _pageController,
-                        onPageChanged: (index) async {
-                          provider.updateTab(index);
-                        },
-                        children: [
-                          _buildTapFirst(
-                            listContactDTO: provider.listSearch,
-                            onChange: provider.onSearch,
+              return Stack(
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 30, 20, 16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Text(
+                              'Ví QR',
+                              style: const TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.w600),
+                            ),
+                            Text(
+                              'Nơi lưu trữ mã QR của bạn',
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  color: AppColor.GREY_TEXT,
+                                  height: 1.4),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.only(left: 20),
+                        child: Row(
+                          children: List.generate(
+                              provider.listCategories.length, (index) {
+                            final model = provider.listCategories[index];
+                            return GestureDetector(
+                              onTap: () {
+                                provider.updateCategory(value: model);
+                                _bloc.add(ContactEventGetList(
+                                    type: provider.category?.type));
+                                if (scrollController.hasClients)
+                                  scrollController.jumpTo(0.0);
+                              },
+                              child: _buildCategory(
+                                title: model.title,
+                                url: model.url,
+                                isSelect: provider.category == model,
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                      if (provider.category != null)
+                        if (provider.category!.type == 0)
+                          Expanded(
+                            child: _buildTapSecond(
+                              list: state.listContactDTOSuggest,
+                            ),
+                          )
+                        else
+                          Expanded(
+                            child: _buildTapFirst(
+                              listContactDTO: provider.listSearch,
+                              onChange: provider.onSearch,
+                            ),
                           ),
-                          _buildTapSecond(list: state.listContactDTOSuggest),
-                        ],
+                    ],
+                  ),
+                  Positioned(
+                    bottom: 30,
+                    right: 20,
+                    child: GestureDetector(
+                      onTap: () async {
+                        final data = await Navigator.pushNamed(
+                            context, Routes.SCAN_QR_VIEW);
+                        if (data is Map<String, dynamic>) {
+                          if (!mounted) return;
+                          await QRScannerUtils.instance.onScanNavi(
+                              data, context, onTapSave: (data) async {
+                            _bloc.add(SaveContactEvent(dto: data));
+                          }, onTapAdd: (data) {
+                            context.read<DashBoardBloc>().add(
+                                DashBoardCheckExistedEvent(dto: data['data']));
+                          }, onCallBack: () {
+                            _bloc.add(
+                              ContactEventGetList(
+                                type: provider.category?.type,
+                              ),
+                            );
+                          });
+                        }
+                        _bloc.add(
+                            ContactEventGetList(type: provider.category?.type));
+                      },
+                      child: Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                            color: AppColor.BLUE_TEXT,
+                            borderRadius: BorderRadius.circular(100)),
+                        child: Image.asset(
+                            'assets/images/ic-add-new-qr-wallet.png'),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               );
             },
           );
@@ -233,91 +272,102 @@ class _ContactStateState extends State<_ContactState>
     );
   }
 
-  Widget _buildTapSecond({required List<ContactDTO> list}) {
-    if (list.isNotEmpty) {
-      return RefreshIndicator(
-        onRefresh: _onRefreshTabSecond,
-        child: SingleChildScrollView(
-          child: Container(
-            margin: const EdgeInsets.only(top: 16),
-            child: Column(
-              children: List.generate(
-                list.length,
-                (index) {
-                  ContactDTO dto = list[index];
-                  return _buildItemSuggest(dto: dto);
-                },
-              ).toList(),
+  Widget _buildCategory(
+      {required String title, required String url, bool isSelect = false}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      margin: const EdgeInsets.only(right: 10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: isSelect ? AppColor.BLUE_TEXT : AppColor.WHITE,
+      ),
+      child: Row(
+        children: [
+          Image.asset(
+            url,
+            width: 35,
+            color: isSelect ? AppColor.WHITE : AppColor.BLUE_TEXT,
+          ),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 12,
+              color: isSelect ? AppColor.WHITE : AppColor.BLUE_TEXT,
             ),
           ),
-        ),
-      );
-    }
-    return const SizedBox.shrink();
+          const SizedBox(width: 4),
+        ],
+      ),
+    );
   }
 
   Widget _buildTapFirst({
     required List<ContactDTO> listContactDTO,
     ValueChanged<String>? onChange,
   }) {
-    return Column(
-      children: [
-        const SizedBox(height: 10),
-        TextFieldCustom(
-          isObscureText: false,
-          maxLines: 1,
-          fillColor: AppColor.WHITE,
-          controller: searchController,
-          hintText: 'Tìm kiếm danh bạ',
-          inputType: TextInputType.text,
-          prefixIcon: const Icon(Icons.search),
-          keyboardAction: TextInputAction.next,
-          onChange: onChange,
-        ),
-        const SizedBox(height: 20),
-        Expanded(
-          child: RefreshIndicator(
-            onRefresh: _onRefresh,
-            child: ListView.separated(
-              itemCount: listContactDTO.length,
-              separatorBuilder: (context, index) {
-                if (index == listContactDTO.length - 1) {
-                  return const SizedBox.shrink();
-                }
-                String firstLetterA = (listContactDTO[index].nickname)[0];
-                String firstLetterB = (listContactDTO[index + 1].nickname)[0];
-                if (firstLetterA != firstLetterB) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 4),
-                    child: Text(
-                      firstLetterB,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  );
-                }
-                return const SizedBox.shrink();
-              },
-              itemBuilder: (BuildContext context, int index) {
-                if (index == 0) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 4),
-                        child: Text((listContactDTO[index].nickname)[0],
-                            style:
-                                const TextStyle(fontWeight: FontWeight.bold)),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        children: [
+          const SizedBox(height: 10),
+          TextFieldCustom(
+            isObscureText: false,
+            maxLines: 1,
+            fillColor: AppColor.WHITE,
+            controller: searchController,
+            hintText: 'Tìm kiếm danh bạ',
+            inputType: TextInputType.text,
+            prefixIcon: const Icon(Icons.search),
+            keyboardAction: TextInputAction.next,
+            onChange: onChange,
+          ),
+          const SizedBox(height: 20),
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: _onRefresh,
+              child: ListView.separated(
+                padding: EdgeInsets.zero,
+                itemCount: listContactDTO.length,
+                controller: scrollController,
+                separatorBuilder: (context, index) {
+                  if (index == listContactDTO.length - 1) {
+                    return const SizedBox.shrink();
+                  }
+                  String firstLetterA = (listContactDTO[index].nickname)[0];
+                  String firstLetterB = (listContactDTO[index + 1].nickname)[0];
+                  if (firstLetterA != firstLetterB) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 4),
+                      child: Text(
+                        firstLetterB,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      _buildItemSave(dto: listContactDTO[index]),
-                    ],
-                  );
-                }
-                return _buildItemSave(dto: listContactDTO[index]);
-              },
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+                itemBuilder: (BuildContext context, int index) {
+                  if (index == 0) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 4),
+                          child: Text((listContactDTO[index].nickname)[0],
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold)),
+                        ),
+                        _buildItemSave(dto: listContactDTO[index]),
+                      ],
+                    );
+                  }
+                  return _buildItemSave(dto: listContactDTO[index]);
+                },
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -384,6 +434,30 @@ class _ContactStateState extends State<_ContactState>
         ),
       ),
     );
+  }
+
+  Widget _buildTapSecond({required List<ContactDTO> list}) {
+    if (list.isNotEmpty) {
+      return RefreshIndicator(
+        onRefresh: _onRefreshTabSecond,
+        child: SingleChildScrollView(
+          controller: controller,
+          child: Container(
+            margin: const EdgeInsets.only(top: 16),
+            child: Column(
+              children: List.generate(
+                list.length,
+                (index) {
+                  ContactDTO dto = list[index];
+                  return _buildItemSuggest(dto: dto);
+                },
+              ).toList(),
+            ),
+          ),
+        ),
+      );
+    }
+    return const SizedBox.shrink();
   }
 
   Widget _buildItemSuggest({required ContactDTO? dto}) {
@@ -542,11 +616,4 @@ class _ContactStateState extends State<_ContactState>
 
   @override
   bool get wantKeepAlive => true;
-}
-
-class DataModel {
-  final String title;
-  final int index;
-
-  DataModel({required this.title, required this.index});
 }

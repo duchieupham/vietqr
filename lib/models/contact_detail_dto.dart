@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class ContactDetailDTO {
   final String? id;
   final String? additionalData;
@@ -9,6 +11,7 @@ class ContactDetailDTO {
   final String? bankName;
   final String? imgId;
   final String? bankAccount;
+  final int colorType;
 
   ContactDetailDTO({
     this.id = '',
@@ -21,6 +24,7 @@ class ContactDetailDTO {
     this.bankName = '',
     this.imgId = '',
     this.bankAccount = '',
+    this.colorType = 0,
   });
 
   factory ContactDetailDTO.fromJson(Map<String, dynamic> json) =>
@@ -35,6 +39,7 @@ class ContactDetailDTO {
         imgId: json["imgId"],
         bankAccount: json["bankAccount"],
         bankName: json["bankName"],
+        colorType: json["colorType"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -48,5 +53,65 @@ class ContactDetailDTO {
         "bankShortName": bankShortName,
         "status": status,
         "id": id,
+        "colorType": colorType,
       };
+
+  Gradient getBgGradient() {
+    switch (colorType) {
+      case 0:
+        return LinearGradient(
+          colors: [
+            const Color(0xFF5FFFD8),
+            const Color(0xFF0A7AFF),
+          ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        );
+      case 1:
+        return LinearGradient(
+          colors: [
+            const Color(0xFF52FBFF),
+            const Color(0xFF06711B),
+          ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        );
+      case 2:
+        return LinearGradient(
+          colors: [
+            const Color(0xFFEECDFF),
+            const Color(0xFF49558A),
+          ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        );
+      case 3:
+        return LinearGradient(
+          colors: [
+            const Color(0xFFFBAE1F),
+            const Color(0xFFFC6A01),
+          ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        );
+      case 4:
+        return LinearGradient(
+          colors: [
+            const Color(0xFFFF6DC6),
+            const Color(0xFFF8837A),
+          ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        );
+      default:
+        return LinearGradient(
+          colors: [
+            const Color(0xFF5FFFD8),
+            const Color(0xFF0A7AFF),
+          ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        );
+    }
+  }
 }

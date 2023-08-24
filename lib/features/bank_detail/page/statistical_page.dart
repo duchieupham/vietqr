@@ -10,6 +10,8 @@ import 'package:vierqr/features/bank_detail/states/statistical_state.dart';
 import 'package:vierqr/models/statistical_dto.dart';
 import 'package:vierqr/services/providers/statistical_provider.dart';
 
+import '../views/line_chart.dart';
+
 // ignore: must_be_immutable
 class Statistical extends StatelessWidget {
   final String bankId;
@@ -37,6 +39,10 @@ class Statistical extends StatelessWidget {
             return ListView(
               padding: const EdgeInsets.only(top: 12),
               children: [
+                LineChart(
+                  listData: state.listData,
+                ),
+                const SizedBox(height: 24,),
                 // Container(
                 //   padding: const EdgeInsets.fromLTRB(0, 40, 4, 12),
                 //   width: MediaQuery.of(context).size.width,
@@ -166,12 +172,12 @@ class Statistical extends StatelessWidget {
                     title: 'Tổng quan'),
                 _buildItemOverView(
                     provider.typeStatistical == TypeStatistical.all
-                        ? dto.totalTrans.toString()
+                        ? dto.totalTransC.toString()
                         : provider.responseStatisticDTO.totalTransC.toString(),
                     title: 'Nhận tiền đến'),
                 _buildItemOverView(
                     provider.typeStatistical == TypeStatistical.all
-                        ? dto.totalTrans.toString()
+                        ? dto.totalTransD.toString()
                         : provider.responseStatisticDTO.totalTransD.toString(),
                     title: 'Chuyển tiền đi')
               ],

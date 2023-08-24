@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:equatable/equatable.dart';
 import 'package:vierqr/models/add_contact_dto.dart';
 
@@ -6,7 +8,17 @@ class ContactEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class ContactEventGetList extends ContactEvent {}
+class InitDataEvent extends ContactEvent {}
+
+class ContactEventGetList extends ContactEvent {
+  final int? type;
+  final int? offset;
+
+  ContactEventGetList({this.type, this.offset});
+
+  @override
+  List<Object?> get props => [type, offset];
+}
 
 class ContactEventGetListRecharge extends ContactEvent {}
 
@@ -41,11 +53,15 @@ class UpdateContactEvent extends ContactEvent {
 
 class SaveContactEvent extends ContactEvent {
   final AddContactDTO dto;
+  final File? file;
 
-  SaveContactEvent({required this.dto});
+  SaveContactEvent({
+    required this.dto,
+    this.file,
+  });
 
   @override
-  List<Object?> get props => [dto];
+  List<Object?> get props => [dto, file];
 }
 
 class ScanQrContactEvent extends ContactEvent {
@@ -72,6 +88,7 @@ class UpdateEventContact extends ContactEvent {}
 
 class SearchUser extends ContactEvent {
   final String phoneNo;
+
   SearchUser(this.phoneNo);
 
   @override
