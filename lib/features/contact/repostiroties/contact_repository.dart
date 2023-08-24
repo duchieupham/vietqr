@@ -148,26 +148,6 @@ class ContactRepository {
     return result;
   }
 
-  Future<Map> getNickname(walletId) async {
-    Map mapData = {};
-    try {
-      String url = '${EnvConfig.getBaseUrl()}contact/scan-result/$walletId';
-      final response = await BaseAPIClient.getAPI(
-        url: url,
-        type: AuthenticationType.SYSTEM,
-      );
-      if (response.statusCode == 200) {
-        var data = jsonDecode(response.body);
-        if (data != null) {
-          mapData = data;
-        }
-      }
-    } catch (e) {
-      LOG.error('Error at requestPermissions - PermissionRepository: $e');
-    }
-    return mapData;
-  }
-
   Future<List<ContactDTO>> getListContactRecharge(userId) async {
     List<ContactDTO> list = [];
     try {

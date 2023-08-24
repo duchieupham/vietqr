@@ -157,6 +157,20 @@ extension TypeContactExt2 on TypeContact {
         return '';
     }
   }
+
+  String get dialogName {
+    switch (this) {
+      case TypeContact.VietQR_ID:
+        return 'VietQR ID';
+      case TypeContact.Bank:
+        return 'Mã VietQR ngân hàng';
+      case TypeContact.Other:
+        return 'Mã QR không xác định';
+      case TypeContact.NONE:
+      default:
+        return '';
+    }
+  }
 }
 
 enum BankDetailType { NONE, SUCCESS, DELETED, ERROR, UN_LINK, OTP }
@@ -264,6 +278,7 @@ enum ScanType {
   SCAN_NOT_FOUND,
   SEARCH_NAME,
   PERMISSION,
+  NICK_NAME,
 }
 
 enum TokenType {

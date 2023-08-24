@@ -19,7 +19,7 @@ class ContactState extends Equatable {
   final BankTypeDTO? bankTypeDTO;
   final ContactDTO? userSearch;
   final String? imgId;
-  final QRGeneratedDTO? dto;
+  final dynamic dto;
 
   const ContactState({
     required this.listContactDTO,
@@ -52,7 +52,7 @@ class ContactState extends Equatable {
     ContactDTO? userSearch,
     BankTypeDTO? bankTypeDTO,
     String? imgId,
-    QRGeneratedDTO? dto,
+    dynamic dto,
   }) {
     return ContactState(
       status: status ?? this.status,

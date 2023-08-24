@@ -119,6 +119,10 @@ class _ContactStateState extends State<_ContactState>
                 Provider.of<ContactProvider>(context, listen: false).offset++);
           }
 
+          if (state.type == ContactType.REMOVE) {
+            _bloc.add(ContactEventGetList());
+          }
+
           if (state.type == ContactType.SAVE) {
             Fluttertoast.showToast(
               msg: 'Lưu thành công',

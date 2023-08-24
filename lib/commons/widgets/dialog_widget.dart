@@ -419,6 +419,7 @@ class DialogWidget {
     EdgeInsetsGeometry? padding,
     EdgeInsetsGeometry? margin,
     BorderRadiusGeometry? borderRadius,
+    Color? bgrColor,
   }) async {
     context ??= NavigationService.navigatorKey.currentContext!;
     return showModalBottomSheet(
@@ -441,7 +442,7 @@ class DialogWidget {
               decoration: BoxDecoration(
                 borderRadius: borderRadius ??
                     BorderRadius.vertical(top: Radius.circular(radius)),
-                color: Theme.of(context).cardColor,
+                color: bgrColor ?? Theme.of(context).cardColor,
               ),
               child: widget,
             ),

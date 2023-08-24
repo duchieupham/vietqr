@@ -128,7 +128,7 @@ class VietQr extends StatelessWidget {
                   style: TextStyle(
                     fontSize:
                         (isSmallWidget != null && isSmallWidget!) ? 12 : 15,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 4),
