@@ -50,7 +50,7 @@ class _ContactEditViewState extends State<ContactEditView> {
   @override
   void initState() {
     super.initState();
-    typeColorCard = widget.contactDetailDTO.type ?? 0;
+    typeColorCard = widget.contactDetailDTO.colorType ?? 0;
     imageLogoId = widget.contactDetailDTO.imgId ?? '';
     WidgetsBinding.instance.addPostFrameCallback((_) {
       nickNameController.text = widget.contactDetailDTO.nickName ?? '';
@@ -103,114 +103,120 @@ class _ContactEditViewState extends State<ContactEditView> {
           return Scaffold(
             appBar: const MAppBar(title: 'Cập nhật thẻ QR', actions: []),
             body: SafeArea(
-              child: Stack(
+              child: Column(
                 children: [
-                  ListView(
-                    padding: EdgeInsets.zero,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 30),
-                        child: Column(
-                          children: [
-                            _buildTypeQr(widget.contactDetailDTO),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(bottom: 16, top: 8),
-                              child: _buildTypeNameQr(widget.contactDetailDTO),
-                            ),
-                            TextFieldCustom(
-                              isObscureText: false,
-                              maxLines: 1,
-                              fillColor: AppColor.WHITE,
-                              controller: nickNameController,
-                              textFieldType: TextfieldType.LABEL,
-                              title: 'Tên',
-                              hintText: '',
-                              isRequired: true,
-                              inputType: TextInputType.text,
-                              keyboardAction: TextInputAction.next,
-                              onChange: (value) {},
-                            ),
-                            const SizedBox(height: 16),
-                            TextFieldCustom(
-                              isObscureText: false,
-                              maxLines: 4,
-                              fillColor: AppColor.WHITE,
-                              textFieldType: TextfieldType.LABEL,
-                              title: 'Mô tả QR',
-                              contentPadding: EdgeInsets.symmetric(
-                                  vertical: 12, horizontal: 16),
-                              controller: suggestController,
-                              hintText: 'Nhập mô tả cho mã QR của bạn',
-                              inputType: TextInputType.text,
-                              keyboardAction: TextInputAction.next,
-                              onChange: (value) {},
-                            ),
-                          ],
+                  Expanded(
+                    child: ListView(
+                      padding: EdgeInsets.zero,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 30),
+                          child: Column(
+                            children: [
+                              _buildTypeQr(widget.contactDetailDTO),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(bottom: 16, top: 8),
+                                child:
+                                    _buildTypeNameQr(widget.contactDetailDTO),
+                              ),
+                              const SizedBox(
+                                height: 8,
+                              ),
+                              TextFieldCustom(
+                                isObscureText: false,
+                                maxLines: 1,
+                                fillColor: AppColor.WHITE,
+                                controller: nickNameController,
+                                textFieldType: TextfieldType.LABEL,
+                                title: 'Tên',
+                                hintText: '',
+                                isRequired: true,
+                                inputType: TextInputType.text,
+                                keyboardAction: TextInputAction.next,
+                                onChange: (value) {},
+                              ),
+                              const SizedBox(height: 24),
+                              TextFieldCustom(
+                                isObscureText: false,
+                                maxLines: 4,
+                                fillColor: AppColor.WHITE,
+                                textFieldType: TextfieldType.LABEL,
+                                title: 'Mô tả QR',
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: 12, horizontal: 16),
+                                controller: suggestController,
+                                hintText: 'Nhập mô tả cho mã QR của bạn',
+                                inputType: TextInputType.text,
+                                keyboardAction: TextInputAction.next,
+                                onChange: (value) {},
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      if (widget.contactDetailDTO.type == 1 ||
-                          widget.contactDetailDTO.type == 3)
-                        _buildChooseColor((colorType) {
-                          setState(() {
-                            typeColorCard = colorType;
-                          });
-                        }),
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8),
-                        child: GestureDetector(
-                          onTap: () {
-                            DialogWidget.instance.openMsgDialog(
-                              title: 'Xoá thẻ QR',
-                              msg: 'Bạn có chắc chắn muốn xoá thẻ này?',
-                              isSecondBT: true,
-                              functionConfirm: () {
-                                Navigator.of(context).pop();
-                                BlocProvider.of<ContactBloc>(context).add(
-                                    RemoveContactEvent(
-                                        id: widget.contactDetailDTO.id ?? ''));
-                              },
-                            );
-                          },
-                          child: Container(
-                            margin: EdgeInsets.symmetric(horizontal: 20),
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 12),
-                            decoration: BoxDecoration(
-                              color: AppColor.WHITE,
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.delete_outline,
-                                  color: AppColor.RED_TEXT,
-                                  size: 18,
-                                ),
-                                const SizedBox(
-                                  width: 4,
-                                ),
-                                Text(
-                                  'Xoá thẻ QR',
-                                  style: TextStyle(
+                        if (widget.contactDetailDTO.type == 1 ||
+                            widget.contactDetailDTO.type == 3)
+                          _buildChooseColor((colorType) {
+                            setState(() {
+                              typeColorCard = colorType;
+                            });
+                          }),
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 8),
+                          child: GestureDetector(
+                            onTap: () {
+                              DialogWidget.instance.openMsgDialog(
+                                title: 'Xoá thẻ QR',
+                                msg: 'Bạn có chắc chắn muốn xoá thẻ này?',
+                                isSecondBT: true,
+                                functionConfirm: () {
+                                  Navigator.of(context).pop();
+                                  BlocProvider.of<ContactBloc>(context).add(
+                                      RemoveContactEvent(
+                                          id: widget.contactDetailDTO.id ??
+                                              ''));
+                                },
+                              );
+                            },
+                            child: Container(
+                              margin: EdgeInsets.symmetric(horizontal: 20),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 12),
+                              decoration: BoxDecoration(
+                                color: AppColor.WHITE,
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.delete_outline,
                                     color: AppColor.RED_TEXT,
+                                    size: 18,
                                   ),
-                                )
-                              ],
+                                  const SizedBox(
+                                    width: 4,
+                                  ),
+                                  Text(
+                                    'Xoá thẻ QR',
+                                    style: TextStyle(
+                                      color: AppColor.RED_TEXT,
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(
-                        height: 120,
-                      )
-                    ],
+                        const SizedBox(
+                          height: 120,
+                        )
+                      ],
+                    ),
                   ),
-                  Positioned(
-                      bottom: 12,
-                      right: 20,
-                      left: 20,
+                  Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                       child: Row(
                         children: [
                           Expanded(
@@ -365,8 +371,8 @@ class _ContactEditViewState extends State<ContactEditView> {
                 borderRadius: BorderRadius.circular(12),
                 color: AppColor.WHITE,
                 image: DecorationImage(
-                    image:
-                        ImageUtils.instance.getImageNetWork(dto.imgId ?? '')),
+                    image: ImageUtils.instance.getImageNetWork(dto.imgId ?? ''),
+                    fit: BoxFit.cover),
               ),
             ),
             const SizedBox(
@@ -408,7 +414,8 @@ class _ContactEditViewState extends State<ContactEditView> {
                 image: dto.imgId!.isNotEmpty
                     ? DecorationImage(
                         image: ImageUtils.instance
-                            .getImageNetWork(dto.imgId ?? ''))
+                            .getImageNetWork(dto.imgId ?? ''),
+                        fit: BoxFit.cover)
                     : const DecorationImage(
                         image: AssetImage('assets/images/ic-viet-qr-small.png'),
                         fit: BoxFit.contain),

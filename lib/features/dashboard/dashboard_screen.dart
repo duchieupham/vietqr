@@ -663,7 +663,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
         iconSize: 18,
         contentPadding: const EdgeInsets.only(left: 16),
         alignment: Alignment.centerLeft,
-        title: 'Tài khoản ngân hàng',
+        title: 'TK ngân hàng',
         textSize: 11,
         function: () {
           Navigator.pushNamed(context, Routes.SEARCH_BANK);

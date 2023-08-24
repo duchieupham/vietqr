@@ -111,14 +111,33 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
                                 decoration: BoxDecoration(
                                   color: AppColor.WHITE,
                                 ),
-                                child: QrImage(
-                                  data: state.contactDetailDTO.value ?? '',
-                                  version: QrVersions.auto,
-                                  embeddedImage: const AssetImage(
-                                      'assets/images/ic-viet-qr-small.png'),
-                                  embeddedImageStyle: QrEmbeddedImageStyle(
-                                    size: const Size(30, 30),
-                                  ),
+                                child: Stack(
+                                  children: [
+                                    QrImage(
+                                      data: state.contactDetailDTO.value ?? '',
+                                      version: QrVersions.auto,
+                                    ),
+                                    Positioned(
+                                      top: 0,
+                                      bottom: 0,
+                                      right: 0,
+                                      left: 0,
+                                      child: Align(
+                                        alignment: Alignment.center,
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          child: Image(
+                                            height: 30,
+                                            width: 30,
+                                            fit: BoxFit.cover,
+                                            image: getEmbeddedImageImage(
+                                                state.contactDetailDTO),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  ],
                                 ),
                               ),
                               Text(
@@ -369,6 +388,15 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
         },
       ),
     );
+  }
+
+  ImageProvider getEmbeddedImageImage(ContactDetailDTO dto) {
+    if (dto.type == 1 || dto.type == 3) {
+      if (dto.imgId?.isNotEmpty ?? false) {
+        return ImageUtils.instance.getImageNetWork(dto.imgId ?? '');
+      }
+    }
+    return const AssetImage('assets/images/ic-viet-qr-small.png');
   }
 
   Widget _buildTypeQr(ContactDetailDTO dto, {required Function onEdit}) {

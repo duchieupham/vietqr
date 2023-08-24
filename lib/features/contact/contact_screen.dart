@@ -174,7 +174,7 @@ class _ContactStateState extends State<_ContactState>
                             Text(
                               'Ví QR',
                               style: const TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.w600),
+                                  fontSize: 16, fontWeight: FontWeight.w600),
                             ),
                             Text(
                               'Nơi lưu trữ mã QR của bạn',

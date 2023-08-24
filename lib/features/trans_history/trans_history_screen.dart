@@ -359,9 +359,10 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
                         horizontal: 20.0, vertical: 16.0),
                     decoration: BoxDecoration(
                       border: position != (list.length - 1)
-                          ? const Border(
+                          ? Border(
                               bottom: BorderSide(
-                                  color: AppColor.GREY_TEXT, width: 0.5))
+                                  color: AppColor.GREY_TEXT.withOpacity(0.3),
+                                  width: 0.5))
                           : null,
                     ),
                     child: Row(
