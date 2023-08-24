@@ -479,11 +479,14 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
           ),
           Container(
             width: double.infinity,
+            height: 100,
             margin: EdgeInsets.symmetric(vertical: 8),
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
                 color: AppColor.WHITE, borderRadius: BorderRadius.circular(8)),
-            child: Text(dto.additionalData ?? ''),
+            child: SingleChildScrollView(
+              child: Text(dto.additionalData ?? ''),
+            ),
           )
         ],
       );
