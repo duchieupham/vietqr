@@ -392,7 +392,7 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.TRANSACTION_WALLET: (context) =>
                       const TransWalletScreen(),
                   Routes.BUSINESS: (context) => const BusinessScreen(),
-                  Routes.RECHARGE_SUCCESS: (context) => const RechargeSuccess(),
+                  // Routes.RECHARGE_SUCCESS: (context) => const RechargeSuccess(),
                 },
                 onGenerateRoute: (settings) {
                   if (settings.name == Routes.BUSINESS_INFORMATION_VIEW) {
@@ -444,19 +444,19 @@ class _VietQRApp extends State<VietQRApp> {
                       },
                     );
                   }
-                  // if (settings.name == Routes.RECHARGE_SUCCESS) {
-                  //   Map<String, dynamic> data =
-                  //       settings.arguments as Map<String, dynamic>;
-                  //
-                  //   return MaterialPageRoute(
-                  //     builder: (context) {
-                  //       return RechargeSuccess(
-                  //         phoneNo: data['phoneNo'],
-                  //         money: data['money'],
-                  //       );
-                  //     },
-                  //   );
-                  // }
+                  if (settings.name == Routes.RECHARGE_SUCCESS) {
+                    Map<String, dynamic> data =
+                        settings.arguments as Map<String, dynamic>;
+
+                    return MaterialPageRoute(
+                      builder: (context) {
+                        return RechargeSuccess(
+                          phoneNo: data['phoneNo'],
+                          money: data['money'],
+                        );
+                      },
+                    );
+                  }
                   // if (settings.name == Routes.UPDATE_PHONE_BOOK) {
                   //   PhoneBookDetailDTO _dto =
                   //       settings.arguments as PhoneBookDetailDTO;

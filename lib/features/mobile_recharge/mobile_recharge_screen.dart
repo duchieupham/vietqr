@@ -131,8 +131,8 @@ class MobileRechargeScreen extends StatelessWidget {
                       Provider.of<TopUpProvider>(context, listen: false)
                           .phoneNo;
 
-                  Navigator.pushNamed(context, Routes.RECHARGE_SUCCESS,
-                      arguments: arguments);
+                  Navigator.of(context)
+                      .pushNamed(Routes.RECHARGE_SUCCESS, arguments: arguments);
                 }
               }
               if (state is MobileRechargeMobileMoneyFailedState) {

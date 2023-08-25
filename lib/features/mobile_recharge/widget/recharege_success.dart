@@ -7,7 +7,10 @@ import 'package:rive/rive.dart' as rive;
 import 'package:vierqr/layouts/m_app_bar.dart';
 
 class RechargeSuccess extends StatefulWidget {
-  const RechargeSuccess({Key? key}) : super(key: key);
+  final String money;
+  final String phoneNo;
+  const RechargeSuccess({Key? key, required this.money, required this.phoneNo})
+      : super(key: key);
 
   @override
   State<RechargeSuccess> createState() => _RechargeSuccessState();
@@ -18,20 +21,9 @@ class _RechargeSuccessState extends State<RechargeSuccess> {
   late rive.SMITrigger _action;
   bool _isRiveInit = false;
 
-  String money = '';
-  String phoneNo = '';
-
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (ModalRoute.of(context)!.settings.arguments != null) {
-        final args = ModalRoute.of(context)!.settings.arguments as Map;
-        phoneNo = args['phoneNo'];
-        money = args['money'];
-        setState(() {});
-      }
-    });
   }
 
   @override
@@ -46,10 +38,7 @@ class _RechargeSuccessState extends State<RechargeSuccess> {
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: const MAppBar(
-        title: 'Nạp tiền điện thoại',
-        isLeading: false,
-      ),
+      appBar: const MAppBar(title: 'Nạp tiền điện thoại'),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
@@ -82,7 +71,7 @@ class _RechargeSuccessState extends State<RechargeSuccess> {
                   Align(
                     alignment: Alignment.center,
                     child: Text(
-                      '+ ${money} VND',
+                      '+ ${widget.money} VND',
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
@@ -92,7 +81,7 @@ class _RechargeSuccessState extends State<RechargeSuccess> {
                   ),
                   const Padding(padding: EdgeInsets.only(top: 20)),
                   Text(
-                    'Quý khách đã nạp thành công số tiền +${money} VND cho số điện thoại ${phoneNo}. Cảm ơn quý khách đã sử dụng dịch vụ của VietQR VN',
+                    'Quý khách đã nạp thành công số tiền +${widget.money} VND cho số điện thoại ${widget.phoneNo}. Cảm ơn quý khách đã sử dụng dịch vụ của VietQR VN',
                     textAlign: TextAlign.center,
                   )
                 ],
@@ -108,7 +97,7 @@ class _RechargeSuccessState extends State<RechargeSuccess> {
                   _doEndAnimation();
                   eventBus.fire(ReloadWallet());
                   Future.delayed(const Duration(milliseconds: 500), () {
-                    Navigator.of(context).popUntil((route) => route.isFirst);
+                    Navigator.of(context).pop();
                   });
                 })
           ],
@@ -128,15 +117,15 @@ class _RechargeSuccessState extends State<RechargeSuccess> {
 
   void _doInitAnimation() {
     _action =
-        _riveController.findInput<bool>(Stringify.SUCCESS_ANI_ACTION_DO_INIT)
-            as rive.SMITrigger;
+    _riveController.findInput<bool>(Stringify.SUCCESS_ANI_ACTION_DO_INIT)
+    as rive.SMITrigger;
     _action.fire();
   }
 
   void _doEndAnimation() {
     _action =
-        _riveController.findInput<bool>(Stringify.SUCCESS_ANI_ACTION_DO_END)
-            as rive.SMITrigger;
+    _riveController.findInput<bool>(Stringify.SUCCESS_ANI_ACTION_DO_END)
+    as rive.SMITrigger;
     _action.fire();
   }
 }
