@@ -10,7 +10,9 @@ import '../../../commons/widgets/divider_widget.dart';
 
 class PopupTopUpSuccess extends StatelessWidget {
   final TopUpSuccessDTO dto;
+
   const PopupTopUpSuccess({Key? key, required this.dto}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
@@ -99,25 +101,25 @@ class PopupTopUpSuccess extends StatelessWidget {
             ),
           ],
         ),
-        // Padding(
-        //   padding: const EdgeInsets.symmetric(vertical: 12),
-        //   child: DividerWidget(
-        //     width: width,
-        //   ),
-        // ),
-        // Row(
-        //   mainAxisAlignment: MainAxisAlignment.center,
-        //   children: [
-        //     const Text(
-        //       'Mã giao dịch',
-        //     ),
-        //     const Spacer(),
-        //     Text(
-        //       dto.billNumber,
-        //       style: TextStyle(fontWeight: FontWeight.bold),
-        //     ),
-        //   ],
-        // ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          child: DividerWidget(
+            width: width,
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              'Mã giao dịch',
+            ),
+            const Spacer(),
+            Text(
+              dto.billNumber,
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 12),
           child: DividerWidget(
@@ -140,8 +142,8 @@ class PopupTopUpSuccess extends StatelessWidget {
         const Spacer(),
         MButtonWidget(
             title: 'Đóng',
-            colorEnableText: AppColor.BLACK,
-            colorEnableBgr: AppColor.GREY_BUTTON,
+            colorEnableText: AppColor.WHITE,
+            colorEnableBgr: AppColor.BLUE_TEXT,
             margin: EdgeInsets.zero,
             isEnable: true,
             onTap: () {

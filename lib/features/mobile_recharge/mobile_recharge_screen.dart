@@ -131,8 +131,8 @@ class MobileRechargeScreen extends StatelessWidget {
                       Provider.of<TopUpProvider>(context, listen: false)
                           .phoneNo;
 
-                  Navigator.of(context)
-                      .pushNamed(Routes.RECHARGE_SUCCESS, arguments: arguments);
+                  Navigator.pushNamed(context, Routes.RECHARGE_SUCCESS,
+                      arguments: arguments);
                 }
               }
               if (state is MobileRechargeMobileMoneyFailedState) {
@@ -269,42 +269,40 @@ class MobileRechargeScreen extends StatelessWidget {
                                                   .replaceAll(',', '')) ||
                                           provider.paymentTypeMethod == 1) {
                                         DialogWidget.instance.openWidgetDialog(
-                                            heightPopup: 320,
-                                            widthPopup: 320,
-                                            margin: const EdgeInsets.only(
-                                                left: 32,
-                                                right: 32,
-                                                bottom: 48),
-                                            radius: 20,
-                                            child: PopupConfirmPassword(
-                                              onConfirmSuccess: (otp) {
-                                                Navigator.of(context).pop();
-                                                Map<String, dynamic> data = {};
-                                                data['phoneNo'] =
-                                                    provider.phoneNo.isNotEmpty
-                                                        ? provider.phoneNo
-                                                        : UserInformationHelper
-                                                            .instance
-                                                            .getPhoneNo();
-                                                data['userId'] =
-                                                    UserInformationHelper
-                                                        .instance
-                                                        .getUserId();
-                                                data['rechargeType'] =
-                                                    provider.rechargeType;
-                                                data['otp'] = otp;
-                                                data['carrierTypeId'] = provider
-                                                    .networkProviders.id;
-                                                data['paymentMethod'] =
-                                                    provider.paymentTypeMethod;
-                                                BlocProvider.of<
-                                                            MobileRechargeBloc>(
-                                                        context)
-                                                    .add(
-                                                        MobileRechargeMobileMoney(
-                                                            data: data));
-                                              },
-                                            ));
+                                          heightPopup: 320,
+                                          widthPopup: 320,
+                                          margin: const EdgeInsets.only(
+                                              left: 32, right: 32, bottom: 48),
+                                          radius: 20,
+                                          child: PopupConfirmPassword(
+                                            onConfirmSuccess: (otp) {
+                                              Navigator.of(context).pop();
+                                              Map<String, dynamic> data = {};
+                                              data['phoneNo'] =
+                                                  provider.phoneNo.isNotEmpty
+                                                      ? provider.phoneNo
+                                                      : UserInformationHelper
+                                                          .instance
+                                                          .getPhoneNo();
+                                              data['userId'] =
+                                                  UserInformationHelper.instance
+                                                      .getUserId();
+                                              data['rechargeType'] =
+                                                  provider.rechargeType;
+                                              data['otp'] = otp;
+                                              data['carrierTypeId'] =
+                                                  provider.networkProviders.id;
+                                              data['paymentMethod'] =
+                                                  provider.paymentTypeMethod;
+                                              BlocProvider.of<
+                                                          MobileRechargeBloc>(
+                                                      context)
+                                                  .add(
+                                                      MobileRechargeMobileMoney(
+                                                          data: data));
+                                            },
+                                          ),
+                                        );
                                       }
                                     },
                                     child: Container(
@@ -606,30 +604,30 @@ class MobileRechargeScreen extends StatelessWidget {
         onChange!(text);
       },
       child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5),
-            border: text == money
-                ? Border.all(color: AppColor.BLUE_TEXT, width: 0.8)
-                : Border.all(color: AppColor.WHITE, width: 0.8),
-            color: text == money
-                ? AppColor.BLUE_TEXT.withOpacity(0.3)
-                : AppColor.WHITE,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                text,
-                style: TextStyle(
-                    fontWeight:
-                        text == money ? FontWeight.w600 : FontWeight.w400,
-                    height: 1.4,
-                    color: text == money ? AppColor.BLUE_TEXT : AppColor.BLACK),
-              ),
-            ],
-          )),
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          border: text == money
+              ? Border.all(color: AppColor.BLUE_TEXT, width: 0.8)
+              : Border.all(color: AppColor.WHITE, width: 0.8),
+          color: text == money
+              ? AppColor.BLUE_TEXT.withOpacity(0.3)
+              : AppColor.WHITE,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              text,
+              style: TextStyle(
+                  fontWeight: text == money ? FontWeight.w600 : FontWeight.w400,
+                  height: 1.4,
+                  color: text == money ? AppColor.BLUE_TEXT : AppColor.BLACK),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

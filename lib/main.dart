@@ -211,13 +211,16 @@ class _VietQRApp extends State<VietQRApp> {
         if (message.data['notificationType'] != null &&
             message.data['notificationType'] ==
                 Stringify.NOTI_TYPE_MOBILE_RECHARGE) {
-          DialogWidget.instance.showModelBottomSheet(
-            padding: EdgeInsets.only(left: 12, right: 12, bottom: 32, top: 12),
-            height: 500,
-            widget: PopupTopUpSuccess(
-              dto: TopUpSuccessDTO.fromJson(message.data),
-            ),
-          );
+          if (message.data['paymentMethod'] == "1") {
+            DialogWidget.instance.showModelBottomSheet(
+              padding:
+                  EdgeInsets.only(left: 12, right: 12, bottom: 32, top: 12),
+              height: 500,
+              widget: PopupTopUpSuccess(
+                dto: TopUpSuccessDTO.fromJson(message.data),
+              ),
+            );
+          }
         }
         //process success transcation
         if (message.data['notificationType'] != null &&
@@ -389,6 +392,7 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.TRANSACTION_WALLET: (context) =>
                       const TransWalletScreen(),
                   Routes.BUSINESS: (context) => const BusinessScreen(),
+                  Routes.RECHARGE_SUCCESS: (context) => const RechargeSuccess(),
                 },
                 onGenerateRoute: (settings) {
                   if (settings.name == Routes.BUSINESS_INFORMATION_VIEW) {
@@ -440,19 +444,19 @@ class _VietQRApp extends State<VietQRApp> {
                       },
                     );
                   }
-                  if (settings.name == Routes.RECHARGE_SUCCESS) {
-                    Map<String, dynamic> data =
-                        settings.arguments as Map<String, dynamic>;
-
-                    return MaterialPageRoute(
-                      builder: (context) {
-                        return RechargeSuccess(
-                          phoneNo: data['phoneNo'],
-                          money: data['money'],
-                        );
-                      },
-                    );
-                  }
+                  // if (settings.name == Routes.RECHARGE_SUCCESS) {
+                  //   Map<String, dynamic> data =
+                  //       settings.arguments as Map<String, dynamic>;
+                  //
+                  //   return MaterialPageRoute(
+                  //     builder: (context) {
+                  //       return RechargeSuccess(
+                  //         phoneNo: data['phoneNo'],
+                  //         money: data['money'],
+                  //       );
+                  //     },
+                  //   );
+                  // }
                   // if (settings.name == Routes.UPDATE_PHONE_BOOK) {
                   //   PhoneBookDetailDTO _dto =
                   //       settings.arguments as PhoneBookDetailDTO;

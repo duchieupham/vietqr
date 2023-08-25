@@ -55,13 +55,6 @@ class DashBoardProvider with ChangeNotifier {
       assetsUnActive: 'assets/images/ic-tb-qr.png',
       index: -1,
     ),
-    // const NavigationDTO(
-    //   name: 'Doanh nghiệp',
-    //   label: 'Doanh nghiệp',
-    //   assetsActive: 'assets/images/ic-tb-business-selected.png',
-    //   assetsUnActive: 'assets/images/ic-tb-business.png',
-    //   index: 2,
-    // ),
     const NavigationDTO(
       name: 'Ví QR',
       label: 'Ví QR',

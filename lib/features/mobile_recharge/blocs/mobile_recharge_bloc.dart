@@ -61,7 +61,7 @@ void _updateTypeMobileCarrier(MobileRechargeEvent event, Emitter emit) async {
     if (event is MobileRechargeUpdateType) {
       result = await mobileRechargeRepository.updateMobileCarrier(event.data);
       if (result.status == 'SUCCESS') {
-        emit(RechargeUpdateTypeUpdateSuccessState);
+        emit(RechargeUpdateTypeUpdateSuccessState());
       }
     }
   } catch (e) {

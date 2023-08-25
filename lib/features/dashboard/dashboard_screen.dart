@@ -796,9 +796,9 @@ class _DashBoardScreen extends State<DashBoardScreen>
               GestureDetector(
                   onTap: () {
                     Provider.of<DashBoardProvider>(context, listen: false)
-                        .updateIndex(4);
+                        .updateIndex(3);
 
-                    _animatedToPage(4);
+                    _animatedToPage(3);
                   },
                   child: _buildAvatarWidget(context)),
             ],

@@ -7,6 +7,7 @@ class TopUpSuccessDTO {
   final String notificationType;
   final String time;
   final String phoneNo;
+
   const TopUpSuccessDTO(
       {this.amount = '',
       this.billNumber = '',
