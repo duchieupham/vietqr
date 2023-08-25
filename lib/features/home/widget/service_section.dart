@@ -124,21 +124,20 @@ class _ServiceSectionState extends State<ServiceSection> {
             Navigator.pushNamed(context, Routes.BUSINESS);
           },
         ),
-        if (Provider.of<AuthProvider>(context, listen: false).isUpdateVersion)
-          _buildItemService(
-            context,
-            'assets/images/logo-check-app-version.png',
-            'Kiểm tra phiên bản App',
-            () async {
-              showDialog(
-                barrierDismissible: false,
-                context: NavigationService.navigatorKey.currentContext!,
-                builder: (BuildContext context) {
-                  return DialogUpdateView();
-                },
-              );
-            },
-          ),
+        _buildItemService(
+          context,
+          'assets/images/logo-check-app-version.png',
+          'Kiểm tra phiên bản App',
+          () async {
+            showDialog(
+              barrierDismissible: false,
+              context: NavigationService.navigatorKey.currentContext!,
+              builder: (BuildContext context) {
+                return DialogUpdateView();
+              },
+            );
+          },
+        ),
       ],
     );
   }

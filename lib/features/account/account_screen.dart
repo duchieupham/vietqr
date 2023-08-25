@@ -19,7 +19,9 @@ import 'package:vierqr/features/account/events/account_event.dart';
 import 'package:vierqr/features/account/states/account_state.dart';
 import 'package:vierqr/features/account/views/dialog_my_qr.dart';
 import 'package:vierqr/features/account/widget/my_QR_bottom_sheet.dart';
+import 'package:vierqr/features/home/widget/dialog_update.dart';
 import 'package:vierqr/features/personal/views/introduce_bottom_sheet.dart';
+import 'package:vierqr/main.dart';
 import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
@@ -619,6 +621,36 @@ class _SettingWidget extends StatelessWidget {
                       const Expanded(
                         child: Text(
                           'Thay đổi giao diện',
+                          style: TextStyle(
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(),
+                GestureDetector(
+                  onTap: () async {
+                    showDialog(
+                      barrierDismissible: false,
+                      context: NavigationService.navigatorKey.currentContext!,
+                      builder: (BuildContext context) {
+                        return DialogUpdateView();
+                      },
+                    );
+                  },
+                  child: Row(
+                    children: [
+                      Image.asset(
+                        'assets/images/ic-gear.png',
+                        width: 28,
+                        height: 28,
+                      ),
+                      const SizedBox(width: 8),
+                      const Expanded(
+                        child: Text(
+                          'Kiểm tra phiên bản app',
                           style: TextStyle(
                             fontSize: 14,
                           ),

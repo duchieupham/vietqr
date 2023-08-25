@@ -247,12 +247,13 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
           emit(state.copyWith(
               type: ContactType.ERROR,
               status: BlocStatus.UNLOADING,
-              msg: CheckUtils.instance.getCheckMessage(result.message)));
+              msg: 'Thẻ QR này đã được thêm trước đó'));
         }
       }
     } catch (e) {
       LOG.error(e.toString());
-      emit(state.copyWith(type: ContactType.ERROR));
+      emit(state.copyWith(
+          type: ContactType.ERROR, msg: 'Thẻ QR này đã được thêm trước đó'));
     }
   }
 
