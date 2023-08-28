@@ -40,6 +40,7 @@ import 'package:vierqr/services/providers/water_mark_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 import 'package:vierqr/services/sqflite/local_database.dart';
 
+import '../../commons/constants/configurations/route.dart';
 import 'views/dialog_exits_view.dart';
 import 'views/dialog_more_view.dart';
 
@@ -67,13 +68,17 @@ class CreateQrScreen extends StatelessWidget {
       create: (_) => CreateQRBloc(context, data, qrDto),
       child: ChangeNotifierProvider(
         create: (context) => CreateQRProvider()..updatePage(page),
-        child: _CreateQRScreen(),
+        child: _CreateQRScreen(
+          bankAccountDTO: data!,
+        ),
       ),
     );
   }
 }
 
 class _CreateQRScreen extends StatefulWidget {
+  final BankAccountDTO bankAccountDTO;
+  _CreateQRScreen({required this.bankAccountDTO});
   @override
   State<_CreateQRScreen> createState() => _CreateQRScreenState();
 }
@@ -667,32 +672,50 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                   ],
                 )),
             const SizedBox(height: 10),
-            MButtonWidget(
-              isEnable: true,
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              onTap: () {
-                if (fileImage != null) {
-                  dialogExits();
-                } else {
-                  Navigator.of(context).popUntil((route) => route.isFirst);
-                }
-              },
-              title: '',
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset(
-                    'assets/images/ic-home-blue.png',
-                    width: 30,
-                    height: 30,
-                    fit: BoxFit.cover,
-                    color: AppColor.WHITE,
+                  MButtonWidget(
+                    width: 80,
+                    isEnable: true,
+                    colorEnableBgr: AppColor.BLUE_TEXT.withOpacity(0.3),
+                    margin: const EdgeInsets.only(right: 12),
+                    onTap: () {
+                      if (fileImage != null) {
+                        dialogExits();
+                      } else {
+                        Navigator.of(context)
+                            .popUntil((route) => route.isFirst);
+                      }
+                    },
+                    title: '',
+                    child: Image.asset(
+                      'assets/images/ic-home-blue.png',
+                      width: 30,
+                      height: 30,
+                      fit: BoxFit.cover,
+                      color: AppColor.BLUE_TEXT,
+                    ),
                   ),
-                  const Text(
-                    'Trang chủ',
-                    style: TextStyle(
-                      color: AppColor.WHITE,
-                      fontSize: 14,
+                  Expanded(
+                    child: ButtonIconWidget(
+                      height: 40,
+                      icon: Icons.add_rounded,
+                      textSize: 12,
+                      title: 'Tạo QR giao dịch',
+                      function: () {
+                        Navigator.pop(context);
+                        Future.delayed(const Duration(milliseconds: 400), () {
+                          Navigator.pushNamed(
+                            context,
+                            Routes.CREATE_QR,
+                            arguments: {'bankInfo': widget.bankAccountDTO},
+                          );
+                        });
+                      },
+                      textColor: AppColor.WHITE,
+                      bgColor: AppColor.BLUE_TEXT,
                     ),
                   ),
                 ],
