@@ -703,7 +703,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                       height: 40,
                       icon: Icons.add_rounded,
                       textSize: 12,
-                      title: 'Tạo QR giao dịch',
+                      title: 'QR giao dịch mới',
                       function: () {
                         Navigator.pop(context);
                         Future.delayed(const Duration(milliseconds: 400), () {
