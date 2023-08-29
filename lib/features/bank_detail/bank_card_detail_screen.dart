@@ -237,6 +237,9 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                             }
                           },
                           builder: (context, state) {
+                            if (state.bankDetailDTO == null) {
+                              return Center(child: CircularProgressIndicator());
+                            }
                             return PageView(
                               controller: pageController,
                               onPageChanged: (index) {

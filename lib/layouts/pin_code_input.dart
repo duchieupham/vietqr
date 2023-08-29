@@ -41,6 +41,7 @@ class PinCodeInput extends StatelessWidget {
       autoFocus: autoFocus,
       focusNode: focusNode,
       obscureText: obscureText,
+
       autovalidateMode: AutovalidateMode.always,
       keyboardType: TextInputType.number,
       // inputFormatters: [TextInputMask(mask: '999999')],

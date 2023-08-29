@@ -14,10 +14,11 @@ class TextFieldCustom extends StatefulWidget {
   final TextInputAction? keyboardAction;
   final TextInputType inputType;
   final bool isObscureText;
-  final double? fontSize;
+  final double? fontSize, titleSize;
   final TextfieldType? textFieldType;
   final String? title;
   final String? unTitle;
+  final String? subTitle;
   final bool? autoFocus;
   final bool? enable;
   final FocusNode? focusNode;
@@ -40,41 +41,43 @@ class TextFieldCustom extends StatefulWidget {
   final bool isRequired;
   final Color? fillColor;
 
-  const TextFieldCustom({
-    Key? key,
-    required this.hintText,
-    this.controller,
-    this.fillColor,
-    this.hintColor,
-    required this.keyboardAction,
-    this.onChange,
-    required this.inputType,
-    required this.isObscureText,
-    this.fontSize,
-    this.textFieldType,
-    this.title,
-    this.unTitle,
-    this.autoFocus,
-    this.focusNode,
-    this.maxLines,
-    this.onEditingComplete,
-    this.onSubmitted,
-    this.maxLength,
-    this.textAlign,
-    this.onTapOutside,
-    this.enable,
-    this.isShowToast = false,
-    this.errorStyle,
-    this.showToast,
-    this.validator,
-    this.inputFormatter,
-    this.prefixIcon,
-    this.suffixIcon,
-    this.isRequired = false,
-    this.onTap,
-    this.contentPadding,
-    this.readOnly = false,
-  }) : super(key: key);
+  const TextFieldCustom(
+      {Key? key,
+      required this.hintText,
+      this.controller,
+      this.fillColor,
+      this.hintColor,
+      required this.keyboardAction,
+      this.onChange,
+      required this.inputType,
+      required this.isObscureText,
+      this.fontSize,
+      this.textFieldType,
+      this.title,
+      this.unTitle,
+      this.autoFocus,
+      this.focusNode,
+      this.maxLines,
+      this.onEditingComplete,
+      this.onSubmitted,
+      this.maxLength,
+      this.textAlign,
+      this.onTapOutside,
+      this.enable,
+      this.isShowToast = false,
+      this.errorStyle,
+      this.showToast,
+      this.validator,
+      this.inputFormatter,
+      this.prefixIcon,
+      this.subTitle,
+      this.suffixIcon,
+      this.isRequired = false,
+      this.onTap,
+      this.contentPadding,
+      this.readOnly = false,
+      this.titleSize})
+      : super(key: key);
 
   @override
   State<TextFieldCustom> createState() => _TextFieldWidgetState();
@@ -137,18 +140,29 @@ class _TextFieldWidgetState extends State<TextFieldCustom> {
                     widget.title ?? '',
                     style: TextStyle(
                       fontSize:
-                          (widget.fontSize != null) ? widget.fontSize : 14,
+                          (widget.titleSize != null) ? widget.titleSize : 14,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
+                if (widget.subTitle != null) ...[
+                  const SizedBox(width: 4),
+                  Text(
+                    widget.subTitle ?? '',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                      height: 1.4,
+                    ),
+                  ),
+                ],
                 const SizedBox(width: 4),
                 if (widget.isRequired)
                   Text(
                     '*',
                     style: TextStyle(
                       fontSize:
-                          (widget.fontSize != null) ? widget.fontSize : 14,
+                          (widget.titleSize != null) ? widget.titleSize : 14,
                       fontWeight: FontWeight.bold,
                       color: AppColor.RED_EC1010,
                     ),

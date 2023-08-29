@@ -1,25 +1,21 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/commons/enums/textfield_type.dart';
 import 'package:vierqr/commons/utils/encrypt_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/utils/user_information_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/commons/widgets/phone_widget.dart';
-import 'package:vierqr/commons/widgets/textfield_custom.dart';
 import 'package:vierqr/features/register/blocs/register_bloc.dart';
 import 'package:vierqr/features/register/events/register_event.dart';
 import 'package:vierqr/features/register/states/register_state.dart';
-import 'package:vierqr/features/register/views/dialog_register.dart';
+import 'package:vierqr/features/register/views/page/form_account.dart';
+import 'package:vierqr/features/register/views/page/referral_code.dart';
 import 'package:vierqr/layouts/button_widget.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/account_login_dto.dart';
 import 'package:vierqr/services/providers/register_provider.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
-
-import '../../../layouts/pin_code_input.dart';
 
 class Register extends StatelessWidget {
   final String phoneNo;
@@ -50,7 +46,7 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final _phoneNoController = TextEditingController();
   final focusNode = FocusNode();
-
+  final PageController pageController = PageController();
   final controller = ScrollController();
 
   // final auth = FirebaseAuth.instance;
@@ -119,105 +115,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
               padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
-                  Consumer<RegisterProvider>(
-                    builder: (context, provider, child) {
-                      return Expanded(
-                        child: SingleChildScrollView(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              PhoneWidget(
-                                onChanged: provider.updatePhone,
-                                phoneController: _phoneNoController,
-                              ),
-                              Visibility(
-                                visible: provider.phoneErr,
-                                child: const Padding(
-                                  padding: EdgeInsets.only(
-                                      left: 5, top: 5, right: 30),
-                                  child: Text(
-                                    'Số điện thoại không đúng định dạng.',
-                                    style: TextStyle(
-                                        color: AppColor.RED_TEXT, fontSize: 13),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 30),
-                              RichText(
-                                text: const TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text: 'Mật khẩu ',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                        color: AppColor.BLACK,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: '*',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                        color: AppColor.RED_EC1010,
-                                      ),
-                                    ),
-                                    TextSpan(
-                                      text: ' (Bao gồm 6 số)',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: AppColor.BLACK,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              SizedBox(
-                                height: 40,
-                                child: PinCodeInput(
-                                  autoFocus: true,
-                                  obscureText: true,
-                                  onChanged: (value) {
-                                    provider.updatePassword(value);
-                                  },
-                                ),
-                              ),
-                              Visibility(
-                                visible: provider.passwordErr,
-                                child: const Padding(
-                                  padding: EdgeInsets.only(
-                                      left: 5, top: 5, right: 30),
-                                  child: Text(
-                                    'Mật khẩu bao gồm 6 số.',
-                                    style: TextStyle(
-                                        color: AppColor.RED_TEXT, fontSize: 13),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 30),
-                              TextFieldCustom(
-                                isObscureText: false,
-                                maxLines: 1,
-                                textFieldType: TextfieldType.LABEL,
-                                title: 'Mã giới thiệu',
-                                hintText: 'Nhập mã giới thiệu của bạn bè',
-                                controller: provider.introduceController,
-                                inputType: TextInputType.text,
-                                keyboardAction: TextInputAction.next,
-                                onChange: provider.updateIntroduce,
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+                  Expanded(
+                      child: PageView(
+                    controller: pageController,
+                    physics: NeverScrollableScrollPhysics(),
+                    children: [
+                      FormAccount(
+                        phoneController: _phoneNoController,
+                      ),
+                      ReferralCode()
+                    ],
+                  )),
                   const SizedBox(height: 20),
                   (PlatformUtils.instance.checkResize(width))
                       ? const SizedBox()
                       : Consumer<RegisterProvider>(
                           builder: (context, provider, child) {
+                            if (provider.page == 0) {
+                              return _buildButtonSubmitFormAccount();
+                            }
+
                             return Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -254,78 +171,127 @@ class _RegisterScreenState extends State<RegisterScreen> {
             : null);
   }
 
-  Widget _buildButtonSubmit(BuildContext context, double height) {
+  Widget _buildButtonSubmitFormAccount() {
     return Consumer<RegisterProvider>(
       builder: (context, provider, child) {
         return MButtonWidget(
-          title: 'Đăng ký',
+          title: 'Xác nhận',
           isEnable: provider.isEnableButton(),
           margin: EdgeInsets.zero,
           onTap: () async {
-            provider.updateHeight(height, true);
-
-            String phone = provider.phoneNoController.text;
-
-            String password = provider.passwordController.text;
-            String confirmPassword = provider.confirmPassController.text;
-
-            String sharingCode = provider.introduceController.text;
-
-            provider.updateErrs(
-              phoneErr: (StringUtils.instance.isValidatePhone(phone)!),
-              passErr: (!StringUtils.instance.isNumeric(password) ||
-                  (password.length != 6)),
-              confirmPassErr: !StringUtils.instance
-                  .isValidConfirmText(password, confirmPassword),
-            );
-
-            if (provider.isValid()) {
-              await showGeneralDialog(
-                context: context,
-                barrierLabel: "Barrier",
-                barrierDismissible: true,
-                barrierColor: Colors.black.withOpacity(0.5),
-                transitionDuration: const Duration(milliseconds: 700),
-                pageBuilder: (_, __, ___) {
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      DialogRegister(
-                        passController: provider.passwordController,
-                        onChanged: (value) {
-                          provider.updateRePass(value);
-                        },
-                        onTap: () async {
-                          if (provider.isValidValidation()) {
-                            String userIP = await UserInformationUtils.instance
-                                .getIPAddress();
-
-                            AccountLoginDTO dto = AccountLoginDTO(
-                              phoneNo: phone,
-                              password: EncryptUtils.instance
-                                  .encrypted(phone, password),
-                              device: userIP,
-                              fcmToken: '',
-                              sharingCode: sharingCode,
-                              platform: PlatformUtils.instance.isIOsApp()
-                                  ? 'MOBILE'
-                                  : 'MOBILE_ADR',
-                            );
-                            if (!mounted) return;
-                            context
-                                .read<RegisterBloc>()
-                                .add(RegisterEventSubmit(dto: dto));
-                          }
-                        },
-                      ),
-                      SizedBox(height: provider.height - kToolbarHeight),
-                    ],
-                  );
-                },
-              );
-              provider.updateHeight(0.0, false);
-            }
+            provider.updatePage(1);
+            pageController.animateToPage(1,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.ease);
           },
+        );
+      },
+    );
+  }
+
+  Widget _buildButtonSubmit(BuildContext context, double height) {
+    return Consumer<RegisterProvider>(
+      builder: (context, provider, child) {
+        return Row(
+          children: [
+            Expanded(
+              child: MButtonWidget(
+                title: 'Bỏ qua',
+                isEnable: true,
+                margin: EdgeInsets.zero,
+                colorEnableBgr: AppColor.BLUE_TEXT.withOpacity(0.3),
+                colorEnableText: AppColor.BLUE_TEXT,
+                onTap: () async {
+                  provider.updateHeight(height, true);
+
+                  String phone = provider.phoneNoController.text;
+
+                  String password = provider.passwordController.text;
+                  String confirmPassword = provider.confirmPassController.text;
+
+                  String sharingCode = '';
+
+                  provider.updateErrs(
+                    phoneErr: (StringUtils.instance.isValidatePhone(phone)!),
+                    passErr: (!StringUtils.instance.isNumeric(password) ||
+                        (password.length != 6)),
+                    confirmPassErr: !StringUtils.instance
+                        .isValidConfirmText(password, confirmPassword),
+                  );
+
+                  if (provider.isValidValidation()) {
+                    String userIP =
+                        await UserInformationUtils.instance.getIPAddress();
+
+                    AccountLoginDTO dto = AccountLoginDTO(
+                      phoneNo: phone,
+                      password:
+                          EncryptUtils.instance.encrypted(phone, password),
+                      device: userIP,
+                      fcmToken: '',
+                      sharingCode: sharingCode,
+                      platform: PlatformUtils.instance.isIOsApp()
+                          ? 'MOBILE'
+                          : 'MOBILE_ADR',
+                    );
+                    if (!mounted) return;
+                    context
+                        .read<RegisterBloc>()
+                        .add(RegisterEventSubmit(dto: dto));
+                  }
+                },
+              ),
+            ),
+            const SizedBox(
+              width: 12,
+            ),
+            Expanded(
+              child: MButtonWidget(
+                title: 'Tiếp tục',
+                isEnable: provider.isEnableButton(),
+                margin: EdgeInsets.zero,
+                onTap: () async {
+                  provider.updateHeight(height, true);
+
+                  String phone = provider.phoneNoController.text;
+
+                  String password = provider.passwordController.text;
+                  String confirmPassword = provider.confirmPassController.text;
+
+                  String sharingCode = provider.introduceController.text ?? '';
+
+                  provider.updateErrs(
+                    phoneErr: (StringUtils.instance.isValidatePhone(phone)!),
+                    passErr: (!StringUtils.instance.isNumeric(password) ||
+                        (password.length != 6)),
+                    confirmPassErr: !StringUtils.instance
+                        .isValidConfirmText(password, confirmPassword),
+                  );
+
+                  if (provider.isValidValidation()) {
+                    String userIP =
+                        await UserInformationUtils.instance.getIPAddress();
+
+                    AccountLoginDTO dto = AccountLoginDTO(
+                      phoneNo: phone,
+                      password:
+                          EncryptUtils.instance.encrypted(phone, password),
+                      device: userIP,
+                      fcmToken: '',
+                      sharingCode: sharingCode,
+                      platform: PlatformUtils.instance.isIOsApp()
+                          ? 'MOBILE'
+                          : 'MOBILE_ADR',
+                    );
+                    if (!mounted) return;
+                    context
+                        .read<RegisterBloc>()
+                        .add(RegisterEventSubmit(dto: dto));
+                  }
+                },
+              ),
+            ),
+          ],
         );
       },
     );

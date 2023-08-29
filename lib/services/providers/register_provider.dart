@@ -4,6 +4,7 @@ class RegisterProvider with ChangeNotifier {
   //error handler
   bool _isPhoneErr = false;
   bool _isPasswordErr = false;
+
   bool _isConfirmPassErr = false;
 
   final phoneNoController = TextEditingController();
@@ -31,6 +32,9 @@ class RegisterProvider with ChangeNotifier {
   // final auth = FirebaseAuth.instance;
 
   static const String countryCode = '+84';
+
+  int _page = 0;
+  int get page => _page;
 
   double height = 0;
   bool isShowButton = false;
@@ -75,6 +79,17 @@ class RegisterProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void updateConfirmPassword(String value) {
+    if (value == passwordController.text) {
+      confirmPassController.value =
+          confirmPassController.value.copyWith(text: value);
+      _isConfirmPassErr = false;
+    } else {
+      _isConfirmPassErr = true;
+    }
+    notifyListeners();
+  }
+
   void updateErrs({
     required bool phoneErr,
     required bool passErr,
@@ -96,8 +111,11 @@ class RegisterProvider with ChangeNotifier {
 
   bool isEnableButton() {
     if (phoneNoController.text.isNotEmpty &&
-        passwordController.text.isNotEmpty) {
-      return true;
+        passwordController.text.isNotEmpty &&
+        confirmPassController.text.isNotEmpty) {
+      if (isValidValidation()) {
+        return true;
+      }
     }
     return false;
   }
@@ -109,27 +127,15 @@ class RegisterProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void updateRePass(String value) {
-    if (value.isNotEmpty) {
-      confirmPassController.value =
-          confirmPassController.value.copyWith(text: value);
-      if (value != passwordController.text) {
-        _isConfirmPassErr = true;
-      } else {
-        _isConfirmPassErr = false;
-      }
-    } else {
-      _isConfirmPassErr = true;
-    }
-
-    notifyListeners();
-  }
-
   void updateIntroduce(String value) {
     introduceController.value = introduceController.value.copyWith(text: value);
     notifyListeners();
   }
 
+  updatePage(int page) {
+    _page = page;
+    notifyListeners();
+  }
 // Future<void> phoneAuthentication(String phone,
 //     {Function(TypeOTP)? onSentOtp}) async {
 //   await auth.verifyPhoneNumber(

@@ -26,6 +26,12 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
   void _getDetail(BankCardEvent event, Emitter emit) async {
     try {
       if (event is BankCardGetDetailEvent) {
+        emit(
+          state.copyWith(
+            status: BlocStatus.LOADING_PAGE,
+            request: BankDetailType.NONE,
+          ),
+        );
         final AccountBankDetailDTO dto =
             await bankCardRepository.getAccountBankDetail(bankId);
         emit(
