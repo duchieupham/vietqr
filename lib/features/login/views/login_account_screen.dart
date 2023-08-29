@@ -100,8 +100,27 @@ class LoginAccountScreen extends StatelessWidget {
                   const SizedBox(height: 10),
                   GestureDetector(
                     onTap: onBackLogin,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      margin: const EdgeInsets.symmetric(horizontal: 20),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          color: Colors.transparent,
+                          border: Border.all(color: AppColor.BLUE_TEXT)),
+                      child: Text(
+                        'Đăng nhập bằng tài khoản khác',
+                        style:
+                            TextStyle(fontSize: 15, color: AppColor.BLUE_TEXT),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  GestureDetector(
+                    onTap: onRegister,
                     child: const Text(
-                      'Đăng nhập bằng tài khoản khác',
+                      'Đăng ký tài khoản mới',
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 15, color: AppColor.BLUE_TEXT),
                     ),
@@ -110,29 +129,6 @@ class LoginAccountScreen extends StatelessWidget {
               ),
             ),
           ),
-        ],
-      ),
-      bottomSheet: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          GestureDetector(
-            onTap: onRegister,
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              margin: const EdgeInsets.symmetric(horizontal: 20),
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  color: Colors.transparent,
-                  border: Border.all(color: AppColor.BLUE_TEXT)),
-              child: Text(
-                'Đăng ký tài khoản mới',
-                style: TextStyle(fontSize: 15, color: AppColor.BLUE_TEXT),
-              ),
-            ),
-          ),
-          const SizedBox(height: 30),
         ],
       ),
     );

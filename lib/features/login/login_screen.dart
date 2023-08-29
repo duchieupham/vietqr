@@ -214,225 +214,363 @@ class _LoginState extends State<_Login> {
             }
           },
           builder: (context, state) {
-            if (provider.isQuickLogin == 1) {
-              return LoginAccountScreen(
-                list: provider.listInfoUsers,
-                onRemoveAccount: (dto) async {
-                  List<String> listString = [];
-                  List<InfoUserDTO> list = provider.listInfoUsers;
-                  list.removeAt(dto);
-                  if (list.length >= 2) {
-                    list.sort((a, b) =>
-                        a.expiryAsDateTime.compareTo(b.expiryAsDateTime));
-                  }
-
-                  list.forEach((element) {
-                    listString.add(element.toSPJson().toString());
-                  });
-
-                  await UserInformationHelper.instance
-                      .setLoginAccount(listString);
-
-                  provider.updateListInfoUser();
-
-                  if (list.isEmpty) {
-                    provider.updateQuickLogin(0);
-                  }
-                },
-                onQuickLogin: (dto) {
-                  provider.updateQuickLogin(2);
-                  provider.updateInfoUser(dto);
-                },
-                onBackLogin: () {
-                  provider.updateInfoUser(null);
-                  provider.updateQuickLogin(0);
-                },
-                onRegister: () async {
-                  provider.updateInfoUser(null);
-                  final data = await Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => Register(phoneNo: ''),
-                      settings: const RouteSettings(
-                        name: Routes.REGISTER,
-                      ),
-                    ),
-                  );
-
-                  if (data is Map) {
-                    AccountLoginDTO dto = AccountLoginDTO(
-                      phoneNo: data['phone'],
-                      password: EncryptUtils.instance.encrypted(
-                        data['phone'],
-                        data['password'],
-                      ),
-                      device: '',
-                      fcmToken: '',
-                      platform: '',
-                      sharingCode: '',
-                    );
-                    if (!mounted) return;
-                    context
-                        .read<LoginBloc>()
-                        .add(LoginEventByPhone(dto: dto, isToast: true));
-                  }
-                },
-              );
-            }
-
-            if (provider.isQuickLogin == 2) {
-              return QuickLoginScreen(
-                pinController: passController,
-                passFocus: passFocus,
-                userName: provider.infoUserDTO?.fullName,
-                phone: provider.infoUserDTO?.phoneNo ?? '',
-                onLogin: (dto) {
-                  context.read<LoginBloc>().add(LoginEventByPhone(dto: dto));
-                },
-                onQuickLogin: () {
-                  passController.clear();
-                  provider.updateQuickLogin(0);
-                  provider.updateInfoUser(null);
-                },
-              );
-            }
+            // if (provider.isQuickLogin == 1) {
+            //   return LoginAccountScreen(
+            //     list: provider.listInfoUsers,
+            //     onRemoveAccount: (dto) async {
+            //       List<String> listString = [];
+            //       List<InfoUserDTO> list = provider.listInfoUsers;
+            //       list.removeAt(dto);
+            //       if (list.length >= 2) {
+            //         list.sort((a, b) =>
+            //             a.expiryAsDateTime.compareTo(b.expiryAsDateTime));
+            //       }
+            //
+            //       list.forEach((element) {
+            //         listString.add(element.toSPJson().toString());
+            //       });
+            //
+            //       await UserInformationHelper.instance
+            //           .setLoginAccount(listString);
+            //
+            //       provider.updateListInfoUser();
+            //
+            //       if (list.isEmpty) {
+            //         provider.updateQuickLogin(0);
+            //       }
+            //     },
+            //     onQuickLogin: (dto) {
+            //       provider.updateQuickLogin(2);
+            //       provider.updateInfoUser(dto);
+            //     },
+            //     onBackLogin: () {
+            //       provider.updateInfoUser(null);
+            //       provider.updateQuickLogin(0);
+            //     },
+            //     onRegister: () async {
+            //       provider.updateInfoUser(null);
+            //       final data = await Navigator.of(context).push(
+            //         MaterialPageRoute(
+            //           builder: (context) => Register(phoneNo: ''),
+            //           settings: const RouteSettings(
+            //             name: Routes.REGISTER,
+            //           ),
+            //         ),
+            //       );
+            //
+            //       if (data is Map) {
+            //         AccountLoginDTO dto = AccountLoginDTO(
+            //           phoneNo: data['phone'],
+            //           password: EncryptUtils.instance.encrypted(
+            //             data['phone'],
+            //             data['password'],
+            //           ),
+            //           device: '',
+            //           fcmToken: '',
+            //           platform: '',
+            //           sharingCode: '',
+            //         );
+            //         if (!mounted) return;
+            //         context
+            //             .read<LoginBloc>()
+            //             .add(LoginEventByPhone(dto: dto, isToast: true));
+            //       }
+            //     },
+            //   );
+            // }
+            //
+            // if (provider.isQuickLogin == 2) {
+            //   return QuickLoginScreen(
+            //     pinController: passController,
+            //     passFocus: passFocus,
+            //     userName: provider.infoUserDTO?.fullName,
+            //     phone: provider.infoUserDTO?.phoneNo ?? '',
+            //     onLogin: (dto) {
+            //       context.read<LoginBloc>().add(LoginEventByPhone(dto: dto));
+            //     },
+            //     onQuickLogin: () {
+            //       passController.clear();
+            //       provider.updateQuickLogin(0);
+            //       provider.updateInfoUser(null);
+            //     },
+            //   );
+            // }
 
             return Scaffold(
-              body: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+              body: Stack(
                 children: [
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.3,
-                    width: MediaQuery.of(context).size.width,
-                    child: Stack(
-                      children: [
-                        Center(
-                          child: Container(
+                  Visibility(
+                    visible: provider.isQuickLogin == 0,
+                    child: Scaffold(
+                      body: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          SizedBox(
                             height: MediaQuery.of(context).size.height * 0.3,
                             width: MediaQuery.of(context).size.width,
-                            decoration: const BoxDecoration(
-                              image: DecorationImage(
-                                image:
-                                    AssetImage('assets/images/bgr-header.png'),
-                                fit: BoxFit.fill,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          child: ClipRect(
-                            child: BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                              child: Opacity(
-                                opacity: 0.6,
-                                child: Container(
-                                  height: 30,
-                                  color: Colors.transparent,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Container(
-                              height: 100,
-                              width: MediaQuery.of(context).size.width / 2,
-                              margin: const EdgeInsets.only(top: 50),
-                              decoration: const BoxDecoration(
-                                image: DecorationImage(
-                                  image: AssetImage(
-                                      'assets/images/logo_vietgr_payment.png'),
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 20),
-                            child: Column(
+                            child: Stack(
                               children: [
-                                PhoneWidget(
-                                  phoneController: phoneNoController,
-                                  onChanged: provider.updatePhone,
+                                Center(
+                                  child: Container(
+                                    height: MediaQuery.of(context).size.height *
+                                        0.3,
+                                    width: MediaQuery.of(context).size.width,
+                                    decoration: const BoxDecoration(
+                                      image: DecorationImage(
+                                        image: AssetImage(
+                                            'assets/images/bgr-header.png'),
+                                        fit: BoxFit.fill,
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                                Visibility(
-                                  visible: provider.errorPhone != null,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 5, top: 5, right: 30),
-                                    child: Text(
-                                      provider.errorPhone ?? '',
-                                      textAlign: TextAlign.left,
-                                      style: const TextStyle(
-                                          color: AppColor.RED_TEXT, fontSize: 13),
+                                Positioned(
+                                  bottom: 0,
+                                  left: 0,
+                                  right: 0,
+                                  child: ClipRect(
+                                    child: BackdropFilter(
+                                      filter: ImageFilter.blur(
+                                          sigmaX: 25, sigmaY: 25),
+                                      child: Opacity(
+                                        opacity: 0.6,
+                                        child: Container(
+                                          height: 30,
+                                          color: Colors.transparent,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: Container(
+                                      height: 100,
+                                      width:
+                                          MediaQuery.of(context).size.width / 2,
+                                      margin: const EdgeInsets.only(top: 50),
+                                      decoration: const BoxDecoration(
+                                        image: DecorationImage(
+                                          image: AssetImage(
+                                              'assets/images/logo_vietgr_payment.png'),
+                                          fit: BoxFit.contain,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          const SizedBox(height: 8),
+                          Expanded(
+                            child: SingleChildScrollView(
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 20),
+                                    child: Column(
+                                      children: [
+                                        PhoneWidget(
+                                          phoneController: phoneNoController,
+                                          onChanged: provider.updatePhone,
+                                          autoFocus: provider.isQuickLogin == 0,
+                                        ),
+                                        Visibility(
+                                          visible: provider.errorPhone != null,
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 5, top: 5, right: 30),
+                                            child: Text(
+                                              provider.errorPhone ?? '',
+                                              textAlign: TextAlign.left,
+                                              style: const TextStyle(
+                                                  color: AppColor.RED_TEXT,
+                                                  fontSize: 13),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                ],
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
                   ),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Consumer<LoginProvider>(
-                        builder: (context, auth, child) {
-                          if (auth.listInfoUsers.isNotEmpty) {
-                            return Container(
-                              alignment: Alignment.center,
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                              child: GestureDetector(
-                                onTap: () async {
-                                  provider.updateQuickLogin(1);
-                                },
-                                child: const Text(
-                                  'Đăng nhập bằng tài khoản trước đó',
-                                  style: TextStyle(color: AppColor.BLUE_TEXT),
-                                ),
-                              ),
-                            );
-                          } else {
-                            return const SizedBox();
-                          }
-                        },
-                      ),
-                      const SizedBox(height: 8),
-                      MButtonWidget(
-                        title: 'Tiếp tục',
-                        isEnable: provider.isEnableButton,
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 8),
-                        colorEnableText: provider.isEnableButton
-                            ? AppColor.WHITE
-                            : AppColor.GREY_TEXT,
-                        onTap: () {
-                          FocusManager.instance.primaryFocus?.unfocus();
-                          _bloc
-                              .add(CheckExitsPhoneEvent(phone: provider.phone));
-                        },
-                      ),
-                      const SizedBox(height: 24)
-                    ],
+                  Visibility(
+                    visible: provider.isQuickLogin == 1,
+                    child: LoginAccountScreen(
+                      list: provider.listInfoUsers,
+                      onRemoveAccount: (dto) async {
+                        List<String> listString = [];
+                        List<InfoUserDTO> list = provider.listInfoUsers;
+                        list.removeAt(dto);
+                        if (list.length >= 2) {
+                          list.sort((a, b) =>
+                              a.expiryAsDateTime.compareTo(b.expiryAsDateTime));
+                        }
+
+                        list.forEach((element) {
+                          listString.add(element.toSPJson().toString());
+                        });
+
+                        await UserInformationHelper.instance
+                            .setLoginAccount(listString);
+
+                        provider.updateListInfoUser();
+
+                        if (list.isEmpty) {
+                          provider.updateQuickLogin(0);
+                        }
+                      },
+                      onQuickLogin: (dto) {
+                        provider.updateQuickLogin(2);
+                        provider.updateInfoUser(dto);
+                      },
+                      onBackLogin: () {
+                        provider.updateInfoUser(null);
+                        provider.updateQuickLogin(0);
+                      },
+                      onRegister: () async {
+                        provider.updateInfoUser(null);
+                        final data = await Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => Register(phoneNo: ''),
+                            settings: const RouteSettings(
+                              name: Routes.REGISTER,
+                            ),
+                          ),
+                        );
+
+                        if (data is Map) {
+                          AccountLoginDTO dto = AccountLoginDTO(
+                            phoneNo: data['phone'],
+                            password: EncryptUtils.instance.encrypted(
+                              data['phone'],
+                              data['password'],
+                            ),
+                            device: '',
+                            fcmToken: '',
+                            platform: '',
+                            sharingCode: '',
+                          );
+                          if (!mounted) return;
+                          context
+                              .read<LoginBloc>()
+                              .add(LoginEventByPhone(dto: dto, isToast: true));
+                        }
+                      },
+                    ),
                   ),
+                  Visibility(
+                    visible: provider.isQuickLogin == 2,
+                    child: QuickLoginScreen(
+                      pinController: passController,
+                      passFocus: passFocus,
+                      userName: provider.infoUserDTO?.fullName ?? '',
+                      phone: provider.infoUserDTO?.phoneNo ?? '',
+                      onLogin: (dto) {
+                        context
+                            .read<LoginBloc>()
+                            .add(LoginEventByPhone(dto: dto));
+                      },
+                      onQuickLogin: () {
+                        passController.clear();
+                        provider.updateQuickLogin(0);
+                        provider.updateInfoUser(null);
+                      },
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 24,
+                    left: 0,
+                    right: 0,
+                    child: Column(
+                      children: [
+                        if (provider.isQuickLogin == 0 ||
+                            provider.isQuickLogin == 2)
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Consumer<LoginProvider>(
+                                builder: (context, auth, child) {
+                                  if (auth.listInfoUsers.isNotEmpty) {
+                                    return Container(
+                                      alignment: Alignment.center,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20),
+                                      child: GestureDetector(
+                                        onTap: () async {
+                                          provider.updateQuickLogin(1);
+                                        },
+                                        child: const Text(
+                                          'Đăng nhập bằng tài khoản trước đó',
+                                          style: TextStyle(
+                                              color: AppColor.BLUE_TEXT),
+                                        ),
+                                      ),
+                                    );
+                                  } else {
+                                    return const SizedBox();
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+                        const SizedBox(height: 8),
+                        if (provider.isQuickLogin == 0)
+                          MButtonWidget(
+                            title: 'Tiếp tục',
+                            isEnable: provider.isEnableButton,
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 8),
+                            colorEnableText: provider.isEnableButton
+                                ? AppColor.WHITE
+                                : AppColor.GREY_TEXT,
+                            onTap: () {
+                              FocusManager.instance.primaryFocus?.unfocus();
+                              _bloc.add(
+                                  CheckExitsPhoneEvent(phone: provider.phone));
+                            },
+                          )
+                        else if (provider.isQuickLogin == 2)
+                          MButtonWidget(
+                            title: 'Đăng nhập',
+                            isEnable: passController.text.length >= 6,
+                            colorEnableText: passController.text.length >= 6
+                                ? AppColor.WHITE
+                                : AppColor.GREY_TEXT,
+                            onTap: () {
+                              String phone =
+                                  provider.infoUserDTO?.phoneNo ?? '';
+                              AccountLoginDTO dto = AccountLoginDTO(
+                                phoneNo: provider.infoUserDTO?.phoneNo ?? '',
+                                password: EncryptUtils.instance.encrypted(
+                                  phone,
+                                  passController.text,
+                                ),
+                                device: '',
+                                fcmToken: '',
+                                platform: '',
+                                sharingCode: '',
+                              );
+                              context
+                                  .read<LoginBloc>()
+                                  .add(LoginEventByPhone(dto: dto));
+                            },
+                          )
+                        else
+                          Container()
+                      ],
+                    ),
+                  )
                 ],
               ),
             );
