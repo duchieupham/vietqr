@@ -98,9 +98,8 @@ class QRScannerUtils {
   Future onScanNavi(
     Map<String, dynamic> data,
     BuildContext context, {
-    Function(AddContactDTO)? onTapSave,
-    Function(Map<String, dynamic>)? onTapAdd,
     GestureTapCallback? onCallBack,
+    bool isShowIconFirst = true,
   }) async {
     final type = data['type'];
     final typeQR = data['typeQR'];
@@ -116,6 +115,7 @@ class QRScannerUtils {
             widget: DialogScanBank(
               dto: value,
               bankTypeDTO: bankTypeDTO,
+              isShowIconFirst: isShowIconFirst,
             ),
           );
           break;
@@ -127,6 +127,7 @@ class QRScannerUtils {
             widget: DialogScanTypeID(
               dto: value,
               typeQR: type,
+              isShowIconFirst: isShowIconFirst,
             ),
           );
 
@@ -142,6 +143,7 @@ class QRScannerUtils {
               bgrColor: AppColor.TRANSPARENT,
               widget: DialogScanURL(
                 code: value ?? '',
+                isShowIconFirst: isShowIconFirst,
                 onTapSave: () async {
                   final data = await Navigator.push(
                     context,
@@ -173,6 +175,7 @@ class QRScannerUtils {
               bgrColor: AppColor.TRANSPARENT,
               widget: DialogScanOther(
                 code: value ?? '',
+                isShowIconFirst: isShowIconFirst,
                 onTapSave: () async {
                   final data = await Navigator.push(
                     context,

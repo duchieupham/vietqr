@@ -13,8 +13,6 @@ import 'package:vierqr/features/contact/blocs/contact_bloc.dart';
 import 'package:vierqr/features/contact/blocs/contact_provider.dart';
 import 'package:vierqr/features/contact/events/contact_event.dart';
 import 'package:vierqr/features/contact/states/contact_state.dart';
-import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
-import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/layouts/button_widget.dart';
 import 'package:vierqr/models/contact_dto.dart';
 
@@ -254,13 +252,8 @@ class _ContactStateState extends State<_ContactState>
                             context, Routes.SCAN_QR_VIEW);
                         if (data is Map<String, dynamic>) {
                           if (!mounted) return;
-                          await QRScannerUtils.instance.onScanNavi(
-                              data, context, onTapSave: (data) async {
-                            _bloc.add(SaveContactEvent(dto: data));
-                          }, onTapAdd: (data) {
-                            context.read<DashBoardBloc>().add(
-                                DashBoardCheckExistedEvent(dto: data['data']));
-                          }, onCallBack: () {
+                          await QRScannerUtils.instance
+                              .onScanNavi(data, context, onCallBack: () {
                             _bloc.add(
                               ContactEventGetList(
                                 type: provider.category?.type,

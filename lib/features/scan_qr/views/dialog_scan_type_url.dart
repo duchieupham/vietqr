@@ -10,8 +10,14 @@ import 'package:vierqr/features/scan_qr/views/dialog_feature_scan.dart';
 class DialogScanURL extends StatelessWidget {
   final String code;
   final GestureTapCallback? onTapSave;
+  final bool isShowIconFirst;
 
-  DialogScanURL({super.key, required this.code, this.onTapSave});
+  DialogScanURL({
+    super.key,
+    required this.code,
+    this.onTapSave,
+    this.isShowIconFirst = false,
+  });
 
   final globalKey = GlobalKey();
 
@@ -50,6 +56,7 @@ class DialogScanURL extends StatelessWidget {
           code: code,
           type: TypeQR.QR_LINK,
           globalKey: globalKey,
+          isShowIconFirst: isShowIconFirst,
         ),
       ],
     );

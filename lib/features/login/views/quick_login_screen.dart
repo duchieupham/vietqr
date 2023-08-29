@@ -174,25 +174,6 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
           ],
         ),
       ),
-      bottomSheet: MButtonWidget(
-        title: 'Đăng nhập',
-        isEnable: isButtonLogin,
-        colorEnableText: isButtonLogin ? AppColor.WHITE : AppColor.GREY_TEXT,
-        onTap: () {
-          AccountLoginDTO dto = AccountLoginDTO(
-            phoneNo: widget.phone,
-            password: EncryptUtils.instance.encrypted(
-              widget.phone,
-              widget.pinController.text,
-            ),
-            device: '',
-            fcmToken: '',
-            platform: '',
-            sharingCode: '',
-          );
-          widget.onLogin(dto);
-        },
-      ),
     );
   }
 }

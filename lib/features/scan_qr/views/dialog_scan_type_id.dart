@@ -11,11 +11,13 @@ import 'package:vierqr/models/vietqr_dto.dart';
 class DialogScanTypeID extends StatelessWidget {
   final VietQRDTO dto;
   final TypeContact typeQR;
+  final bool isShowIconFirst;
 
   DialogScanTypeID({
     super.key,
     required this.dto,
     required this.typeQR,
+    this.isShowIconFirst = false,
   });
 
   final globalKey = GlobalKey();
@@ -110,6 +112,7 @@ class DialogScanTypeID extends StatelessWidget {
             code: dto.code ?? '',
             globalKey: globalKey,
             isSmall: isSmall,
+            isShowIconFirst: isShowIconFirst,
           ),
         ],
       ),

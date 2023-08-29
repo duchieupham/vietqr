@@ -6,12 +6,15 @@ class PhoneWidget extends StatefulWidget {
   final ValueChanged<String>? onChanged;
   final TextEditingController phoneController;
   final bool isShowTitle;
+  final bool autoFocus;
 
-  const PhoneWidget(
-      {super.key,
-      this.onChanged,
-      required this.phoneController,
-      this.isShowTitle = false});
+  const PhoneWidget({
+    super.key,
+    this.onChanged,
+    required this.phoneController,
+    this.isShowTitle = false,
+    this.autoFocus = false,
+  });
 
   @override
   State<PhoneWidget> createState() => _BodyWidget();
@@ -39,28 +42,6 @@ class _BodyWidget extends State<PhoneWidget> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: const [
-          // DropdownButtonHideUnderline(
-          //   child: ButtonTheme(
-          //     alignedDropdown: true,
-          //     child: DropdownButton(
-          //       value: _selectedCountryCode,
-          //       items: _countryCodes.map((String value) {
-          //         return DropdownMenuItem<String>(
-          //           value: value,
-          //           child: Text(
-          //             value,
-          //             style: const TextStyle(fontSize: 14.0),
-          //           ),
-          //         );
-          //       }).toList(),
-          //       onChanged: (value) {
-          //         setState(() {
-          //           _selectedCountryCode = value;
-          //         });
-          //       },
-          //     ),
-          //   ),
-          // ),
           SizedBox(
             width: 16,
           ),
@@ -114,7 +95,7 @@ class _BodyWidget extends State<PhoneWidget> {
                   textInputAction: TextInputAction.next,
                   controller: widget.phoneController,
                   onChanged: widget.onChanged,
-                  autofocus: true,
+                  autofocus: widget.autoFocus,
                   decoration: const InputDecoration(
                     contentPadding: EdgeInsets.symmetric(horizontal: 16),
                     fillColor: AppColor.WHITE,

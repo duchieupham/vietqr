@@ -9,8 +9,14 @@ import 'package:vierqr/models/qr_generated_dto.dart';
 class DialogScanBank extends StatelessWidget {
   final QRGeneratedDTO dto;
   final BankTypeDTO bankTypeDTO;
+  final bool isShowIconFirst;
 
-  DialogScanBank({super.key, required this.dto, required this.bankTypeDTO});
+  DialogScanBank({
+    super.key,
+    required this.dto,
+    required this.bankTypeDTO,
+    this.isShowIconFirst = true,
+  });
 
   final globalKey = GlobalKey();
 
@@ -36,6 +42,7 @@ class DialogScanBank extends StatelessWidget {
             globalKey: globalKey,
             bankTypeDTO: bankTypeDTO,
             isSmall: true,
+            isShowIconFirst: isShowIconFirst,
           ),
         ],
       ),

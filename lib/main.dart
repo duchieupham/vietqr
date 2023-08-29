@@ -110,6 +110,8 @@ void main() async {
 }
 
 Future<void> _initialServiceHelper() async {
+  await sharedPrefs.setString('TOKEN_FREE', '');
+
   if (!sharedPrefs.containsKey('THEME_SYSTEM') ||
       sharedPrefs.getString('THEME_SYSTEM') == null) {
     await ThemeHelper.instance.initialTheme();

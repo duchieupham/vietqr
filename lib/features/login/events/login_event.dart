@@ -77,4 +77,6 @@ class CheckExitsPhoneEvent extends LoginEvent {
   List<Object?> get props => [phone];
 }
 
+class GetFreeToken extends LoginEvent {}
+
 class UpdateEvent extends LoginEvent {}
