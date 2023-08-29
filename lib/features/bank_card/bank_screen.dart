@@ -229,20 +229,7 @@ class _BankScreenState extends State<_BankScreen>
     final data = await Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
     if (data is Map<String, dynamic>) {
       if (!mounted) return;
-      QRScannerUtils.instance.onScanNavi(
-        data,
-        context,
-        onTapSave: (data) {
-          context
-              .read<DashBoardBloc>()
-              .add(DashBoardEventAddContact(dto: data));
-        },
-        onTapAdd: (data) {
-          context
-              .read<DashBoardBloc>()
-              .add(DashBoardCheckExistedEvent(dto: data['data']));
-        },
-      );
+      QRScannerUtils.instance.onScanNavi(data, context);
     }
   }
 

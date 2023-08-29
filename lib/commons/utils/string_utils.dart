@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:intl/intl.dart';
 import 'package:vierqr/commons/enums/text_data.dart';
 
@@ -150,5 +152,14 @@ class StringUtils {
       }
       return numericString;
     }
+  }
+
+  String authBase64() {
+    final username = "system-mobile-app";
+    final password = "c3lzdGVtLW1vYmlsZS1hcHA=";
+
+    String credentials = "$username:$password";
+    String credentialsBase64 = base64Encode(utf8.encode(credentials));
+    return credentialsBase64;
   }
 }

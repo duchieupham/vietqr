@@ -265,7 +265,15 @@ enum TypePermission {
   Error,
 }
 
-enum LoginType { NONE, SUCCESS, TOAST, ERROR, CHECK_EXIST, REGISTER }
+enum LoginType {
+  NONE,
+  SUCCESS,
+  TOAST,
+  ERROR,
+  CHECK_EXIST,
+  REGISTER,
+  FREE_TOKEN
+}
 
 enum TransactionType { NONE, LOAD_DATA, REFRESH, GET_LIST }
 

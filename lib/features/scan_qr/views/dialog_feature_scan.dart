@@ -26,6 +26,7 @@ class DialogFeatureWidget extends StatefulWidget {
   final GlobalKey? globalKey;
   final BankTypeDTO? bankTypeDTO;
   final bool isSmall;
+  final bool isShowIconFirst;
 
   const DialogFeatureWidget({
     super.key,
@@ -36,6 +37,7 @@ class DialogFeatureWidget extends StatefulWidget {
     this.globalKey,
     this.bankTypeDTO,
     this.isSmall = false,
+    this.isShowIconFirst = true,
   });
 
   @override
@@ -46,10 +48,12 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
   @override
   void initState() {
     super.initState();
-    if (widget.typeQR == TypeContact.Bank) {
-      DataModel data = DataModel(
-          title: 'Lưu TK', url: 'assets/images/ic-tb-card-selected.png');
-      _list.first = data;
+    if (widget.isShowIconFirst) {
+      if (widget.typeQR == TypeContact.Bank) {
+        _list.first = dataBank;
+      } else {
+        _list.first = dataOther;
+      }
     }
   }
 
@@ -142,9 +146,7 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
             children: List.generate(_list.length, (index) {
               return GestureDetector(
                 onTap: () {
-                  dataModel = _list[index];
-                  onHandle(index);
-                  setState(() {});
+                  onHandle(_list[index].index);
                 },
                 child: _buildItem(
                   _list[index],
@@ -215,29 +217,28 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
         ),
       ),
     );
-    dataModel = null;
-    setState(() {});
   }
 
   void onSaveImage() async {
     DialogWidget.instance.openLoadingDialog();
-    await Future.delayed(const Duration(milliseconds: 200), () async {
-      await ShareUtils.instance
-          .saveImageToGallery(widget.globalKey!)
-          .then((value) {
-        Navigator.pop(context);
-        Fluttertoast.showToast(
-          msg: 'Đã lưu ảnh',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          backgroundColor: Theme.of(context).cardColor,
-          textColor: Theme.of(context).cardColor,
-          fontSize: 15,
+    await Future.delayed(
+      const Duration(milliseconds: 200),
+      () async {
+        await ShareUtils.instance.saveImageToGallery(widget.globalKey!).then(
+          (value) {
+            Navigator.pop(context);
+            Fluttertoast.showToast(
+              msg: 'Đã lưu ảnh',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              backgroundColor: Theme.of(context).cardColor,
+              textColor: Theme.of(context).cardColor,
+              fontSize: 15,
+            );
+          },
         );
-      });
-    });
-    dataModel = null;
-    setState(() {});
+      },
+    );
   }
 
   void onCopy({required dynamic dto, required String code}) async {
@@ -265,9 +266,6 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
         webPosition: 'center',
       ),
     );
-    setState(() {
-      dataModel = null;
-    });
   }
 
   Future<void> share({required dynamic dto}) async {
@@ -283,9 +281,6 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
         key: widget.globalKey!,
         textSharing: text,
       );
-    });
-    setState(() {
-      dataModel = null;
     });
   }
 
@@ -320,19 +315,45 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
     );
   }
 
-  DataModel? dataModel;
+  final DataModel dataBank = DataModel(
+    title: 'Lưu TK',
+    url: 'assets/images/ic-tb-card-selected.png',
+    index: 0,
+  );
+
+  final DataModel dataOther = DataModel(
+    title: 'Lưu thẻ QR',
+    url: 'assets/images/ic-qr-wallet-grey.png',
+    index: 0,
+  );
 
   List<DataModel> _list = [
-    DataModel(title: 'Lưu thẻ QR', url: 'assets/images/ic-qr-wallet-grey.png'),
-    DataModel(title: 'Lưu ảnh', url: 'assets/images/ic-img-blue.png'),
-    DataModel(title: 'Sao chép', url: 'assets/images/ic_copy.png'),
-    DataModel(title: 'Chia sẻ', url: 'assets/images/ic-share-blue.png'),
+    DataModel(
+      title: 'Lưu ảnh',
+      url: 'assets/images/ic-img-blue.png',
+      index: 1,
+    ),
+    DataModel(
+      title: 'Sao chép',
+      url: 'assets/images/ic_copy.png',
+      index: 2,
+    ),
+    DataModel(
+      title: 'Chia sẻ',
+      url: 'assets/images/ic-share-blue.png',
+      index: 3,
+    ),
   ];
 }
 
 class DataModel {
   final String title;
   final String url;
+  final int index;
 
-  DataModel({required this.title, required this.url});
+  DataModel({
+    required this.title,
+    required this.url,
+    required this.index,
+  });
 }

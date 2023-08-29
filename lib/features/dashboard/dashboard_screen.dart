@@ -127,12 +127,6 @@ class _DashBoardScreen extends State<DashBoardScreen>
       QRScannerUtils.instance.onScanNavi(
         data,
         context,
-        onTapSave: (data) {
-          _dashBoardBloc.add(DashBoardEventAddContact(dto: data));
-        },
-        onTapAdd: (data) {
-          _dashBoardBloc.add(DashBoardCheckExistedEvent(dto: data['data']));
-        },
       );
     }
   }

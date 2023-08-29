@@ -8,6 +8,7 @@ import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
+import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/models/account_information_dto.dart';
 import 'package:vierqr/models/account_login_dto.dart';
 import 'package:vierqr/models/code_login_dto.dart';
@@ -67,6 +68,7 @@ class LoginRepository {
             AccountInformationDTO.fromJson(decodedToken);
         await AccountHelper.instance.setFcmToken(fcmToken);
         await AccountHelper.instance.setToken(token);
+        await AccountHelper.instance.setTokenFree('');
         await UserInformationHelper.instance.setPhoneNo(dto.phoneNo);
         await UserInformationHelper.instance
             .setUserId(accountInformationDTO.userId);
@@ -102,5 +104,29 @@ class LoginRepository {
     } catch (e) {
       LOG.error(e.toString());
     }
+  }
+
+  Future getFreeToken() async {
+    try {
+      String url = '${EnvConfig.getBaseUrl()}token_generate';
+
+      Map<String, String>? result = {};
+      result['Authorization'] = 'Basic ${StringUtils.instance.authBase64()}';
+      result['Content-Type'] = 'application/json';
+      result['Accept'] = '*/*';
+
+      final response = await BaseAPIClient.postAPI(
+          url: url, type: AuthenticationType.CUSTOM, body: {}, header: result);
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        await AccountHelper.instance.setTokenFree(data['access_token']);
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return false;
   }
 }

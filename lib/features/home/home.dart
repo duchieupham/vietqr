@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
-import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
-import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/home/widget/card_wallet.dart';
 import 'package:vierqr/features/home/widget/service_section.dart';
 
@@ -42,16 +39,6 @@ class _HomeScreen extends State<HomeScreen> {
       QRScannerUtils.instance.onScanNavi(
         data,
         context,
-        onTapSave: (data) {
-          context
-              .read<DashBoardBloc>()
-              .add(DashBoardEventAddContact(dto: data));
-        },
-        onTapAdd: (data) {
-          context
-              .read<DashBoardBloc>()
-              .add(DashBoardCheckExistedEvent(dto: data['data']));
-        },
       );
     }
   }

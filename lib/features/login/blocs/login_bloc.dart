@@ -12,6 +12,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc() : super(const LoginState()) {
     on<LoginEventByPhone>(_login);
     on<CheckExitsPhoneEvent>(_checkExitsPhone);
+    on<GetFreeToken>(_loadFreeToken);
     on<UpdateEvent>(_updateEvent);
   }
 
@@ -66,6 +67,15 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       }
     } catch (e) {
       emit(state.copyWith(request: LoginType.ERROR));
+    }
+  }
+
+  void _loadFreeToken(LoginEvent event, Emitter emit) async {
+    if (event is GetFreeToken) {
+      emit(state.copyWith(status: BlocStatus.NONE, request: LoginType.NONE));
+      await loginRepository.getFreeToken();
+      emit(state.copyWith(
+          status: BlocStatus.NONE, request: LoginType.FREE_TOKEN));
     }
   }
 

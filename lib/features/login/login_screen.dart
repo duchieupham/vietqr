@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:fluttertoast/fluttertoast.dart';
@@ -7,6 +8,7 @@ import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/encrypt_utils.dart';
+import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/phone_widget.dart';
 import 'package:vierqr/features/login/blocs/login_bloc.dart';
@@ -21,6 +23,7 @@ import 'package:vierqr/models/account_login_dto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/models/info_user_dto.dart';
+import 'package:vierqr/services/shared_references/account_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class Login extends StatelessWidget {
@@ -65,7 +68,31 @@ class _LoginState extends State<_Login> {
   @override
   void dispose() {
     phoneNoController.clear();
+    if (_timer != null) {
+      _timer!.cancel();
+    }
     super.dispose();
+  }
+
+  Timer? _timer;
+  final int _seconds = 1;
+  int expires_in = 0;
+
+  void _startFreeTime() {
+    if (_timer != null) {
+      return;
+    }
+    _timer = Timer.periodic(Duration(seconds: _seconds), (timer) async {
+      print(expires_in);
+      if (expires_in >= 59) {
+        Provider.of<LoginProvider>(context, listen: false).updateToken(false);
+        await AccountHelper.instance.setTokenFree('');
+        _timer!.cancel();
+      }
+      setState(() {
+        expires_in += _seconds;
+      });
+    });
   }
 
   @override
@@ -157,6 +184,10 @@ class _LoginState extends State<_Login> {
             if (state.request == LoginType.CHECK_EXIST) {
               provider.updateQuickLogin(2);
               provider.updateInfoUser(state.infoUserDTO);
+            }
+            if (state.request == LoginType.FREE_TOKEN) {
+              provider.updateToken(true);
+              _startFreeTime();
             }
 
             if (state.request == LoginType.ERROR) {
@@ -493,6 +524,28 @@ class _LoginState extends State<_Login> {
                     right: 0,
                     child: Column(
                       children: [
+                        IconButton(
+                          icon: Icon(Icons.add),
+                          onPressed: () async {
+                            if (!provider.expires_in) {
+                              _bloc.add(GetFreeToken());
+                            }
+                            final data = await Navigator.pushNamed(
+                              context,
+                              Routes.SCAN_QR_VIEW,
+                            );
+                            if (data != null) {
+                              if (data is Map<String, dynamic>) {
+                                if (!mounted) return;
+                                QRScannerUtils.instance.onScanNavi(
+                                  data,
+                                  context,
+                                  isShowIconFirst: false,
+                                );
+                              }
+                            }
+                          },
+                        ),
                         if (provider.isQuickLogin == 0 ||
                             provider.isQuickLogin == 2)
                           Column(
@@ -565,9 +618,7 @@ class _LoginState extends State<_Login> {
                                   .read<LoginBloc>()
                                   .add(LoginEventByPhone(dto: dto));
                             },
-                          )
-                        else
-                          Container()
+                          ),
                       ],
                     ),
                   )
