@@ -4,6 +4,7 @@ class CheckUtils {
   const CheckUtils._privateConsrtructor();
 
   static const CheckUtils _instance = CheckUtils._privateConsrtructor();
+
   static CheckUtils get instance => _instance;
 
   String getCheckMessage(String message) {
@@ -26,6 +27,9 @@ class CheckUtils {
       case CheckType.C04:
         result =
             'Không thể xoá TK. Tính năng đang bảo trì cho TK ngân hàng đã liên kết.';
+        break;
+      case CheckType.C06:
+        result = 'TK ngân hàng này đã được thêm trước đó';
         break;
       default:
         result = message;

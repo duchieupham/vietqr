@@ -36,8 +36,6 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
     on<PermissionEventRequest>(_requestPermissions);
     on<ScanQrEventGetBankType>(_getBankType);
     on<DashBoardEventSearchName>(_searchBankName);
-    on<DashBoardEventAddContact>(_addContact);
-    on<DashBoardCheckExistedEvent>(_checkExistedBank);
     on<DashBoardEventInsertUnauthenticated>(_insertBankCardUnauthenticated);
     on<UpdateEvent>(_updateEvent);
   }
@@ -312,59 +310,6 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
       LOG.error(e.toString());
       emit(state.copyWith(
           request: DashBoardType.SCAN_NOT_FOUND, status: BlocStatus.NONE));
-    }
-  }
-
-  void _addContact(DashBoardEvent event, Emitter emit) async {
-    try {
-      if (event is DashBoardEventAddContact) {
-        emit(state.copyWith(
-            status: BlocStatus.LOADING, request: DashBoardType.NONE));
-        ResponseMessageDTO result =
-            await bankCardRepository.addContact(event.dto);
-        if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
-          emit(state.copyWith(
-              status: BlocStatus.UNLOADING,
-              request: DashBoardType.ADD_BOOK_CONTACT));
-        } else {
-          emit(
-            state.copyWith(
-              request: DashBoardType.ADD_BOOK_CONTACT_EXIST,
-              status: BlocStatus.UNLOADING,
-            ),
-          );
-        }
-      }
-    } catch (e) {
-      LOG.error(e.toString());
-      emit(state.copyWith(request: DashBoardType.ERROR));
-    }
-  }
-
-  void _checkExistedBank(DashBoardEvent event, Emitter emit) async {
-    try {
-      if (event is DashBoardCheckExistedEvent) {
-        emit(state.copyWith(
-            status: BlocStatus.LOADING, request: DashBoardType.NONE));
-        final ResponseMessageDTO result =
-            await bankCardRepository.checkExistedBank(
-                event.dto.bankAccount, event.dto.bankTypeId ?? '');
-        if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
-          emit(state.copyWith(
-              request: DashBoardType.EXIST_BANK, qrDto: event.dto));
-        } else if (result.status == Stringify.RESPONSE_STATUS_CHECK) {
-          emit(state.copyWith(
-              request: DashBoardType.ERROR,
-              status: BlocStatus.UNLOADING,
-              msg: CheckUtils.instance.getCheckMessage(result.message)));
-        } else {
-          emit(state.copyWith(
-              request: DashBoardType.ERROR, status: BlocStatus.UNLOADING));
-        }
-      }
-    } catch (e) {
-      LOG.error(e.toString());
-      emit(state.copyWith(request: DashBoardType.ERROR));
     }
   }
 

@@ -629,6 +629,7 @@ class _StackedList extends State<StackedList> {
                                   'bankAccount': dto.bankAccount,
                                   'name': dto.userBankName,
                                   'bankDTO': bankTypeDTO,
+                                  'bankId': dto.id,
                                 },
                               );
                             },

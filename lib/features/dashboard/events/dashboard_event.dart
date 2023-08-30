@@ -43,26 +43,6 @@ class DashBoardEventSearchName extends DashBoardEvent {
   List<Object?> get props => [dto];
 }
 
-class DashBoardEventAddContact extends DashBoardEvent {
-  final AddContactDTO dto;
-
-  const DashBoardEventAddContact({required this.dto});
-
-  @override
-  List<Object?> get props => [dto];
-}
-
-class DashBoardCheckExistedEvent extends DashBoardEvent {
-  final QRGeneratedDTO dto;
-
-  const DashBoardCheckExistedEvent({
-    required this.dto,
-  });
-
-  @override
-  List<Object?> get props => [dto];
-}
-
 class DashBoardEventInsertUnauthenticated extends DashBoardEvent {
   final BankCardInsertUnauthenticatedDTO dto;
 

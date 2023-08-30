@@ -101,19 +101,33 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
       if (event is BankCardCheckExistedEvent) {
         emit(state.copyWith(
             status: BlocStatus.LOADING, request: AddBankType.NONE));
-        final ResponseMessageDTO result = await bankCardRepository
-            .checkExistedBank(event.bankAccount, event.bankTypeId);
+        final ResponseMessageDTO result =
+            await bankCardRepository.checkExistedBank(
+                event.bankAccount, event.bankTypeId, event.type, userId);
         if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
           emit(state.copyWith(
               request: AddBankType.EXIST_BANK, status: BlocStatus.UNLOADING));
         } else if (result.status == Stringify.RESPONSE_STATUS_CHECK) {
+          String title = 'Không thể liên kết';
+          String msg =
+              'Tài khoản đã được liên kết trước đó. Quý khách chỉ được lưu tài khoản này.';
+          if (event.type == ExitsType.ADD.name) {
+            title = 'không thể thêm TK';
+            msg = 'TK đã tồn tại trong danh sách TK ngân hàng của bạn';
+          }
+          emit(
+            state.copyWith(
+              request: AddBankType.ERROR,
+              status: BlocStatus.UNLOADING,
+              msg: msg,
+              titleMsg: title,
+            ),
+          );
+        } else {
           emit(state.copyWith(
               request: AddBankType.ERROR,
               status: BlocStatus.UNLOADING,
-              msg: CheckUtils.instance.getCheckMessage(result.message)));
-        } else {
-          emit(state.copyWith(
-              request: AddBankType.ERROR, status: BlocStatus.UNLOADING));
+              titleMsg: null));
         }
       }
     } catch (e) {

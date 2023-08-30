@@ -125,11 +125,13 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
         bankAccountController.text.length > 5 &&
         isEdit) {
       String transferType = '';
+      String caiValue = '';
       String bankCode = '';
       BankTypeDTO? bankTypeDTO =
           Provider.of<AddBankProvider>(context, listen: false).bankTypeDTO;
       if (bankTypeDTO != null) {
-        bankCode = bankTypeDTO.caiValue;
+        caiValue = bankTypeDTO.caiValue;
+        bankCode = bankTypeDTO.bankCode;
       }
 
       if (bankCode == 'MB') {
@@ -141,7 +143,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
         accountNumber: bankAccountController.text,
         accountType: 'ACCOUNT',
         transferType: transferType,
-        bankCode: bankCode,
+        bankCode: caiValue,
       );
       _bloc.add(BankCardEventSearchName(dto: bankNameSearchDTO));
     }
@@ -214,7 +216,8 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
 
             if (state.request == AddBankType.ERROR) {
               await DialogWidget.instance.openMsgDialog(
-                  title: 'Không thể thêm TK', msg: state.msg ?? '');
+                  title: state.titleMsg ?? 'Không thể thêm TK',
+                  msg: state.msg ?? '');
               if (!mounted) return;
               Provider.of<AddBankProvider>(context, listen: false)
                   .updateEnableName(true);
@@ -668,10 +671,14 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                                           ?.unfocus();
                                       String bankTypeId =
                                           provider.bankTypeDTO!.id;
-                                      _bloc.add(BankCardCheckExistedEvent(
+                                      _bloc.add(
+                                        BankCardCheckExistedEvent(
                                           bankAccount:
                                               bankAccountController.text,
-                                          bankTypeId: bankTypeId));
+                                          bankTypeId: bankTypeId,
+                                          type: ExitsType.ADD.name,
+                                        ),
+                                      );
                                     },
                                   );
                           },
@@ -694,13 +701,19 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
         FocusManager.instance.primaryFocus?.unfocus();
         String bankTypeId = provider.bankTypeDTO!.id;
         _bloc.add(BankCardCheckExistedEvent(
-            bankAccount: bankAccountController.text, bankTypeId: bankTypeId));
+          bankAccount: bankAccountController.text,
+          bankTypeId: bankTypeId,
+          type: ExitsType.ADD.name,
+        ));
       },
       onTapLK: () {
         provider.updateLinkBank(true);
         String bankTypeId = provider.bankTypeDTO!.id;
         _bloc.add(BankCardCheckExistedEvent(
-            bankAccount: bankAccountController.text, bankTypeId: bankTypeId));
+          bankAccount: bankAccountController.text,
+          bankTypeId: bankTypeId,
+          type: ExitsType.LINKED.name,
+        ));
       },
       isEnableBTSave: provider.isEnableButton,
       isEnableBTLK: provider.isValidFormUnAuthentication(),

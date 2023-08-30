@@ -14,6 +14,8 @@ enum BlocStatus {
   DELETED_ERROR,
 }
 
+enum ExitsType { ADD, LINKED }
+
 enum StepType { first_screen, second_screen, three_screen }
 
 enum TypeSelect {
@@ -26,6 +28,7 @@ enum CheckType {
   C02,
   C03,
   C04,
+  C06
 }
 
 enum TypeOTP {

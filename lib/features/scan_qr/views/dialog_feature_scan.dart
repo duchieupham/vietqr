@@ -187,7 +187,7 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
   void onSaveTK() async {
     if (widget.dto is QRGeneratedDTO) {
       QRGeneratedDTO value = widget.dto;
-      if (value.isNaviAddBank) {
+      // if (value.isNaviAddBank) {
         await Navigator.pushNamed(
           context,
           Routes.ADD_BANK_CARD,
@@ -200,11 +200,11 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
         );
 
         eventBus.fire(ChangeThemeEvent());
-      } else {
-        context
-            .read<DashBoardBloc>()
-            .add(DashBoardCheckExistedEvent(dto: value));
-      }
+      // } else {
+      //   context
+      //       .read<DashBoardBloc>()
+      //       .add(DashBoardCheckExistedEvent(dto: value));
+      // }
     }
   }
 

@@ -51,14 +51,16 @@ class UpdateAddBankEvent extends AddBankEvent {}
 class BankCardCheckExistedEvent extends AddBankEvent {
   final String bankAccount;
   final String bankTypeId;
+  final String type;
 
   const BankCardCheckExistedEvent({
     required this.bankAccount,
     required this.bankTypeId,
+    required this.type,
   });
 
   @override
-  List<Object?> get props => [bankAccount, bankTypeId];
+  List<Object?> get props => [bankAccount, bankTypeId, type];
 }
 
 class BankCardEventInsertUnauthenticated extends AddBankEvent {

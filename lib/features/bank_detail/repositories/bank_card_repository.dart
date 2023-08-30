@@ -122,12 +122,17 @@ class BankCardRepository {
   }
 
   Future<ResponseMessageDTO> checkExistedBank(
-      String bankAccount, String bankTypeId) async {
+    String bankAccount,
+    String bankTypeId,
+    String type,
+    String userId,
+  ) async {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
       final String url =
-          '${EnvConfig.getBaseUrl()}account-bank/check/$bankAccount/$bankTypeId';
+          '${EnvConfig.getBaseUrl()}account-bank/check-existed?bankAccount='
+          '$bankAccount&bankTypeId=$bankTypeId&userId=$userId&type=$type';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,

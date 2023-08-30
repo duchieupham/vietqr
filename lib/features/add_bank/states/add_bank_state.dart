@@ -4,6 +4,7 @@ import 'package:vierqr/models/bank_name_information_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 
 class AddBankState {
+  final String? titleMsg;
   final String? msg;
   final String? errorAccount;
   final String? errorName;
@@ -22,6 +23,7 @@ class AddBankState {
   final TypeQR? typeQR;
 
   AddBankState({
+    this.titleMsg,
     this.msg,
     this.status = BlocStatus.NONE,
     this.request = AddBankType.NONE,
@@ -44,6 +46,7 @@ class AddBankState {
     BlocStatus? status,
     AddBankType? request,
     String? msg,
+    String? titleMsg,
     String? errorName,
     String? errorAccount,
     List<BankTypeDTO>? listBanks,
@@ -62,6 +65,7 @@ class AddBankState {
       status: status ?? this.status,
       request: request ?? this.request,
       typeQR: typeQR ?? this.typeQR,
+      titleMsg: titleMsg ?? this.titleMsg,
       msg: msg ?? this.msg,
       errorAccount: errorAccount ?? this.errorAccount,
       errorName: errorName ?? this.errorName,
