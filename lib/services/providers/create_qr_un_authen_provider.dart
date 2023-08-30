@@ -4,7 +4,8 @@ import 'package:vierqr/models/bank_type_dto.dart';
 
 class CreateQrUnATProvider with ChangeNotifier {
   String _money = '';
-
+  bool _showMoreOption = false;
+  bool get showMoreOption => _showMoreOption;
   String get money => _money;
   void updateMoney(String value) {
     int data = int.parse(value.replaceAll('.', ''));
@@ -48,6 +49,7 @@ class CreateQrUnATProvider with ChangeNotifier {
 
   void updateValidCreate(bool value) {
     _isValidCreate = value;
+
     notifyListeners();
   }
 
@@ -58,6 +60,12 @@ class CreateQrUnATProvider with ChangeNotifier {
 
   bool isValidUnauthenticateForm() {
     return (_bankType.bankCode.isNotEmpty && !_isNameErr && !_isBankAccountErr);
+  }
+
+  updateShowMoreOption(bool errorAmount) {
+    _showMoreOption = !_showMoreOption;
+    _isValidCreate = errorAmount;
+    notifyListeners();
   }
 
   bool isValidAuthenticateForm() {

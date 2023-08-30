@@ -219,6 +219,7 @@ class _LoginState extends State<_Login> {
           },
           builder: (context, state) {
             return Scaffold(
+              resizeToAvoidBottomInset: false,
               body: Stack(
                 children: [
                   Visibility(
@@ -415,71 +416,11 @@ class _LoginState extends State<_Login> {
                     right: 0,
                     child: Column(
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              _buildCustomButtonIcon(
-                                onTap: () async {
-                                  _bloc.add(GetFreeToken());
-                                  final data = await Navigator.pushNamed(
-                                    context,
-                                    Routes.SCAN_QR_VIEW,
-                                  );
-                                  if (data != null) {
-                                    if (data is Map<String, dynamic>) {
-                                      if (!mounted) return;
-                                      await QRScannerUtils.instance.onScanNavi(
-                                        data,
-                                        context,
-                                        isShowIconFirst: false,
-                                      );
-                                      await AccountHelper.instance
-                                          .setTokenFree('');
-                                    }
-                                  }
-                                },
-                                title: 'Quét QR',
-                                pathIcon:
-                                    'assets/images/qr-contact-other-blue.png',
-                              ),
-                              _buildCustomButtonIcon(
-                                onTap: () async {
-                                  Navigator.pushNamed(
-                                      context, Routes.CREATE_UN_AUTHEN);
-                                },
-                                title: 'Tạo mã VietQR',
-                                pathIcon: 'assets/images/ic-viet-qr-small.png',
-                              ),
-                              _buildCustomButtonIcon(
-                                onTap: () {
-                                  Navigator.pushNamed(
-                                      context, Routes.CONTACT_US_SCREEN);
-                                },
-                                title: 'Liên hệ',
-                                pathIcon: 'assets/images/ic-introduce.png',
-                              ),
-                              _buildCustomButtonIcon(
-                                onTap: () async {
-                                  showDialog(
-                                    barrierDismissible: false,
-                                    context: NavigationService
-                                        .navigatorKey.currentContext!,
-                                    builder: (BuildContext context) {
-                                      return DialogUpdateView();
-                                    },
-                                  );
-                                },
-                                title: 'Phiên bản app',
-                                pathIcon: 'assets/images/ic-gear.png',
-                              ),
-                            ],
-                          ),
+                        _buildButtonBottom(),
+                         SizedBox(
+                          height:provider.isQuickLogin == 2 ? 40 : 0,
                         ),
-                        SizedBox(
-                          height: provider.isQuickLogin == 2 ? 16 : 0,
-                        ),
+
                         if (provider.isQuickLogin == 0 ||
                             provider.isQuickLogin == 2)
                           Column(
@@ -562,6 +503,66 @@ class _LoginState extends State<_Login> {
           },
         );
       },
+    );
+  }
+
+  Widget _buildButtonBottom() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _buildCustomButtonIcon(
+            onTap: () async {
+              _bloc.add(GetFreeToken());
+              final data = await Navigator.pushNamed(
+                context,
+                Routes.SCAN_QR_VIEW,
+              );
+              if (data != null) {
+                if (data is Map<String, dynamic>) {
+                  if (!mounted) return;
+                  await QRScannerUtils.instance.onScanNavi(
+                    data,
+                    context,
+                    isShowIconFirst: false,
+                  );
+                  await AccountHelper.instance.setTokenFree('');
+                }
+              }
+            },
+            title: 'Quét QR',
+            pathIcon: 'assets/images/qr-contact-other-blue.png',
+          ),
+          _buildCustomButtonIcon(
+            onTap: () async {
+              Navigator.pushNamed(context, Routes.CREATE_UN_AUTHEN);
+            },
+            title: 'Tạo mã VietQR',
+            pathIcon: 'assets/images/ic-viet-qr-small.png',
+          ),
+          _buildCustomButtonIcon(
+            onTap: () {
+              Navigator.pushNamed(context, Routes.CONTACT_US_SCREEN);
+            },
+            title: 'Liên hệ',
+            pathIcon: 'assets/images/ic-introduce.png',
+          ),
+          _buildCustomButtonIcon(
+            onTap: () async {
+              showDialog(
+                barrierDismissible: false,
+                context: NavigationService.navigatorKey.currentContext!,
+                builder: (BuildContext context) {
+                  return DialogUpdateView();
+                },
+              );
+            },
+            title: 'Phiên bản app',
+            pathIcon: 'assets/images/ic-gear.png',
+          ),
+        ],
+      ),
     );
   }
 

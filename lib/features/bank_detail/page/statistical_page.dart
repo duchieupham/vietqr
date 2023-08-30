@@ -42,7 +42,9 @@ class Statistical extends StatelessWidget {
                 LineChart(
                   listData: state.listData,
                 ),
-                const SizedBox(height: 24,),
+                const SizedBox(
+                  height: 24,
+                ),
                 // Container(
                 //   padding: const EdgeInsets.fromLTRB(0, 40, 4, 12),
                 //   width: MediaQuery.of(context).size.width,

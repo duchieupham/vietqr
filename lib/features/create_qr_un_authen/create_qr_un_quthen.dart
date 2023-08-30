@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
@@ -13,6 +14,7 @@ import 'package:vierqr/features/add_bank/views/bank_input_widget.dart';
 import 'package:vierqr/features/create_qr_un_authen/blocs/qrcode_un_authen_bloc.dart';
 import 'package:vierqr/features/create_qr_un_authen/states/qrcode_un_authen_state.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
+import 'package:vierqr/layouts/m_text_form_field.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 
 import '../../services/providers/create_qr_un_authen_provider.dart';
@@ -137,66 +139,109 @@ class _CreateQrUnQuthenState extends State<CreateQrUnQuthen> {
                             ),
                           ),
                           const Padding(padding: EdgeInsets.only(top: 15)),
-                          TextFieldCustom(
-                            isObscureText: false,
-                            maxLines: 1,
-                            enable: provider.bankType.bankCode.isNotEmpty,
-                            fillColor: provider.bankType.bankCode.isNotEmpty
-                                ? null
-                                : AppColor.GREY_EBEBEB,
-                            controller: amountController,
-                            textFieldType: TextfieldType.LABEL,
-                            title: 'Số tiền (Lớn hơn 1000)',
-                            hintText: 'Nhập số tiền',
-                            inputType: TextInputType.number,
-                            keyboardAction: TextInputAction.next,
-                            onChange: (value) {
-                              if (amountController.text.isNotEmpty) {
-                                if (StringUtils.instance
-                                    .isNumeric(amountController.text)) {
-                                  provider.updateAmountErr(false);
-                                  if (amountController.text.length >= 4) {
-                                    provider.updateValidCreate(true);
+                          if (provider.showMoreOption) ...[
+                            MTextFieldCustom(
+                              isObscureText: false,
+                              maxLines: 1,
+                              enable: provider.bankType.bankCode.isNotEmpty,
+                              fillColor: provider.bankType.bankCode.isNotEmpty
+                                  ? null
+                                  : AppColor.GREY_EBEBEB,
+                              textFieldType: TextfieldType.LABEL,
+                              title: 'Số tiền',
+                              hintText: 'Nhập số tiền ít nhất 1000',
+                              inputType: TextInputType.number,
+                              controller: amountController,
+                              keyboardAction: TextInputAction.next,
+                              onChange: (value) {
+                                if (amountController.text.isNotEmpty) {
+                                  if (StringUtils.instance
+                                      .isNumeric(amountController.text)) {
+                                    provider.updateAmountErr(false);
+                                    if (amountController.text.length >= 4) {
+                                      provider.updateValidCreate(true);
+                                    } else {
+                                      provider.updateValidCreate(false);
+                                    }
                                   } else {
+                                    provider.updateAmountErr(true);
                                     provider.updateValidCreate(false);
                                   }
                                 } else {
-                                  provider.updateAmountErr(true);
-                                  provider.updateValidCreate(false);
+                                  provider.updateAmountErr(false);
+                                  provider.updateValidCreate(true);
                                 }
-                              } else {
-                                provider.updateAmountErr(false);
-                                provider.updateValidCreate(true);
-                              }
-                            },
-                          ),
-                          const Padding(padding: EdgeInsets.only(top: 5)),
-                          if (provider.isAmountErr)
-                            const Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                'Số tiền không đúng định dạng',
-                                style: TextStyle(
-                                  color: AppColor.RED_CALENDAR,
-                                  fontSize: 12,
+                              },
+                              suffixIcon: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: const [
+                                  Text(
+                                    'VND',
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                ],
+                              ),
+                              inputFormatter: [
+                                FilteringTextInputFormatter.digitsOnly,
+                              ],
+                            ),
+                            const Padding(padding: EdgeInsets.only(top: 5)),
+                            if (provider.isAmountErr)
+                              const Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  'Số tiền không đúng định dạng',
+                                  style: TextStyle(
+                                    color: AppColor.RED_CALENDAR,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                            const Padding(padding: EdgeInsets.only(top: 15)),
+                            TextFieldCustom(
+                              isObscureText: false,
+                              maxLines: 1,
+                              enable: provider.bankType.bankCode.isNotEmpty,
+                              fillColor: provider.bankType.bankCode.isNotEmpty
+                                  ? null
+                                  : AppColor.GREY_EBEBEB,
+                              controller: contentController,
+                              textFieldType: TextfieldType.LABEL,
+                              title: 'Nội dung (50 ký tự)',
+                              hintText: 'Nội dung mã QR',
+                              inputType: TextInputType.text,
+                              keyboardAction: TextInputAction.done,
+                              onChange: (value) {},
+                            ),
+                          ],
+                          UnconstrainedBox(
+                            child: GestureDetector(
+                              onTap: () {
+                                if (provider.showMoreOption) {
+                                  provider.updateShowMoreOption(true);
+                                } else {
+                                  provider.updateShowMoreOption(
+                                      amountController.text.length > 4);
+                                }
+                              },
+                              child: Container(
+                                width: 160,
+                                height: 40,
+                                margin: EdgeInsets.symmetric(vertical: 28),
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(30),
+                                    border:
+                                        Border.all(color: AppColor.BLUE_TEXT)),
+                                child: Text(
+                                  provider.showMoreOption
+                                      ? 'Đóng tuỳ chọn'
+                                      : 'Thêm tuỳ chọn',
+                                  style: TextStyle(color: AppColor.BLUE_TEXT),
                                 ),
                               ),
                             ),
-                          const Padding(padding: EdgeInsets.only(top: 15)),
-                          TextFieldCustom(
-                            isObscureText: false,
-                            maxLines: 1,
-                            enable: provider.bankType.bankCode.isNotEmpty,
-                            fillColor: provider.bankType.bankCode.isNotEmpty
-                                ? null
-                                : AppColor.GREY_EBEBEB,
-                            controller: contentController,
-                            textFieldType: TextfieldType.LABEL,
-                            title: 'Nội dung (50 ký tự)',
-                            hintText: 'Nội dung mã QR',
-                            inputType: TextInputType.text,
-                            keyboardAction: TextInputAction.done,
-                            onChange: (value) {},
                           ),
                           const SizedBox(
                             height: 24,
@@ -231,7 +276,6 @@ class _CreateQrUnQuthenState extends State<CreateQrUnQuthen> {
                                   data['content'] = StringUtils.instance
                                       .removeDiacritic(contentController.text);
 
-                                  print('----------------$data');
                                   BlocProvider.of<QRCodeUnUTBloc>(context)
                                       .add(QRCodeUnUTCreateQR(data: data));
                                 }
@@ -294,7 +338,7 @@ class _CreateQrUnQuthenState extends State<CreateQrUnQuthen> {
             ),
             child: Row(
               children: [
-                if (provider.bankType.id.isNotEmpty)
+                if (provider.bankType.bankCode.isNotEmpty)
                   Container(
                     width: 60,
                     height: 30,

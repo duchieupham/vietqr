@@ -20,7 +20,7 @@ class _LineChartState extends State<LineChart> {
   List<ResponseStatisticDTO> listStatistic = [];
   @override
   void initState() {
-    listStatistic = widget.listData;
+    listStatistic.addAll(widget.listData.reversed);
     // filterList();
 
     if (maxValueAmount > Numeral.MILLION) {
@@ -68,7 +68,7 @@ class _LineChartState extends State<LineChart> {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: 400,
+      height: 440,
       padding: EdgeInsets.only(top: 12, left: 8, right: 12),
       decoration: BoxDecoration(
           color: AppColor.WHITE, borderRadius: BorderRadius.circular(8)),
@@ -76,7 +76,7 @@ class _LineChartState extends State<LineChart> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '(Số tiền)',
+            'Số tiền\n(VND)',
             style: TextStyle(fontSize: 10),
           ),
           Expanded(
@@ -89,25 +89,34 @@ class _LineChartState extends State<LineChart> {
                         padding: const EdgeInsets.only(bottom: 16),
                         child: SfCartesianChart(
                           enableAxisAnimation: true,
-                          primaryXAxis: CategoryAxis(isInversed: true),
+                          primaryXAxis: CategoryAxis(isInversed: false),
                           primaryYAxis: NumericAxis(
                               labelFormat: '{value}$currencyUnit',
                               labelAlignment: LabelAlignment.center),
                           series: <SplineSeries<ResponseStatisticDTO, String>>[
                             SplineSeries<ResponseStatisticDTO, String>(
-                              dataSource: widget.listData,
-                              xValueMapper: (ResponseStatisticDTO dto, _) {
-                                return dto.getMonth();
-                              },
-                              color: AppColor.BLUE_TEXT,
-                              yValueMapper: (ResponseStatisticDTO dto, _) =>
-                                  dto.totalCashIn / conversionRate,
-                            ),
+                                dataSource: listStatistic,
+                                xValueMapper: (ResponseStatisticDTO dto, _) {
+                                  return dto.getMonth();
+                                },
+                                color: AppColor.GREEN,
+                                yValueMapper: (ResponseStatisticDTO dto, _) =>
+                                    dto.totalCashIn / conversionRate,
+                                markerSettings: MarkerSettings(
+                                  isVisible: true,
+                                  height: 6,
+                                  width: 6,
+                                )),
                             SplineSeries<ResponseStatisticDTO, String>(
-                                dataSource: widget.listData,
+                                dataSource: listStatistic,
                                 xValueMapper: (ResponseStatisticDTO dto, _) =>
                                     dto.getMonth(),
                                 color: AppColor.RED_TEXT,
+                                markerSettings: MarkerSettings(
+                                  isVisible: true,
+                                  height: 6,
+                                  width: 6,
+                                ),
                                 yValueMapper: (ResponseStatisticDTO dto, _) =>
                                     dto.totalCashOut / conversionRate)
                           ],
@@ -126,6 +135,21 @@ class _LineChartState extends State<LineChart> {
               ],
             ),
           ),
+          Align(
+              alignment: Alignment.center,
+              child: Text(
+                'Biểu đồ thống kê giao dịch',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              )),
+          Align(
+              alignment: Alignment.center,
+              child: Text(
+                'Năm ${DateTime.now().year}',
+                style: TextStyle(fontSize: 12),
+              )),
+          const SizedBox(
+            height: 12,
+          ),
           Row(
             children: [
               const SizedBox(
@@ -134,7 +158,7 @@ class _LineChartState extends State<LineChart> {
               Container(
                 height: 10,
                 width: 20,
-                color: AppColor.BLUE_TEXT,
+                color: AppColor.GREEN,
               ),
               const SizedBox(
                 width: 8,
