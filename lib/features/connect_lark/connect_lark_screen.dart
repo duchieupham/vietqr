@@ -6,7 +6,7 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/connect_lark/states/conect_lark_state.dart';
-import 'package:vierqr/layouts/button_widget.dart';
+import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/services/providers/connect_lark_provider.dart';
 

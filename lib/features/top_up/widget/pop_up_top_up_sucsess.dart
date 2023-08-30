@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
-import 'package:vierqr/layouts/button_widget.dart';
+import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/top_up_sucsess_dto.dart';
 
 import '../../../commons/utils/time_utils.dart';

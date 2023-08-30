@@ -11,7 +11,7 @@ import 'package:vierqr/features/personal/blocs/user_edit_bloc.dart';
 import 'package:vierqr/features/personal/events/user_edit_event.dart';
 import 'package:vierqr/features/personal/states/user_edit_state.dart';
 import 'package:vierqr/layouts/box_layout.dart';
-import 'package:vierqr/layouts/button_widget.dart';
+import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/account_information_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';

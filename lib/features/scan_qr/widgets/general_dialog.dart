@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/layouts/button_widget.dart';
+import 'package:vierqr/layouts/m_button_widget.dart';
 
 class GeneralDialog extends StatelessWidget {
   _handleOnPressedCallback(BuildContext context, Function? onPressed) {

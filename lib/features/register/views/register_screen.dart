@@ -12,8 +12,8 @@ import 'package:vierqr/features/register/events/register_event.dart';
 import 'package:vierqr/features/register/states/register_state.dart';
 import 'package:vierqr/features/register/views/page/form_account.dart';
 import 'package:vierqr/features/register/views/page/referral_code.dart';
-import 'package:vierqr/layouts/button_widget.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
+import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/account_login_dto.dart';
 import 'package:vierqr/services/providers/register_provider.dart';
 

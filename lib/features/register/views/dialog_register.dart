@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/layouts/button_widget.dart';
+import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/pin_code_input.dart';
 
 class DialogRegister extends StatefulWidget {

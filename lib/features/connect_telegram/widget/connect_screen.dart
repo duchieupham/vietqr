@@ -12,7 +12,7 @@ import 'package:vierqr/features/connect_telegram/page/choose_bank_page.dart';
 import 'package:vierqr/features/connect_telegram/page/setting_telegram_page.dart';
 import 'package:vierqr/features/connect_telegram/states/conect_telegram_state.dart';
 import 'package:vierqr/features/connect_telegram/widget/success_screen.dart';
-import 'package:vierqr/layouts/button_widget.dart';
+import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/services/providers/connect_telegram_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';

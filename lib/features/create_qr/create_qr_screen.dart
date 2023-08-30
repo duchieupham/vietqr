@@ -27,7 +27,7 @@ import 'package:vierqr/features/create_qr/states/create_qr_state.dart';
 import 'package:vierqr/features/create_qr/views/bottom_sheet_image.dart';
 import 'package:vierqr/features/printer/views/printing_view.dart';
 import 'package:vierqr/features/transaction/widgets/transaction_sucess_widget.dart';
-import 'package:vierqr/layouts/button_widget.dart';
+import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
 import 'package:vierqr/main.dart';

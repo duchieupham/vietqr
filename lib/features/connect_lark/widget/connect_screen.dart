@@ -10,7 +10,7 @@ import 'package:vierqr/features/connect_lark/page/choose_bank_page.dart';
 import 'package:vierqr/features/connect_lark/page/create_webhook.dart';
 import 'package:vierqr/features/connect_lark/page/setting_lark_page.dart';
 import 'package:vierqr/features/connect_lark/widget/success_screen.dart';
-import 'package:vierqr/layouts/button_widget.dart';
+import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 

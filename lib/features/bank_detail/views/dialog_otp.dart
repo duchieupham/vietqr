@@ -2,7 +2,7 @@ import 'package:dudv_base/dudv_base.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/layouts/button_widget.dart';
+import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/pin_code_input.dart';
 import 'package:vierqr/services/providers/countdown_provider.dart';
 

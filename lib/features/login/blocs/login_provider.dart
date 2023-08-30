@@ -17,18 +17,11 @@ class LoginProvider with ChangeNotifier {
   //2 : quickLogin
   int isQuickLogin = 0;
 
-  bool expires_in = false;
-
   init() async {
     listInfoUsers = UserInformationHelper.instance.getLoginAccount();
     if (listInfoUsers.isNotEmpty) {
       isQuickLogin = 1;
     }
-    notifyListeners();
-  }
-
-  void updateToken(value) {
-    expires_in = value;
     notifyListeners();
   }
 

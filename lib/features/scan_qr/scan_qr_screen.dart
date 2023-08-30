@@ -20,7 +20,7 @@
 // import 'package:vierqr/features/scan_qr/events/scan_qr_event.dart';
 // import 'package:vierqr/features/scan_qr/my_qr_screen.dart';
 // import 'package:vierqr/features/scan_qr/states/scan_qr_state.dart';
-// import 'package:vierqr/layouts/button_widget.dart';
+// import 'package:vierqr/layouts/m_button_widget.dart';
 // import 'package:vierqr/layouts/m_app_bar.dart';
 // import 'package:vierqr/main.dart';
 // import 'package:vierqr/models/bank_name_search_dto.dart';

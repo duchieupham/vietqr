@@ -19,7 +19,7 @@ import 'package:vierqr/features/add_bank/states/add_bank_state.dart';
 import 'package:vierqr/features/add_bank/views/account_link_view.dart';
 import 'package:vierqr/features/add_bank/views/confirm_otp_view.dart';
 import 'package:vierqr/features/add_bank/views/policy_view.dart';
-import 'package:vierqr/layouts/button_widget.dart';
+import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/bank_card_insert_dto.dart';
 import 'package:vierqr/models/bank_card_insert_unauthenticated.dart';

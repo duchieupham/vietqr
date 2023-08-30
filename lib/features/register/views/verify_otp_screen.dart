@@ -4,7 +4,7 @@
 // import 'package:flutter/material.dart';
 // import 'package:provider/provider.dart';
 // import 'package:vierqr/commons/constants/configurations/theme.dart';
-// import 'package:vierqr/commons/widgets/button_widget.dart';
+// import 'package:vierqr/commons/widgets/m_button_widget.dart';
 // import 'package:vierqr/commons/widgets/divider_widget.dart';
 // import 'package:vierqr/features/register/blocs/register_bloc.dart';
 // import 'package:vierqr/features/register/events/register_event.dart';

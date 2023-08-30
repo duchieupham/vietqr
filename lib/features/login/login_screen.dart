@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:ui';
 
 import 'package:fluttertoast/fluttertoast.dart';
@@ -18,7 +17,7 @@ import 'package:vierqr/features/login/states/login_state.dart';
 import 'package:vierqr/features/login/views/login_account_screen.dart';
 import 'package:vierqr/features/login/views/quick_login_screen.dart';
 import 'package:vierqr/features/register/views/register_screen.dart';
-import 'package:vierqr/layouts/button_widget.dart';
+import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/account_login_dto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -68,31 +67,7 @@ class _LoginState extends State<_Login> {
   @override
   void dispose() {
     phoneNoController.clear();
-    if (_timer != null) {
-      _timer!.cancel();
-    }
     super.dispose();
-  }
-
-  Timer? _timer;
-  final int _seconds = 1;
-  int expires_in = 0;
-
-  void _startFreeTime() {
-    if (_timer != null) {
-      return;
-    }
-    _timer = Timer.periodic(Duration(seconds: _seconds), (timer) async {
-      print(expires_in);
-      if (expires_in >= 59) {
-        Provider.of<LoginProvider>(context, listen: false).updateToken(false);
-        await AccountHelper.instance.setTokenFree('');
-        _timer!.cancel();
-      }
-      setState(() {
-        expires_in += _seconds;
-      });
-    });
   }
 
   @override
@@ -185,10 +160,6 @@ class _LoginState extends State<_Login> {
               provider.updateQuickLogin(2);
               provider.updateInfoUser(state.infoUserDTO);
             }
-            if (state.request == LoginType.FREE_TOKEN) {
-              provider.updateToken(true);
-              _startFreeTime();
-            }
 
             if (state.request == LoginType.ERROR) {
               FocusManager.instance.primaryFocus?.unfocus();
@@ -245,88 +216,6 @@ class _LoginState extends State<_Login> {
             }
           },
           builder: (context, state) {
-            // if (provider.isQuickLogin == 1) {
-            //   return LoginAccountScreen(
-            //     list: provider.listInfoUsers,
-            //     onRemoveAccount: (dto) async {
-            //       List<String> listString = [];
-            //       List<InfoUserDTO> list = provider.listInfoUsers;
-            //       list.removeAt(dto);
-            //       if (list.length >= 2) {
-            //         list.sort((a, b) =>
-            //             a.expiryAsDateTime.compareTo(b.expiryAsDateTime));
-            //       }
-            //
-            //       list.forEach((element) {
-            //         listString.add(element.toSPJson().toString());
-            //       });
-            //
-            //       await UserInformationHelper.instance
-            //           .setLoginAccount(listString);
-            //
-            //       provider.updateListInfoUser();
-            //
-            //       if (list.isEmpty) {
-            //         provider.updateQuickLogin(0);
-            //       }
-            //     },
-            //     onQuickLogin: (dto) {
-            //       provider.updateQuickLogin(2);
-            //       provider.updateInfoUser(dto);
-            //     },
-            //     onBackLogin: () {
-            //       provider.updateInfoUser(null);
-            //       provider.updateQuickLogin(0);
-            //     },
-            //     onRegister: () async {
-            //       provider.updateInfoUser(null);
-            //       final data = await Navigator.of(context).push(
-            //         MaterialPageRoute(
-            //           builder: (context) => Register(phoneNo: ''),
-            //           settings: const RouteSettings(
-            //             name: Routes.REGISTER,
-            //           ),
-            //         ),
-            //       );
-            //
-            //       if (data is Map) {
-            //         AccountLoginDTO dto = AccountLoginDTO(
-            //           phoneNo: data['phone'],
-            //           password: EncryptUtils.instance.encrypted(
-            //             data['phone'],
-            //             data['password'],
-            //           ),
-            //           device: '',
-            //           fcmToken: '',
-            //           platform: '',
-            //           sharingCode: '',
-            //         );
-            //         if (!mounted) return;
-            //         context
-            //             .read<LoginBloc>()
-            //             .add(LoginEventByPhone(dto: dto, isToast: true));
-            //       }
-            //     },
-            //   );
-            // }
-            //
-            // if (provider.isQuickLogin == 2) {
-            //   return QuickLoginScreen(
-            //     pinController: passController,
-            //     passFocus: passFocus,
-            //     userName: provider.infoUserDTO?.fullName,
-            //     phone: provider.infoUserDTO?.phoneNo ?? '',
-            //     onLogin: (dto) {
-            //       context.read<LoginBloc>().add(LoginEventByPhone(dto: dto));
-            //     },
-            //     onQuickLogin: () {
-            //       passController.clear();
-            //       provider.updateQuickLogin(0);
-            //       provider.updateInfoUser(null);
-            //     },
-            //   );
-            // }
-
             return Scaffold(
               body: Stack(
                 children: [
@@ -527,9 +416,7 @@ class _LoginState extends State<_Login> {
                         IconButton(
                           icon: Icon(Icons.add),
                           onPressed: () async {
-                            if (!provider.expires_in) {
-                              _bloc.add(GetFreeToken());
-                            }
+                            _bloc.add(GetFreeToken());
                             final data = await Navigator.pushNamed(
                               context,
                               Routes.SCAN_QR_VIEW,
@@ -537,11 +424,12 @@ class _LoginState extends State<_Login> {
                             if (data != null) {
                               if (data is Map<String, dynamic>) {
                                 if (!mounted) return;
-                                QRScannerUtils.instance.onScanNavi(
+                                await QRScannerUtils.instance.onScanNavi(
                                   data,
                                   context,
                                   isShowIconFirst: false,
                                 );
+                                await AccountHelper.instance.setTokenFree('');
                               }
                             }
                           },
@@ -629,32 +517,5 @@ class _LoginState extends State<_Login> {
         );
       },
     );
-  }
-
-  void openPinDialog(BuildContext context) {
-    if (phoneNoController.text.isEmpty) {
-      DialogWidget.instance.openMsgDialog(
-          title: 'Đăng nhập không thành công',
-          msg: 'Vui lòng nhập số điện thoại để đăng nhập.');
-    } else {
-      DialogWidget.instance.openPINDialog(
-        title: 'Nhập Mật khẩu',
-        onDone: (pin) {
-          Navigator.of(context).pop();
-          AccountLoginDTO dto = AccountLoginDTO(
-            phoneNo: phoneNoController.text,
-            password: EncryptUtils.instance.encrypted(
-              phoneNoController.text,
-              pin,
-            ),
-            device: '',
-            fcmToken: '',
-            platform: '',
-            sharingCode: '',
-          );
-          context.read<LoginBloc>().add(LoginEventByPhone(dto: dto));
-        },
-      );
-    }
   }
 }
