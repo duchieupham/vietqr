@@ -39,6 +39,7 @@ class Routes {
   static const String QR_MOBILE_CHARGE = '/qr_mobile_charge';
   static const String MOBILE_RECHARGE = '/mobile_recharge';
   static const String CONTACT_US_SCREEN = '/contact_us_screen';
+  static const String CREATE_UN_AUTHEN = '/create_un_authen';
   static const String REPORT_SCREEN = '/report_screen';
   static const String RECHARGE_SUCCESS = '/recharge_success';
   static const String CONNECT_TELEGRAM = '/connect_telegram';
@@ -48,4 +49,5 @@ class Routes {
   static const String SETTING_BDSD = '/setting_bdsd';
   static const String TRANSACTION_WALLET = '/transaction_wallet';
   static const String BUSINESS = '/business';
+  static const String SHOW_QR = '/show_qr';
 }

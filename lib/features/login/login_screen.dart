@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -10,6 +12,7 @@ import 'package:vierqr/commons/utils/encrypt_utils.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/phone_widget.dart';
+import 'package:vierqr/features/home/widget/dialog_update.dart';
 import 'package:vierqr/features/login/blocs/login_bloc.dart';
 import 'package:vierqr/features/login/blocs/login_provider.dart';
 import 'package:vierqr/features/login/events/login_event.dart';
@@ -18,9 +21,8 @@ import 'package:vierqr/features/login/views/login_account_screen.dart';
 import 'package:vierqr/features/login/views/quick_login_screen.dart';
 import 'package:vierqr/features/register/views/register_screen.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
+import 'package:vierqr/main.dart';
 import 'package:vierqr/models/account_login_dto.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/models/info_user_dto.dart';
 import 'package:vierqr/services/shared_references/account_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
@@ -408,31 +410,75 @@ class _LoginState extends State<_Login> {
                     ),
                   ),
                   Positioned(
-                    bottom: 24,
+                    bottom: 16,
                     left: 0,
                     right: 0,
                     child: Column(
                       children: [
-                        IconButton(
-                          icon: Icon(Icons.add),
-                          onPressed: () async {
-                            _bloc.add(GetFreeToken());
-                            final data = await Navigator.pushNamed(
-                              context,
-                              Routes.SCAN_QR_VIEW,
-                            );
-                            if (data != null) {
-                              if (data is Map<String, dynamic>) {
-                                if (!mounted) return;
-                                await QRScannerUtils.instance.onScanNavi(
-                                  data,
-                                  context,
-                                  isShowIconFirst: false,
-                                );
-                                await AccountHelper.instance.setTokenFree('');
-                              }
-                            }
-                          },
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              _buildCustomButtonIcon(
+                                onTap: () async {
+                                  _bloc.add(GetFreeToken());
+                                  final data = await Navigator.pushNamed(
+                                    context,
+                                    Routes.SCAN_QR_VIEW,
+                                  );
+                                  if (data != null) {
+                                    if (data is Map<String, dynamic>) {
+                                      if (!mounted) return;
+                                      await QRScannerUtils.instance.onScanNavi(
+                                        data,
+                                        context,
+                                        isShowIconFirst: false,
+                                      );
+                                      await AccountHelper.instance
+                                          .setTokenFree('');
+                                    }
+                                  }
+                                },
+                                title: 'Quét QR',
+                                pathIcon:
+                                    'assets/images/qr-contact-other-blue.png',
+                              ),
+                              _buildCustomButtonIcon(
+                                onTap: () async {
+                                  Navigator.pushNamed(
+                                      context, Routes.CREATE_UN_AUTHEN);
+                                },
+                                title: 'Tạo mã VietQR',
+                                pathIcon: 'assets/images/ic-viet-qr-small.png',
+                              ),
+                              _buildCustomButtonIcon(
+                                onTap: () {
+                                  Navigator.pushNamed(
+                                      context, Routes.CONTACT_US_SCREEN);
+                                },
+                                title: 'Liên hệ',
+                                pathIcon: 'assets/images/ic-introduce.png',
+                              ),
+                              _buildCustomButtonIcon(
+                                onTap: () async {
+                                  showDialog(
+                                    barrierDismissible: false,
+                                    context: NavigationService
+                                        .navigatorKey.currentContext!,
+                                    builder: (BuildContext context) {
+                                      return DialogUpdateView();
+                                    },
+                                  );
+                                },
+                                title: 'Phiên bản app',
+                                pathIcon: 'assets/images/ic-gear.png',
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: provider.isQuickLogin == 2 ? 16 : 0,
                         ),
                         if (provider.isQuickLogin == 0 ||
                             provider.isQuickLogin == 2)
@@ -516,6 +562,44 @@ class _LoginState extends State<_Login> {
           },
         );
       },
+    );
+  }
+
+  Widget _buildCustomButtonIcon(
+      {required String title,
+      required Function onTap,
+      required String pathIcon}) {
+    return InkWell(
+      onTap: () {
+        onTap();
+      },
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(30),
+              color: AppColor.WHITE,
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(30),
+              child: Image.asset(
+                pathIcon,
+                height: 36,
+                width: 36,
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 8,
+          ),
+          Text(
+            title,
+            style: TextStyle(fontSize: 12),
+          )
+        ],
+      ),
     );
   }
 }

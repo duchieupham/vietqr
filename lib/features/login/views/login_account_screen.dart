@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/models/info_user_dto.dart';
 
+import '../../../commons/utils/image_utils.dart';
+
 class LoginAccountScreen extends StatelessWidget {
   final Function(InfoUserDTO)? onQuickLogin;
   final Function(int)? onRemoveAccount;
@@ -147,11 +149,18 @@ class LoginAccountScreen extends StatelessWidget {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(100),
-                  child: Image.asset(
-                    'assets/images/ic-avatar.png',
-                    width: 40,
-                    height: 40,
-                  ),
+                  child: dto.imgId?.isNotEmpty ?? false
+                      ? Image(
+                          image:
+                              ImageUtils.instance.getImageNetWork(dto.imgId!),
+                          width: 40,
+                          height: 40,
+                        )
+                      : Image.asset(
+                          'assets/images/ic-avatar.png',
+                          width: 40,
+                          height: 40,
+                        ),
                 ),
                 const SizedBox(width: 10),
                 Column(

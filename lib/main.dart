@@ -38,6 +38,8 @@ import 'package:vierqr/features/contact/contact_screen.dart';
 import 'package:vierqr/features/contact/views/contact_detail.dart';
 import 'package:vierqr/features/contact_us/contact_us_screen.dart';
 import 'package:vierqr/features/create_qr/create_qr_screen.dart';
+import 'package:vierqr/features/create_qr_un_authen/create_qr_un_quthen.dart';
+import 'package:vierqr/features/create_qr_un_authen/show_qr.dart';
 import 'package:vierqr/features/dashboard/blocs/dash_board_provider.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/dashboard_screen.dart';
@@ -59,7 +61,6 @@ import 'package:vierqr/features/printer/views/printer_setting_screen.dart';
 import 'package:vierqr/features/report/report_screen.dart';
 import 'package:vierqr/features/scan_qr/scan_qr_lib.dart';
 import 'package:vierqr/features/setting_bdsd/setting_bdsd_screen.dart';
-
 // import 'package:vierqr/features/scan_qr/scan_qr_screen.dart';
 import 'package:vierqr/features/top_up/qr_top_up.dart';
 import 'package:vierqr/features/top_up/top_up_screen.dart';
@@ -86,6 +87,7 @@ import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 import 'features/connect_lark/widget/connect_screen.dart';
 import 'features/transaction_wallet/trans_wallet_screen.dart';
+import 'models/qr_generated_dto.dart';
 
 //Share Preferences
 late SharedPreferences sharedPrefs;
@@ -389,10 +391,13 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.CONNECT_LARK: (context) => ConnectLarkScreen(),
                   Routes.CONTACT_US_SCREEN: (context) =>
                       const ContactUSScreen(),
+                  Routes.CREATE_UN_AUTHEN: (context) =>
+                      const CreateQrUnQuthen(),
                   Routes.REPORT_SCREEN: (context) => const ReportScreen(),
                   Routes.SETTING_BDSD: (context) => const SettingBDSD(),
                   Routes.TRANSACTION_WALLET: (context) =>
                       const TransWalletScreen(),
+
                   Routes.BUSINESS: (context) => const BusinessScreen(),
                   // Routes.RECHARGE_SUCCESS: (context) => const RechargeSuccess(),
                 },
@@ -415,6 +420,17 @@ class _VietQRApp extends State<VietQRApp> {
                       },
                     );
                   }
+                  if (settings.name == Routes.SHOW_QR) {
+                    QRGeneratedDTO dto = settings.arguments as QRGeneratedDTO;
+                    return MaterialPageRoute(
+                      builder: (context) {
+                        return ShowQr(
+                          dto: dto,
+                        );
+                      },
+                    );
+                  }
+
                   if (settings.name == Routes.QR_TOP_UP) {
                     Map<String, dynamic> param =
                         settings.arguments as Map<String, dynamic>;

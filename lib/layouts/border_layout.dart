@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 
 class BorderLayout extends StatelessWidget {
-  final double width;
+  final double? width;
   final bool isError;
   final Widget child;
   final EdgeInsets? padding;
@@ -10,7 +10,7 @@ class BorderLayout extends StatelessWidget {
 
   const BorderLayout({
     super.key,
-    required this.width,
+    this.width,
     required this.isError,
     required this.child,
     this.padding,
@@ -25,9 +25,7 @@ class BorderLayout extends StatelessWidget {
       padding: (padding != null) ? padding : null,
       decoration: BoxDecoration(
         border: Border.all(
-            color: (isError)
-                ? AppColor.RED_TEXT
-                : AppColor.GREY_TOP_TAB_BAR,
+            color: (isError) ? AppColor.RED_TEXT : AppColor.GREY_TOP_TAB_BAR,
             width: 0.5),
         borderRadius: BorderRadius.circular(5),
       ),
