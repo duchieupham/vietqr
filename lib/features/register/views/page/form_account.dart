@@ -29,15 +29,13 @@ class FormAccount extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(
-                height: 4,
-              ),
+              const SizedBox(height: 4),
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Số điện thoại được dùng để đăng nhập vào hệ thống VietQR Vn',
+                  'Số điện thoại được dùng để đăng nhập vào hệ thống VietQR VN',
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 11,
                     color: AppColor.BLACK,
                   ),
                 ),
@@ -48,7 +46,8 @@ class FormAccount extends StatelessWidget {
               ),
               Visibility(
                 visible: provider.phoneErr,
-                child: const Padding(
+                child: Container(
+                  alignment: Alignment.centerLeft,
                   padding: EdgeInsets.only(left: 5, top: 5, right: 30),
                   child: Text(
                     'Số điện thoại không đúng định dạng.',
@@ -59,6 +58,7 @@ class FormAccount extends StatelessWidget {
               const SizedBox(height: 30),
               Text(
                 'Đặt mật khẩu*',
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: AppColor.BLACK,
@@ -71,13 +71,14 @@ class FormAccount extends StatelessWidget {
                 'Mật khẩu có độ dài 6 ký tự số, không bao gồm chữ và ký tự đặc biệt',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 11,
                   color: AppColor.BLACK,
                 ),
               ),
               const SizedBox(height: 10),
               SizedBox(
                 height: 40,
+                width: 280,
                 child: PinCodeInput(
                   autoFocus: true,
                   obscureText: true,
@@ -111,13 +112,14 @@ class FormAccount extends StatelessWidget {
                 'Nhập lại mật khẩu ở trên để xác nhận',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 11,
                   color: AppColor.BLACK,
                 ),
               ),
               const SizedBox(height: 10),
               SizedBox(
                 height: 40,
+                width: 280,
                 child: PinCodeInput(
                   autoFocus: true,
                   obscureText: true,
@@ -131,7 +133,7 @@ class FormAccount extends StatelessWidget {
                 child: const Padding(
                   padding: EdgeInsets.only(top: 6),
                   child: Text(
-                    'Mật khẩu không trùng nhau',
+                    'Mật khẩu không trùng khớp',
                     style: TextStyle(color: AppColor.RED_TEXT, fontSize: 13),
                   ),
                 ),

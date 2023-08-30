@@ -30,7 +30,7 @@ class LoginProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void updateInfoUser(value) {
+  Future updateInfoUser(value) async {
     infoUserDTO = value;
     notifyListeners();
   }

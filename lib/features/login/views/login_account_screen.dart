@@ -99,7 +99,7 @@ class LoginAccountScreen extends StatelessWidget {
                       }).toList(),
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 20),
                   GestureDetector(
                     onTap: onBackLogin,
                     child: Container(
@@ -118,7 +118,7 @@ class LoginAccountScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 20),
                   GestureDetector(
                     onTap: onRegister,
                     child: const Text(
@@ -141,62 +141,55 @@ class LoginAccountScreen extends StatelessWidget {
       margin: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5), color: AppColor.WHITE),
-      child: Stack(
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            child: Row(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(100),
-                  child: dto.imgId?.isNotEmpty ?? false
-                      ? Image(
-                          image:
-                              ImageUtils.instance.getImageNetWork(dto.imgId!),
-                          width: 40,
-                          height: 40,
-                        )
-                      : Image.asset(
-                          'assets/images/ic-avatar.png',
-                          width: 40,
-                          height: 40,
-                        ),
-                ),
-                const SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      dto.fullName.trim(),
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(100),
+              child: dto.imgId?.isNotEmpty ?? false
+                  ? Image(
+                      image: ImageUtils.instance.getImageNetWork(dto.imgId!),
+                      width: 40,
+                      height: 40,
+                    )
+                  : Image.asset(
+                      'assets/images/ic-avatar.png',
+                      width: 40,
+                      height: 40,
                     ),
-                    Text(
-                      dto.phoneNo ?? '',
-                      style: TextStyle(fontSize: 15, color: AppColor.GREY_TEXT),
-                    ),
-                  ],
-                )
-              ],
             ),
-          ),
-          Positioned(
-            right: 0,
-            top: 0,
-            child: GestureDetector(
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    dto.fullName.trim(),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Text(
+                    dto.phoneNo ?? '',
+                    style: TextStyle(fontSize: 15, color: AppColor.GREY_TEXT),
+                  ),
+                ],
+              ),
+            ),
+            GestureDetector(
               onTap: () {
                 onRemoveAccount!(index);
               },
               child: Image.asset(
-                'assets/images/ic-remove-account.png',
+                'assets/images/ic-next-user.png',
                 width: 30,
                 height: 30,
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

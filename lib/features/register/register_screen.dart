@@ -98,7 +98,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         if (state is RegisterSuccessState) {
           //pop loading dialog
           Navigator.of(context).pop();
-          Navigator.of(context).pop();
           //pop to login page
           backToPreviousPage(context, true);
         }
@@ -116,16 +115,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
               child: Column(
                 children: [
                   Expanded(
-                      child: PageView(
-                    controller: pageController,
-                    physics: NeverScrollableScrollPhysics(),
-                    children: [
-                      FormAccount(
-                        phoneController: _phoneNoController,
-                      ),
-                      ReferralCode()
-                    ],
-                  )),
+                    child: PageView(
+                      controller: pageController,
+                      physics: NeverScrollableScrollPhysics(),
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: FormAccount(
+                            phoneController: _phoneNoController,
+                          ),
+                        ),
+                        ReferralCode()
+                      ],
+                    ),
+                  ),
                   const SizedBox(height: 20),
                   (PlatformUtils.instance.checkResize(width))
                       ? const SizedBox()
