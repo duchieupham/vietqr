@@ -32,7 +32,9 @@ import 'package:vierqr/features/personal/frames/user_edit_frame.dart';
 import 'package:vierqr/features/personal/states/user_edit_state.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
 import 'package:vierqr/layouts/box_layout.dart';
+import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/account_information_dto.dart';
+import 'package:vierqr/models/info_user_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:vierqr/services/providers/avatar_provider.dart';
@@ -129,20 +131,20 @@ class _UserEditViewState extends State<UserEditView> {
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: Scaffold(
+        appBar: MAppBar(
+          title: 'Thông tin cá nhân',
+          onPressed: () {
+            backToPreviousPage(context);
+          },
+          callBackHome: () {
+            backToPreviousPage(context);
+          },
+        ),
         body: Column(
           children: [
-            SubHeader(
-              title: 'Thông tin cá nhân',
-              function: () {
-                backToPreviousPage(context);
-              },
-              callBackHome: () {
-                backToPreviousPage(context);
-              },
-            ),
             Expanded(
               child: BlocListener<UserEditBloc, UserEditState>(
-                listener: ((context, state) {
+                listener: (context, state) async {
                   if (state is UserEditLoadingState) {
                     DialogWidget.instance.openLoadingDialog();
                   }
@@ -219,7 +221,7 @@ class _UserEditViewState extends State<UserEditView> {
                       Navigator.pop(context);
                     }
                   }
-                }),
+                },
                 child: Consumer<UserEditProvider>(
                   builder: (context, provider, child) {
                     return UserEditFrame(
@@ -667,7 +669,7 @@ class _UserEditViewState extends State<UserEditView> {
                                   imageAsset: 'assets/images/ic-warning.png',
                                   description:
                                       'Tài khoản của bạn sẽ bị vô hiệu hoá và không thể đăng nhập lại vào hệ thống',
-                                  confirmFunction: () {
+                                  confirmFunction: () async {
                                     Navigator.pop(context);
                                     String userId = UserInformationHelper
                                         .instance

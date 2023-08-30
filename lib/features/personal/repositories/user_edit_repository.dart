@@ -11,6 +11,7 @@ import 'package:vierqr/commons/utils/encrypt_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/account_information_dto.dart';
+import 'package:vierqr/models/info_user_dto.dart';
 import 'package:vierqr/models/password_update_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
@@ -162,6 +163,22 @@ class UserEditRepository {
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         result = ResponseMessageDTO.fromJson(data);
+        final String phone = UserInformationHelper.instance.getPhoneNo();
+
+        List<InfoUserDTO> list =
+            UserInformationHelper.instance.getLoginAccount();
+
+        List<String> listString = [];
+
+        if (list.isNotEmpty) {
+          list.removeWhere((element) => element.phoneNo == phone.trim());
+
+          list.forEach((element) {
+            listString.add(element.toSPJson().toString());
+          });
+          await UserInformationHelper.instance.setLoginAccount(listString);
+        }
+
         await _resetServices();
       } else {
         result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');

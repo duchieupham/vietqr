@@ -50,9 +50,11 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
     super.initState();
     if (widget.isShowIconFirst) {
       if (widget.typeQR == TypeContact.Bank) {
-        _list.first = dataBank;
+        _list.add(dataBank);
+        _list = _list.reversed.toList();
       } else {
-        _list.first = dataOther;
+        _list.add(dataOther);
+        _list = _list.reversed.toList();
       }
     }
   }
@@ -150,7 +152,7 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
                 },
                 child: _buildItem(
                   _list[index],
-                  index,
+                  _list[index].index,
                 ),
               );
             }).toList(),

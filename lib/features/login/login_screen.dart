@@ -19,7 +19,7 @@ import 'package:vierqr/features/login/events/login_event.dart';
 import 'package:vierqr/features/login/states/login_state.dart';
 import 'package:vierqr/features/login/views/login_account_screen.dart';
 import 'package:vierqr/features/login/views/quick_login_screen.dart';
-import 'package:vierqr/features/register/views/register_screen.dart';
+import 'package:vierqr/features/register/register_screen.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/account_login_dto.dart';
@@ -99,41 +99,32 @@ class _LoginState extends State<_Login> {
               if (provider.infoUserDTO != null) {
                 List<String> list = [];
                 List<InfoUserDTO> listDto =
-                    await UserInformationHelper.instance.getLoginAccount();
-                List<InfoUserDTO> listCheck = [];
+                    UserInformationHelper.instance.getLoginAccount();
+                List<InfoUserDTO> listCheck = listDto;
 
-                if (listDto.isNotEmpty) {
-                  if (listDto.length <= 3) {
-                    listCheck = listDto
-                        .where((element) =>
-                            element.phoneNo == provider.infoUserDTO!.phoneNo)
-                        .toList();
+                if (listCheck.isNotEmpty) {
+                  if (listCheck.length == 3) {
+                    listCheck.sort((a, b) =>
+                        a.expiryAsDateTime.compareTo(b.expiryAsDateTime));
+                    listCheck.removeAt(2);
+                    listCheck.add(provider.infoUserDTO!);
+                  } else {
+                    listCheck.removeWhere((element) =>
+                        element.phoneNo!.trim() ==
+                        provider.infoUserDTO!.phoneNo);
 
-                    if (listCheck.isNotEmpty) {
-                      int index = listDto.indexOf(listCheck.first);
-                      listDto.removeAt(index);
-                      listDto.add(provider.infoUserDTO!);
-                    } else {
-                      if (listDto.length == 3) {
-                        listDto.sort((a, b) =>
-                            a.expiryAsDateTime.compareTo(b.expiryAsDateTime));
-                        listDto.removeAt(2);
-                        listDto.add(provider.infoUserDTO!);
-                      } else {
-                        listDto.add(provider.infoUserDTO!);
-                      }
-                    }
+                    listCheck.add(provider.infoUserDTO!);
                   }
                 } else {
-                  listDto.add(provider.infoUserDTO!);
+                  listCheck.add(provider.infoUserDTO!);
                 }
 
-                if (listDto.length >= 2) {
-                  listDto.sort((a, b) =>
+                if (listCheck.length >= 2) {
+                  listCheck.sort((a, b) =>
                       a.expiryAsDateTime.compareTo(b.expiryAsDateTime));
                 }
 
-                listDto.forEach((element) {
+                listCheck.forEach((element) {
                   list.add(element.toSPJson().toString());
                 });
 
@@ -302,7 +293,8 @@ class _LoginState extends State<_Login> {
                                         ),
                                         Visibility(
                                           visible: provider.errorPhone != null,
-                                          child: Padding(
+                                          child: Container(
+                                            alignment: Alignment.centerLeft,
                                             padding: const EdgeInsets.only(
                                                 left: 5, top: 5, right: 30),
                                             child: Text(
@@ -417,10 +409,9 @@ class _LoginState extends State<_Login> {
                     child: Column(
                       children: [
                         _buildButtonBottom(),
-                         SizedBox(
-                          height:provider.isQuickLogin == 2 ? 40 : 0,
+                        SizedBox(
+                          height: provider.isQuickLogin == 2 ? 40 : 0,
                         ),
-
                         if (provider.isQuickLogin == 0 ||
                             provider.isQuickLogin == 2)
                           Column(
@@ -492,6 +483,17 @@ class _LoginState extends State<_Login> {
                               context
                                   .read<LoginBloc>()
                                   .add(LoginEventByPhone(dto: dto));
+                            },
+                          )
+                        else if (provider.isQuickLogin == 1 &&
+                            provider.listInfoUsers.length == 1)
+                          MButtonWidget(
+                            title: 'Tiếp tục',
+                            isEnable: true,
+                            onTap: () async {
+                              await provider
+                                  .updateInfoUser(provider.listInfoUsers.first);
+                              provider.updateQuickLogin(2);
                             },
                           ),
                       ],

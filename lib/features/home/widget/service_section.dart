@@ -97,7 +97,7 @@ class _ServiceSectionState extends State<ServiceSection> {
           );
         }),
         _buildItemService(
-            context, 'assets/images/logo-vqr-k.png', 'VietQR Kiot\n', () async {
+            context, 'assets/images/logo-vietqr-kiot-dashboard.png', 'VietQR Kiot\n', () async {
           if (PlatformUtils.instance.isAndroidApp()) {
             final intent = AndroidIntent(
                 action: 'action_view',

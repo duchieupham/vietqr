@@ -725,6 +725,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
             return PolicyView(
               onSelectPolicy: provider.updatePolicy,
               isAgreeWithPolicy: provider.isAgreeWithPolicy,
+              bankAccount: bankAccountController.text,
               onTap: () {
                 if (provider.isAgreeWithPolicy) {
                   String formattedName = StringUtils.instance.removeDiacritic(
