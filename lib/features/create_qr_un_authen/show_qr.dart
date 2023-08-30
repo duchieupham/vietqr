@@ -12,7 +12,6 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
 import 'package:vierqr/commons/widgets/viet_qr.dart';
 import 'package:vierqr/features/printer/views/printing_view.dart';
-import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/bluetooth_printer_dto.dart';
 import 'package:vierqr/services/sqflite/local_database.dart';
 
@@ -123,79 +122,88 @@ class _ShowQrState extends State<ShowQr> {
       create: (context) => ShowQRProvider(),
       child: Consumer<ShowQRProvider>(builder: (context, provider, child) {
         return Scaffold(
-          body: SafeArea(
-            child: RepaintBoundaryWidget(
-              globalKey: globalKey,
-              builder: (key) {
-                return Container(
-                  color: AppColor.GREY_BG,
-                  child: ListView(
-                    padding: EdgeInsets.zero,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 16),
-                        child: VietQr(qrGeneratedDTO: widget.dto),
-                      ),
-                      ValueListenableBuilder(
-                        valueListenable: _waterMarkProvider,
-                        builder: (_, provider, child) {
-                          return Visibility(
-                            visible: provider == true,
-                            child: Container(
-                              width: width,
+          body: Container(
+            decoration: BoxDecoration(
+                image: DecorationImage(
+                    image: AssetImage('assets/images/bgr-header.png'),
+                    fit: BoxFit.cover)),
+            child: SafeArea(
+              child: Column(
+                children: [
+                  Expanded(
+                    child: RepaintBoundaryWidget(
+                      globalKey: globalKey,
+                      builder: (key) {
+                        return ListView(
+                          padding: EdgeInsets.zero,
+                          children: [
+                            Padding(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 20,
-                                vertical: 10,
-                              ),
-                              child: RichText(
-                                textAlign: TextAlign.right,
-                                text: const TextSpan(
-                                  style: TextStyle(
-                                    color: AppColor.GREY_TEXT,
-                                    fontSize: 12,
-                                  ),
-                                  children: [
-                                    TextSpan(text: 'Được tạo bởi '),
-                                    TextSpan(
-                                      text: 'vietqr.vn',
-                                      style: TextStyle(
-                                        color: AppColor.BLUE_TEXT,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                    TextSpan(text: ' - '),
-                                    TextSpan(text: 'Hotline '),
-                                    TextSpan(
-                                      text: '19006234',
-                                      style: TextStyle(
-                                        color: AppColor.BLUE_TEXT,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                                  horizontal: 20, vertical: 16),
+                              child: VietQr(qrGeneratedDTO: widget.dto),
                             ),
-                          );
-                        },
-                      ),
-                      const SizedBox(
-                        height: 120,
-                      )
-                    ],
+                            ValueListenableBuilder(
+                              valueListenable: _waterMarkProvider,
+                              builder: (_, provider, child) {
+                                return Visibility(
+                                  visible: provider == true,
+                                  child: Container(
+                                    width: width,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 20,
+                                      vertical: 10,
+                                    ),
+                                    child: RichText(
+                                      textAlign: TextAlign.right,
+                                      text: const TextSpan(
+                                        style: TextStyle(
+                                          color: AppColor.GREY_TEXT,
+                                          fontSize: 12,
+                                        ),
+                                        children: [
+                                          TextSpan(text: 'Được tạo bởi '),
+                                          TextSpan(
+                                            text: 'vietqr.vn',
+                                            style: TextStyle(
+                                              color: AppColor.BLUE_TEXT,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                          TextSpan(text: ' - '),
+                                          TextSpan(text: 'Hotline '),
+                                          TextSpan(
+                                            text: '19006234',
+                                            style: TextStyle(
+                                              color: AppColor.BLUE_TEXT,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            const SizedBox(
+                              height: 120,
+                            )
+                          ],
+                        );
+                      },
+                    ),
                   ),
-                );
-              },
+                  _buildButton(
+                    context: context,
+                    fileImage: provider.imageFile,
+                    progressBar: provider.progressBar,
+                    onClick: (index) {
+                      onClick(index);
+                    },
+                  )
+                ],
+              ),
             ),
-          ),
-          bottomSheet: _buildButton(
-            context: context,
-            fileImage: provider.imageFile,
-            progressBar: provider.progressBar,
-            onClick: (index) {
-              onClick(index);
-            },
           ),
         );
       }),
@@ -215,118 +223,115 @@ class _ShowQrState extends State<ShowQr> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    ButtonIconWidget(
-                      width: width * 0.2,
-                      height: 40,
-                      pathIcon: 'assets/images/ic-print-blue.png',
-                      title: '',
-                      function: () async {
-                        onClick(0);
-                      },
-                      bgColor: Theme.of(context).cardColor,
-                      textColor: AppColor.ORANGE,
+                    Column(
+                      children: [
+                        ButtonIconWidget(
+                          width: 44,
+                          height: 44,
+                          borderRadius: 30,
+                          pathIcon: 'assets/images/ic-home-blue.png',
+                          iconPathColor: AppColor.WHITE,
+                          title: '',
+                          function: () async {
+                            Navigator.pop(context);
+                          },
+                          bgColor: AppColor.BLUE_TEXT,
+                          textColor: AppColor.ORANGE,
+                        ),
+                        const SizedBox(
+                          height: 4,
+                        ),
+                        Text(
+                          'Trang chủ',
+                          style: TextStyle(fontSize: 12),
+                        )
+                      ],
                     ),
                     const Padding(
                       padding: EdgeInsets.only(left: 10),
                     ),
-                    ButtonIconWidget(
-                      width: width * 0.2,
-                      height: 40,
-                      pathIcon: 'assets/images/ic-img-blue.png',
-                      title: '',
-                      function: () {
-                        onClick(1);
-                      },
-                      bgColor: Theme.of(context).cardColor,
-                      textColor: AppColor.RED_CALENDAR,
+                    Column(
+                      children: [
+                        ButtonIconWidget(
+                          width: 44,
+                          height: 44,
+                          borderRadius: 30,
+                          pathIcon: 'assets/images/ic-img-blue.png',
+                          title: '',
+                          function: () {
+                            onClick(1);
+                          },
+                          bgColor: AppColor.WHITE,
+                          textColor: AppColor.RED_CALENDAR,
+                        ),
+                        const SizedBox(
+                          height: 4,
+                        ),
+                        Text(
+                          'Lưu ảnh',
+                          style: TextStyle(fontSize: 12),
+                        )
+                      ],
                     ),
                     const Padding(
                       padding: EdgeInsets.only(left: 10),
                     ),
-                    ButtonIconWidget(
-                      width: width * 0.2,
-                      height: 40,
-                      pathIcon: 'assets/images/ic-copy-blue.png',
-                      title: '',
-                      function: () async {
-                        onClick(2);
-                      },
-                      bgColor: Theme.of(context).cardColor,
-                      textColor: AppColor.BLUE_TEXT,
+                    Column(
+                      children: [
+                        ButtonIconWidget(
+                          width: 44,
+                          height: 44,
+                          borderRadius: 30,
+                          pathIcon: 'assets/images/ic-copy-blue.png',
+                          title: '',
+                          function: () async {
+                            onClick(2);
+                          },
+                          bgColor: Theme.of(context).cardColor,
+                          textColor: AppColor.BLUE_TEXT,
+                        ),
+                        const SizedBox(
+                          height: 4,
+                        ),
+                        Text(
+                          'Sao chép',
+                          style: TextStyle(fontSize: 12),
+                        )
+                      ],
                     ),
                     const Padding(
                       padding: EdgeInsets.only(left: 10),
                     ),
-                    ButtonIconWidget(
-                      width: width * 0.2,
-                      height: 40,
-                      pathIcon: 'assets/images/ic-share-blue.png',
-                      title: '',
-                      function: () {
-                        onClick(3);
-                      },
-                      bgColor: Theme.of(context).cardColor,
-                      textColor: AppColor.BLUE_TEXT,
+                    Column(
+                      children: [
+                        ButtonIconWidget(
+                          width: 44,
+                          height: 44,
+                          borderRadius: 30,
+                          pathIcon: 'assets/images/ic-share-blue.png',
+                          title: '',
+                          function: () {
+                            onClick(3);
+                          },
+                          bgColor: Theme.of(context).cardColor,
+                          textColor: AppColor.BLUE_TEXT,
+                        ),
+                        const SizedBox(
+                          height: 4,
+                        ),
+                        Text(
+                          'Chia sẻ',
+                          style: TextStyle(fontSize: 12),
+                        )
+                      ],
                     ),
                   ],
                 )),
             const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: MButtonWidget(
-                isEnable: true,
-                colorEnableBgr: AppColor.BLUE_TEXT,
-                margin: EdgeInsets.zero,
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                title: 'Đóng',
-              ),
-            ),
-            if (fileImage != null)
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: MediaQuery.of(context).size.width * progressBar,
-                    alignment: Alignment.centerLeft,
-                    padding:
-                        const EdgeInsets.only(top: 10, left: 20, right: 20),
-                    decoration: const BoxDecoration(
-                      border: Border(
-                        top: BorderSide(color: AppColor.BLUE_TEXT, width: 4),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(top: 10, left: 20, right: 20),
-                    child: Row(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(5),
-                          child: Image.file(
-                            fileImage,
-                            height: 60,
-                            fit: BoxFit.fill,
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        const Text(
-                          'Đang lưu tệp đính kèm.',
-                          style: TextStyle(
-                            fontSize: 16,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              )
           ],
         ),
       ),
