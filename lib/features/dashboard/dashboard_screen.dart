@@ -175,6 +175,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
   }
 
   Future<void> _updateConnectionStatus(ConnectivityResult result) async {
+    if (!mounted) return;
     bool isInternet =
         Provider.of<DashBoardProvider>(context, listen: false).isInternet;
     if (result == ConnectivityResult.none) {

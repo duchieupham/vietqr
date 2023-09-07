@@ -38,6 +38,7 @@ class MTextFieldCustom extends StatefulWidget {
   //Border textfield
   final bool isRequired;
   final Color? fillColor;
+  final Color? hintColor;
 
   const MTextFieldCustom({
     Key? key,
@@ -70,6 +71,7 @@ class MTextFieldCustom extends StatefulWidget {
     this.suffixIcon,
     this.isRequired = false,
     this.value,
+    this.hintColor,
   }) : super(key: key);
 
   @override
@@ -132,9 +134,7 @@ class _TextFieldWidgetState extends State<MTextFieldCustom> {
         border: InputBorder.none,
         hintStyle: TextStyle(
           fontSize: (widget.fontSize != null) ? widget.fontSize : 14,
-          color: (widget.title != null)
-              ? AppColor.GREY_TEXT
-              : Theme.of(context).hintColor,
+          color: widget.hintColor ?? AppColor.GREY_TEXT,
         ),
         prefixIcon: widget.prefixIcon,
         suffixIcon: widget.suffixIcon,

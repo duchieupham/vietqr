@@ -49,22 +49,6 @@ class _BusinessInformationView extends State<BusinessInformationView>
   );
   late BusinessInformationBloc _businessInformationBloc;
 
-  BusinessItemDTO dto = const BusinessItemDTO(
-    businessId: '',
-    code: '',
-    role: 0,
-    imgId: '',
-    coverImgId: '',
-    name: '',
-    branchs: [],
-    address: '',
-    taxCode: '',
-    transactions: [],
-    totalMember: 0,
-    totalBranch: 0,
-    bankAccounts: [],
-  );
-
   String heroId = '';
 
   @override
@@ -77,10 +61,15 @@ class _BusinessInformationView extends State<BusinessInformationView>
   initData(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments as Map;
     String userId = UserInformationHelper.instance.getUserId();
-    heroId = args['heroId'];
-    dto = args['businessItem'];
-    _businessInformationBloc.add(
-        BusinessGetDetailEvent(businessId: dto.businessId, userId: userId));
+    String businessId = '';
+
+    if (args.containsKey('heroId')) {
+      heroId = args['heroId'];
+      businessId = heroId;
+    }
+
+    _businessInformationBloc
+        .add(BusinessGetDetailEvent(businessId: businessId, userId: userId));
   }
 
   @override
@@ -99,74 +88,72 @@ class _BusinessInformationView extends State<BusinessInformationView>
         Navigator.pop(context);
         return false;
       },
-      child: Scaffold(
-        body: Stack(
-          children: [
-            LayoutBuilder(builder: (context, constraints) {
-              return NestedScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                headerSliverBuilder:
-                    (BuildContext context, bool innerBoxIsScrolled) {
-                  return [
-                    SliverAppBar(
-                      automaticallyImplyLeading: false,
-                      pinned: true,
-                      collapsedHeight: MediaQuery.of(context).size.width * 0.25,
-                      floating: false,
-                      expandedHeight: MediaQuery.of(context).size.width * 0.6,
-                      flexibleSpace: SliverHeader(
-                        minHeight: MediaQuery.of(context).size.width * 0.25,
-                        maxHeight: MediaQuery.of(context).size.width * 0.6,
-                        businessName: dto.name,
-                        heroId: heroId,
-                        imgId: dto.imgId,
-                        coverImgId: dto.coverImgId,
-                      ),
-                    ),
-                    // Widget được pin
-                  ];
-                },
-                body: BlocConsumer<BusinessInformationBloc,
-                    BusinessInformationState>(
-                  listener: (context, state) {
-                    if (state.status == BlocStatus.SUCCESS) {
-                      businessDetailDTO = state.dto!;
-                      String businessId = businessDetailDTO.id;
-                      String userId =
-                          UserInformationHelper.instance.getUserId();
+      child: BlocConsumer<BusinessInformationBloc, BusinessInformationState>(
+          listener: (context, state) {
+        if (state.status == BlocStatus.SUCCESS) {
+          businessDetailDTO = state.dto!;
+          String businessId = businessDetailDTO.id;
+          String userId = UserInformationHelper.instance.getUserId();
 
-                      Future.delayed(const Duration(milliseconds: 0), () {
-                        //update user role
-                        int userRole = 0;
-                        if (businessDetailDTO.managers
-                            .where((element) => element.userId == userId)
-                            .isNotEmpty) {
-                          userRole = businessDetailDTO.managers
-                              .where((element) => element.userId == userId)
-                              .first
-                              .role;
-                          Provider.of<BusinessInformationProvider>(context,
-                                  listen: false)
-                              .updateUserRole(userRole);
-                        }
-                        //update for select box transaction
-                        Provider.of<BusinessInformationProvider>(context,
-                                listen: false)
-                            .updateInput(
-                          TransactionBranchInputDTO(
-                              businessId: businessId,
-                              branchId: 'all',
-                              offset: 0),
-                        );
-                      });
+          Future.delayed(
+            const Duration(milliseconds: 0),
+            () {
+              //update user role
+              int userRole = 0;
+              if (businessDetailDTO.managers
+                  .where((element) => element.userId == userId)
+                  .isNotEmpty) {
+                userRole = businessDetailDTO.managers
+                    .where((element) => element.userId == userId)
+                    .first
+                    .role;
+                Provider.of<BusinessInformationProvider>(context, listen: false)
+                    .updateUserRole(userRole);
+              }
+              //update for select box transaction
+              Provider.of<BusinessInformationProvider>(context, listen: false)
+                  .updateInput(
+                TransactionBranchInputDTO(
+                    businessId: businessId, branchId: 'all', offset: 0),
+              );
+            },
+          );
 
-                      Provider.of<BusinessInformationProvider>(context,
-                              listen: false)
-                          .updateBusinessId(businessId);
-                    }
-                  },
-                  builder: (context, state) {
-                    return ListView(
+          Provider.of<BusinessInformationProvider>(context, listen: false)
+              .updateBusinessId(businessId);
+        }
+      }, builder: (context, state) {
+        return Scaffold(
+          body: Stack(
+            children: [
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  return NestedScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    headerSliverBuilder:
+                        (BuildContext context, bool innerBoxIsScrolled) {
+                      return [
+                        SliverAppBar(
+                          automaticallyImplyLeading: false,
+                          pinned: true,
+                          collapsedHeight:
+                              MediaQuery.of(context).size.width * 0.25,
+                          floating: false,
+                          expandedHeight:
+                              MediaQuery.of(context).size.width * 0.6,
+                          flexibleSpace: SliverHeader(
+                            minHeight: MediaQuery.of(context).size.width * 0.25,
+                            maxHeight: MediaQuery.of(context).size.width * 0.6,
+                            businessName: businessDetailDTO.name,
+                            heroId: businessDetailDTO.id,
+                            imgId: businessDetailDTO.imgId,
+                            coverImgId: businessDetailDTO.coverImgId,
+                          ),
+                        ),
+                        // Widget được pin
+                      ];
+                    },
+                    body: ListView(
                       shrinkWrap: false,
                       physics: const NeverScrollableScrollPhysics(),
                       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -232,8 +219,6 @@ class _BusinessInformationView extends State<BusinessInformationView>
                               '${businessDetailDTO.managers.length} quản trị viên',
                           color: AppColor.BLUE_TEXT,
                           icon: Icons.people_alt_rounded,
-                          // function: () {},
-                          // functionName: 'Cập nhật',
                         ),
                         BoxLayout(
                           width: width - 40,
@@ -316,16 +301,18 @@ class _BusinessInformationView extends State<BusinessInformationView>
                                                 icon: Icons.more_horiz_rounded,
                                                 title: 'Xem thêm',
                                                 function: () {
-                                                  BranchFilterInsertDTO
-                                                      brandDTO =
+                                                  BranchFilterInsertDTO brandDTO =
                                                       BranchFilterInsertDTO(
                                                           userId:
                                                               UserInformationHelper
                                                                   .instance
                                                                   .getUserId(),
-                                                          role: dto.role,
+                                                          role:
+                                                              businessDetailDTO
+                                                                  .userRole,
                                                           businessId:
-                                                              dto.businessId);
+                                                              businessDetailDTO
+                                                                  .id);
                                                   Navigator.pushNamed(
                                                       context,
                                                       Routes
@@ -342,7 +329,7 @@ class _BusinessInformationView extends State<BusinessInformationView>
                                               context: context,
                                               dto: businessDetailDTO
                                                   .transactions[index],
-                                              businessId: dto.businessId,
+                                              businessId: businessDetailDTO.id,
                                             );
                                     },
                                     separatorBuilder: (context, index) {
@@ -353,43 +340,41 @@ class _BusinessInformationView extends State<BusinessInformationView>
                         ),
                         const Padding(padding: EdgeInsets.only(bottom: 50)),
                       ],
-                    );
-                  },
-                ),
-
-                // ],
-              );
-            }),
-            Positioned(
-              top: 50,
-              right: 10,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(15),
-                onTap: () {
-                  Provider.of<BusinessInformationProvider>(context,
-                          listen: false)
-                      .reset();
-                  Navigator.pop(context, heroId);
+                    ),
+                  );
                 },
-                child: Container(
-                  width: 30,
-                  height: 30,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    color: AppColor.BLACK_BUTTON.withOpacity(0.6),
-                  ),
-                  child: const Icon(
-                    Icons.close_rounded,
-                    color: AppColor.WHITE,
-                    size: 15,
+              ),
+              Positioned(
+                top: 50,
+                right: 10,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(15),
+                  onTap: () {
+                    Provider.of<BusinessInformationProvider>(context,
+                            listen: false)
+                        .reset();
+                    Navigator.pop(context, heroId);
+                  },
+                  child: Container(
+                    width: 30,
+                    height: 30,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      color: AppColor.BLACK_BUTTON.withOpacity(0.6),
+                    ),
+                    child: const Icon(
+                      Icons.close_rounded,
+                      color: AppColor.WHITE,
+                      size: 15,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
-      ),
+            ],
+          ),
+        );
+      }),
     );
   }
 

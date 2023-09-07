@@ -299,7 +299,7 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
                             vertical: 5, horizontal: 10),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5),
-                          color: AppColor.GREEN,
+                          color: AppColor.BLUE_TEXT,
                         ),
                         child: Row(
                           children: const [
@@ -308,7 +308,6 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
                               color: AppColor.WHITE,
                               size: 13,
                             ),
-                            Padding(padding: EdgeInsets.only(left: 5)),
                             Text(
                               'Thêm',
                               style: TextStyle(
@@ -339,17 +338,21 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
     } else if (existed == 1) {
       return TypeAddMember.ADDED;
     }
-    return TypeAddMember.MORE;
+    return TypeAddMember.AWAIT;
   }
 
   void _insertMember(dto) async {
     try {
-      setState(() {});
+      setState(() {
+        _dto.existed = 2;
+      });
       final ResponseMessageDTO result =
           await branchRepository.insertMember(dto);
       if (!mounted) return;
       if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
-        setState(() {});
+        setState(() {
+          _dto.existed = 1;
+        });
       } else {
         ErrorUtils.instance.getErrorMessage(result.message);
       }
@@ -375,9 +378,8 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
         });
       } else {
         BusinessMemberDTO result = responseDTO;
-        setState(() {
-          _dto = result;
-        });
+        _dto = result;
+        setState(() {});
       }
     } catch (e) {
       LOG.error(e.toString());

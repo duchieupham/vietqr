@@ -502,11 +502,7 @@ class InfoDetailBankAccount extends StatelessWidget {
                       Navigator.pushNamed(
                         context,
                         Routes.BUSINESS_INFORMATION_VIEW,
-                        arguments: {
-                          'heroId': heroId,
-                          'img': list[index].coverImgId,
-                          'businessItem': businessItemDTO,
-                        },
+                        arguments: {'heroId': heroId},
                       ).then((value) {
                         bloc.add(
                             const BankCardGetDetailEvent(isLoading: false));

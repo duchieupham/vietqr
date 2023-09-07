@@ -23,13 +23,7 @@ enum TypeSelect {
   MEMBER,
 }
 
-enum CheckType {
-  C01,
-  C02,
-  C03,
-  C04,
-  C06
-}
+enum CheckType { C01, C02, C03, C04, C06 }
 
 enum TypeOTP {
   SUCCESS,
@@ -310,4 +304,19 @@ enum TypeInternet {
   NONE,
   CONNECT,
   DISCONNECT,
+}
+
+enum ShareBDSDType {
+  NONE,
+  Avail,
+  ERROR,
+  CONNECT,
+  MEMBER,
+  DELETE_MEMBER,
+  TELEGRAM,
+  LARK,
+  ADD_LARK,
+  ADD_TELEGRAM,
+  REMOVE_TELEGRAM,
+  REMOVE_LARK,
 }

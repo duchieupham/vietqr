@@ -301,11 +301,7 @@ class _BusinessScreenState extends State<_BusinessScreen>
         Navigator.pushNamed(
           context,
           Routes.BUSINESS_INFORMATION_VIEW,
-          arguments: {
-            'heroId': heroId,
-            'img': dto.coverImgId,
-            'businessItem': dto,
-          },
+          arguments: {'heroId': heroId},
         ).then((value) {
           heroId = value.toString();
           _businessBloc.add(BusinessInitEvent());

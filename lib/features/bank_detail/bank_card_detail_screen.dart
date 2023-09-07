@@ -1,3 +1,4 @@
+import 'package:dudv_base/dudv_base.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -8,6 +9,7 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
 import 'package:vierqr/features/bank_detail/page/info_page.dart';
+import 'package:vierqr/features/bank_detail/page/share_bdsd_page.dart';
 import 'package:vierqr/features/bank_detail/page/statistical_page.dart';
 import 'package:vierqr/features/bank_detail/views/dialog_otp.dart';
 import 'package:vierqr/features/trans_history/trans_history_screen.dart';
@@ -44,7 +46,12 @@ class BankCardDetailState extends StatefulWidget {
 
 class _BankCardDetailState extends State<BankCardDetailState> {
   late BankCardBloc bankCardBloc;
-  List<String> listTitle = ['Thông tin', 'Thống kê', 'Giao dịch'];
+  List<String> listTitle = [
+    'Thông tin',
+    'Thống kê',
+    'Giao dịch',
+    'Chia sẻ BĐSD'
+  ];
   final PageController pageController = PageController();
   String userId = UserInformationHelper.instance.getUserId();
   late QRGeneratedDTO qrGeneratedDTO = const QRGeneratedDTO(
@@ -107,32 +114,35 @@ class _BankCardDetailState extends State<BankCardDetailState> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 children: [
-                  Row(
-                    children: listTitle.map((title) {
-                      int index = listTitle.indexOf(title);
-                      return GestureDetector(
-                        onTap: () {
-                          pageController.animateToPage(index,
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.ease);
-                          provider.changeCurrentPage(index);
-                        },
-                        child: Container(
-                          margin: const EdgeInsets.only(right: 20),
-                          padding: const EdgeInsets.only(bottom: 4, top: 12),
-                          decoration: BoxDecoration(
-                              border: Border(
-                                  bottom: BorderSide(
-                                      color: index == provider.currentPage
-                                          ? AppColor.BLUE_TEXT
-                                          : Colors.transparent))),
-                          child: Text(
-                            title,
-                            style: const TextStyle(fontSize: 16),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: listTitle.map((title) {
+                        int index = listTitle.indexOf(title);
+                        return GestureDetector(
+                          onTap: () {
+                            pageController.jumpToPage(index);
+                            // duration: const Duration(milliseconds: 300),
+                            // curve: Curves.ease);
+                            provider.changeCurrentPage(index);
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.only(right: 20),
+                            padding: const EdgeInsets.only(bottom: 4, top: 12),
+                            decoration: BoxDecoration(
+                                border: Border(
+                                    bottom: BorderSide(
+                                        color: index == provider.currentPage
+                                            ? AppColor.BLUE_TEXT
+                                            : Colors.transparent))),
+                            child: Text(
+                              title,
+                              style: const TextStyle(fontSize: 16),
+                            ),
                           ),
-                        ),
-                      );
-                    }).toList(),
+                        );
+                      }).toList(),
+                    ),
                   ),
                   const SizedBox(
                     height: 12,
@@ -258,7 +268,12 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                                   },
                                 ),
                                 Statistical(bankId: state.bankId ?? ''),
-                                TransHistoryScreen(bankId: state.bankId ?? '')
+                                TransHistoryScreen(bankId: state.bankId ?? ''),
+                                ShareBDSDScreen(
+                                  bankId: state.bankId ?? '',
+                                  dto: dto,
+                                  bloc: bankCardBloc,
+                                ),
                               ],
                             );
                           },

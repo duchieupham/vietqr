@@ -64,6 +64,7 @@ class BankConnectedDTO {
   final String imageId;
   final String bankShortName;
   final String telBankId;
+  final String larkBankId;
 
   const BankConnectedDTO({
     this.bankCode = '',
@@ -73,6 +74,7 @@ class BankConnectedDTO {
     this.userBankName = '',
     this.bankShortName = '',
     this.telBankId = '',
+    this.larkBankId = '',
   });
 
   factory BankConnectedDTO.fromJson(Map<String, dynamic> json) {
@@ -84,6 +86,7 @@ class BankConnectedDTO {
       userBankName: json['userBankName'] ?? '',
       bankShortName: json['bankShortName'] ?? '',
       telBankId: json['telBankId'] ?? '',
+      larkBankId: json['larkBankId'] ?? '',
     );
   }
 }

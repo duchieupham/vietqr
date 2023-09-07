@@ -10,7 +10,7 @@ class BusinessMemberDTO {
 
   //for check status reponse found member or not
   final String status;
-  final int existed;
+  int existed;
 
   BusinessMemberDTO({
     this.isDelete = false,
@@ -29,7 +29,7 @@ class BusinessMemberDTO {
     } else if (existed == 1) {
       return TypeAddMember.ADDED;
     }
-    return TypeAddMember.MORE;
+    return TypeAddMember.AWAIT;
   }
 
   factory BusinessMemberDTO.fromJson(Map<String, dynamic> json) {

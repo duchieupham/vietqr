@@ -110,8 +110,6 @@ class _BranchDetailViewState extends State<BranchDetailView> {
               SubHeader(
                 title: 'Chi nhánh',
                 function: () {
-                  // Provider.of<BusinessInformationProvider>(context, listen: false)
-                  //     .updateUserRole(0);
                   Navigator.pop(context);
                 },
               ),

@@ -614,14 +614,14 @@ class _StackedList extends State<StackedList> {
                             dto.bankCode == 'MB' &&
                             dto.userId == userId))
                           InkWell(
-                            onTap: () {
+                            onTap: () async {
                               BankTypeDTO bankTypeDTO;
 
                               bankTypeDTO = widget.listBanks.where((element) {
                                 return element.bankCode == 'MB';
                               }).first;
 
-                              Navigator.pushNamed(
+                              await Navigator.pushNamed(
                                 context,
                                 Routes.ADD_BANK_CARD,
                                 arguments: {
@@ -632,6 +632,8 @@ class _StackedList extends State<StackedList> {
                                   'bankId': dto.id,
                                 },
                               );
+
+                              getListBank();
                             },
                             child: BoxLayout(
                               width: 95,

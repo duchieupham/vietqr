@@ -39,9 +39,9 @@ class Statistical extends StatelessWidget {
             return ListView(
               padding: const EdgeInsets.only(top: 12),
               children: [
-                LineChart(
-                  listData: state.listData,
-                ),
+                // LineChart(
+                //   listData: state.listData,
+                // ),
                 const SizedBox(
                   height: 24,
                 ),
