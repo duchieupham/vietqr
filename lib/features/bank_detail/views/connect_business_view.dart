@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/business_branch_dto.dart';
@@ -6,9 +7,13 @@ import 'package:vierqr/models/business_branch_dto.dart';
 class ConnectBusinessView extends StatefulWidget {
   final List<BusinessAvailDTO> list;
   final Function(String, String) onConnect;
+  final VoidCallback onCallBack;
 
   const ConnectBusinessView(
-      {super.key, required this.list, required this.onConnect});
+      {super.key,
+      required this.list,
+      required this.onConnect,
+      required this.onCallBack});
 
   @override
   State<ConnectBusinessView> createState() => _ConnectBusinessViewState();
@@ -49,7 +54,7 @@ class _ConnectBusinessViewState extends State<ConnectBusinessView> {
                           selected = select;
                         });
                       },
-                    )
+                      onCallBack: widget.onCallBack)
                   : _BuildStepSecond(
                       model: widget.list[selected],
                       onConnect: widget.onConnect,
@@ -208,8 +213,10 @@ class _buildStep extends StatelessWidget {
 class _BuildStepFirst extends StatelessWidget {
   final List<BusinessAvailDTO> list;
   final Function(int, int) onNext;
+  final VoidCallback onCallBack;
 
-  const _BuildStepFirst({required this.list, required this.onNext});
+  const _BuildStepFirst(
+      {required this.list, required this.onNext, required this.onCallBack});
 
   @override
   Widget build(BuildContext context) {
@@ -218,15 +225,16 @@ class _BuildStepFirst extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Expanded(
-            child: Column(
-              children: [
-                Text(
-                  'Danh sách doanh nghiệp khả dụng',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(height: 20),
-                if (list.isNotEmpty)
+          if (list.isNotEmpty)
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Danh sách doanh nghiệp khả dụng',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  ),
+                  const SizedBox(height: 20),
                   ...List.generate(list.length, (index) {
                     BusinessAvailDTO model = list.elementAt(index);
                     return GestureDetector(
@@ -236,9 +244,20 @@ class _BuildStepFirst extends StatelessWidget {
                       child: _buildItem(model),
                     );
                   }).toList(),
-              ],
+                ],
+              ),
+            )
+          else
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.only(top: kToolbarHeight * 2),
+                child: Text(
+                  'Không có doanh nghiệp khả dụng',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16),
+                ),
+              ),
             ),
-          ),
           Column(
             children: [
               Text(
@@ -249,6 +268,10 @@ class _BuildStepFirst extends StatelessWidget {
                 title: 'Tạo doanh nghiệp mới',
                 isEnable: true,
                 margin: const EdgeInsets.symmetric(vertical: 20),
+                onTap: () async {
+                  await Navigator.pushNamed(context, Routes.ADD_BUSINESS_VIEW);
+                  onCallBack();
+                },
               )
             ],
           )
@@ -260,6 +283,7 @@ class _BuildStepFirst extends StatelessWidget {
   Widget _buildItem(BusinessAvailDTO model) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+      margin:const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
         color: AppColor.greyF0F0F0,
@@ -304,6 +328,7 @@ class _BuildStepSecond extends StatelessWidget {
         children: [
           Expanded(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'Danh sách chi nhánh khả dụng',

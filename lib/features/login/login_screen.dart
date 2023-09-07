@@ -98,16 +98,22 @@ class _LoginState extends State<_Login> {
 
               if (provider.infoUserDTO != null) {
                 List<String> list = [];
-                List<InfoUserDTO> listDto =
+                List<InfoUserDTO> listCheck =
                     UserInformationHelper.instance.getLoginAccount();
-                List<InfoUserDTO> listCheck = listDto;
 
                 if (listCheck.isNotEmpty) {
                   if (listCheck.length == 3) {
-                    listCheck.sort((a, b) =>
-                        a.expiryAsDateTime.compareTo(b.expiryAsDateTime));
-                    listCheck.removeAt(2);
-                    listCheck.add(provider.infoUserDTO!);
+                    listCheck.removeWhere((element) =>
+                        element.phoneNo!.trim() ==
+                        provider.infoUserDTO!.phoneNo);
+
+                    if (listCheck.length < 3) {
+                      listCheck.add(provider.infoUserDTO!);
+                    } else {
+                      listCheck.sort((a, b) =>
+                          a.expiryAsDateTime.compareTo(b.expiryAsDateTime));
+                      listCheck.removeAt(2);
+                    }
                   } else {
                     listCheck.removeWhere((element) =>
                         element.phoneNo!.trim() ==

@@ -98,6 +98,8 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
           Navigator.pop(context);
         }
 
+        if (state.request == ShareBDSDType.Avail) {}
+
         if (state.request == ShareBDSDType.CONNECT) {
           widget.bloc.add(const BankCardGetDetailEvent());
           _bloc.add(GetBusinessAvailDTOEvent());
@@ -118,92 +120,92 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
         }
       },
       builder: (context, state) {
-        return SingleChildScrollView(
-          child: Container(
-            height: MediaQuery.of(context).size.height,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (widget.dto.businessDetails.isEmpty)
-                  _BuildNotConnectWidget(
-                    list: state.listBusinessAvailDTO,
-                    onConnect: (BusinessId, branchId) {
-                      _bloc.add(
-                        ConnectBranchEvent(
-                          businessId: BusinessId,
-                          branchId: branchId,
-                          bankId: widget.bankId,
-                        ),
-                      );
-                    },
-                  )
-                else
-                  _BuildConnectWidget(
-                    dto: widget.dto,
-                    list: state.listMember,
-                    isAdmin: widget.dto.userId == userId,
-                    branchId: state.branchId ?? '',
-                    businessId: state.businessId ?? '',
-                    onCallBack: () {
-                      widget.bloc.add(const BankCardGetDetailEvent());
-                      _bloc.add(GetBusinessAvailDTOEvent());
-                    },
-                    onGetMember: () {
-                      _bloc.add(GetMemberEvent());
-                    },
-                    onRemoveMember: (value) {
-                      String businessId = '';
-                      if (widget.dto.businessDetails.isNotEmpty) {
-                        businessId =
-                            widget.dto.businessDetails.first.businessId;
-                      }
-                      _bloc.add(DeleteMemberEvent(
-                          businessId: businessId, userId: value));
-                    },
-                  ),
-                const SizedBox(height: 30),
-                if (state.listTelegram.isEmpty && state.listLark.isEmpty)
-                  _buildSocialNetwork(context)
-                else
-                  Expanded(
-                    child: Column(
-                      children: [
-                        ...[
-                          if (state.listTelegram.isNotEmpty)
-                            _buildListChatTelegram(
-                                state.listTelegram, state.isTelegram)
-                          else
-                            GestureDetector(
-                              onTap: () async {
-                                await Navigator.pushNamed(
-                                    context, Routes.CONNECT_TELEGRAM);
-                                _bloc.add(GetInfoTelegramEvent());
-                              },
-                              child: _buildItemNetWork('Kết nối Telegram',
-                                  'assets/images/logo-telegram.png'),
-                            )
-                        ],
-                        const SizedBox(height: 20),
-                        ...[
-                          if (state.listLark.isNotEmpty)
-                            _buildListConnectLark(state.listLark, state.isLark)
-                          else
-                            GestureDetector(
-                              onTap: () async {
-                                await Navigator.pushNamed(
-                                    context, Routes.CONNECT_LARK);
-                                _bloc.add(GetInfoLarkEvent());
-                              },
-                              child: _buildItemNetWork('Kết nối Lark',
-                                  'assets/images/logo-lark.png'),
-                            )
-                        ]
-                      ],
+        return ListView(
+          children: [
+            if (widget.dto.businessDetails.isEmpty)
+              _BuildNotConnectWidget(
+                list: state.listBusinessAvailDTO,
+                onCallBack: () {
+                  _bloc.add(GetBusinessAvailDTOEvent());
+                  Navigator.pop(context);
+                },
+                onConnect: (BusinessId, branchId) {
+                  _bloc.add(
+                    ConnectBranchEvent(
+                      businessId: BusinessId,
+                      branchId: branchId,
+                      bankId: widget.bankId,
                     ),
-                  )
-              ],
+                  );
+                },
+              )
+            else
+              _BuildConnectWidget(
+                dto: widget.dto,
+                list: state.listMember,
+                isAdmin: widget.dto.userId == userId,
+                branchId: state.branchId ?? '',
+                businessId: state.businessId ?? '',
+                onCallBack: () {
+                  widget.bloc.add(const BankCardGetDetailEvent());
+                  _bloc.add(GetBusinessAvailDTOEvent());
+                },
+                onGetMember: () {
+                  _bloc.add(GetMemberEvent());
+                },
+                onRemoveMember: (value) {
+                  String businessId = '';
+                  if (widget.dto.businessDetails.isNotEmpty) {
+                    businessId = widget.dto.businessDetails.first.businessId;
+                  }
+                  _bloc.add(
+                      DeleteMemberEvent(businessId: businessId, userId: value));
+                },
+              ),
+            const SizedBox(height: 30),
+            const Text(
+              'Chia sẻ qua mạng xã hội',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
-          ),
+            const SizedBox(height: 16),
+            if (state.listTelegram.isEmpty && state.listLark.isEmpty)
+              _buildSocialNetwork(context)
+            else
+              Column(
+                children: [
+                  ...[
+                    if (state.listTelegram.isNotEmpty)
+                      _buildListChatTelegram(
+                          state.listTelegram, state.isTelegram)
+                    else
+                      GestureDetector(
+                        onTap: () async {
+                          await Navigator.pushNamed(
+                              context, Routes.CONNECT_TELEGRAM);
+                          _bloc.add(GetInfoTelegramEvent());
+                        },
+                        child: _buildItemNetWork('Kết nối Telegram',
+                            'assets/images/logo-telegram.png'),
+                      )
+                  ],
+                  const SizedBox(height: 20),
+                  ...[
+                    if (state.listLark.isNotEmpty)
+                      _buildListConnectLark(state.listLark, state.isLark)
+                    else
+                      GestureDetector(
+                        onTap: () async {
+                          await Navigator.pushNamed(
+                              context, Routes.CONNECT_LARK);
+                          _bloc.add(GetInfoLarkEvent());
+                        },
+                        child: _buildItemNetWork(
+                            'Kết nối Lark', 'assets/images/logo-lark.png'),
+                      )
+                  ]
+                ],
+              ),
+          ],
         );
       },
     );
@@ -392,7 +394,7 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
             ],
           ),
         ),
-        if (!isExist && widget.dto.userId == userId)
+        if (!isExist && widget.dto.userId == userId && widget.dto.authenticated)
           MButtonWidget(
             title: 'Nhận BĐSD qua Lark',
             isEnable: true,
@@ -538,7 +540,7 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
             ],
           ),
         ),
-        if (!isExist && widget.dto.userId == userId)
+        if (!isExist && widget.dto.userId == userId && widget.dto.authenticated)
           MButtonWidget(
             title: 'Nhận BĐSD qua Telegram',
             isEnable: true,
@@ -560,28 +562,18 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
   }
 
   Widget _buildSocialNetwork(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Wrap(
+      runSpacing: 20,
       children: [
-        const Text(
-          'Chia sẻ qua mạng xã hội',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-        ),
-        const SizedBox(height: 16),
-        Wrap(
-          runSpacing: 20,
-          children: [
-            _buildItemService(
-                context, 'assets/images/logo-telegram-dash.png', 'Telegram',
-                () async {
-              Navigator.pushNamed(context, Routes.CONNECT_TELEGRAM);
-            }),
-            _buildItemService(
-                context, 'assets/images/logo-lark-dash.png', 'Lark', () async {
-              Navigator.pushNamed(context, Routes.CONNECT_LARK);
-            }),
-          ],
-        ),
+        _buildItemService(
+            context, 'assets/images/logo-telegram-dash.png', 'Telegram',
+            () async {
+          Navigator.pushNamed(context, Routes.CONNECT_TELEGRAM);
+        }),
+        _buildItemService(context, 'assets/images/logo-lark-dash.png', 'Lark',
+            () async {
+          Navigator.pushNamed(context, Routes.CONNECT_LARK);
+        }),
       ],
     );
   }
@@ -623,8 +615,10 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
 class _BuildNotConnectWidget extends StatelessWidget {
   final List<BusinessAvailDTO> list;
   final Function(String, String) onConnect;
+  final VoidCallback onCallBack;
 
-  const _BuildNotConnectWidget({required this.list, required this.onConnect});
+  const _BuildNotConnectWidget(
+      {required this.list, required this.onConnect, required this.onCallBack});
 
   @override
   Widget build(BuildContext context) {
@@ -656,6 +650,7 @@ class _BuildNotConnectWidget extends StatelessWidget {
                   return ConnectBusinessView(
                     list: list,
                     onConnect: onConnect,
+                    onCallBack: onCallBack,
                   );
                 },
               );
@@ -765,22 +760,27 @@ class _BuildConnectWidget extends StatelessWidget {
             );
           }).toList(),
         const SizedBox(height: 16),
-        ...[
+        if (!list.isNotEmpty) ...[
           Text(
             'Danh sách thành viên',
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 12),
-          if (list.isNotEmpty)
-            ...List.generate(list.length, (index) {
-              MemberBranchModel model = list[index];
-              return _buildItemMember(
-                model,
-                onRemoveMember,
-                isAdmin,
-              );
-            }).toList()
-        ],
+          ...List.generate(list.length, (index) {
+            MemberBranchModel model = list[index];
+            return _buildItemMember(
+              model,
+              onRemoveMember,
+              isAdmin,
+            );
+          }).toList()
+        ] else
+          Center(
+            child: Text(
+              'Không có thành viên',
+              style: TextStyle(fontSize: 16),
+            ),
+          ),
       ],
     );
   }

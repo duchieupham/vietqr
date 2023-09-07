@@ -107,7 +107,7 @@ class _AddBusinessViewState extends State<_AddBusinessView> {
               textColor: Theme.of(context).hintColor,
               fontSize: 15,
             );
-            Navigator.pop(context);
+            Navigator.pop(context, true);
           }
           if (state.status == BlocStatus.ERROR) {
             Navigator.pop(context);

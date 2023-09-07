@@ -109,39 +109,37 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
           ),
           DividerWidget(width: width),
           const Padding(padding: EdgeInsets.only(top: 30)),
-          Column(
-            children: [
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Kết quả tìm kiếm',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
+          Expanded(
+            child: Column(
+              children: [
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Kết quả tìm kiếm',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
-              ),
-              (message.trim().isNotEmpty && _dto.userId.isEmpty)
-                  ? BoxLayout(
-                      width: width,
-                      borderRadius: 5,
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      margin: const EdgeInsets.symmetric(vertical: 10),
-                      alignment: Alignment.center,
-                      bgColor: Theme.of(context).canvasColor,
+                if (message.trim().isNotEmpty && _dto.userId.isEmpty)
+                  Expanded(
+                    child: Center(
                       child: Text(
                         message,
                       ),
-                    )
-                  : (_dto.userId.isNotEmpty && message.trim().isEmpty)
+                    ),
+                  )
+                else
+                  (_dto.userId.isNotEmpty && message.trim().isEmpty)
                       ? _buildSearchItem(
                           context: context,
                           dto: _dto,
                           existed: getTypeMember(_dto.existed),
                         )
                       : const SizedBox(),
-            ],
+              ],
+            ),
           ),
-          const Spacer(),
           Form(
             key: _formAddMemberKey,
             child: BorderLayout(
@@ -354,13 +352,17 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
           _dto.existed = 1;
         });
       } else {
-        ErrorUtils.instance.getErrorMessage(result.message);
+        _dto.existed = 0;
+        message = ErrorUtils.instance.getErrorMessage(result.message);
+        setState(() {});
       }
     } catch (e) {
+      _dto.existed = 0;
       ResponseMessageDTO result =
           const ResponseMessageDTO(status: 'FAILED', message: 'E05');
       LOG.error(e.toString());
-      ErrorUtils.instance.getErrorMessage(result.message);
+      message = ErrorUtils.instance.getErrorMessage(result.message);
+      setState(() {});
     }
   }
 
@@ -371,11 +373,10 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
       if (!mounted) return;
       if (responseDTO.status.isNotEmpty) {
         ResponseMessageDTO result = responseDTO;
-        CheckUtils.instance.getCheckMessage(result.message);
-        message = result.message;
-        setState(() {
-          _dto = dtoDefault;
-        });
+        message = CheckUtils.instance.getCheckMessage(result.message);
+        _dto = dtoDefault;
+
+        setState(() {});
       } else {
         BusinessMemberDTO result = responseDTO;
         _dto = result;
