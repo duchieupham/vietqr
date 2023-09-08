@@ -12,6 +12,10 @@ class BusinessMemberDTO {
   final String status;
   int existed;
 
+  setExisted(value) {
+    existed = value;
+  }
+
   BusinessMemberDTO({
     this.isDelete = false,
     required this.userId,

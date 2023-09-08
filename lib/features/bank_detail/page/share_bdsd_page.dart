@@ -795,7 +795,7 @@ class _BuildConnectWidget extends StatelessWidget {
         ] else
           Center(
             child: Text(
-              'Không có thành viên',
+              'Chưa có thành viên nào được thêm',
               style: TextStyle(fontSize: 16),
             ),
           ),
