@@ -37,7 +37,6 @@ class Statistical extends StatelessWidget {
         }, builder: (context, state) {
           if (state is StatisticGetAllDataSuccessState) {
             return ListView(
-              padding: const EdgeInsets.only(top: 12),
               children: [
                 // Container(
                 //   padding: const EdgeInsets.fromLTRB(0, 40, 4, 12),

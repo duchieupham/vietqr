@@ -16,6 +16,7 @@ class ShareBDSDState extends Equatable {
   final List<InfoLarkDTO> listLark;
   final bool isTelegram;
   final bool isLark;
+  final bool isLoading;
 
   ShareBDSDState({
     this.status = BlocStatus.NONE,
@@ -29,6 +30,7 @@ class ShareBDSDState extends Equatable {
     required this.listLark,
     this.isLark = false,
     this.isTelegram = false,
+    this.isLoading = false,
   });
 
   ShareBDSDState copyWith({
@@ -43,6 +45,7 @@ class ShareBDSDState extends Equatable {
     List<InfoLarkDTO>? listLark,
     bool? isTelegram,
     bool? isLark,
+    bool? isLoading,
   }) {
     return ShareBDSDState(
       status: status ?? this.status,
@@ -56,6 +59,7 @@ class ShareBDSDState extends Equatable {
       listLark: listLark ?? this.listLark,
       isLark: isLark ?? this.isLark,
       isTelegram: isTelegram ?? this.isTelegram,
+      isLoading: isLoading ?? this.isLoading,
     );
   }
 

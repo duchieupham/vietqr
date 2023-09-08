@@ -13,6 +13,7 @@ class Transaction extends StatelessWidget {
   final RefreshCallback refresh;
   final AccountBankDetailDTO dto;
   final String bankId;
+
   const Transaction(
       {Key? key,
       required this.bloc,
@@ -31,10 +32,11 @@ class Transaction extends StatelessWidget {
     final double width = MediaQuery.of(context).size.width;
     if (transactions.isEmpty) {
       return const Center(
-          child: Padding(
-        padding: EdgeInsets.only(bottom: 36),
-        child: Text('Chưa có giao dịch nào'),
-      ));
+        child: Padding(
+          padding: EdgeInsets.only(bottom: 36),
+          child: Text('Chưa có giao dịch nào'),
+        ),
+      );
     }
     return Column(
       children: [

@@ -50,20 +50,22 @@ class DeleteMemberEvent extends ShareBDSDEvent {
 
 class GetInfoTelegramEvent extends ShareBDSDEvent {
   final String? bankId;
+  final bool isLoading;
 
-  GetInfoTelegramEvent({this.bankId});
+  GetInfoTelegramEvent({this.bankId, this.isLoading = false});
 
   @override
-  List<Object?> get props => [bankId];
+  List<Object?> get props => [bankId, isLoading];
 }
 
 class GetInfoLarkEvent extends ShareBDSDEvent {
   final String? bankId;
+  final bool isLoading;
 
-  GetInfoLarkEvent({this.bankId});
+  GetInfoLarkEvent({this.bankId, this.isLoading = false});
 
   @override
-  List<Object?> get props => [bankId];
+  List<Object?> get props => [bankId, isLoading];
 }
 
 class AddBankLarkEvent extends ShareBDSDEvent {

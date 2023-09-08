@@ -56,10 +56,14 @@ class ShareBDSDBloc extends Bloc<ShareBDSDEvent, ShareBDSDState>
         );
         final List<BusinessAvailDTO> list =
             await repository.getBusinessAndBrand(userId);
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             status: BlocStatus.NONE,
             listBusinessAvailDTO: list,
-            request: ShareBDSDType.Avail));
+            request: ShareBDSDType.Avail,
+            isLoading: false,
+          ),
+        );
       }
     } catch (e) {
       LOG.error(e.toString());
@@ -72,8 +76,13 @@ class ShareBDSDBloc extends Bloc<ShareBDSDEvent, ShareBDSDState>
     bool isLark = false;
     try {
       if (event is GetInfoTelegramEvent) {
-        emit(state.copyWith(
-            status: BlocStatus.LOADING_PAGE, request: ShareBDSDType.NONE));
+        emit(
+          state.copyWith(
+            status: BlocStatus.LOADING_PAGE,
+            request: ShareBDSDType.NONE,
+            isLoading: event.isLoading,
+          ),
+        );
         result = await telegramRepository.getInformation(userId);
 
         if (event.bankId != null && result.isNotEmpty) {
@@ -153,7 +162,7 @@ class ShareBDSDBloc extends Bloc<ShareBDSDEvent, ShareBDSDState>
       if (event is GetMemberEvent) {
         emit(
           state.copyWith(
-              status: BlocStatus.LOADING, request: ShareBDSDType.NONE),
+              status: BlocStatus.LOADING_PAGE, request: ShareBDSDType.NONE),
         );
         String branchId = '';
 
@@ -166,11 +175,12 @@ class ShareBDSDBloc extends Bloc<ShareBDSDEvent, ShareBDSDState>
         final List<MemberBranchModel> list =
             await repository.getMemberBranch(branchId);
         emit(state.copyWith(
-          status: BlocStatus.UNLOADING,
+          status: BlocStatus.NONE,
           listMember: list,
           request: ShareBDSDType.MEMBER,
           branchId: event.branchId,
           businessId: event.businessId,
+          isLoading: false,
         ));
       }
     } catch (e) {

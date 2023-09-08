@@ -70,7 +70,7 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
   }
 
   initData() {
-    _bloc.add(GetInfoTelegramEvent(bankId: widget.bankId));
+    _bloc.add(GetInfoTelegramEvent(bankId: widget.bankId, isLoading: true));
     _bloc.add(GetInfoLarkEvent(bankId: widget.bankId));
     if (widget.dto.businessDetails.isEmpty) {
       _bloc.add(GetBusinessAvailDTOEvent());
@@ -84,6 +84,10 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
       }
       _bloc.add(GetMemberEvent(branchId: branchId, businessId: businessId));
     }
+  }
+
+  Future<void> onRefresh() async {
+    initData();
   }
 
   @override
@@ -120,92 +124,106 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
         }
       },
       builder: (context, state) {
-        return ListView(
-          children: [
-            if (widget.dto.businessDetails.isEmpty)
-              _BuildNotConnectWidget(
-                list: state.listBusinessAvailDTO,
-                onCallBack: () {
-                  _bloc.add(GetBusinessAvailDTOEvent());
-                  Navigator.pop(context);
-                },
-                onConnect: (BusinessId, branchId) {
-                  _bloc.add(
-                    ConnectBranchEvent(
-                      businessId: BusinessId,
-                      branchId: branchId,
-                      bankId: widget.bankId,
-                    ),
-                  );
-                },
-              )
-            else
-              _BuildConnectWidget(
-                dto: widget.dto,
-                list: state.listMember,
-                isAdmin: widget.dto.userId == userId,
-                branchId: state.branchId ?? '',
-                businessId: state.businessId ?? '',
-                onCallBack: () {
-                  widget.bloc.add(const BankCardGetDetailEvent());
-                  _bloc.add(GetBusinessAvailDTOEvent());
-                },
-                onGetMember: () {
-                  _bloc.add(GetMemberEvent());
-                },
-                onRemoveMember: (value) {
-                  String businessId = '';
-                  if (widget.dto.businessDetails.isNotEmpty) {
-                    businessId = widget.dto.businessDetails.first.businessId;
-                  }
-                  _bloc.add(
-                      DeleteMemberEvent(businessId: businessId, userId: value));
-                },
+        if (state.isLoading)
+          return const UnconstrainedBox(
+            child: SizedBox(
+              width: 30,
+              height: 30,
+              child: CircularProgressIndicator(
+                color: AppColor.BLUE_TEXT,
               ),
-            const SizedBox(height: 30),
-            const Text(
-              'Chia sẻ qua mạng xã hội',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
-            const SizedBox(height: 16),
-            if (state.listTelegram.isEmpty && state.listLark.isEmpty)
-              _buildSocialNetwork(context)
-            else
-              Column(
-                children: [
-                  ...[
-                    if (state.listTelegram.isNotEmpty)
-                      _buildListChatTelegram(
-                          state.listTelegram, state.isTelegram)
-                    else
-                      GestureDetector(
-                        onTap: () async {
-                          await Navigator.pushNamed(
-                              context, Routes.CONNECT_TELEGRAM);
-                          _bloc.add(GetInfoTelegramEvent());
-                        },
-                        child: _buildItemNetWork('Kết nối Telegram',
-                            'assets/images/logo-telegram.png'),
-                      )
-                  ],
-                  const SizedBox(height: 20),
-                  ...[
-                    if (state.listLark.isNotEmpty)
-                      _buildListConnectLark(state.listLark, state.isLark)
-                    else
-                      GestureDetector(
-                        onTap: () async {
-                          await Navigator.pushNamed(
-                              context, Routes.CONNECT_LARK);
-                          _bloc.add(GetInfoLarkEvent());
-                        },
-                        child: _buildItemNetWork(
-                            'Kết nối Lark', 'assets/images/logo-lark.png'),
-                      )
-                  ]
-                ],
+          );
+        return RefreshIndicator(
+          onRefresh: onRefresh,
+          child: ListView(
+            children: [
+              if (widget.dto.businessDetails.isEmpty)
+                _BuildNotConnectWidget(
+                  list: state.listBusinessAvailDTO,
+                  onCallBack: () {
+                    _bloc.add(GetBusinessAvailDTOEvent());
+                    Navigator.pop(context);
+                  },
+                  onConnect: (BusinessId, branchId) {
+                    _bloc.add(
+                      ConnectBranchEvent(
+                        businessId: BusinessId,
+                        branchId: branchId,
+                        bankId: widget.bankId,
+                      ),
+                    );
+                  },
+                )
+              else
+                _BuildConnectWidget(
+                  dto: widget.dto,
+                  list: state.listMember,
+                  isAdmin: widget.dto.userId == userId,
+                  branchId: state.branchId ?? '',
+                  businessId: state.businessId ?? '',
+                  onCallBack: () {
+                    widget.bloc.add(const BankCardGetDetailEvent());
+                    _bloc.add(GetBusinessAvailDTOEvent());
+                  },
+                  onGetMember: () {
+                    _bloc.add(GetMemberEvent());
+                  },
+                  onRemoveMember: (value) {
+                    String businessId = '';
+                    if (widget.dto.businessDetails.isNotEmpty) {
+                      businessId = widget.dto.businessDetails.first.businessId;
+                    }
+                    _bloc.add(DeleteMemberEvent(
+                        businessId: businessId, userId: value));
+                  },
+                ),
+              const SizedBox(height: 30),
+              const Text(
+                'Chia sẻ qua mạng xã hội',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
-          ],
+              const SizedBox(height: 16),
+              if (state.listTelegram.isEmpty && state.listLark.isEmpty)
+                _buildSocialNetwork(context)
+              else
+                Column(
+                  children: [
+                    ...[
+                      if (state.listTelegram.isNotEmpty)
+                        _buildListChatTelegram(
+                            state.listTelegram, state.isTelegram)
+                      else
+                        GestureDetector(
+                          onTap: () async {
+                            await Navigator.pushNamed(
+                                context, Routes.CONNECT_TELEGRAM);
+                            _bloc.add(GetInfoTelegramEvent());
+                          },
+                          child: _buildItemNetWork('Kết nối Telegram',
+                              'assets/images/logo-telegram.png'),
+                        )
+                    ],
+                    const SizedBox(height: 20),
+                    ...[
+                      if (state.listLark.isNotEmpty)
+                        _buildListConnectLark(state.listLark, state.isLark)
+                      else
+                        GestureDetector(
+                          onTap: () async {
+                            await Navigator.pushNamed(
+                                context, Routes.CONNECT_LARK);
+                            _bloc.add(GetInfoLarkEvent());
+                          },
+                          child: _buildItemNetWork(
+                              'Kết nối Lark', 'assets/images/logo-lark.png'),
+                        )
+                    ]
+                  ],
+                ),
+              const SizedBox(height: 30),
+            ],
+          ),
         );
       },
     );
