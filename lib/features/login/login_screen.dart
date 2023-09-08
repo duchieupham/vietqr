@@ -416,7 +416,9 @@ class _LoginState extends State<_Login> {
                       children: [
                         _buildButtonBottom(),
                         SizedBox(
-                          height: provider.isQuickLogin == 2 ? 40 : 0,
+                          height: provider.isQuickLogin == 2
+                              ? 40
+                              : MediaQuery.of(context).size.height * 0.05,
                         ),
                         if (provider.isQuickLogin == 0 ||
                             provider.isQuickLogin == 2)

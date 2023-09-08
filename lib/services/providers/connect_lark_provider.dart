@@ -41,6 +41,15 @@ class ConnectLarkProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  checkWebHookExist() {
+    if (_webHook.isEmpty) {
+      _errorWebhook = true;
+    } else {
+      _errorWebhook = false;
+    }
+    notifyListeners();
+  }
+
   void updateStep(int value) {
     _curStep = value;
     notifyListeners();
