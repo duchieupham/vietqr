@@ -39,12 +39,6 @@ class Statistical extends StatelessWidget {
             return ListView(
               padding: const EdgeInsets.only(top: 12),
               children: [
-                LineChart(
-                  listData: state.listData,
-                ),
-                const SizedBox(
-                  height: 24,
-                ),
                 // Container(
                 //   padding: const EdgeInsets.fromLTRB(0, 40, 4, 12),
                 //   width: MediaQuery.of(context).size.width,
@@ -70,7 +64,17 @@ class Statistical extends StatelessWidget {
                 //     ],
                 //   ),
                 // ),
-                _buildOverView(state.dto, state.listData)
+                _buildOverView(state.dto, state.listData),
+                const SizedBox(
+                  height: 24,
+                ),
+                if (state.listData.isNotEmpty)
+                  LineChart(
+                    listData: state.listData,
+                  ),
+                const SizedBox(
+                  height: 60,
+                ),
               ],
             );
           }
