@@ -760,7 +760,7 @@ class _BuildConnectWidget extends StatelessWidget {
             );
           }).toList(),
         const SizedBox(height: 16),
-        if (!list.isNotEmpty) ...[
+        if (list.isNotEmpty) ...[
           Text(
             'Danh sách thành viên',
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
