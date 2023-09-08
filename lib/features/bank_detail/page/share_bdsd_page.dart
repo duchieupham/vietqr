@@ -760,12 +760,12 @@ class _BuildConnectWidget extends StatelessWidget {
             );
           }).toList(),
         const SizedBox(height: 16),
+        Text(
+          'Danh sách thành viên',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(height: 12),
         if (list.isNotEmpty) ...[
-          Text(
-            'Danh sách thành viên',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-          ),
-          const SizedBox(height: 12),
           ...List.generate(list.length, (index) {
             MemberBranchModel model = list[index];
             return _buildItemMember(
