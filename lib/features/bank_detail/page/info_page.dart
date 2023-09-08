@@ -11,6 +11,7 @@ import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
+import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
 import 'package:vierqr/commons/widgets/viet_qr.dart';
 import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
@@ -35,7 +36,7 @@ class InfoDetailBankAccount extends StatelessWidget {
   final String bankId;
   final GestureTapCallback? onChangePage;
 
-  const InfoDetailBankAccount({
+  InfoDetailBankAccount({
     Key? key,
     required this.bloc,
     required this.refresh,
@@ -46,6 +47,30 @@ class InfoDetailBankAccount extends StatelessWidget {
   }) : super(key: key);
 
   String get userId => UserInformationHelper.instance.getUserId();
+
+  final globalKey = GlobalKey();
+
+  void onSaveImage(BuildContext context) async {
+    DialogWidget.instance.openLoadingDialog();
+    await Future.delayed(
+      const Duration(milliseconds: 200),
+      () async {
+        await ShareUtils.instance.saveImageToGallery(globalKey).then(
+          (value) {
+            Navigator.pop(context);
+            Fluttertoast.showToast(
+              msg: 'Đã lưu ảnh',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              backgroundColor: Theme.of(context).cardColor,
+              textColor: Theme.of(context).cardColor,
+              fontSize: 15,
+            );
+          },
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +84,12 @@ class InfoDetailBankAccount extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  VietQr(qrGeneratedDTO: qrGeneratedDTO),
+                  RepaintBoundaryWidget(
+                    globalKey: globalKey,
+                    builder: (key) {
+                      return VietQr(qrGeneratedDTO: qrGeneratedDTO);
+                    },
+                  ),
                   const Padding(padding: EdgeInsets.only(top: 16)),
                   _buildTitle(title: 'Thông tin liên kết'),
                   BoxLayout(
@@ -290,14 +320,7 @@ class InfoDetailBankAccount extends StatelessWidget {
                 function: () {
                   Provider.of<AuthProvider>(context, listen: false)
                       .updateAction(false);
-                  Navigator.pushNamed(
-                    context,
-                    Routes.QR_SHARE_VIEW,
-                    arguments: {
-                      'qrGeneratedDTO': qrGeneratedDTO,
-                      'action': 'SAVE'
-                    },
-                  );
+                  onSaveImage(context);
                 },
                 bgColor: Theme.of(context).cardColor,
                 textColor: AppColor.RED_CALENDAR,

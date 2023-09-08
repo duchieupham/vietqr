@@ -8,6 +8,7 @@ class ImageUtils {
   const ImageUtils._privateConsrtructor();
 
   static const ImageUtils _instance = ImageUtils._privateConsrtructor();
+
   static ImageUtils get instance => _instance;
 
   //

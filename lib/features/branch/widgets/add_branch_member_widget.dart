@@ -6,11 +6,11 @@ import 'package:vierqr/commons/utils/check_utils.dart';
 import 'package:vierqr/commons/utils/error_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
+import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_widget.dart';
 import 'package:vierqr/features/branch/blocs/branch_bloc.dart';
 import 'package:vierqr/layouts/border_layout.dart';
-import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/models/branch_member_insert_dto.dart';
 import 'package:vierqr/models/business_member_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
@@ -31,7 +31,7 @@ class AddBranchMemberWidget extends StatefulWidget {
 }
 
 class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
-  final TextEditingController nameController = TextEditingController();
+  final nameController = TextEditingController();
 
   final SearchClearProvider searchClearProvider = SearchClearProvider(false);
 
@@ -121,7 +121,7 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
                     ),
                   ),
                 ),
-                if (message.trim().isNotEmpty && _dto.userId.isEmpty)
+                if (message.trim().isNotEmpty && !isError)
                   Expanded(
                     child: Center(
                       child: Text(
@@ -131,11 +131,7 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
                   )
                 else
                   (_dto.userId.isNotEmpty && message.trim().isEmpty)
-                      ? _buildSearchItem(
-                          context: context,
-                          dto: _dto,
-                          existed: getTypeMember(_dto.existed),
-                        )
+                      ? _buildSearchItem(context: context, dto: _dto)
                       : const SizedBox(),
               ],
             ),
@@ -175,6 +171,7 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
                         _searchMember();
                       } else {
                         message = '';
+                        isError = false;
                         setState(() {
                           _dto = dtoDefault;
                         });
@@ -210,9 +207,7 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
   }
 
   Widget _buildSearchItem(
-      {required BuildContext context,
-      required BusinessMemberDTO dto,
-      required TypeAddMember existed}) {
+      {required BuildContext context, required BusinessMemberDTO dto}) {
     final double width = MediaQuery.of(context).size.width;
     return Container(
       width: width,
@@ -247,75 +242,76 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
               ],
             ),
           ),
-          (existed == TypeAddMember.ADDED)
-              ? Container(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: AppColor.GREY_VIEW,
+          if (dto.typeMember == TypeAddMember.ADDED)
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: AppColor.GREY_VIEW,
+              ),
+              child: Row(
+                children: const [
+                  Icon(
+                    Icons.check_rounded,
+                    color: AppColor.BLUE_TEXT,
+                    size: 13,
                   ),
-                  child: Row(children: const [
+                  Padding(padding: EdgeInsets.only(left: 5)),
+                  Text(
+                    'Đã thêm',
+                    style: TextStyle(color: AppColor.BLUE_TEXT),
+                  )
+                ],
+              ),
+            )
+          else if (isLoading)
+            Container(
+              color: AppColor.TRANSPARENT,
+              margin: const EdgeInsets.only(right: 8),
+              width: 24,
+              height: 24,
+              child: const Center(
+                child: CircularProgressIndicator(
+                  color: AppColor.BLUE_TEXT,
+                ),
+              ),
+            )
+          else
+            InkWell(
+              onTap: () {
+                BranchMemberInsertDTO branchMemberInsertDTO =
+                    BranchMemberInsertDTO(
+                  branchId: widget.branchId,
+                  businessId: widget.businessId,
+                  userId: dto.userId,
+                  role: 4,
+                );
+                _insertMember(branchMemberInsertDTO);
+              },
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  color: AppColor.BLUE_TEXT,
+                ),
+                child: Row(
+                  children: const [
                     Icon(
-                      Icons.check_rounded,
-                      color: AppColor.BLUE_TEXT,
+                      Icons.add_rounded,
+                      color: AppColor.WHITE,
                       size: 13,
                     ),
-                    Padding(padding: EdgeInsets.only(left: 5)),
                     Text(
-                      'Đã thêm',
-                      style: TextStyle(color: AppColor.BLUE_TEXT),
-                    )
-                  ]),
-                )
-              : (existed == TypeAddMember.AWAIT)
-                  ? Container(
-                      color: AppColor.TRANSPARENT,
-                      margin: const EdgeInsets.only(right: 8),
-                      width: 24,
-                      height: 24,
-                      child: const Center(
-                        child: CircularProgressIndicator(
-                          color: AppColor.BLUE_TEXT,
-                        ),
+                      'Thêm',
+                      style: TextStyle(
+                        color: AppColor.WHITE,
                       ),
                     )
-                  : InkWell(
-                      onTap: () {
-                        BranchMemberInsertDTO branchMemberInsertDTO =
-                            BranchMemberInsertDTO(
-                          branchId: widget.branchId,
-                          businessId: widget.businessId,
-                          userId: dto.userId,
-                          role: 4,
-                        );
-                        _insertMember(branchMemberInsertDTO);
-                        // reset(context);
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 5, horizontal: 10),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
-                          color: AppColor.BLUE_TEXT,
-                        ),
-                        child: Row(
-                          children: const [
-                            Icon(
-                              Icons.add_rounded,
-                              color: AppColor.WHITE,
-                              size: 13,
-                            ),
-                            Text(
-                              'Thêm',
-                              style: TextStyle(
-                                color: AppColor.WHITE,
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
+                  ],
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -330,46 +326,56 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
     });
   }
 
-  TypeAddMember getTypeMember(int existed) {
-    if (existed == 0) {
-      return TypeAddMember.MORE;
-    } else if (existed == 1) {
-      return TypeAddMember.ADDED;
-    }
-    return TypeAddMember.AWAIT;
-  }
+  bool isLoading = false;
+  bool isError = false;
 
   void _insertMember(dto) async {
     try {
       setState(() {
-        _dto.existed = 2;
+        _dto.setExisted(2);
+        isLoading = true;
+        isError = false;
+        message = '';
       });
       final ResponseMessageDTO result =
           await branchRepository.insertMember(dto);
       if (!mounted) return;
       if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
-        setState(() {
-          _dto.existed = 1;
-        });
-      } else {
-        _dto.existed = 0;
-        message = ErrorUtils.instance.getErrorMessage(result.message);
+        _dto.setExisted(1);
+        isLoading = false;
         setState(() {});
+      } else {
+        _dto.setExisted(0);
+        message = ErrorUtils.instance.getErrorMessage(result.message);
+        isLoading = false;
+        isError = true;
+        setState(() {});
+
+        await DialogWidget.instance
+            .openMsgDialog(title: 'Không thể thêm thành viên', msg: message);
       }
     } catch (e) {
-      _dto.existed = 0;
+      LOG.error(e.toString());
+      _dto.setExisted(0);
+      isLoading = false;
+      isError = true;
       ResponseMessageDTO result =
           const ResponseMessageDTO(status: 'FAILED', message: 'E05');
-      LOG.error(e.toString());
       message = ErrorUtils.instance.getErrorMessage(result.message);
       setState(() {});
+
+      await DialogWidget.instance
+          .openMsgDialog(title: 'Không thể thêm thành viên', msg: message);
     }
   }
 
   void _searchMember() async {
     try {
+      isError = false;
+      message = '';
+      setState(() {});
       final responseDTO = await branchRepository.searchMemberBranch(
-          nameController.text.trim(), widget.businessId);
+          nameController.text.trim().replaceAll(" ", ""), widget.businessId);
       if (!mounted) return;
       if (responseDTO.status.isNotEmpty) {
         ResponseMessageDTO result = responseDTO;

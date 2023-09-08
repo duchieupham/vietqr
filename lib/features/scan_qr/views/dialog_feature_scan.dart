@@ -1,22 +1,25 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:clipboard/clipboard.dart';
+import 'package:dudv_base/dudv_base.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/events.dart';
+import 'package:vierqr/commons/utils/printer_utils.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/contact/save_contact_screen.dart';
-import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
-import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
+import 'package:vierqr/features/printer/views/printing_view.dart';
+import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
+import 'package:vierqr/models/bluetooth_printer_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/vietqr_dto.dart';
+import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/sqflite/local_database.dart';
 
 class DialogFeatureWidget extends StatefulWidget {
   final dynamic dto;
@@ -51,21 +54,21 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
     if (widget.isShowIconFirst) {
       if (widget.typeQR == TypeContact.Bank) {
         _list.add(dataBank);
-        _list = _list.reversed.toList();
       } else {
         _list.add(dataOther);
-        _list = _list.reversed.toList();
       }
+    } else {
+      _list.removeAt(0);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+      padding: const EdgeInsets.fromLTRB(6, 12, 6, 12),
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(10),
         color: AppColor.WHITE,
       ),
       child: Column(
@@ -144,19 +147,55 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
             ),
           const SizedBox(height: 16),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: List.generate(_list.length, (index) {
-              return GestureDetector(
-                onTap: () {
-                  onHandle(_list[index].index);
-                },
-                child: _buildItem(
-                  _list[index],
-                  _list[index].index,
-                ),
-              );
+              final DataModel model = _list[index];
+              if (!widget.isShowIconFirst) {
+                return _buildItem(model);
+              } else if (index < _list.length - 1) {
+                return _buildItem(model);
+              }
+              return const SizedBox();
             }).toList(),
           ),
+          const SizedBox(height: 8),
+          if (widget.isShowIconFirst)
+            Row(
+              children: [
+                _buildItem(dataHome),
+                Expanded(
+                  child: MButtonWidget(
+                    title: _list.last.title,
+                    isEnable: true,
+                    onTap: () {
+                      onHandle(_list.last.index);
+                    },
+                    margin: const EdgeInsets.symmetric(horizontal: 4),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (widget.typeQR == TypeContact.VietQR_ID ||
+                            widget.typeQR == TypeContact.Bank)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 6, vertical: 6),
+                            child: Image.asset(
+                              _list.last.url,
+                              color: AppColor.WHITE,
+                            ),
+                          ),
+                        Text(
+                          _list.last.title,
+                          style: TextStyle(
+                            color: AppColor.WHITE,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            )
         ],
       ),
     );
@@ -165,11 +204,7 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
   void onHandle(int index) async {
     switch (index) {
       case 0:
-        if (widget.typeQR == TypeContact.Bank) {
-          onSaveTK();
-        } else {
-          onSaveQR();
-        }
+        onPrint(widget.code);
         return;
       case 1:
         onSaveImage();
@@ -178,8 +213,18 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
         onCopy(dto: widget.dto, code: widget.code);
         return;
       case 3:
-      default:
         share(dto: widget.dto);
+        return;
+      case 4:
+        Utils.navigateToRoot(context);
+        return;
+      case 5:
+      default:
+        if (widget.typeQR == TypeContact.Bank) {
+          onSaveTK();
+        } else {
+          onSaveQR();
+        }
         return;
     }
   }
@@ -187,24 +232,18 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
   void onSaveTK() async {
     if (widget.dto is QRGeneratedDTO) {
       QRGeneratedDTO value = widget.dto;
-      // if (value.isNaviAddBank) {
-        await Navigator.pushNamed(
-          context,
-          Routes.ADD_BANK_CARD,
-          arguments: {
-            'step': 0,
-            'bankDTO': widget.bankTypeDTO,
-            'bankAccount': value.bankAccount,
-            'name': ''
-          },
-        );
+      await Navigator.pushNamed(
+        context,
+        Routes.ADD_BANK_CARD,
+        arguments: {
+          'step': 0,
+          'bankDTO': widget.bankTypeDTO,
+          'bankAccount': value.bankAccount,
+          'name': ''
+        },
+      );
 
-        eventBus.fire(ChangeThemeEvent());
-      // } else {
-      //   context
-      //       .read<DashBoardBloc>()
-      //       .add(DashBoardCheckExistedEvent(dto: value));
-      // }
+      eventBus.fire(ChangeThemeEvent());
     }
   }
 
@@ -286,50 +325,81 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
     });
   }
 
-  Widget _buildItem(DataModel model, index) {
-    final height = MediaQuery.of(context).size.height;
-    double size = 40;
-    if (height < 800) {
-      size = 28;
+  onPrint(String qr) async {
+    String userId = UserInformationHelper.instance.getUserId();
+    BluetoothPrinterDTO bluetoothPrinterDTO =
+        await LocalDatabase.instance.getBluetoothPrinter(userId);
+    if (bluetoothPrinterDTO.id.isNotEmpty) {
+      bool isPrinting = false;
+      if (!isPrinting) {
+        isPrinting = true;
+        DialogWidget.instance
+            .showFullModalBottomContent(widget: const PrintingView());
+        await PrinterUtils.instance.printQRCode(qr).then((value) {
+          Navigator.pop(context);
+          isPrinting = false;
+        });
+      }
+    } else {
+      DialogWidget.instance.openMsgDialog(
+          title: 'Không thể in',
+          msg: 'Vui lòng kết nối với máy in để thực hiện việc in.');
     }
-    return Column(
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(100),
-            color: index == 0 ? AppColor.BLUE_TEXT : AppColor.GREY_F1F2F5,
-          ),
-          child: Image.asset(
-            model.url,
-            width: size,
-            height: size,
-            color:
-                index == 0 ? AppColor.WHITE : AppColor.BLACK.withOpacity(0.35),
-          ),
+  }
+
+  Widget _buildItem(DataModel model) {
+    final width = MediaQuery.of(context).size.width;
+    final maxWidthItem = widget.isShowIconFirst
+        ? (width - 64) * (1 / (_list.length - 1))
+        : (width - 64) * (1 / (_list.length));
+
+    double size = 15;
+    return GestureDetector(
+      onTap: () {
+        onHandle(model.index);
+      },
+      child: Container(
+        height: 40,
+        width: maxWidthItem,
+        margin: const EdgeInsets.symmetric(horizontal: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          color: AppColor.BLUE_TEXT.withOpacity(0.3),
         ),
-        const SizedBox(height: 8),
-        Text(
-          model.title,
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: height < 800 ? 12 : 15),
+        child: Image.asset(
+          model.url,
+          width: size,
+          color: AppColor.BLUE_TEXT,
         ),
-      ],
+      ),
     );
   }
 
   final DataModel dataBank = DataModel(
-    title: 'Lưu TK',
+    title: 'Lưu TK ngân hàng',
     url: 'assets/images/ic-tb-card-selected.png',
-    index: 0,
+    index: 5,
   );
 
   final DataModel dataOther = DataModel(
     title: 'Lưu thẻ QR',
     url: 'assets/images/ic-qr-wallet-grey.png',
-    index: 0,
+    index: 5,
+  );
+
+  final DataModel dataHome = DataModel(
+    title: 'Trang chủ',
+    url: 'assets/images/ic-home-blue.png',
+    index: 4,
   );
 
   List<DataModel> _list = [
+    DataModel(
+      title: 'In',
+      url: 'assets/images/ic-print-blue.png',
+      index: 0,
+    ),
     DataModel(
       title: 'Lưu ảnh',
       url: 'assets/images/ic-img-blue.png',

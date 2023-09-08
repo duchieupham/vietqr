@@ -42,6 +42,7 @@ class TransactionRepository {
   Future<TransactionReceiveDTO> getTransactionDetail(String id) async {
     TransactionReceiveDTO result = const TransactionReceiveDTO(
       time: 0,
+      timePaid: 0,
       status: 0,
       id: '',
       type: 0,
