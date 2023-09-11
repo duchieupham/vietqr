@@ -375,7 +375,7 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
       message = '';
       setState(() {});
       final responseDTO = await branchRepository.searchMemberBranch(
-          nameController.text.trim(), widget.businessId);
+          nameController.text.trim().replaceAll(" ", ""), widget.businessId);
       if (!mounted) return;
       if (responseDTO.status.isNotEmpty) {
         ResponseMessageDTO result = responseDTO;

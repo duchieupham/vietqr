@@ -243,14 +243,37 @@ class _BodyWidgetState extends State<_BodyWidget> {
                                           vertical: 10),
                                       child: DividerWidget(width: width - 40),
                                     ),
-                                    _buildElement2(
-                                      context: context,
-                                      title: 'Thời gian',
-                                      content: TimeUtils.instance
-                                          .formatDateFromInt(
-                                              state.dto?.time ?? 0, false),
-                                      width: width - 40,
-                                    ),
+                                    if (state.dto?.type == 0 ||
+                                        state.dto?.type == 4 ||
+                                        state.dto?.type == 5) ...[
+                                      _buildElement2(
+                                        context: context,
+                                        title: 'Thời gian khởi tạo',
+                                        content: TimeUtils.instance
+                                            .formatDateFromInt(
+                                                state.dto?.time ?? 0, false),
+                                        width: width - 40,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      if ((state.dto?.timePaid ?? 0) > 0)
+                                        _buildElement2(
+                                          context: context,
+                                          title: 'Thời gian thanh toán',
+                                          content: TimeUtils.instance
+                                              .formatDateFromInt(
+                                                  state.dto?.timePaid ?? 0,
+                                                  false),
+                                          width: width - 40,
+                                        ),
+                                    ] else
+                                      _buildElement2(
+                                        context: context,
+                                        title: 'Thời gian',
+                                        content: TimeUtils.instance
+                                            .formatDateFromInt(
+                                                state.dto?.time ?? 0, false),
+                                        width: width - 40,
+                                      ),
                                     const Padding(
                                         padding: EdgeInsets.only(top: 10)),
                                     if ((state.dto?.referenceNumber ?? '')
@@ -640,8 +663,8 @@ class _BodyWidgetState extends State<_BodyWidget> {
       width: width,
       child: Row(
         children: [
-          SizedBox(
-            width: 100,
+          Expanded(
+            flex: 2,
             child: Text(
               title,
               style: const TextStyle(
@@ -650,6 +673,7 @@ class _BodyWidgetState extends State<_BodyWidget> {
             ),
           ),
           Expanded(
+            flex: 3,
             child: Text(
               content,
               textAlign: TextAlign.end,

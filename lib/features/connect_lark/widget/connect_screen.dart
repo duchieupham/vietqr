@@ -98,15 +98,16 @@ class _ConnectLarkStepScreenState extends State<_ConnectLarkStepScreen> {
                   children: [
                     _buildStepProgress(),
                     Expanded(
-                        child: PageView(
-                      controller: pageController,
-                      physics: NeverScrollableScrollPhysics(),
-                      children: [
-                        ChooseBankPage(),
-                        const CreateWebhookPage(),
-                        const SettingLarkPage(),
-                      ],
-                    )),
+                      child: PageView(
+                        controller: pageController,
+                        physics: NeverScrollableScrollPhysics(),
+                        children: [
+                          ChooseBankPage(),
+                          const CreateWebhookPage(),
+                          const SettingLarkPage(),
+                        ],
+                      ),
+                    ),
                     _buildButton(),
                     const SizedBox(
                       height: 16,

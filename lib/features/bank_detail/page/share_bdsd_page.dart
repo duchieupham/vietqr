@@ -846,13 +846,23 @@ class _BuildConnectWidget extends StatelessWidget {
       ),
       child: Row(
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(100),
-            child: Image.asset(
-              'assets/images/ic-avatar.png',
-              width: 36,
+          if (model.imgId != null && model.imgId!.trim().isNotEmpty)
+            ClipRRect(
+              borderRadius: BorderRadius.circular(100),
+              child: Image(
+                image: ImageUtils.instance.getImageNetWork(model.imgId!),
+                width: 36,
+                height: 36,
+              ),
+            )
+          else
+            ClipRRect(
+              borderRadius: BorderRadius.circular(100),
+              child: Image.asset(
+                'assets/images/ic-avatar.png',
+                width: 36,
+              ),
             ),
-          ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(

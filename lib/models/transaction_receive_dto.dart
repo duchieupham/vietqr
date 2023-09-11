@@ -3,6 +3,7 @@ import 'package:vierqr/commons/utils/transaction_utils.dart';
 
 class TransactionReceiveDTO {
   final int time;
+  final int timePaid;
   final int status;
   final String id;
   final int type;
@@ -21,6 +22,7 @@ class TransactionReceiveDTO {
 
   const TransactionReceiveDTO({
     required this.time,
+    required this.timePaid,
     required this.status,
     required this.id,
     required this.type,
@@ -51,6 +53,7 @@ class TransactionReceiveDTO {
   factory TransactionReceiveDTO.fromJson(Map<String, dynamic> json) {
     return TransactionReceiveDTO(
       time: json['time'] ?? 0,
+      timePaid: json['timePaid'] ?? 0,
       status: json['status'] ?? 0,
       id: json['id'] ?? '',
       type: json['type'] ?? 0,
@@ -72,6 +75,7 @@ class TransactionReceiveDTO {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
     data['time'] = time;
+    data['timePaid'] = timePaid;
     data['status'] = status;
     data['id'] = id;
     data['type'] = type;

@@ -12,6 +12,7 @@ class PrinterUtils {
   const PrinterUtils._privateConsrtructor();
 
   static const PrinterUtils _instance = PrinterUtils._privateConsrtructor();
+
   static PrinterUtils get instance => _instance;
 
   static PrinterBluetoothManager printerManager = PrinterBluetoothManager();
@@ -83,5 +84,42 @@ class PrinterUtils {
       //   await print(dto);
       // }
     }
+  }
+
+  Future<void> printQRCode(String qr) async {
+    try {
+      String userId = UserInformationHelper.instance.getUserId();
+      BluetoothPrinterDTO bluetoothPrinterDTO =
+          await LocalDatabase.instance.getBluetoothPrinter(userId);
+      late PrinterBluetooth? myPrinter;
+      printerManager.scanResults.listen((printers) {
+        if (printers.isNotEmpty) {
+          for (PrinterBluetooth printer in printers) {
+            if (printer.address == bluetoothPrinterDTO.address) {
+              myPrinter = printer;
+            }
+          }
+        }
+      });
+
+      printerManager.startScan(const Duration(seconds: 3));
+      await Future.delayed(const Duration(seconds: 4), () async {
+        if (myPrinter != null) {
+          printerManager.selectPrinter(myPrinter!);
+          const PaperSize paper = PaperSize.mm80;
+          final profile = await CapabilityProfile.load();
+          final Generator generator = Generator(paper, profile);
+          List<int> bytes = [];
+          bytes += generator.feed(3);
+          bytes += generator.text(StringUtils.instance
+              .removeDiacritic('Quét mã VietQR.vn để thanh toán'));
+          bytes += generator.feed(1);
+          bytes += generator.qrcode(qr, size: const QRSize(500));
+          bytes += generator.feed(2);
+          bytes += generator.cut();
+          await printerManager.printTicket(bytes);
+        }
+      });
+    } catch (e) {}
   }
 }

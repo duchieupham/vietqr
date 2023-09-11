@@ -3,6 +3,7 @@ class RelatedTransactionReceiveDTO {
   final String amount;
   final int status;
   final int time;
+  final int timePaid;
   final String content;
   final String transactionId;
   final int type;
@@ -13,6 +14,7 @@ class RelatedTransactionReceiveDTO {
     required this.amount,
     required this.status,
     required this.time,
+    required this.timePaid,
     required this.content,
     required this.transactionId,
     required this.type,
@@ -25,6 +27,7 @@ class RelatedTransactionReceiveDTO {
       amount: json['amount'] ?? '',
       status: json['status'] ?? 0,
       time: json['time'] ?? 0,
+      timePaid: json['timePaid'] ?? 0,
       content: json['content'] ?? '',
       transactionId: json['transactionId'] ?? '',
       type: json['type'] ?? 0,
@@ -38,6 +41,7 @@ class RelatedTransactionReceiveDTO {
     data['amount'] = amount;
     data['status'] = status;
     data['time'] = time;
+    data['timePaid'] = timePaid;
     data['content'] = content;
     data['transactionId'] = transactionId;
     data['transType'] = transType;
