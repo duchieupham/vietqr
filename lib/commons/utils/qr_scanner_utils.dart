@@ -156,6 +156,7 @@ class QRScannerUtils {
                     ),
                   );
                   if (data is bool) {
+                    Navigator.of(context).pop();
                     Fluttertoast.showToast(
                       msg: 'Lưu thành công',
                       toastLength: Toast.LENGTH_SHORT,
@@ -188,6 +189,7 @@ class QRScannerUtils {
                     ),
                   );
                   if (data is bool) {
+                    Navigator.of(context).pop();
                     Fluttertoast.showToast(
                       msg: 'Lưu thành công',
                       toastLength: Toast.LENGTH_SHORT,

@@ -39,7 +39,7 @@ import 'package:vierqr/models/bank_card_insert_unauthenticated.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/services/providers/account_balance_home_provider.dart';
 import 'package:vierqr/services/providers/auth_provider.dart';
-import 'package:vierqr/services/providers/avatar_provider.dart';
+import 'package:vierqr/services/providers/user_edit_provider.dart';
 import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
@@ -100,7 +100,6 @@ class _DashBoardScreen extends State<DashBoardScreen>
         const BankScreen(key: PageStorageKey('QR_GENERATOR_PAGE')),
         const HomeScreen(key: PageStorageKey('HOME_PAGE')),
         const ContactScreen(key: PageStorageKey('CONTACT_PAGE')),
-        // const BusinessScreen(key: PageStorageKey('SMS_LIST_PAGE')),
         const AccountScreen(key: const PageStorageKey('USER_SETTING_PAGE')),
       ],
     );
@@ -806,20 +805,29 @@ class _DashBoardScreen extends State<DashBoardScreen>
   Widget _buildAvatarWidget(BuildContext context) {
     double size = 40;
     String imgId = UserInformationHelper.instance.getAccountInformation().imgId;
-    return Consumer<AvatarProvider>(
-      builder: (context, provider, child) => (imgId.isEmpty)
-          ? ClipOval(
-              child: SizedBox(
-                width: size,
-                height: size,
-                child: Image.asset('assets/images/ic-avatar.png'),
-              ),
-            )
-          : AmbientAvatarWidget(
-              imgId: imgId,
-              size: size,
-              onlyImage: true,
-            ),
+    return Consumer<UserEditProvider>(
+      builder: (context, provider, child) {
+        return (provider.imageFile != null)
+            ? AmbientAvatarWidget(
+                imgId: imgId,
+                size: size,
+                imageFile: provider.imageFile,
+                onlyImage: true,
+              )
+            : (imgId.isEmpty)
+                ? ClipOval(
+                    child: SizedBox(
+                      width: size,
+                      height: size,
+                      child: Image.asset('assets/images/ic-avatar.png'),
+                    ),
+                  )
+                : AmbientAvatarWidget(
+                    imgId: imgId,
+                    size: size,
+                    onlyImage: true,
+                  );
+      },
     );
   }
 }

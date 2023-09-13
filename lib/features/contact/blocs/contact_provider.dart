@@ -27,6 +27,16 @@ class ContactProvider extends ChangeNotifier {
 
   File? file;
 
+  DataModel model = DataModel(
+      title: 'Cá nhân', type: 0, url: 'assets/images/personal-relation.png');
+
+  void updateQRT(value) {
+    if (model != value) {
+      model = value;
+    }
+    notifyListeners();
+  }
+
   void updateFile(value) {
     file = value;
     notifyListeners();
@@ -109,6 +119,11 @@ class ContactProvider extends ChangeNotifier {
       title: 'Tất cả',
       url: 'assets/images/ic-contact-bank-blue.png',
       type: 9,
+    ),
+    DataModel(
+      title: 'Cộng đồng',
+      url: 'assets/images/gl-white.png',
+      type: 8,
     ),
     DataModel(
       title: 'Ngân hàng',

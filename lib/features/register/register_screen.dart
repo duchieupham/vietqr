@@ -17,6 +17,8 @@ import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/account_login_dto.dart';
 import 'package:vierqr/services/providers/register_provider.dart';
 
+import 'views/verify_otp_screen.dart';
+
 class Register extends StatelessWidget {
   final String phoneNo;
 
@@ -44,6 +46,7 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  late RegisterBloc _bloc;
   final _phoneNoController = TextEditingController();
   final focusNode = FocusNode();
   final PageController pageController = PageController();
@@ -63,6 +66,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   void initState() {
     super.initState();
+    _bloc = BlocProvider.of(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       initialServices(context);
     });
@@ -73,6 +77,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
     final viewInsets = EdgeInsets.fromWindowPadding(
         WidgetsBinding.instance.window.viewInsets,
         WidgetsBinding.instance.window.devicePixelRatio);
@@ -83,9 +88,46 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     return BlocConsumer<RegisterBloc, RegisterState>(
       listener: (context, state) async {
-        if (state is RegisterLoadingState) {
+        if (state is RegisterLoadingState ||
+            state is RegisterSentOTPLoadingState) {
           DialogWidget.instance.openLoadingDialog();
         }
+
+        if (state is RegisterSentOTPSuccessState) {
+          Navigator.pop(context);
+          DialogWidget.instance
+              .showModalBottomContent(
+                widget: VerifyOTPView(
+                  phone: _phoneNoController.text,
+                  onChangePage: (index) {
+                    Provider.of<RegisterProvider>(context, listen: false)
+                        .updatePage(index);
+                    pageController.animateToPage(1,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.ease);
+                  },
+                  onVerifyOTP:
+                      Provider.of<RegisterProvider>(context, listen: false)
+                          .verifyOTP,
+                  onResendOTP:
+                      Provider.of<RegisterProvider>(context, listen: false)
+                          .phoneAuthentication(_phoneNoController.text,
+                              onSentOtp: (type) {
+                    _bloc.add(RegisterEventSentOTP(typeOTP: type));
+                  }),
+                ),
+                height: height * 0.5,
+              )
+              .then((value) => isOpenOTP = false);
+        }
+
+        if (state is RegisterSentOTPFailedState) {
+          Navigator.pop(context);
+          Provider.of<RegisterProvider>(context, listen: false).updatePage(1);
+          pageController.animateToPage(1,
+              duration: const Duration(milliseconds: 300), curve: Curves.ease);
+        }
+
         if (state is RegisterFailedState) {
           //pop loading dialog
           Navigator.pop(context);
@@ -178,14 +220,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Consumer<RegisterProvider>(
       builder: (context, provider, child) {
         return MButtonWidget(
-          title: 'Xác nhận',
+          title: 'Đăng ký',
           isEnable: provider.isEnableButton(),
           margin: EdgeInsets.zero,
           onTap: () async {
-            provider.updatePage(1);
-            pageController.animateToPage(1,
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.ease);
+            await provider.phoneAuthentication(_phoneNoController.text,
+                onSentOtp: (type) {
+              _bloc.add(RegisterEventSentOTP(typeOTP: type));
+            });
           },
         );
       },
@@ -261,7 +303,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   String password = provider.passwordController.text;
                   String confirmPassword = provider.confirmPassController.text;
 
-                  String sharingCode = provider.introduceController.text ?? '';
+                  String sharingCode = provider.introduceController.text;
 
                   provider.updateErrs(
                     phoneErr: (StringUtils.instance.isValidatePhone(phone)!),

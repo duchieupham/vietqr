@@ -21,7 +21,6 @@ import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/checkbox_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
-import 'package:vierqr/commons/widgets/sub_header_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_widget.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/dashboard_screen.dart';
@@ -34,10 +33,8 @@ import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/account_information_dto.dart';
-import 'package:vierqr/models/info_user_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/services/providers/auth_provider.dart';
-import 'package:vierqr/services/providers/avatar_provider.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
 import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
@@ -168,8 +165,6 @@ class _UserEditViewState extends State<UserEditView> {
                   if (state is UserEditAvatarSuccessState) {
                     //pop loading dialog
                     Navigator.pop(context);
-                    Provider.of<AvatarProvider>(context, listen: false)
-                        .rebuildAvatar();
                     Navigator.pop(context);
                   }
                   if (state is UserEditAvatarFailedState) {
@@ -235,7 +230,6 @@ class _UserEditViewState extends State<UserEditView> {
                             BoxLayout(
                               width: width,
                               bgColor: AppColor.TRANSPARENT,
-                              margin: const EdgeInsets.only(top: 10),
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 20, vertical: 20),
                               child: Row(

@@ -43,6 +43,7 @@ class FormAccount extends StatelessWidget {
               PhoneWidget(
                 onChanged: provider.updatePhone,
                 phoneController: phoneController,
+                autoFocus: phoneController.text.isEmpty,
               ),
               Visibility(
                 visible: provider.phoneErr,

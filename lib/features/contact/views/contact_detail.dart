@@ -79,6 +79,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final height = MediaQuery.of(context).size.height;
     return BlocProvider<ContactBloc>(
       create: (context) =>
           ContactBloc(context)..add(ContactEventGetDetail(id: widget.dto.id)),
@@ -157,12 +158,15 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
                       child: ListView(
                         children: [
                           if (state.status == BlocStatus.LOADING)
-                            const Center(
-                              child: SizedBox(
-                                width: 30,
-                                height: 30,
-                                child: CircularProgressIndicator(
-                                  color: AppColor.BLUE_TEXT,
+                            Padding(
+                              padding: EdgeInsets.only(top: height / 3),
+                              child: const Center(
+                                child: SizedBox(
+                                  width: 30,
+                                  height: 30,
+                                  child: CircularProgressIndicator(
+                                    color: AppColor.BLUE_TEXT,
+                                  ),
                                 ),
                               ),
                             )

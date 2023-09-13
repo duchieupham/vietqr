@@ -10,6 +10,7 @@ class AddContactDTO {
   final String? bankTypeId;
   final String? bankAccount;
   final File? image;
+  final int? relation;
 
   AddContactDTO({
     this.additionalData,
@@ -21,6 +22,7 @@ class AddContactDTO {
     this.bankTypeId,
     this.bankAccount,
     this.image,
+    this.relation,
   });
 
   factory AddContactDTO.fromJson(Map<String, dynamic> json) => AddContactDTO(
@@ -32,6 +34,7 @@ class AddContactDTO {
         userId: json["userId"],
         bankTypeId: json["bankTypeId"],
         bankAccount: json["bankAccount"],
+        relation: json["relation"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -43,5 +46,6 @@ class AddContactDTO {
         "colorType": colorType,
         "bankTypeId": bankTypeId,
         "bankAccount": bankAccount,
+        "relation": relation.toString(),
       };
 }

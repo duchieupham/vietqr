@@ -398,7 +398,7 @@ class BankCardRepository {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}contact-qr';
+      final String url = '${EnvConfig.getBaseUrl()}contacts';
 
       Map<String, dynamic> body = {};
 
