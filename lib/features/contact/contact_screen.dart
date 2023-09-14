@@ -1,3 +1,4 @@
+import 'package:dudv_base/dudv_base.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -17,6 +18,7 @@ import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/contact_dto.dart';
 
 import 'save_contact_screen.dart';
+import 'views/contact_detail.dart';
 
 class ContactScreen extends StatelessWidget {
   const ContactScreen({super.key});
@@ -47,8 +49,6 @@ class _ContactStateState extends State<_ContactState>
 
   final scrollController = ScrollController();
   final controller = ScrollController();
-
-
 
   @override
   void initState() {
@@ -389,62 +389,80 @@ class _ContactStateState extends State<_ContactState>
   }
 
   Widget _buildItemSave({
-    required ContactDTO? dto,
+    required ContactDTO dto,
     required Color? color,
   }) {
     return GestureDetector(
       onTap: () async {
-        await Navigator.pushNamed(context, Routes.PHONE_BOOK_DETAIL,
-            arguments: dto);
-        _bloc.add(ContactEventGetList());
+        final data =
+            await Utils.navigatePage(context, ContactDetailScreen(dto: dto));
+        if (data) {
+          _bloc.add(ContactEventGetList());
+        }
       },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        margin: const EdgeInsets.only(bottom: 12),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          color: AppColor.WHITE,
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: AppColor.WHITE,
-                borderRadius: BorderRadius.circular(40),
-                border: Border.all(color: AppColor.GREY_LIGHT.withOpacity(0.3)),
-                image: getImage(dto?.type ?? 0, dto?.imgId ?? ''),
-              ),
+      child: Stack(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            margin: const EdgeInsets.only(bottom: 12),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              color: AppColor.WHITE,
             ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    dto?.nickname ?? '',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      color: AppColor.BLACK,
-                      height: 1.4,
-                    ),
+            child: Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: AppColor.WHITE,
+                    borderRadius: BorderRadius.circular(40),
+                    border:
+                        Border.all(color: AppColor.GREY_LIGHT.withOpacity(0.3)),
+                    image: getImage(dto?.type ?? 0, dto?.imgId ?? ''),
                   ),
-                  Text(
-                    dto?.description ?? '',
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w400,
-                      color: color,
-                      height: 1.4,
-                    ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        dto?.nickname ?? '',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          color: AppColor.BLACK,
+                          height: 1.4,
+                        ),
+                      ),
+                      Text(
+                        dto?.description ?? '',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w400,
+                          color: color,
+                          height: 1.4,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            )
-          ],
-        ),
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            bottom: 12,
+            right: 12,
+            child: Image.asset(
+              dto?.relation == 1
+                  ? 'assets/images/gl-white.png'
+                  : 'assets/images/personal-relation.png',
+              color: AppColor.BLACK.withOpacity(0.7),
+              width: 28,
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
@@ -15,6 +14,7 @@ import 'package:vierqr/commons/widgets/textfield_custom.dart';
 import 'package:vierqr/features/contact/blocs/contact_bloc.dart';
 import 'package:vierqr/features/contact/blocs/contact_provider.dart';
 import 'package:vierqr/features/contact/events/contact_event.dart';
+import 'package:vierqr/features/contact/models/data_model.dart';
 import 'package:vierqr/features/contact/states/contact_state.dart';
 import 'package:vierqr/features/create_qr/views/bottom_sheet_image.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
@@ -242,12 +242,12 @@ class _buildVietQRID extends StatefulWidget {
   final TextEditingController suggestController;
   final ValueChanged<String>? onChange;
   final ValueChanged<String>? onChangeColor;
-  final ValueChanged<DataModel>? onChangeQRT;
+  final ValueChanged<ContactDataModel>? onChangeQRT;
   final List<String> listColor;
   final String typeColor;
   final String imgId;
   final double height;
-  final DataModel model;
+  final ContactDataModel model;
 
   const _buildVietQRID({
     required this.type,
@@ -460,7 +460,7 @@ class _buildVietQRIDState extends State<_buildVietQRID> {
               child: Row(
                 children: [
                   Expanded(
-                    child: _BuildDropDownWidget(
+                    child: BuildDropDownWidget(
                       onChange: (model) {
                         widget.onChangeQRT!(model);
                         setState(() {
@@ -657,12 +657,12 @@ class _buildOtherView extends StatefulWidget {
   final ValueChanged<String>? onChange;
   final ValueChanged<String>? onChangeColor;
   final ValueChanged<File>? onChangeLogo;
-  final ValueChanged<DataModel>? onChangeQRT;
+  final ValueChanged<ContactDataModel>? onChangeQRT;
   final List<String> listColor;
   final String typeColor;
   final File? imgId;
   final double height;
-  final DataModel model;
+  final ContactDataModel model;
 
   _buildOtherView({
     required this.type,
@@ -734,6 +734,7 @@ class _buildOtherViewState extends State<_buildOtherView> {
                                 .showModelBottomSheet(
                               context: context,
                               padding: EdgeInsets.zero,
+                              isDismissible: true,
                               margin:
                                   const EdgeInsets.symmetric(horizontal: 10),
                               widget: BottomSheetImage(),
@@ -913,7 +914,7 @@ class _buildOtherViewState extends State<_buildOtherView> {
               child: Row(
                 children: [
                   Expanded(
-                    child: _BuildDropDownWidget(
+                    child: BuildDropDownWidget(
                       onChange: (model) {
                         widget.onChangeQRT!(model);
                         setState(() {
@@ -946,20 +947,21 @@ class _buildOtherViewState extends State<_buildOtherView> {
   }
 }
 
-class _BuildDropDownWidget extends StatefulWidget {
-  final Function(DataModel) onChange;
+class BuildDropDownWidget extends StatefulWidget {
+  final Function(ContactDataModel) onChange;
 
-  _BuildDropDownWidget({required this.onChange});
+  BuildDropDownWidget({required this.onChange});
 
   @override
-  State<_BuildDropDownWidget> createState() => _BuildDropDownWidgetState();
+  State<BuildDropDownWidget> createState() => _BuildDropDownWidgetState();
 }
 
-class _BuildDropDownWidgetState extends State<_BuildDropDownWidget> {
-  final List<DataModel> list = [
-    DataModel(
+class _BuildDropDownWidgetState extends State<BuildDropDownWidget> {
+  final List<ContactDataModel> list = [
+    ContactDataModel(
         title: 'Cá nhân', type: 0, url: 'assets/images/personal-relation.png'),
-    DataModel(title: 'Cộng đồng', type: 1, url: 'assets/images/gl-white.png'),
+    ContactDataModel(
+        title: 'Cộng đồng', type: 1, url: 'assets/images/gl-white.png'),
   ];
 
   @override

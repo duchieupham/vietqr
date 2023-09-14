@@ -13,8 +13,10 @@ import '../../contact/states/contact_state.dart';
 
 class BottomSheetSearchUser extends StatelessWidget {
   final Function(ContactDTO) chooseContact;
+
   const BottomSheetSearchUser({Key? key, required this.chooseContact})
       : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     late ContactBloc _bloc = BlocProvider.of(context);
@@ -92,14 +94,16 @@ class BottomSheetSearchUser extends StatelessWidget {
                 builder: (context, provider, child) {
               if (provider.listSearch.isEmpty) {
                 ContactDTO dto = ContactDTO(
-                    id: '',
-                    nickname: 'Không xác định',
-                    status: 0,
-                    type: 0,
-                    imgId: '',
-                    description: '',
-                    phoneNo: provider.phoneNo,
-                    carrierTypeId: '');
+                  id: '',
+                  nickname: 'Không xác định',
+                  status: 0,
+                  type: 0,
+                  imgId: '',
+                  description: '',
+                  phoneNo: provider.phoneNo,
+                  carrierTypeId: '',
+                  relation: 0,
+                );
                 if (provider.phoneNo.isNotEmpty) {
                   return _buildItemSave(context, dto: dto);
                 } else {

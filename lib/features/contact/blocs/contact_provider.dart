@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:vierqr/features/contact/models/data_model.dart';
 import 'package:vierqr/models/contact_dto.dart';
 
 class ContactProvider extends ChangeNotifier {
@@ -19,7 +20,7 @@ class ContactProvider extends ChangeNotifier {
   // 3 = cam
   // 4 = hồng
 
-  DataModel? category;
+  ContactDataModel? category;
 
   int offset = 0;
 
@@ -27,7 +28,7 @@ class ContactProvider extends ChangeNotifier {
 
   File? file;
 
-  DataModel model = DataModel(
+  ContactDataModel model = ContactDataModel(
       title: 'Cá nhân', type: 0, url: 'assets/images/personal-relation.png');
 
   void updateQRT(value) {
@@ -52,7 +53,7 @@ class ContactProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateCategory({DataModel? value, bool isFirst = false}) {
+  void updateCategory({ContactDataModel? value, bool isFirst = false}) {
     if (isFirst) {
       category = listCategories.first;
     } else {
@@ -114,48 +115,36 @@ class ContactProvider extends ChangeNotifier {
     'assets/images/color-type-4.png',
   ];
 
-  final List<DataModel> listCategories = [
-    DataModel(
+  final List<ContactDataModel> listCategories = [
+    ContactDataModel(
       title: 'Tất cả',
       url: 'assets/images/ic-contact-bank-blue.png',
       type: 9,
     ),
-    DataModel(
+    ContactDataModel(
       title: 'Cộng đồng',
       url: 'assets/images/gl-white.png',
       type: 8,
     ),
-    DataModel(
+    ContactDataModel(
       title: 'Ngân hàng',
       url: 'assets/images/ic-tb-card-selected.png',
       type: 2,
     ),
-    DataModel(
+    ContactDataModel(
       title: 'VietQR ID',
       url: 'assets/images/ic-contact-vietqr-id-blue.png',
       type: 1,
     ),
-    DataModel(
+    ContactDataModel(
       title: 'Khác',
       url: 'assets/images/qr-contact-other-blue.png',
       type: 3,
     ),
-    DataModel(
+    ContactDataModel(
       title: 'Gợi ý',
       url: 'assets/images/ic-contact-suggest-blue.png',
       type: 0,
     ),
   ];
-}
-
-class DataModel {
-  final String title;
-  final String url;
-  final int type;
-
-  DataModel({
-    required this.title,
-    required this.url,
-    required this.type,
-  });
 }

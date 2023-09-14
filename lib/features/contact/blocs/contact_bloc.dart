@@ -48,6 +48,7 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
     on<ContactEventGetDetail>(_getDetailContact);
     on<RemoveContactEvent>(_removeContact);
     on<UpdateContactEvent>(_updateContact);
+    on<UpdateContactRelationEvent>(_updateRelation);
     on<SaveContactEvent>(_saveContact);
     on<ScanQrContactEvent>(_scanQrGetType);
     on<UpdateStatusContactEvent>(_updateStatusContact);
@@ -220,6 +221,30 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
         if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
           emit(state.copyWith(
               status: BlocStatus.UNLOADING, type: ContactType.UPDATE));
+        } else {
+          emit(
+            state.copyWith(
+                type: ContactType.ERROR, status: BlocStatus.UNLOADING),
+          );
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(type: ContactType.ERROR));
+    }
+  }
+
+  void _updateRelation(ContactEvent event, Emitter emit) async {
+    try {
+      if (event is UpdateContactRelationEvent) {
+        emit(
+          state.copyWith(status: BlocStatus.LOADING, type: ContactType.NONE),
+        );
+        ResponseMessageDTO result =
+            await repository.updateRelation(event.query);
+        if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
+          emit(state.copyWith(
+              status: BlocStatus.UNLOADING, type: ContactType.UPDATE_RELATION));
         } else {
           emit(
             state.copyWith(

@@ -12,6 +12,7 @@ class ContactDetailDTO {
   final String? imgId;
   final String? bankAccount;
   final int colorType;
+  final int relation;
 
   ContactDetailDTO({
     this.id = '',
@@ -25,6 +26,7 @@ class ContactDetailDTO {
     this.imgId = '',
     this.bankAccount = '',
     this.colorType = 0,
+    this.relation = 0,
   });
 
   factory ContactDetailDTO.fromJson(Map<String, dynamic> json) =>
@@ -40,6 +42,7 @@ class ContactDetailDTO {
         bankAccount: json["bankAccount"],
         bankName: json["bankName"],
         colorType: json["colorType"],
+        relation: json["relation"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -54,6 +57,7 @@ class ContactDetailDTO {
         "status": status,
         "id": id,
         "colorType": colorType,
+        "relation": relation,
       };
 
   Gradient getBgGradient() {

@@ -126,6 +126,25 @@ class ContactRepository {
     return result;
   }
 
+  Future<ResponseMessageDTO> updateRelation(query) async {
+    ResponseMessageDTO result =
+        const ResponseMessageDTO(status: '', message: '');
+    try {
+      String url = '${EnvConfig.getBaseUrl()}contact/relation';
+      final response = await BaseAPIClient.postAPI(
+          url: url, body: query, type: AuthenticationType.SYSTEM);
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        if (data != null) {
+          result = ResponseMessageDTO.fromJson(data);
+        }
+      }
+    } catch (e) {
+      LOG.error('Error at requestPermissions - PermissionRepository: $e');
+    }
+    return result;
+  }
+
   Future<ResponseMessageDTO> updateStatusContact(query) async {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
@@ -182,7 +201,8 @@ class ContactRepository {
         var data = jsonDecode(response.body);
         if (data != null) {
           list = data
-              .map<ContactDTO>((json) => ContactDTO(
+              .map<ContactDTO>(
+                (json) => ContactDTO(
                   imgId: json['imgId'],
                   id: json['id'],
                   carrierTypeId: json['carrierTypeId'],
@@ -191,7 +211,10 @@ class ContactRepository {
                   status: 0,
                   type: 0,
                   description: '',
-                  phoneNo: json['phoneNo']))
+                  phoneNo: json['phoneNo'],
+                  relation: json['relation'],
+                ),
+              )
               .toList();
         }
       }

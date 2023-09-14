@@ -1,8 +1,10 @@
 import 'package:clipboard/clipboard.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
@@ -560,6 +562,37 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
                             dto.additionalData ?? '',
                             style: TextStyle(color: AppColor.WHITE),
                           ),
+                          if (dto.type == 3 && dto.value!.contains('https'))
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 24.0),
+                              child: RichText(
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                text: TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: 'Đường dẫn: ',
+                                    ),
+                                    TextSpan(
+                                      text: dto.value ?? '',
+                                      style: TextStyle(
+                                        color: Colors.lightBlueAccent,
+                                        decoration: TextDecoration.underline,
+                                      ),
+                                      recognizer: TapGestureRecognizer()
+                                        ..onTap = () async {
+                                          // ignore: deprecated_member_use
+                                          await launch(
+                                            dto.value ?? '',
+                                            forceSafariVC: false,
+                                          );
+                                        },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                           const SizedBox(
                             height: 100,
                           ),
@@ -599,9 +632,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
                   )),
             ],
           ),
-          const SizedBox(
-            height: 60,
-          ),
+          const SizedBox(height: 60),
         ],
       );
     }

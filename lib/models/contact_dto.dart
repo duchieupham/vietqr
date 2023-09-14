@@ -7,6 +7,7 @@ class ContactDTO {
   String description;
   String phoneNo;
   String carrierTypeId;
+  int relation;
 
   ContactDTO({
     required this.id,
@@ -17,6 +18,7 @@ class ContactDTO {
     required this.description,
     required this.phoneNo,
     required this.carrierTypeId,
+    required this.relation,
   });
 
   factory ContactDTO.fromJson(Map<String, dynamic> json) => ContactDTO(
@@ -28,6 +30,7 @@ class ContactDTO {
         description: json["description"] ?? '',
         phoneNo: json["phoneNo"] ?? '',
         carrierTypeId: json["carrierTypeId"] ?? '',
+        relation: json["relation"] ?? 0,
       );
 
   Map<String, dynamic> toJson() => {
@@ -39,5 +42,6 @@ class ContactDTO {
         "description": description,
         "phoneNo": phoneNo,
         "carrierTypeId": carrierTypeId,
+        "relation": relation,
       };
 }
