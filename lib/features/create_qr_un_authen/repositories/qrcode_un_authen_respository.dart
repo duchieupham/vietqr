@@ -9,7 +9,7 @@ class QRCodeUnUTRepository {
   const QRCodeUnUTRepository();
 
   Future<QRGeneratedDTO> generateQR(Map<String, dynamic> data) async {
-    QRGeneratedDTO result = const QRGeneratedDTO(
+    QRGeneratedDTO result = QRGeneratedDTO(
       bankCode: '',
       bankName: '',
       bankAccount: '',
@@ -36,7 +36,7 @@ class QRCodeUnUTRepository {
   }
 
   Future<QRGeneratedDTO> generateQRStaging(Map<String, dynamic> data) async {
-    QRGeneratedDTO result = const QRGeneratedDTO(
+    QRGeneratedDTO result = QRGeneratedDTO(
       bankCode: '',
       bankName: '',
       bankAccount: '',

@@ -1,8 +1,6 @@
 import 'dart:io';
 import 'dart:math';
-import 'package:flutter/services.dart';
 import 'package:image/image.dart' as img;
-import 'package:path_provider/path_provider.dart';
 import 'package:vierqr/commons/utils/log.dart';
 
 class FileUtils {
@@ -42,52 +40,5 @@ class FileUtils {
       result = file;
     }
     return result;
-  }
-
-  static Future<File> resizeImage(
-    File imageFile,
-    double outputWidth,
-    double outputHeight, {
-    String? outputFileName,
-  }) async {
-    // Delete file if exists
-    Directory appDocDir = await getApplicationDocumentsDirectory();
-    String resizedImagePath =
-        appDocDir.path + "/" + (outputFileName ?? getFileName(imageFile));
-    File resizedFile = File(resizedImagePath);
-    // Save the thumbnail as a PNG.
-    if (resizedFile.existsSync()) {
-      resizedFile.deleteSync();
-    } else {}
-    if (Platform.isAndroid) {
-      final platform = MethodChannel('com.vietqr.product');
-      final int resizeResult = await platform.invokeMethod("resizeImage", {
-        "filePath": imageFile.path,
-        "outputPath": resizedImagePath,
-        "outputWidth": outputWidth,
-        "outputHeight": outputHeight,
-      });
-      if (resizeResult == 1) {
-        return File(resizedImagePath);
-      }
-    }
-    // Read a jpeg image from file.
-    final image = img.decodeImage(imageFile.readAsBytesSync());
-    final resizedImage = img.copyResize(
-      image!,
-      width: outputWidth.round(),
-      height: outputHeight.round(),
-    );
-    if (resizedImagePath.endsWith("png")) {
-      resizedFile.writeAsBytesSync(img.encodePng(resizedImage));
-    } else {
-      resizedFile.writeAsBytesSync(img.encodeJpg(resizedImage));
-    }
-    return resizedFile;
-  }
-
-  static String getFileName(File file) {
-    List<String> fileNameSplit = file.path.split("/");
-    return fileNameSplit[fileNameSplit.length - 1];
   }
 }

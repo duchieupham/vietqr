@@ -71,12 +71,14 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState>
             status: BlocStatus.LOADING, type: TransactionType.NONE));
         final QRGeneratedDTO dto =
             await transactionRepository.regenerateQR(event.dto);
+
         emit(
           state.copyWith(
-              qrGeneratedDTO: dto,
-              newTransaction: event.dto.newTransaction,
-              status: BlocStatus.UNLOADING,
-              type: TransactionType.REFRESH),
+            qrGeneratedDTO: dto,
+            newTransaction: event.dto.newTransaction,
+            status: BlocStatus.UNLOADING,
+            type: TransactionType.REFRESH,
+          ),
         );
       }
     } catch (e) {

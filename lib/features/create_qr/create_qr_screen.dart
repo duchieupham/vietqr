@@ -40,45 +40,30 @@ import 'package:vierqr/services/providers/water_mark_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 import 'package:vierqr/services/sqflite/local_database.dart';
 
-import '../../commons/constants/configurations/route.dart';
 import 'views/dialog_exits_view.dart';
 import 'views/dialog_more_view.dart';
 
 class CreateQrScreen extends StatelessWidget {
-  const CreateQrScreen({super.key});
+  final BankAccountDTO? bankAccountDTO;
+  final QRGeneratedDTO? qrDto;
+  final int page;
+
+  const CreateQrScreen(
+      {super.key, this.bankAccountDTO, this.qrDto, this.page = 0});
 
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as Map;
-    BankAccountDTO? data;
-    QRGeneratedDTO? qrDto;
-    int page = 0;
-    if (args.containsKey('bankInfo')) {
-      data = args['bankInfo'];
-    }
-    if (args.containsKey('qr')) {
-      qrDto = args['qr'];
-    }
-
-    if (args.containsKey('page')) {
-      page = args['page'];
-    }
-
     return BlocProvider<CreateQRBloc>(
-      create: (_) => CreateQRBloc(context, data, qrDto),
+      create: (_) => CreateQRBloc(context, bankAccountDTO, qrDto),
       child: ChangeNotifierProvider(
         create: (context) => CreateQRProvider()..updatePage(page),
-        child: _CreateQRScreen(
-          bankAccountDTO: data!,
-        ),
+        child: _CreateQRScreen(),
       ),
     );
   }
 }
 
 class _CreateQRScreen extends StatefulWidget {
-  final BankAccountDTO bankAccountDTO;
-  _CreateQRScreen({required this.bankAccountDTO});
   @override
   State<_CreateQRScreen> createState() => _CreateQRScreenState();
 }
@@ -91,7 +76,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
   final GlobalKey globalKey = GlobalKey();
   final _focusMoney = FocusNode();
 
-  final dto = const QRGeneratedDTO(
+  final dto = QRGeneratedDTO(
       bankCode: '',
       bankName: '',
       bankAccount: '',
@@ -198,7 +183,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
       builder: (context, state) {
         return Consumer<CreateQRProvider>(
           builder: (context, provider, child) {
-            if (provider.page == 1 || state.page == 1) {
+            if (provider.page == 1) {
               return Scaffold(
                 body: SafeArea(
                   child: RepaintBoundaryWidget(
@@ -266,15 +251,23 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                     },
                   ),
                 ),
-                bottomSheet: _buildButton(
-                  context: context,
-                  fileImage: provider.imageFile,
-                  progressBar: provider.progressBar,
-                  onClick: (index) {
-                    onClick(index, state.dto!);
-                  },
-                  onPaid: () {
-                    _bloc.add(QREventPaid(state.dto?.transactionId ?? ''));
+                bottomSheet: Consumer<CreateQRProvider>(
+                  builder: (context, bt, child) {
+                    return _buildButton(
+                      context: context,
+                      fileImage: bt.imageFile,
+                      progressBar: bt.progressBar,
+                      onClick: (index) {
+                        onClick(index, state.dto!);
+                      },
+                      onCreate: () {
+                        bt.reset();
+                        bt.updatePage(0);
+                      },
+                      onPaid: () {
+                        _bloc.add(QREventPaid(state.dto?.transactionId ?? ''));
+                      },
+                    );
                   },
                 ),
               );
@@ -598,12 +591,14 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
     }
   }
 
-  Widget _buildButton(
-      {File? fileImage,
-      double progressBar = 0,
-      required BuildContext context,
-      GestureTapCallback? onPaid,
-      required Function(int) onClick}) {
+  Widget _buildButton({
+    File? fileImage,
+    double progressBar = 0,
+    required BuildContext context,
+    GestureTapCallback? onPaid,
+    required Function(int) onClick,
+    required Function() onCreate,
+  }) {
     double width = MediaQuery.of(context).size.width;
     return IntrinsicHeight(
       child: Padding(
@@ -704,16 +699,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                       icon: Icons.add_rounded,
                       textSize: 12,
                       title: 'QR giao dịch mới',
-                      function: () {
-                        Navigator.pop(context);
-                        Future.delayed(const Duration(milliseconds: 400), () {
-                          Navigator.pushNamed(
-                            context,
-                            Routes.CREATE_QR,
-                            arguments: {'bankInfo': widget.bankAccountDTO},
-                          );
-                        });
-                      },
+                      function: onCreate,
                       textColor: AppColor.WHITE,
                       bgColor: AppColor.BLUE_TEXT,
                     ),

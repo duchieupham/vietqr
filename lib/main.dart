@@ -377,7 +377,7 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.BUSINESS_TRANSACTION: (context) =>
                       const BusinessTransactionView(),
                   Routes.BRANCH_DETAIL: (context) => const BranchDetailView(),
-                  Routes.CREATE_QR: (context) => const CreateQrScreen(),
+                  // Routes.CREATE_QR: (context) => const CreateQrScreen(),
                   Routes.INTRODUCE_SCREEN: (context) => const IntroduceScreen(),
                   Routes.PHONE_BOOK: (context) => const ContactScreen(),
                   Routes.TOP_UP: (context) => const TopUpScreen(),

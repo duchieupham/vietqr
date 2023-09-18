@@ -1,4 +1,5 @@
 class QRGeneratedDTO {
+  String? bankId;
   final String bankCode;
   final String bankName;
   final String bankAccount;
@@ -12,7 +13,8 @@ class QRGeneratedDTO {
   final String? bankTypeId;
   final bool isNaviAddBank;
 
-  const QRGeneratedDTO({
+  QRGeneratedDTO({
+    this.bankId,
     required this.bankCode,
     required this.bankName,
     required this.bankAccount,
@@ -26,6 +28,10 @@ class QRGeneratedDTO {
     this.bankTypeId,
     this.isNaviAddBank = false,
   });
+
+  setBankId(value) {
+    bankId = value;
+  }
 
   factory QRGeneratedDTO.fromJson(Map<String, dynamic> json) {
     return QRGeneratedDTO(

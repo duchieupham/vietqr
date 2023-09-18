@@ -54,7 +54,7 @@ class _BankCardDetailState extends State<BankCardDetailState> {
   ];
   final PageController pageController = PageController();
   String userId = UserInformationHelper.instance.getUserId();
-  late QRGeneratedDTO qrGeneratedDTO = const QRGeneratedDTO(
+  late QRGeneratedDTO qrGeneratedDTO = QRGeneratedDTO(
       bankCode: '',
       bankName: '',
       bankAccount: '',

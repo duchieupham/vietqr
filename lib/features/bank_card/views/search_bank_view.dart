@@ -4,9 +4,11 @@ import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/widgets/textfield_widget.dart';
 import 'package:vierqr/features/bank_detail/bank_card_detail_screen.dart';
 import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
+import 'package:vierqr/features/create_qr/create_qr_screen.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/main.dart';
@@ -384,11 +386,15 @@ class _SearchBankViewState extends State<SearchBankView> {
                                     : dto.businessName,
                                 isAuthenticated: dto.isAuthenticated,
                               );
-                              Navigator.pushNamed(
-                                context,
-                                Routes.CREATE_QR,
-                                arguments: {'bankInfo': bankAccountDTO},
-                              );
+                              NavigatorUtils.navigatePage(
+                                  context,
+                                  CreateQrScreen(
+                                      bankAccountDTO: bankAccountDTO));
+                              // Navigator.pushNamed(
+                              //   context,
+                              //   Routes.CREATE_QR,
+                              //   arguments: {'bankInfo': bankAccountDTO},
+                              // );
                             },
                             child: BoxLayout(
                               width: 110,

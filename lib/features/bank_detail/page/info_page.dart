@@ -1,9 +1,11 @@
 import 'package:clipboard/clipboard.dart';
+import 'package:dudv_base/dudv_base.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/utils/printer_utils.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
@@ -15,6 +17,7 @@ import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
 import 'package:vierqr/commons/widgets/viet_qr.dart';
 import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
+import 'package:vierqr/features/create_qr/create_qr_screen.dart';
 import 'package:vierqr/features/printer/views/printing_view.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
@@ -423,11 +426,13 @@ class InfoDetailBankAccount extends StatelessWidget {
                         : dto.businessDetails.first.businessName,
                     isAuthenticated: dto.authenticated,
                   );
-                  Navigator.pushNamed(
-                    context,
-                    Routes.CREATE_QR,
-                    arguments: {'bankInfo': bankAccountDTO},
-                  );
+                  NavigatorUtils.navigatePage(
+                      context, CreateQrScreen(bankAccountDTO: bankAccountDTO));
+                  // Navigator.pushNamed(
+                  //   context,
+                  //   Routes.CREATE_QR,
+                  //   arguments: {'bankInfo': bankAccountDTO},
+                  // );
                 },
                 textColor: AppColor.WHITE,
                 bgColor: AppColor.BLUE_TEXT,

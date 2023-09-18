@@ -68,12 +68,12 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
     try {
       if (event is BankCardEventSearchName) {
         emit(state.copyWith(
-            status: BlocStatus.LOADING, request: AddBankType.NONE));
+            status: BlocStatus.NONE, request: AddBankType.NONE));
         BankNameInformationDTO dto =
             await bankCardRepository.searchBankName(event.dto);
         if (dto.accountName.trim().isNotEmpty) {
           emit(state.copyWith(
-              status: BlocStatus.UNLOADING,
+              status: BlocStatus.NONE,
               informationDTO: dto,
               request: AddBankType.SEARCH_BANK));
         } else {
@@ -81,7 +81,7 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
             state.copyWith(
               msg: 'Tài khoản ngân hàng không tồn tại.',
               request: AddBankType.ERROR,
-              status: BlocStatus.UNLOADING,
+              status: BlocStatus.NONE,
             ),
           );
         }
@@ -91,7 +91,7 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
       emit(state.copyWith(
         msg: 'Tài khoản ngân hàng không tồn tại.',
         request: AddBankType.ERROR,
-        status: BlocStatus.UNLOADING,
+        status: BlocStatus.NONE,
       ));
     }
   }

@@ -4,7 +4,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/base_manager.dart';
-import 'package:vierqr/commons/utils/check_utils.dart';
 import 'package:vierqr/commons/utils/error_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';

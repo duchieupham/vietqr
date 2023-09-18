@@ -33,4 +33,16 @@ class NavigatorUtils {
 
     return data;
   }
+
+  static Future navigatePage(BuildContext context, Widget widget) async {
+    return Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => widget,
+    ));
+  }
+
+  static void navigateToRoot(
+    BuildContext context,
+  ) {
+    return Navigator.of(context).popUntil((route) => route.isFirst);
+  }
 }

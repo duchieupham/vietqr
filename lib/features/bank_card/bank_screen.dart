@@ -15,6 +15,7 @@ import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/viet_qr_widget.dart';
@@ -24,6 +25,7 @@ import 'package:vierqr/features/bank_card/states/bank_state.dart';
 import 'package:vierqr/features/bank_card/widgets/function_bank_widget.dart';
 import 'package:vierqr/features/bank_detail/bank_card_detail_screen.dart';
 import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
+import 'package:vierqr/features/create_qr/create_qr_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
@@ -668,13 +670,18 @@ class _StackedList extends State<StackedList> {
                         const Padding(padding: EdgeInsets.only(left: 10)),
                         InkWell(
                           onTap: () async {
-                            Navigator.pushNamed(
-                              context,
-                              Routes.CREATE_QR,
-                              arguments: {
-                                'bankInfo': dto,
-                              },
-                            );
+
+
+
+                            NavigatorUtils.navigatePage(
+                                context, CreateQrScreen(bankAccountDTO: dto));
+                            // Navigator.pushNamed(
+                            //   context,
+                            //   Routes.CREATE_QR,
+                            //   arguments: {
+                            //     'bankInfo': dto,
+                            //   },
+                            // );
                           },
                           child: BoxLayout(
                             width: 95,

@@ -40,7 +40,7 @@ class ContactDetailScreen extends StatefulWidget {
 
 class _ContactDetailScreenState extends State<ContactDetailScreen> {
   final GlobalKey globalKey = GlobalKey();
-  QRGeneratedDTO qrGeneratedDTO = const QRGeneratedDTO(
+  QRGeneratedDTO qrGeneratedDTO = QRGeneratedDTO(
     bankCode: '',
     bankName: '',
     bankAccount: '',

@@ -9,11 +9,6 @@ class CreateQRProvider with ChangeNotifier {
 
   String money = StringUtils.formatNumber(0);
 
-  String _transactionAmount = '0';
-  String _currencyFormatted = '0';
-
-  bool _isQRGenerated = false;
-
   //page = 1 : Tạo QR
   //page = 2 : chi tiết QR
   int page = -1;
@@ -24,13 +19,7 @@ class CreateQRProvider with ChangeNotifier {
 
   String? errorAmount;
 
-  get transactionAmount => _transactionAmount;
-
-  get currencyFormatted => _currencyFormatted;
-
   get amountErr => _isAmountErr;
-
-  get qrGenerated => _isQRGenerated;
 
   bool get contentErr => _isContentErr;
 
@@ -54,21 +43,9 @@ class CreateQRProvider with ChangeNotifier {
   }
 
   void reset() {
-    _transactionAmount = '0';
-    _currencyFormatted = '0';
-    _isQRGenerated = false;
     _isAmountErr = false;
     _isContentErr = false;
-  }
-
-  void updateErr(bool amountErr) {
-    _isAmountErr = amountErr;
-    notifyListeners();
-  }
-
-  void updateQrGenerated(bool value) {
-    _isQRGenerated = value;
-    notifyListeners();
+    money = StringUtils.formatNumber(0);
   }
 
   void updateMoney(String value) {
