@@ -646,7 +646,7 @@ class DialogWidget {
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                          fontSize: 13,
+                          fontSize: 14,
                         ),
                       ),
                     ),

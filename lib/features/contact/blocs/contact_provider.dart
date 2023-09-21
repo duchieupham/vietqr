@@ -117,14 +117,14 @@ class ContactProvider extends ChangeNotifier {
 
   final List<ContactDataModel> listCategories = [
     ContactDataModel(
-      title: 'Tất cả',
-      url: 'assets/images/ic-contact-bank-blue.png',
-      type: 9,
-    ),
-    ContactDataModel(
       title: 'Cộng đồng',
       url: 'assets/images/gl-white.png',
       type: 8,
+    ),
+    ContactDataModel(
+      title: 'Tất cả',
+      url: 'assets/images/ic-contact-bank-blue.png',
+      type: 9,
     ),
     ContactDataModel(
       title: 'Ngân hàng',

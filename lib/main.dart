@@ -408,17 +408,7 @@ class _VietQRApp extends State<VietQRApp> {
                       transitionDuration: const Duration(milliseconds: 300),
                     );
                   }
-                  if (settings.name == Routes.PHONE_BOOK_DETAIL) {
-                    ContactDTO dto = settings.arguments as ContactDTO;
 
-                    return MaterialPageRoute(
-                      builder: (context) {
-                        return ContactDetailScreen(
-                          dto: dto,
-                        );
-                      },
-                    );
-                  }
                   if (settings.name == Routes.SHOW_QR) {
                     QRGeneratedDTO dto = settings.arguments as QRGeneratedDTO;
                     return MaterialPageRoute(

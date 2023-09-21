@@ -64,10 +64,12 @@ class BranchEventGetMembers extends BranchEvent {
 class BranchEventSearchMember extends BranchEvent {
   final String phoneNo;
   final String businessId;
+  final int type;
 
   const BranchEventSearchMember({
     required this.phoneNo,
     required this.businessId,
+    required this.type,
   });
 
   @override

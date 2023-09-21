@@ -101,6 +101,8 @@ dependencies:
     git: https://github.com/TrieuCan/float_bubble
 #  sms_autofill:
 
+  math_expressions: ^2.4.0
+
 
 #  audioplayers: ^4.1.0
 dependency_overrides:

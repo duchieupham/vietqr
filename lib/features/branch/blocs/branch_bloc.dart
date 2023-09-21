@@ -16,6 +16,7 @@ import 'package:vierqr/models/branch_filter_dto.dart';
 import 'package:vierqr/models/branch_information_dto.dart';
 import 'package:vierqr/models/business_branch_choice_dto.dart';
 import 'package:vierqr/models/business_member_dto.dart';
+import 'package:vierqr/models/member_branch_model.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 
 class BranchBloc extends Bloc<BranchEvent, BranchState> {
@@ -121,14 +122,17 @@ class BranchBloc extends Bloc<BranchEvent, BranchState> {
       if (event is BranchEventSearchMember) {
         emit(BranchSeachMemberLoadingState());
         final responseDTO = await branchRepository.searchMemberBranch(
-            event.phoneNo, event.businessId);
-        if (responseDTO.status.isNotEmpty) {
+            event.phoneNo, event.businessId, event.type);
+        if (responseDTO is BusinessMemberDTO) {
+          BusinessMemberDTO result = responseDTO;
+          emit(BranchSearchMemberSuccessState(dto: result, listMember: []));
+        } else if (responseDTO is ResponseMessageDTO) {
           ResponseMessageDTO result = responseDTO;
           emit(BranchSearchMemberNotFoundState(
               message: CheckUtils.instance.getCheckMessage(result.message)));
-        } else {
-          BusinessMemberDTO result = responseDTO;
-          emit(BranchSeachMemberSuccessState(dto: result));
+        } else if (responseDTO is List<MemberBranchModel>) {
+          emit(BranchSearchMemberSuccessState(
+              dto: null, listMember: responseDTO));
         }
       }
     } catch (e) {

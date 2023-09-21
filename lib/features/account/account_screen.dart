@@ -313,16 +313,19 @@ class _FeatureWidget extends StatelessWidget {
         if (pickedFile != null) {
           File? file = File(pickedFile.path);
           File? compressedFile = FileUtils.instance.compressImage(file);
-          await Future.delayed(const Duration(milliseconds: 200), () {
-            String userId = UserInformationHelper.instance.getUserId();
-            String imgId =
-                UserInformationHelper.instance.getAccountInformation().imgId;
-            context.read<AccountBloc>().add(UpdateAvatarEvent(
-                userId: userId, imgId: imgId, image: compressedFile));
-          });
+          String userId = UserInformationHelper.instance.getUserId();
+          String imgId =
+              UserInformationHelper.instance.getAccountInformation().imgId;
+          context.read<AccountBloc>().add(UpdateAvatarEvent(
+              userId: userId, imgId: imgId, image: compressedFile));
         }
       },
-    );
+    ).onError((error, stackTrace) {
+      DialogWidget.instance.openMsgDialog(
+        title: 'Vui lòng thử lại ảnh khác',
+        msg: 'Hệ thống không hỗ trợ định dạng ảnh “.jpeg” ',
+      );
+    });
   }
 
   @override

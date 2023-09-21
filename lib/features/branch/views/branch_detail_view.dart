@@ -408,7 +408,7 @@ class _BranchDetailViewState extends State<BranchDetailView> {
                                                           .instance
                                                           .showModelBottomSheet(
                                                         context: context,
-                                                        height: height * 0.5,
+                                                        height: height * 0.7,
                                                         widget:
                                                             AddBranchMemberWidget(
                                                           branchId: branchId,

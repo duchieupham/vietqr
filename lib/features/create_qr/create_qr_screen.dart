@@ -13,6 +13,7 @@ import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
 import 'package:vierqr/commons/utils/file_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/printer_utils.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
@@ -40,6 +41,7 @@ import 'package:vierqr/services/providers/water_mark_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 import 'package:vierqr/services/sqflite/local_database.dart';
 
+import 'views/calculator_view.dart';
 import 'views/dialog_exits_view.dart';
 import 'views/dialog_more_view.dart';
 
@@ -296,7 +298,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                               ),
                               child: Row(
                                 children: [
-                                  if (state.bankAccountDTO?.imgId != null &&
+                                  if (state.bankAccountDTO != null &&
                                       state.bankAccountDTO!.imgId.isNotEmpty)
                                     Container(
                                       width: 60,
@@ -306,8 +308,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                         image: DecorationImage(
                                           image: ImageUtils.instance
                                               .getImageNetWork(
-                                                  state.bankAccountDTO?.imgId ??
-                                                      ''),
+                                                  state.bankAccountDTO!.imgId),
                                         ),
                                       ),
                                     ),
@@ -370,16 +371,41 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                   inputType: TextInputType.number,
                                   keyboardAction: TextInputAction.next,
                                   onChange: provider.updateMoney,
-                                  suffixIcon: Column(
+                                  suffixIcon: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
-                                    children: const [
-                                      Text(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Text(
                                         'VND',
                                         style: TextStyle(
-                                            fontSize: 14, color: AppColor.gray),
+                                            fontSize: 14,
+                                            color: AppColor.textBlack),
                                       ),
+                                      const SizedBox(width: 8),
+                                      GestureDetector(
+                                        onTap: () async {
+                                          FocusManager.instance.primaryFocus
+                                              ?.unfocus();
+                                          final data =
+                                              await NavigatorUtils.navigatePage(
+                                                  context, CalculatorScreen());
+
+                                          if (data != null && data is String) {
+                                            double money = double.parse(data);
+
+                                            provider.updateMoney(
+                                                money.round().toString());
+                                          }
+                                        },
+                                        child: Image.asset(
+                                          'assets/images/logo-calculator.png',
+                                          width: 28,
+                                          height: 28,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
                                     ],
                                   ),
                                   inputFormatter: [
@@ -467,6 +493,29 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                 if (provider.imageFile != null)
                                   _buildImage(provider.imageFile!)
                               ],
+                            ),
+                            GestureDetector(
+                              onTap: () async {
+                                FocusManager.instance.primaryFocus?.unfocus();
+                                final data = await NavigatorUtils.navigatePage(
+                                    context, CalculatorScreen());
+
+                                if (data != null && data is String) {
+                                  double money = double.parse(data);
+
+                                  provider
+                                      .updateMoney(money.round().toString());
+                                }
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.only(top: 30),
+                                alignment: Alignment.bottomRight,
+                                child: Image.asset(
+                                  'assets/images/logo-calculator.png',
+                                  width: 100,
+                                  height: 100,
+                                ),
+                              ),
                             ),
                           ],
                         ),

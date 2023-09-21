@@ -14,6 +14,7 @@ import 'package:vierqr/models/branch_member_delete_dto.dart';
 import 'package:vierqr/models/branch_member_insert_dto.dart';
 import 'package:vierqr/models/business_branch_choice_dto.dart';
 import 'package:vierqr/models/business_member_dto.dart';
+import 'package:vierqr/models/member_branch_model.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 
 class BranchRepository {
@@ -131,18 +132,28 @@ class BranchRepository {
     return result;
   }
 
-  Future<dynamic> searchMemberBranch(String phoneNo, String businessId) async {
+  Future<dynamic> searchMemberBranch(
+      String phoneNo, String businessId, int type) async {
     dynamic result;
     try {
-      final String url =
-          '${EnvConfig.getBaseUrl()}branch-member/search/$phoneNo/$businessId';
+      final String url = '${EnvConfig.getBaseUrl()}branch-member/search?'
+          'type=$type&value=$phoneNo&businessId=$businessId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
       );
       var data = jsonDecode(response.body);
       if (response.statusCode == 200) {
-        result = BusinessMemberDTO.fromJson(data);
+        if (type == 0) {
+          result = BusinessMemberDTO.fromJson(data);
+        } else {
+          if (data != null) {
+            result = data
+                .map<MemberBranchModel>(
+                    (json) => MemberBranchModel.fromJson(json))
+                .toList();
+          }
+        }
       } else if (response.statusCode == 201) {
         result = ResponseMessageDTO.fromJson(data);
       } else {

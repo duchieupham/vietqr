@@ -31,8 +31,10 @@ import 'contact_edit_view.dart';
 // ignore: must_be_immutable
 class ContactDetailScreen extends StatefulWidget {
   final ContactDTO dto;
+  final bool isEdit;
 
-  const ContactDetailScreen({super.key, required this.dto});
+  const ContactDetailScreen(
+      {super.key, required this.dto, required this.isEdit});
 
   @override
   State<ContactDetailScreen> createState() => _ContactDetailScreenState();
@@ -120,7 +122,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
           return Scaffold(
             appBar: MAppBar(
               title: 'Thẻ QR',
-              actions: state.contactDetailDTO.type == 2
+              actions: widget.isEdit && state.contactDetailDTO.type == 2
                   ? [
                       GestureDetector(
                         onTap: () async {
@@ -313,22 +315,22 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
     return const AssetImage('assets/images/ic-viet-qr-small.png');
   }
 
-  Widget _buildTypeQr(ContactDetailDTO dto, {required Function onEdit}) {
-    Widget buttonEdit = GestureDetector(
-      onTap: () {
-        onEdit();
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-        decoration: BoxDecoration(
-            color: AppColor.GREY_BUTTON.withOpacity(0.7),
-            borderRadius: BorderRadius.circular(5)),
-        child: Text(
-          'Sửa',
-          style: TextStyle(fontSize: 12),
-        ),
-      ),
-    );
+  Widget _buildTypeQr(ContactDetailDTO dto, {required Function()? onEdit}) {
+    Widget buttonEdit = widget.isEdit
+        ? GestureDetector(
+            onTap: onEdit,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              decoration: BoxDecoration(
+                  color: AppColor.GREY_BUTTON.withOpacity(0.7),
+                  borderRadius: BorderRadius.circular(5)),
+              child: Text(
+                'Sửa',
+                style: TextStyle(fontSize: 12),
+              ),
+            ),
+          )
+        : const SizedBox();
     if (dto.type == 2) {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -601,19 +603,20 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
                     );
                   }),
               Positioned(
-                  top: 32,
-                  right: 0,
-                  left: 0,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _buildTypeQr(dto, onEdit: () async {
+                top: 32,
+                right: 0,
+                left: 0,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildTypeQr(
+                      dto,
+                      onEdit: () async {
                         final data = await Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (_) =>
                                 ContactEditView(contactDetailDTO: dto),
-                            // settings: RouteSettings(name: ContactEditView.routeName),
                           ),
                         );
 
@@ -622,14 +625,16 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
                           BlocProvider.of<ContactBloc>(contextBloc)
                               .add(ContactEventGetDetail(id: widget.dto.id));
                         }
-                      }),
-                      Container(
-                        width: double.infinity,
-                        height: 1,
-                        color: AppColor.greyF0F0F0,
-                      ),
-                    ],
-                  )),
+                      },
+                    ),
+                    Container(
+                      width: double.infinity,
+                      height: 1,
+                      color: AppColor.greyF0F0F0,
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 60),

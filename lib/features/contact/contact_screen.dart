@@ -1,11 +1,13 @@
+import 'dart:async';
+
 import 'package:dudv_base/dudv_base.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
@@ -50,6 +52,8 @@ class _ContactStateState extends State<_ContactState>
   final scrollController = ScrollController();
   final controller = ScrollController();
 
+  StreamSubscription? _subscription;
+
   @override
   void initState() {
     super.initState();
@@ -62,7 +66,19 @@ class _ContactStateState extends State<_ContactState>
       _bloc.add(ContactEventGetListPending());
     });
 
+    _subscription = eventBus.on<ReloadContact>().listen((_) {
+      _onRefresh();
+    });
+
     controller.addListener(_loadMore);
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    _subscription = null;
+
+    super.dispose();
   }
 
   _loadMore() async {
@@ -78,7 +94,9 @@ class _ContactStateState extends State<_ContactState>
 
   Future<void> _onRefresh() async {
     Provider.of<ContactProvider>(context, listen: false).updateOffset(0);
-    _bloc.add(ContactEventGetList());
+    int type =
+        Provider.of<ContactProvider>(context, listen: false).category!.type;
+    _bloc.add(ContactEventGetList(type: type));
   }
 
   Future<void> _onRefreshTabSecond() async {
@@ -206,10 +224,10 @@ class _ContactStateState extends State<_ContactState>
                                   scrollController.jumpTo(0.0);
                               },
                               child: _buildCategory(
-                                title: model.title,
-                                url: model.url,
-                                isSelect: provider.category == model,
-                              ),
+                                  title: model.title,
+                                  url: model.url,
+                                  isSelect: provider.category == model,
+                                  index: index),
                             );
                           }).toList(),
                         ),
@@ -240,6 +258,7 @@ class _ContactStateState extends State<_ContactState>
                                 listContactDTO: provider.listSearch,
                                 colors: state.colors,
                                 onChange: provider.onSearch,
+                                isEdit: provider.category!.type != 8,
                               ),
                             ),
                       ]
@@ -287,7 +306,10 @@ class _ContactStateState extends State<_ContactState>
   }
 
   Widget _buildCategory(
-      {required String title, required String url, bool isSelect = false}) {
+      {required String title,
+      required String url,
+      bool isSelect = false,
+      int index = -1}) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       margin: const EdgeInsets.only(right: 10),
@@ -297,10 +319,15 @@ class _ContactStateState extends State<_ContactState>
       ),
       child: Row(
         children: [
-          Image.asset(
-            url,
-            width: 35,
-            color: isSelect ? AppColor.WHITE : AppColor.BLUE_TEXT,
+          Padding(
+            padding: index == 0
+                ? const EdgeInsets.symmetric(vertical: 10.5, horizontal: 8.0)
+                : EdgeInsets.zero,
+            child: Image.asset(
+              url,
+              width: index == 0 ? 14 : 35,
+              color: isSelect ? AppColor.WHITE : AppColor.BLUE_TEXT,
+            ),
           ),
           Text(
             title,
@@ -319,6 +346,7 @@ class _ContactStateState extends State<_ContactState>
     required List<ContactDTO> listContactDTO,
     required List<Color> colors,
     ValueChanged<String>? onChange,
+    bool isEdit = true,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -344,6 +372,7 @@ class _ContactStateState extends State<_ContactState>
                 padding: EdgeInsets.zero,
                 itemCount: listContactDTO.length,
                 controller: scrollController,
+                physics: const AlwaysScrollableScrollPhysics(),
                 separatorBuilder: (context, index) {
                   if (index == listContactDTO.length - 1) {
                     return const SizedBox.shrink();
@@ -373,12 +402,18 @@ class _ContactStateState extends State<_ContactState>
                                   const TextStyle(fontWeight: FontWeight.bold)),
                         ),
                         _buildItemSave(
-                            dto: listContactDTO[index], color: colors[index]),
+                          dto: listContactDTO[index],
+                          color: colors[index],
+                          isEdit: isEdit,
+                        ),
                       ],
                     );
                   }
                   return _buildItemSave(
-                      dto: listContactDTO[index], color: colors[index]);
+                    dto: listContactDTO[index],
+                    color: colors[index],
+                    isEdit: isEdit,
+                  );
                 },
               ),
             ),
@@ -391,78 +426,84 @@ class _ContactStateState extends State<_ContactState>
   Widget _buildItemSave({
     required ContactDTO dto,
     required Color? color,
+    bool isEdit = true,
   }) {
     return GestureDetector(
       onTap: () async {
-        final data =
-            await Utils.navigatePage(context, ContactDetailScreen(dto: dto));
+        final data = await Utils.navigatePage(
+            context, ContactDetailScreen(dto: dto, isEdit: isEdit));
         if (data) {
           _bloc.add(ContactEventGetList());
         }
       },
-      child: Stack(
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            margin: const EdgeInsets.only(bottom: 12),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              color: AppColor.WHITE,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        margin: const EdgeInsets.only(bottom: 12),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          color: AppColor.WHITE,
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: AppColor.WHITE,
+                borderRadius: BorderRadius.circular(40),
+                border: Border.all(color: AppColor.GREY_LIGHT.withOpacity(0.3)),
+                image: getImage(dto.type, dto.imgId),
+              ),
             ),
-            child: Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: AppColor.WHITE,
-                    borderRadius: BorderRadius.circular(40),
-                    border:
-                        Border.all(color: AppColor.GREY_LIGHT.withOpacity(0.3)),
-                    image: getImage(dto?.type ?? 0, dto?.imgId ?? ''),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    dto.nickname,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: AppColor.BLACK,
+                      height: 1.4,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        dto?.nickname ?? '',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: AppColor.BLACK,
-                          height: 1.4,
+                  RichText(
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: dto.description,
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w400,
+                            color: color,
+                            height: 1.4,
+                          ),
                         ),
-                      ),
-                      Text(
-                        dto?.description ?? '',
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w400,
-                          color: color,
-                          height: 1.4,
+                        WidgetSpan(
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.only(bottom: 2.5, left: 8),
+                            child: Image.asset(
+                              dto.relation == 1
+                                  ? 'assets/images/gl-white.png'
+                                  : 'assets/images/personal-relation.png',
+                              color: AppColor.BLACK.withOpacity(0.7),
+                              width: 10,
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          Positioned(
-            bottom: 12,
-            right: 12,
-            child: Image.asset(
-              dto?.relation == 1
-                  ? 'assets/images/gl-white.png'
-                  : 'assets/images/personal-relation.png',
-              color: AppColor.BLACK.withOpacity(0.7),
-              width: 28,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -486,8 +527,9 @@ class _ContactStateState extends State<_ContactState>
         onRefresh: _onRefreshTabSecond,
         child: SingleChildScrollView(
           controller: controller,
+          physics: AlwaysScrollableScrollPhysics(),
           child: Container(
-            margin: const EdgeInsets.only(top: 16),
+            margin: const EdgeInsets.only(top: 16, left: 16, right: 16),
             child: Column(
               children: List.generate(
                 list.length,

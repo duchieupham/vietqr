@@ -15,6 +15,7 @@ class MButtonWidget extends StatelessWidget {
   final Widget? child;
   final double? width;
   final double? fontSize;
+  final double radius;
 
   const MButtonWidget({
     super.key,
@@ -31,6 +32,7 @@ class MButtonWidget extends StatelessWidget {
     this.width,
     this.colorDisableText,
     this.fontSize = 14,
+    this.radius = 5,
   });
 
   @override
@@ -48,7 +50,7 @@ class MButtonWidget extends StatelessWidget {
             height: height ?? 40,
             width: width,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
+              borderRadius: BorderRadius.circular(radius),
               color: isEnable
                   ? colorEnableBgr ?? AppColor.BLUE_TEXT
                   : colorDisableBgr ?? AppColor.WHITE,

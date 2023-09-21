@@ -6,6 +6,7 @@ import 'package:vierqr/models/branch_filter_dto.dart';
 import 'package:vierqr/models/branch_information_dto.dart';
 import 'package:vierqr/models/business_branch_choice_dto.dart';
 import 'package:vierqr/models/business_member_dto.dart';
+import 'package:vierqr/models/member_branch_model.dart';
 
 class BranchState extends Equatable {
   const BranchState();
@@ -92,10 +93,14 @@ class BranchGetMembersFailedState extends BranchState {}
 
 class BranchSeachMemberLoadingState extends BranchState {}
 
-class BranchSeachMemberSuccessState extends BranchState {
-  final BusinessMemberDTO dto;
+class BranchSearchMemberSuccessState extends BranchState {
+  final BusinessMemberDTO? dto;
+  final List<MemberBranchModel> listMember;
 
-  const BranchSeachMemberSuccessState({required this.dto});
+  const BranchSearchMemberSuccessState({
+    this.dto,
+    required this.listMember,
+  });
 
   @override
   List<Object?> get props => [dto];

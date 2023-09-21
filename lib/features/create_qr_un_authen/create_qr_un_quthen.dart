@@ -6,11 +6,13 @@ import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_custom.dart';
 import 'package:vierqr/features/add_bank/views/bank_input_widget.dart';
+import 'package:vierqr/features/create_qr/views/calculator_view.dart';
 import 'package:vierqr/features/create_qr_un_authen/blocs/qrcode_un_authen_bloc.dart';
 import 'package:vierqr/features/create_qr_un_authen/states/qrcode_un_authen_state.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
@@ -37,6 +39,7 @@ class _CreateQrUnQuthenState extends State<CreateQrUnQuthen> {
 
   final FocusNode _focusNode = FocusNode();
   List<BankTypeDTO> list = [];
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
@@ -184,16 +187,45 @@ class _CreateQrUnQuthenState extends State<CreateQrUnQuthen> {
                                         provider.updateValidCreate(true);
                                       }
                                     },
-                                    suffixIcon: Column(
+                                    suffixIcon: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       crossAxisAlignment:
                                           CrossAxisAlignment.center,
-                                      children: const [
-                                        Text(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Text(
                                           'VND',
-                                          style: TextStyle(fontSize: 14),
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              color: AppColor.textBlack),
                                         ),
+                                        const SizedBox(width: 8),
+                                        GestureDetector(
+                                          onTap: () async {
+                                            FocusManager.instance.primaryFocus
+                                                ?.unfocus();
+                                            final data = await NavigatorUtils
+                                                .navigatePage(context,
+                                                    CalculatorScreen());
+
+                                            if (data != null &&
+                                                data is String) {
+                                              double money = double.parse(data);
+                                              amountController.text =
+                                                  StringUtils.formatNumber(
+                                                      money.round());
+                                              provider.updateMoney(
+                                                  money.round().toString());
+                                            }
+                                          },
+                                          child: Image.asset(
+                                            'assets/images/logo-calculator.png',
+                                            width: 28,
+                                            height: 28,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
                                       ],
                                     ),
                                     inputFormatter: [

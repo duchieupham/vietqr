@@ -1,3 +1,5 @@
+import 'package:vierqr/commons/enums/enum_type.dart';
+
 class MemberBranchModel {
   final String? phoneNo;
   final String? lastName;
@@ -5,6 +7,7 @@ class MemberBranchModel {
   final String? firstName;
   final String? imgId;
   final String? id;
+  int? existed;
 
   MemberBranchModel({
     this.phoneNo,
@@ -13,7 +16,24 @@ class MemberBranchModel {
     this.firstName,
     this.imgId,
     this.id,
+    this.existed,
   });
+
+  setExisted(value) {
+    existed = value;
+  }
+
+  TypeAddMember get typeMember {
+    if (existed == 0) {
+      return TypeAddMember.MORE;
+    } else if (existed == 1) {
+      return TypeAddMember.ADDED;
+    }
+    return TypeAddMember.AWAIT;
+  }
+
+  String get fullName =>
+      '${lastName ?? ''}' + ' ${middleName ?? ''} ' + '${firstName ?? ''}';
 
   factory MemberBranchModel.fromJson(Map<String, dynamic> json) {
     return MemberBranchModel(
@@ -23,6 +43,7 @@ class MemberBranchModel {
       middleName: json['middleName'] ?? '',
       firstName: json['firstName'] ?? '',
       imgId: json['imgId'] ?? '',
+      existed: json['existed'] ?? 0,
     );
   }
 }

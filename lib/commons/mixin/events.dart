@@ -19,3 +19,7 @@ class GetListBankScreen {
 class ReloadWallet {
   ReloadWallet();
 }
+
+class ReloadContact {
+  ReloadContact();
+}

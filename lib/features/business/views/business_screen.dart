@@ -543,7 +543,7 @@ class _BusinessScreenState extends State<_BusinessScreen>
                           branchId: data,
                           businessId: dto.businessId,
                         ),
-                        height: height * 0.5,
+                        height: height * 0.7,
                       );
 
                       _businessBloc.add(BusinessInitEvent(isLoading: true));

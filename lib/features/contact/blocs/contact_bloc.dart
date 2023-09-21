@@ -67,7 +67,7 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
         BuildContext context = NavigationService.navigatorKey.currentContext!;
         emit(state.copyWith(
             status: BlocStatus.NONE, isLoading: true, type: ContactType.NONE));
-        int type = event.type ?? 9;
+        int type = event.type ?? 8;
         int offset = event.offset ?? 0;
 
         List<ContactDTO> result =

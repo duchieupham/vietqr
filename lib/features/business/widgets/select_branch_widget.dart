@@ -30,12 +30,12 @@ class _SelectBranchWidgetState extends State<SelectBranchWidget> {
   void initState() {
     super.initState();
     repository = const BusinessInformationRepository();
+    initData();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    initData();
   }
 
   void initData() async {

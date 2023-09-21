@@ -7,7 +7,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
+import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_custom.dart';
 import 'package:vierqr/features/contact/blocs/contact_bloc.dart';
@@ -122,7 +124,8 @@ class _ContactEditViewState extends State<ContactEditView> {
           }
 
           if (state.type == ContactType.REMOVE) {
-            Navigator.of(context).popUntil((route) => route.isFirst);
+            eventBus.fire(ReloadContact());
+            NavigatorUtils.navigateToRoot(context);
           }
 
           if (state.type == ContactType.UPDATE_RELATION) {
