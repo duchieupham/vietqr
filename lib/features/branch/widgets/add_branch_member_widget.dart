@@ -134,19 +134,22 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
                   )
                 else
                   listMember.isNotEmpty
-                      ? Column(
-                          children: List.generate(listMember.length, (index) {
-                            BusinessMemberDTO dto = BusinessMemberDTO(
-                              userId: listMember[index].id ?? '',
-                              status: '',
-                              existed: listMember[index].existed ?? 0,
-                              imgId: listMember[index].imgId ?? '',
-                              name: listMember[index].fullName,
-                              phoneNo: listMember[index].phoneNo ?? '',
-                              role: 0,
-                            );
-                            return _buildSearchItem(context: context, dto: dto);
-                          }).toList(),
+                      ? Expanded(
+                          child: Column(
+                            children: List.generate(listMember.length, (index) {
+                              BusinessMemberDTO dto = BusinessMemberDTO(
+                                userId: listMember[index].id ?? '',
+                                status: '',
+                                existed: listMember[index].existed ?? 0,
+                                imgId: listMember[index].imgId ?? '',
+                                name: listMember[index].fullName,
+                                phoneNo: listMember[index].phoneNo ?? '',
+                                role: 0,
+                              );
+                              return _buildSearchItem(
+                                  context: context, dto: dto);
+                            }).toList(),
+                          ),
                         )
                       : (_dto.userId.isNotEmpty && message.trim().isEmpty)
                           ? _buildSearchItem(context: context, dto: _dto)

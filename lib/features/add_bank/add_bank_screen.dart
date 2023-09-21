@@ -495,6 +495,8 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                                                   provider.resetValidate();
                                                   provider.updateSelectBankType(
                                                       state.listBanks![data]);
+                                                  Provider.of<AddBankProvider>(context, listen: false)
+                                                      .updateEnableName(true);
                                                 }
                                               },
                                               child: Container(
