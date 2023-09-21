@@ -54,7 +54,9 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> with BaseManager {
         );
         if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
           emit(state.copyWith(
-              status: BlocStatus.UNLOADING, request: AccountType.AVATAR));
+              status: BlocStatus.UNLOADING,
+              request: AccountType.AVATAR,
+              imageFile: event.image));
         } else {
           emit(
             state.copyWith(

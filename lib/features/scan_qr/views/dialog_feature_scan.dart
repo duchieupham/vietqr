@@ -232,7 +232,7 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
   void onSaveTK() async {
     if (widget.dto is QRGeneratedDTO) {
       QRGeneratedDTO value = widget.dto;
-      await Navigator.pushNamed(
+      final data = await Navigator.pushNamed(
         context,
         Routes.ADD_BANK_CARD,
         arguments: {
@@ -242,13 +242,16 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
           'name': ''
         },
       );
-
       eventBus.fire(ChangeThemeEvent());
+
+      if (data is bool) {
+        Navigator.of(context).pop();
+      }
     }
   }
 
   void onSaveQR() async {
-    await Navigator.push(
+    final data = await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => SaveContactScreen(
@@ -258,6 +261,10 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
         ),
       ),
     );
+
+    if (data is bool) {
+      Navigator.of(context).pop();
+    }
   }
 
   void onSaveImage() async {

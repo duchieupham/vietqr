@@ -201,6 +201,7 @@ enum ContactType {
   GET_LIST_RECHARGE,
   REMOVE,
   UPDATE,
+  UPDATE_RELATION,
   ERROR,
   SAVE,
   SUGGEST,

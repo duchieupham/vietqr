@@ -62,6 +62,7 @@ import 'package:vierqr/features/printer/views/printer_setting_screen.dart';
 import 'package:vierqr/features/report/report_screen.dart';
 import 'package:vierqr/features/scan_qr/scan_qr_lib.dart';
 import 'package:vierqr/features/setting_bdsd/setting_bdsd_screen.dart';
+
 // import 'package:vierqr/features/scan_qr/scan_qr_screen.dart';
 import 'package:vierqr/features/top_up/qr_top_up.dart';
 import 'package:vierqr/features/top_up/top_up_screen.dart';
@@ -74,7 +75,6 @@ import 'package:vierqr/models/respone_top_up_dto.dart';
 import 'package:vierqr/models/top_up_sucsess_dto.dart';
 import 'package:vierqr/services/local_notification/notification_service.dart';
 import 'package:vierqr/services/providers/auth_provider.dart';
-import 'package:vierqr/services/providers/avatar_provider.dart';
 import 'package:vierqr/services/providers/business_inforamtion_provider.dart';
 import 'package:vierqr/services/providers/pin_provider.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
@@ -327,7 +327,6 @@ class _VietQRApp extends State<VietQRApp> {
             ChangeNotifierProvider(create: (context) => UserEditProvider()),
             ChangeNotifierProvider(
                 create: (context) => BusinessInformationProvider()),
-            ChangeNotifierProvider(create: (context) => AvatarProvider()),
           ],
           child: Consumer<AuthProvider>(
             builder: (context, authProvider, child) {

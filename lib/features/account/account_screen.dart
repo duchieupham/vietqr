@@ -105,6 +105,11 @@ class _AccountScreenState extends State<_AccountScreen>
           eventBus.fire(ChangeBottomBarEvent(0));
         }
 
+        if (state.request == AccountType.AVATAR) {
+          Provider.of<UserEditProvider>(context, listen: false)
+              .setImage(state.imageFile);
+        }
+
         if (state.status == BlocStatus.ERROR) {
           if (!mounted) return;
           DialogWidget.instance.openMsgDialog(
@@ -308,8 +313,6 @@ class _FeatureWidget extends StatelessWidget {
         if (pickedFile != null) {
           File? file = File(pickedFile.path);
           File? compressedFile = FileUtils.instance.compressImage(file);
-          // Provider.of<AddBusinessProvider>(context, listen: false)
-          //     .setImage(compressedFile);
           await Future.delayed(const Duration(milliseconds: 200), () {
             String userId = UserInformationHelper.instance.getUserId();
             String imgId =
