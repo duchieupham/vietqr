@@ -84,7 +84,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                     case 0:
                       return CustomButton(
                         buttonTapped: clearInputAndOutput,
-                        color: AppColor.BLUE_TEXT.withOpacity(0.8),
+                        color: AppColor.BLUE_TEXT.withOpacity(0.2),
                         textColor: AppColor.textBlack,
                         text: buttons[index].text,
                         style: TextStyle(
@@ -100,7 +100,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                     case 1:
                       return CustomButton(
                         buttonTapped: deleteBtnAction,
-                        color: AppColor.BLUE_TEXT.withOpacity(0.8),
+                        color: AppColor.BLUE_TEXT.withOpacity(0.2),
                         textColor: AppColor.textBlack,
                         text: buttons[index].text,
                         style: TextStyle(
@@ -116,7 +116,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                     case 2:
                       return CustomButton(
                         buttonTapped: onPT,
-                        color: AppColor.BLUE_TEXT.withOpacity(0.8),
+                        color: AppColor.BLUE_TEXT.withOpacity(0.2),
                         textColor: AppColor.textBlack,
                         text: buttons[index].text,
                         style: TextStyle(

@@ -265,27 +265,7 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
                     inputType: TextInputType.text,
                     autoFocus: false,
                     keyboardAction: TextInputAction.done,
-                    onChange: (text) {
-                      if (nameController.text.isNotEmpty) {
-                        searchClearProvider.updateClearSearch(true);
-                      } else {
-                        searchClearProvider.updateClearSearch(false);
-                      }
-                      if (nameController.text.length >= 10 &&
-                          nameController.text.length <= 12) {
-                        if (_debounce?.isActive ?? false) _debounce!.cancel();
-                        _debounce =
-                            Timer(const Duration(milliseconds: 300), () {
-                          _searchMember();
-                        });
-                      } else {
-                        message = '';
-                        isError = false;
-                        setState(() {
-                          _dto = dtoDefault;
-                        });
-                      }
-                    },
+                    onChange: _onChange,
                   ),
                   ValueListenableBuilder(
                     valueListenable: searchClearProvider,
@@ -432,6 +412,7 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
     searchClearProvider.updateClearSearch(false);
     setState(() {
       _dto = dtoDefault;
+      listMember = [];
     });
   }
 
@@ -522,5 +503,32 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
   void dispose() {
     _debounce?.cancel();
     super.dispose();
+  }
+
+  void _onChange(Object value) {
+    if (nameController.text.isNotEmpty) {
+      searchClearProvider.updateClearSearch(true);
+    } else {
+      searchClearProvider.updateClearSearch(false);
+    }
+    if (type == 0) {
+      if (nameController.text.length >= 5 && nameController.text.length <= 12) {
+        if (_debounce?.isActive ?? false) _debounce!.cancel();
+        _debounce = Timer(const Duration(milliseconds: 300), () {
+          _searchMember();
+        });
+      } else {
+        message = '';
+        isError = false;
+        setState(() {
+          _dto = dtoDefault;
+        });
+      }
+    } else {
+      if (_debounce?.isActive ?? false) _debounce!.cancel();
+      _debounce = Timer(const Duration(milliseconds: 300), () {
+        _searchMember();
+      });
+    }
   }
 }
