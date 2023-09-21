@@ -572,7 +572,7 @@ class _ContactStateState extends State<_ContactState>
                           fit: BoxFit.contain)
                       : const DecorationImage(
                           image:
-                              AssetImage('assets/images/ic-viet-qr-small.png'),
+                              AssetImage('assets/images/ic-tb-qr.png'),
                           fit: BoxFit.contain),
                 ),
               ),
