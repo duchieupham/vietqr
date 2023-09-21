@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dudv_base/dudv_base.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
@@ -445,16 +446,32 @@ class _ContactStateState extends State<_ContactState>
         ),
         child: Row(
           children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: AppColor.WHITE,
-                borderRadius: BorderRadius.circular(40),
-                border: Border.all(color: AppColor.GREY_LIGHT.withOpacity(0.3)),
-                image: getImage(dto.type, dto.imgId),
-              ),
-            ),
+            ((dto.type == 2 || dto.type == 3) && dto.imgId.isNotEmpty)
+                ? Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: AppColor.WHITE,
+                      borderRadius: BorderRadius.circular(40),
+                      border: Border.all(
+                          color: AppColor.GREY_LIGHT.withOpacity(0.3)),
+                      image: getImage(dto.type, dto.imgId),
+                    ),
+                  )
+                : Container(
+                    width: 40,
+                    height: 40,
+                    padding: EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
+                        color: AppColor.GREY_LIGHT.withOpacity(0.1)),
+                    child: ClipRRect(
+                      child: Image.asset(
+                        'assets/images/ic-tb-qr.png',
+                        width: 28,
+                      ),
+                    ),
+                  ),
             const SizedBox(width: 10),
             Expanded(
               child: Column(
@@ -517,8 +534,7 @@ class _ContactStateState extends State<_ContactState>
       }
     }
     return const DecorationImage(
-        image: AssetImage('assets/images/ic-tb-qr.png'),
-        fit: BoxFit.contain);
+        image: AssetImage('assets/images/ic-tb-qr.png'), fit: BoxFit.contain);
   }
 
   Widget _buildTapSecond({required List<ContactDTO> list}) {
@@ -558,24 +574,34 @@ class _ContactStateState extends State<_ContactState>
         children: [
           Row(
             children: [
-              Container(
-                width: 35,
-                height: 35,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
-                  border:
-                      Border.all(color: AppColor.GREY_LIGHT.withOpacity(0.3)),
-                  image: dto?.type == 2
-                      ? DecorationImage(
+              if (dto?.type == 2)
+                Container(
+                  width: 35,
+                  height: 35,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      border: Border.all(
+                          color: AppColor.GREY_LIGHT.withOpacity(0.3)),
+                      image: DecorationImage(
                           image: ImageUtils.instance
                               .getImageNetWork(dto?.imgId ?? ''),
-                          fit: BoxFit.contain)
-                      : const DecorationImage(
-                          image:
-                              AssetImage('assets/images/ic-tb-qr.png'),
-                          fit: BoxFit.contain),
+                          fit: BoxFit.contain)),
+                )
+              else
+                Container(
+                  width: 35,
+                  height: 35,
+                  padding: EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      color: AppColor.GREY_LIGHT.withOpacity(0.1)),
+                  child: ClipRRect(
+                    child: Image.asset(
+                      'assets/images/ic-tb-qr.png',
+                      width: 28,
+                    ),
+                  ),
                 ),
-              ),
               const SizedBox(width: 10),
               Expanded(
                 child: Column(
