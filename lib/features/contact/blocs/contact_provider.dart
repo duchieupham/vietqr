@@ -3,9 +3,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:vierqr/features/contact/models/data_model.dart';
 import 'package:vierqr/models/contact_dto.dart';
+import 'package:vierqr/models/user_repository.dart';
 import 'package:vierqr/services/shared_references/account_helper.dart';
 
 class ContactProvider extends ChangeNotifier {
+  UserRepository get userRes => UserRepository.instance;
+
   int tab = 0;
   bool isEnableBTSave = false;
 
@@ -39,6 +42,12 @@ class ContactProvider extends ChangeNotifier {
   bool isIntro = false;
   bool isSync = false;
 
+  void initData() {
+    category = listCategories.first;
+    isIntro = userRes.getIntroContact();
+    notifyListeners();
+  }
+
   void updateSync(value) {
     isSync = value;
     notifyListeners();
@@ -50,8 +59,9 @@ class ContactProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateIntro() {
-    isIntro = AccountHelper.instance.getVCard();
+  void updateIntro(bool value) {
+    userRes.updateIntroContact(value);
+    isIntro = userRes.isIntroContact;
     notifyListeners();
   }
 
@@ -77,13 +87,9 @@ class ContactProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateCategory({ContactDataModel? value, bool isFirst = false}) {
-    if (isFirst) {
-      category = listCategories.first;
-    } else {
-      if (value == category) return;
-      category = value;
-    }
+  void updateCategory({ContactDataModel? value}) {
+    if (value == category) return;
+    category = value;
 
     notifyListeners();
   }
@@ -98,43 +104,38 @@ class ContactProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateListAll(List<List<ContactDTO>> valueAll, List<ContactDTO> value) {
-    if (valueAll.isNotEmpty) {
-      listAll = valueAll;
-      listAllSearch = valueAll;
-    } else {
-      List<List<ContactDTO>> _list = [];
-      List<String> listString = [];
+  void updateListAll(List<ContactDTO> value) {
+    List<List<ContactDTO>> _list = [];
+    List<String> listString = [];
 
-      if (value.isNotEmpty) {
-        for (int i = 0; i < value.length; i++) {
-          if (value[i].nickname.isNotEmpty) {
-            String keyName = value[i].nickname[0].toUpperCase();
-            listString.add(keyName);
-          } else {
-            listString.add('');
-          }
-        }
-
-        listString = listString.toSet().toList();
-
-        for (int i = 0; i < listString.length; i++) {
-          List<ContactDTO> listCompare = [];
-          listCompare = value.where((element) {
-            if (element.nickname.isNotEmpty) {
-              return element.nickname[0].toUpperCase() == listString[i];
-            } else {
-              return element.nickname.toUpperCase() == listString[i];
-            }
-          }).toList();
-
-          _list.add(listCompare);
+    if (value.isNotEmpty) {
+      for (int i = 0; i < value.length; i++) {
+        if (value[i].nickname.isNotEmpty) {
+          String keyName = value[i].nickname[0].toUpperCase();
+          listString.add(keyName);
+        } else {
+          listString.add('');
         }
       }
 
-      listAll = _list;
-      listAllSearch = _list;
+      listString = listString.toSet().toList();
+
+      for (int i = 0; i < listString.length; i++) {
+        List<ContactDTO> listCompare = [];
+        listCompare = value.where((element) {
+          if (element.nickname.isNotEmpty) {
+            return element.nickname[0].toUpperCase() == listString[i];
+          } else {
+            return element.nickname.toUpperCase() == listString[i];
+          }
+        }).toList();
+
+        _list.add(listCompare);
+      }
     }
+
+    listAll = _list;
+    listAllSearch = _list;
 
     listContactDTO = value;
     notifyListeners();

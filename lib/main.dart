@@ -110,11 +110,6 @@ void main() async {
 Future<void> _initialServiceHelper() async {
   await sharedPrefs.setString('TOKEN_FREE', '');
 
-  if (!sharedPrefs.containsKey('VCARD') ||
-      sharedPrefs.getBool('VCARD') == null) {
-    await sharedPrefs.setBool('VCARD', false);
-  }
-
   if (!sharedPrefs.containsKey('THEME_SYSTEM') ||
       sharedPrefs.getString('THEME_SYSTEM') == null) {
     await ThemeHelper.instance.initialTheme();

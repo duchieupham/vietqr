@@ -1,4 +1,6 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 
@@ -72,7 +74,25 @@ class _ContactIntroWidgetState extends State<ContactIntroWidget> {
                       fontWeight: FontWeight.w500,
                     ),
                     children: [
-                      TextSpan(text: textContent),
+                      TextSpan(text: '$textContent\n'),
+                      TextSpan(
+                        text: 'Xem chi tiết tại đây',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          color: AppColor.BLUE_TEXT,
+                          height: 1.5,
+                          decoration: TextDecoration.underline,
+                        ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () async {
+                            // ignore: deprecated_member_use
+                            await launch(
+                              'https://vietqr.vn/contact/introducing',
+                              forceSafariVC: false,
+                            );
+                          },
+                      ),
                     ],
                   ),
                 ),
@@ -103,7 +123,7 @@ class _ContactIntroWidgetState extends State<ContactIntroWidget> {
                 ],
               ),
               MButtonWidget(
-                title: 'Đồng bộ danh bạ',
+                title: 'Lưu danh bạ',
                 isEnable: true,
                 onTap: widget.onSync,
               )

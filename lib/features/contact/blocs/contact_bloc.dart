@@ -80,38 +80,39 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
 
         List<ContactDTO> result =
             await repository.getListSaveContact(userId, type, offset * 20);
-        result.sort((a, b) {
-          return a.nickname.toLowerCase().compareTo(b.nickname.toLowerCase());
-        });
 
-        List<List<ContactDTO>> listAll = [];
-        List<String> listString = [];
-
-        if (result.isNotEmpty) {
-          for (int i = 0; i < result.length; i++) {
-            if (result[i].nickname.isNotEmpty) {
-              String keyName = result[i].nickname[0].toUpperCase();
-              listString.add(keyName);
-            } else {
-              listString.add('');
-            }
-          }
-
-          listString = listString.toSet().toList();
-
-          for (int i = 0; i < listString.length; i++) {
-            List<ContactDTO> listCompare = [];
-            listCompare = result.where((element) {
-              if (element.nickname.isNotEmpty) {
-                return element.nickname[0].toUpperCase() == listString[i];
-              } else {
-                return element.nickname.toUpperCase() == listString[i];
-              }
-            }).toList();
-
-            listAll.add(listCompare);
-          }
-        }
+        // result.sort((a, b) {
+        //   return a.nickname.toLowerCase().compareTo(b.nickname.toLowerCase());
+        // });
+        //
+        // List<List<ContactDTO>> listAll = [];
+        // List<String> listString = [];
+        //
+        // if (result.isNotEmpty) {
+        //   for (int i = 0; i < result.length; i++) {
+        //     if (result[i].nickname.isNotEmpty) {
+        //       String keyName = result[i].nickname[0].toUpperCase();
+        //       listString.add(keyName);
+        //     } else {
+        //       listString.add('');
+        //     }
+        //   }
+        //
+        //   listString = listString.toSet().toList();
+        //
+        //   for (int i = 0; i < listString.length; i++) {
+        //     List<ContactDTO> listCompare = [];
+        //     listCompare = result.where((element) {
+        //       if (element.nickname.isNotEmpty) {
+        //         return element.nickname[0].toUpperCase() == listString[i];
+        //       } else {
+        //         return element.nickname.toUpperCase() == listString[i];
+        //       }
+        //     }).toList();
+        //
+        //     listAll.add(listCompare);
+        //   }
+        // }
 
         for (ContactDTO dto in result) {
           if (dto.type == 1) {
@@ -132,7 +133,7 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
 
         emit(
           state.copyWith(
-            listCompareContact: listAll,
+            listCompareContact: [],
             listContactDTO: result,
             type: ContactType.GET_LIST,
             isLoading: false,

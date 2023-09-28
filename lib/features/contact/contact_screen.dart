@@ -39,9 +39,7 @@ class ContactScreen extends StatelessWidget {
     return BlocProvider<ContactBloc>(
       create: (context) => ContactBloc(context),
       child: ChangeNotifierProvider<ContactProvider>(
-        create: (context) => ContactProvider()
-          ..updateCategory(isFirst: true)
-          ..updateIntro(),
+        create: (context) => ContactProvider()..initData(),
         child: _ContactState(),
       ),
     );
@@ -67,6 +65,7 @@ class _ContactStateState extends State<_ContactState>
   StreamSubscription? _syncSub;
 
   LocalStorageRepository _local = LocalStorageRepository();
+
   Box? _box;
 
   String get userId => UserInformationHelper.instance.getUserId();
@@ -109,7 +108,8 @@ class _ContactStateState extends State<_ContactState>
             onSelected: (value) async {
               Navigator.pop(context);
               if (value) {
-                await AccountHelper.instance.updateVCard(value);
+                Provider.of<ContactProvider>(context, listen: false)
+                    .updateIntro(true);
               }
             },
           ),
@@ -215,15 +215,17 @@ class _ContactStateState extends State<_ContactState>
             }
 
             final contact = ContactDTO(
-                id: e.id.isNotEmpty ? e.id : '',
-                nickname: e.displayName.isNotEmpty ? e.displayName : '',
-                status: 0,
-                type: 4,
-                imgId: base64Image,
-                description: e.notes.isNotEmpty ? e.notes.first.note : '',
-                phoneNo: e.phones.isNotEmpty ? e.phones.first.number : '',
-                carrierTypeId: '',
-                relation: 0);
+              id: e.id.isNotEmpty ? e.id : '',
+              nickname: e.displayName.isNotEmpty ? e.displayName : '',
+              status: 0,
+              type: 4,
+              imgId: base64Image,
+              description: e.notes.isNotEmpty ? e.notes.first.note : '',
+              phoneNo: e.phones.isNotEmpty ? e.phones.first.number : '',
+              carrierTypeId: '',
+              relation: 0,
+              bankColor: Theme.of(context).cardColor,
+            );
             await _local.addProductToWishlist(_box!, contact);
           }
         }
@@ -232,8 +234,20 @@ class _ContactStateState extends State<_ContactState>
           receivePort.close();
           Provider.of<ContactProvider>(context, listen: false)
               .updateSync(false);
-          await AccountHelper.instance.updateVCard(true);
-          Provider.of<ContactProvider>(context, listen: false).updateIntro();
+          Provider.of<ContactProvider>(context, listen: false)
+              .updateIntro(true);
+          if (Provider.of<ContactProvider>(context, listen: false)
+                  .category!
+                  .type ==
+              4) {
+            List<ContactDTO> list = [];
+            if (_box != null) {
+              list = _local.getWishlist(_box!);
+            }
+            Provider.of<ContactProvider>(context, listen: false)
+                .updateListAll(list);
+          }
+
           return;
         }
       }
@@ -277,8 +291,7 @@ class _ContactStateState extends State<_ContactState>
       if (_box != null) {
         list = _local.getWishlist(_box!);
       }
-      Provider.of<ContactProvider>(context, listen: false)
-          .updateListAll([], list);
+      Provider.of<ContactProvider>(context, listen: false).updateListAll(list);
     }
   }
 
@@ -314,8 +327,26 @@ class _ContactStateState extends State<_ContactState>
           }
 
           if (state.type == ContactType.GET_LIST) {
+            List<ContactDTO> list = [];
+            list.addAll(state.listContactDTO);
+
+            if (Provider.of<ContactProvider>(context, listen: false)
+                    .category!
+                    .type ==
+                9) {
+              if (_box != null) {
+                list.addAll(_local.getWishlist(_box!));
+              }
+            }
+
+            list.sort((a, b) {
+              return a.nickname
+                  .toLowerCase()
+                  .compareTo(b.nickname.toLowerCase());
+            });
+
             Provider.of<ContactProvider>(context, listen: false)
-                .updateListAll(state.listCompareContact, state.listContactDTO);
+                .updateListAll(list);
             Provider.of<ContactProvider>(context, listen: false).updateOffset(
                 Provider.of<ContactProvider>(context, listen: false).offset++);
           }
@@ -371,43 +402,30 @@ class _ContactStateState extends State<_ContactState>
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+                        child: Row(
                           children: [
                             Text(
                               'Ví QR',
                               style: const TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.w600),
                             ),
-                            Row(
-                              children: [
-                                Text(
-                                  'Nơi lưu trữ mã QR của bạn',
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      color: AppColor.GREY_TEXT,
-                                      height: 1.4),
-                                ),
-                                const Spacer(),
-                                if (provider.isIntro)
-                                  TextButton(
-                                    onPressed: _onUpdateContact,
-                                    child: Container(
-                                      alignment: Alignment.centerRight,
-                                      child: Text(
-                                        'Cập nhật danh bạ',
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            color: AppColor.BLUE_TEXT,
-                                            decoration:
-                                                TextDecoration.underline,
-                                            height: 1.4),
-                                      ),
-                                    ),
+                            const Spacer(),
+                            if (provider.isIntro)
+                              TextButton(
+                                onPressed: _onUpdateContact,
+                                child: Container(
+                                  alignment: Alignment.centerRight,
+                                  child: Text(
+                                    'Cập nhật danh bạ',
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        color: AppColor.BLUE_TEXT,
+                                        decoration: TextDecoration.underline,
+                                        height: 1.4),
                                   ),
-                              ],
-                            ),
+                                ),
+                              ),
                           ],
                         ),
                       ),
@@ -427,7 +445,7 @@ class _ContactStateState extends State<_ContactState>
                                   if (_box != null) {
                                     list = _local.getWishlist(_box!);
                                   }
-                                  provider.updateListAll([], list);
+                                  provider.updateListAll(list);
                                 } else if (model.type != 0) {
                                   if (scrollController.hasClients)
                                     scrollController.jumpTo(0.0);

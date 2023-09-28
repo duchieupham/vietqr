@@ -44,12 +44,4 @@ class AccountHelper {
   String getTokenFree() {
     return sharedPrefs.getString('TOKEN_FREE')!;
   }
-
-  Future<void> updateVCard(bool value) async {
-    await sharedPrefs.setBool('VCARD', value);
-  }
-
-  bool getVCard() {
-    return sharedPrefs.getBool('VCARD') ?? false;
-  }
 }

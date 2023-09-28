@@ -1,5 +1,4 @@
 import 'package:hive/hive.dart';
-import 'package:vierqr/models/contact_detail_dto.dart';
 import 'package:vierqr/models/contact_dto.dart';
 
 import 'base_local_storage.dart';
