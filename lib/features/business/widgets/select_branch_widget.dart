@@ -33,18 +33,14 @@ class _SelectBranchWidgetState extends State<SelectBranchWidget> {
     initData();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
   void initData() async {
     try {
       BusinessDetailDTO result =
           await repository.getBusinessDetail(widget.businessId, userId);
-      setState(() {
-        businessDetailDTO = result;
-      });
+      if (!mounted) return;
+      businessDetailDTO = result;
+
+      setState(() {});
     } catch (e) {
       LOG.error(e.toString());
     }

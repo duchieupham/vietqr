@@ -64,12 +64,11 @@ class BranchGetBanksLoadingState extends BranchState {}
 
 class BranchGetBanksSuccessState extends BranchState {
   final List<AccountBankBranchDTO> list;
-  final List<Color> colors;
 
-  const BranchGetBanksSuccessState({required this.list, required this.colors});
+  const BranchGetBanksSuccessState({required this.list});
 
   @override
-  List<Object?> get props => [list, colors];
+  List<Object?> get props => [list];
 }
 
 class BranchGetBanksFailedState extends BranchState {}
@@ -167,13 +166,11 @@ class BranchGetConnectBankLoadingState extends BranchState {}
 
 class BranchGetConnectBankSuccessState extends BranchState {
   final List<AccountBankConnectBranchDTO> list;
-  final List<Color> colors;
 
-  const BranchGetConnectBankSuccessState(
-      {required this.list, required this.colors});
+  const BranchGetConnectBankSuccessState({required this.list});
 
   @override
-  List<Object?> get props => [list, colors];
+  List<Object?> get props => [list];
 }
 
 class BranchGetConnectBankFailedState extends BranchState {

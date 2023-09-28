@@ -26,6 +26,7 @@ import 'package:vierqr/features/bank_card/widgets/function_bank_widget.dart';
 import 'package:vierqr/features/bank_detail/bank_card_detail_screen.dart';
 import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
 import 'package:vierqr/features/create_qr/create_qr_screen.dart';
+import 'package:vierqr/features/dashboard/blocs/dash_board_provider.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
@@ -39,6 +40,8 @@ import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:vierqr/services/providers/bank_card_select_provider.dart';
 import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
+
+import 'views/share_bdsd_view.dart';
 
 class BankScreen extends StatelessWidget {
   const BankScreen({super.key});
@@ -97,7 +100,7 @@ class _BankScreenState extends State<_BankScreen>
       initData();
     });
 
-    _subscription = eventBus.on<ChangeThemeEvent>().listen((_) {
+    _subscription = eventBus.on<GetListBankScreen>().listen((_) {
       _bloc.add(BankCardEventGetList());
     });
   }
@@ -192,6 +195,8 @@ class _BankScreenState extends State<_BankScreen>
                   if (scrollController.hasClients) {
                     scrollController.jumpTo(0);
                   }
+                  Provider.of<DashBoardProvider>(context, listen: false)
+                      .updateListBanks(state.listBanks);
                 }
               },
               builder: (context, state) {
@@ -221,7 +226,12 @@ class _BankScreenState extends State<_BankScreen>
           const SizedBox(
             height: 16,
           ),
-          _buildListSection(),
+          BlocConsumer<BankBloc, BankState>(
+            listener: (context, state) async {},
+            builder: (context, state) {
+              return _buildListSection(state.listBanks, state.colors);
+            },
+          ),
         ],
       ),
     );
@@ -235,7 +245,7 @@ class _BankScreenState extends State<_BankScreen>
     }
   }
 
-  Widget _buildListSection() {
+  Widget _buildListSection(List<BankAccountDTO> listBanks, List<Color> colors) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: IntrinsicHeight(
@@ -243,32 +253,54 @@ class _BankScreenState extends State<_BankScreen>
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Expanded(
-              child: _buildSection('assets/images/qr-contact-other-blue.png',
-                  () async {
-                if (QRScannerHelper.instance.getQrIntro()) {
-                  // Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
-                  startBarcodeScanStream();
-                } else {
-                  await DialogWidget.instance.showFullModalBottomContent(
-                    widget: const QRScanWidget(),
-                    color: AppColor.BLACK,
-                  );
-                  if (!mounted) return;
-                  startBarcodeScanStream();
-                }
-              },
-                  title: 'Copy mã QR',
-                  des: 'Quét mã VietQR để thêm/Liên kết TK ngân hàng'),
+              child: _buildSection(
+                'assets/images/qr-contact-other-blue.png',
+                () async {
+                  if (QRScannerHelper.instance.getQrIntro()) {
+                    startBarcodeScanStream();
+                  } else {
+                    await DialogWidget.instance.showFullModalBottomContent(
+                      widget: const QRScanWidget(),
+                      color: AppColor.BLACK,
+                    );
+                    if (!mounted) return;
+                    startBarcodeScanStream();
+                  }
+                },
+                title: 'Copy mã QR',
+                des: 'Quét mã VietQR để thêm/Liên kết TK ngân hàng',
+              ),
             ),
             const SizedBox(width: 8),
             Expanded(
-              child: _buildSection('assets/images/ic-bankaccount-blue.png',
-                  () async {
-                await Navigator.pushNamed(context, Routes.ADD_BANK_CARD);
-                getListBank(context);
-              },
-                  title: 'Thêm TK',
-                  des: 'Thêm hoặc liên kết TK ngân hàng để nhận BDSD'),
+              child: _buildSection(
+                'assets/images/ic-bankaccount-blue.png',
+                () async {
+                  await Navigator.pushNamed(context, Routes.ADD_BANK_CARD);
+                  getListBank(context);
+                },
+                title: 'Thêm TK',
+                des: 'Thêm hoặc liên kết TK ngân hàng để nhận BDSD',
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: _buildSection(
+                'assets/images/ic_share_code.png',
+                () async {
+                  await DialogWidget.instance.showModelBottomSheet(
+                    context: context,
+                    sigmaX: 0,
+                    sigmaY: 0,
+                    padding: EdgeInsets.zero,
+                    height:
+                        MediaQuery.of(context).size.height - kToolbarHeight * 2,
+                    widget: ShareBDSDView(),
+                  );
+                },
+                title: 'Chia sẻ BĐSD',
+                des: 'Thêm hoặc liên kết TK ngân hàng để nhận BĐSD',
+              ),
             ),
           ],
         ),
@@ -281,66 +313,24 @@ class _BankScreenState extends State<_BankScreen>
     return GestureDetector(
       onTap: onTab,
       child: Container(
-        padding: const EdgeInsets.only(left: 8, right: 16, top: 12, bottom: 12),
+        padding: const EdgeInsets.only(top: 12, bottom: 12),
+        alignment: Alignment.center,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
           color: Theme.of(context).cardColor,
-          // boxShadow: [
-          //   BoxShadow(
-          //     color: AppColor.GREY_LIGHT.withOpacity(0.3),
-          //     spreadRadius: 1,
-          //     blurRadius: 5,
-          //     offset: const Offset(0, 0), // changes position of shadow
-          //   ),
-          // ],
         ),
-        child: Row(
+        child: Column(
           children: [
             Image.asset(
               pathIcon,
-              width: 40,
+              width: 50,
               height: 40,
               color: AppColor.BLUE_TEXT,
               fit: BoxFit.cover,
             ),
-            Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          title,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 12,
-                              height: 1.4),
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.all(2),
-                        decoration: BoxDecoration(
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(25)),
-                            color: AppColor.GREY_LIGHT.withOpacity(0.2)),
-                        child: const Icon(
-                          Icons.arrow_forward_ios,
-                          color: AppColor.GREY_HIGHLIGHT,
-                          size: 10,
-                        ),
-                      )
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    des,
-                    style: const TextStyle(
-                        fontSize: 10, color: AppColor.GREY_TEXT),
-                  ),
-                ],
-              ),
+            Text(
+              title,
+              style: const TextStyle(fontWeight: FontWeight.w500, height: 1.4),
             ),
           ],
         ),
@@ -483,43 +473,10 @@ class _StackedList extends State<StackedList> {
     );
   }
 
-  List<Color> fillListColor(List<Color> colors) {
-    List<Color> listColor = [];
-    listColor = [Colors.white, ...colors, Colors.black26];
-    return listColor;
-  }
-
   List<BankAccountDTO> fillListBankAccount(List<BankAccountDTO> listBank) {
-    BankAccountDTO otd = const BankAccountDTO(
-        id: '',
-        bankAccount: '',
-        userBankName: '',
-        bankCode: '',
-        bankName: '',
-        imgId: '',
-        type: 0,
-        branchId: '',
-        businessId: '',
-        branchName: '',
-        isAuthenticated: false,
-        businessName: '');
-    BankAccountDTO otd2 = const BankAccountDTO(
-        id: '',
-        bankAccount: 'MB',
-        userBankName: '',
-        bankCode: '',
-        bankName: '',
-        imgId: '',
-        type: 0,
-        branchId: '',
-        businessId: '',
-        branchName: '',
-        isAuthenticated: false,
-        businessName: '');
-
     List<BankAccountDTO> listBankAccount = [];
 
-    listBankAccount = [otd, ...listBank, otd2];
+    listBankAccount = listBank;
 
     return listBankAccount;
   }
@@ -600,7 +557,7 @@ class _StackedList extends State<StackedList> {
               ),
               child: Container(
                 decoration: BoxDecoration(
-                  color: fillListColor(widget.colors)[index],
+                  color: fillListBankAccount(widget.list)[index].bankColor,
                   borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(20),
                       topRight: Radius.circular(20)),
@@ -670,9 +627,6 @@ class _StackedList extends State<StackedList> {
                         const Padding(padding: EdgeInsets.only(left: 10)),
                         InkWell(
                           onTap: () async {
-
-
-
                             NavigatorUtils.navigatePage(
                                 context, CreateQrScreen(bankAccountDTO: dto));
                             // Navigator.pushNamed(

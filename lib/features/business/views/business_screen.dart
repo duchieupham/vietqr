@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
@@ -570,16 +571,17 @@ class _BusinessScreenState extends State<_BusinessScreen>
                     final data =
                         await DialogWidget.instance.showModelBottomSheet(
                       context: context,
+                      height: height * 0.5,
                       padding: EdgeInsets.zero,
                       widget: SelectBranchWidget(
                         businessId: dto.businessId,
                       ),
-                      height: height * 0.5,
                     );
 
                     if (!mounted) return;
                     if (data != null && data is String) {
-                      await DialogWidget.instance.showModalBottomContent(
+                      final isCheck =
+                          await DialogWidget.instance.showModalBottomContent(
                         context: context,
                         widget: SelectBankConnectBranchWidget(
                           branchId: data,
@@ -587,6 +589,11 @@ class _BusinessScreenState extends State<_BusinessScreen>
                         ),
                         height: height * 0.7,
                       );
+
+                      if (isCheck) {
+                        _refresh();
+                        eventBus.fire(GetListBankScreen());
+                      }
                     }
                   },
                   bgColor: Theme.of(context).cardColor,

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -53,11 +55,46 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
     imgId: '',
   );
 
-  Future<void> share({required QRGeneratedDTO dto}) async {
+  DecorationImage getImage(int type, String imageId) {
+    if (imageId.isNotEmpty) {
+      if (type == 4) {
+        return DecorationImage(
+            image: MemoryImage(base64Decode(imageId)),
+            fit: type == 2 ? BoxFit.contain : BoxFit.cover);
+      }
+      return DecorationImage(
+          image: ImageUtils.instance.getImageNetWork(imageId),
+          fit: type == 2 ? BoxFit.contain : BoxFit.cover);
+    } else {
+      if (type != 1) {
+        return const DecorationImage(
+            image: AssetImage('assets/images/ic-tb-qr.png'),
+            fit: BoxFit.contain);
+      } else {
+        return const DecorationImage(
+            image: AssetImage('assets/images/ic-viet-qr-small.png'),
+            fit: BoxFit.contain);
+      }
+    }
+  }
+
+  Future<void> share(
+      {required QRGeneratedDTO dto, ContactDetailDTO? contactDetail}) async {
+    String text = '';
+
+    if (widget.dto.type == 4) {
+      if (contactDetail != null) {
+        text =
+            'SĐT: ${contactDetail.bankAccount} - Email: ${contactDetail.email} - Được tạo từ VietQR VN';
+      }
+    } else {
+      text = ShareUtils.instance.getTextSharing(dto);
+    }
+
     await Future.delayed(const Duration(milliseconds: 200), () async {
       await ShareUtils.instance.shareImage(
         key: globalKey,
-        textSharing: ShareUtils.instance.getTextSharing(dto),
+        textSharing: text,
       );
     });
   }
@@ -85,8 +122,8 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     return BlocProvider<ContactBloc>(
-      create: (context) =>
-          ContactBloc(context)..add(ContactEventGetDetail(id: widget.dto.id)),
+      create: (context) => ContactBloc(context)
+        ..add(ContactEventGetDetail(id: widget.dto.id, type: widget.dto.type)),
       child: BlocConsumer<ContactBloc, ContactState>(
         listener: (context, state) {
           if (state.status == BlocStatus.UNLOADING) {
@@ -137,8 +174,9 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
 
                           if (!mounted) return;
                           if (data is bool) {
-                            BlocProvider.of<ContactBloc>(context)
-                                .add(ContactEventGetDetail(id: widget.dto.id));
+                            BlocProvider.of<ContactBloc>(context).add(
+                                ContactEventGetDetail(
+                                    id: widget.dto.id, type: widget.dto.type));
                           }
                         },
                         child: Image.asset(
@@ -284,7 +322,10 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
                                     pathIcon: 'assets/images/ic-share-blue.png',
                                     title: '',
                                     function: () async {
-                                      await share(dto: qrGeneratedDTO);
+                                      await share(
+                                          dto: qrGeneratedDTO,
+                                          contactDetail:
+                                              state.contactDetailDTO);
                                     },
                                     bgColor: Theme.of(context).cardColor,
                                     textColor: AppColor.BLUE_TEXT,
@@ -306,15 +347,6 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
     );
   }
 
-  ImageProvider getEmbeddedImageImage(ContactDetailDTO dto) {
-    if (dto.type == 1 || dto.type == 3) {
-      if (dto.imgId?.isNotEmpty ?? false) {
-        return ImageUtils.instance.getImageNetworkCache(dto.imgId ?? '');
-      }
-    }
-    return const AssetImage('assets/images/ic-viet-qr-small.png');
-  }
-
   Widget _buildTypeQr(ContactDetailDTO dto, {required Function()? onEdit}) {
     Widget buttonEdit = widget.isEdit
         ? GestureDetector(
@@ -331,94 +363,6 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
             ),
           )
         : const SizedBox();
-    if (dto.type == 2) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Row(
-          children: [
-            Container(
-              width: 35,
-              height: 35,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
-                color: AppColor.WHITE,
-                image: DecorationImage(
-                    image:
-                        ImageUtils.instance.getImageNetWork(dto.imgId ?? '')),
-              ),
-            ),
-            const SizedBox(
-              width: 8,
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    dto.nickName ?? '',
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Text(
-                    dto.bankShortName ?? '',
-                    style: TextStyle(fontSize: 12),
-                  ),
-                ],
-              ),
-            ),
-            buttonEdit,
-          ],
-        ),
-      );
-    } else if (dto.type == 1) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Row(
-          children: [
-            Container(
-              width: 35,
-              height: 35,
-              decoration: BoxDecoration(
-                color: AppColor.WHITE,
-                borderRadius: BorderRadius.circular(40),
-                image: dto.type == 2
-                    ? DecorationImage(
-                        image: ImageUtils.instance
-                            .getImageNetWork(dto.imgId ?? ''),
-                        fit: BoxFit.contain)
-                    : const DecorationImage(
-                        image: AssetImage('assets/images/ic-viet-qr-small.png'),
-                        fit: BoxFit.contain),
-              ),
-            ),
-            SizedBox(
-              width: 8,
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    dto.nickName ?? '',
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Text(
-                    'VietQR ID',
-                    style: TextStyle(fontSize: 12),
-                  ),
-                ],
-              ),
-            ),
-            buttonEdit,
-          ],
-        ),
-      );
-    }
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -430,14 +374,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
             decoration: BoxDecoration(
               color: AppColor.WHITE,
               borderRadius: BorderRadius.circular(40),
-              image: dto.imgId?.isNotEmpty ?? false
-                  ? DecorationImage(
-                      image: ImageUtils.instance
-                          .getImageNetworkCache(dto.imgId ?? ''),
-                      fit: BoxFit.cover)
-                  : const DecorationImage(
-                      image: AssetImage('assets/images/ic-viet-qr-small.png'),
-                      fit: BoxFit.contain),
+              image: getImage(dto.type ?? 0, dto.imgId ?? ''),
             ),
           ),
           SizedBox(
@@ -454,10 +391,20 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                Text(
-                  'Thẻ khác',
-                  style: TextStyle(fontSize: 12),
-                ),
+                const SizedBox(height: 4),
+                dto.type == 2
+                    ? Text(
+                        dto.bankShortName ?? '',
+                        style: TextStyle(fontSize: 12),
+                      )
+                    : Text(
+                        dto.type == 1
+                            ? 'VietQR ID'
+                            : dto.type == 4
+                                ? 'Danh bạ'
+                                : 'Thẻ khác',
+                        style: TextStyle(fontSize: 12),
+                      ),
               ],
             ),
           ),
@@ -505,61 +452,50 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
           Stack(
             children: [
               RepaintBoundaryWidget(
-                  globalKey: globalKey,
-                  builder: (key) {
-                    return Container(
-                      margin: EdgeInsets.symmetric(vertical: 32),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          gradient: dto.getBgGradient()),
-                      child: Column(
-                        children: [
-                          const SizedBox(
-                            height: 60,
+                globalKey: globalKey,
+                builder: (key) {
+                  return Container(
+                    margin: EdgeInsets.symmetric(vertical: 32),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        gradient: dto.getBgGradient()),
+                    child: Column(
+                      children: [
+                        const SizedBox(
+                          height: 60,
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(
+                              left: 40, right: 40, top: 68, bottom: 32),
+                          decoration: BoxDecoration(
+                            color: AppColor.WHITE,
                           ),
-                          Container(
-                            margin: const EdgeInsets.only(
-                                left: 40, right: 40, top: 68, bottom: 32),
-                            decoration: BoxDecoration(
-                              color: AppColor.WHITE,
-                            ),
-                            child: Stack(
-                              children: [
-                                QrImage(
-                                  data: dto.value ?? '',
-                                  version: QrVersions.auto,
-                                ),
-                                Positioned(
-                                  top: 0,
-                                  bottom: 0,
-                                  right: 0,
-                                  left: 0,
-                                  child: Align(
-                                    alignment: Alignment.center,
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(20),
-                                      child: Image(
-                                        height: 30,
-                                        width: 30,
-                                        fit: BoxFit.cover,
-                                        image: getEmbeddedImageImage(dto),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
+                          child: Stack(
+                            children: [
+                              QrImage(
+                                data: dto.value ?? '',
+                                version: QrVersions.auto,
+                              ),
+                            ],
                           ),
-                          Text(
-                            dto.nickName ?? '',
-                            style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: AppColor.WHITE),
-                          ),
-                          const SizedBox(
-                            height: 4,
-                          ),
+                        ),
+                        Text(
+                          dto.nickName ?? '',
+                          style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: AppColor.WHITE),
+                        ),
+                        const SizedBox(height: 4),
+                        if (dto.type == 4) ...[
+                          const Divider(thickness: 1, color: AppColor.WHITE),
+                          _buildItem('Số điện thoại', '${dto.bankAccount}'),
+                          const Divider(thickness: 1, color: AppColor.WHITE),
+                          _buildItem('Email', '${dto.email}'),
+                          const Divider(thickness: 1, color: AppColor.WHITE),
+                          _buildItem('Ghi chú', '${dto.additionalData}'),
+                          const SizedBox(height: 20),
+                        ] else ...[
                           Text(
                             dto.additionalData ?? '',
                             style: TextStyle(color: AppColor.WHITE),
@@ -598,10 +534,12 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
                           const SizedBox(
                             height: 100,
                           ),
-                        ],
-                      ),
-                    );
-                  }),
+                        ]
+                      ],
+                    ),
+                  );
+                },
+              ),
               Positioned(
                 top: 32,
                 right: 0,
@@ -622,8 +560,9 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
 
                         if (!mounted) return;
                         if (data is bool) {
-                          BlocProvider.of<ContactBloc>(contextBloc)
-                              .add(ContactEventGetDetail(id: widget.dto.id));
+                          BlocProvider.of<ContactBloc>(contextBloc).add(
+                              ContactEventGetDetail(
+                                  id: widget.dto.id, type: widget.dto.type));
                         }
                       },
                     ),
@@ -641,5 +580,29 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
         ],
       );
     }
+  }
+
+  Widget _buildItem(String title, String content) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 1,
+            child: Text(
+              title,
+              style: TextStyle(color: AppColor.WHITE),
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Text(
+              content,
+              style: TextStyle(color: AppColor.WHITE),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

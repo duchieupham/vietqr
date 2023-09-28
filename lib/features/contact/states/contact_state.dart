@@ -4,9 +4,9 @@ import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/contact_detail_dto.dart';
 import 'package:vierqr/models/contact_dto.dart';
-import 'package:vierqr/models/qr_generated_dto.dart';
 
 class ContactState extends Equatable {
+  final List<List<ContactDTO>> listCompareContact;
   final List<ContactDTO> listContactDTO;
   final List<ContactDTO> listContactDTOSuggest;
   final ContactDetailDTO contactDetailDTO;
@@ -21,11 +21,11 @@ class ContactState extends Equatable {
   final ContactDTO? userSearch;
   final String? imgId;
   final dynamic dto;
-  final List<Color> colors;
   final bool isLoading;
 
   const ContactState({
     required this.listContactDTO,
+    required this.listCompareContact,
     required this.listContactDTOSuggest,
     required this.contactDetailDTO,
     this.status = BlocStatus.NONE,
@@ -39,7 +39,6 @@ class ContactState extends Equatable {
     this.userSearch,
     this.imgId,
     this.dto,
-    required this.colors,
     this.isLoading = false,
   });
 
@@ -48,6 +47,7 @@ class ContactState extends Equatable {
     ContactType? type,
     String? msg,
     List<ContactDTO>? listContactDTO,
+    List<List<ContactDTO>>? listCompareContact,
     List<ContactDTO>? listContactDTOSuggest,
     ContactDetailDTO? contactDetailDTO,
     String? qrCode,
@@ -58,7 +58,6 @@ class ContactState extends Equatable {
     BankTypeDTO? bankTypeDTO,
     String? imgId,
     dynamic dto,
-    List<Color>? colors,
     bool? isLoading,
   }) {
     return ContactState(
@@ -66,6 +65,7 @@ class ContactState extends Equatable {
       type: type ?? this.type,
       msg: msg ?? this.msg,
       listContactDTO: listContactDTO ?? this.listContactDTO,
+      listCompareContact: listCompareContact ?? this.listCompareContact,
       listContactDTOSuggest:
           listContactDTOSuggest ?? this.listContactDTOSuggest,
       contactDetailDTO: contactDetailDTO ?? this.contactDetailDTO,
@@ -77,7 +77,6 @@ class ContactState extends Equatable {
       userSearch: userSearch ?? this.userSearch,
       imgId: imgId ?? this.imgId,
       dto: dto ?? this.dto,
-      colors: colors ?? this.colors,
       isLoading: isLoading ?? this.isLoading,
     );
   }

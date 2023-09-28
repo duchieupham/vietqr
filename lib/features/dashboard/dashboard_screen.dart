@@ -17,6 +17,7 @@ import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
+import 'package:vierqr/commons/utils/pref_utils.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/ambient_avatar_widget.dart';
@@ -244,20 +245,11 @@ class _DashBoardScreen extends State<DashBoardScreen>
   }
 
 //check user information is updated before or not
-  void checkUserInformation() {
-    // String firstName =
-    //     UserInformationHelper.instance.getAccountInformation().firstName;
-    // if (firstName != 'Undefined') {
-    //   Future.delayed(const Duration(milliseconds: 0), () {
-    //     Provider.of<SuggestionWidgetProvider>(context, listen: false)
-    //         .updateUserUpdating(false);
-    //   });
-    // } else {
-    //   Future.delayed(const Duration(milliseconds: 0), () {
-    //     Provider.of<SuggestionWidgetProvider>(context, listen: false)
-    //         .updateUserUpdating(true);
-    //   });
-    // }
+  void checkUserInformation() async {
+    String userId = UserInformationHelper.instance.getUserId();
+    if (userId.isNotEmpty) {
+
+    }
   }
 
   void _updateFcmToken(bool isFromLogin) {
@@ -369,7 +361,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
 
         if (state.request == DashBoardType.INSERT_BANK) {
           if (!mounted) return;
-          eventBus.fire(ChangeThemeEvent());
+          eventBus.fire(GetListBankScreen());
           Navigator.of(context).pop(true);
           Fluttertoast.showToast(
             msg: 'Thêm TK thành công',

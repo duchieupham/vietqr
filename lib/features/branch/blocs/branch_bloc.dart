@@ -95,7 +95,6 @@ class BranchBloc extends Bloc<BranchEvent, BranchState> {
         emit(BranchGetBanksLoadingState());
         List<AccountBankBranchDTO> list =
             await branchRepository.getBranchBanks(event.id);
-        final List<Color> colors = [];
         PaletteGenerator? paletteGenerator;
         BuildContext context = NavigationService.navigatorKey.currentContext!;
         if (list.isNotEmpty) {
@@ -103,13 +102,13 @@ class BranchBloc extends Bloc<BranchEvent, BranchState> {
             NetworkImage image = ImageUtils.instance.getImageNetWork(dto.imgId);
             paletteGenerator = await PaletteGenerator.fromImageProvider(image);
             if (paletteGenerator.dominantColor != null) {
-              colors.add(paletteGenerator.dominantColor!.color);
+              dto.setColor(paletteGenerator.dominantColor!.color);
             } else {
-              colors.add(Theme.of(context).cardColor);
+              dto.setColor(Theme.of(context).cardColor);
             }
           }
         }
-        emit(BranchGetBanksSuccessState(list: list, colors: colors));
+        emit(BranchGetBanksSuccessState(list: list));
       }
     } catch (e) {
       LOG.error(e.toString());
@@ -217,13 +216,13 @@ class BranchBloc extends Bloc<BranchEvent, BranchState> {
             NetworkImage image = ImageUtils.instance.getImageNetWork(dto.imgId);
             paletteGenerator = await PaletteGenerator.fromImageProvider(image);
             if (paletteGenerator.dominantColor != null) {
-              colors.add(paletteGenerator.dominantColor!.color);
+              dto.setColor(paletteGenerator.dominantColor!.color);
             } else {
-              colors.add(Theme.of(context).cardColor);
+              dto.setColor(Theme.of(context).cardColor);
             }
           }
         }
-        emit(BranchGetConnectBankSuccessState(list: list, colors: colors));
+        emit(BranchGetConnectBankSuccessState(list: list));
       }
     } catch (e) {
       LOG.error(e.toString());

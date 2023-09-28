@@ -62,6 +62,60 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
     role: 0,
   );
 
+  Widget _buildHeader() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Row(
+        children: [
+          Text(
+            'Lọc theo',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(width: 16),
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                type = 0;
+              });
+            },
+            child: Container(
+              width: 110,
+              alignment: Alignment.center,
+              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: type == 0
+                    ? AppColor.BLUE_TEXT.withOpacity(0.8)
+                    : AppColor.greyF0F0F0,
+              ),
+              child: const Text('Số điện thoại'),
+            ),
+          ),
+          const SizedBox(width: 4),
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                type = 1;
+              });
+            },
+            child: Container(
+              width: 110,
+              alignment: Alignment.center,
+              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: type == 1
+                    ? AppColor.BLUE_TEXT.withOpacity(0.8)
+                    : AppColor.greyF0F0F0,
+              ),
+              child: const Text('Họ tên'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
@@ -126,124 +180,55 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
                 ),
                 if (message.trim().isNotEmpty && !isError)
                   Expanded(
-                    child: Center(
-                      child: Text(
-                        message,
-                      ),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 30),
+                          child: Center(
+                            child: Text(
+                              message,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   )
                 else
                   listMember.isNotEmpty
                       ? Expanded(
-                          child: Column(
-                            children: List.generate(listMember.length, (index) {
-                              BusinessMemberDTO dto = BusinessMemberDTO(
-                                userId: listMember[index].id ?? '',
-                                status: '',
-                                existed: listMember[index].existed ?? 0,
-                                imgId: listMember[index].imgId ?? '',
-                                name: listMember[index].fullName,
-                                phoneNo: listMember[index].phoneNo ?? '',
-                                role: 0,
-                              );
-                              return _buildSearchItem(
-                                  context: context, dto: dto);
-                            }).toList(),
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children:
+                                  List.generate(listMember.length, (index) {
+                                BusinessMemberDTO dto = BusinessMemberDTO(
+                                  userId: listMember[index].id ?? '',
+                                  status: '',
+                                  existed: listMember[index].existed ?? 0,
+                                  imgId: listMember[index].imgId ?? '',
+                                  name: listMember[index].fullName,
+                                  phoneNo: listMember[index].phoneNo ?? '',
+                                  role: 0,
+                                );
+                                return _buildSearchItem(
+                                    context: context, dto: dto, index: index);
+                              }).toList(),
+                            ),
                           ),
                         )
                       : (_dto.userId.isNotEmpty && message.trim().isEmpty)
-                          ? _buildSearchItem(context: context, dto: _dto)
-                          : const SizedBox(),
+                          ? Expanded(
+                              child: Column(
+                                children: [
+                                  _buildSearchItem(context: context, dto: _dto),
+                                ],
+                              ),
+                            )
+                          : const Expanded(child: SizedBox()),
               ],
             ),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                'Tìm kiếm theo',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Checkbox(
-                          checkColor: AppColor.BLUE_TEXT,
-                          activeColor: AppColor.BLUE_TEXT.withOpacity(0.3),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(2.0),
-                          ),
-                          side: MaterialStateBorderSide.resolveWith(
-                            (states) => const BorderSide(
-                              width: 1.0,
-                              color: AppColor.BLUE_TEXT,
-                            ),
-                          ),
-                          value: type == 1,
-                          onChanged: (value) {
-                            setState(() {
-                              type = 1;
-                            });
-                          },
-                        ),
-                        Expanded(
-                          child: DefaultTextStyle(
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: AppColor.BLACK,
-                            ),
-                            child: const Text(
-                              'Họ và tên',
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Checkbox(
-                          checkColor: AppColor.BLUE_TEXT,
-                          activeColor: AppColor.BLUE_TEXT.withOpacity(0.3),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(2.0),
-                          ),
-                          side: MaterialStateBorderSide.resolveWith(
-                            (states) => const BorderSide(
-                              width: 1.0,
-                              color: AppColor.BLUE_TEXT,
-                            ),
-                          ),
-                          value: type == 0,
-                          onChanged: (value) {
-                            setState(() {
-                              type = 0;
-                            });
-                          },
-                        ),
-                        Expanded(
-                          child: DefaultTextStyle(
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: AppColor.BLACK,
-                            ),
-                            child: const Text(
-                              'Số điện thoại',
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              )
-            ],
-          ),
+          _buildHeader(),
+          const SizedBox(height: 16),
           Form(
             key: _formAddMemberKey,
             child: BorderLayout(
@@ -299,7 +284,9 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
   }
 
   Widget _buildSearchItem(
-      {required BuildContext context, required BusinessMemberDTO dto}) {
+      {required BuildContext context,
+      required BusinessMemberDTO dto,
+      int? index}) {
     final double width = MediaQuery.of(context).size.width;
     return Container(
       width: width,
@@ -356,16 +343,14 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
                 ],
               ),
             )
-          else if (isLoading)
+          else if (isLoading && dto.existed == 2)
             Container(
               color: AppColor.TRANSPARENT,
               margin: const EdgeInsets.only(right: 8),
               width: 24,
               height: 24,
               child: const Center(
-                child: CircularProgressIndicator(
-                  color: AppColor.BLUE_TEXT,
-                ),
+                child: CircularProgressIndicator(color: AppColor.BLUE_TEXT),
               ),
             )
           else
@@ -378,7 +363,7 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
                   userId: dto.userId,
                   role: 4,
                 );
-                _insertMember(branchMemberInsertDTO);
+                _insertMember(branchMemberInsertDTO, index: index);
               },
               child: Container(
                 padding:
@@ -422,10 +407,14 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
   bool isLoading = false;
   bool isError = false;
 
-  void _insertMember(dto) async {
+  void _insertMember(dto, {int? index}) async {
     try {
       setState(() {
-        _dto.setExisted(2);
+        if (index != null && type == 1) {
+          listMember[index].setExisted(2);
+        } else {
+          _dto.setExisted(2);
+        }
         isLoading = true;
         isError = false;
         message = '';
@@ -434,11 +423,19 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
           await branchRepository.insertMember(dto);
       if (!mounted) return;
       if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
-        _dto.setExisted(1);
+        if (index != null) {
+          listMember[index].setExisted(1);
+        } else {
+          _dto.setExisted(1);
+        }
         isLoading = false;
         setState(() {});
       } else {
-        _dto.setExisted(0);
+        if (index != null && type == 1) {
+          listMember[index].setExisted(0);
+        } else {
+          _dto.setExisted(0);
+        }
         message = ErrorUtils.instance.getErrorMessage(result.message);
         isLoading = false;
         isError = true;
@@ -449,7 +446,11 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
       }
     } catch (e) {
       LOG.error(e.toString());
-      _dto.setExisted(0);
+      if (index != null && type == 1) {
+        listMember[index].setExisted(0);
+      } else {
+        _dto.setExisted(0);
+      }
       isLoading = false;
       isError = true;
       ResponseMessageDTO result =

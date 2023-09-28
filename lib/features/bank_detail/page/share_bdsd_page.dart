@@ -744,7 +744,7 @@ class _BuildConnectWidget extends StatelessWidget {
               onGetMember();
             },
             child: MTextFieldCustom(
-              hintText: 'Thêm thành viên bằng Số điện thoại',
+              hintText: 'Thêm thành viên bằng số điện thoại',
               keyboardAction: TextInputAction.next,
               onChange: (value) {},
               enable: false,

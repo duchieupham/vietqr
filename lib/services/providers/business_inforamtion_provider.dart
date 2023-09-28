@@ -32,17 +32,9 @@ class BusinessInformationProvider extends ChangeNotifier {
   get isLoadingGetMember => _isLoadingGetMember;
 
   List<AccountBankBranchDTO> banks = [];
-  List<Color> colors = [];
 
-  void updateBanks(value) {
-    banks.clear();
+  void updateBanks(List<AccountBankBranchDTO> value) {
     banks = value;
-    notifyListeners();
-  }
-
-  void updateColors(value) {
-    colors.clear();
-    colors = value;
     notifyListeners();
   }
 

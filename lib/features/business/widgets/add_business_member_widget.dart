@@ -12,6 +12,20 @@ import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/models/business_member_dto.dart';
 import 'package:vierqr/services/providers/search_clear_provider.dart';
 
+class AddBusinessMemberView extends StatelessWidget {
+  final List<BusinessMemberDTO> list;
+
+  const AddBusinessMemberView({super.key, required this.list});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider<BusinessMemberBloc>(
+      create: (BuildContext context) => BusinessMemberBloc(),
+      child: AddBusinessMemberWidget(list: list),
+    );
+  }
+}
+
 class AddBusinessMemberWidget extends StatefulWidget {
   final List<BusinessMemberDTO> list;
 

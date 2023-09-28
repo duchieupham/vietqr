@@ -198,6 +198,7 @@ enum TransType { NONE, GET_TRANDS, GET_FILTER }
 enum ContactType {
   NONE,
   GET_LIST,
+  GET_LIST_PEN,
   GET_DETAIL,
   GET_LIST_RECHARGE,
   REMOVE,

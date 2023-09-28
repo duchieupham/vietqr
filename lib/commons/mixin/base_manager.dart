@@ -22,7 +22,7 @@ mixin BaseManager {
 
   set banks(List<BankTypeDTO> value) => userRes.banks = value;
 
-  String get userId => UserInformationHelper.instance.getUserId();
+  String get userId => userRes.userId;
 
   int get getTypeBankArr =>
       Provider.of<AuthProvider>(context, listen: false).typeBankArr;

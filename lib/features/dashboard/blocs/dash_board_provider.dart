@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bottom_nav_dto.dart';
 
 class DashBoardProvider with ChangeNotifier {
@@ -14,6 +15,8 @@ class DashBoardProvider with ChangeNotifier {
 
   TypeMoveEvent _moveEvent = TypeMoveEvent.NONE;
 
+  List<BankAccountDTO> listBanks = [];
+
   get moveEvent => _moveEvent;
 
   TypeInternet type = TypeInternet.NONE;
@@ -22,6 +25,13 @@ class DashBoardProvider with ChangeNotifier {
   void updateInternet(value, typeInternet) {
     type = typeInternet;
     isInternet = value;
+    notifyListeners();
+  }
+
+  void updateListBanks(List<BankAccountDTO> value) {
+    listBanks = value.where((element) {
+      return element.branchId.isNotEmpty && element.branchId.isNotEmpty;
+    }).toList();
     notifyListeners();
   }
 

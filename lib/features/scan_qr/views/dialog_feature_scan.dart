@@ -242,7 +242,7 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
           'name': ''
         },
       );
-      eventBus.fire(ChangeThemeEvent());
+      eventBus.fire(GetListBankScreen());
 
       if (data is bool) {
         Navigator.of(context).pop();

@@ -1,9 +1,13 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:isolate';
 
 import 'package:dudv_base/dudv_base.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive/hive.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
@@ -19,9 +23,13 @@ import 'package:vierqr/features/contact/events/contact_event.dart';
 import 'package:vierqr/features/contact/states/contact_state.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/contact_dto.dart';
+import 'package:vierqr/services/local_storage/local_storage.dart';
+import 'package:vierqr/services/shared_references/account_helper.dart';
+import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 import 'save_contact_screen.dart';
 import 'views/contact_detail.dart';
+import 'widgets/introduce_widget.dart';
 
 class ContactScreen extends StatelessWidget {
   const ContactScreen({super.key});
@@ -31,7 +39,9 @@ class ContactScreen extends StatelessWidget {
     return BlocProvider<ContactBloc>(
       create: (context) => ContactBloc(context),
       child: ChangeNotifierProvider<ContactProvider>(
-        create: (context) => ContactProvider()..updateCategory(isFirst: true),
+        create: (context) => ContactProvider()
+          ..updateCategory(isFirst: true)
+          ..updateIntro(),
         child: _ContactState(),
       ),
     );
@@ -55,23 +65,151 @@ class _ContactStateState extends State<_ContactState>
 
   StreamSubscription? _subscription;
 
+  LocalStorageRepository _local = LocalStorageRepository();
+  Box? _box;
+
+  String get userId => UserInformationHelper.instance.getUserId();
+
   @override
   void initState() {
     super.initState();
-    _bloc = BlocProvider.of(context);
-    _pageController = PageController(
-        initialPage: Provider.of<ContactProvider>(context, listen: false).tab,
-        keepPage: true);
+
+    initData();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _bloc.add(ContactEventGetList());
+      _bloc.add(ContactEventGetList(isLoading: true));
       _bloc.add(ContactEventGetListPending());
+
+      Future.delayed(const Duration(seconds: 1)).then((value) {
+        if (Provider.of<ContactProvider>(context, listen: false).isIntro) {
+          DialogWidget.instance.openDialogIntroduce(
+            child: ContactIntroWidget(
+              onSync: () async {
+                Navigator.pop(context);
+                final data = await _fetchContacts();
+                Provider.of<ContactProvider>(context, listen: false)
+                    .updateListSync(data);
+              },
+              onSelected: (value) async {
+                Navigator.pop(context);
+                if (value) {
+                  await AccountHelper.instance.updateVCard(value);
+                }
+              },
+            ),
+          );
+        }
+      });
     });
 
     _subscription = eventBus.on<ReloadContact>().listen((_) {
       _onRefresh();
     });
 
-    controller.addListener(_loadMore);
+    scrollController.addListener(_loadMore);
+  }
+
+  initData() async {
+    _bloc = BlocProvider.of(context);
+    _pageController = PageController(
+        initialPage: Provider.of<ContactProvider>(context, listen: false).tab,
+        keepPage: true);
+    _box = await _local.openBox(userId);
+  }
+
+  Future<List<ContactDTO>> _fetchContacts() async {
+    if (await FlutterContacts.requestPermission(readonly: true)) {
+      ReceivePort port = ReceivePort();
+
+      final contacts = await FlutterContacts.getContacts();
+
+      final isolate = await Isolate.spawn(_handle, [port.sendPort, contacts]);
+      List<ContactDTO> data = await port.first;
+
+      isolate.kill(priority: Isolate.immediate);
+      return data;
+    }
+    return [];
+  }
+
+  static void _handle(List<dynamic> params) async {
+    SendPort sendPort = params[0];
+    List<Contact> data = params[1];
+
+    List<ContactDTO> list = await Future.wait(
+      data.map<Future<ContactDTO>>((e) async {
+        return ContactDTO(
+            id: e.id,
+            nickname: e.displayName,
+            status: 0,
+            type: 4,
+            imgId: '',
+            description: '',
+            phoneNo: e.phones.isNotEmpty ? e.phones.first.number : '',
+            carrierTypeId: '',
+            relation: 0);
+      }).toList(),
+    );
+
+    sendPort.send(list);
+  }
+
+  static void heavyTask(List<dynamic> args) async {
+    SendPort sendPort = args[0];
+    List<ContactDTO> list = args[1];
+
+    double progress = 0;
+    double amount = 1 / list.length;
+    for (int i = 0; i < list.length; i++) {
+      progress += amount;
+      if (i == list.length - 1) {
+        if (progress < 1) {
+          progress = 1;
+        }
+      } else if (progress > 1) {
+        progress = 1;
+      }
+
+      sendPort.send(HeavyTaskData(progress: progress, index: i));
+    }
+    sendPort.send(HeavyTaskData(progress: progress));
+  }
+
+  Stream<HeavyTaskData> _heavyTaskStreamReceiver(List<ContactDTO> list) async* {
+    final receivePort = ReceivePort();
+    Isolate.spawn(heavyTask, [receivePort.sendPort, list]);
+    await for (var message in receivePort) {
+      if (message is HeavyTaskData) {
+        if (message.index != null) {
+          final e = await FlutterContacts.getContact(list[message.index!].id);
+          if (e != null) {
+            String base64Image = '';
+            if (e.photo != null) {
+              base64Image = base64Encode(e.photo!);
+            }
+
+            final contact = ContactDTO(
+                id: e.id.isNotEmpty ? e.id : '',
+                nickname: e.displayName.isNotEmpty ? e.displayName : '',
+                status: 0,
+                type: 4,
+                imgId: base64Image,
+                description: e.notes.isNotEmpty ? e.notes.first.note : '',
+                phoneNo: e.phones.isNotEmpty ? e.phones.first.number : '',
+                carrierTypeId: '',
+                relation: 0);
+            await _local.addProductToWishlist(_box!, contact);
+          }
+        }
+        yield message;
+        if (message.progress >= 1) {
+          receivePort.close();
+          Provider.of<ContactProvider>(context, listen: false)
+              .updateSync(false);
+          return;
+        }
+      }
+    }
   }
 
   @override
@@ -87,9 +225,11 @@ class _ContactStateState extends State<_ContactState>
         Provider.of<ContactProvider>(context, listen: false).category!.type;
     int offset = Provider.of<ContactProvider>(context, listen: false).offset;
 
-    final maxScroll = controller.position.maxScrollExtent;
-    if (controller.offset >= maxScroll && !controller.position.outOfRange) {
-      _bloc.add(ContactEventGetList(type: type, offset: offset));
+    final maxScroll = scrollController.position.maxScrollExtent;
+    if (scrollController.offset >= maxScroll &&
+        !scrollController.position.outOfRange) {
+      _bloc.add(
+          ContactEventGetList(type: type, offset: offset, isLoading: false));
     }
   }
 
@@ -133,7 +273,7 @@ class _ContactStateState extends State<_ContactState>
 
           if (state.type == ContactType.GET_LIST) {
             Provider.of<ContactProvider>(context, listen: false)
-                .updateList(state.listContactDTO);
+                .updateListAll(state.listCompareContact, state.listContactDTO);
             Provider.of<ContactProvider>(context, listen: false).updateOffset(
                 Provider.of<ContactProvider>(context, listen: false).offset++);
           }
@@ -170,7 +310,6 @@ class _ContactStateState extends State<_ContactState>
                   code: state.qrCode,
                   typeQR: state.typeQR,
                 ),
-                // settings: RouteSettings(name: ContactEditView.routeName),
               ),
             );
             _bloc.add(ContactEventGetList());
@@ -219,10 +358,23 @@ class _ContactStateState extends State<_ContactState>
                             return GestureDetector(
                               onTap: () {
                                 provider.updateCategory(value: model);
-                                _bloc.add(ContactEventGetList(
-                                    type: provider.category?.type));
-                                if (scrollController.hasClients)
-                                  scrollController.jumpTo(0.0);
+
+                                if (model.type == 4) {
+                                  List<ContactDTO> list = [];
+                                  if (_box != null) {
+                                    list = _local.getWishlist(_box!);
+                                  }
+                                  provider.updateListAll([], list);
+                                } else if (model.type != 0) {
+                                  if (scrollController.hasClients)
+                                    scrollController.jumpTo(0.0);
+                                  _bloc.add(
+                                      ContactEventGetList(type: model.type));
+                                } else {
+                                  if (controller.hasClients)
+                                    controller.jumpTo(0.0);
+                                  _bloc.add(ContactEventGetListPending());
+                                }
                               },
                               child: _buildCategory(
                                   title: model.title,
@@ -256,17 +408,17 @@ class _ContactStateState extends State<_ContactState>
                           else
                             Expanded(
                               child: _buildTapFirst(
-                                listContactDTO: provider.listSearch,
-                                colors: state.colors,
-                                onChange: provider.onSearch,
-                                isEdit: provider.category!.type != 8,
+                                listContactDTO: provider.listAllSearch,
+                                onChange: provider.onSearchAll,
+                                isEdit: provider.category!.type != 8 &&
+                                    provider.category!.type != 4,
                               ),
                             ),
                       ]
                     ],
                   ),
                   Positioned(
-                    bottom: 30,
+                    bottom: 100,
                     right: 20,
                     child: GestureDetector(
                       onTap: () async {
@@ -297,6 +449,79 @@ class _ContactStateState extends State<_ContactState>
                       ),
                     ),
                   ),
+                  if (provider.isSync)
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      left: 0,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          StreamBuilder<HeavyTaskData>(
+                            stream:
+                                _heavyTaskStreamReceiver(provider.listContact),
+                            builder: (context,
+                                AsyncSnapshot<HeavyTaskData> snapshot) {
+                              int pt = (((snapshot.data?.progress ?? 0) * 100)
+                                  .round());
+
+                              return Column(
+                                children: [
+                                  LinearPercentIndicator(
+                                    animation: true,
+                                    animationDuration: 0,
+                                    lineHeight: 5,
+                                    padding: EdgeInsets.zero,
+                                    percent: snapshot.data?.progress ?? 0.0,
+                                    progressColor: AppColor.BLUE_TEXT,
+                                  ),
+                                  Container(
+                                    color: Colors.white,
+                                    child: Row(
+                                      children: [
+                                        Image.asset(
+                                          'assets/images/ic-contact-sync.png',
+                                          width: 60,
+                                          height: 60,
+                                        ),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.stretch,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                'Đang lưu danh bạ',
+                                                style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                              Text(
+                                                'Vui lòng không tắt ứng dụng cho tới khi quá trình hoàn tất.',
+                                                style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: AppColor.grey979797,
+                                                    height: 1.5),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                        Text(
+                                          '$pt%',
+                                          style: TextStyle(fontSize: 15),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
                 ],
               );
             },
@@ -344,8 +569,7 @@ class _ContactStateState extends State<_ContactState>
   }
 
   Widget _buildTapFirst({
-    required List<ContactDTO> listContactDTO,
-    required List<Color> colors,
+    required List<List<ContactDTO>> listContactDTO,
     ValueChanged<String>? onChange,
     bool isEdit = true,
   }) {
@@ -375,45 +599,44 @@ class _ContactStateState extends State<_ContactState>
                 controller: scrollController,
                 physics: const AlwaysScrollableScrollPhysics(),
                 separatorBuilder: (context, index) {
-                  if (index == listContactDTO.length - 1) {
-                    return const SizedBox.shrink();
-                  }
-                  String firstLetterA = (listContactDTO[index].nickname)[0];
-                  String firstLetterB = (listContactDTO[index + 1].nickname)[0];
-                  if (firstLetterA != firstLetterB) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 4),
-                      child: Text(
-                        firstLetterB,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    );
-                  }
                   return const SizedBox.shrink();
                 },
                 itemBuilder: (BuildContext context, int index) {
-                  if (index == 0) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 4),
-                          child: Text((listContactDTO[index].nickname)[0],
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold)),
-                        ),
-                        _buildItemSave(
-                          dto: listContactDTO[index],
-                          color: colors[index],
-                          isEdit: isEdit,
-                        ),
-                      ],
-                    );
-                  }
-                  return _buildItemSave(
-                    dto: listContactDTO[index],
-                    color: colors[index],
-                    isEdit: isEdit,
+                  return Column(
+                    children: List.generate(
+                      listContactDTO[index].length,
+                      (i) {
+                        ContactDTO e = listContactDTO[index][i];
+                        return IntrinsicHeight(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.only(
+                                    right: 12, bottom: 12),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  e.nickname[0].toUpperCase(),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: (i == 0)
+                                        ? AppColor.textBlack
+                                        : AppColor.TRANSPARENT,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: _buildItemSave(
+                                  dto: e,
+                                  isEdit: isEdit,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ).toList(),
                   );
                 },
               ),
@@ -426,14 +649,13 @@ class _ContactStateState extends State<_ContactState>
 
   Widget _buildItemSave({
     required ContactDTO dto,
-    required Color? color,
     bool isEdit = true,
   }) {
     return GestureDetector(
       onTap: () async {
         final data = await Utils.navigatePage(
             context, ContactDetailScreen(dto: dto, isEdit: isEdit));
-        if (data) {
+        if (data != null) {
           _bloc.add(ContactEventGetList());
         }
       },
@@ -446,32 +668,16 @@ class _ContactStateState extends State<_ContactState>
         ),
         child: Row(
           children: [
-            ((dto.type == 2 || dto.type == 3) && dto.imgId.isNotEmpty)
-                ? Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: AppColor.WHITE,
-                      borderRadius: BorderRadius.circular(40),
-                      border: Border.all(
-                          color: AppColor.GREY_LIGHT.withOpacity(0.3)),
-                      image: getImage(dto.type, dto.imgId),
-                    ),
-                  )
-                : Container(
-                    width: 40,
-                    height: 40,
-                    padding: EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                        color: AppColor.GREY_LIGHT.withOpacity(0.1)),
-                    child: ClipRRect(
-                      child: Image.asset(
-                        'assets/images/ic-tb-qr.png',
-                        width: 28,
-                      ),
-                    ),
-                  ),
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: AppColor.WHITE,
+                borderRadius: BorderRadius.circular(40),
+                border: Border.all(color: AppColor.GREY_LIGHT.withOpacity(0.3)),
+                image: getImage(dto.type, dto.imgId),
+              ),
+            ),
             const SizedBox(width: 10),
             Expanded(
               child: Column(
@@ -492,11 +698,13 @@ class _ContactStateState extends State<_ContactState>
                     text: TextSpan(
                       children: [
                         TextSpan(
-                          text: dto.description,
+                          text: dto.type == 4 ? dto.phoneNo : dto.description,
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.w400,
-                            color: color,
+                            color: dto.type == 4
+                                ? AppColor.textBlack
+                                : dto.bankColor,
                             height: 1.4,
                           ),
                         ),
@@ -526,15 +734,26 @@ class _ContactStateState extends State<_ContactState>
   }
 
   DecorationImage getImage(int type, String imageId) {
-    if (type == 2 || type == 3) {
-      if (imageId.isNotEmpty) {
+    if (imageId.isNotEmpty) {
+      if (type == 4) {
         return DecorationImage(
-            image: ImageUtils.instance.getImageNetWork(imageId),
+            image: MemoryImage(base64Decode(imageId)),
             fit: type == 2 ? BoxFit.contain : BoxFit.cover);
       }
+      return DecorationImage(
+          image: ImageUtils.instance.getImageNetWork(imageId),
+          fit: type == 2 ? BoxFit.contain : BoxFit.cover);
+    } else {
+      if (type != 1) {
+        return const DecorationImage(
+            image: AssetImage('assets/images/ic-tb-qr.png'),
+            fit: BoxFit.contain);
+      } else {
+        return const DecorationImage(
+            image: AssetImage('assets/images/ic-viet-qr-small.png'),
+            fit: BoxFit.contain);
+      }
     }
-    return const DecorationImage(
-        image: AssetImage('assets/images/ic-tb-qr.png'), fit: BoxFit.contain);
   }
 
   Widget _buildTapSecond({required List<ContactDTO> list}) {
@@ -574,34 +793,17 @@ class _ContactStateState extends State<_ContactState>
         children: [
           Row(
             children: [
-              if (dto?.type == 2)
-                Container(
-                  width: 35,
-                  height: 35,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
-                      border: Border.all(
-                          color: AppColor.GREY_LIGHT.withOpacity(0.3)),
-                      image: DecorationImage(
-                          image: ImageUtils.instance
-                              .getImageNetWork(dto?.imgId ?? ''),
-                          fit: BoxFit.contain)),
-                )
-              else
-                Container(
-                  width: 35,
-                  height: 35,
-                  padding: EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
-                      color: AppColor.GREY_LIGHT.withOpacity(0.1)),
-                  child: ClipRRect(
-                    child: Image.asset(
-                      'assets/images/ic-tb-qr.png',
-                      width: 28,
-                    ),
-                  ),
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: AppColor.WHITE,
+                  borderRadius: BorderRadius.circular(40),
+                  border:
+                      Border.all(color: AppColor.GREY_LIGHT.withOpacity(0.3)),
+                  image: getImage(dto?.type ?? 0, dto?.imgId ?? ''),
                 ),
+              ),
               const SizedBox(width: 10),
               Expanded(
                 child: Column(
@@ -677,55 +879,13 @@ class _ContactStateState extends State<_ContactState>
     );
   }
 
-  Widget _buildTab({
-    required String text,
-    GestureTapCallback? onTap,
-    bool isSuggest = false,
-    bool isSelect = false,
-    required String textSuggest,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.only(bottom: 4),
-        margin: const EdgeInsets.only(right: 20),
-        decoration: BoxDecoration(
-          border: Border(
-            bottom: BorderSide(
-              color: isSelect ? AppColor.BLUE_TEXT : AppColor.TRANSPARENT,
-            ),
-          ),
-        ),
-        child: Row(
-          children: [
-            Text(
-              text,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-            ),
-            if (isSuggest)
-              Container(
-                padding: const EdgeInsets.all(4),
-                margin: const EdgeInsets.only(left: 4),
-                width: 20,
-                height: 20,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                    color: AppColor.BLUE_TEXT.withOpacity(0.4),
-                    borderRadius: BorderRadius.circular(100)),
-                child: Text(
-                  textSuggest,
-                  style: const TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w400,
-                      color: AppColor.BLUE_TEXT),
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
   @override
   bool get wantKeepAlive => true;
+}
+
+class HeavyTaskData {
+  HeavyTaskData({required this.progress, this.index});
+
+  double progress;
+  int? index;
 }

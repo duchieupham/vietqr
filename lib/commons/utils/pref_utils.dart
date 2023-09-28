@@ -1,29 +1,32 @@
 import 'dart:async';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:vierqr/models/contact_detail_dto.dart';
+import 'package:vierqr/models/contact_dto.dart';
 
 /// Tuyệt đối không được dùng box.clear()
 /// vì nó sẽ xoá toàn bộ dữ liệu local app
 /// nếu muốn xoá dữ liệu nào đó dùng methob: box.delete(key cần xoá);
 
-class SharedPrefs {
-  static final SharedPrefs _instance = SharedPrefs._internal();
+class HivePrefs {
+  static final HivePrefs _instance = HivePrefs._internal();
 
   SharedPrefsKey get keys => SharedPrefsKey.instance;
   Box? prefs;
 
-  SharedPrefs._internal();
+  HivePrefs._internal();
 
   bool _initEd = false;
 
-  static SharedPrefs get instance => _instance;
+  static HivePrefs get instance => _instance;
 
-  Future<SharedPrefs> init() async {
-    Completer<SharedPrefs> completer = Completer<SharedPrefs>();
+  Future<HivePrefs> init() async {
+    Completer<HivePrefs> completer = Completer<HivePrefs>();
     if (_initEd) {
       completer.complete(_instance);
     } else {
+      Hive.registerAdapter(ContactDetailDTOAdapter());
+      Hive.registerAdapter(ContactDTOAdapter());
       await Hive.initFlutter();
-      prefs = await Hive.openBox(keys.prefKey);
       _initEd = true;
       completer.complete(_instance);
     }
@@ -41,4 +44,6 @@ class SharedPrefsKey {
   String get bankKey => 'bankKey';
 
   String get prefKey => "pref_key";
+
+  String get vCardKey => "vcard_key";
 }

@@ -606,6 +606,9 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                       ],
                     ),
                     Positioned(
+                      bottom: 120,
+                      left: 0,
+                      right: 0,
                       child: FloatBubble(
                         show: true,
                         initialAlignment: Alignment.bottomRight,

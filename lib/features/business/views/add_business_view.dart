@@ -397,7 +397,7 @@ class _AddBusinessViewState extends State<_AddBusinessView> {
                             final data = await DialogWidget.instance
                                 .showModalBottomContent(
                               isDismissible: false,
-                              widget: AddBusinessMemberWidget(
+                              widget: AddBusinessMemberView(
                                 list: Provider.of<AddBusinessProvider>(context,
                                         listen: false)
                                     .memberList,
