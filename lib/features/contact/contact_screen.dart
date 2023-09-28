@@ -880,7 +880,7 @@ class _ContactStateState extends State<_ContactState>
   }
 
   @override
-  bool get wantKeepAlive => true;
+  bool get wantKeepAlive => false;
 }
 
 class HeavyTaskData {
