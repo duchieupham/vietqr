@@ -734,7 +734,7 @@ class _BuildConnectWidget extends StatelessWidget {
             onTap: () async {
               await DialogWidget.instance.showModelBottomSheet(
                 context: context,
-                height: height * 0.5,
+                height: height * 0.7,
                 widget: AddBranchMemberWidget(
                   branchId: branchId,
                   businessId: businessId,
@@ -744,7 +744,7 @@ class _BuildConnectWidget extends StatelessWidget {
               onGetMember();
             },
             child: MTextFieldCustom(
-              hintText: 'Thêm thành viên bằng Số điện thoại',
+              hintText: 'Thêm thành viên bằng số điện thoại',
               keyboardAction: TextInputAction.next,
               onChange: (value) {},
               enable: false,

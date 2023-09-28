@@ -6,7 +6,7 @@ class Routes {
   static const String LOGIN_ACCOUNT = '/login_account';
   static const String REGISTER = '/register';
   static const String DASHBOARD = '/dashboard';
-  static const String CREATE_QR = '/createQR';
+  // static const String CREATE_QR = '/createQR';
   static const String QR_GENERATED = '/qrGenerated';
   static const String TRANSACTION_DETAIL = '/transactionDetail';
   static const String USER_EDIT = '/userEdit';

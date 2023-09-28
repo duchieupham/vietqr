@@ -1,6 +1,7 @@
-import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:vierqr/commons/utils/pref_utils.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
+import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class UserRepository {
   static final UserRepository _instance = UserRepository._internal();
@@ -9,17 +10,22 @@ class UserRepository {
 
   static UserRepository get instance => _instance;
 
-  Box get _box => SharedPrefs.instance.prefs!;
+  Box get _box => HivePrefs.instance.prefs!;
+
+  String get userId => UserInformationHelper.instance.getUserId();
+
+  String get intro_key => '${userId}_card';
 
   List<BankTypeDTO> banks = [];
 
-  final String _bankKey = 'bank_key';
+  bool isIntroContact = false;
 
-  Future saveBanks(data) async {
-    return _box.put(_bankKey, data);
+  bool getIntroContact() {
+    return isIntroContact = _box.get(intro_key) ?? false;
   }
 
-  dynamic getBanks() {
-    return _box.get(_bankKey);
+  Future<void> updateIntroContact(bool value) async {
+    isIntroContact = value;
+    await _box.put(intro_key, value);
   }
 }

@@ -61,7 +61,7 @@ class QRRepository {
   }
 
   Future<QRGeneratedDTO> regenerateQR(QRRecreateDTO dto) async {
-    QRGeneratedDTO result = const QRGeneratedDTO(
+    QRGeneratedDTO result = QRGeneratedDTO(
       bankCode: '',
       bankName: '',
       bankAccount: '',

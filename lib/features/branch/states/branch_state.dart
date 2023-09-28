@@ -6,6 +6,7 @@ import 'package:vierqr/models/branch_filter_dto.dart';
 import 'package:vierqr/models/branch_information_dto.dart';
 import 'package:vierqr/models/business_branch_choice_dto.dart';
 import 'package:vierqr/models/business_member_dto.dart';
+import 'package:vierqr/models/member_branch_model.dart';
 
 class BranchState extends Equatable {
   const BranchState();
@@ -63,12 +64,11 @@ class BranchGetBanksLoadingState extends BranchState {}
 
 class BranchGetBanksSuccessState extends BranchState {
   final List<AccountBankBranchDTO> list;
-  final List<Color> colors;
 
-  const BranchGetBanksSuccessState({required this.list, required this.colors});
+  const BranchGetBanksSuccessState({required this.list});
 
   @override
-  List<Object?> get props => [list, colors];
+  List<Object?> get props => [list];
 }
 
 class BranchGetBanksFailedState extends BranchState {}
@@ -92,10 +92,14 @@ class BranchGetMembersFailedState extends BranchState {}
 
 class BranchSeachMemberLoadingState extends BranchState {}
 
-class BranchSeachMemberSuccessState extends BranchState {
-  final BusinessMemberDTO dto;
+class BranchSearchMemberSuccessState extends BranchState {
+  final BusinessMemberDTO? dto;
+  final List<MemberBranchModel> listMember;
 
-  const BranchSeachMemberSuccessState({required this.dto});
+  const BranchSearchMemberSuccessState({
+    this.dto,
+    required this.listMember,
+  });
 
   @override
   List<Object?> get props => [dto];
@@ -162,13 +166,11 @@ class BranchGetConnectBankLoadingState extends BranchState {}
 
 class BranchGetConnectBankSuccessState extends BranchState {
   final List<AccountBankConnectBranchDTO> list;
-  final List<Color> colors;
 
-  const BranchGetConnectBankSuccessState(
-      {required this.list, required this.colors});
+  const BranchGetConnectBankSuccessState({required this.list});
 
   @override
-  List<Object?> get props => [list, colors];
+  List<Object?> get props => [list];
 }
 
 class BranchGetConnectBankFailedState extends BranchState {

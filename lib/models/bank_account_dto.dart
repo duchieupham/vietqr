@@ -1,3 +1,8 @@
+import 'package:flutter/material.dart';
+import 'package:palette_generator/palette_generator.dart';
+import 'package:vierqr/commons/utils/image_utils.dart';
+import 'package:vierqr/main.dart';
+
 class BankAccountDTO {
   final String id;
   final String bankAccount;
@@ -13,10 +18,12 @@ class BankAccountDTO {
   final bool isAuthenticated;
   final String? userId;
 
+  Color? bankColor;
+
   // final String branchCode;
   // final String businessCode;
 
-  const BankAccountDTO({
+  BankAccountDTO({
     required this.id,
     required this.bankAccount,
     required this.userBankName,
@@ -30,11 +37,16 @@ class BankAccountDTO {
     required this.businessName,
     required this.isAuthenticated,
     this.userId,
+    this.bankColor,
     // required this.branchCode,
     // required this.businessCode,
   });
 
-  factory BankAccountDTO.fromJson(Map<String, dynamic> json) {
+  setColor(value) {
+    bankColor = value;
+  }
+
+  factory BankAccountDTO.fromJson(Map<String, dynamic> json, {Color? color}) {
     return BankAccountDTO(
       id: json['id'] ?? '',
       bankAccount: json['bankAccount'] ?? '',

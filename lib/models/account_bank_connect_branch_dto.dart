@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class AccountBankConnectBranchDTO {
   final String bankId;
   final String bankAccount;
@@ -7,8 +9,9 @@ class AccountBankConnectBranchDTO {
   final String imgId;
   final String userId;
   final bool authenticated;
+  Color? bankColor;
 
-  const AccountBankConnectBranchDTO({
+  AccountBankConnectBranchDTO({
     required this.bankId,
     required this.bankAccount,
     required this.bankAccountName,
@@ -17,7 +20,12 @@ class AccountBankConnectBranchDTO {
     required this.imgId,
     required this.userId,
     required this.authenticated,
+    this.bankColor,
   });
+
+  setColor(value) {
+    bankColor = value;
+  }
 
   factory AccountBankConnectBranchDTO.fromJson(Map<String, dynamic> json) {
     return AccountBankConnectBranchDTO(

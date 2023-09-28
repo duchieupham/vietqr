@@ -50,11 +50,27 @@ class CreateQRBloc extends Bloc<CreateQREvent, CreateQRState> with BaseManager {
             ),
           );
         } else if (qrDTO != null) {
+          BankAccountDTO bankDTO = BankAccountDTO(
+            id: qrDTO!.bankId ?? '',
+            bankAccount: qrDTO!.bankAccount,
+            userBankName: qrDTO!.userBankName,
+            bankCode: qrDTO!.bankAccount,
+            bankName: qrDTO!.bankName,
+            imgId: qrDTO!.imgId,
+            type: 0,
+            branchId: '',
+            businessId: '',
+            branchName: '',
+            businessName: '',
+            isAuthenticated: false,
+          );
+
           emit(
             state.copyWith(
               dto: qrDTO,
               status: BlocStatus.NONE,
               type: CreateQRType.LOAD_DATA,
+              bankAccountDTO: bankDTO,
               page: 1,
             ),
           );

@@ -35,7 +35,6 @@ class SelectBankConnectBranchWidget extends StatefulWidget {
 class _SelectBankConnectBranchWidgetState
     extends State<SelectBankConnectBranchWidget> {
   List<AccountBankConnectBranchDTO> list = [];
-  List<Color> _colors = [];
   bool _isConnectBank = false;
 
   String userId = UserInformationHelper.instance.getUserId();
@@ -57,7 +56,6 @@ class _SelectBankConnectBranchWidgetState
     try {
       final List<AccountBankConnectBranchDTO> listData =
           await branchRepository.getBranchConnectBanks(userId);
-      final List<Color> colors = [];
       PaletteGenerator? paletteGenerator;
       BuildContext context = NavigationService.navigatorKey.currentContext!;
       if (listData.isNotEmpty) {
@@ -65,15 +63,14 @@ class _SelectBankConnectBranchWidgetState
           NetworkImage image = ImageUtils.instance.getImageNetWork(dto.imgId);
           paletteGenerator = await PaletteGenerator.fromImageProvider(image);
           if (paletteGenerator.dominantColor != null) {
-            colors.add(paletteGenerator.dominantColor!.color);
+            dto.setColor(paletteGenerator.dominantColor!.color);
           } else {
-            colors.add(Theme.of(context).cardColor);
+            dto.setColor(Theme.of(context).cardColor);
           }
         }
       }
 
       setState(() {
-        _colors = colors;
         list = listData;
       });
     } catch (e) {
@@ -131,32 +128,19 @@ class _SelectBankConnectBranchWidgetState
           DividerWidget(width: width),
           const Padding(padding: EdgeInsets.only(top: 30)),
           Expanded(
-            child: BlocBuilder<BranchBloc, BranchState>(
-              builder: (context, state) {
-                if (state is BranchGetConnectBankSuccessState) {
-                  list.clear();
-                  _colors.clear();
-                  if (list.isEmpty) {
-                    list.addAll(state.list);
-                    _colors.addAll(state.colors);
-                  }
-                }
-                return (list.isEmpty)
-                    ? const SizedBox()
-                    : ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: list.length,
-                        itemBuilder: (context, index) {
-                          return _buildCardItem(
-                            context: context,
-                            index: index,
-                            dto: list[index],
-                            color: _colors[index],
-                          );
-                        },
+            child: (list.isEmpty)
+                ? const SizedBox()
+                : ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: list.length,
+                    itemBuilder: (context, index) {
+                      return _buildCardItem(
+                        context: context,
+                        index: index,
+                        dto: list[index],
                       );
-              },
-            ),
+                    },
+                  ),
           ),
         ],
       ),
@@ -167,7 +151,6 @@ class _SelectBankConnectBranchWidgetState
     required BuildContext context,
     required int index,
     required AccountBankConnectBranchDTO dto,
-    required Color color,
   }) {
     final double width = MediaQuery.of(context).size.width;
 
@@ -180,7 +163,7 @@ class _SelectBankConnectBranchWidgetState
               margin: const EdgeInsets.only(bottom: 10),
               padding: const EdgeInsets.symmetric(vertical: 5),
               decoration: BoxDecoration(
-                color: color,
+                color: dto.bankColor,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: SizedBox(

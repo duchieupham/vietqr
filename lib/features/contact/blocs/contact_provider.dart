@@ -3,13 +3,21 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:vierqr/features/contact/models/data_model.dart';
 import 'package:vierqr/models/contact_dto.dart';
+import 'package:vierqr/models/user_repository.dart';
+import 'package:vierqr/services/shared_references/account_helper.dart';
 
 class ContactProvider extends ChangeNotifier {
+  UserRepository get userRes => UserRepository.instance;
+
   int tab = 0;
   bool isEnableBTSave = false;
 
   List<ContactDTO> listContactDTO = [];
+  List<ContactDTO> listSync = [];
   List<ContactDTO> listSearch = [];
+
+  List<List<ContactDTO>> listAll = [];
+  List<List<ContactDTO>> listAllSearch = [];
 
   String colorType = '0';
 
@@ -30,6 +38,32 @@ class ContactProvider extends ChangeNotifier {
 
   ContactDataModel model = ContactDataModel(
       title: 'Cá nhân', type: 0, url: 'assets/images/personal-relation.png');
+
+  bool isIntro = false;
+  bool isSync = false;
+
+  void initData() {
+    category = listCategories.first;
+    isIntro = userRes.getIntroContact();
+    notifyListeners();
+  }
+
+  void updateSync(value) {
+    isSync = value;
+    notifyListeners();
+  }
+
+  void updateListSync(List<ContactDTO> value) {
+    listSync = value;
+    isSync = true;
+    notifyListeners();
+  }
+
+  void updateIntro(bool value) {
+    userRes.updateIntroContact(value);
+    isIntro = userRes.isIntroContact;
+    notifyListeners();
+  }
 
   void updateQRT(value) {
     if (model != value) {
@@ -53,13 +87,9 @@ class ContactProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateCategory({ContactDataModel? value, bool isFirst = false}) {
-    if (isFirst) {
-      category = listCategories.first;
-    } else {
-      if (value == category) return;
-      category = value;
-    }
+  void updateCategory({ContactDataModel? value}) {
+    if (value == category) return;
+    category = value;
 
     notifyListeners();
   }
@@ -71,6 +101,43 @@ class ContactProvider extends ChangeNotifier {
 
   void updateTab(value) {
     tab = value;
+    notifyListeners();
+  }
+
+  void updateListAll(List<ContactDTO> value) {
+    List<List<ContactDTO>> _list = [];
+    List<String> listString = [];
+
+    if (value.isNotEmpty) {
+      for (int i = 0; i < value.length; i++) {
+        if (value[i].nickname.isNotEmpty) {
+          String keyName = value[i].nickname[0].toUpperCase();
+          listString.add(keyName);
+        } else {
+          listString.add('');
+        }
+      }
+
+      listString = listString.toSet().toList();
+
+      for (int i = 0; i < listString.length; i++) {
+        List<ContactDTO> listCompare = [];
+        listCompare = value.where((element) {
+          if (element.nickname.isNotEmpty) {
+            return element.nickname[0].toUpperCase() == listString[i];
+          } else {
+            return element.nickname.toUpperCase() == listString[i];
+          }
+        }).toList();
+
+        _list.add(listCompare);
+      }
+    }
+
+    listAll = _list;
+    listAllSearch = _list;
+
+    listContactDTO = value;
     notifyListeners();
   }
 
@@ -107,6 +174,40 @@ class ContactProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void onSearchAll(String value) {
+    if (value.isNotEmpty) {
+      List<ContactDTO> data = listContactDTO
+          .where((element) => element.nickname
+              .toLowerCase()
+              .trim()
+              .contains(value.toLowerCase().trim()))
+          .toList();
+
+      List<List<ContactDTO>> _list = [];
+      List<String> listString = [];
+
+      for (int i = 0; i < data.length; i++) {
+        listString.add(data[i].nickname[0].toUpperCase());
+      }
+      listString = listString.toSet().toList();
+
+      for (int i = 0; i < listString.length; i++) {
+        List<ContactDTO> listCompare = [];
+        listCompare = data
+            .where(
+                (element) => element.nickname[0].toUpperCase() == listString[i])
+            .toList();
+
+        _list.add(listCompare);
+      }
+
+      listAllSearch = _list;
+    } else {
+      listAllSearch = listAll;
+    }
+    notifyListeners();
+  }
+
   final List<String> listColor = [
     'assets/images/color-type-0.png',
     'assets/images/color-type-1.png',
@@ -117,14 +218,19 @@ class ContactProvider extends ChangeNotifier {
 
   final List<ContactDataModel> listCategories = [
     ContactDataModel(
-      title: 'Tất cả',
-      url: 'assets/images/ic-contact-bank-blue.png',
-      type: 9,
-    ),
-    ContactDataModel(
       title: 'Cộng đồng',
       url: 'assets/images/gl-white.png',
       type: 8,
+    ),
+    ContactDataModel(
+      title: 'Cá nhân',
+      url: 'assets/images/ic-personal-white.png',
+      type: 9,
+    ),
+    ContactDataModel(
+      title: 'Danh bạ',
+      url: 'assets/images/ic-contact-bank-blue.png',
+      type: 4,
     ),
     ContactDataModel(
       title: 'Ngân hàng',

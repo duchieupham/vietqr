@@ -11,6 +11,7 @@ import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/utils/sms_information_utils.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/pin_widget.dart';
+import 'package:vierqr/features/contact/widgets/introduce_widget.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_information_dto.dart';
@@ -421,6 +422,8 @@ class DialogWidget {
     BorderRadiusGeometry? borderRadius,
     Color? bgrColor,
     bool isDismissible = false,
+    double sigmaX = 5.0,
+    double sigmaY = 5.0,
   }) async {
     context ??= NavigationService.navigatorKey.currentContext!;
     return showModalBottomSheet(
@@ -433,7 +436,7 @@ class DialogWidget {
       builder: (context) {
         final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
         return BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+          filter: ImageFilter.blur(sigmaX: sigmaX, sigmaY: sigmaY),
           child: ClipRRect(
             child: Container(
               margin: margin ?? const EdgeInsets.only(top: kToolbarHeight),
@@ -646,7 +649,7 @@ class DialogWidget {
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                          fontSize: 13,
+                          fontSize: 14,
                         ),
                       ),
                     ),
@@ -1252,6 +1255,19 @@ class DialogWidget {
               ),
             ),
           ),
+        );
+      },
+    );
+  }
+
+  void openDialogIntroduce({required Widget child}) async {
+    return await showDialog(
+      barrierDismissible: false,
+      context: NavigationService.navigatorKey.currentContext!,
+      builder: (BuildContext context) {
+        return Material(
+          color: AppColor.TRANSPARENT,
+          child: Center(child: child),
         );
       },
     );

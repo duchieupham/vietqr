@@ -13,8 +13,9 @@ class InitDataEvent extends ContactEvent {}
 class ContactEventGetList extends ContactEvent {
   final int? type;
   final int? offset;
+  final bool isLoading;
 
-  ContactEventGetList({this.type, this.offset});
+  ContactEventGetList({this.type, this.offset, this.isLoading = true});
 
   @override
   List<Object?> get props => [type, offset];
@@ -26,8 +27,9 @@ class ContactEventGetListPending extends ContactEvent {}
 
 class ContactEventGetDetail extends ContactEvent {
   final String id;
+  final int type;
 
-  ContactEventGetDetail({required this.id});
+  ContactEventGetDetail({required this.id, required this.type});
 
   @override
   List<Object?> get props => [id];

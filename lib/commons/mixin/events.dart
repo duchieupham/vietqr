@@ -2,10 +2,6 @@ import 'package:event_bus/event_bus.dart';
 
 EventBus eventBus = EventBus();
 
-class ChangeThemeEvent {
-  ChangeThemeEvent();
-}
-
 class ChangeBottomBarEvent {
   final int page;
 
@@ -18,4 +14,12 @@ class GetListBankScreen {
 
 class ReloadWallet {
   ReloadWallet();
+}
+
+class ReloadContact {
+  ReloadContact();
+}
+
+class CheckSyncContact {
+  CheckSyncContact();
 }

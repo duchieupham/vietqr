@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/base_manager.dart';
-import 'package:vierqr/commons/utils/check_utils.dart';
 import 'package:vierqr/commons/utils/error_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/add_bank/events/add_bank_event.dart';
@@ -67,13 +66,13 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
   void _searchBankName(AddBankEvent event, Emitter emit) async {
     try {
       if (event is BankCardEventSearchName) {
-        emit(state.copyWith(
-            status: BlocStatus.LOADING, request: AddBankType.NONE));
+        emit(
+            state.copyWith(status: BlocStatus.NONE, request: AddBankType.NONE));
         BankNameInformationDTO dto =
             await bankCardRepository.searchBankName(event.dto);
         if (dto.accountName.trim().isNotEmpty) {
           emit(state.copyWith(
-              status: BlocStatus.UNLOADING,
+              status: BlocStatus.NONE,
               informationDTO: dto,
               request: AddBankType.SEARCH_BANK));
         } else {
@@ -81,7 +80,7 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
             state.copyWith(
               msg: 'Tài khoản ngân hàng không tồn tại.',
               request: AddBankType.ERROR,
-              status: BlocStatus.UNLOADING,
+              status: BlocStatus.NONE,
             ),
           );
         }
@@ -91,7 +90,7 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
       emit(state.copyWith(
         msg: 'Tài khoản ngân hàng không tồn tại.',
         request: AddBankType.ERROR,
-        status: BlocStatus.UNLOADING,
+        status: BlocStatus.NONE,
       ));
     }
   }
@@ -112,12 +111,12 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
           String msg =
               'Tài khoản đã được liên kết trước đó. Quý khách chỉ được lưu tài khoản này.';
           if (event.type == ExitsType.ADD.name) {
-            title = 'không thể thêm TK';
+            title = 'Không thể thêm TK';
             msg = 'TK đã tồn tại trong danh sách TK ngân hàng của bạn';
           }
           emit(
             state.copyWith(
-              request: AddBankType.ERROR,
+              request: AddBankType.ERROR_EXIST,
               status: BlocStatus.UNLOADING,
               msg: msg,
               titleMsg: title,
@@ -125,7 +124,7 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
           );
         } else {
           emit(state.copyWith(
-              request: AddBankType.ERROR,
+              request: AddBankType.ERROR_EXIST,
               status: BlocStatus.UNLOADING,
               titleMsg: null));
         }

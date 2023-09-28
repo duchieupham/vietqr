@@ -1,11 +1,13 @@
 import 'package:vierqr/main.dart';
 
 class QRScannerHelper {
-  const QRScannerHelper._privateConsrtructor();
+  const QRScannerHelper._privateConstructor();
 
   static const QRScannerHelper _instance =
-      QRScannerHelper._privateConsrtructor();
+      QRScannerHelper._privateConstructor();
+
   static QRScannerHelper get instance => _instance;
+
   //
   Future<void> initialQrScanner() async {
     await sharedPrefs.setBool('QR_INTRO', false);

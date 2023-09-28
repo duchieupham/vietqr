@@ -242,20 +242,9 @@ class _DashBoardScreen extends State<DashBoardScreen>
   }
 
 //check user information is updated before or not
-  void checkUserInformation() {
-    // String firstName =
-    //     UserInformationHelper.instance.getAccountInformation().firstName;
-    // if (firstName != 'Undefined') {
-    //   Future.delayed(const Duration(milliseconds: 0), () {
-    //     Provider.of<SuggestionWidgetProvider>(context, listen: false)
-    //         .updateUserUpdating(false);
-    //   });
-    // } else {
-    //   Future.delayed(const Duration(milliseconds: 0), () {
-    //     Provider.of<SuggestionWidgetProvider>(context, listen: false)
-    //         .updateUserUpdating(true);
-    //   });
-    // }
+  void checkUserInformation() async {
+    String userId = UserInformationHelper.instance.getUserId();
+    if (userId.isNotEmpty) {}
   }
 
   void _updateFcmToken(bool isFromLogin) {
@@ -367,7 +356,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
 
         if (state.request == DashBoardType.INSERT_BANK) {
           if (!mounted) return;
-          eventBus.fire(ChangeThemeEvent());
+          eventBus.fire(GetListBankScreen());
           Navigator.of(context).pop(true);
           Fluttertoast.showToast(
             msg: 'Thêm TK thành công',
@@ -535,7 +524,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
                   ),
                 );
               },
-            )
+            ),
           ],
         ),
         bottomNavigationBar: Consumer<DashBoardProvider>(
@@ -630,11 +619,10 @@ class _DashBoardScreen extends State<DashBoardScreen>
 //navigate to page
   void _animatedToPage(int index) {
     try {
-      _pageController.jumpToPage(
-        index,
-        // duration: const Duration(milliseconds: 200),
-        // curve: Curves.easeInOutQuart,
-      );
+      _pageController.jumpToPage(index);
+      if (index == 2) {
+        eventBus.fire(CheckSyncContact());
+      }
     } catch (e) {
       _pageController = PageController(
         initialPage: Provider.of<DashBoardProvider>(context, listen: false)
@@ -642,6 +630,9 @@ class _DashBoardScreen extends State<DashBoardScreen>
         keepPage: true,
       );
       _animatedToPage(index);
+      if (index == 2) {
+        eventBus.fire(CheckSyncContact());
+      }
     }
   }
 

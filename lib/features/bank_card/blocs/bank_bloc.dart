@@ -106,13 +106,16 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
             NetworkImage image = ImageUtils.instance.getImageNetWork(dto.imgId);
             paletteGenerator = await PaletteGenerator.fromImageProvider(image);
             if (paletteGenerator.dominantColor != null) {
-              colors.add(paletteGenerator.dominantColor!.color);
+              dto.setColor(paletteGenerator.dominantColor!.color);
             } else {
               if (!mounted) return;
-              colors.add(Theme.of(context).cardColor);
+              dto.setColor(Theme.of(context).cardColor);
             }
           }
+
+          list = [otd, ...list, otd2];
         }
+
         emit(state.copyWith(
             request: BankType.BANK,
             listBanks: list,
@@ -130,4 +133,35 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
   void _updateEvent(BankEvent event, Emitter emit) {
     emit(state.copyWith(status: BlocStatus.DONE));
   }
+
+  final otd = BankAccountDTO(
+    id: '',
+    bankAccount: '',
+    userBankName: '',
+    bankCode: '',
+    bankName: '',
+    imgId: '',
+    type: 0,
+    branchId: '',
+    businessId: '',
+    branchName: '',
+    isAuthenticated: false,
+    businessName: '',
+    bankColor: Colors.white,
+  );
+  final otd2 = BankAccountDTO(
+    id: '',
+    bankAccount: 'MB',
+    userBankName: '',
+    bankCode: '',
+    bankName: '',
+    imgId: '',
+    type: 0,
+    branchId: '',
+    businessId: '',
+    branchName: '',
+    isAuthenticated: false,
+    businessName: '',
+    bankColor: Colors.black26,
+  );
 }

@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
@@ -25,6 +26,16 @@ import 'package:vierqr/models/branch_member_delete_dto.dart';
 import 'package:vierqr/models/business_member_dto.dart';
 import 'package:vierqr/services/providers/business_inforamtion_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
+
+class BranchDetailScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider<BranchBloc>(
+      create: (BuildContext context) => BranchBloc(),
+      child: BranchDetailView(),
+    );
+  }
+}
 
 class BranchDetailView extends StatefulWidget {
   const BranchDetailView({super.key});
@@ -123,9 +134,8 @@ class _BranchDetailViewState extends State<BranchDetailView> {
                       Provider.of<BusinessInformationProvider>(context,
                               listen: false)
                           .updateBanks(state.list);
-                      Provider.of<BusinessInformationProvider>(context,
-                              listen: false)
-                          .updateColors(state.colors);
+                      eventBus.fire(GetListBankScreen());
+
                     }
                     if (state is BranchInsertMemberSuccessState ||
                         state is BranchDeleteMemberSuccessState) {
@@ -163,9 +173,7 @@ class _BranchDetailViewState extends State<BranchDetailView> {
                       Provider.of<BusinessInformationProvider>(context,
                               listen: false)
                           .updateBanks([]);
-                      Provider.of<BusinessInformationProvider>(context,
-                              listen: false)
-                          .updateColors([]);
+                      eventBus.fire(GetListBankScreen());
                     }
 
                     if (state is BranchGetMembersLoadingState) {
@@ -340,7 +348,6 @@ class _BranchDetailViewState extends State<BranchDetailView> {
                                     return _buildElementBank(
                                       context: context,
                                       dto: provider.banks[index],
-                                      color: provider.colors[index],
                                       userRole: userRole,
                                     );
                                   },
@@ -408,7 +415,7 @@ class _BranchDetailViewState extends State<BranchDetailView> {
                                                           .instance
                                                           .showModelBottomSheet(
                                                         context: context,
-                                                        height: height * 0.5,
+                                                        height: height * 0.7,
                                                         widget:
                                                             AddBranchMemberWidget(
                                                           branchId: branchId,
@@ -422,7 +429,7 @@ class _BranchDetailViewState extends State<BranchDetailView> {
                                                           BranchEventGetMembers(
                                                               id: branchId));
                                                     },
-                                                    bgColor: AppColor.GREEN,
+                                                    bgColor: AppColor.BLUE_TEXT,
                                                     textColor: AppColor.WHITE,
                                                   )
                                                 : const SizedBox(),
@@ -615,7 +622,6 @@ class _BranchDetailViewState extends State<BranchDetailView> {
   Widget _buildElementBank(
       {required BuildContext context,
       required AccountBankBranchDTO dto,
-      required Color color,
       required int userRole}) {
     final double width = MediaQuery.of(context).size.width;
     final bool isDelete = (userRole != 4 && userRole != 0) ? true : false;
@@ -625,7 +631,7 @@ class _BranchDetailViewState extends State<BranchDetailView> {
           ? const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20)
           : const EdgeInsets.only(left: 20, right: 20, top: 20),
       margin: const EdgeInsets.only(bottom: 10),
-      bgColor: color,
+      bgColor: dto.bankColor,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

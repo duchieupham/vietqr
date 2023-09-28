@@ -20,14 +20,13 @@ import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/helper/media_helper.dart';
 import 'package:vierqr/commons/utils/encrypt_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
+import 'package:vierqr/commons/utils/pref_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/add_bank/add_bank_screen.dart';
 import 'package:vierqr/features/bank_card/views/search_bank_view.dart';
 import 'package:vierqr/features/bank_type/select_bank_type_screen.dart';
-import 'package:vierqr/features/branch/blocs/branch_bloc.dart';
 import 'package:vierqr/features/branch/views/branch_detail_view.dart';
 import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
-import 'package:vierqr/features/business/blocs/business_member_bloc.dart';
 import 'package:vierqr/features/business/views/add_business_view.dart';
 import 'package:vierqr/features/business/views/business_information_view.dart';
 import 'package:vierqr/features/business/views/business_screen.dart';
@@ -36,9 +35,7 @@ import 'package:vierqr/features/connect_lark/connect_lark_screen.dart';
 import 'package:vierqr/features/connect_telegram/connect_telegram_screen.dart';
 import 'package:vierqr/features/connect_telegram/widget/connect_screen.dart';
 import 'package:vierqr/features/contact/contact_screen.dart';
-import 'package:vierqr/features/contact/views/contact_detail.dart';
 import 'package:vierqr/features/contact_us/contact_us_screen.dart';
-import 'package:vierqr/features/create_qr/create_qr_screen.dart';
 import 'package:vierqr/features/create_qr_un_authen/create_qr_un_quthen.dart';
 import 'package:vierqr/features/create_qr_un_authen/show_qr.dart';
 import 'package:vierqr/features/dashboard/blocs/dash_board_provider.dart';
@@ -69,7 +66,6 @@ import 'package:vierqr/features/top_up/top_up_screen.dart';
 import 'package:vierqr/features/top_up/widget/pop_up_top_up_sucsess.dart';
 import 'package:vierqr/features/transaction/transaction_detail_screen.dart';
 import 'package:vierqr/features/transaction/widgets/transaction_sucess_widget.dart';
-import 'package:vierqr/models/contact_dto.dart';
 import 'package:vierqr/models/notification_transaction_success_dto.dart';
 import 'package:vierqr/models/respone_top_up_dto.dart';
 import 'package:vierqr/models/top_up_sucsess_dto.dart';
@@ -98,7 +94,7 @@ List<CameraDescription> cameras = [];
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   sharedPrefs = await SharedPreferences.getInstance();
-  // await SharedPrefs.instance.init();
+  await HivePrefs.instance.init();
   await _initialServiceHelper();
   if (kIsWeb) {
     await Firebase.initializeApp(
@@ -309,14 +305,8 @@ class _VietQRApp extends State<VietQRApp> {
               ..add(GetPointEvent())
               ..add(GetVersionAppEvent()),
           ),
-          BlocProvider<BusinessMemberBloc>(
-            create: (BuildContext context) => BusinessMemberBloc(),
-          ),
           BlocProvider<BusinessInformationBloc>(
             create: (BuildContext context) => BusinessInformationBloc(),
-          ),
-          BlocProvider<BranchBloc>(
-            create: (BuildContext context) => BranchBloc(),
           ),
         ],
         child: MultiProvider(
@@ -377,8 +367,7 @@ class _VietQRApp extends State<VietQRApp> {
                       const NationalInformationView(),
                   Routes.BUSINESS_TRANSACTION: (context) =>
                       const BusinessTransactionView(),
-                  Routes.BRANCH_DETAIL: (context) => const BranchDetailView(),
-                  Routes.CREATE_QR: (context) => const CreateQrScreen(),
+                  Routes.BRANCH_DETAIL: (context) => BranchDetailScreen(),
                   Routes.INTRODUCE_SCREEN: (context) => const IntroduceScreen(),
                   Routes.PHONE_BOOK: (context) => const ContactScreen(),
                   Routes.TOP_UP: (context) => const TopUpScreen(),
@@ -397,9 +386,7 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.SETTING_BDSD: (context) => const SettingBDSD(),
                   Routes.TRANSACTION_WALLET: (context) =>
                       const TransWalletScreen(),
-
                   Routes.BUSINESS: (context) => const BusinessScreen(),
-                  // Routes.RECHARGE_SUCCESS: (context) => const RechargeSuccess(),
                 },
                 onGenerateRoute: (settings) {
                   if (settings.name == Routes.BUSINESS_INFORMATION_VIEW) {
@@ -409,17 +396,7 @@ class _VietQRApp extends State<VietQRApp> {
                       transitionDuration: const Duration(milliseconds: 300),
                     );
                   }
-                  if (settings.name == Routes.PHONE_BOOK_DETAIL) {
-                    ContactDTO dto = settings.arguments as ContactDTO;
 
-                    return MaterialPageRoute(
-                      builder: (context) {
-                        return ContactDetailScreen(
-                          dto: dto,
-                        );
-                      },
-                    );
-                  }
                   if (settings.name == Routes.SHOW_QR) {
                     QRGeneratedDTO dto = settings.arguments as QRGeneratedDTO;
                     return MaterialPageRoute(

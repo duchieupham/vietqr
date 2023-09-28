@@ -6,6 +6,7 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/commons/utils/transaction_utils.dart';
@@ -13,6 +14,7 @@ import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
+import 'package:vierqr/features/create_qr/create_qr_screen.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
@@ -88,22 +90,11 @@ class _BodyWidgetState extends State<_BodyWidget> {
 
         if (state.type == TransactionType.REFRESH) {
           if (state.newTransaction) {
-            await Navigator.pushReplacementNamed(
-              context,
-              Routes.CREATE_QR,
-              arguments: {
-                'qr': state.qrGeneratedDTO,
-              },
-            );
+            await NavigatorUtils.navigatePage(
+                context, CreateQrScreen(qrDto: state.qrGeneratedDTO));
           } else {
-            Navigator.pushNamed(
-              context,
-              Routes.CREATE_QR,
-              arguments: {
-                'qr': state.qrGeneratedDTO,
-                'page': 1,
-              },
-            );
+            NavigatorUtils.navigatePage(
+                context, CreateQrScreen(qrDto: state.qrGeneratedDTO, page: 1));
           }
         }
       },

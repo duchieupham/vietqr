@@ -1,11 +1,18 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:isolate';
+
 import 'package:dudv_base/dudv_base.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
@@ -16,9 +23,13 @@ import 'package:vierqr/features/contact/events/contact_event.dart';
 import 'package:vierqr/features/contact/states/contact_state.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/contact_dto.dart';
+import 'package:vierqr/services/local_storage/local_storage.dart';
+import 'package:vierqr/services/shared_references/account_helper.dart';
+import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 import 'save_contact_screen.dart';
 import 'views/contact_detail.dart';
+import 'widgets/introduce_widget.dart';
 
 class ContactScreen extends StatelessWidget {
   const ContactScreen({super.key});
@@ -28,7 +39,7 @@ class ContactScreen extends StatelessWidget {
     return BlocProvider<ContactBloc>(
       create: (context) => ContactBloc(context),
       child: ChangeNotifierProvider<ContactProvider>(
-        create: (context) => ContactProvider()..updateCategory(isFirst: true),
+        create: (context) => ContactProvider()..initData(),
         child: _ContactState(),
       ),
     );
@@ -50,19 +61,208 @@ class _ContactStateState extends State<_ContactState>
   final scrollController = ScrollController();
   final controller = ScrollController();
 
+  StreamSubscription? _subscription;
+  StreamSubscription? _syncSub;
+
+  LocalStorageRepository _local = LocalStorageRepository();
+
+  Box? _box;
+
+  String get userId => UserInformationHelper.instance.getUserId();
+
   @override
   void initState() {
     super.initState();
+
+    initData();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _bloc.add(ContactEventGetList(isLoading: true));
+      _bloc.add(ContactEventGetListPending());
+
+      _onCheckSyncContact();
+    });
+
+    _subscription = eventBus.on<ReloadContact>().listen((_) {
+      _onRefresh();
+    });
+    _syncSub = eventBus.on<CheckSyncContact>().listen((_) {
+      _onCheckSyncContact();
+    });
+
+    scrollController.addListener(_loadMore);
+  }
+
+  void _onCheckSyncContact() async {
+    Future.delayed(const Duration(seconds: 1)).then((value) {
+      if (!Provider.of<ContactProvider>(context, listen: false).isIntro) {
+        DialogWidget.instance.openDialogIntroduce(
+          child: ContactIntroWidget(
+            onSync: () async {
+              Navigator.pop(context);
+              final data = await _fetchContacts();
+
+              Provider.of<ContactProvider>(context, listen: false)
+                  .updateListSync(data);
+            },
+            onSelected: (value) async {
+              Navigator.pop(context);
+              if (value) {
+                Provider.of<ContactProvider>(context, listen: false)
+                    .updateIntro(true);
+              }
+            },
+          ),
+        );
+      }
+    });
+  }
+
+  void _onUpdateContact() async {
+    List<ContactDTO> list = [];
+    if (_box != null) {
+      list = _local.getWishlist(_box!);
+    }
+
+    final data = await _fetchContacts();
+
+    if (list.length != data.length) {
+      Provider.of<ContactProvider>(context, listen: false).updateListSync(data);
+    }
+  }
+
+  initData() async {
     _bloc = BlocProvider.of(context);
     _pageController = PageController(
         initialPage: Provider.of<ContactProvider>(context, listen: false).tab,
         keepPage: true);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _bloc.add(ContactEventGetList());
-      _bloc.add(ContactEventGetListPending());
-    });
+    _box = await _local.openBox(userId);
+  }
 
-    controller.addListener(_loadMore);
+  Future<List<ContactDTO>> _fetchContacts() async {
+    if (await FlutterContacts.requestPermission(readonly: true)) {
+      ReceivePort port = ReceivePort();
+
+      final contacts = await FlutterContacts.getContacts();
+
+      final isolate = await Isolate.spawn(_handle, [port.sendPort, contacts]);
+      List<ContactDTO> data = await port.first;
+
+      isolate.kill(priority: Isolate.immediate);
+      return data;
+    }
+    return [];
+  }
+
+  static void _handle(List<dynamic> params) async {
+    SendPort sendPort = params[0];
+    List<Contact> data = params[1];
+
+    List<ContactDTO> list = await Future.wait(
+      data.map<Future<ContactDTO>>((e) async {
+        return ContactDTO(
+            id: e.id,
+            nickname: e.displayName,
+            status: 0,
+            type: 4,
+            imgId: '',
+            description: '',
+            phoneNo: e.phones.isNotEmpty ? e.phones.first.number : '',
+            carrierTypeId: '',
+            relation: 0);
+      }).toList(),
+    );
+
+    sendPort.send(list);
+  }
+
+  static void heavyTask(List<dynamic> args) async {
+    SendPort sendPort = args[0];
+    List<ContactDTO> list = args[1];
+
+    double progress = 0;
+    if (list.isNotEmpty) {
+      double amount = 1 / list.length;
+      for (int i = 0; i < list.length; i++) {
+        progress += amount;
+        if (i == list.length - 1) {
+          if (progress < 1) {
+            progress = 1;
+          }
+        } else if (progress > 1) {
+          progress = 1;
+        }
+
+        sendPort.send(HeavyTaskData(progress: progress, index: i));
+      }
+      sendPort.send(HeavyTaskData(progress: progress));
+    } else {
+      sendPort.send(HeavyTaskData(progress: 1.0));
+    }
+  }
+
+  Stream<HeavyTaskData> _heavyTaskStreamReceiver(List<ContactDTO> list) async* {
+    final receivePort = ReceivePort();
+    Isolate.spawn(heavyTask, [receivePort.sendPort, list]);
+    await for (var message in receivePort) {
+      if (message is HeavyTaskData) {
+        if (message.index != null) {
+          final e = await FlutterContacts.getContact(list[message.index!].id);
+          if (e != null) {
+            String base64Image = '';
+            if (e.photo != null) {
+              base64Image = base64Encode(e.photo!);
+            }
+
+            final contact = ContactDTO(
+              id: e.id.isNotEmpty ? e.id : '',
+              nickname: e.displayName.isNotEmpty ? e.displayName : '',
+              status: 0,
+              type: 4,
+              imgId: base64Image,
+              description: e.notes.isNotEmpty ? e.notes.first.note : '',
+              phoneNo: e.phones.isNotEmpty ? e.phones.first.number : '',
+              carrierTypeId: '',
+              relation: 0,
+              bankColor: Theme.of(context).cardColor,
+            );
+            await _local.addProductToWishlist(_box!, contact);
+          }
+        }
+        yield message;
+        if (message.progress >= 1) {
+          receivePort.close();
+          Provider.of<ContactProvider>(context, listen: false)
+              .updateSync(false);
+          Provider.of<ContactProvider>(context, listen: false)
+              .updateIntro(true);
+          if (Provider.of<ContactProvider>(context, listen: false)
+                  .category!
+                  .type ==
+              4) {
+            List<ContactDTO> list = [];
+            if (_box != null) {
+              list = _local.getWishlist(_box!);
+            }
+            Provider.of<ContactProvider>(context, listen: false)
+                .updateListAll(list);
+          }
+
+          return;
+        }
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    _subscription = null;
+
+    _syncSub?.cancel();
+    _syncSub = null;
+
+    super.dispose();
   }
 
   _loadMore() async {
@@ -70,15 +270,29 @@ class _ContactStateState extends State<_ContactState>
         Provider.of<ContactProvider>(context, listen: false).category!.type;
     int offset = Provider.of<ContactProvider>(context, listen: false).offset;
 
-    final maxScroll = controller.position.maxScrollExtent;
-    if (controller.offset >= maxScroll && !controller.position.outOfRange) {
-      _bloc.add(ContactEventGetList(type: type, offset: offset));
+    final maxScroll = scrollController.position.maxScrollExtent;
+    if (scrollController.offset >= maxScroll &&
+        !scrollController.position.outOfRange) {
+      if (type != 4) {
+        _bloc.add(
+            ContactEventGetList(type: type, offset: offset, isLoading: false));
+      }
     }
   }
 
   Future<void> _onRefresh() async {
     Provider.of<ContactProvider>(context, listen: false).updateOffset(0);
-    _bloc.add(ContactEventGetList());
+    int type =
+        Provider.of<ContactProvider>(context, listen: false).category!.type;
+    if (type != 4) {
+      _bloc.add(ContactEventGetList(type: type));
+    } else {
+      List<ContactDTO> list = [];
+      if (_box != null) {
+        list = _local.getWishlist(_box!);
+      }
+      Provider.of<ContactProvider>(context, listen: false).updateListAll(list);
+    }
   }
 
   Future<void> _onRefreshTabSecond() async {
@@ -113,8 +327,26 @@ class _ContactStateState extends State<_ContactState>
           }
 
           if (state.type == ContactType.GET_LIST) {
+            List<ContactDTO> list = [];
+            list.addAll(state.listContactDTO);
+
+            if (Provider.of<ContactProvider>(context, listen: false)
+                    .category!
+                    .type ==
+                9) {
+              if (_box != null) {
+                list.addAll(_local.getWishlist(_box!));
+              }
+            }
+
+            list.sort((a, b) {
+              return a.nickname
+                  .toLowerCase()
+                  .compareTo(b.nickname.toLowerCase());
+            });
+
             Provider.of<ContactProvider>(context, listen: false)
-                .updateList(state.listContactDTO);
+                .updateListAll(list);
             Provider.of<ContactProvider>(context, listen: false).updateOffset(
                 Provider.of<ContactProvider>(context, listen: false).offset++);
           }
@@ -151,7 +383,6 @@ class _ContactStateState extends State<_ContactState>
                   code: state.qrCode,
                   typeQR: state.typeQR,
                 ),
-                // settings: RouteSettings(name: ContactEditView.routeName),
               ),
             );
             _bloc.add(ContactEventGetList());
@@ -171,22 +402,30 @@ class _ContactStateState extends State<_ContactState>
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+                        child: Row(
                           children: [
                             Text(
                               'Ví QR',
                               style: const TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.w600),
                             ),
-                            Text(
-                              'Nơi lưu trữ mã QR của bạn',
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  color: AppColor.GREY_TEXT,
-                                  height: 1.4),
-                            ),
+                            const Spacer(),
+                            if (provider.isIntro)
+                              TextButton(
+                                onPressed: _onUpdateContact,
+                                child: Container(
+                                  alignment: Alignment.centerRight,
+                                  child: Text(
+                                    'Cập nhật danh bạ',
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        color: AppColor.BLUE_TEXT,
+                                        decoration: TextDecoration.underline,
+                                        height: 1.4),
+                                  ),
+                                ),
+                              ),
                           ],
                         ),
                       ),
@@ -200,16 +439,29 @@ class _ContactStateState extends State<_ContactState>
                             return GestureDetector(
                               onTap: () {
                                 provider.updateCategory(value: model);
-                                _bloc.add(ContactEventGetList(
-                                    type: provider.category?.type));
-                                if (scrollController.hasClients)
-                                  scrollController.jumpTo(0.0);
+
+                                if (model.type == 4) {
+                                  List<ContactDTO> list = [];
+                                  if (_box != null) {
+                                    list = _local.getWishlist(_box!);
+                                  }
+                                  provider.updateListAll(list);
+                                } else if (model.type != 0) {
+                                  if (scrollController.hasClients)
+                                    scrollController.jumpTo(0.0);
+                                  _bloc.add(
+                                      ContactEventGetList(type: model.type));
+                                } else {
+                                  if (controller.hasClients)
+                                    controller.jumpTo(0.0);
+                                  _bloc.add(ContactEventGetListPending());
+                                }
                               },
                               child: _buildCategory(
-                                title: model.title,
-                                url: model.url,
-                                isSelect: provider.category == model,
-                              ),
+                                  title: model.title,
+                                  url: model.url,
+                                  isSelect: provider.category == model,
+                                  index: index),
                             );
                           }).toList(),
                         ),
@@ -237,16 +489,17 @@ class _ContactStateState extends State<_ContactState>
                           else
                             Expanded(
                               child: _buildTapFirst(
-                                listContactDTO: provider.listSearch,
-                                colors: state.colors,
-                                onChange: provider.onSearch,
+                                listContactDTO: provider.listAllSearch,
+                                onChange: provider.onSearchAll,
+                                isEdit: provider.category!.type != 8 &&
+                                    provider.category!.type != 4,
                               ),
                             ),
                       ]
                     ],
                   ),
                   Positioned(
-                    bottom: 30,
+                    bottom: 20,
                     right: 20,
                     child: GestureDetector(
                       onTap: () async {
@@ -277,6 +530,78 @@ class _ContactStateState extends State<_ContactState>
                       ),
                     ),
                   ),
+                  if (provider.isSync)
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      left: 0,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          StreamBuilder<HeavyTaskData>(
+                            stream: _heavyTaskStreamReceiver(provider.listSync),
+                            builder: (context,
+                                AsyncSnapshot<HeavyTaskData> snapshot) {
+                              int pt = (((snapshot.data?.progress ?? 0) * 100)
+                                  .round());
+
+                              return Column(
+                                children: [
+                                  LinearPercentIndicator(
+                                    animation: true,
+                                    animationDuration: 0,
+                                    lineHeight: 5,
+                                    padding: EdgeInsets.zero,
+                                    percent: snapshot.data?.progress ?? 0.0,
+                                    progressColor: AppColor.BLUE_TEXT,
+                                  ),
+                                  Container(
+                                    color: Colors.white,
+                                    child: Row(
+                                      children: [
+                                        Image.asset(
+                                          'assets/images/ic-contact-sync.png',
+                                          width: 60,
+                                          height: 60,
+                                        ),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.stretch,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                'Đang lưu danh bạ',
+                                                style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                              Text(
+                                                'Vui lòng không tắt ứng dụng cho tới khi quá trình hoàn tất.',
+                                                style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: AppColor.grey979797,
+                                                    height: 1.5),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                        Text(
+                                          '$pt%',
+                                          style: TextStyle(fontSize: 15),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
                 ],
               );
             },
@@ -287,7 +612,10 @@ class _ContactStateState extends State<_ContactState>
   }
 
   Widget _buildCategory(
-      {required String title, required String url, bool isSelect = false}) {
+      {required String title,
+      required String url,
+      bool isSelect = false,
+      int index = -1}) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       margin: const EdgeInsets.only(right: 10),
@@ -297,10 +625,15 @@ class _ContactStateState extends State<_ContactState>
       ),
       child: Row(
         children: [
-          Image.asset(
-            url,
-            width: 35,
-            color: isSelect ? AppColor.WHITE : AppColor.BLUE_TEXT,
+          Padding(
+            padding: index == 0
+                ? const EdgeInsets.symmetric(vertical: 10.5, horizontal: 8.0)
+                : EdgeInsets.zero,
+            child: Image.asset(
+              url,
+              width: index == 0 ? 14 : 35,
+              color: isSelect ? AppColor.WHITE : AppColor.BLUE_TEXT,
+            ),
           ),
           Text(
             title,
@@ -316,9 +649,9 @@ class _ContactStateState extends State<_ContactState>
   }
 
   Widget _buildTapFirst({
-    required List<ContactDTO> listContactDTO,
-    required List<Color> colors,
+    required List<List<ContactDTO>> listContactDTO,
     ValueChanged<String>? onChange,
+    bool isEdit = true,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -344,41 +677,49 @@ class _ContactStateState extends State<_ContactState>
                 padding: EdgeInsets.zero,
                 itemCount: listContactDTO.length,
                 controller: scrollController,
+                physics: const AlwaysScrollableScrollPhysics(),
                 separatorBuilder: (context, index) {
-                  if (index == listContactDTO.length - 1) {
-                    return const SizedBox.shrink();
-                  }
-                  String firstLetterA = (listContactDTO[index].nickname)[0];
-                  String firstLetterB = (listContactDTO[index + 1].nickname)[0];
-                  if (firstLetterA != firstLetterB) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 4),
-                      child: Text(
-                        firstLetterB,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    );
-                  }
                   return const SizedBox.shrink();
                 },
                 itemBuilder: (BuildContext context, int index) {
-                  if (index == 0) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 4),
-                          child: Text((listContactDTO[index].nickname)[0],
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold)),
-                        ),
-                        _buildItemSave(
-                            dto: listContactDTO[index], color: colors[index]),
-                      ],
-                    );
-                  }
-                  return _buildItemSave(
-                      dto: listContactDTO[index], color: colors[index]);
+                  return Column(
+                    children: List.generate(
+                      listContactDTO[index].length,
+                      (i) {
+                        ContactDTO e = listContactDTO[index][i];
+                        return IntrinsicHeight(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.only(
+                                    right: 12, bottom: 12),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  e.nickname.isNotEmpty
+                                      ? e.nickname[0].toUpperCase()
+                                      : e.nickname.toUpperCase(),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: (i == 0)
+                                        ? AppColor.textBlack
+                                        : AppColor.TRANSPARENT,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: _buildItemSave(
+                                  dto: e,
+                                  isEdit: isEdit,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ).toList(),
+                  );
                 },
               ),
             ),
@@ -390,94 +731,111 @@ class _ContactStateState extends State<_ContactState>
 
   Widget _buildItemSave({
     required ContactDTO dto,
-    required Color? color,
+    bool isEdit = true,
   }) {
     return GestureDetector(
       onTap: () async {
-        final data =
-            await Utils.navigatePage(context, ContactDetailScreen(dto: dto));
-        if (data) {
+        final data = await Utils.navigatePage(
+            context, ContactDetailScreen(dto: dto, isEdit: isEdit));
+        if (data != null) {
           _bloc.add(ContactEventGetList());
         }
       },
-      child: Stack(
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            margin: const EdgeInsets.only(bottom: 12),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              color: AppColor.WHITE,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        margin: const EdgeInsets.only(bottom: 12),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          color: AppColor.WHITE,
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: AppColor.WHITE,
+                borderRadius: BorderRadius.circular(40),
+                border: Border.all(color: AppColor.GREY_LIGHT.withOpacity(0.3)),
+                image: getImage(dto.type, dto.imgId),
+              ),
             ),
-            child: Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: AppColor.WHITE,
-                    borderRadius: BorderRadius.circular(40),
-                    border:
-                        Border.all(color: AppColor.GREY_LIGHT.withOpacity(0.3)),
-                    image: getImage(dto?.type ?? 0, dto?.imgId ?? ''),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    dto.nickname,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: AppColor.BLACK,
+                      height: 1.4,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        dto?.nickname ?? '',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: AppColor.BLACK,
-                          height: 1.4,
+                  RichText(
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: dto.type == 4 ? dto.phoneNo : dto.description,
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w400,
+                            color: dto.type == 4
+                                ? AppColor.textBlack
+                                : dto.bankColor,
+                            height: 1.4,
+                          ),
                         ),
-                      ),
-                      Text(
-                        dto?.description ?? '',
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w400,
-                          color: color,
-                          height: 1.4,
+                        WidgetSpan(
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.only(bottom: 2.5, left: 8),
+                            child: Image.asset(
+                              dto.relation == 1
+                                  ? 'assets/images/gl-white.png'
+                                  : 'assets/images/personal-relation.png',
+                              color: AppColor.BLACK.withOpacity(0.7),
+                              width: 10,
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          Positioned(
-            bottom: 12,
-            right: 12,
-            child: Image.asset(
-              dto?.relation == 1
-                  ? 'assets/images/gl-white.png'
-                  : 'assets/images/personal-relation.png',
-              color: AppColor.BLACK.withOpacity(0.7),
-              width: 28,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   DecorationImage getImage(int type, String imageId) {
-    if (type == 2 || type == 3) {
-      if (imageId.isNotEmpty) {
+    if (imageId.isNotEmpty) {
+      if (type == 4) {
         return DecorationImage(
-            image: ImageUtils.instance.getImageNetWork(imageId),
+            image: MemoryImage(base64Decode(imageId)),
             fit: type == 2 ? BoxFit.contain : BoxFit.cover);
       }
+      return DecorationImage(
+          image: ImageUtils.instance.getImageNetWork(imageId),
+          fit: type == 2 ? BoxFit.contain : BoxFit.cover);
+    } else {
+      if (type != 1) {
+        return const DecorationImage(
+            image: AssetImage('assets/images/ic-tb-qr.png'),
+            fit: BoxFit.contain);
+      } else {
+        return const DecorationImage(
+            image: AssetImage('assets/images/ic-viet-qr-small.png'),
+            fit: BoxFit.contain);
+      }
     }
-    return const DecorationImage(
-        image: AssetImage('assets/images/ic-viet-qr-small.png'),
-        fit: BoxFit.contain);
   }
 
   Widget _buildTapSecond({required List<ContactDTO> list}) {
@@ -486,8 +844,9 @@ class _ContactStateState extends State<_ContactState>
         onRefresh: _onRefreshTabSecond,
         child: SingleChildScrollView(
           controller: controller,
+          physics: AlwaysScrollableScrollPhysics(),
           child: Container(
-            margin: const EdgeInsets.only(top: 16),
+            margin: const EdgeInsets.only(top: 16, left: 16, right: 16),
             child: Column(
               children: List.generate(
                 list.length,
@@ -517,21 +876,14 @@ class _ContactStateState extends State<_ContactState>
           Row(
             children: [
               Container(
-                width: 35,
-                height: 35,
+                width: 40,
+                height: 40,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
+                  color: AppColor.WHITE,
+                  borderRadius: BorderRadius.circular(40),
                   border:
                       Border.all(color: AppColor.GREY_LIGHT.withOpacity(0.3)),
-                  image: dto?.type == 2
-                      ? DecorationImage(
-                          image: ImageUtils.instance
-                              .getImageNetWork(dto?.imgId ?? ''),
-                          fit: BoxFit.contain)
-                      : const DecorationImage(
-                          image:
-                              AssetImage('assets/images/ic-viet-qr-small.png'),
-                          fit: BoxFit.contain),
+                  image: getImage(dto?.type ?? 0, dto?.imgId ?? ''),
                 ),
               ),
               const SizedBox(width: 10),
@@ -609,55 +961,13 @@ class _ContactStateState extends State<_ContactState>
     );
   }
 
-  Widget _buildTab({
-    required String text,
-    GestureTapCallback? onTap,
-    bool isSuggest = false,
-    bool isSelect = false,
-    required String textSuggest,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.only(bottom: 4),
-        margin: const EdgeInsets.only(right: 20),
-        decoration: BoxDecoration(
-          border: Border(
-            bottom: BorderSide(
-              color: isSelect ? AppColor.BLUE_TEXT : AppColor.TRANSPARENT,
-            ),
-          ),
-        ),
-        child: Row(
-          children: [
-            Text(
-              text,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-            ),
-            if (isSuggest)
-              Container(
-                padding: const EdgeInsets.all(4),
-                margin: const EdgeInsets.only(left: 4),
-                width: 20,
-                height: 20,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                    color: AppColor.BLUE_TEXT.withOpacity(0.4),
-                    borderRadius: BorderRadius.circular(100)),
-                child: Text(
-                  textSuggest,
-                  style: const TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w400,
-                      color: AppColor.BLUE_TEXT),
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
   @override
   bool get wantKeepAlive => true;
+}
+
+class HeavyTaskData {
+  HeavyTaskData({required this.progress, this.index});
+
+  double progress;
+  int? index;
 }

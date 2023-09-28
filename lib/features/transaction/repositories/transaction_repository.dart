@@ -95,7 +95,8 @@ class TransactionRepository {
   }
 
   Future<QRGeneratedDTO> regenerateQR(QRRecreateDTO dto) async {
-    QRGeneratedDTO result = const QRGeneratedDTO(
+    QRGeneratedDTO result = QRGeneratedDTO(
+      bankId: '',
       bankCode: '',
       bankName: '',
       bankAccount: '',
@@ -115,6 +116,7 @@ class TransactionRepository {
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         result = QRGeneratedDTO.fromJson(data);
+        result.setBankId(dto.bankId);
       }
     } catch (e) {
       LOG.error(e.toString());

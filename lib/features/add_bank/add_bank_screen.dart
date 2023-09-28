@@ -215,12 +215,18 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
             }
 
             if (state.request == AddBankType.ERROR) {
-              await DialogWidget.instance.openMsgDialog(
-                  title: state.titleMsg ?? 'Không thể thêm TK',
-                  msg: state.msg ?? '');
+              // await DialogWidget.instance.openMsgDialog(
+              //     title: state.titleMsg ?? 'Không thể thêm TK',
+              //     msg: state.msg ?? '');
               if (!mounted) return;
               Provider.of<AddBankProvider>(context, listen: false)
                   .updateEnableName(true);
+            }
+
+            if (state.request == AddBankType.ERROR_EXIST) {
+              await DialogWidget.instance.openMsgDialog(
+                  title: state.titleMsg ?? 'Không thể thêm TK',
+                  msg: state.msg ?? '');
             }
 
             if (state.request == AddBankType.ERROR_SYSTEM) {
@@ -489,6 +495,8 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                                                   provider.resetValidate();
                                                   provider.updateSelectBankType(
                                                       state.listBanks![data]);
+                                                  Provider.of<AddBankProvider>(context, listen: false)
+                                                      .updateEnableName(true);
                                                 }
                                               },
                                               child: Container(

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
@@ -13,6 +15,7 @@ import 'package:vierqr/features/branch/blocs/branch_bloc.dart';
 import 'package:vierqr/layouts/border_layout.dart';
 import 'package:vierqr/models/branch_member_insert_dto.dart';
 import 'package:vierqr/models/business_member_dto.dart';
+import 'package:vierqr/models/member_branch_model.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/services/providers/search_clear_provider.dart';
 
@@ -58,6 +61,60 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
     phoneNo: '',
     role: 0,
   );
+
+  Widget _buildHeader() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Row(
+        children: [
+          Text(
+            'Lọc theo',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(width: 16),
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                type = 0;
+              });
+            },
+            child: Container(
+              width: 110,
+              alignment: Alignment.center,
+              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: type == 0
+                    ? AppColor.BLUE_TEXT.withOpacity(0.8)
+                    : AppColor.greyF0F0F0,
+              ),
+              child: const Text('Số điện thoại'),
+            ),
+          ),
+          const SizedBox(width: 4),
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                type = 1;
+              });
+            },
+            child: Container(
+              width: 110,
+              alignment: Alignment.center,
+              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: type == 1
+                    ? AppColor.BLUE_TEXT.withOpacity(0.8)
+                    : AppColor.greyF0F0F0,
+              ),
+              child: const Text('Họ tên'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -123,19 +180,55 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
                 ),
                 if (message.trim().isNotEmpty && !isError)
                   Expanded(
-                    child: Center(
-                      child: Text(
-                        message,
-                      ),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 30),
+                          child: Center(
+                            child: Text(
+                              message,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   )
                 else
-                  (_dto.userId.isNotEmpty && message.trim().isEmpty)
-                      ? _buildSearchItem(context: context, dto: _dto)
-                      : const SizedBox(),
+                  listMember.isNotEmpty
+                      ? Expanded(
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children:
+                                  List.generate(listMember.length, (index) {
+                                BusinessMemberDTO dto = BusinessMemberDTO(
+                                  userId: listMember[index].id ?? '',
+                                  status: '',
+                                  existed: listMember[index].existed ?? 0,
+                                  imgId: listMember[index].imgId ?? '',
+                                  name: listMember[index].fullName,
+                                  phoneNo: listMember[index].phoneNo ?? '',
+                                  role: 0,
+                                );
+                                return _buildSearchItem(
+                                    context: context, dto: dto, index: index);
+                              }).toList(),
+                            ),
+                          ),
+                        )
+                      : (_dto.userId.isNotEmpty && message.trim().isEmpty)
+                          ? Expanded(
+                              child: Column(
+                                children: [
+                                  _buildSearchItem(context: context, dto: _dto),
+                                ],
+                              ),
+                            )
+                          : const Expanded(child: SizedBox()),
               ],
             ),
           ),
+          _buildHeader(),
+          const SizedBox(height: 16),
           Form(
             key: _formAddMemberKey,
             child: BorderLayout(
@@ -155,28 +248,12 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
                     titleWidth: 80,
                     width: width - 110,
                     isObscureText: false,
-                    hintText: 'Nhập số điện thoại',
+                    hintText: 'Nhập tên hoặc số điện thoại',
                     controller: nameController,
-                    inputType: TextInputType.number,
+                    inputType: TextInputType.text,
                     autoFocus: false,
                     keyboardAction: TextInputAction.done,
-                    onChange: (text) {
-                      if (nameController.text.isNotEmpty) {
-                        searchClearProvider.updateClearSearch(true);
-                      } else {
-                        searchClearProvider.updateClearSearch(false);
-                      }
-                      if (nameController.text.length >= 10 &&
-                          nameController.text.length <= 12) {
-                        _searchMember();
-                      } else {
-                        message = '';
-                        isError = false;
-                        setState(() {
-                          _dto = dtoDefault;
-                        });
-                      }
-                    },
+                    onChange: _onChange,
                   ),
                   ValueListenableBuilder(
                     valueListenable: searchClearProvider,
@@ -207,7 +284,9 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
   }
 
   Widget _buildSearchItem(
-      {required BuildContext context, required BusinessMemberDTO dto}) {
+      {required BuildContext context,
+      required BusinessMemberDTO dto,
+      int? index}) {
     final double width = MediaQuery.of(context).size.width;
     return Container(
       width: width,
@@ -264,16 +343,14 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
                 ],
               ),
             )
-          else if (isLoading)
+          else if (isLoading && dto.existed == 2)
             Container(
               color: AppColor.TRANSPARENT,
               margin: const EdgeInsets.only(right: 8),
               width: 24,
               height: 24,
               child: const Center(
-                child: CircularProgressIndicator(
-                  color: AppColor.BLUE_TEXT,
-                ),
+                child: CircularProgressIndicator(color: AppColor.BLUE_TEXT),
               ),
             )
           else
@@ -286,7 +363,7 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
                   userId: dto.userId,
                   role: 4,
                 );
-                _insertMember(branchMemberInsertDTO);
+                _insertMember(branchMemberInsertDTO, index: index);
               },
               child: Container(
                 padding:
@@ -323,16 +400,21 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
     searchClearProvider.updateClearSearch(false);
     setState(() {
       _dto = dtoDefault;
+      listMember = [];
     });
   }
 
   bool isLoading = false;
   bool isError = false;
 
-  void _insertMember(dto) async {
+  void _insertMember(dto, {int? index}) async {
     try {
       setState(() {
-        _dto.setExisted(2);
+        if (index != null && type == 1) {
+          listMember[index].setExisted(2);
+        } else {
+          _dto.setExisted(2);
+        }
         isLoading = true;
         isError = false;
         message = '';
@@ -341,11 +423,19 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
           await branchRepository.insertMember(dto);
       if (!mounted) return;
       if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
-        _dto.setExisted(1);
+        if (index != null) {
+          listMember[index].setExisted(1);
+        } else {
+          _dto.setExisted(1);
+        }
         isLoading = false;
         setState(() {});
       } else {
-        _dto.setExisted(0);
+        if (index != null && type == 1) {
+          listMember[index].setExisted(0);
+        } else {
+          _dto.setExisted(0);
+        }
         message = ErrorUtils.instance.getErrorMessage(result.message);
         isLoading = false;
         isError = true;
@@ -356,7 +446,11 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
       }
     } catch (e) {
       LOG.error(e.toString());
-      _dto.setExisted(0);
+      if (index != null && type == 1) {
+        listMember[index].setExisted(0);
+      } else {
+        _dto.setExisted(0);
+      }
       isLoading = false;
       isError = true;
       ResponseMessageDTO result =
@@ -369,27 +463,76 @@ class _AddBranchMemberWidgetState extends State<AddBranchMemberWidget> {
     }
   }
 
+  int type = 0;
+  List<MemberBranchModel> listMember = [];
+
+  Timer? _debounce;
+
   void _searchMember() async {
     try {
       isError = false;
+      String data = nameController.text;
       message = '';
       setState(() {});
+
+      if (type == 1) {
+        data = nameController.text.trim().replaceAll(' ', '-');
+      }
       final responseDTO = await branchRepository.searchMemberBranch(
-          nameController.text.trim().replaceAll(" ", ""), widget.businessId);
+          data.trim().replaceAll(" ", ""), widget.businessId, type);
       if (!mounted) return;
-      if (responseDTO.status.isNotEmpty) {
+      if (responseDTO is BusinessMemberDTO) {
+        BusinessMemberDTO result = responseDTO;
+        _dto = result;
+        listMember = [];
+        setState(() {});
+      } else if (responseDTO is ResponseMessageDTO) {
         ResponseMessageDTO result = responseDTO;
         message = CheckUtils.instance.getCheckMessage(result.message);
         _dto = dtoDefault;
+        listMember = [];
 
         setState(() {});
-      } else {
-        BusinessMemberDTO result = responseDTO;
-        _dto = result;
+      } else if (responseDTO is List<MemberBranchModel>) {
+        listMember = responseDTO;
+        _dto = dtoDefault;
         setState(() {});
       }
     } catch (e) {
       LOG.error(e.toString());
+    }
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
+  }
+
+  void _onChange(Object value) {
+    if (nameController.text.isNotEmpty) {
+      searchClearProvider.updateClearSearch(true);
+    } else {
+      searchClearProvider.updateClearSearch(false);
+    }
+    if (type == 0) {
+      if (nameController.text.length >= 5 && nameController.text.length <= 12) {
+        if (_debounce?.isActive ?? false) _debounce!.cancel();
+        _debounce = Timer(const Duration(milliseconds: 300), () {
+          _searchMember();
+        });
+      } else {
+        message = '';
+        isError = false;
+        setState(() {
+          _dto = dtoDefault;
+        });
+      }
+    } else {
+      if (_debounce?.isActive ?? false) _debounce!.cancel();
+      _debounce = Timer(const Duration(milliseconds: 300), () {
+        _searchMember();
+      });
     }
   }
 }

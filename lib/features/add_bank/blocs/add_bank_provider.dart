@@ -111,6 +111,7 @@ class AddBankProvider with ChangeNotifier {
       isEnableButton = false;
     } else {
       _isInvalidUserBankName = true;
+      isEnableName = true;
       isEnableButton = true;
     }
 

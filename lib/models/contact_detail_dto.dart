@@ -1,23 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
+part 'contact_detail_dto.g.dart';
+
+@HiveType(typeId: 1)
 class ContactDetailDTO {
+  @HiveField(0)
   final String? id;
+  @HiveField(1)
+  final String? userId;
+  @HiveField(2)
   final String? additionalData;
+  @HiveField(3)
   final String? nickName;
+  @HiveField(4)
+  final String? email;
+  @HiveField(5)
   final int? type;
+  @HiveField(6)
   final int? status;
+  @HiveField(7)
   final String? value;
+  @HiveField(8)
   final String? bankShortName;
+  @HiveField(9)
   final String? bankName;
+  @HiveField(10)
   final String? imgId;
+  @HiveField(11)
   final String? bankAccount;
+  @HiveField(12)
   final int colorType;
+  @HiveField(13)
   final int relation;
 
   ContactDetailDTO({
     this.id = '',
+    this.userId = '',
     this.additionalData = '',
     this.nickName = '',
+    this.email = '',
     this.type = 0,
     this.status = 0,
     this.value = '',
