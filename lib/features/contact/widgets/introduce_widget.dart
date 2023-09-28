@@ -62,14 +62,18 @@ class _ContactIntroWidgetState extends State<ContactIntroWidget> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: Text(
-                  textContent,
+                child: RichText(
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: AppColor.textBlack,
-                    height: 1.4,
-                    fontWeight: FontWeight.w500,
+                  text: TextSpan(
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: AppColor.textBlack,
+                      height: 1.4,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    children: [
+                      TextSpan(text: textContent),
+                    ],
                   ),
                 ),
               ),
