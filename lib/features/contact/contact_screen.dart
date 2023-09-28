@@ -64,6 +64,7 @@ class _ContactStateState extends State<_ContactState>
   final controller = ScrollController();
 
   StreamSubscription? _subscription;
+  StreamSubscription? _syncSub;
 
   LocalStorageRepository _local = LocalStorageRepository();
   Box? _box;
@@ -80,33 +81,40 @@ class _ContactStateState extends State<_ContactState>
       _bloc.add(ContactEventGetList(isLoading: true));
       _bloc.add(ContactEventGetListPending());
 
-      Future.delayed(const Duration(seconds: 1)).then((value) {
-        if (Provider.of<ContactProvider>(context, listen: false).isIntro) {
-          DialogWidget.instance.openDialogIntroduce(
-            child: ContactIntroWidget(
-              onSync: () async {
-                Navigator.pop(context);
-                final data = await _fetchContacts();
-                Provider.of<ContactProvider>(context, listen: false)
-                    .updateListSync(data);
-              },
-              onSelected: (value) async {
-                Navigator.pop(context);
-                if (value) {
-                  await AccountHelper.instance.updateVCard(value);
-                }
-              },
-            ),
-          );
-        }
-      });
+      _onCheckSyncContact();
     });
 
     _subscription = eventBus.on<ReloadContact>().listen((_) {
       _onRefresh();
     });
+    _syncSub = eventBus.on<CheckSyncContact>().listen((_) {
+      _onCheckSyncContact();
+    });
 
     scrollController.addListener(_loadMore);
+  }
+
+  void _onCheckSyncContact() async {
+    Future.delayed(const Duration(seconds: 1)).then((value) {
+      if (!Provider.of<ContactProvider>(context, listen: false).isIntro) {
+        DialogWidget.instance.openDialogIntroduce(
+          child: ContactIntroWidget(
+            onSync: () async {
+              Navigator.pop(context);
+              final data = await _fetchContacts();
+              Provider.of<ContactProvider>(context, listen: false)
+                  .updateListSync(data);
+            },
+            onSelected: (value) async {
+              Navigator.pop(context);
+              if (value) {
+                await AccountHelper.instance.updateVCard(value);
+              }
+            },
+          ),
+        );
+      }
+    });
   }
 
   initData() async {
@@ -216,6 +224,9 @@ class _ContactStateState extends State<_ContactState>
   void dispose() {
     _subscription?.cancel();
     _subscription = null;
+
+    _syncSub?.cancel();
+    _syncSub = null;
 
     super.dispose();
   }
@@ -880,7 +891,7 @@ class _ContactStateState extends State<_ContactState>
   }
 
   @override
-  bool get wantKeepAlive => false;
+  bool get wantKeepAlive => true;
 }
 
 class HeavyTaskData {

@@ -19,3 +19,7 @@ class ReloadWallet {
 class ReloadContact {
   ReloadContact();
 }
+
+class CheckSyncContact {
+  CheckSyncContact();
+}

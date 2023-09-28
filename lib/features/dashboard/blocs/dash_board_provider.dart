@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bottom_nav_dto.dart';
+import 'package:vierqr/services/shared_references/account_helper.dart';
 
 class DashBoardProvider with ChangeNotifier {
   int _indexSelected = 0;

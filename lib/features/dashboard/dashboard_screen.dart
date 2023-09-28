@@ -15,9 +15,7 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/log.dart';
-import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
-import 'package:vierqr/commons/utils/pref_utils.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/ambient_avatar_widget.dart';
@@ -26,7 +24,6 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/account/account_screen.dart';
 import 'package:vierqr/features/bank_card/bank_screen.dart';
 import 'package:vierqr/features/contact/contact_screen.dart';
-import 'package:vierqr/features/create_qr/views/calculator_view.dart';
 import 'package:vierqr/features/dashboard/blocs/dash_board_provider.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
@@ -247,9 +244,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
 //check user information is updated before or not
   void checkUserInformation() async {
     String userId = UserInformationHelper.instance.getUserId();
-    if (userId.isNotEmpty) {
-
-    }
+    if (userId.isNotEmpty) {}
   }
 
   void _updateFcmToken(bool isFromLogin) {
@@ -624,11 +619,10 @@ class _DashBoardScreen extends State<DashBoardScreen>
 //navigate to page
   void _animatedToPage(int index) {
     try {
-      _pageController.jumpToPage(
-        index,
-        // duration: const Duration(milliseconds: 200),
-        // curve: Curves.easeInOutQuart,
-      );
+      _pageController.jumpToPage(index);
+      if (index == 2) {
+        eventBus.fire(CheckSyncContact());
+      }
     } catch (e) {
       _pageController = PageController(
         initialPage: Provider.of<DashBoardProvider>(context, listen: false)
@@ -636,6 +630,9 @@ class _DashBoardScreen extends State<DashBoardScreen>
         keepPage: true,
       );
       _animatedToPage(index);
+      if (index == 2) {
+        eventBus.fire(CheckSyncContact());
+      }
     }
   }
 
