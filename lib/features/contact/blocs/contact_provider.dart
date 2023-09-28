@@ -10,7 +10,7 @@ class ContactProvider extends ChangeNotifier {
   bool isEnableBTSave = false;
 
   List<ContactDTO> listContactDTO = [];
-  List<ContactDTO> listContact = [];
+  List<ContactDTO> listSync = [];
   List<ContactDTO> listSearch = [];
 
   List<List<ContactDTO>> listAll = [];
@@ -45,7 +45,7 @@ class ContactProvider extends ChangeNotifier {
   }
 
   void updateListSync(List<ContactDTO> value) {
-    listContact = value;
+    listSync = value;
     isSync = true;
     notifyListeners();
   }
@@ -98,7 +98,7 @@ class ContactProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateListAll(List<List<ContactDTO>> valueAll, value) {
+  void updateListAll(List<List<ContactDTO>> valueAll, List<ContactDTO> value) {
     if (valueAll.isNotEmpty) {
       listAll = valueAll;
       listAllSearch = valueAll;
@@ -106,19 +106,30 @@ class ContactProvider extends ChangeNotifier {
       List<List<ContactDTO>> _list = [];
       List<String> listString = [];
 
-      for (int i = 0; i < value.length; i++) {
-        listString.add(value[i].nickname[0].toUpperCase());
-      }
-      listString = listString.toSet().toList();
+      if (value.isNotEmpty) {
+        for (int i = 0; i < value.length; i++) {
+          if (value[i].nickname.isNotEmpty) {
+            String keyName = value[i].nickname[0].toUpperCase();
+            listString.add(keyName);
+          } else {
+            listString.add('');
+          }
+        }
 
-      for (int i = 0; i < listString.length; i++) {
-        List<ContactDTO> listCompare = [];
-        listCompare = value
-            .where(
-                (element) => element.nickname[0].toUpperCase() == listString[i])
-            .toList();
+        listString = listString.toSet().toList();
 
-        _list.add(listCompare);
+        for (int i = 0; i < listString.length; i++) {
+          List<ContactDTO> listCompare = [];
+          listCompare = value.where((element) {
+            if (element.nickname.isNotEmpty) {
+              return element.nickname[0].toUpperCase() == listString[i];
+            } else {
+              return element.nickname.toUpperCase() == listString[i];
+            }
+          }).toList();
+
+          _list.add(listCompare);
+        }
       }
 
       listAll = _list;

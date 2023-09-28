@@ -16,6 +16,7 @@ class MButtonWidget extends StatelessWidget {
   final double? width;
   final double? fontSize;
   final double radius;
+  final TextDecoration? decoration;
 
   const MButtonWidget({
     super.key,
@@ -33,6 +34,7 @@ class MButtonWidget extends StatelessWidget {
     this.colorDisableText,
     this.fontSize = 14,
     this.radius = 5,
+    this.decoration,
   });
 
   @override
@@ -59,11 +61,11 @@ class MButtonWidget extends StatelessWidget {
                 Text(
                   title,
                   style: TextStyle(
-                    color: isEnable
-                        ? colorEnableText ?? AppColor.WHITE
-                        : colorDisableText,
-                    fontSize: fontSize,
-                  ),
+                      color: isEnable
+                          ? colorEnableText ?? AppColor.WHITE
+                          : colorDisableText,
+                      fontSize: fontSize,
+                      decoration: decoration),
                 ),
           ),
         ],

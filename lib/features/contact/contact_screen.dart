@@ -117,6 +117,19 @@ class _ContactStateState extends State<_ContactState>
     });
   }
 
+  void _onUpdateContact() async {
+    List<ContactDTO> list = [];
+    if (_box != null) {
+      list = _local.getWishlist(_box!);
+    }
+
+    final data = await _fetchContacts();
+
+    if (list.length != data.length) {
+      Provider.of<ContactProvider>(context, listen: false).updateListSync(data);
+    }
+  }
+
   initData() async {
     _bloc = BlocProvider.of(context);
     _pageController = PageController(
@@ -214,6 +227,7 @@ class _ContactStateState extends State<_ContactState>
           receivePort.close();
           Provider.of<ContactProvider>(context, listen: false)
               .updateSync(false);
+          await AccountHelper.instance.updateVCard(true);
           return;
         }
       }
@@ -239,8 +253,10 @@ class _ContactStateState extends State<_ContactState>
     final maxScroll = scrollController.position.maxScrollExtent;
     if (scrollController.offset >= maxScroll &&
         !scrollController.position.outOfRange) {
-      _bloc.add(
-          ContactEventGetList(type: type, offset: offset, isLoading: false));
+      if (type != 4) {
+        _bloc.add(
+            ContactEventGetList(type: type, offset: offset, isLoading: false));
+      }
     }
   }
 
@@ -248,7 +264,16 @@ class _ContactStateState extends State<_ContactState>
     Provider.of<ContactProvider>(context, listen: false).updateOffset(0);
     int type =
         Provider.of<ContactProvider>(context, listen: false).category!.type;
-    _bloc.add(ContactEventGetList(type: type));
+    if (type != 4) {
+      _bloc.add(ContactEventGetList(type: type));
+    } else {
+      List<ContactDTO> list = [];
+      if (_box != null) {
+        list = _local.getWishlist(_box!);
+      }
+      Provider.of<ContactProvider>(context, listen: false)
+          .updateListAll([], list);
+    }
   }
 
   Future<void> _onRefreshTabSecond() async {
@@ -349,12 +374,34 @@ class _ContactStateState extends State<_ContactState>
                               style: const TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.w600),
                             ),
-                            Text(
-                              'Nơi lưu trữ mã QR của bạn',
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  color: AppColor.GREY_TEXT,
-                                  height: 1.4),
+                            Row(
+                              children: [
+                                Text(
+                                  'Nơi lưu trữ mã QR của bạn',
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      color: AppColor.GREY_TEXT,
+                                      height: 1.4),
+                                ),
+                                if (provider.isIntro)
+                                  Expanded(
+                                    child: TextButton(
+                                      onPressed: _onUpdateContact,
+                                      child: Container(
+                                        alignment: Alignment.centerRight,
+                                        child: Text(
+                                          'Cập nhật danh bạ',
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              color: AppColor.BLUE_TEXT,
+                                              decoration:
+                                                  TextDecoration.underline,
+                                              height: 1.4),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ],
                             ),
                           ],
                         ),
@@ -469,8 +516,7 @@ class _ContactStateState extends State<_ContactState>
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           StreamBuilder<HeavyTaskData>(
-                            stream:
-                                _heavyTaskStreamReceiver(provider.listContact),
+                            stream: _heavyTaskStreamReceiver(provider.listSync),
                             builder: (context,
                                 AsyncSnapshot<HeavyTaskData> snapshot) {
                               int pt = (((snapshot.data?.progress ?? 0) * 100)
@@ -627,7 +673,9 @@ class _ContactStateState extends State<_ContactState>
                                     right: 12, bottom: 12),
                                 alignment: Alignment.center,
                                 child: Text(
-                                  e.nickname[0].toUpperCase(),
+                                  e.nickname.isNotEmpty
+                                      ? e.nickname[0].toUpperCase()
+                                      : e.nickname.toUpperCase(),
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: (i == 0)

@@ -87,20 +87,30 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
         List<List<ContactDTO>> listAll = [];
         List<String> listString = [];
 
-        for (int i = 0; i < result.length; i++) {
-          listString.add(result[i].nickname[0].toUpperCase());
-        }
+        if (result.isNotEmpty) {
+          for (int i = 0; i < result.length; i++) {
+            if (result[i].nickname.isNotEmpty) {
+              String keyName = result[i].nickname[0].toUpperCase();
+              listString.add(keyName);
+            } else {
+              listString.add('');
+            }
+          }
 
-        listString = listString.toSet().toList();
+          listString = listString.toSet().toList();
 
-        for (int i = 0; i < listString.length; i++) {
-          List<ContactDTO> listCompare = [];
-          listCompare = result
-              .where((element) =>
-                  element.nickname[0].toUpperCase() == listString[i])
-              .toList();
+          for (int i = 0; i < listString.length; i++) {
+            List<ContactDTO> listCompare = [];
+            listCompare = result.where((element) {
+              if (element.nickname.isNotEmpty) {
+                return element.nickname[0].toUpperCase() == listString[i];
+              } else {
+                return element.nickname.toUpperCase() == listString[i];
+              }
+            }).toList();
 
-          listAll.add(listCompare);
+            listAll.add(listCompare);
+          }
         }
 
         for (ContactDTO dto in result) {
