@@ -102,6 +102,7 @@ class _ContactStateState extends State<_ContactState>
             onSync: () async {
               Navigator.pop(context);
               final data = await _fetchContacts();
+
               Provider.of<ContactProvider>(context, listen: false)
                   .updateListSync(data);
             },
@@ -180,20 +181,24 @@ class _ContactStateState extends State<_ContactState>
     List<ContactDTO> list = args[1];
 
     double progress = 0;
-    double amount = 1 / list.length;
-    for (int i = 0; i < list.length; i++) {
-      progress += amount;
-      if (i == list.length - 1) {
-        if (progress < 1) {
+    if (list.isNotEmpty) {
+      double amount = 1 / list.length;
+      for (int i = 0; i < list.length; i++) {
+        progress += amount;
+        if (i == list.length - 1) {
+          if (progress < 1) {
+            progress = 1;
+          }
+        } else if (progress > 1) {
           progress = 1;
         }
-      } else if (progress > 1) {
-        progress = 1;
-      }
 
-      sendPort.send(HeavyTaskData(progress: progress, index: i));
+        sendPort.send(HeavyTaskData(progress: progress, index: i));
+      }
+      sendPort.send(HeavyTaskData(progress: progress));
+    } else {
+      sendPort.send(HeavyTaskData(progress: 1.0));
     }
-    sendPort.send(HeavyTaskData(progress: progress));
   }
 
   Stream<HeavyTaskData> _heavyTaskStreamReceiver(List<ContactDTO> list) async* {
@@ -228,6 +233,7 @@ class _ContactStateState extends State<_ContactState>
           Provider.of<ContactProvider>(context, listen: false)
               .updateSync(false);
           await AccountHelper.instance.updateVCard(true);
+          Provider.of<ContactProvider>(context, listen: false).updateIntro();
           return;
         }
       }
@@ -383,21 +389,20 @@ class _ContactStateState extends State<_ContactState>
                                       color: AppColor.GREY_TEXT,
                                       height: 1.4),
                                 ),
+                                const Spacer(),
                                 if (provider.isIntro)
-                                  Expanded(
-                                    child: TextButton(
-                                      onPressed: _onUpdateContact,
-                                      child: Container(
-                                        alignment: Alignment.centerRight,
-                                        child: Text(
-                                          'Cập nhật danh bạ',
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              color: AppColor.BLUE_TEXT,
-                                              decoration:
-                                                  TextDecoration.underline,
-                                              height: 1.4),
-                                        ),
+                                  TextButton(
+                                    onPressed: _onUpdateContact,
+                                    child: Container(
+                                      alignment: Alignment.centerRight,
+                                      child: Text(
+                                        'Cập nhật danh bạ',
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: AppColor.BLUE_TEXT,
+                                            decoration:
+                                                TextDecoration.underline,
+                                            height: 1.4),
                                       ),
                                     ),
                                   ),
@@ -476,7 +481,7 @@ class _ContactStateState extends State<_ContactState>
                     ],
                   ),
                   Positioned(
-                    bottom: 100,
+                    bottom: 20,
                     right: 20,
                     child: GestureDetector(
                       onTap: () async {
