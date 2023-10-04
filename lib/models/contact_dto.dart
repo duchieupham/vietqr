@@ -1,29 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-part 'contact_dto.g.dart';
-
-@HiveType(typeId: 0)
 class ContactDTO {
-  @HiveField(0)
   String id;
-  @HiveField(1)
   String nickname;
-  @HiveField(2)
   int status;
-  @HiveField(3)
   int type;
-  @HiveField(4)
   String imgId;
-  @HiveField(5)
   String description;
-  @HiveField(6)
   String phoneNo;
-  @HiveField(7)
   String carrierTypeId;
-  @HiveField(8)
   int relation;
-  @HiveField(9)
   Color? bankColor;
 
   ContactDTO({
@@ -65,5 +52,49 @@ class ContactDTO {
         "phoneNo": phoneNo,
         "carrierTypeId": carrierTypeId,
         "relation": relation,
+      };
+}
+
+class VCardModel {
+  final String? fullname;
+  final String? phoneNo;
+  final String? email;
+  final String? companyName;
+  final String? website;
+  final String? address;
+  final String? userId;
+  final String? additionalData;
+
+  VCardModel({
+    this.fullname,
+    this.phoneNo,
+    this.email,
+    this.companyName,
+    this.website,
+    this.address,
+    this.userId,
+    this.additionalData,
+  });
+
+  factory VCardModel.fromJson(Map<String, dynamic> json) => VCardModel(
+        fullname: json["fullname"],
+        phoneNo: json["phoneNo"],
+        email: json["email"],
+        companyName: json["companyName"],
+        website: json["website"],
+        address: json["address"],
+        userId: json["userId"],
+        additionalData: json["additionalData"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "fullname": fullname,
+        "phoneNo": phoneNo,
+        "email": email,
+        "companyName": companyName,
+        "website": website,
+        "address": address,
+        "userId": userId,
+        "additionalData": additionalData,
       };
 }

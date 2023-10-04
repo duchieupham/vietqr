@@ -1,85 +1,76 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 
-part 'contact_detail_dto.g.dart';
-
-@HiveType(typeId: 1)
 class ContactDetailDTO {
-  @HiveField(0)
-  final String? id;
-  @HiveField(1)
-  final String? userId;
-  @HiveField(2)
-  final String? additionalData;
-  @HiveField(3)
-  final String? nickName;
-  @HiveField(4)
-  final String? email;
-  @HiveField(5)
-  final int? type;
-  @HiveField(6)
-  final int? status;
-  @HiveField(7)
-  final String? value;
-  @HiveField(8)
-  final String? bankShortName;
-  @HiveField(9)
-  final String? bankName;
-  @HiveField(10)
-  final String? imgId;
-  @HiveField(11)
-  final String? bankAccount;
-  @HiveField(12)
+  final String id;
+  final String nickname;
+  final String value;
+  final String additionalData;
+  final int type;
+  final int status;
+  final String bankShortName;
+  final String bankName;
+  final String imgId;
+  final String bankAccount;
   final int colorType;
-  @HiveField(13)
   final int relation;
+  final String email;
+  final String address;
+  final String company;
+  final String website;
+  final String phoneNo;
 
   ContactDetailDTO({
     this.id = '',
-    this.userId = '',
+    this.nickname = '',
+    this.value = '',
     this.additionalData = '',
-    this.nickName = '',
-    this.email = '',
     this.type = 0,
     this.status = 0,
-    this.value = '',
     this.bankShortName = '',
     this.bankName = '',
     this.imgId = '',
     this.bankAccount = '',
     this.colorType = 0,
     this.relation = 0,
+    this.email = '',
+    this.address = '',
+    this.company = '',
+    this.website = '',
+    this.phoneNo = '',
   });
 
   factory ContactDetailDTO.fromJson(Map<String, dynamic> json) =>
       ContactDetailDTO(
-        additionalData: json["additionalData"],
-        nickName: json["nickname"],
-        type: json["type"],
-        value: json["value"],
-        id: json["id"],
-        status: json["status"],
-        bankShortName: json["bankShortName"],
-        imgId: json["imgId"],
-        bankAccount: json["bankAccount"],
-        bankName: json["bankName"],
-        colorType: json["colorType"],
-        relation: json["relation"],
+        id: json["id"] ?? '',
+        nickname: json["nickname"] ?? '',
+        value: json["value"] ?? '',
+        additionalData: json["additionalData"] ?? '',
+        type: json["type"] ?? 0,
+        status: json["status"] ?? 0,
+        bankShortName: json["bankShortName"] ?? '',
+        bankName: json["bankName"] ?? '',
+        imgId: json["imgId"] ?? '',
+        bankAccount: json["bankAccount"] ?? '',
+        colorType: json["colorType"] ?? 0,
+        relation: json["relation"] ?? 0,
+        email: json["email"] ?? '',
+        address: json["address"] ?? '',
+        company: json["company"] ?? '',
+        website: json["website"] ?? '',
+        phoneNo: json["phoneNo"] ?? '',
       );
 
   Map<String, dynamic> toJson() => {
-        "additionalData": additionalData,
-        "nickName": nickName,
-        "type": type,
-        "value": value,
-        "bankName": bankName,
-        "bankAccount": bankAccount,
-        "imgId": imgId,
-        "bankShortName": bankShortName,
-        "status": status,
         "id": id,
-        "colorType": colorType,
-        "relation": relation,
+        "nickname": nickname,
+        "note": additionalData,
+        "colorType": colorType.toString(),
+        "address": address,
+        "company": company,
+        "email": email,
+        "phoneNo": phoneNo,
+        "website": website,
+        "imgId": imgId,
       };
 
   Gradient getBgGradient() {

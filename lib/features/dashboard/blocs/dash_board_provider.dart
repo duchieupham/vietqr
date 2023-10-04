@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bottom_nav_dto.dart';
+import 'package:vierqr/models/contact_dto.dart';
 import 'package:vierqr/services/shared_references/account_helper.dart';
 
 class DashBoardProvider with ChangeNotifier {
@@ -22,6 +23,19 @@ class DashBoardProvider with ChangeNotifier {
 
   TypeInternet type = TypeInternet.NONE;
   bool isInternet = false;
+
+  List<ContactDTO> listSync = [];
+  bool isSync = false;
+
+  void updateSync(value) {
+    isSync = value;
+    notifyListeners();
+  }
+
+  void updateListSync(List<ContactDTO> value) {
+    listSync = value;
+    notifyListeners();
+  }
 
   void updateInternet(value, typeInternet) {
     type = typeInternet;

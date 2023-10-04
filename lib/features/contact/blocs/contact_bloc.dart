@@ -1,9 +1,5 @@
-import 'dart:convert';
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:vcard_maintained/vcard_maintained.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
@@ -48,6 +44,7 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
         )) {
     on<InitDataEvent>(_getNickNameWalletId);
     on<ContactEventGetList>(_getListContact);
+    on<GetListContactLoadMore>(_fetchListContact);
     on<ContactEventGetListRecharge>(_getListContactRecharge);
     on<ContactEventGetListPending>(_getListContactPending);
     on<ContactEventGetDetail>(_getDetailContact);
@@ -60,6 +57,9 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
     on<GetNickNameContactEvent>(_getNickNameWalletId);
     on<UpdateEventContact>(_updateState);
     on<SearchUser>(_searchUser);
+    on<InsertVCardEvent>(_insertVCard);
+    on<UpdateContactVCardEvent>(_updateContactVCard);
+    on<SearchContactEvent>(_searchContact);
   }
 
   final repository = ContactRepository();
@@ -81,45 +81,12 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
         List<ContactDTO> result =
             await repository.getListSaveContact(userId, type, offset * 20);
 
-        // result.sort((a, b) {
-        //   return a.nickname.toLowerCase().compareTo(b.nickname.toLowerCase());
-        // });
-        //
-        // List<List<ContactDTO>> listAll = [];
-        // List<String> listString = [];
-        //
-        // if (result.isNotEmpty) {
-        //   for (int i = 0; i < result.length; i++) {
-        //     if (result[i].nickname.isNotEmpty) {
-        //       String keyName = result[i].nickname[0].toUpperCase();
-        //       listString.add(keyName);
-        //     } else {
-        //       listString.add('');
-        //     }
-        //   }
-        //
-        //   listString = listString.toSet().toList();
-        //
-        //   for (int i = 0; i < listString.length; i++) {
-        //     List<ContactDTO> listCompare = [];
-        //     listCompare = result.where((element) {
-        //       if (element.nickname.isNotEmpty) {
-        //         return element.nickname[0].toUpperCase() == listString[i];
-        //       } else {
-        //         return element.nickname.toUpperCase() == listString[i];
-        //       }
-        //     }).toList();
-        //
-        //     listAll.add(listCompare);
-        //   }
-        // }
-
         for (ContactDTO dto in result) {
           if (dto.type == 1) {
             dto.setColor(AppColor.BLUE_TEXT);
           } else if (dto.type == 3) {
             dto.setColor(AppColor.GREY_TEXT);
-          } else {
+          } else if (dto.type != 4) {
             NetworkImage image = ImageUtils.instance.getImageNetWork(dto.imgId);
             paletteGenerator = await PaletteGenerator.fromImageProvider(image);
             if (paletteGenerator.dominantColor != null) {
@@ -131,9 +98,15 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
           }
         }
 
+        result.sort((a, b) {
+          return a.nickname.toLowerCase().compareTo(b.nickname.toLowerCase());
+        });
+
+        List<List<ContactDTO>> listAll = await _compareList(result);
+
         emit(
           state.copyWith(
-            listCompareContact: [],
+            listCompareContact: listAll,
             listContactDTO: result,
             type: ContactType.GET_LIST,
             isLoading: false,
@@ -144,6 +117,101 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
       LOG.error(e.toString());
       emit(state.copyWith(status: BlocStatus.ERROR));
     }
+  }
+
+  void _fetchListContact(ContactEvent event, Emitter emit) async {
+    try {
+      if (event is GetListContactLoadMore) {
+        PaletteGenerator? paletteGenerator;
+        BuildContext context = NavigationService.navigatorKey.currentContext!;
+        emit(state.copyWith(
+            status: BlocStatus.NONE,
+            isLoading: event.isLoading,
+            type: ContactType.NONE));
+
+        bool isLoadMore = false;
+        int type = event.type ?? 8;
+        int offset = event.offset ?? 0;
+
+        List<ContactDTO> result =
+            await repository.getListSaveContact(userId, type, offset * 20);
+
+        List<ContactDTO> data = state.listContactDTO;
+
+        if (result.isEmpty || result.length < 20) {
+          isLoadMore = true;
+        }
+
+        data.addAll(result);
+
+        for (ContactDTO dto in data) {
+          if (dto.type == 1) {
+            dto.setColor(AppColor.BLUE_TEXT);
+          } else if (dto.type == 3) {
+            dto.setColor(AppColor.GREY_TEXT);
+          } else if (dto.type != 4) {
+            NetworkImage image = ImageUtils.instance.getImageNetWork(dto.imgId);
+            paletteGenerator = await PaletteGenerator.fromImageProvider(image);
+            if (paletteGenerator.dominantColor != null) {
+              dto.setColor(paletteGenerator.dominantColor!.color);
+            } else {
+              if (!mounted) return;
+              dto.setColor(Theme.of(context).cardColor);
+            }
+          }
+        }
+
+        data.sort((a, b) {
+          return a.nickname.toLowerCase().compareTo(b.nickname.toLowerCase());
+        });
+
+        List<List<ContactDTO>> listAll = await _compareList(data);
+
+        emit(
+          state.copyWith(
+            listCompareContact: listAll,
+            listContactDTO: data,
+            type: ContactType.GET_LIST,
+            isLoading: false,
+          ),
+        );
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(status: BlocStatus.ERROR));
+    }
+  }
+
+  Future<List<List<ContactDTO>>> _compareList(List<ContactDTO> result) async {
+    List<List<ContactDTO>> listAll = [];
+    List<String> listString = [];
+
+    if (result.isNotEmpty) {
+      for (int i = 0; i < result.length; i++) {
+        if (result[i].nickname.isNotEmpty) {
+          String keyName = result[i].nickname[0].toUpperCase();
+          listString.add(keyName);
+        } else {
+          listString.add('');
+        }
+      }
+
+      listString = listString.toSet().toList();
+
+      for (int i = 0; i < listString.length; i++) {
+        List<ContactDTO> listCompare = [];
+        listCompare = result.where((element) {
+          if (element.nickname.isNotEmpty) {
+            return element.nickname[0].toUpperCase() == listString[i];
+          } else {
+            return element.nickname.toUpperCase() == listString[i];
+          }
+        }).toList();
+
+        listAll.add(listCompare);
+      }
+    }
+    return listAll;
   }
 
   void _getListContactRecharge(ContactEvent event, Emitter emit) async {
@@ -204,64 +272,14 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
       if (event is ContactEventGetDetail) {
         emit(
             state.copyWith(status: BlocStatus.LOADING, type: ContactType.NONE));
-
-        ContactDetailDTO result = ContactDetailDTO();
-
-        if (event.type != 4) {
-          result = await repository.getContactDetail(event.id);
-        } else {
-          final data = await FlutterContacts.getContact(event.id);
-          if (data != null) {
-            String phone =
-                data.phones.isNotEmpty ? data.phones.first.number : '';
-            String email =
-                data.emails.isNotEmpty ? data.emails.first.address : '';
-            String nickName = data.displayName;
-
-            String lastName = data.name.last;
-            String firstName = data.name.first;
-
-            String base64Image = '';
-            if (data.photo != null) {
-              base64Image = base64Encode(data.photo!);
-            }
-
-            int random = Random().nextInt(5);
-
-            vCard.middleName = data.name.middle;
-            vCard.firstName = firstName;
-            vCard.lastName = lastName;
-            vCard.cellPhone = phone;
-            vCard.email = email;
-            vCard.url = base64Image;
-
-            result = ContactDetailDTO(
-              id: data.id,
-              userId: userId,
-              additionalData:
-                  data.notes.isNotEmpty ? data.notes.first.note : '-',
-              nickName: nickName,
-              email: email.isNotEmpty ? email : '-',
-              type: 4,
-              status: 0,
-              value: vCard.getFormattedString(),
-              bankShortName: '',
-              bankName: '',
-              imgId: base64Image,
-              bankAccount: phone,
-              colorType: random,
-              relation: 0,
-            );
-          }
-        }
-
-        if (result.id!.isNotEmpty) {
+        final result = await repository.getContactDetail(event.id);
+        if (result.id.isNotEmpty) {
           emit(
             state.copyWith(
-              contactDetailDTO: result,
-              status: BlocStatus.UNLOADING,
-              type: ContactType.GET_DETAIL,
-            ),
+                contactDetailDTO: result,
+                status: BlocStatus.UNLOADING,
+                type: ContactType.GET_DETAIL,
+                isChange: event.isChange),
           );
         } else {
           emit(state.copyWith(
@@ -326,21 +344,44 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
     }
   }
 
+  void _updateContactVCard(ContactEvent event, Emitter emit) async {
+    try {
+      if (event is UpdateContactVCardEvent) {
+        emit(
+          state.copyWith(status: BlocStatus.LOADING, type: ContactType.NONE),
+        );
+        ResponseMessageDTO result =
+            await repository.updateContactVCard(event.query, event.image);
+        if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
+          emit(state.copyWith(
+              status: BlocStatus.UNLOADING, type: ContactType.UPDATE));
+        } else {
+          emit(
+            state.copyWith(
+                type: ContactType.ERROR, status: BlocStatus.UNLOADING),
+          );
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(type: ContactType.ERROR));
+    }
+  }
+
   void _updateRelation(ContactEvent event, Emitter emit) async {
     try {
       if (event is UpdateContactRelationEvent) {
         emit(
-          state.copyWith(status: BlocStatus.LOADING, type: ContactType.NONE),
+          state.copyWith(status: BlocStatus.NONE, type: ContactType.NONE),
         );
         ResponseMessageDTO result =
             await repository.updateRelation(event.query);
         if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
           emit(state.copyWith(
-              status: BlocStatus.UNLOADING, type: ContactType.UPDATE_RELATION));
+              status: BlocStatus.NONE, type: ContactType.UPDATE_RELATION));
         } else {
           emit(
-            state.copyWith(
-                type: ContactType.ERROR, status: BlocStatus.UNLOADING),
+            state.copyWith(type: ContactType.ERROR, status: BlocStatus.NONE),
           );
         }
       }
@@ -527,6 +568,77 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
     } catch (e) {
       LOG.error(e.toString());
       emit(state.copyWith(type: ContactType.ERROR));
+    }
+  }
+
+  void _insertVCard(ContactEvent event, Emitter emit) async {
+    try {
+      if (event is InsertVCardEvent) {
+        emit(state.copyWith(status: BlocStatus.NONE, type: ContactType.NONE));
+        ResponseMessageDTO result = await repository.insertVCard(event.list);
+        if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
+          emit(state.copyWith(
+              status: BlocStatus.NONE, type: ContactType.INSERT_VCARD));
+        } else {
+          emit(state.copyWith(
+              type: ContactType.ERROR,
+              status: BlocStatus.NONE,
+              msg: CheckUtils.instance.getCheckMessage(result.message)));
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(type: ContactType.ERROR));
+    }
+  }
+
+  void _searchContact(ContactEvent event, Emitter emit) async {
+    try {
+      if (event is SearchContactEvent) {
+        PaletteGenerator? paletteGenerator;
+        BuildContext context = NavigationService.navigatorKey.currentContext!;
+        emit(state.copyWith(status: BlocStatus.NONE, type: ContactType.NONE));
+        int type = event.type ?? 8;
+        int offset = event.offset ?? 0;
+
+        List<ContactDTO> result = await repository.searchContact(
+            event.nickName, userId, type, offset * 20);
+
+        for (ContactDTO dto in result) {
+          if (dto.type == 1) {
+            dto.setColor(AppColor.BLUE_TEXT);
+          } else if (dto.type == 3) {
+            dto.setColor(AppColor.GREY_TEXT);
+          } else if (dto.type != 4) {
+            NetworkImage image = ImageUtils.instance.getImageNetWork(dto.imgId);
+            paletteGenerator = await PaletteGenerator.fromImageProvider(image);
+            if (paletteGenerator.dominantColor != null) {
+              dto.setColor(paletteGenerator.dominantColor!.color);
+            } else {
+              if (!mounted) return;
+              dto.setColor(Theme.of(context).cardColor);
+            }
+          }
+        }
+
+        result.sort((a, b) {
+          return a.nickname.toLowerCase().compareTo(b.nickname.toLowerCase());
+        });
+
+        List<List<ContactDTO>> listAll = await _compareList(result);
+
+        emit(
+          state.copyWith(
+            listCompareContact: listAll,
+            listContactDTO: result,
+            type: ContactType.GET_LIST,
+            isLoading: false,
+          ),
+        );
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(status: BlocStatus.ERROR));
     }
   }
 }

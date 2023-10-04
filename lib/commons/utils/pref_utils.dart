@@ -24,8 +24,6 @@ class HivePrefs {
     if (_initEd) {
       completer.complete(_instance);
     } else {
-      Hive.registerAdapter(ContactDetailDTOAdapter());
-      Hive.registerAdapter(ContactDTOAdapter());
       await Hive.initFlutter();
       prefs = await Hive.openBox(keys.vCardKey);
       _initEd = true;

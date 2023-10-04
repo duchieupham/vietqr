@@ -126,6 +126,33 @@ class ContactRepository {
     return result;
   }
 
+  Future<ResponseMessageDTO> updateContactVCard(query, File? file) async {
+    ResponseMessageDTO result =
+        const ResponseMessageDTO(status: '', message: '');
+    final List<http.MultipartFile> files = [];
+    if (file != null) {
+      final imageFile = await http.MultipartFile.fromPath('image', file.path);
+      files.add(imageFile);
+    }
+    try {
+      String url = '${EnvConfig.getBaseUrl()}contacts/vcard/update';
+      final response = await BaseAPIClient.postMultipartAPI(
+        url: url,
+        fields: query,
+        files: files,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        if (data != null) {
+          result = ResponseMessageDTO.fromJson(data);
+        }
+      }
+    } catch (e) {
+      LOG.error('Error at requestPermissions - PermissionRepository: $e');
+    }
+    return result;
+  }
+
   Future<ResponseMessageDTO> updateRelation(query) async {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
@@ -221,6 +248,55 @@ class ContactRepository {
     } catch (e) {
       LOG.error('Error at requestPermissions - PermissionRepository: $e');
       return list;
+    }
+    return list;
+  }
+
+  Future<ResponseMessageDTO> insertVCard(List<VCardModel> list) async {
+    ResponseMessageDTO result =
+        const ResponseMessageDTO(status: '', message: '');
+    try {
+      String url = '${EnvConfig.getBaseUrl()}contacts/vcard';
+      final response = await BaseAPIClient.postAPI(
+          url: url, type: AuthenticationType.SYSTEM, body: {'list': list});
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        if (data != null) {
+          result = ResponseMessageDTO.fromJson(data);
+        }
+      }
+    } catch (e) {
+      LOG.error('Error at requestPermissions - PermissionRepository: $e');
+      return result;
+    }
+    return result;
+  }
+
+  Future<List<ContactDTO>> searchContact(nickname, userId, type, offset) async {
+    List<ContactDTO> list = [];
+    try {
+      String url = '${EnvConfig.getBaseUrl()}contacts/search';
+
+      final response = await BaseAPIClient.postAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+        body: {
+          'nickname': nickname,
+          'userId': userId,
+          'type': type,
+          'offset': offset,
+        },
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        if (data != null) {
+          list = data
+              .map<ContactDTO>((json) => ContactDTO.fromJson(json))
+              .toList();
+        }
+      }
+    } catch (e) {
+      LOG.error('Error at requestPermissions - PermissionRepository: $e');
     }
     return list;
   }
