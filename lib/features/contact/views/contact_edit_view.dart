@@ -299,7 +299,8 @@ class _ContactEditViewState extends State<_ContactEditView> {
                                   contentPadding: EdgeInsets.symmetric(
                                       vertical: 12, horizontal: 16),
                                   controller: phoneController,
-                                  hintText: 'Nhập số điện thoại cho mã QR của bạn',
+                                  hintText:
+                                      'Nhập số điện thoại cho mã QR của bạn',
                                   inputType: TextInputType.text,
                                   keyboardAction: TextInputAction.next,
                                   onChange: (value) {},
@@ -381,7 +382,8 @@ class _ContactEditViewState extends State<_ContactEditView> {
                           ),
                         ),
                         if (widget.contactDetailDTO.type == 1 ||
-                            widget.contactDetailDTO.type == 3)
+                            widget.contactDetailDTO.type == 3 ||
+                            widget.contactDetailDTO.type == 4)
                           _buildChooseColor((colorType) {
                             setState(() {
                               typeColorCard = colorType;
@@ -497,7 +499,7 @@ class _ContactEditViewState extends State<_ContactEditView> {
                               id: widget.contactDetailDTO.id,
                               nickname: nickNameController.text,
                               additionalData: suggestController.text,
-                              colorType: widget.contactDetailDTO.colorType,
+                              colorType: typeColorCard,
                               address: addressController.text,
                               company: companyController.text,
                               website: webController.text,

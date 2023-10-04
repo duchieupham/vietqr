@@ -99,5 +99,7 @@ class ContactState extends Equatable {
         bankAccount,
         bankTypeDTO,
         userSearch,
+        isLoading,
+        isChange,
       ];
 }

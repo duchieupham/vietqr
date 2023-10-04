@@ -196,7 +196,7 @@ class ContactProvider extends ChangeNotifier {
       type: 9,
     ),
     ContactDataModel(
-      title: 'Danh bạ',
+      title: 'VCard',
       url: 'assets/images/ic-contact-bank-blue.png',
       type: 4,
     ),

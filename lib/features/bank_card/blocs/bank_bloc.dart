@@ -112,9 +112,8 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
               dto.setColor(Theme.of(context).cardColor);
             }
           }
-
-          list = [otd, ...list, otd2];
         }
+        list = [otd, ...list, otd2];
 
         emit(state.copyWith(
             request: BankType.BANK,
