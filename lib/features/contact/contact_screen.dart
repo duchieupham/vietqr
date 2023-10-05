@@ -77,15 +77,16 @@ class _ContactStateState extends State<_ContactState>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _bloc.add(ContactEventGetList(isLoading: true));
       _bloc.add(ContactEventGetListPending());
-
-      _onCheckSyncContact();
     });
 
     _subscription = eventBus.on<ReloadContact>().listen((_) {
       _onRefresh();
     });
     _syncSub = eventBus.on<CheckSyncContact>().listen((_) {
-      _onCheckSyncContact();
+      if (Provider.of<ContactProvider>(context, listen: false).category!.type ==
+          4) {
+        _onCheckSyncContact();
+      }
     });
     _syncGetSub = eventBus.on<SentDataToContact>().listen((data) {
       Provider.of<ContactProvider>(context, listen: false)
@@ -108,32 +109,34 @@ class _ContactStateState extends State<_ContactState>
   }
 
   void _onCheckSyncContact() async {
-    Future.delayed(const Duration(seconds: 1)).then((value) {
-      if (!Provider.of<ContactProvider>(context, listen: false).isIntro) {
-        DialogWidget.instance.openDialogIntroduce(
-          child: ContactIntroWidget(
-            onSync: () async {
-              Navigator.pop(context);
+    if (!Provider.of<ContactProvider>(context, listen: false).isIntro) {
+      DialogWidget.instance.openDialogIntroduce(
+        child: ContactIntroWidget(
+          onSync: () async {
+            Navigator.pop(context);
+            Provider.of<ContactProvider>(context, listen: false)
+                .updateIntro(true);
+            final data = await _fetchContacts();
+
+            eventBus.fire(SyncContactEvent(data));
+          },
+          onSelected: (value) async {
+            Navigator.pop(context);
+            if (value) {
               Provider.of<ContactProvider>(context, listen: false)
                   .updateIntro(true);
-              final data = await _fetchContacts();
-
-              eventBus.fire(SyncContactEvent(data));
-            },
-            onSelected: (value) async {
-              Navigator.pop(context);
-              if (value) {
-                Provider.of<ContactProvider>(context, listen: false)
-                    .updateIntro(true);
-              }
-            },
-          ),
-        );
-      }
-    });
+            }
+          },
+        ),
+      );
+    }
   }
 
-  void _onUpdateContact() async {}
+  void _onUpdateContact() async {
+    final data = await _fetchContacts();
+
+    eventBus.fire(SyncContactEvent(data));
+  }
 
   initData() async {
     _bloc = BlocProvider.of(context);
@@ -258,8 +261,18 @@ class _ContactStateState extends State<_ContactState>
                 .updateOffset(offset + 1);
           }
 
+          if (state.type == ContactType.INSERT_VCARD) {
+            int type = Provider.of<ContactProvider>(context, listen: false)
+                .category!
+                .type;
+            _bloc.add(ContactEventGetList(type: type, isLoading: false));
+          }
+
           if (state.type == ContactType.REMOVE) {
-            _bloc.add(ContactEventGetList());
+            int type = Provider.of<ContactProvider>(context, listen: false)
+                .category!
+                .type;
+            _bloc.add(ContactEventGetList(type: type));
           }
 
           if (state.type == ContactType.SAVE) {
@@ -354,6 +367,10 @@ class _ContactStateState extends State<_ContactState>
                                       ContactEventGetList(type: model.type));
                                 } else {
                                   _bloc.add(ContactEventGetListPending());
+                                }
+
+                                if (model.type == 4) {
+                                  _onCheckSyncContact();
                                 }
                               },
                               child: _buildCategory(
@@ -627,7 +644,7 @@ class _ContactStateState extends State<_ContactState>
                     text: TextSpan(
                       children: [
                         TextSpan(
-                          text: dto.type == 4 ? dto.phoneNo : dto.description,
+                          text: dto.description,
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.w400,

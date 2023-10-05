@@ -97,7 +97,6 @@ class _MyQRBottomSheetState extends State<MyQRBottomSheet> {
                                               .imgId)),
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(100)),
-                                  color: Colors.redAccent,
                                 ),
                               ),
                             ),
