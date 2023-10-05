@@ -22,6 +22,7 @@ class ContactState extends Equatable {
   final String? imgId;
   final dynamic dto;
   final bool isLoading;
+  final bool isChange;
 
   const ContactState({
     required this.listContactDTO,
@@ -40,6 +41,7 @@ class ContactState extends Equatable {
     this.imgId,
     this.dto,
     this.isLoading = false,
+    this.isChange = false,
   });
 
   ContactState copyWith({
@@ -59,6 +61,7 @@ class ContactState extends Equatable {
     String? imgId,
     dynamic dto,
     bool? isLoading,
+    bool? isChange,
   }) {
     return ContactState(
       status: status ?? this.status,
@@ -78,6 +81,7 @@ class ContactState extends Equatable {
       imgId: imgId ?? this.imgId,
       dto: dto ?? this.dto,
       isLoading: isLoading ?? this.isLoading,
+      isChange: isChange ?? this.isChange,
     );
   }
 

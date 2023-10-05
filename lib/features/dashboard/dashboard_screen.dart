@@ -1,12 +1,16 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:float_bubble/float_bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
@@ -36,7 +40,9 @@ import 'package:vierqr/features/notification/states/notification_state.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_card_insert_unauthenticated.dart';
+import 'package:vierqr/models/contact_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
+import 'package:vierqr/services/local_storage/local_storage.dart';
 import 'package:vierqr/services/providers/account_balance_home_provider.dart';
 import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
@@ -57,10 +63,14 @@ class _DashBoardScreen extends State<DashBoardScreen>
         WidgetsBindingObserver,
         AutomaticKeepAliveClientMixin,
         SingleTickerProviderStateMixin {
+  final _local = LocalStorageRepository();
+  Box? _box;
+
   //page controller
   late PageController _pageController;
   StreamSubscription? _subscription;
   StreamSubscription? _subReloadWallet;
+  StreamSubscription? _subSyncContact;
 
   //list page
   final List<Widget> _listScreens = [];
@@ -115,8 +125,69 @@ class _DashBoardScreen extends State<DashBoardScreen>
     _subReloadWallet = eventBus.on<ReloadWallet>().listen((_) {
       _dashBoardBloc.add(GetPointEvent());
     });
+    _subSyncContact = eventBus.on<SyncContactEvent>().listen((data) {
+      _heavyTaskStreamReceiver(data.list);
+    });
 
     _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+  }
+
+  static void heavyTask(List<dynamic> args) async {
+    SendPort sendPort = args[0];
+    List<ContactDTO> list = args[1];
+
+    double progress = 0;
+    if (list.isNotEmpty) {
+      double amount = 1 / list.length;
+      for (int i = 0; i < list.length; i++) {
+        progress += amount;
+        if (i == list.length - 1) {
+          if (progress < 1) {
+            progress = 1;
+          }
+        } else if (progress > 1) {
+          progress = 1;
+        }
+
+        sendPort.send(HeavyTaskData(progress: progress, index: i));
+      }
+      sendPort.send(HeavyTaskData(progress: progress));
+    } else {
+      sendPort.send(HeavyTaskData(progress: 1.0));
+    }
+  }
+
+  Future<void> _heavyTaskStreamReceiver(List<ContactDTO> list) async {
+    final receivePort = ReceivePort();
+    Isolate.spawn(heavyTask, [receivePort.sendPort, list]);
+    await for (var message in receivePort) {
+      if (message is HeavyTaskData) {
+        if (message.index != null) {
+          final e = await FlutterContacts.getContact(list[message.index!].id);
+          if (e != null) {
+            final contact = VCardModel(
+              fullname: e.displayName.isNotEmpty ? e.displayName : '',
+              phoneNo: e.phones.isNotEmpty ? e.phones.first.number : '',
+              email: e.emails.isNotEmpty ? e.emails.first.address : '',
+              companyName: e.organizations.isNotEmpty
+                  ? e.organizations.first.company
+                  : '',
+              website: e.websites.isNotEmpty ? e.websites.first.url : '',
+              address: e.addresses.isNotEmpty ? e.addresses.first.address : '',
+              userId: UserInformationHelper.instance.getUserId(),
+              additionalData: e.notes.isNotEmpty ? e.notes.first.note : '',
+            );
+
+            eventBus.fire(SentDataToContact(contact, list.length));
+          }
+        }
+
+        if (message.progress >= 1) {
+          receivePort.close();
+          return;
+        }
+      }
+    }
   }
 
   void startBarcodeScanStream() async {
@@ -235,6 +306,8 @@ class _DashBoardScreen extends State<DashBoardScreen>
     _subscription = null;
     _subReloadWallet?.cancel();
     _subReloadWallet = null;
+    _subSyncContact?.cancel();
+    _subSyncContact = null;
     if (_connectivitySubscription != null) {
       _connectivitySubscription!.cancel();
     }
@@ -244,7 +317,9 @@ class _DashBoardScreen extends State<DashBoardScreen>
 //check user information is updated before or not
   void checkUserInformation() async {
     String userId = UserInformationHelper.instance.getUserId();
-    if (userId.isNotEmpty) {}
+    if (userId.isNotEmpty) {
+      _box = await _local.openBox(userId);
+    }
   }
 
   void _updateFcmToken(bool isFromLogin) {

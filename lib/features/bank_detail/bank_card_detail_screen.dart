@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
@@ -207,6 +208,7 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                             }
 
                             if (state.request == BankDetailType.DELETED) {
+                              eventBus.fire(GetListBankScreen());
                               Fluttertoast.showToast(
                                 msg: 'Đã xoá TK ngân hàng',
                                 toastLength: Toast.LENGTH_SHORT,

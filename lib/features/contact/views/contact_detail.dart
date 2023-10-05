@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:clipboard/clipboard.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -30,8 +29,7 @@ import '../../../services/shared_references/user_information_helper.dart';
 import '../../printer/views/printing_view.dart';
 import 'contact_edit_view.dart';
 
-// ignore: must_be_immutable
-class ContactDetailScreen extends StatefulWidget {
+class ContactDetailScreen extends StatelessWidget {
   final ContactDTO dto;
   final bool isEdit;
 
@@ -39,11 +37,31 @@ class ContactDetailScreen extends StatefulWidget {
       {super.key, required this.dto, required this.isEdit});
 
   @override
-  State<ContactDetailScreen> createState() => _ContactDetailScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider<ContactBloc>(
+      create: (context) => ContactBloc(context)
+        ..add(ContactEventGetDetail(id: dto.id, type: dto.type)),
+      child: _ContactDetailScreen(dto: dto, isEdit: isEdit),
+    );
+  }
 }
 
-class _ContactDetailScreenState extends State<ContactDetailScreen> {
+// ignore: must_be_immutable
+class _ContactDetailScreen extends StatefulWidget {
+  final ContactDTO dto;
+  final bool isEdit;
+
+  const _ContactDetailScreen({required this.dto, required this.isEdit});
+
+  @override
+  State<_ContactDetailScreen> createState() => _ContactDetailScreenState();
+}
+
+class _ContactDetailScreenState extends State<_ContactDetailScreen> {
   final GlobalKey globalKey = GlobalKey();
+
+  late ContactBloc _bloc;
+
   QRGeneratedDTO qrGeneratedDTO = QRGeneratedDTO(
     bankCode: '',
     bankName: '',
@@ -57,11 +75,6 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
 
   DecorationImage getImage(int type, String imageId) {
     if (imageId.isNotEmpty) {
-      if (type == 4) {
-        return DecorationImage(
-            image: MemoryImage(base64Decode(imageId)),
-            fit: type == 2 ? BoxFit.contain : BoxFit.cover);
-      }
       return DecorationImage(
           image: ImageUtils.instance.getImageNetWork(imageId),
           fit: type == 2 ? BoxFit.contain : BoxFit.cover);
@@ -119,231 +132,228 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _bloc = BlocProvider.of(context);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
-    return BlocProvider<ContactBloc>(
-      create: (context) => ContactBloc(context)
-        ..add(ContactEventGetDetail(id: widget.dto.id, type: widget.dto.type)),
-      child: BlocConsumer<ContactBloc, ContactState>(
-        listener: (context, state) {
-          if (state.status == BlocStatus.UNLOADING) {
-            qrGeneratedDTO = QRGeneratedDTO(
-              bankCode: state.contactDetailDTO.bankShortName ?? '',
-              bankName: state.contactDetailDTO.bankName ?? '',
-              bankAccount: state.contactDetailDTO.bankAccount ?? '',
-              userBankName: state.contactDetailDTO.nickName ?? '',
-              amount: '',
-              content: '',
-              qrCode: state.contactDetailDTO.value ?? '',
-              imgId: state.contactDetailDTO.imgId ?? '',
-            );
-          }
 
-          if (state.type == ContactType.REMOVE) {
-            Navigator.of(context).pop();
-            Fluttertoast.showToast(
-              msg: 'Xoá thành công',
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              backgroundColor: Theme.of(context).cardColor,
-              textColor: Theme.of(context).hintColor,
-              fontSize: 15,
-            );
-          }
+    return BlocConsumer<ContactBloc, ContactState>(
+      listener: (context, state) {
+        if (state.type == ContactType.REMOVE) {
+          Navigator.of(context).pop();
+          Fluttertoast.showToast(
+            msg: 'Xoá thành công',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Theme.of(context).cardColor,
+            textColor: Theme.of(context).hintColor,
+            fontSize: 15,
+          );
+        }
 
-          if (state.type == ContactType.UPDATE) {}
+        if (state.type == ContactType.GET_DETAIL) {
+          qrGeneratedDTO = QRGeneratedDTO(
+            bankCode: state.contactDetailDTO.bankShortName,
+            bankName: state.contactDetailDTO.bankName,
+            bankAccount: state.contactDetailDTO.bankAccount,
+            userBankName: state.contactDetailDTO.nickname,
+            amount: '',
+            content: '',
+            qrCode: state.contactDetailDTO.value,
+            imgId: state.contactDetailDTO.imgId,
+          );
+        }
+      },
+      builder: (context, state) {
+        return Scaffold(
+          appBar: MAppBar(
+            title: 'Thẻ QR',
+            onPressed: () {
+              Navigator.of(context).pop(state.isChange);
+            },
+            actions: widget.isEdit && state.contactDetailDTO.type == 2
+                ? [
+                    GestureDetector(
+                      onTap: () async {
+                        final data = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ContactEditView(
+                                contactDetailDTO: state.contactDetailDTO),
+                            // settings: RouteSettings(name: ContactEditView.routeName),
+                          ),
+                        );
 
-          if (state.type == ContactType.GET_LIST) {}
-        },
-        builder: (context, state) {
-          return Scaffold(
-            appBar: MAppBar(
-              title: 'Thẻ QR',
-              actions: widget.isEdit && state.contactDetailDTO.type == 2
-                  ? [
-                      GestureDetector(
-                        onTap: () async {
-                          final data = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => ContactEditView(
-                                  contactDetailDTO: state.contactDetailDTO),
-                              // settings: RouteSettings(name: ContactEditView.routeName),
-                            ),
-                          );
-
-                          if (!mounted) return;
-                          if (data is bool) {
-                            BlocProvider.of<ContactBloc>(context).add(
-                                ContactEventGetDetail(
-                                    id: widget.dto.id, type: widget.dto.type));
-                          }
-                        },
-                        child: Image.asset(
-                          'assets/images/ic-edit.png',
-                          height: 40,
-                          width: 40,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 12,
-                      )
-                    ]
-                  : null,
-            ),
-            body: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: ListView(
-                        children: [
-                          if (state.status == BlocStatus.LOADING)
-                            Padding(
-                              padding: EdgeInsets.only(top: height / 3),
-                              child: const Center(
-                                child: SizedBox(
-                                  width: 30,
-                                  height: 30,
-                                  child: CircularProgressIndicator(
-                                    color: AppColor.BLUE_TEXT,
-                                  ),
-                                ),
-                              ),
-                            )
-                          else
-                            _buildViewCard(state.contactDetailDTO, context)
-                        ],
+                        if (!mounted) return;
+                        if (data is bool) {
+                          _bloc.add(ContactEventGetDetail(
+                              id: widget.dto.id, type: widget.dto.type));
+                        }
+                      },
+                      child: Image.asset(
+                        'assets/images/ic-edit.png',
+                        height: 40,
+                        width: 40,
                       ),
                     ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 12),
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            width: double.infinity,
-                            height: 40,
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: ButtonIconWidget(
-                                    height: 40,
-                                    pathIcon: 'assets/images/ic-print-blue.png',
-                                    title: '',
-                                    function: () async {
-                                      BluetoothPrinterDTO bluetoothPrinterDTO =
-                                          await LocalDatabase.instance
-                                              .getBluetoothPrinter(
-                                                  UserInformationHelper.instance
-                                                      .getUserId());
-                                      if (bluetoothPrinterDTO.id.isNotEmpty) {
-                                        bool isPrinting = false;
-                                        if (!isPrinting) {
-                                          isPrinting = true;
-                                          DialogWidget.instance
-                                              .showFullModalBottomContent(
-                                                  widget: const PrintingView());
-                                          await PrinterUtils.instance
-                                              .print(qrGeneratedDTO)
-                                              .then((value) {
-                                            Navigator.pop(context);
-                                            isPrinting = false;
-                                          });
-                                        }
-                                      } else {
-                                        DialogWidget.instance.openMsgDialog(
-                                            title: 'Không thể in',
-                                            msg:
-                                                'Vui lòng kết nối với máy in để thực hiện việc in.');
-                                      }
-                                    },
-                                    bgColor: Theme.of(context).cardColor,
-                                    textColor: AppColor.ORANGE,
-                                  ),
+                    SizedBox(width: 12)
+                  ]
+                : null,
+          ),
+          body: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: ListView(
+                      children: [
+                        if (state.status == BlocStatus.LOADING)
+                          Padding(
+                            padding: EdgeInsets.only(top: height / 3),
+                            child: const Center(
+                              child: SizedBox(
+                                width: 30,
+                                height: 30,
+                                child: CircularProgressIndicator(
+                                  color: AppColor.BLUE_TEXT,
                                 ),
-                                const Padding(
-                                  padding: EdgeInsets.only(left: 10),
-                                ),
-                                Expanded(
-                                  child: ButtonIconWidget(
-                                    height: 40,
-                                    pathIcon:
-                                        'assets/images/ic-edit-avatar-setting.png',
-                                    title: '',
-                                    function: () {
-                                      actionServices(
-                                          context, 'SAVE', qrGeneratedDTO);
-                                    },
-                                    bgColor: Theme.of(context).cardColor,
-                                    textColor: AppColor.RED_CALENDAR,
-                                  ),
-                                ),
-                                const Padding(
-                                  padding: EdgeInsets.only(left: 10),
-                                ),
-                                Expanded(
-                                  child: ButtonIconWidget(
-                                    height: 40,
-                                    pathIcon: 'assets/images/ic-copy-blue.png',
-                                    title: '',
-                                    function: () async {
-                                      await FlutterClipboard.copy(ShareUtils
-                                              .instance
-                                              .getTextSharing(qrGeneratedDTO))
-                                          .then(
-                                        (value) => Fluttertoast.showToast(
-                                          msg: 'Đã sao chép',
-                                          toastLength: Toast.LENGTH_SHORT,
-                                          gravity: ToastGravity.CENTER,
-                                          timeInSecForIosWeb: 1,
-                                          backgroundColor:
-                                              Theme.of(context).cardColor,
-                                          textColor:
-                                              Theme.of(context).hintColor,
-                                          fontSize: 15,
-                                          webBgColor: 'rgba(255, 255, 255)',
-                                          webPosition: 'center',
-                                        ),
-                                      );
-                                    },
-                                    bgColor: Theme.of(context).cardColor,
-                                    textColor: AppColor.BLUE_TEXT,
-                                  ),
-                                ),
-                                const Padding(
-                                  padding: EdgeInsets.only(left: 10),
-                                ),
-                                Expanded(
-                                  child: ButtonIconWidget(
-                                    height: 40,
-                                    pathIcon: 'assets/images/ic-share-blue.png',
-                                    title: '',
-                                    function: () async {
-                                      await share(
-                                          dto: qrGeneratedDTO,
-                                          contactDetail:
-                                              state.contactDetailDTO);
-                                    },
-                                    bgColor: Theme.of(context).cardColor,
-                                    textColor: AppColor.BLUE_TEXT,
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
+                          )
+                        else
+                          _buildViewCard(state.contactDetailDTO, context)
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          width: double.infinity,
+                          height: 40,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: ButtonIconWidget(
+                                  height: 40,
+                                  pathIcon: 'assets/images/ic-print-blue.png',
+                                  title: '',
+                                  function: () async {
+                                    BluetoothPrinterDTO bluetoothPrinterDTO =
+                                        await LocalDatabase.instance
+                                            .getBluetoothPrinter(
+                                                UserInformationHelper.instance
+                                                    .getUserId());
+                                    if (bluetoothPrinterDTO.id.isNotEmpty) {
+                                      bool isPrinting = false;
+                                      if (!isPrinting) {
+                                        isPrinting = true;
+                                        DialogWidget.instance
+                                            .showFullModalBottomContent(
+                                                widget: const PrintingView());
+                                        await PrinterUtils.instance
+                                            .print(qrGeneratedDTO)
+                                            .then((value) {
+                                          Navigator.pop(context);
+                                          isPrinting = false;
+                                        });
+                                      }
+                                    } else {
+                                      DialogWidget.instance.openMsgDialog(
+                                          title: 'Không thể in',
+                                          msg:
+                                              'Vui lòng kết nối với máy in để thực hiện việc in.');
+                                    }
+                                  },
+                                  bgColor: Theme.of(context).cardColor,
+                                  textColor: AppColor.ORANGE,
+                                ),
+                              ),
+                              const Padding(
+                                padding: EdgeInsets.only(left: 10),
+                              ),
+                              Expanded(
+                                child: ButtonIconWidget(
+                                  height: 40,
+                                  pathIcon:
+                                      'assets/images/ic-edit-avatar-setting.png',
+                                  title: '',
+                                  function: () {
+                                    actionServices(
+                                        context, 'SAVE', qrGeneratedDTO);
+                                  },
+                                  bgColor: Theme.of(context).cardColor,
+                                  textColor: AppColor.RED_CALENDAR,
+                                ),
+                              ),
+                              const Padding(
+                                padding: EdgeInsets.only(left: 10),
+                              ),
+                              Expanded(
+                                child: ButtonIconWidget(
+                                  height: 40,
+                                  pathIcon: 'assets/images/ic-copy-blue.png',
+                                  title: '',
+                                  function: () async {
+                                    await FlutterClipboard.copy(ShareUtils
+                                            .instance
+                                            .getTextSharing(qrGeneratedDTO))
+                                        .then(
+                                      (value) => Fluttertoast.showToast(
+                                        msg: 'Đã sao chép',
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.CENTER,
+                                        timeInSecForIosWeb: 1,
+                                        backgroundColor:
+                                            Theme.of(context).cardColor,
+                                        textColor: Theme.of(context).hintColor,
+                                        fontSize: 15,
+                                        webBgColor: 'rgba(255, 255, 255)',
+                                        webPosition: 'center',
+                                      ),
+                                    );
+                                  },
+                                  bgColor: Theme.of(context).cardColor,
+                                  textColor: AppColor.BLUE_TEXT,
+                                ),
+                              ),
+                              const Padding(
+                                padding: EdgeInsets.only(left: 10),
+                              ),
+                              Expanded(
+                                child: ButtonIconWidget(
+                                  height: 40,
+                                  pathIcon: 'assets/images/ic-share-blue.png',
+                                  title: '',
+                                  function: () async {
+                                    await share(
+                                        dto: qrGeneratedDTO,
+                                        contactDetail: state.contactDetailDTO);
+                                  },
+                                  bgColor: Theme.of(context).cardColor,
+                                  textColor: AppColor.BLUE_TEXT,
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -374,7 +384,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
             decoration: BoxDecoration(
               color: AppColor.WHITE,
               borderRadius: BorderRadius.circular(40),
-              image: getImage(dto.type ?? 0, dto.imgId ?? ''),
+              image: getImage(dto.type, dto.imgId),
             ),
           ),
           SizedBox(
@@ -385,7 +395,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  dto.nickName ?? '',
+                  dto.nickname,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     fontWeight: FontWeight.w600,
@@ -394,14 +404,14 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
                 const SizedBox(height: 4),
                 dto.type == 2
                     ? Text(
-                        dto.bankShortName ?? '',
+                        dto.bankShortName,
                         style: TextStyle(fontSize: 12),
                       )
                     : Text(
                         dto.type == 1
                             ? 'VietQR ID'
                             : dto.type == 4
-                                ? 'Danh bạ'
+                                ? 'VCard'
                                 : 'Thẻ khác',
                         style: TextStyle(fontSize: 12),
                       ),
@@ -440,7 +450,7 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
             decoration: BoxDecoration(
                 color: AppColor.WHITE, borderRadius: BorderRadius.circular(8)),
             child: SingleChildScrollView(
-              child: Text(dto.additionalData ?? ''),
+              child: Text(dto.additionalData),
             ),
           )
         ],
@@ -473,14 +483,14 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
                           child: Stack(
                             children: [
                               QrImage(
-                                data: dto.value ?? '',
+                                data: dto.value,
                                 version: QrVersions.auto,
                               ),
                             ],
                           ),
                         ),
                         Text(
-                          dto.nickName ?? '',
+                          dto.nickname,
                           style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -489,51 +499,33 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
                         const SizedBox(height: 4),
                         if (dto.type == 4) ...[
                           const Divider(thickness: 1, color: AppColor.WHITE),
-                          _buildItem('Số điện thoại', '${dto.bankAccount}'),
+                          _buildItem('Số điện thoại', '${dto.phoneNo}'),
                           const Divider(thickness: 1, color: AppColor.WHITE),
-                          _buildItem('Email', '${dto.email}'),
+                          _buildItem('Email',
+                              '${dto.email.isNotEmpty ? dto.email : '-'}'),
                           const Divider(thickness: 1, color: AppColor.WHITE),
-                          _buildItem('Ghi chú', '${dto.additionalData}'),
+                          _buildItem('Ghi chú',
+                              '${dto.additionalData.isNotEmpty ? dto.additionalData : '-'}'),
                           const SizedBox(height: 20),
                         ] else ...[
-                          Text(
-                            dto.additionalData ?? '',
-                            style: TextStyle(color: AppColor.WHITE),
-                          ),
-                          if (dto.type == 3 && dto.value!.contains('https'))
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 24.0),
-                              child: RichText(
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                text: TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text: 'Đường dẫn: ',
-                                    ),
-                                    TextSpan(
-                                      text: dto.value ?? '',
-                                      style: TextStyle(
-                                        color: Colors.lightBlueAccent,
-                                        decoration: TextDecoration.underline,
-                                      ),
-                                      recognizer: TapGestureRecognizer()
-                                        ..onTap = () async {
-                                          // ignore: deprecated_member_use
-                                          await launch(
-                                            dto.value ?? '',
-                                            forceSafariVC: false,
-                                          );
-                                        },
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          const SizedBox(
-                            height: 100,
-                          ),
+                          const Divider(thickness: 1, color: AppColor.WHITE),
+                          _buildItem('Ghi chú',
+                              '${dto.additionalData.isNotEmpty ? dto.additionalData : '-'}'),
+                          if (dto.type == 3 && dto.value.contains('https'))
+                            const Divider(thickness: 1, color: AppColor.WHITE),
+                          _buildItem('Đường dẫn',
+                              '${dto.value.isNotEmpty ? dto.value : '-'}',
+                              style: TextStyle(
+                                color: Colors.lightBlueAccent,
+                                decoration: TextDecoration.underline,
+                              ), onTap: () async {
+                            // ignore: deprecated_member_use
+                            await launch(
+                              dto.value,
+                              forceSafariVC: false,
+                            );
+                          }),
+                          const SizedBox(height: 60),
                         ]
                       ],
                     ),
@@ -560,9 +552,10 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
 
                         if (!mounted) return;
                         if (data is bool) {
-                          BlocProvider.of<ContactBloc>(contextBloc).add(
-                              ContactEventGetDetail(
-                                  id: widget.dto.id, type: widget.dto.type));
+                          _bloc.add(ContactEventGetDetail(
+                              id: widget.dto.id,
+                              type: widget.dto.type,
+                              isChange: true));
                         }
                       },
                     ),
@@ -582,7 +575,8 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
     }
   }
 
-  Widget _buildItem(String title, String content) {
+  Widget _buildItem(String title, String content,
+      {GestureTapCallback? onTap, TextStyle? style}) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 6),
       child: Row(
@@ -596,9 +590,13 @@ class _ContactDetailScreenState extends State<ContactDetailScreen> {
           ),
           Expanded(
             flex: 2,
-            child: Text(
-              content,
-              style: TextStyle(color: AppColor.WHITE),
+            child: GestureDetector(
+              onTap: onTap,
+              child: Text(
+                content,
+                maxLines: 1,
+                style: style ?? TextStyle(color: AppColor.WHITE),
+              ),
             ),
           ),
         ],

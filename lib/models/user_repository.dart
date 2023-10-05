@@ -28,4 +28,8 @@ class UserRepository {
     isIntroContact = value;
     await _box.put(intro_key, value);
   }
+
+  void updateBanks(value) {
+    banks = value;
+  }
 }

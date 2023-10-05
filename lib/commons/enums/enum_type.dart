@@ -212,6 +212,7 @@ enum ContactType {
   SCAN_ERROR,
   SEARCH_USER,
   OTHER,
+  INSERT_VCARD,
 }
 
 enum CreateQRType {

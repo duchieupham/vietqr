@@ -123,56 +123,54 @@ class _SaveContactScreenState extends State<_BodyWidget> {
                   child: Column(
                     children: [
                       Expanded(
-                        child: SingleChildScrollView(
+                        child: ListView(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 20, vertical: 20),
-                          child: Column(
-                            children: [
-                              const SizedBox(height: 30),
-                              if (state.typeQR == TypeContact.VietQR_ID)
-                                _buildVietQRID(
-                                  type: state.typeQR,
-                                  nameController: nameController,
-                                  suggestController: suggestController,
-                                  onChange: provider.onChangeName,
-                                  onChangeColor: provider.updateColorType,
-                                  listColor: provider.listColor,
-                                  typeColor: provider.colorType,
-                                  imgId: state.imgId ?? '',
-                                  height: height,
-                                  onChangeQRT: provider.updateQRT,
-                                  model: provider.model,
-                                )
-                              else if (state.typeQR == TypeContact.Bank)
-                                _buildBankView(
-                                  type: state.typeQR,
-                                  nameController: nameController,
-                                  suggestController: suggestController,
-                                  onChange: provider.onChangeName,
-                                  onChangeColor: provider.updateColorType,
-                                  listColor: provider.listColor,
-                                  typeColor: provider.colorType,
-                                  imgId: state.imgId ?? '',
-                                  dto: state.dto,
-                                  bankTypeDto: state.bankTypeDTO,
-                                )
-                              else
-                                _buildOtherView(
-                                  type: state.typeQR,
-                                  nameController: nameController,
-                                  suggestController: suggestController,
-                                  onChange: provider.onChangeName,
-                                  onChangeColor: provider.updateColorType,
-                                  listColor: provider.listColor,
-                                  typeColor: provider.colorType,
-                                  imgId: provider.file,
-                                  onChangeLogo: provider.updateFile,
-                                  onChangeQRT: provider.updateQRT,
-                                  height: height,
-                                  model: provider.model,
-                                ),
-                            ],
-                          ),
+                          children: [
+                            const SizedBox(height: 30),
+                            if (state.typeQR == TypeContact.VietQR_ID)
+                              _buildVietQRID(
+                                type: state.typeQR,
+                                nameController: nameController,
+                                suggestController: suggestController,
+                                onChange: provider.onChangeName,
+                                onChangeColor: provider.updateColorType,
+                                listColor: provider.listColor,
+                                typeColor: provider.colorType,
+                                imgId: state.imgId ?? '',
+                                height: height,
+                                onChangeQRT: provider.updateQRT,
+                                model: provider.model,
+                              )
+                            else if (state.typeQR == TypeContact.Bank)
+                              _buildBankView(
+                                type: state.typeQR,
+                                nameController: nameController,
+                                suggestController: suggestController,
+                                onChange: provider.onChangeName,
+                                onChangeColor: provider.updateColorType,
+                                listColor: provider.listColor,
+                                typeColor: provider.colorType,
+                                imgId: state.imgId ?? '',
+                                dto: state.dto,
+                                bankTypeDto: state.bankTypeDTO,
+                              )
+                            else
+                              _buildOtherView(
+                                type: state.typeQR,
+                                nameController: nameController,
+                                suggestController: suggestController,
+                                onChange: provider.onChangeName,
+                                onChangeColor: provider.updateColorType,
+                                listColor: provider.listColor,
+                                typeColor: provider.colorType,
+                                imgId: provider.file,
+                                onChangeLogo: provider.updateFile,
+                                onChangeQRT: provider.updateQRT,
+                                height: height,
+                                model: provider.model,
+                              ),
+                          ],
                         ),
                       ),
                       Row(
@@ -1018,8 +1016,9 @@ class _BuildDropDownWidgetState extends State<BuildDropDownWidget> {
                         Image.asset(
                           '${list[position].url}',
                           color: AppColor.BLACK,
-                          width: 28,
+                          width: 20,
                         ),
+                        const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             list[position].title,

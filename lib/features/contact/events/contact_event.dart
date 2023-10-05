@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:equatable/equatable.dart';
 import 'package:vierqr/models/add_contact_dto.dart';
+import 'package:vierqr/models/contact_dto.dart';
 
 class ContactEvent extends Equatable {
   @override
@@ -14,8 +15,31 @@ class ContactEventGetList extends ContactEvent {
   final int? type;
   final int? offset;
   final bool isLoading;
+  final bool isLoadMore;
 
-  ContactEventGetList({this.type, this.offset, this.isLoading = true});
+  ContactEventGetList({
+    this.type,
+    this.offset,
+    this.isLoading = true,
+    this.isLoadMore = false,
+  });
+
+  @override
+  List<Object?> get props => [type, offset];
+}
+
+class GetListContactLoadMore extends ContactEvent {
+  final int? type;
+  final int? offset;
+  final bool isLoading;
+  final bool isLoadMore;
+
+  GetListContactLoadMore({
+    this.type,
+    this.offset,
+    this.isLoading = true,
+    this.isLoadMore = false,
+  });
 
   @override
   List<Object?> get props => [type, offset];
@@ -28,8 +52,10 @@ class ContactEventGetListPending extends ContactEvent {}
 class ContactEventGetDetail extends ContactEvent {
   final String id;
   final int type;
+  final bool isChange;
 
-  ContactEventGetDetail({required this.id, required this.type});
+  ContactEventGetDetail(
+      {required this.id, required this.type, this.isChange = false});
 
   @override
   List<Object?> get props => [id];
@@ -105,4 +131,38 @@ class SearchUser extends ContactEvent {
 
   @override
   List<Object?> get props => [phoneNo];
+}
+
+class InsertVCardEvent extends ContactEvent {
+  final List<VCardModel> list;
+
+  InsertVCardEvent(this.list);
+
+  @override
+  List<Object?> get props => [list];
+}
+
+class UpdateContactVCardEvent extends ContactEvent {
+  final Map<String, dynamic> query;
+  final File? image;
+
+  UpdateContactVCardEvent(this.query, this.image);
+
+  @override
+  List<Object?> get props => [query];
+}
+
+class SearchContactEvent extends ContactEvent {
+  final int? type;
+  final int? offset;
+  final String? nickName;
+
+  SearchContactEvent({
+    this.type,
+    this.offset,
+    this.nickName,
+  });
+
+  @override
+  List<Object?> get props => [type, offset];
 }
