@@ -19,6 +19,7 @@ import 'package:vierqr/features/contact/blocs/contact_bloc.dart';
 import 'package:vierqr/features/contact/blocs/contact_provider.dart';
 import 'package:vierqr/features/contact/events/contact_event.dart';
 import 'package:vierqr/features/contact/states/contact_state.dart';
+import 'package:vierqr/features/dashboard/blocs/dashboard_provider.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/contact_dto.dart';
 import 'package:vierqr/services/local_storage/local_storage.dart';
@@ -62,7 +63,6 @@ class _ContactStateState extends State<_ContactState>
   StreamSubscription? _syncGetSub;
 
   final _local = LocalStorageRepository();
-  Box? _box;
 
   String get userId => UserInformationHelper.instance.getUserId();
 
@@ -94,8 +94,8 @@ class _ContactStateState extends State<_ContactState>
       List<VCardModel> listInsert =
           Provider.of<ContactProvider>(context, listen: false).listInsert;
 
-      if (data.length > 25) {
-        if (listInsert.length == 25) {
+      if (data.length > 50) {
+        if (listInsert.length == 50) {
           _bloc.add(InsertVCardEvent(listInsert));
         }
       } else {
@@ -116,6 +116,8 @@ class _ContactStateState extends State<_ContactState>
             Navigator.pop(context);
             Provider.of<ContactProvider>(context, listen: false)
                 .updateIntro(true);
+            Provider.of<ContactProvider>(context, listen: false)
+                .updateListInsert();
             final data = await _fetchContacts();
 
             eventBus.fire(SyncContactEvent(data));
@@ -133,6 +135,8 @@ class _ContactStateState extends State<_ContactState>
   }
 
   void _onUpdateContact() async {
+    Provider.of<ContactProvider>(context, listen: false).updateListInsert();
+    Provider.of<DashBoardProvider>(context, listen: false).updateSync(true);
     final data = await _fetchContacts();
 
     eventBus.fire(SyncContactEvent(data));
@@ -143,7 +147,6 @@ class _ContactStateState extends State<_ContactState>
     _pageController = PageController(
         initialPage: Provider.of<ContactProvider>(context, listen: false).tab,
         keepPage: true);
-    _box = await _local.openBox(userId);
   }
 
   Future<List<ContactDTO>> _fetchContacts() async {
@@ -332,20 +335,38 @@ class _ContactStateState extends State<_ContactState>
                             ),
                             const Spacer(),
                             if (provider.isIntro)
-                              TextButton(
-                                onPressed: _onUpdateContact,
-                                child: Container(
-                                  alignment: Alignment.centerRight,
-                                  child: Text(
-                                    'Cập nhật danh bạ',
-                                    style: TextStyle(
-                                        fontSize: 12,
-                                        color: AppColor.BLUE_TEXT,
-                                        decoration: TextDecoration.underline,
-                                        height: 1.4),
+                              if (!Provider.of<DashBoardProvider>(context,
+                                      listen: false)
+                                  .isSync)
+                                TextButton(
+                                  onPressed: _onUpdateContact,
+                                  child: Container(
+                                    alignment: Alignment.centerRight,
+                                    child: Text(
+                                      'Cập nhật danh bạ',
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          color: AppColor.BLUE_TEXT,
+                                          decoration: TextDecoration.underline,
+                                          height: 1.4),
+                                    ),
                                   ),
-                                ),
-                              ),
+                                )
+                              else
+                                TextButton(
+                                  onPressed: _onUpdateContact,
+                                  child: Container(
+                                    alignment: Alignment.centerRight,
+                                    child: Text(
+                                      'Đang cập nhật',
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          color: AppColor.BLUE_TEXT,
+                                          decoration: TextDecoration.underline,
+                                          height: 1.4),
+                                    ),
+                                  ),
+                                )
                           ],
                         ),
                       ),

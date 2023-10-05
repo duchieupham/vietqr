@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 
@@ -10,8 +9,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:nfc_manager/nfc_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
@@ -64,9 +61,6 @@ class _DashBoardScreen extends State<DashBoardScreen>
         WidgetsBindingObserver,
         AutomaticKeepAliveClientMixin,
         SingleTickerProviderStateMixin {
-  final _local = LocalStorageRepository();
-  Box? _box;
-
   //page controller
   late PageController _pageController;
   StreamSubscription? _subscription;
@@ -185,6 +179,8 @@ class _DashBoardScreen extends State<DashBoardScreen>
 
         if (message.progress >= 1) {
           receivePort.close();
+          Provider.of<DashBoardProvider>(context, listen: false)
+              .updateSync(false);
           return;
         }
       }
@@ -316,12 +312,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
   }
 
 //check user information is updated before or not
-  void checkUserInformation() async {
-    String userId = UserInformationHelper.instance.getUserId();
-    if (userId.isNotEmpty) {
-      _box = await _local.openBox(userId);
-    }
-  }
+  void checkUserInformation() async {}
 
   void _updateFcmToken(bool isFromLogin) {
     if (!isFromLogin) {
