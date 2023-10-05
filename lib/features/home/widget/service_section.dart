@@ -167,7 +167,7 @@ class _ServiceSectionState extends State<ServiceSection> {
                   .openDialogIntroduce(child: NFCDialog());
               if (data != null) {
                 if (data) {
-                  Future.delayed(const Duration(seconds: 2), () {
+                  Future.delayed(const Duration(milliseconds: 500), () {
                     DialogWidget.instance
                         .openDialogIntroduce(child: NFCWidget());
                   });

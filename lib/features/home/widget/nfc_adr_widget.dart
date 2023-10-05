@@ -34,7 +34,7 @@ class _NFCDialogState extends State<NFCDialog> {
             message = result;
             isSuccess = true;
           });
-          Future.delayed(const Duration(seconds: 3), () {
+          Future.delayed(const Duration(milliseconds: 500), () {
             Navigator.pop(context, true);
           });
         } catch (e) {
