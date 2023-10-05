@@ -148,19 +148,19 @@ class _ServiceSectionState extends State<ServiceSection> {
           'assets/images/shortcut-nfc.png',
           'Đọc thẻ NFC',
           () async {
-            // if (!(await NfcManager.instance.isAvailable())) {
-            //   return DialogWidget.instance.openMsgDialog(
-            //     title: 'Thông báo',
-            //     msg:
-            //         'NFC có thể không được hỗ trợ hoặc có thể tạm thời bị tắt.',
-            //     function: () {
-            //       Navigator.pop(context);
-            //       if (Navigator.canPop(context)) {
-            //         Navigator.pop(context);
-            //       }
-            //     },
-            //   );
-            // }
+            if (!(await NfcManager.instance.isAvailable())) {
+              return DialogWidget.instance.openMsgDialog(
+                title: 'Thông báo',
+                msg:
+                    'NFC có thể không được hỗ trợ hoặc có thể tạm thời bị tắt.',
+                function: () {
+                  Navigator.pop(context);
+                  if (Navigator.canPop(context)) {
+                    Navigator.pop(context);
+                  }
+                },
+              );
+            }
 
             if (Platform.isAndroid) {
               final data = await DialogWidget.instance
