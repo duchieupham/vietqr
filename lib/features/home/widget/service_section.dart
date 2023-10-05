@@ -12,6 +12,7 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/home/widget/dialog_update.dart';
 import 'package:vierqr/main.dart';
 
+import 'nfc_adr_widget.dart';
 import 'nfc_widget.dart';
 
 class ServiceSection extends StatefulWidget {
@@ -147,41 +148,53 @@ class _ServiceSectionState extends State<ServiceSection> {
           'assets/images/shortcut-nfc.png',
           'Đọc thẻ NFC',
           () async {
-            if (!(await NfcManager.instance.isAvailable())) {
-              return DialogWidget.instance.openMsgDialog(
-                title: 'Thông báo',
-                msg:
-                    'NFC có thể không được hỗ trợ hoặc có thể tạm thời bị tắt.',
-                function: () {
-                  Navigator.pop(context);
-                  if (Navigator.canPop(context)) {
-                    Navigator.pop(context);
+            // if (!(await NfcManager.instance.isAvailable())) {
+            //   return DialogWidget.instance.openMsgDialog(
+            //     title: 'Thông báo',
+            //     msg:
+            //         'NFC có thể không được hỗ trợ hoặc có thể tạm thời bị tắt.',
+            //     function: () {
+            //       Navigator.pop(context);
+            //       if (Navigator.canPop(context)) {
+            //         Navigator.pop(context);
+            //       }
+            //     },
+            //   );
+            // }
+
+            if (Platform.isAndroid) {
+              final data = await DialogWidget.instance
+                  .openDialogIntroduce(child: NFCDialog());
+              if (data != null) {
+                if (data) {
+                  Future.delayed(const Duration(seconds: 2), () {
+                    DialogWidget.instance
+                        .openDialogIntroduce(child: NFCWidget());
+                  });
+                }
+              }
+            } else if (Platform.isIOS) {
+              NfcManager.instance.startSession(
+                pollingOptions: {
+                  NfcPollingOption.iso14443,
+                  NfcPollingOption.iso15693
+                },
+                onDiscovered: (tag) async {
+                  try {
+                    final result = await handleTag(tag);
+                    if (result == null) return;
+                    await NfcManager.instance.stopSession(alertMessage: result);
+
+                    Future.delayed(const Duration(seconds: 3), () {
+                      DialogWidget.instance
+                          .openDialogIntroduce(child: NFCWidget());
+                    });
+                  } catch (e) {
+                    await NfcManager.instance.stopSession(alertMessage: '');
                   }
                 },
-              );
+              ).catchError((e) {});
             }
-
-            NfcManager.instance.startSession(
-              pollingOptions: {
-                NfcPollingOption.iso14443,
-                NfcPollingOption.iso15693
-              },
-              onDiscovered: (tag) async {
-                try {
-                  final result = await handleTag(tag);
-                  if (result == null) return;
-                  await NfcManager.instance.stopSession(alertMessage: result);
-
-                  Future.delayed(const Duration(seconds: 3), () {
-                    DialogWidget.instance.openDialogIntroduce(
-                      child: NFCWidget(),
-                    );
-                  });
-                } catch (e) {
-                  await NfcManager.instance.stopSession();
-                }
-              },
-            ).catchError((e) {});
           },
         ),
       ],
@@ -260,22 +273,5 @@ class _ServiceSectionState extends State<ServiceSection> {
   String getDeviceType() {
     final data = MediaQueryData.fromWindow(WidgetsBinding.instance.window);
     return data.size.shortestSide < 600 ? 'phone' : 'tablet';
-  }
-}
-
-class _UnavailableDialog extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Thông báo'),
-      content: const Text(
-          'NFC có thể không được hỗ trợ hoặc có thể tạm thời bị tắt.'),
-      actions: [
-        TextButton(
-          child: const Text('Đóng'),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ],
-    );
   }
 }

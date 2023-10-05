@@ -1260,7 +1260,7 @@ class DialogWidget {
     );
   }
 
-  void openDialogIntroduce({required Widget child}) async {
+  Future<dynamic> openDialogIntroduce({required Widget child}) async {
     return await showDialog(
       barrierDismissible: false,
       context: NavigationService.navigatorKey.currentContext!,

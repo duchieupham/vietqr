@@ -68,6 +68,7 @@ class AppColor {
   static const secondary400 = Color(0xff464F77);
   static const greyF0F0F0 = Color(0xffF0F0F0);
   static const grey979797 = Color(0xff979797);
+  static const greyF1F2F5 = Color(0xffF1F2F5);
 
   //THEME NAME
   static const String THEME_LIGHT = 'LIGHT';
