@@ -2,7 +2,8 @@ import 'dart:io';
 
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:nfc_manager/nfc_manager.dart';
+import 'package:nfc_manager/platform_tags.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/utils/log.dart';
@@ -10,7 +11,8 @@ import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/home/widget/dialog_update.dart';
 import 'package:vierqr/main.dart';
-import 'package:vierqr/services/providers/auth_provider.dart';
+
+import 'nfc_widget.dart';
 
 class ServiceSection extends StatefulWidget {
   const ServiceSection({Key? key}) : super(key: key);
@@ -97,7 +99,9 @@ class _ServiceSectionState extends State<ServiceSection> {
           );
         }),
         _buildItemService(
-            context, 'assets/images/logo-vietqr-kiot-dashboard.png', 'VietQR Kiot\n', () async {
+            context,
+            'assets/images/logo-vietqr-kiot-dashboard.png',
+            'VietQR Kiot\n', () async {
           if (PlatformUtils.instance.isAndroidApp()) {
             final intent = AndroidIntent(
                 action: 'action_view',
@@ -138,8 +142,62 @@ class _ServiceSectionState extends State<ServiceSection> {
             );
           },
         ),
+        _buildItemService(
+          context,
+          'assets/images/shortcut-nfc.png',
+          'Đọc thẻ NFC',
+          () async {
+            NfcManager.instance.startSession(
+              pollingOptions: {
+                NfcPollingOption.iso14443,
+                NfcPollingOption.iso15693
+              },
+              onDiscovered: (tag) async {
+                try {
+                  final result = await handleTag(tag);
+                  if (result == null) return;
+                  await NfcManager.instance.stopSession(alertMessage: result);
+
+                  Future.delayed(const Duration(seconds: 3), () {
+                    DialogWidget.instance.openDialogIntroduce(
+                      child: NFCWidget(),
+                    );
+                  });
+                } catch (e) {
+                  await NfcManager.instance.stopSession(errorMessage: '$e');
+                }
+              },
+            ).catchError((e) {});
+          },
+        ),
       ],
     );
+  }
+
+  NfcTag? tag;
+
+  Map<String, dynamic>? additionalData;
+
+  Future<String?> handleTag(NfcTag tag) async {
+    // this.tag = tag;
+    // additionalData = {};
+    //
+    // Object? tech;
+    //
+    // if (Platform.isIOS) {
+    //   tech = FeliCa.from(tag);
+    //   if (tech is FeliCa) {
+    //     final polling = await tech.polling(
+    //       systemCode: tech.currentSystemCode,
+    //       requestCode: FeliCaPollingRequestCode.noRequest,
+    //       timeSlot: FeliCaPollingTimeSlot.max1,
+    //     );
+    //     additionalData!['manufacturerParameter'] =
+    //         polling.manufacturerParameter;
+    //   }
+    // }
+
+    return 'Hoàn tất.';
   }
 
   Future<void> _launchUrl() async {

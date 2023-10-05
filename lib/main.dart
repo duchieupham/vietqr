@@ -38,7 +38,7 @@ import 'package:vierqr/features/contact/contact_screen.dart';
 import 'package:vierqr/features/contact_us/contact_us_screen.dart';
 import 'package:vierqr/features/create_qr_un_authen/create_qr_un_quthen.dart';
 import 'package:vierqr/features/create_qr_un_authen/show_qr.dart';
-import 'package:vierqr/features/dashboard/blocs/dash_board_provider.dart';
+import 'package:vierqr/features/dashboard/blocs/dashboard_provider.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/dashboard_screen.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';

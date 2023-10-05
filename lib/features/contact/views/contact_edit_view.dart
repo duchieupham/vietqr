@@ -606,12 +606,16 @@ class _ContactEditViewState extends State<_ContactEditView> {
               width: 50,
               height: 50,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(100),
+                borderRadius: BorderRadius.circular(12),
                 color: AppColor.WHITE,
-                image: DecorationImage(
-                  image: ImageUtils.instance.getImageNetWork(dto.imgId),
-                  fit: BoxFit.cover,
-                ),
+                image: dto.imgId.isNotEmpty
+                    ? DecorationImage(
+                        image: ImageUtils.instance.getImageNetWork(dto.imgId),
+                        fit: dto.type == 1 ? BoxFit.cover : BoxFit.contain,
+                      )
+                    : const DecorationImage(
+                        image: AssetImage('assets/images/ic-viet-qr-small.png'),
+                        fit: BoxFit.contain),
               ),
             ),
             const SizedBox(
@@ -663,7 +667,7 @@ class _ContactEditViewState extends State<_ContactEditView> {
                       image: ImageUtils.instance.getImageNetWork(dto.imgId),
                       fit: BoxFit.cover)
                   : const DecorationImage(
-                      image: AssetImage('assets/images/ic-viet-qr-small.png'),
+                      image: AssetImage('assets/images/ic-tb-qr.png'),
                       fit: BoxFit.contain),
             ),
           ),
