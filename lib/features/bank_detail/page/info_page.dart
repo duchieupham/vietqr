@@ -25,7 +25,6 @@ import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_account_remove_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/bluetooth_printer_dto.dart';
-import 'package:vierqr/models/business_item_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
@@ -513,20 +512,6 @@ class InfoDetailBankAccount extends StatelessWidget {
                     textColor: AppColor.BLUE_TEXT,
                     bgColor: AppColor.TRANSPARENT,
                     function: () {
-                      BusinessItemDTO businessItemDTO = BusinessItemDTO(
-                          businessId: list[index].businessId,
-                          code: '',
-                          role: 0,
-                          imgId: list[index].imgId,
-                          coverImgId: list[index].coverImgId,
-                          name: list[index].businessName,
-                          address: '',
-                          taxCode: '',
-                          transactions: [],
-                          totalMember: 0,
-                          totalBranch: 0,
-                          branchs: [],
-                          bankAccounts: []);
                       Navigator.pushNamed(
                         context,
                         Routes.BUSINESS_INFORMATION_VIEW,
@@ -540,18 +525,7 @@ class InfoDetailBankAccount extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(
-              height: 12,
-            ),
-            // BoxLayout(
-            //   width: width,
-            //   borderRadius: 8,
-            //   padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
-            //   child: Column(
-            //     crossAxisAlignment: CrossAxisAlignment.start,
-            //     children: [],
-            //   ),
-            // )
+            const SizedBox(height: 12),
           ],
         );
       }).toList(),

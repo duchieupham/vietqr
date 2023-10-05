@@ -65,9 +65,7 @@ class VietQr extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: QrImage(
                     size: height < 800 ? width / 2 : null,
-                    // data: qrGeneratedDTO.qrCode,
-                    data:
-                        'BEGIN:VCARD\r\nVERSION:3.0\r\nN;CHARSET=UTF-8:Phạm;Đức;Tuấn;\r\nFN;CHARSET=UTF-8:Phạm Đức Tuấn\r\nORG;CHARSET=UTF-8:BLUECOM\r\nTITLE:\r\nTEL;TYPE=WORK,VOICE:\r\nTEL;TYPE=CELL,VOICE:0936382222\r\nTEL;TYPE=CELL,VOICE:\r\nTEL;TYPE=CELL,VOICE:\r\nTEL;TYPE=FAX,WORK,VOICE:\r\nADR;CHARSET=UTF-8;TYPE=HOME:;;Hà Nội;;;;\r\nLABEL;CHARSET=UTF-8;TYPE=HOME:Hà Nội\r\n,\r\nEMAIL;TYPE=PREF,internet:tuan@bluecom.vn\r\nEMAIL;TYPE=WORK,internet:\r\nURL:https://www.google.com.vn\r\nURL:\r\nURL:\r\nREV:2023-10-03T10:50:43Z\r\nEND:VCARD',
+                    data: qrGeneratedDTO.qrCode,
                     version: QrVersions.auto,
                     embeddedImage:
                         const AssetImage('assets/images/ic-viet-qr-small.png'),

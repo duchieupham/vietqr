@@ -123,8 +123,6 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                         return GestureDetector(
                           onTap: () {
                             pageController.jumpToPage(index);
-                            // duration: const Duration(milliseconds: 300),
-                            // curve: Curves.ease);
                             provider.changeCurrentPage(index);
                           },
                           child: Container(

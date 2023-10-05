@@ -520,22 +520,23 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
                           const Divider(thickness: 1, color: AppColor.WHITE),
                           _buildItem('Ghi chú',
                               '${dto.additionalData.isNotEmpty ? dto.additionalData : '-'}'),
-                          if (dto.type == 3 && dto.value.contains('https'))
+                          if (dto.type == 3 && dto.value.contains('https')) ...[
                             const Divider(thickness: 1, color: AppColor.WHITE),
-                          _buildItem('Đường dẫn',
-                              '${dto.value.isNotEmpty ? dto.value : '-'}',
-                              style: TextStyle(
-                                color: Colors.lightBlueAccent,
-                                decoration: TextDecoration.underline,
-                              ), onTap: () async {
-                            // ignore: deprecated_member_use
-                            await launch(
-                              dto.value,
-                              forceSafariVC: false,
-                            );
-                          }),
+                            _buildItem('Đường dẫn',
+                                '${dto.value.isNotEmpty ? dto.value : '-'}',
+                                style: TextStyle(
+                                  color: Colors.lightBlueAccent,
+                                  decoration: TextDecoration.underline,
+                                ), onTap: () async {
+                              // ignore: deprecated_member_use
+                              await launch(
+                                dto.value,
+                                forceSafariVC: false,
+                              );
+                            }),
+                          ],
                           const SizedBox(height: 60),
-                        ]
+                        ],
                       ],
                     ),
                   );
