@@ -773,7 +773,7 @@ class _LoginState extends State<_Login> {
             fcmToken: '',
             platform: '',
             sharingCode: '',
-            method: 'NFC_CARD',
+            method: 'CARD',
             userId: '',
             cardNumber: card,
           );
