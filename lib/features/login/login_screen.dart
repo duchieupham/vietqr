@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nfc_manager/nfc_manager.dart';
@@ -62,16 +64,34 @@ class _LoginState extends State<_Login> {
 
   late LoginBloc _bloc;
 
+  var controller = StreamController<AccountLoginDTO?>.broadcast();
+
   @override
   void initState() {
     super.initState();
     _bloc = BlocProvider.of(context);
     code = uuid.v1();
+    controller.stream.listen((value) async {
+      if (value != null) {
+        if (value.method == 'NFC_CARD') {
+          RawKeyboard.instance.removeListener((value) {});
+        } else {
+          if (Platform.isAndroid) {
+            await NfcManager.instance.stopSession();
+          } else {
+            await NfcManager.instance.stopSession(alertMessage: '');
+          }
+        }
+
+        _bloc.add(LoginEventByNFC(dto: value));
+      }
+    });
   }
 
   @override
   void dispose() {
     phoneNoController.clear();
+    controller.close();
     super.dispose();
   }
 
@@ -326,6 +346,7 @@ class _LoginState extends State<_Login> {
                                           colorEnableText: AppColor.BLUE_TEXT,
                                           onTap: () {
                                             onReadNFC();
+                                            onReadRFID();
                                           },
                                         ),
                                       ],
@@ -405,6 +426,7 @@ class _LoginState extends State<_Login> {
                       },
                       onLoginCard: () {
                         onReadNFC();
+                        onReadRFID();
                       },
                     ),
                   ),
@@ -724,7 +746,8 @@ class _LoginState extends State<_Login> {
               userId: '',
               cardNumber: result['value'],
             );
-            _bloc.add(LoginEventByNFC(dto: dto));
+            controller.sink.add(dto); //
+            // _bloc.add(LoginEventByNFC(dto: dto));
           });
         } catch (e) {
           if (Platform.isAndroid) {
@@ -735,5 +758,28 @@ class _LoginState extends State<_Login> {
         }
       },
     ).catchError((e) {});
+  }
+
+  void onReadRFID() async {
+    RawKeyboard.instance.addListener((RawKeyEvent event) {
+      String card = event.character ?? '';
+      Future.delayed(
+        const Duration(seconds: 2),
+        () {
+          AccountLoginDTO dto = AccountLoginDTO(
+            phoneNo: '',
+            password: '',
+            device: '',
+            fcmToken: '',
+            platform: '',
+            sharingCode: '',
+            method: 'NFC_CARD',
+            userId: '',
+            cardNumber: card,
+          );
+          controller.sink.add(dto); //
+        },
+      );
+    });
   }
 }

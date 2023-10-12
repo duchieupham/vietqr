@@ -151,6 +151,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
     }
   }
 
+
   Future<void> _heavyTaskStreamReceiver(List<ContactDTO> list) async {
     final receivePort = ReceivePort();
     Isolate.spawn(heavyTask, [receivePort.sendPort, list]);
