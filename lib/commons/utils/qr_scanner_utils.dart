@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/vietqr/aid.dart';
 import 'package:vierqr/commons/constants/vietqr/viet_qr_id.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
-import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/contact/save_contact_screen.dart';
@@ -13,8 +11,6 @@ import 'package:vierqr/features/scan_qr/views/dialog_scan_type_bank.dart';
 import 'package:vierqr/features/scan_qr/views/dialog_scan_type_id.dart';
 import 'package:vierqr/features/scan_qr/views/dialog_scan_type_other.dart';
 import 'package:vierqr/features/scan_qr/views/dialog_scan_type_url.dart';
-import 'package:vierqr/models/add_contact_dto.dart';
-import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/viet_qr_scanned_dto.dart';
 
 class QRScannerUtils {

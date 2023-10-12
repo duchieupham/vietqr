@@ -10,6 +10,7 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/file_utils.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/ambient_avatar_widget.dart';
@@ -25,6 +26,8 @@ import 'package:vierqr/main.dart';
 import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
+
+import 'views/vietqr_id_card_view.dart';
 
 class IconData {
   final String url;
@@ -569,6 +572,30 @@ class _SettingWidget extends StatelessWidget {
                       const Expanded(
                         child: Text(
                           'Cài đặt nhận biến động số dư',
+                          style: TextStyle(
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(),
+                GestureDetector(
+                  onTap: () async {
+                    NavigatorUtils.navigatePage(context, VietQRIDCardView());
+                  },
+                  child: Row(
+                    children: [
+                      Image.asset(
+                        'assets/images/ic-vietqr-id-setting.png',
+                        width: 30,
+                        height: 30,
+                      ),
+                      const SizedBox(width: 8),
+                      const Expanded(
+                        child: Text(
+                          'VietQR ID Card',
                           style: TextStyle(
                             fontSize: 14,
                           ),

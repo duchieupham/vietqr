@@ -1,8 +1,11 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:nfc_manager/nfc_manager.dart';
+import 'package:nfc_manager/platform_tags.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
@@ -312,6 +315,19 @@ class _LoginState extends State<_Login> {
                                             ),
                                           ),
                                         ),
+                                        const SizedBox(height: 10),
+                                        MButtonWidget(
+                                          title: 'Đăng nhập VietQR ID Card',
+                                          isEnable: true,
+                                          margin: EdgeInsets.zero,
+                                          colorEnableBgr: AppColor.TRANSPARENT,
+                                          border: Border.all(
+                                              color: AppColor.BLUE_TEXT),
+                                          colorEnableText: AppColor.BLUE_TEXT,
+                                          onTap: () {
+                                            onReadNFC();
+                                          },
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -386,6 +402,9 @@ class _LoginState extends State<_Login> {
                               .read<LoginBloc>()
                               .add(LoginEventByPhone(dto: dto, isToast: true));
                         }
+                      },
+                      onLoginCard: () {
+                        onReadNFC();
                       },
                     ),
                   ),
@@ -612,5 +631,109 @@ class _LoginState extends State<_Login> {
         ],
       ),
     );
+  }
+
+  String readTagToKey(NfcTag tag, String? userId) {
+    String card = '';
+    Object? tech;
+
+    tech = FeliCa.from(tag);
+    if (tech is FeliCa) {
+      card =
+          '${tech.currentIDm.toHexString()}-${tech.currentSystemCode.toHexString()}'
+              .replaceAll(' ', '');
+      return card;
+    }
+
+    tech = Iso15693.from(tag);
+    if (tech is Iso15693) {
+      card = '${tech.icSerialNumber.toHexString()}'.replaceAll(' ', '');
+      return card;
+    }
+
+    tech = Iso7816.from(tag);
+    if (tech is Iso7816) {
+      card = '${tech.identifier.toHexString()}'.replaceAll(' ', '');
+      return card;
+    }
+
+    tech = MiFare.from(tag);
+    if (tech is MiFare) {
+      return card;
+    }
+    tech = Ndef.from(tag);
+    if (tech is Ndef) {
+      return card;
+    }
+
+    return card;
+  }
+
+  NfcTag? tag;
+
+  Map<String, dynamic>? additionalData;
+
+  Future<Map<String, dynamic>?> handleTag(NfcTag tag) async {
+    String card = readTagToKey(tag, '');
+
+    return {
+      'message': 'Hoàn tất.',
+      'value': card,
+    };
+  }
+
+  void onReadNFC() async {
+    if (!(await NfcManager.instance.isAvailable())) {
+      return DialogWidget.instance.openMsgDialog(
+        title: 'Thông báo',
+        msg: 'NFC có thể không được hỗ trợ hoặc có thể tạm thời bị tắt.',
+        function: () {
+          Navigator.pop(context);
+          if (Navigator.canPop(context)) {
+            Navigator.pop(context);
+          }
+        },
+      );
+    }
+
+    await NfcManager.instance.startSession(
+      pollingOptions: {
+        NfcPollingOption.iso14443,
+        NfcPollingOption.iso15693,
+      },
+      onDiscovered: (tag) async {
+        try {
+          final result = await handleTag(tag);
+          if (result == null) return;
+          if (Platform.isAndroid) {
+            await NfcManager.instance.stopSession();
+          } else {
+            await NfcManager.instance
+                .stopSession(alertMessage: result['message']);
+          }
+
+          Future.delayed(const Duration(seconds: 2), () {
+            AccountLoginDTO dto = AccountLoginDTO(
+              phoneNo: '',
+              password: '',
+              device: '',
+              fcmToken: '',
+              platform: '',
+              sharingCode: '',
+              method: 'NFC_CARD',
+              userId: '',
+              cardNumber: result['value'],
+            );
+            _bloc.add(LoginEventByNFC(dto: dto));
+          });
+        } catch (e) {
+          if (Platform.isAndroid) {
+            await NfcManager.instance.stopSession();
+          } else {
+            await NfcManager.instance.stopSession(alertMessage: '');
+          }
+        }
+      },
+    ).catchError((e) {});
   }
 }

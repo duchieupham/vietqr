@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/info_user_dto.dart';
 
 import '../../../commons/utils/image_utils.dart';
@@ -11,15 +12,18 @@ class LoginAccountScreen extends StatelessWidget {
   final Function(int)? onRemoveAccount;
   final GestureTapCallback? onBackLogin;
   final GestureTapCallback? onRegister;
+  final GestureTapCallback? onLoginCard;
   final List<InfoUserDTO> list;
 
-  const LoginAccountScreen(
-      {super.key,
-      this.onQuickLogin,
-      this.onRemoveAccount,
-      this.onBackLogin,
-      required this.list,
-      this.onRegister});
+  const LoginAccountScreen({
+    super.key,
+    this.onQuickLogin,
+    this.onRemoveAccount,
+    this.onBackLogin,
+    this.onLoginCard,
+    this.onRegister,
+    required this.list,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -87,6 +91,13 @@ class LoginAccountScreen extends StatelessWidget {
             child: SingleChildScrollView(
               child: Column(
                 children: [
+                  MButtonWidget(
+                    title: 'Đăng nhập VietQR ID Card',
+                    isEnable: true,
+                    margin: const EdgeInsets.symmetric(horizontal: 20),
+                    onTap: onLoginCard,
+                  ),
+                  const SizedBox(height: 10),
                   Container(
                     child: Column(
                       children: List.generate(list.length, (index) {

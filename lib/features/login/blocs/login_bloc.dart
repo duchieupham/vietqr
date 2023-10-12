@@ -11,6 +11,7 @@ import 'package:vierqr/models/response_message_dto.dart';
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc() : super(const LoginState()) {
     on<LoginEventByPhone>(_login);
+    on<LoginEventByNFC>(_loginNFC);
     on<CheckExitsPhoneEvent>(_checkExitsPhone);
     on<GetFreeToken>(_loadFreeToken);
     on<UpdateEvent>(_updateEvent);
@@ -22,6 +23,28 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         emit(state.copyWith(
             status: BlocStatus.LOADING, request: LoginType.NONE));
         bool check = await loginRepository.login(event.dto);
+        if (check) {
+          emit(state.copyWith(
+              isToast: event.isToast,
+              request: LoginType.TOAST,
+              status: BlocStatus.UNLOADING));
+        } else {
+          emit(state.copyWith(
+              request: LoginType.ERROR,
+              msg: 'Sai mật khẩu. Vui lòng kiểm tra lại mật khẩu của bạn'));
+        }
+      }
+    } catch (e) {
+      emit(state.copyWith(request: LoginType.ERROR));
+    }
+  }
+
+  void _loginNFC(LoginEvent event, Emitter emit) async {
+    try {
+      if (event is LoginEventByNFC) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, request: LoginType.NONE));
+        bool check = await loginRepository.loginNFC(event.dto);
         if (check) {
           emit(state.copyWith(
               isToast: event.isToast,

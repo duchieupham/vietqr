@@ -11,7 +11,6 @@ import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/utils/sms_information_utils.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/pin_widget.dart';
-import 'package:vierqr/features/contact/widgets/introduce_widget.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_information_dto.dart';

@@ -82,6 +82,68 @@ class LoginRepository {
     return result;
   }
 
+  Future<bool> loginNFC(AccountLoginDTO dto) async {
+    bool result = false;
+    try {
+      DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+      String url = '${EnvConfig.getBaseUrl()}accounts/login';
+      String fcmToken = await FirebaseMessaging.instance.getToken() ?? '';
+      String platform = '';
+      String device = '';
+      String sharingCode = '';
+      if (!PlatformUtils.instance.isWeb()) {
+        if (PlatformUtils.instance.isIOsApp()) {
+          platform = 'IOS';
+          IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+          device =
+              '${iosInfo.name.toString()} ${iosInfo.systemVersion.toString()}';
+        } else if (PlatformUtils.instance.isAndroidApp()) {
+          platform = 'ANDROID';
+          AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+          device = androidInfo.model.toString();
+        }
+      } else {
+        platform = 'Web';
+        WebBrowserInfo webBrowserInfo = await deviceInfo.webBrowserInfo;
+        device = webBrowserInfo.userAgent.toString();
+      }
+      AccountLoginDTO loginDTO = AccountLoginDTO(
+        phoneNo: dto.phoneNo,
+        password: dto.password,
+        platform: platform,
+        device: device,
+        fcmToken: fcmToken,
+        sharingCode: sharingCode,
+        method: dto.method,
+        cardNumber: dto.cardNumber,
+        userId: dto.method == 'USER_ID' ? dto.userId : '',
+      );
+      final response = await BaseAPIClient.postAPI(
+        url: url,
+        body: loginDTO.toJson(),
+        type: AuthenticationType.NONE,
+      );
+      if (response.statusCode == 200) {
+        String token = response.body;
+        Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+        AccountInformationDTO accountInformationDTO =
+            AccountInformationDTO.fromJson(decodedToken);
+        await AccountHelper.instance.setFcmToken(fcmToken);
+        await AccountHelper.instance.setToken(token);
+        await AccountHelper.instance.setTokenFree('');
+        await UserInformationHelper.instance.setPhoneNo(dto.phoneNo);
+        await UserInformationHelper.instance
+            .setUserId(accountInformationDTO.userId);
+        await UserInformationHelper.instance
+            .setAccountInformation(accountInformationDTO);
+        result = true;
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return result;
+  }
+
   Future checkExistPhone(String phone) async {
     try {
       String url = '${EnvConfig.getBaseUrl()}accounts/search/$phone';

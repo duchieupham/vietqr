@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:palette_generator/palette_generator.dart';
-import 'package:vierqr/commons/utils/image_utils.dart';
-import 'package:vierqr/main.dart';
 
 class BankAccountDTO {
   final String id;

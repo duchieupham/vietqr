@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 import 'package:vierqr/models/account_bank_branch_dto.dart';
 import 'package:vierqr/models/account_bank_connect_branch_dto.dart';
 import 'package:vierqr/models/branch_filter_dto.dart';

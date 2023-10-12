@@ -3,7 +3,6 @@ import 'package:nfc_manager/nfc_manager.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 
-import 'nfc_widget.dart';
 
 class NFCDialog extends StatefulWidget {
   @override

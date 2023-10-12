@@ -48,12 +48,12 @@ class CameraWidget extends StatelessWidget {
     );
   }
 
-  bool _isLandscape() {
-    return <DeviceOrientation>[
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight
-    ].contains(_getApplicableOrientation());
-  }
+  // bool _isLandscape() {
+  //   return <DeviceOrientation>[
+  //     DeviceOrientation.landscapeLeft,
+  //     DeviceOrientation.landscapeRight
+  //   ].contains(_getApplicableOrientation());
+  // }
 
   int _getQuarterTurns() {
     final Map<DeviceOrientation, int> turns = <DeviceOrientation, int>{

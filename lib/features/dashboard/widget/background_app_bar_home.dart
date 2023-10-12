@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class BackgroundAppBarHome extends StatelessWidget {
   final Widget child;
+
   const BackgroundAppBarHome({super.key, required this.child});
 
   @override

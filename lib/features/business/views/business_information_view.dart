@@ -19,7 +19,6 @@ import 'package:vierqr/features/business/states/business_information_state.dart'
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/models/branch_filter_insert_dto.dart';
 import 'package:vierqr/models/business_detail_dto.dart';
-import 'package:vierqr/models/business_item_dto.dart';
 import 'package:vierqr/models/transaction_branch_input_dto.dart';
 import 'package:vierqr/services/providers/business_inforamtion_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';

@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/user_repository.dart';
 import 'package:vierqr/services/providers/auth_provider.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 ///1. quản lý view chung mà 80% các màn dùng: appbar, dialog confirm, button...
 ///2 lấy thông tin model chung: user
