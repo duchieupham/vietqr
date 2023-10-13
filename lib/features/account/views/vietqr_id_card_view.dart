@@ -322,6 +322,12 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
           onReadRFID(isScan: true, value: identifier);
         }
       });
+    } else if (data is bool) {
+      getCard();
+      setState(() {
+        pageIndex = 0;
+        cardNumber = '';
+      });
     }
   }
 
@@ -713,6 +719,7 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
                 cardScan = cardScanFirst;
                 type = cardType;
               });
+              onReadRFID();
             },
           ),
         ],

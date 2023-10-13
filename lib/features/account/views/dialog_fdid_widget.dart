@@ -147,7 +147,7 @@ class _NFCDialogState extends State<FDIDDialog> {
                   isEnable: true,
                   fontWeight: FontWeight.w600,
                   onTap: () {
-                    Navigator.pop(context);
+                    Navigator.pop(context, true);
                   },
                 )
               ] else
