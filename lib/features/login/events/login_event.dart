@@ -20,6 +20,16 @@ class LoginEventByPhone extends LoginEvent {
   List<Object?> get props => [dto];
 }
 
+class LoginEventByNFC extends LoginEvent {
+  final AccountLoginDTO dto;
+  final bool isToast;
+
+  const LoginEventByNFC({required this.dto, this.isToast = false});
+
+  @override
+  List<Object?> get props => [dto];
+}
+
 // class LoginEventGetUserInformation extends LoginEvent {
 //   final String userId;
 

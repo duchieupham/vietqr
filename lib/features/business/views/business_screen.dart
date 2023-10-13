@@ -208,69 +208,8 @@ class _BusinessScreenState extends State<_BusinessScreen>
     });
   }
 
-  Widget _buildListBlank() {
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
-    return SizedBox(
-      width: width,
-      height: height,
-      child: Column(
-        children: [
-          const Expanded(
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: EdgeInsets.only(bottom: 30),
-                child: Text('Bạn chưa thuộc doanh nghiệp nào'),
-              ),
-            ),
-          ),
-          Stack(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 12, left: 16, right: 16),
-                child: Image.asset(
-                  'assets/images/bg-business.png',
-                  width: width,
-                  fit: BoxFit.fitWidth,
-                ),
-              ),
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Row(
-                  children: [
-                    const Spacer(),
-                    ButtonWidget(
-                      width: 170,
-                      height: 40,
-                      text: 'Tạo doanh nghiệp',
-                      textColor: AppColor.WHITE,
-                      bgColor: AppColor.BLUE_TEXT,
-                      borderRadius: 20,
-                      enableShadow: true,
-                      function: () {
-                        Navigator.pushNamed(context, Routes.ADD_BUSINESS_VIEW);
-                      },
-                    ),
-                    const Spacer(),
-                  ],
-                ),
-              )
-            ],
-          ),
-          const SizedBox(
-            height: 40,
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildBusinessWidget(
       BuildContext context, List<BusinessItemDTO> listBusinessItemDTO) {
-    final double height = MediaQuery.of(context).size.height;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: CarouselSlider(

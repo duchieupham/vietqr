@@ -49,10 +49,15 @@ class ContactProvider extends ChangeNotifier {
   }
 
   void addDataInsert(value) {
-    if (listInsert.length == 25) {
-      listInsert.clear();
+    if (listInsert.length == 50) {
+      updateListInsert();
     }
     listInsert.add(value);
+    notifyListeners();
+  }
+
+  void updateListInsert() {
+    listInsert.clear();
     notifyListeners();
   }
 
@@ -114,8 +119,6 @@ class ContactProvider extends ChangeNotifier {
     listSearch = value;
     notifyListeners();
   }
-
-  void onChangeSuggest(String value) {}
 
   void onChangeName(String value) {
     if (value.isNotEmpty) {

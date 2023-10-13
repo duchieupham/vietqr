@@ -208,7 +208,6 @@ class BranchBloc extends Bloc<BranchEvent, BranchState> {
         emit(BranchGetConnectBankLoadingState());
         final List<AccountBankConnectBranchDTO> list =
             await branchRepository.getBranchConnectBanks(event.userId);
-        final List<Color> colors = [];
         PaletteGenerator? paletteGenerator;
         BuildContext context = NavigationService.navigatorKey.currentContext!;
         if (list.isNotEmpty) {

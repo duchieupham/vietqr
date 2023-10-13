@@ -11,6 +11,7 @@ import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/account_information_dto.dart';
+import 'package:vierqr/models/card_dto.dart';
 import 'package:vierqr/models/introduce_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/models/setting_account_sto.dart';
@@ -140,6 +141,53 @@ class AccountRepository {
       return false;
     }
     return false;
+  }
+
+  Future<CardDTO> getCardID(String userId) async {
+    try {
+      final String url =
+          '${EnvConfig.getBaseUrl()}accounts/cardNumber?userId=$userId';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        return CardDTO.fromJson(data);
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return CardDTO();
+  }
+
+  Future<ResponseMessageDTO> updateCardID(
+      String userId, String cardNumber, String cardType) async {
+    ResponseMessageDTO result =
+        const ResponseMessageDTO(status: '', message: '');
+
+    try {
+      final String url = '${EnvConfig.getBaseUrl()}accounts/cardNumber';
+      final response = await BaseAPIClient.postAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+        body: {
+          'userId': userId,
+          'cardNumber': cardNumber,
+          'cardType': cardType,
+        },
+      );
+      if (response.statusCode == 200 || response.statusCode == 400) {
+        var data = jsonDecode(response.body);
+        result = ResponseMessageDTO.fromJson(data);
+      } else {
+        result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+    }
+    return result;
   }
 
   Future<bool> logout() async {

@@ -18,7 +18,6 @@ import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/helper/media_helper.dart';
-import 'package:vierqr/commons/utils/encrypt_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/pref_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
@@ -89,6 +88,18 @@ import 'models/qr_generated_dto.dart';
 //Share Preferences
 late SharedPreferences sharedPrefs;
 List<CameraDescription> cameras = [];
+
+extension IntExtension on int {
+  String toHexString() {
+    return '0x' + toRadixString(16).padLeft(2, '0').toUpperCase();
+  }
+}
+
+extension Uint8ListExtension on Uint8List {
+  String toHexString({String empty = '-', String separator = ' '}) {
+    return isEmpty ? empty : map((e) => e.toHexString()).join(separator);
+  }
+}
 
 //go into EnvConfig to change env
 void main() async {

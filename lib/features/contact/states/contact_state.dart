@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/contact_detail_dto.dart';

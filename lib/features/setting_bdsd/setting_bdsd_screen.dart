@@ -1,18 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/account/blocs/account_bloc.dart';
-import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
-import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
-import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/services/providers/setting_bdsd_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
-
-import '../bank_card/states/bank_state.dart';
 
 class SettingBDSD extends StatefulWidget {
   const SettingBDSD({Key? key}) : super(key: key);
@@ -146,85 +139,85 @@ class _SettingBDSDState extends State<SettingBDSD> {
     );
   }
 
-  Widget _buildListBank(BuildContext context, SettingBDSDProvider provider) {
-    return BlocProvider<BankBloc>(
-        create: (context) => BankBloc(context)..add(BankCardEventGetList()),
-        child: BlocConsumer<BankBloc, BankState>(
-          listener: (context, state) {},
-          builder: (context, state) {
-            List<BankAccountDTO> listBank =
-                state.listBanks.where((dto) => dto.isAuthenticated).toList();
-            return Column(
-              children: listBank.map((bank) {
-                return Container(
-                  height: 60,
-                  margin: EdgeInsets.only(top: 12),
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color: AppColor.WHITE),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 35,
-                        height: 35,
-                        decoration: BoxDecoration(
-                          color: AppColor.WHITE,
-                          borderRadius: BorderRadius.circular(40),
-                          border:
-                              Border.all(width: 0.5, color: AppColor.GREY_TEXT),
-                          image: DecorationImage(
-                            image: ImageUtils.instance.getImageNetWork(
-                              bank.imgId,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const Padding(padding: EdgeInsets.only(left: 10)),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '${bank.bankCode} - ${bank.bankAccount}',
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                                color: AppColor.BLACK,
-                                fontWeight: FontWeight.w600),
-                          ),
-                          Text(
-                            bank.userBankName.toUpperCase(),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: AppColor.BLACK,
-                              fontSize: 10,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const Spacer(),
-                      Text(
-                        provider.bankIds.contains(bank.id) ? 'Bật' : 'Tắt',
-                        style:
-                            TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
-                      ),
-                      Switch(
-                        value: provider.bankIds.contains(bank.id),
-                        activeColor: AppColor.BLUE_TEXT,
-                        onChanged: (bool value) {
-                          provider.updateListBank(bank.id);
-                        },
-                      ),
-                    ],
-                  ),
-                );
-              }).toList(),
-            );
-          },
-        ));
-  }
+  // Widget _buildListBank(BuildContext context, SettingBDSDProvider provider) {
+  //   return BlocProvider<BankBloc>(
+  //       create: (context) => BankBloc(context)..add(BankCardEventGetList()),
+  //       child: BlocConsumer<BankBloc, BankState>(
+  //         listener: (context, state) {},
+  //         builder: (context, state) {
+  //           List<BankAccountDTO> listBank =
+  //               state.listBanks.where((dto) => dto.isAuthenticated).toList();
+  //           return Column(
+  //             children: listBank.map((bank) {
+  //               return Container(
+  //                 height: 60,
+  //                 margin: EdgeInsets.only(top: 12),
+  //                 padding: EdgeInsets.symmetric(horizontal: 20),
+  //                 alignment: Alignment.center,
+  //                 decoration: BoxDecoration(
+  //                     borderRadius: BorderRadius.circular(8),
+  //                     color: AppColor.WHITE),
+  //                 child: Row(
+  //                   children: [
+  //                     Container(
+  //                       width: 35,
+  //                       height: 35,
+  //                       decoration: BoxDecoration(
+  //                         color: AppColor.WHITE,
+  //                         borderRadius: BorderRadius.circular(40),
+  //                         border:
+  //                             Border.all(width: 0.5, color: AppColor.GREY_TEXT),
+  //                         image: DecorationImage(
+  //                           image: ImageUtils.instance.getImageNetWork(
+  //                             bank.imgId,
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ),
+  //                     const Padding(padding: EdgeInsets.only(left: 10)),
+  //                     Column(
+  //                       mainAxisAlignment: MainAxisAlignment.center,
+  //                       crossAxisAlignment: CrossAxisAlignment.start,
+  //                       children: [
+  //                         Text(
+  //                           '${bank.bankCode} - ${bank.bankAccount}',
+  //                           overflow: TextOverflow.ellipsis,
+  //                           style: const TextStyle(
+  //                               color: AppColor.BLACK,
+  //                               fontWeight: FontWeight.w600),
+  //                         ),
+  //                         Text(
+  //                           bank.userBankName.toUpperCase(),
+  //                           maxLines: 1,
+  //                           overflow: TextOverflow.ellipsis,
+  //                           style: const TextStyle(
+  //                             color: AppColor.BLACK,
+  //                             fontSize: 10,
+  //                           ),
+  //                         ),
+  //                       ],
+  //                     ),
+  //                     const Spacer(),
+  //                     Text(
+  //                       provider.bankIds.contains(bank.id) ? 'Bật' : 'Tắt',
+  //                       style:
+  //                           TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
+  //                     ),
+  //                     Switch(
+  //                       value: provider.bankIds.contains(bank.id),
+  //                       activeColor: AppColor.BLUE_TEXT,
+  //                       onChanged: (bool value) {
+  //                         provider.updateListBank(bank.id);
+  //                       },
+  //                     ),
+  //                   ],
+  //                 ),
+  //               );
+  //             }).toList(),
+  //           );
+  //         },
+  //       ));
+  // }
 
   Widget _buildBgItem({required Widget child, EdgeInsets? customPadding}) {
     return Container(

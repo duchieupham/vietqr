@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:carousel_slider/carousel_slider.dart';
@@ -125,30 +124,30 @@ class _BankScreenState extends State<_BankScreen>
     final double height = MediaQuery.of(context).size.height;
     double sizedBox = 0;
     return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
+      padding: const EdgeInsets.only(bottom: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              'Tài khoản',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: const [
-                Text(
-                  'Sử dụng tạo mã QR, đối soát giao dịch',
-                  style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 10),
+          // const Padding(
+          //   padding: EdgeInsets.symmetric(horizontal: 16),
+          //   child: Text(
+          //     'Tài khoản',
+          //     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          //   ),
+          // ),
+          // Padding(
+          //   padding: const EdgeInsets.symmetric(horizontal: 16),
+          //   child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //     children: const [
+          //       Text(
+          //         'Sử dụng tạo mã QR, đối soát giao dịch',
+          //         style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
+          //       ),
+          //     ],
+          //   ),
+          // ),
+          // const SizedBox(height: 10),
           Expanded(
             child: BlocConsumer<BankBloc, BankState>(
               listener: (context, state) async {
@@ -224,9 +223,7 @@ class _BankScreenState extends State<_BankScreen>
               },
             ),
           ),
-          const SizedBox(
-            height: 16,
-          ),
+          const SizedBox(height: 16),
           BlocConsumer<BankBloc, BankState>(
             listener: (context, state) async {},
             builder: (context, state) {
@@ -314,7 +311,7 @@ class _BankScreenState extends State<_BankScreen>
     return GestureDetector(
       onTap: onTab,
       child: Container(
-        padding: const EdgeInsets.only(top: 12, bottom: 12),
+        padding: const EdgeInsets.symmetric(vertical: 6),
         alignment: Alignment.center,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
@@ -324,14 +321,15 @@ class _BankScreenState extends State<_BankScreen>
           children: [
             Image.asset(
               pathIcon,
-              width: 50,
-              height: 40,
+              width: 40,
+              height: 35,
               color: AppColor.BLUE_TEXT,
               fit: BoxFit.cover,
             ),
             Text(
               title,
-              style: const TextStyle(fontWeight: FontWeight.w500, height: 1.4),
+              style: const TextStyle(
+                  fontWeight: FontWeight.w500, height: 1.4, fontSize: 12),
             ),
           ],
         ),

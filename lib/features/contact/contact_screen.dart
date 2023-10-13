@@ -5,7 +5,6 @@ import 'package:dudv_base/dudv_base.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
@@ -19,9 +18,9 @@ import 'package:vierqr/features/contact/blocs/contact_bloc.dart';
 import 'package:vierqr/features/contact/blocs/contact_provider.dart';
 import 'package:vierqr/features/contact/events/contact_event.dart';
 import 'package:vierqr/features/contact/states/contact_state.dart';
+import 'package:vierqr/features/dashboard/blocs/dashboard_provider.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/contact_dto.dart';
-import 'package:vierqr/services/local_storage/local_storage.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 import 'save_contact_screen.dart';
@@ -61,9 +60,6 @@ class _ContactStateState extends State<_ContactState>
   StreamSubscription? _syncSub;
   StreamSubscription? _syncGetSub;
 
-  final _local = LocalStorageRepository();
-  Box? _box;
-
   String get userId => UserInformationHelper.instance.getUserId();
 
   Timer? _debounce;
@@ -94,13 +90,15 @@ class _ContactStateState extends State<_ContactState>
       List<VCardModel> listInsert =
           Provider.of<ContactProvider>(context, listen: false).listInsert;
 
-      if (data.length > 25) {
-        if (listInsert.length == 25) {
+      if (data.length > 50) {
+        if (listInsert.length == 50) {
           _bloc.add(InsertVCardEvent(listInsert));
         }
       } else {
         if (listInsert.length == data.length) {
           _bloc.add(InsertVCardEvent(listInsert));
+          Provider.of<ContactProvider>(context, listen: false)
+              .updateListInsert();
         }
       }
     });
@@ -116,6 +114,8 @@ class _ContactStateState extends State<_ContactState>
             Navigator.pop(context);
             Provider.of<ContactProvider>(context, listen: false)
                 .updateIntro(true);
+            Provider.of<ContactProvider>(context, listen: false)
+                .updateListInsert();
             final data = await _fetchContacts();
 
             eventBus.fire(SyncContactEvent(data));
@@ -133,6 +133,8 @@ class _ContactStateState extends State<_ContactState>
   }
 
   void _onUpdateContact() async {
+    Provider.of<ContactProvider>(context, listen: false).updateListInsert();
+    Provider.of<DashBoardProvider>(context, listen: false).updateSync(true);
     final data = await _fetchContacts();
 
     eventBus.fire(SyncContactEvent(data));
@@ -143,7 +145,6 @@ class _ContactStateState extends State<_ContactState>
     _pageController = PageController(
         initialPage: Provider.of<ContactProvider>(context, listen: false).tab,
         keepPage: true);
-    _box = await _local.openBox(userId);
   }
 
   Future<List<ContactDTO>> _fetchContacts() async {
@@ -239,101 +240,106 @@ class _ContactStateState extends State<_ContactState>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: BlocConsumer<ContactBloc, ContactState>(
-        listener: (context, state) async {
-          if (state.status == BlocStatus.LOADING) {
-            DialogWidget.instance.openLoadingDialog();
-          }
+    return BlocConsumer<ContactBloc, ContactState>(
+      listener: (context, state) async {
+        if (state.status == BlocStatus.LOADING) {
+          DialogWidget.instance.openLoadingDialog();
+        }
 
-          if (state.status == BlocStatus.UNLOADING) {
-            Navigator.pop(context);
-          }
+        if (state.status == BlocStatus.UNLOADING) {
+          Navigator.pop(context);
+        }
 
-          if (state.type == ContactType.GET_LIST) {
-            int offset =
-                Provider.of<ContactProvider>(context, listen: false).offset;
+        if (state.type == ContactType.GET_LIST) {
+          int offset =
+              Provider.of<ContactProvider>(context, listen: false).offset;
 
-            Provider.of<ContactProvider>(context, listen: false)
-                .updateListAll(state.listCompareContact, state.listContactDTO);
-            Provider.of<ContactProvider>(context, listen: false)
-                .updateOffset(offset + 1);
-          }
+          Provider.of<ContactProvider>(context, listen: false)
+              .updateListAll(state.listCompareContact, state.listContactDTO);
+          Provider.of<ContactProvider>(context, listen: false)
+              .updateOffset(offset + 1);
+        }
 
-          if (state.type == ContactType.INSERT_VCARD) {
-            int type = Provider.of<ContactProvider>(context, listen: false)
-                .category!
-                .type;
-            _bloc.add(ContactEventGetList(type: type, isLoading: false));
-          }
+        if (state.type == ContactType.INSERT_VCARD) {
+          int type = Provider.of<ContactProvider>(context, listen: false)
+              .category!
+              .type;
+          _bloc.add(ContactEventGetList(type: type, isLoading: false));
+        }
 
-          if (state.type == ContactType.REMOVE) {
-            int type = Provider.of<ContactProvider>(context, listen: false)
-                .category!
-                .type;
-            _bloc.add(ContactEventGetList(type: type));
-          }
+        if (state.type == ContactType.REMOVE) {
+          int type = Provider.of<ContactProvider>(context, listen: false)
+              .category!
+              .type;
+          _bloc.add(ContactEventGetList(type: type));
+        }
 
-          if (state.type == ContactType.SAVE) {
-            Fluttertoast.showToast(
-              msg: 'Lưu thành công',
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              backgroundColor: Theme.of(context).cardColor,
-              textColor: Theme.of(context).hintColor,
-              fontSize: 15,
-            );
-            _bloc.add(ContactEventGetList());
-          }
+        if (state.type == ContactType.SAVE) {
+          Fluttertoast.showToast(
+            msg: 'Lưu thành công',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Theme.of(context).cardColor,
+            textColor: Theme.of(context).hintColor,
+            fontSize: 15,
+          );
+          _bloc.add(ContactEventGetList());
+        }
 
-          if (state.type == ContactType.SUGGEST) {
-            Provider.of<ContactProvider>(context, listen: false).updateTab(0);
-            _bloc.add(ContactEventGetList());
-            _bloc.add(ContactEventGetListPending());
-            _animatedToPage(0);
-          }
+        if (state.type == ContactType.SUGGEST) {
+          Provider.of<ContactProvider>(context, listen: false).updateTab(0);
+          _bloc.add(ContactEventGetList());
+          _bloc.add(ContactEventGetListPending());
+          _animatedToPage(0);
+        }
 
-          if (state.type == ContactType.SCAN) {
-            _bloc.add(UpdateEventContact());
-            await Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => SaveContactScreen(
-                  code: state.qrCode,
-                  typeQR: state.typeQR,
-                ),
+        if (state.type == ContactType.SCAN) {
+          _bloc.add(UpdateEventContact());
+          await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => SaveContactScreen(
+                code: state.qrCode,
+                typeQR: state.typeQR,
               ),
-            );
-            _bloc.add(ContactEventGetList());
-          }
+            ),
+          );
+          _bloc.add(ContactEventGetList());
+        }
 
-          if (state.type == ContactType.ERROR) {
-            await DialogWidget.instance.openMsgDialog(
-                title: 'Không thể lưu danh bạ', msg: state.msg ?? '');
-          }
-        },
-        builder: (context, state) {
-          return Consumer<ContactProvider>(
-            builder: (context, provider, child) {
-              return Stack(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
-                        child: Row(
-                          children: [
-                            Text(
-                              'Ví QR',
-                              style: const TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.w600),
-                            ),
-                            const Spacer(),
-                            if (provider.isIntro)
+        if (state.type == ContactType.ERROR) {
+          await DialogWidget.instance.openMsgDialog(
+              title: 'Không thể lưu danh bạ', msg: state.msg ?? '');
+        }
+      },
+      builder: (context, state) {
+        return Consumer<ContactProvider>(
+          builder: (context, provider, child) {
+            return Stack(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 4),
+                      child: Row(
+                        children: [
+                          Text(
+                            'Ví QR',
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w600),
+                          ),
+                          const Spacer(),
+                          if (provider.isIntro)
+                            if (!Provider.of<DashBoardProvider>(context,
+                                    listen: false)
+                                .isSync)
                               TextButton(
                                 onPressed: _onUpdateContact,
+                                style: ButtonStyle(
+                                  overlayColor: MaterialStateProperty.all(
+                                      Colors.transparent),
+                                ),
                                 child: Container(
                                   alignment: Alignment.centerRight,
                                   child: Text(
@@ -345,132 +351,149 @@ class _ContactStateState extends State<_ContactState>
                                         height: 1.4),
                                   ),
                                 ),
-                              ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 35,
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          padding: const EdgeInsets.only(left: 20),
-                          children: List.generate(
-                              provider.listCategories.length, (index) {
-                            final model = provider.listCategories[index];
-                            return GestureDetector(
-                              onTap: () {
-                                searchController.clear();
-                                provider.updateCategory(value: model);
-                                provider.updateOffset(0);
-                                if (model.type != 0) {
-                                  _bloc.add(
-                                      ContactEventGetList(type: model.type));
-                                } else {
-                                  _bloc.add(ContactEventGetListPending());
-                                }
-
-                                if (model.type == 4) {
-                                  _onCheckSyncContact();
-                                }
-                              },
-                              child: _buildCategory(
-                                  title: model.title,
-                                  url: model.url,
-                                  isSelect: provider.category == model,
-                                  index: index),
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                      if (state.isLoading)
-                        Expanded(
-                          child: const Center(
-                            child: SizedBox(
-                              width: 30,
-                              height: 30,
-                              child: CircularProgressIndicator(
-                                color: AppColor.BLUE_TEXT,
-                              ),
-                            ),
-                          ),
-                        )
-                      else ...[
-                        if (provider.category != null)
-                          if (provider.category!.type == 0)
-                            Expanded(
-                              child: _buildTapSecond(
-                                list: state.listContactDTOSuggest,
-                              ),
-                            )
-                          else
-                            Expanded(
-                              child: _buildTapFirst(
-                                  listContactDTO: provider.listAllSearch,
-                                  onChange: (value) {
-                                    if (value.isNotEmpty) {
-                                      if (_debounce?.isActive ?? false)
-                                        _debounce!.cancel();
-                                      _debounce = Timer(
-                                          const Duration(milliseconds: 300),
-                                          () {
-                                        _bloc.add(
-                                          SearchContactEvent(
-                                            nickName: value,
-                                            type: provider.category!.type,
-                                          ),
-                                        );
-                                      });
-                                    } else {
-                                      searchController.clear();
-                                      provider.updateOffset(0);
-                                      int type = provider.category!.type;
-                                      _bloc.add(ContactEventGetList(
-                                          type: type, isLoading: false));
-                                    }
-                                  },
-                                  isEdit: provider.category!.type != 8),
-                            ),
-                      ]
-                    ],
-                  ),
-                  Positioned(
-                    bottom: 20,
-                    right: 20,
-                    child: GestureDetector(
-                      onTap: () async {
-                        final data = await Navigator.pushNamed(
-                            context, Routes.SCAN_QR_VIEW);
-                        if (data is Map<String, dynamic>) {
-                          if (!mounted) return;
-                          await QRScannerUtils.instance
-                              .onScanNavi(data, context, onCallBack: () {
-                            _bloc.add(
-                              ContactEventGetList(
-                                type: provider.category?.type,
-                              ),
-                            );
-                          });
-                        }
-                        _bloc.add(
-                            ContactEventGetList(type: provider.category?.type));
-                      },
-                      child: Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                            color: AppColor.BLUE_TEXT,
-                            borderRadius: BorderRadius.circular(100)),
-                        child: Image.asset(
-                            'assets/images/ic-add-new-qr-wallet.png'),
+                              )
+                            else
+                              TextButton(
+                                onPressed: () {},
+                                style: ButtonStyle(
+                                  overlayColor: MaterialStateProperty.all(
+                                      Colors.transparent),
+                                ),
+                                child: Container(
+                                  alignment: Alignment.centerRight,
+                                  child: Text(
+                                    'Đang cập nhật',
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        color: AppColor.BLUE_TEXT,
+                                        decoration: TextDecoration.underline,
+                                        height: 1.4),
+                                  ),
+                                ),
+                              )
+                        ],
                       ),
                     ),
+                    SizedBox(
+                      height: 35,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.only(left: 20),
+                        children: List.generate(provider.listCategories.length,
+                            (index) {
+                          final model = provider.listCategories[index];
+                          return GestureDetector(
+                            onTap: () {
+                              searchController.clear();
+                              provider.updateCategory(value: model);
+                              provider.updateOffset(0);
+                              if (model.type != 0) {
+                                _bloc
+                                    .add(ContactEventGetList(type: model.type));
+                              } else {
+                                _bloc.add(ContactEventGetListPending());
+                              }
+
+                              if (model.type == 4) {
+                                _onCheckSyncContact();
+                              }
+                            },
+                            child: _buildCategory(
+                                title: model.title,
+                                url: model.url,
+                                isSelect: provider.category == model,
+                                index: index),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                    if (state.isLoading)
+                      Expanded(
+                        child: const Center(
+                          child: SizedBox(
+                            width: 30,
+                            height: 30,
+                            child: CircularProgressIndicator(
+                              color: AppColor.BLUE_TEXT,
+                            ),
+                          ),
+                        ),
+                      )
+                    else ...[
+                      if (provider.category != null)
+                        if (provider.category!.type == 0)
+                          Expanded(
+                            child: _buildTapSecond(
+                              list: state.listContactDTOSuggest,
+                            ),
+                          )
+                        else
+                          Expanded(
+                            child: _buildTapFirst(
+                                listContactDTO: provider.listAllSearch,
+                                onChange: (value) {
+                                  if (value.isNotEmpty) {
+                                    if (_debounce?.isActive ?? false)
+                                      _debounce!.cancel();
+                                    _debounce = Timer(
+                                        const Duration(milliseconds: 300), () {
+                                      _bloc.add(
+                                        SearchContactEvent(
+                                          nickName: value,
+                                          type: provider.category!.type,
+                                        ),
+                                      );
+                                    });
+                                  } else {
+                                    searchController.clear();
+                                    provider.updateOffset(0);
+                                    int type = provider.category!.type;
+                                    _bloc.add(ContactEventGetList(
+                                        type: type, isLoading: false));
+                                  }
+                                },
+                                isEdit: provider.category!.type != 8),
+                          ),
+                    ]
+                  ],
+                ),
+                Positioned(
+                  bottom: 20,
+                  right: 20,
+                  child: GestureDetector(
+                    onTap: () async {
+                      final data = await Navigator.pushNamed(
+                          context, Routes.SCAN_QR_VIEW);
+                      if (data is Map<String, dynamic>) {
+                        if (!mounted) return;
+                        await QRScannerUtils.instance.onScanNavi(data, context,
+                            onCallBack: () {
+                          _bloc.add(
+                            ContactEventGetList(
+                              type: provider.category?.type,
+                            ),
+                          );
+                        });
+                      }
+                      _bloc.add(
+                          ContactEventGetList(type: provider.category?.type));
+                    },
+                    child: Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                          color: AppColor.BLUE_TEXT,
+                          borderRadius: BorderRadius.circular(100)),
+                      child:
+                          Image.asset('assets/images/ic-add-new-qr-wallet.png'),
+                    ),
                   ),
-                ],
-              );
-            },
-          );
-        },
-      ),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 

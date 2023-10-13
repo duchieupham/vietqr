@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';

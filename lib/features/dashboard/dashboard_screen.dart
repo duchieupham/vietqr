@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 
@@ -10,8 +9,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:nfc_manager/nfc_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
@@ -43,7 +40,6 @@ import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_card_insert_unauthenticated.dart';
 import 'package:vierqr/models/contact_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
-import 'package:vierqr/services/local_storage/local_storage.dart';
 import 'package:vierqr/services/providers/account_balance_home_provider.dart';
 import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
@@ -64,9 +60,6 @@ class _DashBoardScreen extends State<DashBoardScreen>
         WidgetsBindingObserver,
         AutomaticKeepAliveClientMixin,
         SingleTickerProviderStateMixin {
-  final _local = LocalStorageRepository();
-  Box? _box;
-
   //page controller
   late PageController _pageController;
   StreamSubscription? _subscription;
@@ -158,6 +151,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
     }
   }
 
+
   Future<void> _heavyTaskStreamReceiver(List<ContactDTO> list) async {
     final receivePort = ReceivePort();
     Isolate.spawn(heavyTask, [receivePort.sendPort, list]);
@@ -185,6 +179,8 @@ class _DashBoardScreen extends State<DashBoardScreen>
 
         if (message.progress >= 1) {
           receivePort.close();
+          Provider.of<DashBoardProvider>(context, listen: false)
+              .updateSync(false);
           return;
         }
       }
@@ -316,12 +312,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
   }
 
 //check user information is updated before or not
-  void checkUserInformation() async {
-    String userId = UserInformationHelper.instance.getUserId();
-    if (userId.isNotEmpty) {
-      _box = await _local.openBox(userId);
-    }
-  }
+  void checkUserInformation() async {}
 
   void _updateFcmToken(bool isFromLogin) {
     if (!isFromLogin) {
@@ -759,112 +750,116 @@ class _DashBoardScreen extends State<DashBoardScreen>
     return BackgroundAppBarHome(
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 25),
-        child: Consumer<DashBoardProvider>(builder: (context, page, child) {
-          if (page.indexSelected == 3) {
-            return const SizedBox.shrink();
-          }
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Container(
-                width: 60,
-                height: 30,
-                decoration: BoxDecoration(
-                  //color: Theme.of(context).cardColor,
-                  borderRadius: BorderRadius.circular(10),
+        height: 60,
+        child: Consumer<DashBoardProvider>(
+          builder: (context, page, child) {
+            if (page.indexSelected == 3) {
+              return const SizedBox.shrink();
+            }
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  width: 60,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    //color: Theme.of(context).cardColor,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Image.asset(
+                    'assets/images/ic-viet-qr.png',
+                    width: 50,
+                  ),
                 ),
-                child: Image.asset(
-                  'assets/images/ic-viet-qr.png',
-                  width: 50,
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: _getTitlePaqe(context, page.indexSelected),
+                  ),
                 ),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: _getTitlePaqe(context, page.indexSelected),
-                ),
-              ),
-              SizedBox(
-                  width: 50,
-                  height: 60,
-                  child: BlocConsumer<NotificationBloc, NotificationState>(
-                    listener: (context, state) {
-                      //
-                    },
-                    builder: (context, state) {
-                      if (state is NotificationCountSuccessState) {
-                        _notificationCount = state.count;
-                      }
-                      if (state is NotificationUpdateStatusSuccessState) {
-                        _notificationCount = 0;
-                      }
-                      return Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          ButtonIconWidget(
-                            width: 40,
-                            height: 40,
-                            borderRadius: 40,
-                            icon: Icons.notifications_outlined,
-                            title: '',
-                            function: () {
-                              Navigator.pushNamed(
-                                context,
-                                Routes.NOTIFICATION_VIEW,
-                                arguments: {
-                                  'notificationBloc': _notificationBloc,
-                                },
-                              ).then((value) {
-                                _notificationBloc.add(
-                                  NotificationUpdateStatusEvent(),
-                                );
-                              });
-                            },
-                            bgColor: Theme.of(context).cardColor,
-                            textColor: Theme.of(context).hintColor,
-                          ),
-                          if (_notificationCount != 0)
-                            Positioned(
-                              top: 5,
-                              right: 0,
-                              child: Container(
-                                width: 20,
-                                height: 20,
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(30),
-                                  color: AppColor.RED_CALENDAR,
-                                ),
-                                child: Text(
-                                  _notificationCount.toString(),
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize:
-                                        (_notificationCount.toString().length >=
-                                                3)
-                                            ? 8
-                                            : 10,
-                                    color: AppColor.WHITE,
+                SizedBox(
+                    width: 50,
+                    height: 60,
+                    child: BlocConsumer<NotificationBloc, NotificationState>(
+                      listener: (context, state) {
+                        //
+                      },
+                      builder: (context, state) {
+                        if (state is NotificationCountSuccessState) {
+                          _notificationCount = state.count;
+                        }
+                        if (state is NotificationUpdateStatusSuccessState) {
+                          _notificationCount = 0;
+                        }
+                        return Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            ButtonIconWidget(
+                              width: 40,
+                              height: 40,
+                              borderRadius: 40,
+                              icon: Icons.notifications_outlined,
+                              title: '',
+                              function: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  Routes.NOTIFICATION_VIEW,
+                                  arguments: {
+                                    'notificationBloc': _notificationBloc,
+                                  },
+                                ).then((value) {
+                                  _notificationBloc.add(
+                                    NotificationUpdateStatusEvent(),
+                                  );
+                                });
+                              },
+                              bgColor: Theme.of(context).cardColor,
+                              textColor: Theme.of(context).hintColor,
+                            ),
+                            if (_notificationCount != 0)
+                              Positioned(
+                                top: 5,
+                                right: 0,
+                                child: Container(
+                                  width: 20,
+                                  height: 20,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(30),
+                                    color: AppColor.RED_CALENDAR,
+                                  ),
+                                  child: Text(
+                                    _notificationCount.toString(),
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: (_notificationCount
+                                                  .toString()
+                                                  .length >=
+                                              3)
+                                          ? 8
+                                          : 10,
+                                      color: AppColor.WHITE,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                        ],
-                      );
-                    },
-                  )),
-              const Padding(padding: EdgeInsets.only(left: 5)),
-              GestureDetector(
-                  onTap: () {
-                    Provider.of<DashBoardProvider>(context, listen: false)
-                        .updateIndex(3);
+                          ],
+                        );
+                      },
+                    )),
+                const Padding(padding: EdgeInsets.only(left: 5)),
+                GestureDetector(
+                    onTap: () {
+                      Provider.of<DashBoardProvider>(context, listen: false)
+                          .updateIndex(3);
 
-                    _animatedToPage(3);
-                  },
-                  child: _buildAvatarWidget(context)),
-            ],
-          );
-        }),
+                      _animatedToPage(3);
+                    },
+                    child: _buildAvatarWidget(context)),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

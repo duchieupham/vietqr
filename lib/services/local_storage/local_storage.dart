@@ -52,12 +52,6 @@ class LocalStorageRepository extends BaseLocalStorageRepository {
 
     return box.valuesBetween(startKey: keyFirst, endKey: keyLast).toList()
         as List<ContactDTO>;
-
-    List<ContactDTO> listBetween = box
-        .valuesBetween(startKey: keyFirst, endKey: keyLast)
-        .toList() as List<ContactDTO>;
-    List<ContactDTO> list = box.values.toList() as List<ContactDTO>;
-    return box.values.toList() as List<ContactDTO>;
   }
 
   @override

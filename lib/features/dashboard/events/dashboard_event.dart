@@ -1,8 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:vierqr/models/add_contact_dto.dart';
 import 'package:vierqr/models/bank_card_insert_unauthenticated.dart';
 import 'package:vierqr/models/bank_name_search_dto.dart';
-import 'package:vierqr/models/qr_generated_dto.dart';
 
 class DashBoardEvent extends Equatable {
   const DashBoardEvent();

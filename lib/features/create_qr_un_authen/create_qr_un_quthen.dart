@@ -38,7 +38,6 @@ class _CreateQrUnQuthenState extends State<CreateQrUnQuthen> {
   final TextEditingController contentController =
       TextEditingController(text: '');
 
-  final FocusNode _focusNode = FocusNode();
   List<BankTypeDTO> list = [];
 
   @override
@@ -457,8 +456,8 @@ class _CreateQrUnQuthenState extends State<CreateQrUnQuthen> {
                     margin: const EdgeInsets.only(left: 4),
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                          image: ImageUtils.instance.getImageNetWork(
-                              provider.bankType.imageId ?? '')),
+                          image: ImageUtils.instance
+                              .getImageNetWork(provider.bankType.imageId)),
                     ),
                   )
                 else

@@ -5,6 +5,9 @@ class AccountLoginDTO {
   final String device;
   final String fcmToken;
   final String sharingCode;
+  final String? method;
+  final String? userId;
+  final String? cardNumber;
 
   const AccountLoginDTO({
     required this.phoneNo,
@@ -13,6 +16,9 @@ class AccountLoginDTO {
     required this.device,
     required this.fcmToken,
     required this.sharingCode,
+    this.method,
+    this.userId,
+    this.cardNumber,
   });
 
   Map<String, dynamic> toJson() {
@@ -22,7 +28,9 @@ class AccountLoginDTO {
     data['fcmToken'] = fcmToken;
     data['device'] = device;
     data['platform'] = platform;
-    data['sharingCode'] = sharingCode;
+    if (method != null) data['method'] = method;
+    if (userId != null) data['userId'] = userId;
+    if (cardNumber != null) data['cardNumber'] = cardNumber;
     return data;
   }
 }

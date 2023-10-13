@@ -21,6 +21,7 @@ import '../../services/providers/water_mark_provider.dart';
 
 class ShowQr extends StatefulWidget {
   final QRGeneratedDTO dto;
+
   const ShowQr({Key? key, required this.dto}) : super(key: key);
 
   @override
@@ -215,7 +216,6 @@ class _ShowQrState extends State<ShowQr> {
       double progressBar = 0,
       required BuildContext context,
       required Function(int) onClick}) {
-    double width = MediaQuery.of(context).size.width;
     return IntrinsicHeight(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20),
