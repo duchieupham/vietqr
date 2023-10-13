@@ -18,6 +18,8 @@ import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/phone_widget.dart';
 import 'package:vierqr/features/home/widget/dialog_update.dart';
+import 'package:vierqr/features/home/widget/nfc_adr_widget.dart';
+import 'package:vierqr/features/home/widget/nfc_widget.dart';
 import 'package:vierqr/features/login/blocs/login_bloc.dart';
 import 'package:vierqr/features/login/blocs/login_provider.dart';
 import 'package:vierqr/features/login/events/login_event.dart';
@@ -344,8 +346,38 @@ class _LoginState extends State<_Login> {
                                           border: Border.all(
                                               color: AppColor.BLUE_TEXT),
                                           colorEnableText: AppColor.BLUE_TEXT,
-                                          onTap: () {
-                                            onReadNFC();
+                                          onTap: () async {
+                                            if (Platform.isAndroid) {
+                                              final data = await DialogWidget
+                                                  .instance
+                                                  .openDialogIntroduce(
+                                                      child: NFCDialog());
+                                              if (data != null &&
+                                                  data is NfcTag) {
+                                                Future.delayed(
+                                                    const Duration(
+                                                        milliseconds: 500), () {
+                                                  String cardNumber =
+                                                      readTagToKey(data, '');
+
+                                                  AccountLoginDTO dto =
+                                                      AccountLoginDTO(
+                                                    phoneNo: '',
+                                                    password: '',
+                                                    device: '',
+                                                    fcmToken: '',
+                                                    platform: '',
+                                                    sharingCode: '',
+                                                    method: 'NFC_CARD',
+                                                    userId: '',
+                                                    cardNumber: cardNumber,
+                                                  );
+                                                  controller.sink.add(dto);
+                                                });
+                                              }
+                                            } else {
+                                              onReadNFC();
+                                            }
                                             onReadRFID();
                                           },
                                         ),
@@ -424,8 +456,32 @@ class _LoginState extends State<_Login> {
                               .add(LoginEventByPhone(dto: dto, isToast: true));
                         }
                       },
-                      onLoginCard: () {
-                        onReadNFC();
+                      onLoginCard: () async {
+                        if (Platform.isAndroid) {
+                          final data = await DialogWidget.instance
+                              .openDialogIntroduce(child: NFCDialog());
+                          if (data != null && data is NfcTag) {
+                            Future.delayed(const Duration(milliseconds: 500),
+                                () {
+                              String cardNumber = readTagToKey(data, '');
+
+                              AccountLoginDTO dto = AccountLoginDTO(
+                                phoneNo: '',
+                                password: '',
+                                device: '',
+                                fcmToken: '',
+                                platform: '',
+                                sharingCode: '',
+                                method: 'NFC_CARD',
+                                userId: '',
+                                cardNumber: cardNumber,
+                              );
+                              controller.sink.add(dto);
+                            });
+                          }
+                        } else {
+                          onReadNFC();
+                        }
                         onReadRFID();
                       },
                     ),
@@ -655,37 +711,75 @@ class _LoginState extends State<_Login> {
     );
   }
 
-  String readTagToKey(NfcTag tag, String? userId) {
+  String readTagToKey(NfcTag tag, String userId) {
     String card = '';
     Object? tech;
+    if (Platform.isIOS) {
+      tech = FeliCa.from(tag);
+      if (tech is FeliCa) {
+        card = '${tech.currentSystemCode.toHexString()}'.replaceAll(' ', '');
+        return card;
+      }
 
-    tech = FeliCa.from(tag);
-    if (tech is FeliCa) {
-      card =
-          '${tech.currentIDm.toHexString()}-${tech.currentSystemCode.toHexString()}'
-              .replaceAll(' ', '');
-      return card;
-    }
+      tech = Iso15693.from(tag);
+      if (tech is Iso15693) {
+        card = '${tech.identifier.toHexString()}'.replaceAll(' ', '');
+        return card;
+      }
 
-    tech = Iso15693.from(tag);
-    if (tech is Iso15693) {
-      card = '${tech.icSerialNumber.toHexString()}'.replaceAll(' ', '');
-      return card;
-    }
+      tech = Iso7816.from(tag);
+      if (tech is Iso7816) {
+        card = '${tech.identifier.toHexString()}'.replaceAll(' ', '');
+        return card;
+      }
 
-    tech = Iso7816.from(tag);
-    if (tech is Iso7816) {
-      card = '${tech.identifier.toHexString()}'.replaceAll(' ', '');
-      return card;
-    }
+      tech = MiFare.from(tag);
+      if (tech is MiFare) {
+        card = '${tech.identifier.toHexString()}'.replaceAll(' ', '');
+        return card;
+      }
+      tech = Ndef.from(tag);
+      if (tech is Ndef) {
+        return card;
+      }
+    } else if (Platform.isAndroid) {
+      tech = IsoDep.from(tag);
+      if (tech is NfcA) {
+        card = '${tech.identifier.toHexString()}'.replaceAll(' ', '');
+        return card;
+      }
 
-    tech = MiFare.from(tag);
-    if (tech is MiFare) {
-      return card;
-    }
-    tech = Ndef.from(tag);
-    if (tech is Ndef) {
-      return card;
+      tech = NfcA.from(tag);
+      if (tech is NfcA) {
+        card = '${tech.identifier.toHexString()}'.replaceAll(' ', '');
+        return card;
+      }
+      tech = NfcB.from(tag);
+      if (tech is NfcB) {
+        card = '${tech.identifier.toHexString()}'.replaceAll(' ', '');
+        return card;
+      }
+      tech = NfcF.from(tag);
+      if (tech is NfcF) {
+        card = '${tech.identifier.toHexString()}'.replaceAll(' ', '');
+        return card;
+      }
+      tech = NfcV.from(tag);
+      if (tech is NfcV) {
+        card = '${tech.identifier.toHexString()}'.replaceAll(' ', '');
+        return card;
+      }
+
+      tech = MifareClassic.from(tag);
+      if (tech is MifareClassic) {
+        card = '${tech.identifier.toHexString()}'.replaceAll(' ', '');
+        return card;
+      }
+      tech = MifareUltralight.from(tag);
+      if (tech is MifareUltralight) {
+        card = '${tech.identifier.toHexString()}'.replaceAll(' ', '');
+        return card;
+      }
     }
 
     return card;

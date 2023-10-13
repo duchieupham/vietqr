@@ -3,7 +3,6 @@ import 'package:nfc_manager/nfc_manager.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 
-
 class NFCDialog extends StatefulWidget {
   @override
   State<NFCDialog> createState() => _NFCDialogState();
@@ -23,7 +22,11 @@ class _NFCDialogState extends State<NFCDialog> {
   void initState() {
     super.initState();
     NfcManager.instance.startSession(
-      pollingOptions: {NfcPollingOption.iso14443, NfcPollingOption.iso15693},
+      pollingOptions: {
+        NfcPollingOption.iso14443,
+        NfcPollingOption.iso15693,
+        NfcPollingOption.iso18092,
+      },
       onDiscovered: (tag) async {
         try {
           final result = await handleTag(tag);
@@ -34,7 +37,7 @@ class _NFCDialogState extends State<NFCDialog> {
             isSuccess = true;
           });
           Future.delayed(const Duration(milliseconds: 500), () {
-            Navigator.pop(context, true);
+            Navigator.pop(context, tag);
           });
         } catch (e) {
           await NfcManager.instance.stopSession();
