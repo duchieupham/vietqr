@@ -10,6 +10,7 @@ import 'package:vierqr/commons/utils/error_utils.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/account/repositories/account_res.dart';
+import 'package:vierqr/features/account/views/dialog_fdid_widget.dart';
 import 'package:vierqr/features/account/views/dialog_nfc.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
@@ -25,6 +26,9 @@ class VietQRIDCardView extends StatefulWidget {
 class _VietQRIDCardViewState extends State<VietQRIDCardView> {
   final repository = AccountRepository();
   CardDTO? cardDTO;
+
+  NfcTag? tag;
+  Map<String, dynamic>? additionalData;
 
   String get userId => UserInformationHelper.instance.getUserId();
 
@@ -97,48 +101,92 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
   String readTagToKey(NfcTag tag, String userId) {
     String card = '';
     Object? tech;
+    if (Platform.isIOS) {
+      tech = FeliCa.from(tag);
+      if (tech is FeliCa) {
+        card = '${tech.currentSystemCode.toHexString()}'.replaceAll(' ', '');
+        return card;
+      }
 
-    tech = FeliCa.from(tag);
-    if (tech is FeliCa) {
-      card =
-          '${tech.currentIDm.toHexString()}-${tech.currentSystemCode.toHexString()}'
-              .replaceAll(' ', '');
-      return card;
-    }
+      tech = Iso15693.from(tag);
+      if (tech is Iso15693) {
+        card = '${tech.identifier.toHexString()}'.replaceAll(' ', '');
+        return card;
+      }
 
-    tech = Iso15693.from(tag);
-    if (tech is Iso15693) {
-      card = '${tech.icSerialNumber.toHexString()}'.replaceAll(' ', '');
-      return card;
-    }
+      tech = Iso7816.from(tag);
+      if (tech is Iso7816) {
+        card = '${tech.identifier.toHexString()}'.replaceAll(' ', '');
+        return card;
+      }
 
-    tech = Iso7816.from(tag);
-    if (tech is Iso7816) {
-      card = '${tech.identifier.toHexString()}'.replaceAll(' ', '');
-      return card;
-    }
+      tech = MiFare.from(tag);
+      if (tech is MiFare) {
+        card = '${tech.identifier.toHexString()}'.replaceAll(' ', '');
+        return card;
+      }
+      tech = Ndef.from(tag);
+      if (tech is Ndef) {
+        return card;
+      }
+    } else if (Platform.isAndroid) {
+      tech = IsoDep.from(tag);
+      if (tech is NfcA) {
+        card = '${tech.identifier.toHexString()}'.replaceAll(' ', '');
+        return card;
+      }
 
-    tech = MiFare.from(tag);
-    if (tech is MiFare) {
-      return card;
-    }
-    tech = Ndef.from(tag);
-    if (tech is Ndef) {
-      return card;
+      tech = NfcA.from(tag);
+      if (tech is NfcA) {
+        card = '${tech.identifier.toHexString()}'.replaceAll(' ', '');
+        return card;
+      }
+      tech = NfcB.from(tag);
+      if (tech is NfcB) {
+        card = '${tech.identifier.toHexString()}'.replaceAll(' ', '');
+        return card;
+      }
+      tech = NfcF.from(tag);
+      if (tech is NfcF) {
+        card = '${tech.identifier.toHexString()}'.replaceAll(' ', '');
+        return card;
+      }
+      tech = NfcV.from(tag);
+      if (tech is NfcV) {
+        card = '${tech.identifier.toHexString()}'.replaceAll(' ', '');
+        return card;
+      }
+
+      tech = MifareClassic.from(tag);
+      if (tech is MifareClassic) {
+        card = '${tech.identifier.toHexString()}'.replaceAll(' ', '');
+        return card;
+      }
+      tech = MifareUltralight.from(tag);
+      if (tech is MifareUltralight) {
+        card = '${tech.identifier.toHexString()}'.replaceAll(' ', '');
+        return card;
+      }
     }
 
     return card;
   }
 
-  NfcTag? tag;
-
-  Map<String, dynamic>? additionalData;
-
   Future<Map<String, dynamic>?> handleTag(
       NfcTag tag, bool isScan, String? data) async {
     String card = readTagToKey(tag, userId);
 
-    print('card: $card');
+    if (card.isEmpty) {
+      setState(() {
+        errorText = 'Thẻ không hợp lệ, vui lòng thử lại.';
+      });
+      if (Platform.isAndroid) {
+        await NfcManager.instance.stopSession();
+      } else {
+        await NfcManager.instance.stopSession(alertMessage: '');
+      }
+      return null;
+    }
 
     if (data != null) {
       if (data == card) {
@@ -152,8 +200,6 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
       cardScan = cardScanTwo;
     }
     setState(() {});
-
-    print('tag: ${tag.data.toString()}');
 
     return {
       'message': 'Hoàn tất.',
@@ -174,11 +220,11 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
         },
       );
     }
-
     await NfcManager.instance.startSession(
       pollingOptions: {
         NfcPollingOption.iso14443,
         NfcPollingOption.iso15693,
+        NfcPollingOption.iso18092,
       },
       onDiscovered: (tag) async {
         bool isCardFailed = false;
@@ -215,49 +261,68 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
           }
         }
       },
-    ).catchError((e) {});
+      onError: (e) async {
+        getCard();
+        setState(() {
+          pageIndex = 0;
+          cardNumber = '';
+        });
+      },
+    ).catchError(
+      (e) {
+        print('hehehhe');
+      },
+    );
   }
 
   void onReadRFID({
     bool isScan = false,
-    String? data,
+    String? value,
   }) async {
-    RawKeyboard.instance.addListener(
-      (RawKeyEvent event) {
-        bool isCardFailed = false;
-        String card = event.character ?? '';
-        if (data != null) {
-          if (data == card) {
-            setState(() {
-              cardNumber = data;
-            });
-          }
-        }
+    final data = await DialogWidget.instance
+        .openDialogIntroduce(child: FDIDDialog(isScan: isScan, data: value));
+    if (data != null && data is Map) {
+      String identifier = '';
+      String error = '';
+      bool isScan = false;
+      bool isCardFailed = false;
+      if (data.containsKey('errorText')) {
+        error = data['errorText'];
+      }
 
-        if (isScan) {
-          cardScan = '';
-        } else {
-          cardScan = cardScanTwo;
-        }
-        setState(() {});
-
-        if (cardNumber.isNotEmpty) {
-          updateCard();
-        } else if (cardNumber.isEmpty && isScan) {
-          setState(() {
-            errorText = 'Thẻ không khớp, vui lòng quét lại';
-            cardScan = cardScanTwo;
-            isCardFailed = true;
-          });
-        }
-
-        Future.delayed(const Duration(milliseconds: 500), () {
-          if (cardScan == cardScanTwo && !isCardFailed) {
-            onReadRFID(isScan: true, data: card);
-          }
+      if (error.isNotEmpty) {
+        setState(() {
+          errorText = error;
         });
-      },
-    );
+        return;
+      }
+
+      if (data.containsKey('cardNumber')) {
+        identifier = data['cardNumber'];
+      }
+      if (data.containsKey('isScan')) {
+        isScan = data['isScan'];
+      }
+
+      if (identifier.isNotEmpty) {
+        setState(() {
+          cardNumber = identifier;
+        });
+        updateCard();
+      } else if (identifier.isEmpty && isScan) {
+        setState(() {
+          errorText = 'Thẻ không khớp, vui lòng quét lại';
+          cardScan = cardScanTwo;
+          isCardFailed = true;
+        });
+      }
+
+      Future.delayed(const Duration(milliseconds: 500), () async {
+        if (cardScan == cardScanTwo && !isCardFailed) {
+          onReadRFID(isScan: true, value: identifier);
+        }
+      });
+    }
   }
 
   @override
@@ -281,9 +346,18 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
                       height: MediaQuery.of(context).size.height * 0.3,
                     ),
                   ),
-                  if (pageIndex != 2)
+                  if (pageIndex == 0)
                     Text(
                       'Giới thiệu về VietQR ID Card',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    )
+                  else if (pageIndex == 1)
+                    Text(
+                      'Liên kết thẻ $cardTitle',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 20,
@@ -632,14 +706,13 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
             isEnable: true,
             colorEnableBgr: AppColor.BLUE_TEXT.withOpacity(0.4),
             colorEnableText: AppColor.BLUE_TEXT,
-            onTap: () {
+            onTap: () async {
               setState(() {
                 pageIndex = 1;
                 cardTitle = 'RFID';
                 cardScan = cardScanFirst;
                 type = cardType;
               });
-              onReadRFID();
             },
           ),
         ],
