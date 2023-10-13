@@ -138,6 +138,8 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
       NfcTag tag, bool isScan, String? data) async {
     String card = readTagToKey(tag, userId);
 
+    print('card: $card');
+
     if (data != null) {
       if (data == card) {
         cardNumber = card;
@@ -150,6 +152,8 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
       cardScan = cardScanTwo;
     }
     setState(() {});
+
+    print('tag: ${tag.data.toString()}');
 
     return {
       'message': 'Hoàn tất.',
