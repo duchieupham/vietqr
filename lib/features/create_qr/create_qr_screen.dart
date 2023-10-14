@@ -1,12 +1,10 @@
 import 'dart:io';
 
-import 'package:clipboard/clipboard.dart';
 import 'package:float_bubble/float_bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
@@ -15,44 +13,37 @@ import 'package:vierqr/commons/enums/textfield_type.dart';
 import 'package:vierqr/commons/utils/file_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
-import 'package:vierqr/commons/utils/printer_utils.dart';
-import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
-import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_custom.dart';
-import 'package:vierqr/commons/widgets/viet_qr.dart';
 import 'package:vierqr/features/create_qr/blocs/create_qr_bloc.dart';
 import 'package:vierqr/features/create_qr/events/create_qr_event.dart';
 import 'package:vierqr/features/create_qr/states/create_qr_state.dart';
-import 'package:vierqr/features/create_qr/views/bottom_sheet_image.dart';
-import 'package:vierqr/features/printer/views/printing_view.dart';
+import 'package:vierqr/features/create_qr/views/create_success_view.dart';
+import 'package:vierqr/features/create_qr/widgets/bottom_sheet_image.dart';
 import 'package:vierqr/features/transaction/widgets/transaction_sucess_widget.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
-import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
-import 'package:vierqr/models/bluetooth_printer_dto.dart';
 import 'package:vierqr/models/qr_create_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/services/providers/create_qr_provider.dart';
-import 'package:vierqr/services/providers/water_mark_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
-import 'package:vierqr/services/sqflite/local_database.dart';
 
-import 'views/calculator_view.dart';
-import 'views/dialog_exits_view.dart';
-import 'views/dialog_more_view.dart';
+import 'widgets/calculator_view.dart';
 
 class CreateQrScreen extends StatelessWidget {
   final BankAccountDTO? bankAccountDTO;
   final QRGeneratedDTO? qrDto;
   final int page;
 
-  const CreateQrScreen(
-      {super.key, this.bankAccountDTO, this.qrDto, this.page = 0});
+  const CreateQrScreen({
+    super.key,
+    this.bankAccountDTO,
+    this.qrDto,
+    this.page = 0,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -73,10 +64,8 @@ class _CreateQRScreen extends StatefulWidget {
 
 class _CreateQRScreenState extends State<_CreateQRScreen> {
   late CreateQRBloc _bloc;
-  final _waterMarkProvider = WaterMarkProvider(false);
 
   final imagePicker = ImagePicker();
-  final GlobalKey globalKey = GlobalKey();
   final _focusMoney = FocusNode();
 
   final dto = QRGeneratedDTO(
@@ -89,6 +78,9 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
       qrCode: '',
       imgId: '');
 
+  bool enableList = false;
+  BankAccountDTO? _bankAccountDTO;
+
   @override
   void initState() {
     super.initState();
@@ -100,6 +92,24 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
 
   initData(BuildContext context) {
     _bloc.add(QrEventGetBankDetail());
+    _bloc.add(QREventGetList());
+  }
+
+  _onHandleTap() {
+    FocusManager.instance.primaryFocus?.unfocus();
+    setState(() {
+      enableList = !enableList;
+    });
+  }
+
+  _onChanged(BankAccountDTO bankAccountDTO) {
+    setState(() {
+      enableList = !enableList;
+      if (_bankAccountDTO != bankAccountDTO) {
+        _bankAccountDTO = bankAccountDTO;
+        _bloc.add(QREventSetBankAccountDTO(bankAccountDTO));
+      }
+    });
   }
 
   @override
@@ -187,97 +197,21 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
         return Consumer<CreateQRProvider>(
           builder: (context, provider, child) {
             if (provider.page == 1) {
-              return Scaffold(
-                body: SafeArea(
-                  child: RepaintBoundaryWidget(
-                    globalKey: globalKey,
-                    builder: (key) {
-                      return Container(
-                        color: AppColor.GREY_BG,
-                        child: ListView(
-                          padding: EdgeInsets.zero,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 16),
-                              child: VietQr(qrGeneratedDTO: state.dto ?? dto),
-                            ),
-                            ValueListenableBuilder(
-                              valueListenable: _waterMarkProvider,
-                              builder: (_, provider, child) {
-                                return Visibility(
-                                  visible: provider == true,
-                                  child: Container(
-                                    width: width,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 20,
-                                      vertical: 10,
-                                    ),
-                                    child: RichText(
-                                      textAlign: TextAlign.right,
-                                      text: const TextSpan(
-                                        style: TextStyle(
-                                          color: AppColor.GREY_TEXT,
-                                          fontSize: 12,
-                                        ),
-                                        children: [
-                                          TextSpan(text: 'Được tạo bởi '),
-                                          TextSpan(
-                                            text: 'vietqr.vn',
-                                            style: TextStyle(
-                                              color: AppColor.BLUE_TEXT,
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                          TextSpan(text: ' - '),
-                                          TextSpan(text: 'Hotline '),
-                                          TextSpan(
-                                            text: '19006234',
-                                            style: TextStyle(
-                                              color: AppColor.BLUE_TEXT,
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                            const SizedBox(
-                              height: 120,
-                            )
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                bottomSheet: Consumer<CreateQRProvider>(
-                  builder: (context, bt, child) {
-                    return _buildButton(
-                      context: context,
-                      fileImage: bt.imageFile,
-                      progressBar: bt.progressBar,
-                      onClick: (index) {
-                        onClick(index, state.dto!);
-                      },
-                      onCreate: () {
-                        bt.reset();
-                        bt.updatePage(0);
-                      },
-                      onPaid: () {
-                        _bloc.add(QREventPaid(state.dto?.transactionId ?? ''));
-                      },
-                    );
-                  },
-                ),
+              return CreateQRSuccess(
+                dto: state.dto ?? dto,
+                onPaid: () {
+                  _bloc.add(QREventPaid(state.dto?.transactionId ?? ''));
+                },
               );
             }
             return GestureDetector(
               onTap: () {
                 FocusManager.instance.primaryFocus?.unfocus();
+                if (enableList) {
+                  setState(() {
+                    enableList = false;
+                  });
+                }
               },
               child: Scaffold(
                 appBar: const MAppBar(title: 'Tạo QR'),
@@ -292,75 +226,88 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Container(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 12),
-                                  decoration: const BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(5)),
-                                    color: AppColor.WHITE,
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      if (state.bankAccountDTO != null &&
-                                          state
-                                              .bankAccountDTO!.imgId.isNotEmpty)
-                                        Container(
-                                          width: 60,
-                                          height: 30,
-                                          margin:
-                                              const EdgeInsets.only(left: 4),
-                                          decoration: BoxDecoration(
-                                            image: DecorationImage(
-                                              image: ImageUtils.instance
-                                                  .getImageNetWork(state
-                                                      .bankAccountDTO!.imgId),
+                                GestureDetector(
+                                  onTap: _onHandleTap,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 12),
+                                    decoration: const BoxDecoration(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(5)),
+                                      color: AppColor.WHITE,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        if (state.bankAccountDTO != null &&
+                                            state.bankAccountDTO!.imgId
+                                                .isNotEmpty)
+                                          Container(
+                                            width: 60,
+                                            height: 30,
+                                            margin:
+                                                const EdgeInsets.only(left: 4),
+                                            decoration: BoxDecoration(
+                                              image: DecorationImage(
+                                                image: ImageUtils.instance
+                                                    .getImageNetWork(state
+                                                        .bankAccountDTO!.imgId),
+                                              ),
                                             ),
                                           ),
+                                        const SizedBox(width: 4),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.stretch,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    '${state.bankAccountDTO?.bankCode ?? ''} - ${state.bankAccountDTO?.bankName ?? ''}',
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: const TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        color: AppColor.BLACK),
+                                                  ),
+                                                  const Spacer(),
+                                                  Icon(Icons
+                                                      .keyboard_arrow_down_outlined),
+                                                  const SizedBox(width: 8),
+                                                ],
+                                              ),
+                                              const SizedBox(height: 4),
+                                              Text(
+                                                state.bankAccountDTO
+                                                        ?.bankAccount ??
+                                                    '',
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w400,
+                                                    color: AppColor.BLACK),
+                                              ),
+                                              const SizedBox(height: 4),
+                                              Text(
+                                                state.bankAccountDTO
+                                                        ?.userBankName ??
+                                                    '',
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w400,
+                                                    color: AppColor.BLACK),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      const SizedBox(width: 4),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.stretch,
-                                          children: [
-                                            Text(
-                                              '${state.bankAccountDTO?.bankCode ?? ''} - ${state.bankAccountDTO?.bankName ?? ''}',
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: const TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w400,
-                                                  color: AppColor.BLACK),
-                                            ),
-                                            const SizedBox(height: 4),
-                                            Text(
-                                              state.bankAccountDTO
-                                                      ?.bankAccount ??
-                                                  '',
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: const TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w400,
-                                                  color: AppColor.BLACK),
-                                            ),
-                                            const SizedBox(height: 4),
-                                            Text(
-                                              state.bankAccountDTO
-                                                      ?.userBankName ??
-                                                  '',
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: const TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w400,
-                                                  color: AppColor.BLACK),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
                                 const SizedBox(height: 30),
@@ -642,7 +589,15 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                           ),
                         ),
                       ),
-                    )
+                    ),
+                    enableList
+                        ? Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 20),
+                            child: _buildDropList(
+                                state.listBanks, state.bankAccountDTO),
+                          )
+                        : Container(),
                   ],
                 ),
               ),
@@ -672,200 +627,6 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
         _bloc.add(QrEventScanGetBankType(code: data));
       }
     }
-  }
-
-  Widget _buildButton({
-    File? fileImage,
-    double progressBar = 0,
-    required BuildContext context,
-    GestureTapCallback? onPaid,
-    required Function(int) onClick,
-    required Function() onCreate,
-  }) {
-    double width = MediaQuery.of(context).size.width;
-    return IntrinsicHeight(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ButtonIconWidget(
-                      width: width * 0.2,
-                      height: 40,
-                      pathIcon: 'assets/images/ic-print-blue.png',
-                      title: '',
-                      function: () async {
-                        onClick(0);
-                      },
-                      bgColor: Theme.of(context).cardColor,
-                      textColor: AppColor.ORANGE,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.only(left: 10),
-                    ),
-                    ButtonIconWidget(
-                      width: width * 0.2,
-                      height: 40,
-                      pathIcon: 'assets/images/ic-img-blue.png',
-                      title: '',
-                      function: () {
-                        onClick(1);
-                      },
-                      bgColor: Theme.of(context).cardColor,
-                      textColor: AppColor.RED_CALENDAR,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.only(left: 10),
-                    ),
-                    ButtonIconWidget(
-                      width: width * 0.2,
-                      height: 40,
-                      pathIcon: 'assets/images/ic-copy-blue.png',
-                      title: '',
-                      function: () async {
-                        onClick(2);
-                      },
-                      bgColor: Theme.of(context).cardColor,
-                      textColor: AppColor.BLUE_TEXT,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.only(left: 10),
-                    ),
-                    ButtonIconWidget(
-                      width: width * 0.2,
-                      height: 40,
-                      pathIcon: 'assets/images/ic-share-blue.png',
-                      title: '',
-                      function: () {
-                        onClick(3);
-                      },
-                      bgColor: Theme.of(context).cardColor,
-                      textColor: AppColor.BLUE_TEXT,
-                    ),
-                  ],
-                )),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                children: [
-                  MButtonWidget(
-                    width: 80,
-                    isEnable: true,
-                    colorEnableBgr: AppColor.BLUE_TEXT.withOpacity(0.3),
-                    margin: const EdgeInsets.only(right: 12),
-                    onTap: () {
-                      if (fileImage != null) {
-                        dialogExits();
-                      } else {
-                        Navigator.of(context)
-                            .popUntil((route) => route.isFirst);
-                      }
-                    },
-                    title: '',
-                    child: Image.asset(
-                      'assets/images/ic-home-blue.png',
-                      width: 30,
-                      height: 30,
-                      fit: BoxFit.cover,
-                      color: AppColor.BLUE_TEXT,
-                    ),
-                  ),
-                  Expanded(
-                    child: ButtonIconWidget(
-                      height: 40,
-                      icon: Icons.add_rounded,
-                      textSize: 12,
-                      title: 'QR giao dịch mới',
-                      function: onCreate,
-                      textColor: AppColor.WHITE,
-                      bgColor: AppColor.BLUE_TEXT,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            if (fileImage != null)
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: MediaQuery.of(context).size.width * progressBar,
-                    alignment: Alignment.centerLeft,
-                    padding:
-                        const EdgeInsets.only(top: 10, left: 20, right: 20),
-                    decoration: const BoxDecoration(
-                      border: Border(
-                        top: BorderSide(color: AppColor.BLUE_TEXT, width: 4),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(top: 10, left: 20, right: 20),
-                    child: Row(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(5),
-                          child: Image.file(
-                            fileImage,
-                            height: 60,
-                            fit: BoxFit.fill,
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        const Text(
-                          'Đang lưu tệp đính kèm.',
-                          style: TextStyle(
-                            fontSize: 16,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              )
-          ],
-        ),
-      ),
-    );
-  }
-
-  final List<DataModel> list = [
-    DataModel(url: 'assets/images/ic-print-blue.png', text: 'In mã QR'),
-    DataModel(url: 'assets/images/ic-img-blue.png', text: 'Lưu ảnh QR'),
-    DataModel(
-        url: 'assets/images/ic-copy-blue.png', text: 'Sao chép thông tin'),
-    DataModel(url: 'assets/images/ic-share-blue.png', text: 'Chia sẻ'),
-  ];
-
-  void dialog({required Function(int) onClick}) async {
-    final data = await showDialog(
-      barrierDismissible: true,
-      context: NavigationService.navigatorKey.currentContext!,
-      builder: (BuildContext context) {
-        return const DialogMoreView();
-      },
-    );
-
-    if (data is int) {
-      onClick(data);
-    }
-  }
-
-  void dialogExits() async {
-    await showDialog(
-      barrierDismissible: true,
-      context: NavigationService.navigatorKey.currentContext!,
-      builder: (BuildContext context) {
-        return const DialogExitsView();
-      },
-    );
   }
 
   Widget _buildImage(File url) {
@@ -963,91 +724,117 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
     );
   }
 
-  onClick(
-    int index,
-    QRGeneratedDTO qrGeneratedDTO,
-  ) {
-    switch (index) {
-      case 0:
-        onPrint(qrGeneratedDTO);
-        return;
-      case 1:
-        saveImage(context);
-        return;
-      case 2:
-        onCopy(dto: qrGeneratedDTO);
-        return;
-      case 3:
-        share(dto: qrGeneratedDTO);
-        return;
-    }
-  }
-
-  onPrint(QRGeneratedDTO qrGeneratedDTO) async {
-    String userId = UserInformationHelper.instance.getUserId();
-    BluetoothPrinterDTO bluetoothPrinterDTO =
-        await LocalDatabase.instance.getBluetoothPrinter(userId);
-    if (bluetoothPrinterDTO.id.isNotEmpty) {
-      bool isPrinting = false;
-      if (!isPrinting) {
-        isPrinting = true;
-        DialogWidget.instance
-            .showFullModalBottomContent(widget: const PrintingView());
-        await PrinterUtils.instance.print(qrGeneratedDTO).then((value) {
-          Navigator.pop(context);
-          isPrinting = false;
-        });
-      }
-    } else {
-      DialogWidget.instance.openMsgDialog(
-          title: 'Không thể in',
-          msg: 'Vui lòng kết nối với máy in để thực hiện việc in.');
-    }
-  }
-
-  Future<void> saveImage(BuildContext context) async {
-    _waterMarkProvider.updateWaterMark(true);
-    DialogWidget.instance.openLoadingDialog();
-    await Future.delayed(const Duration(milliseconds: 200), () async {
-      await ShareUtils.instance.saveImageToGallery(globalKey).then((value) {
-        _waterMarkProvider.updateWaterMark(false);
-        Navigator.pop(context);
-        Fluttertoast.showToast(
-          msg: 'Đã lưu ảnh',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          backgroundColor: Theme.of(context).cardColor,
-          textColor: Theme.of(context).cardColor,
-          fontSize: 15,
-        );
-      });
-    });
-  }
-
-  Future<void> share({required QRGeneratedDTO dto}) async {
-    await Future.delayed(const Duration(milliseconds: 200), () async {
-      await ShareUtils.instance.shareImage(
-        key: globalKey,
-        textSharing:
-            '${dto.bankAccount} - ${dto.bankName}\nĐược tạo bởi vietqr.vn - Hotline 1900.6234'
-                .trim(),
+  Widget _buildDropList(
+          List<BankAccountDTO> list, BankAccountDTO? bankAccountDTO) =>
+      Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(5)),
+              color: Colors.white,
+              boxShadow: <BoxShadow>[
+                BoxShadow(
+                  color: Theme.of(context).shadowColor.withOpacity(0.2),
+                  spreadRadius: 0,
+                  blurRadius: 4,
+                  offset: const Offset(1, 2),
+                ),
+              ],
+            ),
+            child: ListView.builder(
+              padding: EdgeInsets.zero,
+              shrinkWrap: true,
+              scrollDirection: Axis.vertical,
+              physics: const BouncingScrollPhysics(
+                  parent: NeverScrollableScrollPhysics()),
+              itemCount: list.length,
+              itemBuilder: (context, position) {
+                BankAccountDTO dto = list[position];
+                return Column(
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        _onChanged(dto);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(5)),
+                          color: AppColor.WHITE,
+                        ),
+                        child: Row(
+                          children: [
+                            if (dto.imgId.isNotEmpty)
+                              Container(
+                                width: 60,
+                                height: 30,
+                                margin: const EdgeInsets.only(left: 4),
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    image: ImageUtils.instance
+                                        .getImageNetWork(dto.imgId),
+                                  ),
+                                ),
+                              ),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                        '${dto.bankCode} - ${dto.bankName}',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400,
+                                            color: AppColor.BLACK),
+                                      ),
+                                      const Spacer(),
+                                      if (bankAccountDTO != null)
+                                        if (bankAccountDTO.bankAccount ==
+                                            dto.bankAccount)
+                                          Icon(Icons
+                                              .keyboard_arrow_down_outlined),
+                                      const SizedBox(width: 8),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    dto.bankAccount,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w400,
+                                        color: AppColor.BLACK),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    dto.userBankName,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w400,
+                                        color: AppColor.BLACK),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    if (position != list.length - 1) const Divider(),
+                  ],
+                );
+              },
+            ),
+          ),
+        ],
       );
-    });
-  }
-
-  void onCopy({required QRGeneratedDTO dto}) async {
-    await FlutterClipboard.copy(ShareUtils.instance.getTextSharing(dto)).then(
-      (value) => Fluttertoast.showToast(
-        msg: 'Đã sao chép',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Theme.of(context).cardColor,
-        textColor: Colors.black,
-        fontSize: 15,
-        webBgColor: 'rgba(255, 255, 255)',
-        webPosition: 'center',
-      ),
-    );
-  }
 }

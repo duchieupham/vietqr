@@ -11,6 +11,7 @@ class ContactDTO {
   String carrierTypeId;
   int relation;
   Color? bankColor;
+  bool isGetDetail;
 
   ContactDTO({
     required this.id,
@@ -23,10 +24,15 @@ class ContactDTO {
     required this.carrierTypeId,
     required this.relation,
     this.bankColor,
+    this.isGetDetail = false,
   });
 
   setColor(value) {
     bankColor = value;
+  }
+
+  setIsGet(value) {
+    isGetDetail = value;
   }
 
   factory ContactDTO.fromJson(Map<String, dynamic> json) => ContactDTO(
@@ -39,6 +45,7 @@ class ContactDTO {
         phoneNo: json["phoneNo"] ?? '',
         carrierTypeId: json["carrierTypeId"] ?? '',
         relation: json["relation"] ?? 0,
+        isGetDetail: false,
       );
 
   Map<String, dynamic> toJson() => {

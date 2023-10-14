@@ -184,22 +184,6 @@ class _ContactStateState extends State<_ContactState>
     sendPort.send(list);
   }
 
-  @override
-  void dispose() {
-    _subscription?.cancel();
-    _subscription = null;
-
-    _syncSub?.cancel();
-    _syncSub = null;
-
-    _syncGetSub?.cancel();
-    _syncGetSub = null;
-
-    _debounce?.cancel();
-
-    super.dispose();
-  }
-
   _loadMore() async {
     int type =
         Provider.of<ContactProvider>(context, listen: false).category!.type;
@@ -213,12 +197,13 @@ class _ContactStateState extends State<_ContactState>
     }
   }
 
-  Future<void> _onRefresh() async {
+  Future<void> _onRefresh({bool isLoading = true}) async {
     searchController.clear();
     Provider.of<ContactProvider>(context, listen: false).updateOffset(0);
+
     int type =
         Provider.of<ContactProvider>(context, listen: false).category!.type;
-    _bloc.add(ContactEventGetList(type: type));
+    _bloc.add(ContactEventGetList(type: type, isLoading: isLoading));
   }
 
   Future<void> _onRefreshTabSecond() async {
@@ -235,6 +220,22 @@ class _ContactStateState extends State<_ContactState>
       );
       _animatedToPage(index);
     }
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    _subscription = null;
+
+    _syncSub?.cancel();
+    _syncSub = null;
+
+    _syncGetSub?.cancel();
+    _syncGetSub = null;
+
+    _debounce?.cancel();
+
+    super.dispose();
   }
 
   @override
@@ -256,6 +257,7 @@ class _ContactStateState extends State<_ContactState>
 
           Provider.of<ContactProvider>(context, listen: false)
               .updateListAll(state.listCompareContact, state.listContactDTO);
+
           Provider.of<ContactProvider>(context, listen: false)
               .updateOffset(offset + 1);
         }
@@ -320,59 +322,63 @@ class _ContactStateState extends State<_ContactState>
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 4),
-                      child: Row(
-                        children: [
-                          Text(
-                            'Ví QR',
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w600),
+                    Consumer<DashBoardProvider>(
+                      builder: (context, dashProvider, child) {
+                        return Padding(
+                          padding: const EdgeInsets.fromLTRB(20, 0, 20, 4),
+                          child: Row(
+                            children: [
+                              Text(
+                                'Ví QR',
+                                style: const TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.w600),
+                              ),
+                              const Spacer(),
+                              if (provider.isIntro)
+                                if (!dashProvider.isSync)
+                                  TextButton(
+                                    onPressed: _onUpdateContact,
+                                    style: ButtonStyle(
+                                      overlayColor: MaterialStateProperty.all(
+                                          Colors.transparent),
+                                    ),
+                                    child: Container(
+                                      alignment: Alignment.centerRight,
+                                      child: Text(
+                                        'Cập nhật danh bạ',
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: AppColor.BLUE_TEXT,
+                                            decoration:
+                                                TextDecoration.underline,
+                                            height: 1.4),
+                                      ),
+                                    ),
+                                  )
+                                else
+                                  TextButton(
+                                    onPressed: () {},
+                                    style: ButtonStyle(
+                                      overlayColor: MaterialStateProperty.all(
+                                          Colors.transparent),
+                                    ),
+                                    child: Container(
+                                      alignment: Alignment.centerRight,
+                                      child: Text(
+                                        'Đang cập nhật',
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: AppColor.BLUE_TEXT,
+                                            decoration:
+                                                TextDecoration.underline,
+                                            height: 1.4),
+                                      ),
+                                    ),
+                                  )
+                            ],
                           ),
-                          const Spacer(),
-                          if (provider.isIntro)
-                            if (!Provider.of<DashBoardProvider>(context,
-                                    listen: false)
-                                .isSync)
-                              TextButton(
-                                onPressed: _onUpdateContact,
-                                style: ButtonStyle(
-                                  overlayColor: MaterialStateProperty.all(
-                                      Colors.transparent),
-                                ),
-                                child: Container(
-                                  alignment: Alignment.centerRight,
-                                  child: Text(
-                                    'Cập nhật danh bạ',
-                                    style: TextStyle(
-                                        fontSize: 12,
-                                        color: AppColor.BLUE_TEXT,
-                                        decoration: TextDecoration.underline,
-                                        height: 1.4),
-                                  ),
-                                ),
-                              )
-                            else
-                              TextButton(
-                                onPressed: () {},
-                                style: ButtonStyle(
-                                  overlayColor: MaterialStateProperty.all(
-                                      Colors.transparent),
-                                ),
-                                child: Container(
-                                  alignment: Alignment.centerRight,
-                                  child: Text(
-                                    'Đang cập nhật',
-                                    style: TextStyle(
-                                        fontSize: 12,
-                                        color: AppColor.BLUE_TEXT,
-                                        decoration: TextDecoration.underline,
-                                        height: 1.4),
-                                  ),
-                                ),
-                              )
-                        ],
-                      ),
+                        );
+                      },
                     ),
                     SizedBox(
                       height: 35,
@@ -384,6 +390,8 @@ class _ContactStateState extends State<_ContactState>
                           final model = provider.listCategories[index];
                           return GestureDetector(
                             onTap: () {
+                              if (scrollController.hasClients)
+                                scrollController.jumpTo(0.0);
                               searchController.clear();
                               provider.updateCategory(value: model);
                               provider.updateOffset(0);
@@ -431,6 +439,7 @@ class _ContactStateState extends State<_ContactState>
                           Expanded(
                             child: _buildTapFirst(
                                 listContactDTO: provider.listAllSearch,
+                                list: provider.listContactDTO,
                                 onChange: (value) {
                                   if (value.isNotEmpty) {
                                     if (_debounce?.isActive ?? false)
@@ -536,6 +545,7 @@ class _ContactStateState extends State<_ContactState>
 
   Widget _buildTapFirst({
     required List<List<ContactDTO>> listContactDTO,
+    required List<ContactDTO> list,
     ValueChanged<String>? onChange,
     bool isEdit = true,
   }) {
@@ -597,9 +607,7 @@ class _ContactStateState extends State<_ContactState>
                                 ),
                                 Expanded(
                                   child: _buildItemSave(
-                                    dto: e,
-                                    isEdit: isEdit,
-                                  ),
+                                      dto: e, isEdit: isEdit, list: list),
                                 ),
                               ],
                             ),
@@ -618,15 +626,26 @@ class _ContactStateState extends State<_ContactState>
 
   Widget _buildItemSave({
     required ContactDTO dto,
+    required List<ContactDTO> list,
     bool isEdit = true,
   }) {
     return GestureDetector(
       onTap: () async {
-        final data = await Utils.navigatePage(
-            context, ContactDetailScreen(dto: dto, isEdit: isEdit));
-        if (data != null && data) {
-          _onRefresh();
-        }
+        int type =
+            Provider.of<ContactProvider>(context, listen: false).category!.type;
+        int offset =
+            Provider.of<ContactProvider>(context, listen: false).offset;
+
+        await Utils.navigatePage(
+            context,
+            ContactDetailScreen(
+              dto: dto,
+              isEdit: isEdit,
+              listContact: list,
+              pageNumber: offset,
+              type: type,
+            ));
+        _onRefresh(isLoading: false);
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),

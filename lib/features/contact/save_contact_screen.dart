@@ -16,7 +16,7 @@ import 'package:vierqr/features/contact/blocs/contact_provider.dart';
 import 'package:vierqr/features/contact/events/contact_event.dart';
 import 'package:vierqr/features/contact/models/data_model.dart';
 import 'package:vierqr/features/contact/states/contact_state.dart';
-import 'package:vierqr/features/create_qr/views/bottom_sheet_image.dart';
+import 'package:vierqr/features/create_qr/widgets/bottom_sheet_image.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/add_contact_dto.dart';

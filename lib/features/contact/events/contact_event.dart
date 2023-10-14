@@ -33,16 +33,18 @@ class GetListContactLoadMore extends ContactEvent {
   final int? offset;
   final bool isLoading;
   final bool isLoadMore;
+  final bool isCompare;
 
   GetListContactLoadMore({
     this.type,
     this.offset,
     this.isLoading = true,
     this.isLoadMore = false,
+    this.isCompare = false,
   });
 
   @override
-  List<Object?> get props => [type, offset];
+  List<Object?> get props => [type, offset, isCompare];
 }
 
 class ContactEventGetListRecharge extends ContactEvent {}
@@ -53,12 +55,30 @@ class ContactEventGetDetail extends ContactEvent {
   final String id;
   final int type;
   final bool isChange;
+  final List<ContactDTO> list;
 
-  ContactEventGetDetail(
-      {required this.id, required this.type, this.isChange = false});
+  ContactEventGetDetail({
+    required this.id,
+    required this.type,
+    this.isChange = false,
+    required this.list,
+  });
 
   @override
-  List<Object?> get props => [id];
+  List<Object?> get props => [id, list];
+}
+
+class ContactEventGetListDetail extends ContactEvent {
+  final int index;
+  final bool isChange;
+
+  ContactEventGetListDetail({
+    required this.index,
+    this.isChange = false,
+  });
+
+  @override
+  List<Object?> get props => [index];
 }
 
 class RemoveContactEvent extends ContactEvent {

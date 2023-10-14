@@ -223,7 +223,8 @@ enum CreateQRType {
   PAID,
   LOAD_DATA,
   SCAN_QR,
-  SCAN_NOT_FOUND
+  SCAN_NOT_FOUND,
+  LIST_BANK,
 }
 
 enum DashBoardType {

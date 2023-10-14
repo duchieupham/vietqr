@@ -8,6 +8,7 @@ class ContactState extends Equatable {
   final List<List<ContactDTO>> listCompareContact;
   final List<ContactDTO> listContactDTO;
   final List<ContactDTO> listContactDTOSuggest;
+  final List<ContactDetailDTO> listContactDetail;
   final ContactDetailDTO contactDetailDTO;
   final BlocStatus status;
   final ContactType type;
@@ -22,12 +23,14 @@ class ContactState extends Equatable {
   final dynamic dto;
   final bool isLoading;
   final bool isChange;
+  final bool isLoadMore;
 
   const ContactState({
     required this.listContactDTO,
     required this.listCompareContact,
     required this.listContactDTOSuggest,
     required this.contactDetailDTO,
+    required this.listContactDetail,
     this.status = BlocStatus.NONE,
     this.type = ContactType.NONE,
     this.msg,
@@ -41,6 +44,7 @@ class ContactState extends Equatable {
     this.dto,
     this.isLoading = false,
     this.isChange = false,
+    this.isLoadMore = false,
   });
 
   ContactState copyWith({
@@ -50,6 +54,7 @@ class ContactState extends Equatable {
     List<ContactDTO>? listContactDTO,
     List<List<ContactDTO>>? listCompareContact,
     List<ContactDTO>? listContactDTOSuggest,
+    List<ContactDetailDTO>? listContactDetail,
     ContactDetailDTO? contactDetailDTO,
     String? qrCode,
     TypeContact? typeQR,
@@ -61,6 +66,7 @@ class ContactState extends Equatable {
     dynamic dto,
     bool? isLoading,
     bool? isChange,
+    bool? isLoadMore,
   }) {
     return ContactState(
       status: status ?? this.status,
@@ -71,6 +77,7 @@ class ContactState extends Equatable {
       listContactDTOSuggest:
           listContactDTOSuggest ?? this.listContactDTOSuggest,
       contactDetailDTO: contactDetailDTO ?? this.contactDetailDTO,
+      listContactDetail: listContactDetail ?? this.listContactDetail,
       qrCode: qrCode ?? this.qrCode,
       typeQR: typeQR ?? this.typeQR,
       nickName: nickName ?? this.nickName,
@@ -81,6 +88,7 @@ class ContactState extends Equatable {
       dto: dto ?? this.dto,
       isLoading: isLoading ?? this.isLoading,
       isChange: isChange ?? this.isChange,
+      isLoadMore: isLoadMore ?? this.isLoadMore,
     );
   }
 
@@ -100,5 +108,7 @@ class ContactState extends Equatable {
         userSearch,
         isLoading,
         isChange,
+        listContactDetail,
+        isLoadMore,
       ];
 }

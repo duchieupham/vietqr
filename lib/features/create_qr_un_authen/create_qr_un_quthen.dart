@@ -13,7 +13,7 @@ import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_custom.dart';
 import 'package:vierqr/features/add_bank/views/bank_input_widget.dart';
-import 'package:vierqr/features/create_qr/views/calculator_view.dart';
+import 'package:vierqr/features/create_qr/widgets/calculator_view.dart';
 import 'package:vierqr/features/create_qr_un_authen/blocs/qrcode_un_authen_bloc.dart';
 import 'package:vierqr/features/create_qr_un_authen/states/qrcode_un_authen_state.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';

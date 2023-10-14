@@ -8,12 +8,12 @@ class DialogMoreView extends StatefulWidget {
 }
 
 class _DialogMoreViewState extends State<DialogMoreView> {
-  final List<DataModel> list = [
-    DataModel(url: 'assets/images/ic-print-blue.png', text: 'In mã QR'),
-    DataModel(url: 'assets/images/ic-img-blue.png', text: 'Lưu ảnh QR'),
-    DataModel(
+  final List<DataMoreModel> list = [
+    DataMoreModel(url: 'assets/images/ic-print-blue.png', text: 'In mã QR'),
+    DataMoreModel(url: 'assets/images/ic-img-blue.png', text: 'Lưu ảnh QR'),
+    DataMoreModel(
         url: 'assets/images/ic-copy-blue.png', text: 'Sao chép thông tin'),
-    DataModel(url: 'assets/images/ic-share-blue.png', text: 'Chia sẻ'),
+    DataMoreModel(url: 'assets/images/ic-share-blue.png', text: 'Chia sẻ'),
   ];
 
   @override
@@ -81,9 +81,9 @@ class _DialogMoreViewState extends State<DialogMoreView> {
   }
 }
 
-class DataModel {
+class DataMoreModel {
   final String url;
   final String text;
 
-  DataModel({required this.url, required this.text});
+  DataMoreModel({required this.url, required this.text});
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class DashboardProvider with ChangeNotifier {
+class BusinessProvider with ChangeNotifier {
   int _businessSelect = 0;
   get businessSelect => _businessSelect;
   int _businessLength = 0;
