@@ -19,11 +19,11 @@ class VietQr extends StatelessWidget {
     bool isSmallWidget = height < 800;
     return Container(
       width: width,
-      margin: height < 800
-          ? EdgeInsets.zero
+      margin: height < 750
+          ? EdgeInsets.symmetric(horizontal: 10)
           : const EdgeInsets.symmetric(vertical: 8),
-      padding: height < 800
-          ? const EdgeInsets.only(bottom: 16, left: 20, right: 20)
+      padding: height < 750
+          ? const EdgeInsets.only(bottom: 16, left: 30, right: 30)
           : const EdgeInsets.only(bottom: 20, left: 20, right: 20),
       decoration: const BoxDecoration(
         image: DecorationImage(
@@ -36,8 +36,9 @@ class VietQr extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Container(
-            margin: height < 800
-                ? const EdgeInsets.only(left: 8, right: 8, top: 24, bottom: 20)
+            margin: height < 750
+                ? const EdgeInsets.only(
+                    left: 10, right: 10, top: 24, bottom: 10)
                 : const EdgeInsets.only(left: 8, right: 8, top: 30, bottom: 24),
             decoration: BoxDecoration(
               color: AppColor.WHITE,
@@ -57,14 +58,14 @@ class VietQr extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 16),
                   child: Image.asset(
                     'assets/images/ic-viet-qr.png',
-                    width: height < 800 ? width * 0.15 : width * 0.22,
+                    width: height < 750 ? width * 0.13 : width * 0.22,
                   ),
                 ),
-                const SizedBox(height: 4),
+                if (height > 750) const SizedBox(height: 4),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: QrImage(
-                    size: height < 800 ? width / 2 : null,
+                    size: height < 750 ? height / 3.5 : null,
                     data: qrGeneratedDTO.qrCode,
                     version: QrVersions.auto,
                     embeddedImage:
@@ -103,7 +104,7 @@ class VietQr extends StatelessWidget {
                               : (width / 2 * 0.5)),
                   ],
                 ),
-                const SizedBox(height: 16),
+                if (height > 750) const SizedBox(height: 16),
               ],
             ),
           ),

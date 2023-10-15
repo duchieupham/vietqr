@@ -19,7 +19,6 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/phone_widget.dart';
 import 'package:vierqr/features/home/widget/dialog_update.dart';
 import 'package:vierqr/features/home/widget/nfc_adr_widget.dart';
-import 'package:vierqr/features/home/widget/nfc_widget.dart';
 import 'package:vierqr/features/login/blocs/login_bloc.dart';
 import 'package:vierqr/features/login/blocs/login_provider.dart';
 import 'package:vierqr/features/login/events/login_event.dart';
