@@ -132,14 +132,8 @@ class CreateQRBloc extends Bloc<CreateQREvent, CreateQRState> with BaseManager {
   void _setBankAccountDTO(CreateQREvent event, Emitter emit) async {
     try {
       if (event is QREventSetBankAccountDTO) {
-        List<BankAccountDTO> list = state.listBanks;
-
-        list.remove(event.dto);
-        list.insert(0, event.dto);
-
         emit(state.copyWith(
             bankAccountDTO: event.dto,
-            listBanks: list,
             status: BlocStatus.NONE,
             type: CreateQRType.NONE));
       }

@@ -16,7 +16,7 @@ class FDIDDialog extends StatefulWidget {
 
 class _NFCDialogState extends State<FDIDDialog> {
   NfcTag? tag;
-  String message = 'Chạm thẻ NFC vào thiết bị của bạn để đọc dữ liệu.';
+  String message = 'Chạm thẻ NDID vào thiết bị của bạn để đọc dữ liệu.';
   String image = 'assets/images/sem-contato.png';
   bool isSuccess = false;
   static String cardScanTwo = 'Quét lần 2';

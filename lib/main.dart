@@ -146,6 +146,11 @@ Future<void> _initialServiceHelper() async {
       sharedPrefs.getBool('QR_INTRO') == null) {
     await QRScannerHelper.instance.initialQrScanner();
   }
+
+  if (!sharedPrefs.containsKey('SCROLL_CARD') ||
+      sharedPrefs.getBool('SCROLL_CARD') == null) {
+    await AccountHelper.instance.setScrollCard(false);
+  }
   await EventBlocHelper.instance.initialEventBlocHelper();
 }
 

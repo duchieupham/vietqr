@@ -75,7 +75,7 @@ class _LoginState extends State<_Login> {
     controller.stream.listen((value) async {
       if (value != null) {
         if (value.method == 'NFC_CARD') {
-          RawKeyboard.instance.removeListener((value) {});
+          RawKeyboard.instance.removeListener(_onListenerRFID);
         } else {
           if (Platform.isAndroid) {
             await NfcManager.instance.stopSession();
@@ -116,7 +116,6 @@ class _LoginState extends State<_Login> {
             }
 
             if (state.request == LoginType.TOAST) {
-              // _loginBloc.add(LoginEventGetUserInformation(userId: state.userId));
               //pop loading dialog
               //navigate to home screen
 
@@ -798,6 +797,7 @@ class _LoginState extends State<_Login> {
   }
 
   void onReadNFC() async {
+    FocusManager.instance.primaryFocus?.unfocus();
     if (!(await NfcManager.instance.isAvailable())) {
       return DialogWidget.instance.openMsgDialog(
         title: 'Thông báo',
@@ -815,6 +815,7 @@ class _LoginState extends State<_Login> {
       pollingOptions: {
         NfcPollingOption.iso14443,
         NfcPollingOption.iso15693,
+        NfcPollingOption.iso18092,
       },
       onDiscovered: (tag) async {
         try {
@@ -840,7 +841,6 @@ class _LoginState extends State<_Login> {
               cardNumber: result['value'],
             );
             controller.sink.add(dto); //
-            // _bloc.add(LoginEventByNFC(dto: dto));
           });
         } catch (e) {
           if (Platform.isAndroid) {
@@ -850,12 +850,25 @@ class _LoginState extends State<_Login> {
           }
         }
       },
+      onError: (e) async {
+        RawKeyboard.instance.removeListener(_onListenerRFID);
+        if (Platform.isAndroid) {
+          await NfcManager.instance.stopSession();
+        } else {
+          await NfcManager.instance.stopSession(alertMessage: '');
+        }
+      },
     ).catchError((e) {});
   }
 
   void onReadRFID() async {
-    RawKeyboard.instance.addListener((RawKeyEvent event) {
-      String card = event.character ?? '';
+    FocusManager.instance.primaryFocus?.unfocus();
+    RawKeyboard.instance.addListener(_onListenerRFID);
+  }
+
+  void _onListenerRFID(RawKeyEvent event) async {
+    String card = event.character ?? '';
+    if (event.isKeyPressed(LogicalKeyboardKey.enter)) {
       Future.delayed(
         const Duration(seconds: 2),
         () {
@@ -873,6 +886,6 @@ class _LoginState extends State<_Login> {
           controller.sink.add(dto); //
         },
       );
-    });
+    }
   }
 }

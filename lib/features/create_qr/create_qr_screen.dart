@@ -797,8 +797,8 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                       if (bankAccountDTO != null)
                                         if (bankAccountDTO.bankAccount ==
                                             dto.bankAccount)
-                                          Icon(Icons
-                                              .keyboard_arrow_down_outlined),
+                                          Icon(Icons.check,
+                                              color: AppColor.BLUE_TEXT),
                                       const SizedBox(width: 8),
                                     ],
                                   ),

@@ -44,4 +44,12 @@ class AccountHelper {
   String getTokenFree() {
     return sharedPrefs.getString('TOKEN_FREE')!;
   }
+
+  Future<void> setScrollCard(bool value) async {
+    await sharedPrefs.setBool('SCROLL_CARD', value);
+  }
+
+  bool getScrollCard() {
+    return sharedPrefs.getBool('SCROLL_CARD') ?? false;
+  }
 }
