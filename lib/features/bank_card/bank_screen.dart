@@ -124,30 +124,10 @@ class _BankScreenState extends State<_BankScreen>
     final double height = MediaQuery.of(context).size.height;
     double sizedBox = 0;
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.only(bottom: 6),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // const Padding(
-          //   padding: EdgeInsets.symmetric(horizontal: 16),
-          //   child: Text(
-          //     'Tài khoản',
-          //     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-          //   ),
-          // ),
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(horizontal: 16),
-          //   child: Row(
-          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //     children: const [
-          //       Text(
-          //         'Sử dụng tạo mã QR, đối soát giao dịch',
-          //         style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
-          //       ),
-          //     ],
-          //   ),
-          // ),
-          // const SizedBox(height: 10),
           Expanded(
             child: BlocConsumer<BankBloc, BankState>(
               listener: (context, state) async {
@@ -223,7 +203,7 @@ class _BankScreenState extends State<_BankScreen>
               },
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 4),
           BlocConsumer<BankBloc, BankState>(
             listener: (context, state) async {},
             builder: (context, state) {
@@ -269,7 +249,7 @@ class _BankScreenState extends State<_BankScreen>
                 des: 'Quét mã VietQR để thêm/Liên kết TK ngân hàng',
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 4),
             Expanded(
               child: _buildSection(
                 'assets/images/ic-bankaccount-blue.png',
@@ -281,7 +261,7 @@ class _BankScreenState extends State<_BankScreen>
                 des: 'Thêm hoặc liên kết TK ngân hàng để nhận BDSD',
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 4),
             Expanded(
               child: _buildSection(
                 'assets/images/ic_share_code.png',
@@ -311,7 +291,7 @@ class _BankScreenState extends State<_BankScreen>
     return GestureDetector(
       onTap: onTab,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 6),
+        padding: const EdgeInsets.symmetric(vertical: 4),
         alignment: Alignment.center,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
@@ -322,14 +302,14 @@ class _BankScreenState extends State<_BankScreen>
             Image.asset(
               pathIcon,
               width: 40,
-              height: 35,
+              height: 28,
               color: AppColor.BLUE_TEXT,
               fit: BoxFit.cover,
             ),
             Text(
               title,
               style: const TextStyle(
-                  fontWeight: FontWeight.w500, height: 1.4, fontSize: 12),
+                  fontWeight: FontWeight.w400, height: 1.4, fontSize: 11),
             ),
           ],
         ),

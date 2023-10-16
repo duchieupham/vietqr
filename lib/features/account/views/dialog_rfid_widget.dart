@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:nfc_manager/nfc_manager.dart';
-import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/layouts/m_button_widget.dart';
 
 class RFIDDialog extends StatefulWidget {
   final String? data;
@@ -35,10 +33,12 @@ class _NFCDialogState extends State<RFIDDialog> {
     onReadRFID();
   }
 
+  String card = '';
+
   void onReadRFID() async {
     RawKeyboard.instance.addListener(
       (RawKeyEvent event) async {
-        String card = event.character ?? '';
+        card += event.character ?? '';
 
         if (card.isEmpty) {
           setState(() {
@@ -88,6 +88,7 @@ class _NFCDialogState extends State<RFIDDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final double width = MediaQuery.of(context).size.width;
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
@@ -100,58 +101,56 @@ class _NFCDialogState extends State<RFIDDialog> {
             borderRadius: BorderRadius.circular(30),
           ),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              if (!isSuccess)
-                Text(
-                  'Sẵn sàng quét',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 24,
-                    color: AppColor.grey979797,
-                  ),
-                ),
-              const SizedBox(height: 12),
-              if (isSuccess)
-                Icon(
-                  Icons.check_circle_outline_outlined,
-                  color: AppColor.BLUE_TEXT,
-                  size: 100,
-                )
-              else
-                Image.asset(
-                  image,
-                  width: 100,
-                  height: 140,
-                ),
-              const SizedBox(height: 12),
-              RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: AppColor.textBlack,
-                    height: 1.4,
-                  ),
+              const Padding(padding: EdgeInsets.only(top: 20)),
+              SizedBox(
+                width: width,
+                child: Row(
                   children: [
-                    TextSpan(text: '$message\n'),
+                    const Padding(padding: EdgeInsets.only(left: 25)),
+                    const Spacer(),
+                    const Text(
+                      'VietQR ID Card',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Spacer(),
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        width: 25,
+                        height: 25,
+                        alignment: Alignment.center,
+                        margin: const EdgeInsets.only(right: 20),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: Theme.of(context).canvasColor.withOpacity(0.3),
+                        ),
+                        child: const Icon(
+                          Icons.close_rounded,
+                          size: 15,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
-              if (!isSuccess) ...[
-                const SizedBox(height: 12),
-                MButtonWidget(
-                  title: 'Huỷ',
-                  colorEnableText: AppColor.BLACK,
-                  colorEnableBgr: AppColor.greyF1F2F5,
-                  isEnable: true,
-                  fontWeight: FontWeight.w600,
-                  onTap: () {
-                    Navigator.pop(context, true);
-                  },
-                )
-              ] else
-                const SizedBox(height: 30),
+              const Padding(padding: EdgeInsets.only(bottom: 50)),
+              Image.asset(
+                'assets/images/ic-card-nfc.png',
+                width: 200,
+                height: 200,
+              ),
+              const Text(
+                'Quét thẻ VietQR ID để đăng nhập',
+                style: TextStyle(
+                  fontSize: 20,
+                ),
+              ),
             ],
           ),
         ),

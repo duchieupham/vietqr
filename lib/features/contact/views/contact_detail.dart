@@ -486,20 +486,22 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
                                   version: QrVersions.auto,
                                   size: height < 750 ? height / 3 : null,
                                 ),
-                                Positioned.fill(
-                                  child: Align(
-                                    alignment: Alignment.center,
-                                    child: Container(
-                                      width: 30,
-                                      height: 30,
-                                      decoration: BoxDecoration(
-                                        color: AppColor.WHITE,
-                                        borderRadius: BorderRadius.circular(40),
-                                        image: getImage(dto.type, dto.imgId),
+                                if (dto.imgId.isNotEmpty)
+                                  Positioned.fill(
+                                    child: Align(
+                                      alignment: Alignment.center,
+                                      child: Container(
+                                        width: 30,
+                                        height: 30,
+                                        decoration: BoxDecoration(
+                                          color: AppColor.WHITE,
+                                          borderRadius:
+                                              BorderRadius.circular(40),
+                                          image: getImage(dto.type, dto.imgId),
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
                               ],
                             ),
                           ),

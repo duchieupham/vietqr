@@ -129,19 +129,20 @@ class LoginAccountScreen extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Container(
-                            height: 1,
-                            color: Colors.black,
-                          ),
+                              height: 0.5,
+                              color: AppColor.BLACK.withOpacity(0.6)),
                         ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Text('Hoặc'),
+                          child: Text(
+                            'Hoặc',
+                            style: TextStyle(fontWeight: FontWeight.w300),
+                          ),
                         ),
                         Expanded(
                           child: Container(
-                            height: 1,
-                            color: Colors.black,
-                          ),
+                              height: 0.5,
+                              color: AppColor.BLACK.withOpacity(0.6)),
                         ),
                       ],
                     ),

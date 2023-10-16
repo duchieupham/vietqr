@@ -340,19 +340,26 @@ class _LoginState extends State<_Login> {
                                           children: [
                                             Expanded(
                                               child: Container(
-                                                  height: 1,
-                                                  color: AppColor.BLACK),
+                                                  height: 0.5,
+                                                  color: AppColor.BLACK
+                                                      .withOpacity(0.6)),
                                             ),
                                             Padding(
                                               padding:
                                                   const EdgeInsets.symmetric(
                                                       horizontal: 8.0),
-                                              child: Text('Hoặc'),
+                                              child: Text(
+                                                'Hoặc',
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.w300),
+                                              ),
                                             ),
                                             Expanded(
                                               child: Container(
-                                                  height: 1,
-                                                  color: AppColor.BLACK),
+                                                  height: 0.5,
+                                                  color: AppColor.BLACK
+                                                      .withOpacity(0.6)),
                                             ),
                                           ],
                                         ),
