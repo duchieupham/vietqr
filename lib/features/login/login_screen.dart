@@ -335,49 +335,78 @@ class _LoginState extends State<_Login> {
                                             ),
                                           ),
                                         ),
-                                        const SizedBox(height: 10),
-                                        MButtonWidget(
-                                          title: 'Đăng nhập VietQR ID Card',
-                                          isEnable: true,
-                                          margin: EdgeInsets.zero,
-                                          colorEnableBgr: AppColor.TRANSPARENT,
-                                          border: Border.all(
-                                              color: AppColor.BLUE_TEXT),
-                                          colorEnableText: AppColor.BLUE_TEXT,
-                                          onTap: () async {
-                                            if (Platform.isAndroid) {
-                                              final data = await DialogWidget
-                                                  .instance
-                                                  .openDialogIntroduce(
-                                                      child: NFCDialog());
-                                              if (data != null &&
-                                                  data is NfcTag) {
-                                                Future.delayed(
-                                                    const Duration(
-                                                        milliseconds: 500), () {
-                                                  String cardNumber =
-                                                      readTagToKey(data, '');
-
-                                                  AccountLoginDTO dto =
-                                                      AccountLoginDTO(
-                                                    phoneNo: '',
-                                                    password: '',
-                                                    device: '',
-                                                    fcmToken: '',
-                                                    platform: '',
-                                                    sharingCode: '',
-                                                    method: 'NFC_CARD',
-                                                    userId: '',
-                                                    cardNumber: cardNumber,
-                                                  );
-                                                  controller.sink.add(dto);
-                                                });
-                                              }
-                                            } else {
-                                              onReadNFC();
-                                            }
-                                            onReadRFID();
-                                          },
+                                        const SizedBox(height: 16),
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: Container(
+                                                  height: 1,
+                                                  color: AppColor.BLACK),
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 8.0),
+                                              child: Text('Hoặc'),
+                                            ),
+                                            Expanded(
+                                              child: Container(
+                                                  height: 1,
+                                                  color: AppColor.BLACK),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 16),
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: MButtonWidget(
+                                                title: '',
+                                                isEnable: true,
+                                                colorEnableBgr: AppColor.WHITE,
+                                                margin: EdgeInsets.zero,
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Image.asset(
+                                                        'assets/images/logo-google.png'),
+                                                    Text(
+                                                      'Đăng nhập với Google',
+                                                      style: TextStyle(
+                                                          fontSize: 12),
+                                                    ),
+                                                  ],
+                                                ),
+                                                onTap: () {},
+                                              ),
+                                            ),
+                                            const SizedBox(width: 16),
+                                            Expanded(
+                                              child: MButtonWidget(
+                                                title: '',
+                                                isEnable: true,
+                                                margin: EdgeInsets.zero,
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Image.asset(
+                                                        'assets/images/ic-card.png'),
+                                                    const SizedBox(width: 8),
+                                                    Text(
+                                                      'VQR ID Card',
+                                                      style: TextStyle(
+                                                          fontSize: 12,
+                                                          color:
+                                                              AppColor.WHITE),
+                                                    ),
+                                                  ],
+                                                ),
+                                                onTap: onLoginCard,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
@@ -454,34 +483,7 @@ class _LoginState extends State<_Login> {
                               .add(LoginEventByPhone(dto: dto, isToast: true));
                         }
                       },
-                      onLoginCard: () async {
-                        if (Platform.isAndroid) {
-                          final data = await DialogWidget.instance
-                              .openDialogIntroduce(child: NFCDialog());
-                          if (data != null && data is NfcTag) {
-                            Future.delayed(const Duration(milliseconds: 500),
-                                () {
-                              String cardNumber = readTagToKey(data, '');
-
-                              AccountLoginDTO dto = AccountLoginDTO(
-                                phoneNo: '',
-                                password: '',
-                                device: '',
-                                fcmToken: '',
-                                platform: '',
-                                sharingCode: '',
-                                method: 'NFC_CARD',
-                                userId: '',
-                                cardNumber: cardNumber,
-                              );
-                              controller.sink.add(dto);
-                            });
-                          }
-                        } else {
-                          onReadNFC();
-                        }
-                        onReadRFID();
-                      },
+                      onLoginCard: onLoginCard,
                     ),
                   ),
                   Visibility(
@@ -504,17 +506,14 @@ class _LoginState extends State<_Login> {
                     ),
                   ),
                   Positioned(
-                    bottom: 16,
+                    bottom: 30,
                     left: 0,
                     right: 0,
                     child: Column(
                       children: [
                         _buildButtonBottom(),
                         SizedBox(
-                          height: provider.isQuickLogin == 2
-                              ? 40
-                              : MediaQuery.of(context).size.height * 0.05,
-                        ),
+                            height: MediaQuery.of(context).size.height * 0.04),
                         if (provider.isQuickLogin == 0 ||
                             provider.isQuickLogin == 2)
                           Column(
@@ -535,7 +534,9 @@ class _LoginState extends State<_Login> {
                                         child: const Text(
                                           'Đăng nhập bằng tài khoản trước đó',
                                           style: TextStyle(
-                                              color: AppColor.BLUE_TEXT),
+                                              color: AppColor.BLUE_TEXT,
+                                              decoration:
+                                                  TextDecoration.underline),
                                         ),
                                       ),
                                     );
@@ -546,10 +547,10 @@ class _LoginState extends State<_Login> {
                               ),
                             ],
                           ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 16),
                         if (provider.isQuickLogin == 0)
                           MButtonWidget(
-                            title: 'Tiếp tục',
+                            title: 'Tiếp tụca',
                             isEnable: provider.isEnableButton,
                             margin: const EdgeInsets.symmetric(
                                 horizontal: 20, vertical: 8),
@@ -887,5 +888,33 @@ class _LoginState extends State<_Login> {
         },
       );
     }
+  }
+
+  void onLoginCard() async {
+    if (Platform.isAndroid) {
+      final data =
+          await DialogWidget.instance.openDialogIntroduce(child: NFCDialog());
+      if (data != null && data is NfcTag) {
+        Future.delayed(const Duration(milliseconds: 500), () {
+          String cardNumber = readTagToKey(data, '');
+
+          AccountLoginDTO dto = AccountLoginDTO(
+            phoneNo: '',
+            password: '',
+            device: '',
+            fcmToken: '',
+            platform: '',
+            sharingCode: '',
+            method: 'NFC_CARD',
+            userId: '',
+            cardNumber: cardNumber,
+          );
+          controller.sink.add(dto);
+        });
+      }
+    } else {
+      onReadNFC();
+    }
+    onReadRFID();
   }
 }

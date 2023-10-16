@@ -1,16 +1,14 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:nfc_manager/platform_tags.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/error_utils.dart';
-import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/account/repositories/account_res.dart';
-import 'package:vierqr/features/account/views/dialog_fdid_widget.dart';
+import 'package:vierqr/features/account/views/dialog_rfid_widget.dart';
 import 'package:vierqr/features/account/views/dialog_nfc.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
@@ -38,6 +36,9 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
   static String nfcType = 'NFC_CARD';
   static String cardScanFirst = 'Quét lần 1';
   static String cardScanTwo = 'Quét lần 2';
+  static String titleIntro = 'Giới thiệu về VietQR ID Card';
+  static String titleNFC = 'Liên kết thẻ NFC';
+  static String titleRFID = 'Liên kết thẻ RFID';
 
   String type = '';
   int pageIndex = 0;
@@ -45,6 +46,7 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
   String cardTitle = 'RFID';
   String cardScan = '';
   String cardNumber = '';
+  String title = '';
 
   String errorDialog = '';
   String errorText = '';
@@ -52,12 +54,16 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
   @override
   void initState() {
     super.initState();
+    setState(() {
+      title = titleIntro;
+    });
     getCard();
   }
 
   void getCard() async {
     final data = await repository.getCardID(userId);
     cardDTO = data;
+    if (!mounted) return;
     setState(() {});
   }
 
@@ -65,13 +71,10 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
     final data = await repository.updateCardID(userId, cardNumber, type);
     if (data.status == Stringify.RESPONSE_STATUS_SUCCESS) {
       setState(() {
-        if (isUnLink) {
-          pageIndex = 0;
-          getCard();
-        } else {
-          pageIndex = 2;
-        }
+        pageIndex = 0;
+        title = titleIntro;
       });
+      getCard();
     } else {
       setState(() {
         errorDialog = ErrorUtils.instance.getErrorMessage(data.message);
@@ -89,6 +92,7 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
                 errorDialog = '';
                 pageIndex = 1;
                 cardNumber = '';
+                cardScan = '';
               });
               onReadNFC();
             },
@@ -214,12 +218,22 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
         msg: 'NFC có thể không được hỗ trợ hoặc có thể tạm thời bị tắt.',
         function: () {
           Navigator.pop(context);
-          if (Navigator.canPop(context)) {
-            Navigator.pop(context);
-          }
+          setState(() {
+            pageIndex = 0;
+            title = titleIntro;
+            cardNumber = '';
+            cardScan = '';
+          });
         },
       );
     }
+
+    if (cardScan.isEmpty) {
+      setState(() {
+        cardScan = cardScanFirst;
+      });
+    }
+
     await NfcManager.instance.startSession(
       pollingOptions: {
         NfcPollingOption.iso14443,
@@ -262,16 +276,16 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
         }
       },
       onError: (e) async {
-        getCard();
         setState(() {
           pageIndex = 0;
           cardNumber = '';
+          title = titleIntro;
+          cardScan = '';
         });
+        getCard();
       },
     ).catchError(
-      (e) {
-        print('hehehhe');
-      },
+      (e) {},
     );
   }
 
@@ -280,7 +294,7 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
     String? value,
   }) async {
     final data = await DialogWidget.instance
-        .openDialogIntroduce(child: FDIDDialog(isScan: isScan, data: value));
+        .openDialogIntroduce(child: RFIDDialog(isScan: isScan, data: value));
     if (data != null && data is Map) {
       String identifier = '';
       String error = '';
@@ -323,11 +337,13 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
         }
       });
     } else if (data is bool) {
-      getCard();
       setState(() {
         pageIndex = 0;
         cardNumber = '';
+        title = titleIntro;
+        cardScan = '';
       });
+      getCard();
     }
   }
 
@@ -345,40 +361,30 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Container(
-                    alignment: Alignment.center,
-                    child: Image.asset(
-                      'assets/images/sem-contato.png',
-                      width: MediaQuery.of(context).size.width * 0.4,
-                      height: MediaQuery.of(context).size.height * 0.3,
+                    height: MediaQuery.of(context).size.height * 0.4,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (pageIndex == 1) _buildTextScanFirst(),
+                        const SizedBox(height: 50),
+                        Container(
+                          alignment: Alignment.center,
+                          child: Image.asset(
+                            'assets/images/sem-contato.png',
+                            width: MediaQuery.of(context).size.width * 0.4,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  if (pageIndex == 0)
-                    Text(
-                      'Giới thiệu về VietQR ID Card',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    )
-                  else if (pageIndex == 1)
-                    Text(
-                      'Liên kết thẻ $cardTitle',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    )
-                  else
-                    Text(
-                      'Hoàn tất liên kết thẻ $cardTitle',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                      ),
+                  Text(
+                    title,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
                     ),
+                  ),
                   const SizedBox(height: 12),
                   if (pageIndex == 0) ...[
                     Padding(
@@ -416,66 +422,26 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
                               style: TextStyle(fontSize: 14),
                             ),
                           ),
-                          const Spacer(),
-                          if (errorText.isEmpty)
-                            Text(
-                              cardScan,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w600,
-                                color: AppColor.grey979797,
-                              ),
-                            ),
-                          if (errorText.isNotEmpty) ...[
-                            Text(
-                              errorText,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: AppColor.error700,
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            MButtonWidget(
-                              title: 'Quét lại',
-                              isEnable: true,
-                              margin: EdgeInsets.zero,
-                              onTap: () {
-                                setState(() {
-                                  pageIndex = 1;
-                                  cardScan = cardScanFirst;
-                                  errorText = '';
-                                  cardNumber = '';
-                                });
-                                onReadNFC();
-                              },
-                            )
-                          ],
-                          const SizedBox(height: 35),
                         ],
                       ),
                     ),
-                  if (pageIndex == 2) ...[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                      child: Text(
-                        'Bạn có thể dùng thẻ $cardTitle để thực hiện đăng nhập vào hệ thống VietQR VN ngay bây giờ',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 15),
-                      ),
-                    ),
+                  if (errorText.isNotEmpty) ...[
                     const Spacer(),
                     MButtonWidget(
-                      title: 'Hoàn tất',
+                      title: 'Quét lại',
                       isEnable: true,
                       margin: EdgeInsets.zero,
                       onTap: () {
-                        NavigatorUtils.navigateToRoot(context);
+                        setState(() {
+                          pageIndex = 1;
+                          cardScan = cardScanFirst;
+                          errorText = '';
+                          cardNumber = '';
+                        });
+                        onReadNFC();
                       },
                     ),
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 40),
                   ],
                 ],
               ),
@@ -644,8 +610,8 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
               setState(() {
                 pageIndex = 1;
                 cardTitle = 'NFC';
-                cardScan = cardScanFirst;
                 type = nfcType;
+                title = titleNFC;
               });
               onReadNFC();
             },
@@ -718,6 +684,7 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
                 cardTitle = 'RFID';
                 cardScan = cardScanFirst;
                 type = cardType;
+                title = titleRFID;
               });
               onReadRFID();
             },
@@ -742,6 +709,7 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
               cardTitle = 'RFID';
               cardScan = cardScanFirst;
               type = cardType;
+              title = titleRFID;
             });
             onReadRFID();
           },
@@ -757,12 +725,39 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
             setState(() {
               pageIndex = 1;
               cardTitle = 'NFC';
-              cardScan = cardScanFirst;
               type = nfcType;
+              title = titleNFC;
             });
             onReadNFC();
           },
         ),
+      ],
+    );
+  }
+
+  _buildTextScanFirst() {
+    return Column(
+      children: [
+        if (errorText.isEmpty)
+          Text(
+            cardScan,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w600,
+              color: AppColor.grey979797,
+            ),
+          ),
+        if (errorText.isNotEmpty)
+          Text(
+            errorText,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: AppColor.error700,
+            ),
+          ),
       ],
     );
   }

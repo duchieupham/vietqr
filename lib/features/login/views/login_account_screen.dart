@@ -91,13 +91,6 @@ class LoginAccountScreen extends StatelessWidget {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  MButtonWidget(
-                    title: 'Đăng nhập VietQR ID Card',
-                    isEnable: true,
-                    margin: const EdgeInsets.symmetric(horizontal: 20),
-                    onTap: onLoginCard,
-                  ),
-                  const SizedBox(height: 10),
                   Container(
                     child: Column(
                       children: List.generate(list.length, (index) {
@@ -129,19 +122,95 @@ class LoginAccountScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  GestureDetector(
-                    onTap: onRegister,
-                    child: const Text(
-                      'Đăng ký tài khoản mới',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 15, color: AppColor.BLUE_TEXT),
+                  const SizedBox(height: 16),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            height: 1,
+                            color: Colors.black,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Text('Hoặc'),
+                        ),
+                        Expanded(
+                          child: Container(
+                            height: 1,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: MButtonWidget(
+                            title: '',
+                            isEnable: true,
+                            colorEnableBgr: AppColor.WHITE,
+                            margin: EdgeInsets.zero,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset('assets/images/logo-google.png'),
+                                Text(
+                                  'Đăng nhập với Google',
+                                  style: TextStyle(fontSize: 12),
+                                ),
+                              ],
+                            ),
+                            onTap: () {},
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: MButtonWidget(
+                            title: '',
+                            isEnable: true,
+                            margin: EdgeInsets.zero,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset('assets/images/ic-card.png'),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'VQR ID Card',
+                                  style: TextStyle(
+                                      fontSize: 12, color: AppColor.WHITE),
+                                ),
+                              ],
+                            ),
+                            onTap: onLoginCard,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
           ),
+          GestureDetector(
+            onTap: onRegister,
+            child: const Text(
+              'Đăng ký tài khoản mới',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 15,
+                color: AppColor.BLUE_TEXT,
+                decoration: TextDecoration.underline,
+              ),
+            ),
+          ),
+          const SizedBox(height: 40),
         ],
       ),
     );
