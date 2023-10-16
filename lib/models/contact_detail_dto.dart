@@ -19,6 +19,8 @@ class ContactDetailDTO {
   final String website;
   final String phoneNo;
 
+  final GlobalKey? globalKey;
+
   ContactDetailDTO({
     this.id = '',
     this.nickname = '',
@@ -37,6 +39,7 @@ class ContactDetailDTO {
     this.company = '',
     this.website = '',
     this.phoneNo = '',
+    this.globalKey,
   });
 
   factory ContactDetailDTO.fromJson(Map<String, dynamic> json) =>
@@ -58,6 +61,7 @@ class ContactDetailDTO {
         company: json["company"] ?? '',
         website: json["website"] ?? '',
         phoneNo: json["phoneNo"] ?? '',
+        globalKey: GlobalKey(),
       );
 
   Map<String, dynamic> toJson() => {
