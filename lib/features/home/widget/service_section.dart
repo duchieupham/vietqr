@@ -165,12 +165,9 @@ class _ServiceSectionState extends State<ServiceSection> {
               final data = await DialogWidget.instance
                   .openDialogIntroduce(child: NFCDialog());
               if (data != null) {
-                if (data) {
-                  Future.delayed(const Duration(milliseconds: 500), () {
-                    DialogWidget.instance
-                        .openDialogIntroduce(child: NFCWidget());
-                  });
-                }
+                Future.delayed(const Duration(milliseconds: 500), () {
+                  DialogWidget.instance.openDialogIntroduce(child: NFCWidget());
+                });
               }
             } else if (Platform.isIOS) {
               NfcManager.instance.startSession(

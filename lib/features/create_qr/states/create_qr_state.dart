@@ -1,11 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
-import 'package:vierqr/models/account_bank_detail_dto.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/notification_transaction_success_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
-
-
 
 class CreateQRState extends Equatable {
   final BlocStatus status;
@@ -13,10 +10,10 @@ class CreateQRState extends Equatable {
   final String? msg;
   final QRGeneratedDTO? dto;
   final BankAccountDTO? bankAccountDTO;
-  final AccountBankDetailDTO? bankDetailDTO;
   final NotificationTransactionSuccessDTO? transDTO;
   final int page;
   final String? barCode;
+  final List<BankAccountDTO> listBanks;
 
   const CreateQRState({
     this.status = BlocStatus.NONE,
@@ -24,10 +21,10 @@ class CreateQRState extends Equatable {
     this.msg,
     this.dto,
     this.bankAccountDTO,
-    this.bankDetailDTO,
     this.transDTO,
     this.page = -1,
     this.barCode,
+    required this.listBanks,
   });
 
   CreateQRState copyWith({
@@ -36,10 +33,10 @@ class CreateQRState extends Equatable {
     String? msg,
     QRGeneratedDTO? dto,
     BankAccountDTO? bankAccountDTO,
-    AccountBankDetailDTO? bankDetailDTO,
     NotificationTransactionSuccessDTO? transDTO,
     int? page,
     String? barCode,
+    List<BankAccountDTO>? listBanks,
   }) {
     return CreateQRState(
       status: status ?? this.status,
@@ -47,10 +44,10 @@ class CreateQRState extends Equatable {
       msg: msg ?? this.msg,
       dto: dto ?? this.dto,
       bankAccountDTO: bankAccountDTO ?? this.bankAccountDTO,
-      bankDetailDTO: bankDetailDTO ?? this.bankDetailDTO,
       transDTO: transDTO ?? this.transDTO,
       page: page ?? this.page,
       barCode: barCode ?? this.barCode,
+      listBanks: listBanks ?? this.listBanks,
     );
   }
 
@@ -61,8 +58,8 @@ class CreateQRState extends Equatable {
         msg,
         dto,
         bankAccountDTO,
-        bankDetailDTO,
         page,
         barCode,
+        listBanks,
       ];
 }

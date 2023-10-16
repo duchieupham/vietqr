@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
-import 'package:vierqr/features/create_qr/views/history_view.dart';
+import 'package:vierqr/features/create_qr/widgets/history_view.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:math_expressions/math_expressions.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';

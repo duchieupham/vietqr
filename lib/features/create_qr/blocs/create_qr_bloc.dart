@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:palette_generator/palette_generator.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/base_manager.dart';
+import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/create_qr/events/create_qr_event.dart';
 import 'package:vierqr/features/create_qr/states/create_qr_state.dart';
 import 'package:vierqr/features/generate_qr/repositories/qr_repository.dart';
 import 'package:vierqr/features/home/blocs/home_bloc.dart';
+import 'package:vierqr/main.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
@@ -23,12 +26,14 @@ class CreateQRBloc extends Bloc<CreateQREvent, CreateQRState> with BaseManager {
   final QRGeneratedDTO? qrDTO;
 
   CreateQRBloc(this.context, this.bankAccountDTO, this.qrDTO)
-      : super(const CreateQRState()) {
+      : super(const CreateQRState(listBanks: [])) {
     on<QrEventGetBankDetail>(_initData);
+    on<QREventGetList>(_getBankAccounts);
     on<QREventGenerate>(_generateQR);
     on<QREventUploadImage>(_uploadImage);
     on<QREventPaid>(_onPaid);
     on<QrEventScanGetBankType>(_getDataScan);
+    on<QREventSetBankAccountDTO>(_setBankAccountDTO);
   }
 
   final qrRepository = const QRRepository();
@@ -38,16 +43,12 @@ class CreateQRBloc extends Bloc<CreateQREvent, CreateQRState> with BaseManager {
       if (event is QrEventGetBankDetail) {
         emit(state.copyWith(status: BlocStatus.NONE, type: CreateQRType.NONE));
         if (bankAccountDTO != null) {
-          final AccountBankDetailDTO dto = await bankCardRepository
-              .getAccountBankDetail(bankAccountDTO?.id ?? '');
           emit(
             state.copyWith(
-              bankDetailDTO: dto,
-              status: BlocStatus.NONE,
-              type: CreateQRType.LOAD_DATA,
-              bankAccountDTO: bankAccountDTO,
-              page: 0,
-            ),
+                status: BlocStatus.NONE,
+                type: CreateQRType.LOAD_DATA,
+                bankAccountDTO: bankAccountDTO,
+                page: 0),
           );
         } else if (qrDTO != null) {
           BankAccountDTO bankDTO = BankAccountDTO(
@@ -84,6 +85,66 @@ class CreateQRBloc extends Bloc<CreateQREvent, CreateQRState> with BaseManager {
           type: CreateQRType.ERROR,
         ),
       );
+    }
+  }
+
+  void _getBankAccounts(CreateQREvent event, Emitter emit) async {
+    try {
+      if (event is QREventGetList) {
+        emit(state.copyWith(status: BlocStatus.NONE));
+        List<BankAccountDTO> list =
+            await bankCardRepository.getListBankAccount(userId);
+        PaletteGenerator? paletteGenerator;
+        BuildContext context = NavigationService.navigatorKey.currentContext!;
+        if (list.isNotEmpty) {
+          List<BankAccountDTO> listLinked =
+              list.where((e) => e.isAuthenticated).toList();
+          List<BankAccountDTO> listNotLinked =
+              list.where((e) => !e.isAuthenticated).toList();
+
+          list = [...listLinked, ...listNotLinked];
+
+          for (BankAccountDTO dto in list) {
+            NetworkImage image = ImageUtils.instance.getImageNetWork(dto.imgId);
+            paletteGenerator = await PaletteGenerator.fromImageProvider(image);
+            if (paletteGenerator.dominantColor != null) {
+              dto.setColor(paletteGenerator.dominantColor!.color);
+            } else {
+              if (!mounted) return;
+              dto.setColor(Theme.of(context).cardColor);
+            }
+          }
+        }
+
+        emit(state.copyWith(
+            type: CreateQRType.LIST_BANK,
+            listBanks: list,
+            status: BlocStatus.NONE));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+          status: BlocStatus.ERROR,
+          msg: 'Không thể tải danh sách. Vui lòng kiểm tra lại kết nối'));
+    }
+  }
+
+  void _setBankAccountDTO(CreateQREvent event, Emitter emit) async {
+    try {
+      if (event is QREventSetBankAccountDTO) {
+        List<BankAccountDTO> list = state.listBanks;
+
+        list.remove(event.dto);
+        list.insert(0, event.dto);
+
+        emit(state.copyWith(
+            bankAccountDTO: event.dto,
+            listBanks: list,
+            status: BlocStatus.NONE,
+            type: CreateQRType.NONE));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
     }
   }
 

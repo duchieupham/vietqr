@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,7 +10,6 @@ import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
 import 'package:vierqr/features/contact/blocs/contact_bloc.dart';
 import 'package:vierqr/features/contact/events/contact_event.dart';
 import 'package:vierqr/features/contact/states/contact_state.dart';
@@ -29,17 +29,31 @@ import 'contact_edit_view.dart';
 
 class ContactDetailScreen extends StatelessWidget {
   final ContactDTO dto;
+  final List<ContactDTO> listContact;
   final bool isEdit;
+  final int pageNumber;
+  final int type;
 
   const ContactDetailScreen(
-      {super.key, required this.dto, required this.isEdit});
+      {super.key,
+      required this.dto,
+      required this.isEdit,
+      required this.listContact,
+      this.pageNumber = 0,
+      required this.type});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<ContactBloc>(
       create: (context) => ContactBloc(context)
-        ..add(ContactEventGetDetail(id: dto.id, type: dto.type)),
-      child: _ContactDetailScreen(dto: dto, isEdit: isEdit),
+        ..add(ContactEventGetDetail(
+            id: dto.id, type: dto.type, list: listContact)),
+      child: _ContactDetailScreen(
+        dto: dto,
+        isEdit: isEdit,
+        pageNumber: pageNumber,
+        type: type,
+      ),
     );
   }
 }
@@ -48,8 +62,14 @@ class ContactDetailScreen extends StatelessWidget {
 class _ContactDetailScreen extends StatefulWidget {
   final ContactDTO dto;
   final bool isEdit;
+  final int pageNumber;
+  final int type;
 
-  const _ContactDetailScreen({required this.dto, required this.isEdit});
+  const _ContactDetailScreen(
+      {required this.dto,
+      required this.isEdit,
+      required this.pageNumber,
+      required this.type});
 
   @override
   State<_ContactDetailScreen> createState() => _ContactDetailScreenState();
@@ -60,6 +80,8 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
 
   late ContactBloc _bloc;
 
+  int offset = 0;
+
   QRGeneratedDTO qrGeneratedDTO = QRGeneratedDTO(
     bankCode: '',
     bankName: '',
@@ -69,7 +91,13 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
     content: '',
     qrCode: '',
     imgId: '',
+    email: '',
+    type: 0,
   );
+
+  ContactDetailDTO detailDTO = ContactDetailDTO();
+
+  int selectedIndex = 0;
 
   DecorationImage getImage(int type, String imageId) {
     if (imageId.isNotEmpty) {
@@ -89,15 +117,12 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
     }
   }
 
-  Future<void> share(
-      {required QRGeneratedDTO dto, ContactDetailDTO? contactDetail}) async {
+  Future<void> share({required QRGeneratedDTO dto}) async {
     String text = '';
 
-    if (widget.dto.type == 4) {
-      if (contactDetail != null) {
-        text =
-            'SĐT: ${contactDetail.bankAccount} - Email: ${contactDetail.email} - Được tạo từ VietQR VN';
-      }
+    if (dto.type == 4) {
+      text =
+          'SĐT: ${dto.bankAccount} - Email: ${dto.email} - Được tạo từ VietQR VN';
     } else {
       text = ShareUtils.instance.getTextSharing(dto);
     }
@@ -129,16 +154,19 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
     }
   }
 
+  late PageController pageView;
+
   @override
   void initState() {
     super.initState();
     _bloc = BlocProvider.of(context);
+    setState(() {
+      offset = widget.pageNumber;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height;
-
     return BlocConsumer<ContactBloc, ContactState>(
       listener: (context, state) {
         if (state.type == ContactType.REMOVE) {
@@ -163,7 +191,24 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
             content: '',
             qrCode: state.contactDetailDTO.value,
             imgId: state.contactDetailDTO.imgId,
+            email: state.contactDetailDTO.email,
+            type: state.contactDetailDTO.type,
           );
+
+          detailDTO = state.contactDetailDTO;
+        }
+
+        if (state.type == ContactType.GET_LIST) {
+          if (state.listContactDTO.length >= (offset * 20)) {
+            _bloc.add(ContactEventGetListDetail(index: (offset * 20)));
+          } else {
+            _bloc.add(ContactEventGetListDetail(
+                index: state.listContactDTO.length - 1));
+          }
+
+          setState(() {
+            offset++;
+          });
         }
       },
       builder: (context, state) {
@@ -173,23 +218,23 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
             onPressed: () {
               Navigator.of(context).pop(state.isChange);
             },
-            actions: widget.isEdit && state.contactDetailDTO.type == 2
+            actions: widget.isEdit && qrGeneratedDTO.type == 2
                 ? [
                     GestureDetector(
                       onTap: () async {
                         final data = await Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => ContactEditView(
-                                contactDetailDTO: state.contactDetailDTO),
+                            builder: (_) =>
+                                ContactEditView(contactDetailDTO: detailDTO),
                             // settings: RouteSettings(name: ContactEditView.routeName),
                           ),
                         );
 
                         if (!mounted) return;
                         if (data is bool) {
-                          _bloc.add(ContactEventGetDetail(
-                              id: widget.dto.id, type: widget.dto.type));
+                          _bloc.add(ContactEventGetListDetail(
+                              index: selectedIndex, isChange: true));
                         }
                       },
                       child: Image.asset(
@@ -203,151 +248,133 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
                 : null,
           ),
           body: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                children: [
-                  Expanded(
-                    child: ListView(
-                      children: [
-                        if (state.status == BlocStatus.LOADING)
-                          Padding(
-                            padding: EdgeInsets.only(top: height / 3),
-                            child: const Center(
-                              child: SizedBox(
-                                width: 30,
-                                height: 30,
-                                child: CircularProgressIndicator(
-                                  color: AppColor.BLUE_TEXT,
-                                ),
+            child: Column(
+              children: [
+                Expanded(
+                  child: _buildListWidget(
+                      context,
+                      state.listContactDetail,
+                      state.listContactDTO,
+                      state.status == BlocStatus.LOADING,
+                      state.isLoadMore),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        width: double.infinity,
+                        height: 40,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: ButtonIconWidget(
+                                height: 40,
+                                pathIcon: 'assets/images/ic-print-blue.png',
+                                title: '',
+                                function: () async {
+                                  BluetoothPrinterDTO bluetoothPrinterDTO =
+                                      await LocalDatabase.instance
+                                          .getBluetoothPrinter(
+                                              UserInformationHelper.instance
+                                                  .getUserId());
+                                  if (bluetoothPrinterDTO.id.isNotEmpty) {
+                                    bool isPrinting = false;
+                                    if (!isPrinting) {
+                                      isPrinting = true;
+                                      DialogWidget.instance
+                                          .showFullModalBottomContent(
+                                              widget: const PrintingView());
+                                      await PrinterUtils.instance
+                                          .print(qrGeneratedDTO)
+                                          .then((value) {
+                                        Navigator.pop(context);
+                                        isPrinting = false;
+                                      });
+                                    }
+                                  } else {
+                                    DialogWidget.instance.openMsgDialog(
+                                        title: 'Không thể in',
+                                        msg:
+                                            'Vui lòng kết nối với máy in để thực hiện việc in.');
+                                  }
+                                },
+                                bgColor: Theme.of(context).cardColor,
+                                textColor: AppColor.ORANGE,
                               ),
                             ),
-                          )
-                        else
-                          _buildViewCard(state.contactDetailDTO, context)
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 12),
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          width: double.infinity,
-                          height: 40,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: ButtonIconWidget(
-                                  height: 40,
-                                  pathIcon: 'assets/images/ic-print-blue.png',
-                                  title: '',
-                                  function: () async {
-                                    BluetoothPrinterDTO bluetoothPrinterDTO =
-                                        await LocalDatabase.instance
-                                            .getBluetoothPrinter(
-                                                UserInformationHelper.instance
-                                                    .getUserId());
-                                    if (bluetoothPrinterDTO.id.isNotEmpty) {
-                                      bool isPrinting = false;
-                                      if (!isPrinting) {
-                                        isPrinting = true;
-                                        DialogWidget.instance
-                                            .showFullModalBottomContent(
-                                                widget: const PrintingView());
-                                        await PrinterUtils.instance
-                                            .print(qrGeneratedDTO)
-                                            .then((value) {
-                                          Navigator.pop(context);
-                                          isPrinting = false;
-                                        });
-                                      }
-                                    } else {
-                                      DialogWidget.instance.openMsgDialog(
-                                          title: 'Không thể in',
-                                          msg:
-                                              'Vui lòng kết nối với máy in để thực hiện việc in.');
-                                    }
-                                  },
-                                  bgColor: Theme.of(context).cardColor,
-                                  textColor: AppColor.ORANGE,
-                                ),
+                            const Padding(
+                              padding: EdgeInsets.only(left: 10),
+                            ),
+                            Expanded(
+                              child: ButtonIconWidget(
+                                height: 40,
+                                pathIcon:
+                                    'assets/images/ic-edit-avatar-setting.png',
+                                title: '',
+                                function: () {
+                                  actionServices(
+                                      context, 'SAVE', qrGeneratedDTO);
+                                },
+                                bgColor: Theme.of(context).cardColor,
+                                textColor: AppColor.RED_CALENDAR,
                               ),
-                              const Padding(
-                                padding: EdgeInsets.only(left: 10),
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.only(left: 10),
+                            ),
+                            Expanded(
+                              child: ButtonIconWidget(
+                                height: 40,
+                                pathIcon: 'assets/images/ic-copy-blue.png',
+                                title: '',
+                                function: () async {
+                                  await FlutterClipboard.copy(ShareUtils
+                                          .instance
+                                          .getTextSharing(qrGeneratedDTO))
+                                      .then(
+                                    (value) => Fluttertoast.showToast(
+                                      msg: 'Đã sao chép',
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.CENTER,
+                                      timeInSecForIosWeb: 1,
+                                      backgroundColor:
+                                          Theme.of(context).cardColor,
+                                      textColor: Theme.of(context).hintColor,
+                                      fontSize: 15,
+                                      webBgColor: 'rgba(255, 255, 255)',
+                                      webPosition: 'center',
+                                    ),
+                                  );
+                                },
+                                bgColor: Theme.of(context).cardColor,
+                                textColor: AppColor.BLUE_TEXT,
                               ),
-                              Expanded(
-                                child: ButtonIconWidget(
-                                  height: 40,
-                                  pathIcon:
-                                      'assets/images/ic-edit-avatar-setting.png',
-                                  title: '',
-                                  function: () {
-                                    actionServices(
-                                        context, 'SAVE', qrGeneratedDTO);
-                                  },
-                                  bgColor: Theme.of(context).cardColor,
-                                  textColor: AppColor.RED_CALENDAR,
-                                ),
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.only(left: 10),
+                            ),
+                            Expanded(
+                              child: ButtonIconWidget(
+                                height: 40,
+                                pathIcon: 'assets/images/ic-share-blue.png',
+                                title: '',
+                                function: () async {
+                                  await share(dto: qrGeneratedDTO);
+                                },
+                                bgColor: Theme.of(context).cardColor,
+                                textColor: AppColor.BLUE_TEXT,
                               ),
-                              const Padding(
-                                padding: EdgeInsets.only(left: 10),
-                              ),
-                              Expanded(
-                                child: ButtonIconWidget(
-                                  height: 40,
-                                  pathIcon: 'assets/images/ic-copy-blue.png',
-                                  title: '',
-                                  function: () async {
-                                    await FlutterClipboard.copy(ShareUtils
-                                            .instance
-                                            .getTextSharing(qrGeneratedDTO))
-                                        .then(
-                                      (value) => Fluttertoast.showToast(
-                                        msg: 'Đã sao chép',
-                                        toastLength: Toast.LENGTH_SHORT,
-                                        gravity: ToastGravity.CENTER,
-                                        timeInSecForIosWeb: 1,
-                                        backgroundColor:
-                                            Theme.of(context).cardColor,
-                                        textColor: Theme.of(context).hintColor,
-                                        fontSize: 15,
-                                        webBgColor: 'rgba(255, 255, 255)',
-                                        webPosition: 'center',
-                                      ),
-                                    );
-                                  },
-                                  bgColor: Theme.of(context).cardColor,
-                                  textColor: AppColor.BLUE_TEXT,
-                                ),
-                              ),
-                              const Padding(
-                                padding: EdgeInsets.only(left: 10),
-                              ),
-                              Expanded(
-                                child: ButtonIconWidget(
-                                  height: 40,
-                                  pathIcon: 'assets/images/ic-share-blue.png',
-                                  title: '',
-                                  function: () async {
-                                    await share(
-                                        dto: qrGeneratedDTO,
-                                        contactDetail: state.contactDetailDTO);
-                                  },
-                                  bgColor: Theme.of(context).cardColor,
-                                  textColor: AppColor.BLUE_TEXT,
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  )
-                ],
-              ),
+                      ),
+                    ],
+                  ),
+                )
+              ],
             ),
           ),
         );
@@ -422,17 +449,28 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
     );
   }
 
+  QRGeneratedDTO getQrDTO(ContactDetailDTO dto) {
+    return QRGeneratedDTO(
+      bankCode: dto.bankShortName,
+      bankName: dto.bankName,
+      bankAccount: dto.bankAccount,
+      userBankName: dto.nickname,
+      amount: '',
+      content: '',
+      qrCode: dto.value,
+      imgId: dto.imgId,
+      email: dto.email,
+      type: dto.type,
+    );
+  }
+
   Widget _buildViewCard(ContactDetailDTO dto, BuildContext contextBloc) {
     if (dto.type == 2) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          RepaintBoundaryWidget(
-              globalKey: globalKey,
-              builder: (key) {
-                return VietQr(qrGeneratedDTO: qrGeneratedDTO);
-              }),
+          VietQr(qrGeneratedDTO: qrGeneratedDTO),
           const SizedBox(
             height: 24,
           ),
@@ -459,86 +497,81 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
         children: [
           Stack(
             children: [
-              RepaintBoundaryWidget(
-                globalKey: globalKey,
-                builder: (key) {
-                  return Container(
-                    margin: EdgeInsets.symmetric(vertical: 32),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        gradient: dto.getBgGradient()),
-                    child: Column(
-                      children: [
-                        const SizedBox(
-                          height: 60,
-                        ),
-                        Container(
-                          margin: const EdgeInsets.only(
-                              left: 40, right: 40, top: 68, bottom: 32),
-                          decoration: BoxDecoration(
-                            color: AppColor.WHITE,
-                          ),
-                          child: Stack(
-                            children: [
-                              QrImage(
-                                data: dto.value,
-                                version: QrVersions.auto,
-                              ),
-                            ],
-                          ),
-                        ),
-                        Text(
-                          dto.nickname,
-                          style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: AppColor.WHITE),
-                        ),
-                        const SizedBox(height: 4),
-                        if (dto.type == 4) ...[
-                          const Divider(thickness: 1, color: AppColor.WHITE),
-                          _buildItem('Số điện thoại', '${dto.phoneNo}'),
-                          const Divider(thickness: 1, color: AppColor.WHITE),
-                          _buildItem('Email',
-                              '${dto.email.isNotEmpty ? dto.email : '-'}'),
-                          const Divider(thickness: 1, color: AppColor.WHITE),
-                          _buildItem('Địa chỉ',
-                              '${dto.address.isNotEmpty ? dto.address : '-'}'),
-                          const Divider(thickness: 1, color: AppColor.WHITE),
-                          _buildItem('Công ty',
-                              '${dto.company.isNotEmpty ? dto.company : '-'}'),
-                          const Divider(thickness: 1, color: AppColor.WHITE),
-                          _buildItem('Website',
-                              '${dto.website.isNotEmpty ? dto.website : '-'}'),
-                          const Divider(thickness: 1, color: AppColor.WHITE),
-                          _buildItem('Ghi chú',
-                              '${dto.additionalData.isNotEmpty ? dto.additionalData : '-'}'),
-                          const SizedBox(height: 20),
-                        ] else ...[
-                          const Divider(thickness: 1, color: AppColor.WHITE),
-                          _buildItem('Ghi chú',
-                              '${dto.additionalData.isNotEmpty ? dto.additionalData : '-'}'),
-                          if (dto.type == 3 && dto.value.contains('https')) ...[
-                            const Divider(thickness: 1, color: AppColor.WHITE),
-                            _buildItem('Đường dẫn',
-                                '${dto.value.isNotEmpty ? dto.value : '-'}',
-                                style: TextStyle(
-                                  color: Colors.lightBlueAccent,
-                                  decoration: TextDecoration.underline,
-                                ), onTap: () async {
-                              // ignore: deprecated_member_use
-                              await launch(
-                                dto.value,
-                                forceSafariVC: false,
-                              );
-                            }),
-                          ],
-                          const SizedBox(height: 60),
-                        ],
-                      ],
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 32),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    gradient: dto.getBgGradient()),
+                child: Column(
+                  children: [
+                    const SizedBox(
+                      height: 60,
                     ),
-                  );
-                },
+                    Container(
+                      margin: const EdgeInsets.only(
+                          left: 40, right: 40, top: 68, bottom: 32),
+                      decoration: BoxDecoration(
+                        color: AppColor.WHITE,
+                      ),
+                      child: Stack(
+                        children: [
+                          QrImage(
+                            data: dto.value,
+                            version: QrVersions.auto,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Text(
+                      dto.nickname,
+                      style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: AppColor.WHITE),
+                    ),
+                    const SizedBox(height: 4),
+                    if (dto.type == 4) ...[
+                      const Divider(thickness: 1, color: AppColor.WHITE),
+                      _buildItem('Số điện thoại', '${dto.phoneNo}'),
+                      const Divider(thickness: 1, color: AppColor.WHITE),
+                      _buildItem(
+                          'Email', '${dto.email.isNotEmpty ? dto.email : '-'}'),
+                      const Divider(thickness: 1, color: AppColor.WHITE),
+                      _buildItem('Địa chỉ',
+                          '${dto.address.isNotEmpty ? dto.address : '-'}'),
+                      const Divider(thickness: 1, color: AppColor.WHITE),
+                      _buildItem('Công ty',
+                          '${dto.company.isNotEmpty ? dto.company : '-'}'),
+                      const Divider(thickness: 1, color: AppColor.WHITE),
+                      _buildItem('Website',
+                          '${dto.website.isNotEmpty ? dto.website : '-'}'),
+                      const Divider(thickness: 1, color: AppColor.WHITE),
+                      _buildItem('Ghi chú',
+                          '${dto.additionalData.isNotEmpty ? dto.additionalData : '-'}'),
+                      const SizedBox(height: 20),
+                    ] else ...[
+                      const Divider(thickness: 1, color: AppColor.WHITE),
+                      _buildItem('Ghi chú',
+                          '${dto.additionalData.isNotEmpty ? dto.additionalData : '-'}'),
+                      if (dto.type == 3 && dto.value.contains('https')) ...[
+                        const Divider(thickness: 1, color: AppColor.WHITE),
+                        _buildItem('Đường dẫn',
+                            '${dto.value.isNotEmpty ? dto.value : '-'}',
+                            style: TextStyle(
+                              color: Colors.lightBlueAccent,
+                              decoration: TextDecoration.underline,
+                            ), onTap: () async {
+                          // ignore: deprecated_member_use
+                          await launch(
+                            dto.value,
+                            forceSafariVC: false,
+                          );
+                        }),
+                      ],
+                      const SizedBox(height: 60),
+                    ],
+                  ],
+                ),
               ),
               Positioned(
                 top: 32,
@@ -560,10 +593,8 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
 
                         if (!mounted) return;
                         if (data is bool) {
-                          _bloc.add(ContactEventGetDetail(
-                              id: widget.dto.id,
-                              type: widget.dto.type,
-                              isChange: true));
+                          _bloc.add(ContactEventGetListDetail(
+                              index: selectedIndex, isChange: true));
                         }
                       },
                     ),
@@ -607,6 +638,85 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  final carouselController = CarouselController();
+
+  Widget _buildListWidget(
+    BuildContext context,
+    List<ContactDetailDTO> list,
+    List<ContactDTO> values,
+    bool isLoading,
+    bool isLoadMore,
+  ) {
+    final height = MediaQuery.of(context).size.height;
+    if (list.isEmpty) return const SizedBox();
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      height: height,
+      child: CarouselSlider(
+        carouselController: carouselController,
+        items: List.generate(values.length, (index) {
+          ContactDetailDTO dto = list[index];
+          return ListView(
+            physics: NeverScrollableScrollPhysics(),
+            children: [
+              if (isLoading)
+                Padding(
+                  padding: EdgeInsets.only(top: height / 3),
+                  child: const Center(
+                    child: SizedBox(
+                      width: 30,
+                      height: 30,
+                      child: CircularProgressIndicator(
+                        color: AppColor.BLUE_TEXT,
+                      ),
+                    ),
+                  ),
+                )
+              else
+                _buildViewCard(dto, context)
+            ],
+          );
+        }).toList(),
+        options: CarouselOptions(
+          viewportFraction: 1,
+          animateToClosest: true,
+          height: height,
+          enableInfiniteScroll: false,
+          scrollDirection: Axis.vertical,
+          onPageChanged: ((index, reason) {
+            setState(() {
+              qrGeneratedDTO = getQrDTO(list[index]);
+              detailDTO = list[index];
+              selectedIndex = index;
+            });
+
+            if (index == values.length - 1) {
+              if (!isLoadMore) {
+                _bloc.add(
+                  GetListContactLoadMore(
+                    type: widget.type,
+                    offset: offset,
+                    isLoading: false,
+                    isLoadMore: true,
+                    isCompare: true,
+                  ),
+                );
+              }
+            } else {
+              if (!values[index + 1].isGetDetail) {
+                _bloc.add(ContactEventGetListDetail(index: index + 1));
+              } else {
+                if (list[index].id.isEmpty) {
+                  _bloc.add(ContactEventGetListDetail(index: index));
+                }
+              }
+            }
+          }),
+        ),
       ),
     );
   }

@@ -23,7 +23,7 @@ import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/business_detail_dto.dart';
 import 'package:vierqr/models/business_item_dto.dart';
 import 'package:vierqr/models/related_transaction_receive_dto.dart';
-import 'package:vierqr/services/providers/dashboard_provider.dart';
+import 'package:vierqr/services/providers/business_provider.dart';
 
 class BusinessScreen extends StatelessWidget {
   const BusinessScreen({Key? key}) : super(key: key);
@@ -83,8 +83,8 @@ class _BusinessScreenState extends State<_BusinessScreen>
     super.build(context);
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    return ChangeNotifierProvider<DashboardProvider>(
-      create: (_) => DashboardProvider(),
+    return ChangeNotifierProvider<BusinessProvider>(
+      create: (_) => BusinessProvider(),
       child: BlocConsumer<BusinessBloc, BusinessState>(
         bloc: context.read<BusinessBloc>(),
         listener: (context, state) {
@@ -100,7 +100,7 @@ class _BusinessScreenState extends State<_BusinessScreen>
           }
 
           if (state.status == BlocStatus.SUCCESS) {
-            Provider.of<DashboardProvider>(context, listen: false)
+            Provider.of<BusinessProvider>(context, listen: false)
                 .updateBusinessLength(state.list.length);
           }
         },
@@ -129,7 +129,7 @@ class _BusinessScreenState extends State<_BusinessScreen>
                                       const SizedBox(
                                         height: 12,
                                       ),
-                                      Consumer<DashboardProvider>(
+                                      Consumer<BusinessProvider>(
                                           builder: (context, provider, child) {
                                         return _buildButtonList(context,
                                             dto: state
@@ -187,7 +187,7 @@ class _BusinessScreenState extends State<_BusinessScreen>
   }
 
   Widget _buildIndicatorDot() {
-    return Consumer<DashboardProvider>(builder: (context, provider, child) {
+    return Consumer<BusinessProvider>(builder: (context, provider, child) {
       return Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: List.generate(provider.businessLength, (index) {
@@ -225,7 +225,7 @@ class _BusinessScreenState extends State<_BusinessScreen>
             aspectRatio: 0.8,
             disableCenter: true,
             onPageChanged: ((index, reason) {
-              Provider.of<DashboardProvider>(context, listen: false)
+              Provider.of<BusinessProvider>(context, listen: false)
                   .updateBusinessSelect(index);
             }),
           )),

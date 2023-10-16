@@ -1,18 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 
-class NFCDialog extends StatefulWidget {
+class FDIDDialog extends StatefulWidget {
+  final String? data;
+  final bool isScan;
+
+  const FDIDDialog({super.key, this.data, this.isScan = false});
+
   @override
-  State<NFCDialog> createState() => _NFCDialogState();
+  State<FDIDDialog> createState() => _NFCDialogState();
 }
 
-class _NFCDialogState extends State<NFCDialog> {
+class _NFCDialogState extends State<FDIDDialog> {
   NfcTag? tag;
   String message = 'Chạm thẻ NFC vào thiết bị của bạn để đọc dữ liệu.';
   String image = 'assets/images/sem-contato.png';
   bool isSuccess = false;
+  static String cardScanTwo = 'Quét lần 2';
+
+  String errorText = '';
+  String cardNumber = '';
+  String cardScan = '';
 
   Future<String?> handleTag(NfcTag tag) async {
     return 'Hoàn tất.';
@@ -21,35 +32,57 @@ class _NFCDialogState extends State<NFCDialog> {
   @override
   void initState() {
     super.initState();
-    NfcManager.instance.startSession(
-      pollingOptions: {
-        NfcPollingOption.iso14443,
-        NfcPollingOption.iso15693,
-        NfcPollingOption.iso18092,
-      },
-      onDiscovered: (tag) async {
-        try {
-          final result = await handleTag(tag);
-          if (result == null) return;
-          await NfcManager.instance.stopSession();
+    onReadRFID();
+  }
+
+  void onReadRFID() async {
+    RawKeyboard.instance.addListener(
+      (RawKeyEvent event) async {
+        String card = event.character ?? '';
+
+        if (card.isEmpty) {
           setState(() {
-            message = result;
-            isSuccess = true;
+            errorText = 'Thẻ không hợp lệ, vui lòng thử lại.';
           });
-          Future.delayed(const Duration(milliseconds: 500), () {
-            Navigator.pop(context, tag);
+          RawKeyboard.instance.removeListener((value) {});
+          Future.delayed(const Duration(milliseconds: 300), () {
+            Navigator.pop(context, {
+              'error': errorText,
+            });
           });
-        } catch (e) {
-          await NfcManager.instance.stopSession();
-          Navigator.pop(context, false);
+          return null;
         }
+
+        if (widget.data != null) {
+          if (widget.data == card) {
+            setState(() {
+              cardNumber = card;
+            });
+          }
+        }
+
+        if (widget.isScan) {
+          cardScan = '';
+        } else {
+          cardScan = cardScanTwo;
+        }
+        setState(() {});
+
+        Future.delayed(const Duration(milliseconds: 300), () {
+          Navigator.pop(context, {
+            'error': errorText,
+            'cardScan': cardScan,
+            'cardNumber': cardNumber,
+            'isScan': widget.isScan,
+          });
+        });
       },
-    ).catchError((e) {});
+    );
   }
 
   @override
   void dispose() {
-    NfcManager.instance.stopSession().catchError((_) {});
+    RawKeyboard.instance.removeListener((value) {});
     super.dispose();
   }
 
@@ -114,11 +147,11 @@ class _NFCDialogState extends State<NFCDialog> {
                   isEnable: true,
                   fontWeight: FontWeight.w600,
                   onTap: () {
-                    Navigator.pop(context);
+                    Navigator.pop(context, true);
                   },
                 )
               ] else
-                const SizedBox(height: 40),
+                const SizedBox(height: 30),
             ],
           ),
         ),

@@ -41,6 +41,7 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
           qrCode: qrCode,
           typeQR: typeQR,
           dto: dto,
+          listContactDetail: const [],
         )) {
     on<InitDataEvent>(_getNickNameWalletId);
     on<ContactEventGetList>(_getListContact);
@@ -48,6 +49,7 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
     on<ContactEventGetListRecharge>(_getListContactRecharge);
     on<ContactEventGetListPending>(_getListContactPending);
     on<ContactEventGetDetail>(_getDetailContact);
+    on<ContactEventGetListDetail>(_getListDetailContact);
     on<RemoveContactEvent>(_removeContact);
     on<UpdateContactEvent>(_updateContact);
     on<UpdateContactRelationEvent>(_updateRelation);
@@ -110,6 +112,7 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
             listContactDTO: result,
             type: ContactType.GET_LIST,
             isLoading: false,
+            isLoadMore: false,
           ),
         );
       }
@@ -133,16 +136,28 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
         int type = event.type ?? 8;
         int offset = event.offset ?? 0;
 
+        List<ContactDTO> data = state.listContactDTO;
+        List<ContactDetailDTO> details = [];
+        List<List<ContactDTO>> listAll = [];
+
+        if (event.isCompare) {
+          details.addAll(state.listContactDetail);
+        }
+
         List<ContactDTO> result =
             await repository.getListSaveContact(userId, type, offset * 20);
-
-        List<ContactDTO> data = state.listContactDTO;
 
         if (result.isEmpty || result.length < 20) {
           isLoadMore = true;
         }
 
         data.addAll(result);
+
+        if (event.isCompare) {
+          result.forEach((element) {
+            details.add(ContactDetailDTO());
+          });
+        }
 
         for (ContactDTO dto in data) {
           if (dto.type == 1) {
@@ -161,18 +176,21 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
           }
         }
 
-        data.sort((a, b) {
-          return a.nickname.toLowerCase().compareTo(b.nickname.toLowerCase());
-        });
-
-        List<List<ContactDTO>> listAll = await _compareList(data);
+        if (!event.isCompare) {
+          data.sort((a, b) {
+            return a.nickname.toLowerCase().compareTo(b.nickname.toLowerCase());
+          });
+          listAll = await _compareList(data);
+        }
 
         emit(
           state.copyWith(
             listCompareContact: listAll,
             listContactDTO: data,
+            listContactDetail: details,
             type: ContactType.GET_LIST,
             isLoading: false,
+            isLoadMore: isLoadMore,
           ),
         );
       }
@@ -271,12 +289,52 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
     try {
       if (event is ContactEventGetDetail) {
         emit(
-            state.copyWith(status: BlocStatus.LOADING, type: ContactType.NONE));
-        final result = await repository.getContactDetail(event.id);
-        if (result.id.isNotEmpty) {
+          state.copyWith(
+            status: BlocStatus.LOADING,
+            type: ContactType.NONE,
+            listContactDTO:
+                event.list.isNotEmpty ? event.list : state.listContactDTO,
+          ),
+        );
+        int index = 0;
+        List<ContactDTO> values = [];
+        List<ContactDetailDTO> details = [];
+        values.addAll(state.listContactDTO);
+
+        values.forEach((element) {
+          element.setIsGet(false);
+          details.add(ContactDetailDTO());
+        });
+
+        if (values.isNotEmpty) {
+          index = values.indexWhere((element) => element.id == event.id);
+          ContactDTO data = values[index];
+          values.removeAt(index);
+          values.insert(0, data);
+
+          final result = await repository.getContactDetail(data.id);
+          if (result.id.isNotEmpty) {
+            values[0].setIsGet(true);
+            details.removeAt(index);
+            details.insert(0, result);
+          }
+
+          if (values.length > 2) {
+            ContactDTO data1 = values[1];
+
+            final result1 = await repository.getContactDetail(data1.id);
+            if (result1.id.isNotEmpty) {
+              details.removeAt(1);
+              details.insert(1, result1);
+            }
+          }
+        }
+        if (details.isNotEmpty) {
           emit(
             state.copyWith(
-                contactDetailDTO: result,
+                listContactDetail: details,
+                listContactDTO: values,
+                contactDetailDTO: details[0],
                 status: BlocStatus.UNLOADING,
                 type: ContactType.GET_DETAIL,
                 isChange: event.isChange),
@@ -284,6 +342,46 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
         } else {
           emit(state.copyWith(
               status: BlocStatus.UNLOADING, type: ContactType.NONE));
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(status: BlocStatus.ERROR));
+    }
+  }
+
+  void _getListDetailContact(ContactEvent event, Emitter emit) async {
+    try {
+      if (event is ContactEventGetListDetail) {
+        List<ContactDTO> values = [];
+        List<ContactDetailDTO> details = [];
+        values.addAll(state.listContactDTO);
+        details.addAll(state.listContactDetail);
+        if (values.isNotEmpty) {
+          ContactDTO data = values[event.index];
+          final result = await repository.getContactDetail(data.id);
+          if (result.id.isNotEmpty) {
+            values[event.index].setIsGet(true);
+            details.removeAt(event.index);
+            details.insert(event.index, result);
+          }
+
+          if (details.isNotEmpty) {
+            emit(
+              state.copyWith(
+                  listContactDetail: details,
+                  listContactDTO: values,
+                  status: BlocStatus.NONE,
+                  contactDetailDTO: details[event.index],
+                  type: event.isChange
+                      ? ContactType.GET_DETAIL
+                      : ContactType.NONE,
+                  isChange: event.isChange),
+            );
+          } else {
+            emit(state.copyWith(
+                status: BlocStatus.NONE, type: ContactType.NONE));
+          }
         }
       }
     } catch (e) {

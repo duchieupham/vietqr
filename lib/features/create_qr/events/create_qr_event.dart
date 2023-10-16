@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:equatable/equatable.dart';
+import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/qr_create_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/qr_recreate_dto.dart';
@@ -11,6 +12,17 @@ class CreateQREvent extends Equatable {
 }
 
 class QrEventGetBankDetail extends CreateQREvent {}
+
+class QREventGetList extends CreateQREvent {}
+
+class QREventSetBankAccountDTO extends CreateQREvent {
+  final BankAccountDTO dto;
+
+  QREventSetBankAccountDTO(this.dto);
+
+  @override
+  List<Object?> get props => [dto];
+}
 
 class QREventGenerateList extends CreateQREvent {
   final List<QRCreateDTO> list;
