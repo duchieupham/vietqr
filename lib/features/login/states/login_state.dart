@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/info_user_dto.dart';
 
 class LoginState extends Equatable {
@@ -9,6 +10,8 @@ class LoginState extends Equatable {
   final bool isToast;
   final String? msg;
   final String? phone;
+  final AppInfoDTO? appInfoDTO;
+  final bool isCheckApp;
 
   const LoginState({
     this.infoUserDTO,
@@ -17,6 +20,8 @@ class LoginState extends Equatable {
     this.status = BlocStatus.NONE,
     this.request = LoginType.NONE,
     this.isToast = false,
+    this.appInfoDTO,
+    this.isCheckApp = false,
   });
 
   LoginState copyWith({
@@ -26,6 +31,8 @@ class LoginState extends Equatable {
     bool? isToast,
     InfoUserDTO? infoUserDTO,
     String? phone,
+    AppInfoDTO? appInfoDTO,
+    bool? isCheckApp,
   }) {
     return LoginState(
       status: status ?? this.status,
@@ -34,6 +41,8 @@ class LoginState extends Equatable {
       msg: msg ?? this.msg,
       infoUserDTO: infoUserDTO ?? this.infoUserDTO,
       phone: phone ?? this.phone,
+      appInfoDTO: appInfoDTO ?? this.appInfoDTO,
+      isCheckApp: isCheckApp ?? this.isCheckApp,
     );
   }
 
@@ -45,5 +54,7 @@ class LoginState extends Equatable {
         msg,
         isToast,
         phone,
+        appInfoDTO,
+        isCheckApp,
       ];
 }

@@ -6,8 +6,10 @@ import 'package:nfc_manager/nfc_manager.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/utils/log.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
+import 'package:vierqr/features/account/views/vietqr_id_card_view.dart';
 import 'package:vierqr/features/home/widget/dialog_update.dart';
 import 'package:vierqr/main.dart';
 
@@ -145,52 +147,54 @@ class _ServiceSectionState extends State<ServiceSection> {
         _buildItemService(
           context,
           'assets/images/shortcut-nfc.png',
-          'Đọc thẻ NFC',
+          'VQR-ID Card',
           () async {
-            if (!(await NfcManager.instance.isAvailable())) {
-              return DialogWidget.instance.openMsgDialog(
-                title: 'Thông báo',
-                msg:
-                    'NFC có thể không được hỗ trợ hoặc có thể tạm thời bị tắt.',
-                function: () {
-                  Navigator.pop(context);
-                  if (Navigator.canPop(context)) {
-                    Navigator.pop(context);
-                  }
-                },
-              );
-            }
 
-            if (Platform.isAndroid) {
-              final data = await DialogWidget.instance
-                  .openDialogIntroduce(child: NFCDialog());
-              if (data != null) {
-                Future.delayed(const Duration(milliseconds: 500), () {
-                  DialogWidget.instance.openDialogIntroduce(child: NFCWidget());
-                });
-              }
-            } else if (Platform.isIOS) {
-              NfcManager.instance.startSession(
-                pollingOptions: {
-                  NfcPollingOption.iso14443,
-                  NfcPollingOption.iso15693
-                },
-                onDiscovered: (tag) async {
-                  try {
-                    final result = await handleTag(tag);
-                    if (result == null) return;
-                    await NfcManager.instance.stopSession(alertMessage: result);
-
-                    Future.delayed(const Duration(seconds: 3), () {
-                      DialogWidget.instance
-                          .openDialogIntroduce(child: NFCWidget());
-                    });
-                  } catch (e) {
-                    await NfcManager.instance.stopSession(alertMessage: '');
-                  }
-                },
-              ).catchError((e) {});
-            }
+            NavigatorUtils.navigatePage(context, VietQRIDCardView());
+            // if (!(await NfcManager.instance.isAvailable())) {
+            //   return DialogWidget.instance.openMsgDialog(
+            //     title: 'Thông báo',
+            //     msg:
+            //         'NFC có thể không được hỗ trợ hoặc có thể tạm thời bị tắt.',
+            //     function: () {
+            //       Navigator.pop(context);
+            //       if (Navigator.canPop(context)) {
+            //         Navigator.pop(context);
+            //       }
+            //     },
+            //   );
+            // }
+            //
+            // if (Platform.isAndroid) {
+            //   final data = await DialogWidget.instance
+            //       .openDialogIntroduce(child: NFCDialog());
+            //   if (data != null) {
+            //     Future.delayed(const Duration(milliseconds: 500), () {
+            //       DialogWidget.instance.openDialogIntroduce(child: NFCWidget());
+            //     });
+            //   }
+            // } else if (Platform.isIOS) {
+            //   NfcManager.instance.startSession(
+            //     pollingOptions: {
+            //       NfcPollingOption.iso14443,
+            //       NfcPollingOption.iso15693
+            //     },
+            //     onDiscovered: (tag) async {
+            //       try {
+            //         final result = await handleTag(tag);
+            //         if (result == null) return;
+            //         await NfcManager.instance.stopSession(alertMessage: result);
+            //
+            //         Future.delayed(const Duration(seconds: 3), () {
+            //           DialogWidget.instance
+            //               .openDialogIntroduce(child: NFCWidget());
+            //         });
+            //       } catch (e) {
+            //         await NfcManager.instance.stopSession(alertMessage: '');
+            //       }
+            //     },
+            //   ).catchError((e) {});
+            // }
           },
         ),
       ],

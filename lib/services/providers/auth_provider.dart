@@ -71,9 +71,7 @@ class AuthProvider with ChangeNotifier {
 
   void updateAppInfoDTO(value, {bool isCheckApp = false}) {
     appInfoDTO = value;
-    updateVersion(
-      isCheckApp: isCheckApp,
-    );
+    updateVersion(isCheckApp: isCheckApp);
     updateIsCheckApp(false);
     notifyListeners();
   }

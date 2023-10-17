@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:float_bubble/float_bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,8 +10,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:nfc_manager/platform_tags.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
+import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/encrypt_utils.dart';
@@ -30,6 +33,7 @@ import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/account_login_dto.dart';
 import 'package:vierqr/models/info_user_dto.dart';
+import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:vierqr/services/shared_references/account_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
@@ -87,6 +91,8 @@ class _LoginState extends State<_Login> {
         _bloc.add(LoginEventByNFC(dto: value));
       }
     });
+
+    _bloc.add(GetFreeToken());
   }
 
   @override
@@ -115,10 +121,16 @@ class _LoginState extends State<_Login> {
               Navigator.of(context).pop();
             }
 
-            if (state.request == LoginType.TOAST) {
-              //pop loading dialog
-              //navigate to home screen
+            if (state.request == LoginType.FREE_TOKEN) {
+              _bloc.add(GetVersionAppEvent());
+            }
+            if (state.request == LoginType.APP_VERSION) {
+              Provider.of<AuthProvider>(context, listen: false)
+                  .updateAppInfoDTO(state.appInfoDTO,
+                      isCheckApp: state.isCheckApp);
+            }
 
+            if (state.request == LoginType.TOAST) {
               if (provider.infoUserDTO != null) {
                 List<String> list = [];
                 List<InfoUserDTO> listCheck =
@@ -596,7 +608,56 @@ class _LoginState extends State<_Login> {
                         SizedBox(height: height < 800 ? 16 : 20),
                       ],
                     ),
-                  )
+                  ),
+                  Consumer<AuthProvider>(
+                    builder: (context, provider, child) {
+                      return Positioned(
+                        bottom: 80,
+                        left: 0,
+                        right: 0,
+                        top: 0,
+                        child: FloatBubble(
+                          show: provider.isUpdateVersion,
+                          initialAlignment: Alignment.bottomRight,
+                          child: SizedBox(
+                            width: 100,
+                            height: 105,
+                            child: Stack(
+                              children: [
+                                GestureDetector(
+                                  onTap: () async {
+                                    Uri uri = Uri.parse(Stringify.urlStore);
+                                    if (!await launchUrl(uri,
+                                        mode:
+                                            LaunchMode.externalApplication)) {}
+                                  },
+                                  child: Image.asset(
+                                    'assets/images/banner-update.png',
+                                    width: 100,
+                                    height: 100,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                Positioned(
+                                  right: 0,
+                                  top: 0,
+                                  child: GestureDetector(
+                                    onTap: provider.onClose,
+                                    child: Image.asset(
+                                      'assets/images/ic-close-banner.png',
+                                      width: 24,
+                                      height: 24,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ],
               ),
             );
