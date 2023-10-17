@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:float_bubble/float_bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,8 +10,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:nfc_manager/platform_tags.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
+import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/encrypt_utils.dart';
@@ -30,6 +33,7 @@ import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/account_login_dto.dart';
 import 'package:vierqr/models/info_user_dto.dart';
+import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:vierqr/services/shared_references/account_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
@@ -87,6 +91,8 @@ class _LoginState extends State<_Login> {
         _bloc.add(LoginEventByNFC(dto: value));
       }
     });
+
+    _bloc.add(GetFreeToken());
   }
 
   @override
@@ -103,7 +109,7 @@ class _LoginState extends State<_Login> {
       final arg = ModalRoute.of(context)!.settings.arguments as Map;
       isLogoutEnterHome = arg['isLogout'] ?? false;
     }
-
+    final height = MediaQuery.of(context).size.height;
     return Consumer<LoginProvider>(
       builder: (context, provider, child) {
         return BlocConsumer<LoginBloc, LoginState>(
@@ -115,10 +121,16 @@ class _LoginState extends State<_Login> {
               Navigator.of(context).pop();
             }
 
-            if (state.request == LoginType.TOAST) {
-              //pop loading dialog
-              //navigate to home screen
+            if (state.request == LoginType.FREE_TOKEN) {
+              _bloc.add(GetVersionAppEvent());
+            }
+            if (state.request == LoginType.APP_VERSION) {
+              Provider.of<AuthProvider>(context, listen: false)
+                  .updateAppInfoDTO(state.appInfoDTO,
+                      isCheckApp: state.isCheckApp);
+            }
 
+            if (state.request == LoginType.TOAST) {
               if (provider.infoUserDTO != null) {
                 List<String> list = [];
                 List<InfoUserDTO> listCheck =
@@ -248,68 +260,76 @@ class _LoginState extends State<_Login> {
                       body: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.3,
-                            width: MediaQuery.of(context).size.width,
-                            child: Stack(
-                              children: [
-                                Center(
-                                  child: Container(
-                                    height: MediaQuery.of(context).size.height *
-                                        0.3,
-                                    width: MediaQuery.of(context).size.width,
-                                    decoration: const BoxDecoration(
-                                      image: DecorationImage(
-                                        image: AssetImage(
-                                            'assets/images/bgr-header.png'),
-                                        fit: BoxFit.fill,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  bottom: 0,
-                                  left: 0,
-                                  right: 0,
-                                  child: ClipRect(
-                                    child: BackdropFilter(
-                                      filter: ImageFilter.blur(
-                                          sigmaX: 25, sigmaY: 25),
-                                      child: Opacity(
-                                        opacity: 0.6,
-                                        child: Container(
-                                          height: 30,
-                                          color: Colors.transparent,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  child: Align(
-                                    alignment: Alignment.center,
-                                    child: Container(
-                                      height: 100,
-                                      width:
-                                          MediaQuery.of(context).size.width / 2,
-                                      margin: const EdgeInsets.only(top: 50),
-                                      decoration: const BoxDecoration(
-                                        image: DecorationImage(
-                                          image: AssetImage(
-                                              'assets/images/logo_vietgr_payment.png'),
-                                          fit: BoxFit.contain,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
                           Expanded(
                             child: SingleChildScrollView(
                               child: Column(
                                 children: [
+                                  SizedBox(
+                                    height: MediaQuery.of(context).size.height *
+                                        0.3,
+                                    width: MediaQuery.of(context).size.width,
+                                    child: Stack(
+                                      children: [
+                                        Center(
+                                          child: Container(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.3,
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            decoration: const BoxDecoration(
+                                              image: DecorationImage(
+                                                image: AssetImage(
+                                                    'assets/images/bgr-header.png'),
+                                                fit: BoxFit.fill,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Positioned(
+                                          bottom: 0,
+                                          left: 0,
+                                          right: 0,
+                                          child: ClipRect(
+                                            child: BackdropFilter(
+                                              filter: ImageFilter.blur(
+                                                  sigmaX: 25, sigmaY: 25),
+                                              child: Opacity(
+                                                opacity: 0.6,
+                                                child: Container(
+                                                  height: 30,
+                                                  color: Colors.transparent,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Positioned(
+                                          child: Align(
+                                            alignment: Alignment.center,
+                                            child: Container(
+                                              height: 100,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  2,
+                                              margin: const EdgeInsets.only(
+                                                  top: 50),
+                                              decoration: const BoxDecoration(
+                                                image: DecorationImage(
+                                                  image: AssetImage(
+                                                      'assets/images/logo_vietgr_payment.png'),
+                                                  fit: BoxFit.contain,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 20, vertical: 20),
@@ -340,19 +360,26 @@ class _LoginState extends State<_Login> {
                                           children: [
                                             Expanded(
                                               child: Container(
-                                                  height: 1,
-                                                  color: AppColor.BLACK),
+                                                  height: 0.5,
+                                                  color: AppColor.BLACK
+                                                      .withOpacity(0.6)),
                                             ),
                                             Padding(
                                               padding:
                                                   const EdgeInsets.symmetric(
                                                       horizontal: 8.0),
-                                              child: Text('Hoặc'),
+                                              child: Text(
+                                                'Hoặc',
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.w300),
+                                              ),
                                             ),
                                             Expanded(
                                               child: Container(
-                                                  height: 1,
-                                                  color: AppColor.BLACK),
+                                                  height: 0.5,
+                                                  color: AppColor.BLACK
+                                                      .withOpacity(0.6)),
                                             ),
                                           ],
                                         ),
@@ -373,8 +400,11 @@ class _LoginState extends State<_Login> {
                                                         'assets/images/logo-google.png'),
                                                     Text(
                                                       'Đăng nhập với Google',
-                                                      style: TextStyle(
-                                                          fontSize: 12),
+                                                      style: height < 800
+                                                          ? TextStyle(
+                                                              fontSize: 10)
+                                                          : TextStyle(
+                                                              fontSize: 12),
                                                     ),
                                                   ],
                                                 ),
@@ -396,10 +426,15 @@ class _LoginState extends State<_Login> {
                                                     const SizedBox(width: 8),
                                                     Text(
                                                       'VQR ID Card',
-                                                      style: TextStyle(
-                                                          fontSize: 12,
-                                                          color:
-                                                              AppColor.WHITE),
+                                                      style: height < 800
+                                                          ? TextStyle(
+                                                              fontSize: 10,
+                                                              color: AppColor
+                                                                  .WHITE)
+                                                          : TextStyle(
+                                                              fontSize: 12,
+                                                              color: AppColor
+                                                                  .WHITE),
                                                     ),
                                                   ],
                                                 ),
@@ -411,11 +446,25 @@ class _LoginState extends State<_Login> {
                                       ],
                                     ),
                                   ),
-                                  const SizedBox(height: 8),
                                 ],
                               ),
                             ),
                           ),
+                          MButtonWidget(
+                            title: 'Tiếp tục',
+                            isEnable: provider.isEnableButton,
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 8),
+                            colorEnableText: provider.isEnableButton
+                                ? AppColor.WHITE
+                                : AppColor.GREY_TEXT,
+                            onTap: () {
+                              FocusManager.instance.primaryFocus?.unfocus();
+                              _bloc.add(
+                                  CheckExitsPhoneEvent(phone: provider.phone));
+                            },
+                          ),
+                          SizedBox(height: height < 800 ? 0 : 16),
                         ],
                       ),
                     ),
@@ -484,6 +533,16 @@ class _LoginState extends State<_Login> {
                         }
                       },
                       onLoginCard: onLoginCard,
+                      child: _buildButtonBottom(),
+                      buttonNext: MButtonWidget(
+                        title: 'Tiếp tục',
+                        isEnable: true,
+                        onTap: () async {
+                          await provider
+                              .updateInfoUser(provider.listInfoUsers.first);
+                          provider.updateQuickLogin(2);
+                        },
+                      ),
                     ),
                   ),
                   Visibility(
@@ -506,14 +565,13 @@ class _LoginState extends State<_Login> {
                     ),
                   ),
                   Positioned(
-                    bottom: 30,
+                    bottom: height < 800 ? 50 : 66,
                     left: 0,
                     right: 0,
                     child: Column(
                       children: [
-                        _buildButtonBottom(),
-                        SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.04),
+                        if (provider.isQuickLogin != 1) _buildButtonBottom(),
+                        SizedBox(height: 16),
                         if (provider.isQuickLogin == 0 ||
                             provider.isQuickLogin == 2)
                           Column(
@@ -547,62 +605,59 @@ class _LoginState extends State<_Login> {
                               ),
                             ],
                           ),
-                        const SizedBox(height: 16),
-                        if (provider.isQuickLogin == 0)
-                          MButtonWidget(
-                            title: 'Tiếp tụca',
-                            isEnable: provider.isEnableButton,
-                            margin: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 8),
-                            colorEnableText: provider.isEnableButton
-                                ? AppColor.WHITE
-                                : AppColor.GREY_TEXT,
-                            onTap: () {
-                              FocusManager.instance.primaryFocus?.unfocus();
-                              _bloc.add(
-                                  CheckExitsPhoneEvent(phone: provider.phone));
-                            },
-                          )
-                        else if (provider.isQuickLogin == 2)
-                          MButtonWidget(
-                            title: 'Đăng nhập',
-                            isEnable: passController.text.length >= 6,
-                            colorEnableText: passController.text.length >= 6
-                                ? AppColor.WHITE
-                                : AppColor.GREY_TEXT,
-                            onTap: () {
-                              String phone =
-                                  provider.infoUserDTO?.phoneNo ?? '';
-                              AccountLoginDTO dto = AccountLoginDTO(
-                                phoneNo: provider.infoUserDTO?.phoneNo ?? '',
-                                password: EncryptUtils.instance.encrypted(
-                                  phone,
-                                  passController.text,
-                                ),
-                                device: '',
-                                fcmToken: '',
-                                platform: '',
-                                sharingCode: '',
-                              );
-                              context
-                                  .read<LoginBloc>()
-                                  .add(LoginEventByPhone(dto: dto));
-                            },
-                          )
-                        else if (provider.isQuickLogin == 1 &&
-                            provider.listInfoUsers.length == 1)
-                          MButtonWidget(
-                            title: 'Tiếp tục',
-                            isEnable: true,
-                            onTap: () async {
-                              await provider
-                                  .updateInfoUser(provider.listInfoUsers.first);
-                              provider.updateQuickLogin(2);
-                            },
-                          ),
+                        SizedBox(height: height < 800 ? 16 : 20),
                       ],
                     ),
-                  )
+                  ),
+                  Consumer<AuthProvider>(
+                    builder: (context, provider, child) {
+                      return Positioned(
+                        bottom: 80,
+                        left: 0,
+                        right: 0,
+                        top: 0,
+                        child: FloatBubble(
+                          show: provider.isUpdateVersion,
+                          initialAlignment: Alignment.bottomRight,
+                          child: SizedBox(
+                            width: 100,
+                            height: 105,
+                            child: Stack(
+                              children: [
+                                GestureDetector(
+                                  onTap: () async {
+                                    Uri uri = Uri.parse(Stringify.urlStore);
+                                    if (!await launchUrl(uri,
+                                        mode:
+                                            LaunchMode.externalApplication)) {}
+                                  },
+                                  child: Image.asset(
+                                    'assets/images/banner-update.png',
+                                    width: 100,
+                                    height: 100,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                Positioned(
+                                  right: 0,
+                                  top: 0,
+                                  child: GestureDetector(
+                                    onTap: provider.onClose,
+                                    child: Image.asset(
+                                      'assets/images/ic-close-banner.png',
+                                      width: 24,
+                                      height: 24,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ],
               ),
             );

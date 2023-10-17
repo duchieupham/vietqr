@@ -275,7 +275,8 @@ enum LoginType {
   ERROR,
   CHECK_EXIST,
   REGISTER,
-  FREE_TOKEN
+  FREE_TOKEN,
+  APP_VERSION,
 }
 
 enum TransactionType { NONE, LOAD_DATA, REFRESH, GET_LIST }

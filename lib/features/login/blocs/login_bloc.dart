@@ -1,6 +1,8 @@
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/check_utils.dart';
+import 'package:vierqr/commons/utils/log.dart';
+import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/login/events/login_event.dart';
 import 'package:vierqr/features/login/repositories/login_repository.dart';
 import 'package:vierqr/features/login/states/login_state.dart';
@@ -15,6 +17,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     on<CheckExitsPhoneEvent>(_checkExitsPhone);
     on<GetFreeToken>(_loadFreeToken);
     on<UpdateEvent>(_updateEvent);
+    on<GetVersionAppEvent>(_getVersionApp);
   }
 
   void _login(LoginEvent event, Emitter emit) async {
@@ -99,6 +102,24 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       await loginRepository.getFreeToken();
       emit(state.copyWith(
           status: BlocStatus.NONE, request: LoginType.FREE_TOKEN));
+    }
+  }
+
+  void _getVersionApp(LoginEvent event, Emitter emit) async {
+    try {
+      emit(state.copyWith(status: BlocStatus.NONE, request: LoginType.NONE));
+      if (event is GetVersionAppEvent) {
+        final result = await dashBoardRepository.getVersionApp();
+        emit(state.copyWith(
+          appInfoDTO: result,
+          status: BlocStatus.NONE,
+          request: LoginType.APP_VERSION,
+          isCheckApp: event.isCheckVer,
+        ));
+      }
+    } catch (e) {
+      LOG.error('Error at _getPointAccount: $e');
+      emit(state.copyWith(msg: '', status: BlocStatus.ERROR));
     }
   }
 
