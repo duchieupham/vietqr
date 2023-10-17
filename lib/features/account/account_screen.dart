@@ -595,7 +595,7 @@ class _SettingWidget extends StatelessWidget {
                       const SizedBox(width: 8),
                       const Expanded(
                         child: Text(
-                          'VietQR ID Card',
+                          'Liên kết thẻ NFC/VQR-ID Card',
                           style: TextStyle(
                             fontSize: 14,
                           ),

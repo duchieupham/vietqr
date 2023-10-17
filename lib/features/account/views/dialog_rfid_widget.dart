@@ -4,19 +4,19 @@ import 'package:nfc_manager/nfc_manager.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 
-class FDIDDialog extends StatefulWidget {
+class RFIDDialog extends StatefulWidget {
   final String? data;
   final bool isScan;
 
-  const FDIDDialog({super.key, this.data, this.isScan = false});
+  const RFIDDialog({super.key, this.data, this.isScan = false});
 
   @override
-  State<FDIDDialog> createState() => _NFCDialogState();
+  State<RFIDDialog> createState() => _NFCDialogState();
 }
 
-class _NFCDialogState extends State<FDIDDialog> {
+class _NFCDialogState extends State<RFIDDialog> {
   NfcTag? tag;
-  String message = 'Chạm thẻ NFC vào thiết bị của bạn để đọc dữ liệu.';
+  String message = 'Chạm thẻ RFID vào thiết bị của bạn để đọc dữ liệu.';
   String image = 'assets/images/sem-contato.png';
   bool isSuccess = false;
   static String cardScanTwo = 'Quét lần 2';

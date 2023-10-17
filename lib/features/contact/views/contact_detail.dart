@@ -17,6 +17,7 @@ import 'package:vierqr/features/contact/states/contact_state.dart';
 import 'package:vierqr/models/bluetooth_printer_dto.dart';
 import 'package:vierqr/models/contact_detail_dto.dart';
 import 'package:vierqr/models/contact_dto.dart';
+import 'package:vierqr/services/shared_references/account_helper.dart';
 import 'package:vierqr/services/sqflite/local_database.dart';
 
 import '../../../commons/utils/printer_utils.dart';
@@ -114,6 +115,8 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
 
   int selectedIndex = 0;
 
+  bool isScrollCard = false;
+
   DecorationImage getImage(int type, String imageId) {
     if (imageId.isNotEmpty) {
       return DecorationImage(
@@ -177,6 +180,7 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
     _bloc = BlocProvider.of(context);
     setState(() {
       offset = widget.pageNumber;
+      isScrollCard = AccountHelper.instance.getScrollCard();
     });
   }
 
@@ -264,6 +268,14 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
                     height: height,
                     enableInfiniteScroll: false,
                     scrollDirection: Axis.vertical,
+                    onScrolled: (value) async {
+                      if (!isScrollCard) {
+                        setState(() {
+                          isScrollCard = true;
+                        });
+                        await AccountHelper.instance.setScrollCard(true);
+                      }
+                    },
                     onPageChanged: ((index, reason) {
                       setState(() {
                         qrGeneratedDTO =
@@ -319,13 +331,13 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
                 children: [
                   WidgetSpan(
                     child: Padding(
-                      padding: const EdgeInsets.only(right: 6, bottom: 1),
+                      padding: const EdgeInsets.only(right: 6, bottom: 2),
                       child: Image.asset(
                         dto.relation == 1
                             ? 'assets/images/gl-white.png'
                             : 'assets/images/personal-relation.png',
                         color: AppColor.WHITE.withOpacity(0.7),
-                        width: 15,
+                        width: 13,
                       ),
                     ),
                   ),
@@ -671,7 +683,36 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
               ],
             ),
           ),
-        )
+        ),
+        if (!AccountHelper.instance.getScrollCard())
+          Positioned.fill(
+            child: GestureDetector(
+              onTap: () async {
+                setState(() {
+                  isScrollCard = true;
+                });
+                await AccountHelper.instance.setScrollCard(true);
+              },
+              child: Container(
+                color: AppColor.BLACK.withOpacity(0.8),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset('assets/images/ic-slide-updown.png'),
+                    const SizedBox(height: 30),
+                    Text(
+                      'Trượt lên và xuống để xem thẻ QR khác',
+                      style: TextStyle(
+                        color: AppColor.WHITE,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          )
       ],
     );
   }
