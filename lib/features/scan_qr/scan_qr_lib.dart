@@ -11,6 +11,7 @@ import 'package:vierqr/features/scan_qr/blocs/scan_qr_bloc.dart';
 import 'package:vierqr/features/scan_qr/states/scan_qr_state.dart';
 import 'package:vierqr/features/scan_qr/widgets/general_dialog.dart';
 import 'package:vierqr/models/bank_name_search_dto.dart';
+import 'package:vierqr/models/contact_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 
 import 'events/scan_qr_event.dart';
@@ -179,6 +180,12 @@ class _ScanQrScreenState extends State<_BodyWidget> {
               'typeQR': TypeQR.OTHER,
               'data': state.codeQR,
             });
+          } else if (state.typeQR == TypeQR.QR_VCARD) {
+            Navigator.of(context).pop({
+              'type': state.typeContact,
+              'typeQR': TypeQR.QR_VCARD,
+              'data': getVCard(state.codeQR ?? ''),
+            });
           }
         }
       },
@@ -213,5 +220,72 @@ class _ScanQrScreenState extends State<_BodyWidget> {
         _bloc.add(ScanQrEventGetBankType(code: data));
       }
     }
+  }
+
+  VCardModel getVCard(String data) {
+    if (data.isEmpty) {
+      return VCardModel();
+    }
+
+    List<String> list = data.split("\r\n");
+
+    String name = '';
+    String phone = '';
+    String email = '';
+    String company = '';
+    String address = '';
+    String website = '';
+
+    list.forEach((element) {
+      if (element.contains('FN;CHARSET=UTF-8')) {
+        List<String> splits = element.split(':');
+        name = splits.last;
+      }
+
+      if (element.contains('TEL')) {
+        List<String> splits = element.split(':');
+        if (splits.last.isNotEmpty) {
+          phone = splits.last;
+        }
+      }
+      if (element.contains('EMAIL')) {
+        List<String> splits = element.split(':');
+        if (splits.last.isNotEmpty) {
+          email = splits.last;
+        }
+      }
+      if (element.contains('ORG')) {
+        List<String> splits = element.split(':');
+        if (splits.last.isNotEmpty) {
+          company = splits.last;
+        }
+      }
+      if (element.contains('LABEL')) {
+        List<String> splits = element.split(':');
+        if (splits.last.isNotEmpty) {
+          address = splits.last;
+        }
+      }
+      if (element.contains('URL')) {
+        List<String> splits = element.split(':');
+        if (splits.last.isNotEmpty) {
+          website = splits.last;
+        }
+      }
+    });
+
+    VCardModel model = VCardModel(
+      fullname: name,
+      phoneNo: phone,
+      email: email,
+      companyName: company,
+      website: website,
+      address: address,
+      userId: '',
+      additionalData: '',
+      code: data,
+    );
+
+    return model;
   }
 }

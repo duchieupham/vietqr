@@ -54,14 +54,11 @@ class ShareUtils {
     try {
       RenderRepaintBoundary boundary =
           globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
-      ui.Image image = await boundary.toImage();
+      ui.Image image = await boundary.toImage(pixelRatio: 5.0);
       ByteData? byteData =
           await image.toByteData(format: ui.ImageByteFormat.png);
       Uint8List pngBytes = byteData!.buffer.asUint8List();
-      await ImageGallerySaver.saveImage(
-        pngBytes,
-        quality: 100,
-      );
+      await ImageGallerySaver.saveImage(pngBytes, quality: 100);
     } catch (e) {
       LOG.error(e.toString());
     }
@@ -69,17 +66,35 @@ class ShareUtils {
 
   String getTextSharing(QRGeneratedDTO dto) {
     String result = '';
-    String prefix =
-        '${dto.bankAccount}\n${dto.userBankName}\n${dto.bankCode} - ${dto.bankName}';
-    String suffix = '';
-    if (dto.amount.isNotEmpty && dto.amount != '0') {
-      suffix =
-          '\n${CurrencyUtils.instance.getCurrencyFormatted(dto.amount)} VND\n';
-      if (dto.content.isNotEmpty) {
-        suffix += dto.content;
+    if (dto.type == 4) {
+      String sdt = '';
+      String name = '';
+      String email = '';
+      if (dto.userBankName.isNotEmpty) {
+        name = '${dto.userBankName}';
       }
+      if (dto.phone.isNotEmpty) {
+        sdt = '\nSĐT: ${dto.phone}';
+      }
+      if (dto.email.isNotEmpty) {
+        email = '\nEmail: ${dto.email}';
+      }
+
+      result = '$name $sdt $email\nĐược tạo từ VietQR VN';
+    } else {
+      String prefix =
+          '${dto.bankAccount}\n${dto.userBankName}\n${dto.bankCode}${dto.bankName.isNotEmpty ? '-${dto.bankName}' : ''}';
+      String suffix = '';
+      if (dto.amount.isNotEmpty && dto.amount != '0') {
+        suffix =
+            '\n${CurrencyUtils.instance.getCurrencyFormatted(dto.amount)} VND\n';
+        if (dto.content.isNotEmpty) {
+          suffix += dto.content;
+        }
+      }
+      result = '$prefix$suffix\nĐược tạo bởi vietqr.vn - Hotline 1900.6234';
     }
-    result = '$prefix$suffix\nĐược tạo bởi vietqr.vn - Hotline 1900.6234';
+
     return result;
   }
 }

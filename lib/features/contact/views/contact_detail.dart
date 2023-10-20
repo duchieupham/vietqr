@@ -108,6 +108,7 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
       imgId: dto.imgId,
       email: dto.email,
       type: dto.type,
+      phone: dto.phoneNo,
     );
   }
 
@@ -139,8 +140,19 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
     String text = '';
 
     if (dto.type == 4) {
-      text =
-          'SĐT: ${dto.bankAccount} - Email: ${dto.email} - Được tạo từ VietQR VN';
+      String sdt = '';
+      String name = '';
+      String email = '';
+      if (dto.userBankName.isNotEmpty) {
+        name = '\n${dto.userBankName}';
+      }
+      if (dto.phone.isNotEmpty) {
+        sdt = '\nSĐT: ${dto.phone}';
+      }
+      if (dto.email.isNotEmpty) {
+        email = '\nEmail: ${dto.email}';
+      }
+      text = '$name$sdt$email\nĐược tạo từ VietQR VN';
     } else {
       text = ShareUtils.instance.getTextSharing(dto);
     }
@@ -213,6 +225,7 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
             imgId: state.contactDetailDTO.imgId,
             email: state.contactDetailDTO.email,
             type: state.contactDetailDTO.type,
+            phone: state.contactDetailDTO.phoneNo,
           );
 
           detailDTO = state.contactDetailDTO;
@@ -418,40 +431,49 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
             if (dto.type == 2)
               Container(
                 padding: EdgeInsets.only(
-                    top: height < 750 ? 30 : kToolbarHeight,
-                    left: 20,
-                    right: 20),
+                    top: height < 750 ? 70 : kToolbarHeight + 40),
+                color: AppColor.GREY_BG,
                 height: height,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    _buildAppBar(),
                     RepaintBoundaryWidget(
                       globalKey: dto.globalKey ?? GlobalKey(),
                       builder: (key) {
-                        return VietQr(qrGeneratedDTO: qrGeneratedDTO);
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          child: VietQr(qrGeneratedDTO: qrGeneratedDTO),
+                        );
                       },
                     ),
-                    const SizedBox(height: 10),
-                    Text(
-                      'Mô tả QR',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    Container(
-                      width: double.infinity,
-                      height: height < 750 ? null : 80,
-                      margin: EdgeInsets.symmetric(vertical: 8),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      decoration: BoxDecoration(
-                          color: AppColor.WHITE,
-                          borderRadius: BorderRadius.circular(8)),
-                      child: SingleChildScrollView(
-                        child: Text(
-                          dto.additionalData,
-                          maxLines: 4,
-                        ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          const SizedBox(height: 10),
+                          Text(
+                            'Mô tả QR',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Container(
+                            width: double.infinity,
+                            height: height < 750 ? null : 80,
+                            margin: EdgeInsets.symmetric(vertical: 8),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12),
+                            decoration: BoxDecoration(
+                                color: AppColor.WHITE,
+                                borderRadius: BorderRadius.circular(8)),
+                            child: SingleChildScrollView(
+                              child: Text(
+                                dto.additionalData,
+                                maxLines: 4,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     )
                   ],
@@ -459,124 +481,116 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
               )
             else
               RepaintBoundaryWidget(
-                  globalKey: dto.globalKey ?? GlobalKey(),
-                  builder: (key) {
-                    return Container(
-                      height: height,
-                      decoration: BoxDecoration(gradient: dto.getBgGradient()),
-                      padding: EdgeInsets.only(
-                          top: height < 750 ? 30 : kToolbarHeight),
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 20),
-                            child: _buildAppBar(),
-                          ),
-                          Container(
-                            margin: height < 750
-                                ? const EdgeInsets.only(
-                                    left: 50, right: 50, top: 8, bottom: 8)
-                                : const EdgeInsets.only(
-                                    left: 50, right: 50, top: 20, bottom: 20),
-                            decoration: BoxDecoration(color: AppColor.WHITE),
-                            child: Stack(
-                              children: [
-                                QrImage(
-                                  data: dto.value,
-                                  version: QrVersions.auto,
-                                  size: height < 750 ? height / 3 : null,
-                                ),
-                                if (dto.imgId.isNotEmpty)
-                                  Positioned.fill(
-                                    child: Align(
-                                      alignment: Alignment.center,
-                                      child: Container(
-                                        width: 30,
-                                        height: 30,
-                                        decoration: BoxDecoration(
-                                          color: AppColor.WHITE,
-                                          borderRadius:
-                                              BorderRadius.circular(40),
-                                          image: getImage(dto.type, dto.imgId),
-                                        ),
+                globalKey: dto.globalKey ?? GlobalKey(),
+                builder: (key) {
+                  return Container(
+                    height: height,
+                    decoration: BoxDecoration(gradient: dto.getBgGradient()),
+                    padding: EdgeInsets.only(
+                        top: height < 750 ? 70 : kToolbarHeight + 40),
+                    child: Column(
+                      children: [
+                        Container(
+                          margin: height < 750
+                              ? const EdgeInsets.only(
+                                  left: 50, right: 50, top: 8, bottom: 8)
+                              : const EdgeInsets.only(
+                                  left: 50, right: 50, top: 20, bottom: 20),
+                          decoration: BoxDecoration(color: AppColor.WHITE),
+                          child: Stack(
+                            children: [
+                              QrImage(
+                                data: dto.value,
+                                version: QrVersions.auto,
+                                size: height < 750 ? height / 3 : null,
+                              ),
+                              if (dto.imgId.isNotEmpty)
+                                Positioned.fill(
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: Container(
+                                      width: 30,
+                                      height: 30,
+                                      decoration: BoxDecoration(
+                                        color: AppColor.WHITE,
+                                        borderRadius: BorderRadius.circular(40),
+                                        image: getImage(dto.type, dto.imgId),
                                       ),
                                     ),
                                   ),
-                              ],
-                            ),
-                          ),
-                          Text(
-                            dto.nickname,
-                            style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: AppColor.WHITE),
-                          ),
-                          const SizedBox(height: 4),
-                          _buildTypeQr(dto),
-                          SizedBox(height: height < 750 ? 4 : 20),
-                          if (dto.type == 4)
-                            Expanded(
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  children: [
-                                    const Divider(
-                                        thickness: 1, color: AppColor.WHITE),
-                                    _buildItem(
-                                        'Số điện thoại', '${dto.phoneNo}'),
-                                    const Divider(
-                                        thickness: 1, color: AppColor.WHITE),
-                                    _buildItem('Email',
-                                        '${dto.email.isNotEmpty ? dto.email : '-'}'),
-                                    const Divider(
-                                        thickness: 1, color: AppColor.WHITE),
-                                    _buildItem('Địa chỉ',
-                                        '${dto.address.isNotEmpty ? dto.address : '-'}'),
-                                    const Divider(
-                                        thickness: 1, color: AppColor.WHITE),
-                                    _buildItem('Công ty',
-                                        '${dto.company.isNotEmpty ? dto.company : '-'}'),
-                                    const Divider(
-                                        thickness: 1, color: AppColor.WHITE),
-                                    _buildItem('Website',
-                                        '${dto.website.isNotEmpty ? dto.website : '-'}'),
-                                    const Divider(
-                                        thickness: 1, color: AppColor.WHITE),
-                                    _buildItem('Ghi chú',
-                                        '${dto.additionalData.isNotEmpty ? dto.additionalData : '-'}'),
-                                    const SizedBox(height: 20),
-                                  ],
                                 ),
-                              ),
-                            )
-                          else ...[
-                            const Divider(thickness: 1, color: AppColor.WHITE),
-                            _buildItem('Ghi chú',
-                                '${dto.additionalData.isNotEmpty ? dto.additionalData : '-'}'),
-                            if (dto.type == 3 &&
-                                dto.value.contains('https')) ...[
-                              const Divider(
-                                  thickness: 1, color: AppColor.WHITE),
-                              _buildItem('Đường dẫn',
-                                  '${dto.value.isNotEmpty ? dto.value : '-'}',
-                                  style: TextStyle(
-                                    color: Colors.lightBlueAccent,
-                                    decoration: TextDecoration.underline,
-                                  ), onTap: () async {
-                                // ignore: deprecated_member_use
-                                await launch(
-                                  dto.value,
-                                  forceSafariVC: false,
-                                );
-                              }),
                             ],
-                            const SizedBox(height: 60),
+                          ),
+                        ),
+                        Text(
+                          dto.nickname,
+                          style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: AppColor.WHITE),
+                        ),
+                        const SizedBox(height: 4),
+                        _buildTypeQr(dto),
+                        SizedBox(height: height < 750 ? 4 : 20),
+                        if (dto.type == 4)
+                          Expanded(
+                            child: SingleChildScrollView(
+                              child: Column(
+                                children: [
+                                  _buildItem('Số điện thoại', '${dto.phoneNo}'),
+                                  _buildItem('Email',
+                                      '${dto.email.isNotEmpty ? dto.email : ''}'),
+                                  _buildItem('Địa chỉ',
+                                      '${dto.address.isNotEmpty ? dto.address : ''}'),
+                                  _buildItem('Công ty',
+                                      '${dto.company.isNotEmpty ? dto.company : ''}'),
+                                  _buildItem('Website',
+                                      '${dto.website.isNotEmpty ? dto.website : ''}'),
+                                  _buildItem('Ghi chú',
+                                      '${dto.additionalData.isNotEmpty ? dto.additionalData : ''}'),
+                                  const Divider(
+                                      thickness: 1, color: AppColor.WHITE),
+                                  const SizedBox(height: 20),
+                                ],
+                              ),
+                            ),
+                          )
+                        else ...[
+                          const Divider(thickness: 1, color: AppColor.WHITE),
+                          _buildItem('Ghi chú',
+                              '${dto.additionalData.isNotEmpty ? dto.additionalData : '-'}'),
+                          if (dto.type == 3 && dto.value.contains('https')) ...[
+                            const Divider(thickness: 1, color: AppColor.WHITE),
+                            _buildItem('Đường dẫn',
+                                '${dto.value.isNotEmpty ? dto.value : '-'}',
+                                style: TextStyle(
+                                  color: Colors.lightBlueAccent,
+                                  decoration: TextDecoration.underline,
+                                ), onTap: () async {
+                              // ignore: deprecated_member_use
+                              await launch(
+                                dto.value,
+                                forceSafariVC: false,
+                              );
+                            }),
                           ],
+                          const SizedBox(height: 60),
                         ],
-                      ),
-                    );
-                  }),
+                      ],
+                    ),
+                  );
+                },
+              ),
           ],
+        ),
+        Positioned(
+          top: height < 750 ? 30 : kToolbarHeight,
+          left: 0,
+          right: 0,
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: _buildAppBar(),
+          ),
         ),
         Positioned(
           bottom: 30,
@@ -722,37 +736,45 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
   Widget _buildItem(String title, String content,
       {GestureTapCallback? onTap, TextStyle? style}) {
     final height = MediaQuery.of(context).size.height;
-    return Padding(
-      padding:
-          EdgeInsets.symmetric(horizontal: 20, vertical: height < 750 ? 2 : 6),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 1,
-            child: Text(
-              title,
-              style: TextStyle(
-                color: AppColor.WHITE,
-                fontSize: height < 750 ? 12 : 14,
+    if (content.isEmpty) {
+      return const SizedBox();
+    }
+    return Column(
+      children: [
+        const Divider(thickness: 1, color: AppColor.WHITE),
+        Padding(
+          padding: EdgeInsets.symmetric(
+              horizontal: 20, vertical: height < 750 ? 2 : 6),
+          child: Row(
+            children: [
+              Expanded(
+                flex: 1,
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    color: AppColor.WHITE,
+                    fontSize: height < 750 ? 12 : 14,
+                  ),
+                ),
               ),
-            ),
-          ),
-          Expanded(
-            flex: 2,
-            child: GestureDetector(
-              onTap: onTap,
-              child: Text(
-                content,
-                style: style ??
-                    TextStyle(
-                      color: AppColor.WHITE,
-                      fontSize: height < 750 ? 12 : 14,
-                    ),
+              Expanded(
+                flex: 2,
+                child: GestureDetector(
+                  onTap: onTap,
+                  child: Text(
+                    content,
+                    style: style ??
+                        TextStyle(
+                          color: AppColor.WHITE,
+                          fontSize: height < 750 ? 12 : 14,
+                        ),
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

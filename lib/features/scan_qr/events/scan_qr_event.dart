@@ -48,3 +48,12 @@ class ScanQrEventGetNickName extends ScanQrEvent {
   @override
   List<Object?> get props => [code];
 }
+
+class ScanQrEventGetDetailVCard extends ScanQrEvent {
+  final String code;
+
+  const ScanQrEventGetDetailVCard({required this.code});
+
+  @override
+  List<Object?> get props => [code];
+}

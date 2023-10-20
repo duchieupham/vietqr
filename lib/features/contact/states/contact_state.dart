@@ -24,6 +24,7 @@ class ContactState extends Equatable {
   final bool isLoading;
   final bool isChange;
   final bool isLoadMore;
+  final VCardModel? cardModel;
 
   const ContactState({
     required this.listContactDTO,
@@ -42,6 +43,7 @@ class ContactState extends Equatable {
     this.userSearch,
     this.imgId,
     this.dto,
+    this.cardModel,
     this.isLoading = false,
     this.isChange = false,
     this.isLoadMore = false,
@@ -67,6 +69,7 @@ class ContactState extends Equatable {
     bool? isLoading,
     bool? isChange,
     bool? isLoadMore,
+    VCardModel? cardModel,
   }) {
     return ContactState(
       status: status ?? this.status,
@@ -89,6 +92,7 @@ class ContactState extends Equatable {
       isLoading: isLoading ?? this.isLoading,
       isChange: isChange ?? this.isChange,
       isLoadMore: isLoadMore ?? this.isLoadMore,
+      cardModel: cardModel ?? this.cardModel,
     );
   }
 
@@ -110,5 +114,6 @@ class ContactState extends Equatable {
         isChange,
         listContactDetail,
         isLoadMore,
+        cardModel,
       ];
 }

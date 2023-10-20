@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/features/contact/models/data_model.dart';
 import 'package:vierqr/models/contact_dto.dart';
 import 'package:vierqr/models/user_repository.dart';
@@ -191,37 +192,37 @@ class ContactProvider extends ChangeNotifier {
     ContactDataModel(
       title: 'Cộng đồng',
       url: 'assets/images/gl-white.png',
-      type: 8,
-    ),
-    ContactDataModel(
-      title: 'Cá nhân',
-      url: 'assets/images/ic-personal-white.png',
-      type: 9,
+      type: CategoryType.community.value,
     ),
     ContactDataModel(
       title: 'VCard',
       url: 'assets/images/ic-contact-bank-blue.png',
-      type: 4,
+      type: CategoryType.vcard.value,
+    ),
+    ContactDataModel(
+      title: 'Cá nhân',
+      url: 'assets/images/ic-personal-white.png',
+      type: CategoryType.personal.value,
     ),
     ContactDataModel(
       title: 'Ngân hàng',
       url: 'assets/images/ic-tb-card-selected.png',
-      type: 2,
+      type: CategoryType.bank.value,
     ),
     ContactDataModel(
       title: 'VietQR ID',
       url: 'assets/images/ic-contact-vietqr-id-blue.png',
-      type: 1,
+      type: CategoryType.viet_id.value,
     ),
     ContactDataModel(
       title: 'Khác',
       url: 'assets/images/qr-contact-other-blue.png',
-      type: 3,
+      type: CategoryType.other.value,
     ),
     ContactDataModel(
       title: 'Gợi ý',
       url: 'assets/images/ic-contact-suggest-blue.png',
-      type: 0,
+      type: CategoryType.suggest.value,
     ),
   ];
 }

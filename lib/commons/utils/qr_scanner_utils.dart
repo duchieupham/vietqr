@@ -11,6 +11,7 @@ import 'package:vierqr/features/scan_qr/views/dialog_scan_type_bank.dart';
 import 'package:vierqr/features/scan_qr/views/dialog_scan_type_id.dart';
 import 'package:vierqr/features/scan_qr/views/dialog_scan_type_other.dart';
 import 'package:vierqr/features/scan_qr/views/dialog_scan_type_url.dart';
+import 'package:vierqr/features/scan_qr/views/dialog_scan_type_vcard.dart';
 import 'package:vierqr/models/viet_qr_scanned_dto.dart';
 
 class QRScannerUtils {
@@ -87,6 +88,8 @@ class QRScannerUtils {
       return TypeQR.QR_ID;
     } else if (code.trim().contains('http') || code.trim().contains('https')) {
       return TypeQR.QR_LINK;
+    } else if (code.trim().contains('VCARD')) {
+      return TypeQR.QR_VCARD;
     }
     return TypeQR.OTHER;
   }
@@ -129,6 +132,29 @@ class QRScannerUtils {
 
           if (onCallBack != null) {
             onCallBack();
+          }
+          break;
+        case TypeContact.VCard:
+          final data = await DialogWidget.instance.showModelBottomSheet(
+            context: context,
+            padding: EdgeInsets.zero,
+            bgrColor: AppColor.TRANSPARENT,
+            widget: DialogScanTypeVCard(
+              dto: value,
+              typeQR: type,
+              isShowIconFirst: isShowIconFirst,
+            ),
+          );
+
+          if (data is bool) {
+            Fluttertoast.showToast(
+              msg: 'Lưu thành công',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              backgroundColor: Theme.of(context).cardColor,
+              textColor: Theme.of(context).hintColor,
+              fontSize: 15,
+            );
           }
           break;
         case TypeContact.Other:

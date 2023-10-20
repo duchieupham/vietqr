@@ -571,6 +571,15 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
               emit(state.copyWith(type: ContactType.SCAN_ERROR));
             }
           }
+        } else if (typeQR == TypeContact.VCard) {
+          emit(
+            state.copyWith(
+              type: ContactType.VCARD,
+              typeQR: TypeContact.VCard,
+              qrCode: qrCode,
+              cardModel: getVCard(qrCode),
+            ),
+          );
         } else {
           emit(
             state.copyWith(
@@ -672,15 +681,18 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
   void _insertVCard(ContactEvent event, Emitter emit) async {
     try {
       if (event is InsertVCardEvent) {
-        emit(state.copyWith(status: BlocStatus.NONE, type: ContactType.NONE));
+        emit(state.copyWith(
+            status: event.isLoading ? BlocStatus.LOADING : BlocStatus.NONE,
+            type: ContactType.NONE));
         ResponseMessageDTO result = await repository.insertVCard(event.list);
         if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
           emit(state.copyWith(
-              status: BlocStatus.NONE, type: ContactType.INSERT_VCARD));
+              status: event.isLoading ? BlocStatus.UNLOADING : BlocStatus.NONE,
+              type: ContactType.INSERT_VCARD));
         } else {
           emit(state.copyWith(
               type: ContactType.ERROR,
-              status: BlocStatus.NONE,
+              status: event.isLoading ? BlocStatus.UNLOADING : BlocStatus.NONE,
               msg: CheckUtils.instance.getCheckMessage(result.message)));
         }
       }
@@ -738,5 +750,72 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
       LOG.error(e.toString());
       emit(state.copyWith(status: BlocStatus.ERROR));
     }
+  }
+
+  VCardModel getVCard(String data) {
+    if (data.isEmpty) {
+      return VCardModel();
+    }
+
+    List<String> list = data.split("\r\n");
+
+    String name = '';
+    String phone = '';
+    String email = '';
+    String company = '';
+    String address = '';
+    String website = '';
+
+    list.forEach((element) {
+      if (element.contains('FN;CHARSET=UTF-8')) {
+        List<String> splits = element.split(':');
+        name = splits.last;
+      }
+
+      if (element.contains('TEL')) {
+        List<String> splits = element.split(':');
+        if (splits.last.isNotEmpty) {
+          phone = splits.last;
+        }
+      }
+      if (element.contains('EMAIL')) {
+        List<String> splits = element.split(':');
+        if (splits.last.isNotEmpty) {
+          email = splits.last;
+        }
+      }
+      if (element.contains('ORG')) {
+        List<String> splits = element.split(':');
+        if (splits.last.isNotEmpty) {
+          company = splits.last;
+        }
+      }
+      if (element.contains('LABEL')) {
+        List<String> splits = element.split(':');
+        if (splits.last.isNotEmpty) {
+          address = splits.last;
+        }
+      }
+      if (element.contains('URL')) {
+        List<String> splits = element.split(':');
+        if (splits.last.isNotEmpty) {
+          website = splits.last;
+        }
+      }
+    });
+
+    VCardModel model = VCardModel(
+      fullname: name,
+      phoneNo: phone,
+      email: email,
+      companyName: company,
+      website: website,
+      address: address,
+      userId: '',
+      additionalData: '',
+      code: data,
+    );
+
+    return model;
   }
 }

@@ -10,6 +10,7 @@ import 'package:vierqr/features/scan_qr/repositories/scan_qr_repository.dart';
 import 'package:vierqr/features/scan_qr/states/scan_qr_state.dart';
 import 'package:vierqr/models/bank_name_information_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
+import 'package:vierqr/models/contact_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/models/viet_qr_scanned_dto.dart';
 import 'package:vierqr/models/vietqr_dto.dart';
@@ -19,6 +20,7 @@ class ScanQrBloc extends Bloc<ScanQrEvent, ScanQrState> {
     on<ScanQrEventGetBankType>(_getBankType);
     on<ScanQrEventSearchName>(_searchBankName);
     on<ScanQrEventGetNickName>(_getNickNameWalletId);
+    on<ScanQrEventGetDetailVCard>(_getNickNameWalletId);
   }
 
   final bool isScanAll;
@@ -140,6 +142,12 @@ class ScanQrBloc extends Bloc<ScanQrEvent, ScanQrState> {
                 typeQR: TypeQR.QR_LINK,
                 request: ScanType.SCAN,
                 typeContact: TypeContact.Other));
+          } else if (typeQR == TypeQR.QR_VCARD) {
+            emit(state.copyWith(
+                codeQR: event.code,
+                typeQR: TypeQR.QR_VCARD,
+                request: ScanType.SCAN,
+                typeContact: TypeContact.VCard));
           } else {
             emit(state.copyWith(
                 codeQR: event.code,

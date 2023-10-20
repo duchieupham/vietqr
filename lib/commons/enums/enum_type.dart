@@ -77,6 +77,7 @@ enum TypeQR {
   QR_BARCODE,
   OTHER,
   QR_LINK,
+  QR_VCARD,
   NEGATIVE_TWO,
   NEGATIVE_ONE,
 }
@@ -100,6 +101,7 @@ enum TypeContact {
   VietQR_ID,
   Bank,
   Other,
+  VCard,
   NONE,
   UPDATE,
   ERROR,
@@ -121,6 +123,8 @@ extension TypeContactExt on int {
         return TypeContact.Bank;
       case 3:
         return TypeContact.Other;
+      case 4:
+        return TypeContact.VCard;
       default:
         return TypeContact.NONE;
     }
@@ -148,6 +152,8 @@ extension TypeContactExt2 on TypeContact {
         return 'VietQR ID';
       case TypeContact.Bank:
         return 'Bank';
+      case TypeContact.VCard:
+        return 'VCard';
       case TypeContact.Other:
         return 'Khác';
       case TypeContact.NONE:
@@ -162,6 +168,8 @@ extension TypeContactExt2 on TypeContact {
         return 'VietQR ID';
       case TypeContact.Bank:
         return 'Mã VietQR ngân hàng';
+      case TypeContact.VCard:
+        return 'VCard';
       case TypeContact.Other:
         return 'Mã QR không xác định';
       case TypeContact.NONE:
@@ -212,6 +220,7 @@ enum ContactType {
   SCAN_ERROR,
   SEARCH_USER,
   OTHER,
+  VCARD,
   INSERT_VCARD,
 }
 
@@ -325,4 +334,36 @@ enum ShareBDSDType {
   ADD_TELEGRAM,
   REMOVE_TELEGRAM,
   REMOVE_LARK,
+}
+
+enum CategoryType {
+  vcard,
+  community,
+  personal,
+  bank,
+  viet_id,
+  other,
+  suggest,
+}
+
+extension categoryExt on CategoryType {
+  int get value {
+    switch (this) {
+      case CategoryType.vcard:
+        return 4;
+      case CategoryType.community:
+        return 8;
+      case CategoryType.personal:
+        return 9;
+      case CategoryType.bank:
+        return 2;
+      case CategoryType.viet_id:
+        return 1;
+      case CategoryType.other:
+        return 3;
+      case CategoryType.suggest:
+      default:
+        return 0;
+    }
+  }
 }

@@ -14,8 +14,9 @@ class QRGeneratedDTO {
   final int? existing;
   final String? bankTypeId;
   final bool isNaviAddBank;
-  final String? email;
+  final String email;
   final int? type;
+  final String phone;
 
   QRGeneratedDTO({
     this.bankId,
@@ -30,8 +31,9 @@ class QRGeneratedDTO {
     this.transactionId,
     this.existing,
     this.bankTypeId,
-    this.email,
+    this.email = '',
     this.type,
+    this.phone = '',
     this.isNaviAddBank = false,
   });
 

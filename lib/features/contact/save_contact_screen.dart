@@ -21,9 +21,12 @@ import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/add_contact_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
+import 'package:vierqr/models/contact_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/vietqr_dto.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
+
+import 'views/save_vcard_view.dart';
 
 class SaveContactScreen extends StatelessWidget {
   final String code;
@@ -60,6 +63,11 @@ class _SaveContactScreenState extends State<_BodyWidget> {
   late ContactBloc _bloc;
   final nameController = TextEditingController();
   final suggestController = TextEditingController();
+  final addressController = TextEditingController();
+  final emailController = TextEditingController();
+  final phoneController = TextEditingController();
+  final webController = TextEditingController();
+  final companyController = TextEditingController();
 
   @override
   void initState() {
@@ -83,9 +91,24 @@ class _SaveContactScreenState extends State<_BodyWidget> {
           Navigator.pop(context);
         }
 
-        if (state.type == ContactType.SAVE) {
+        if (state.type == ContactType.SAVE ||
+            state.type == ContactType.INSERT_VCARD) {
           Navigator.of(context).pop(true);
         }
+
+        if (state.type == ContactType.VCARD) {
+          nameController.text = state.cardModel?.fullname ?? '';
+          addressController.text = state.cardModel?.address ?? '';
+          webController.text = state.cardModel?.website ?? '';
+          companyController.text = state.cardModel?.companyName ?? '';
+          emailController.text = state.cardModel?.email ?? '';
+          phoneController.text = state.cardModel?.phoneNo ?? '';
+          suggestController.text = state.cardModel?.additionalData ?? '';
+
+          Provider.of<ContactProvider>(context, listen: false)
+              .onChangeName(state.cardModel?.fullname ?? '');
+        }
+
         if (state.type == ContactType.NICK_NAME) {
           nameController.value =
               nameController.value.copyWith(text: state.nickName ?? '');
@@ -127,8 +150,26 @@ class _SaveContactScreenState extends State<_BodyWidget> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 20, vertical: 20),
                           children: [
-                            const SizedBox(height: 30),
-                            if (state.typeQR == TypeContact.VietQR_ID)
+                            if (state.typeQR == TypeContact.VCard)
+                              BuildVCardView(
+                                type: state.typeQR,
+                                nameController: nameController,
+                                suggestController: suggestController,
+                                addressController: addressController,
+                                emailController: emailController,
+                                phoneController: phoneController,
+                                webController: webController,
+                                companyController: companyController,
+                                onChange: provider.onChangeName,
+                                onChangeColor: provider.updateColorType,
+                                listColor: provider.listColor,
+                                typeColor: provider.colorType,
+                                imgId: state.imgId ?? '',
+                                height: height,
+                                onChangeQRT: provider.updateQRT,
+                                model: provider.model,
+                              )
+                            else if (state.typeQR == TypeContact.VietQR_ID)
                               _buildVietQRID(
                                 type: state.typeQR,
                                 nameController: nameController,
@@ -142,7 +183,8 @@ class _SaveContactScreenState extends State<_BodyWidget> {
                                 onChangeQRT: provider.updateQRT,
                                 model: provider.model,
                               )
-                            else if (state.typeQR == TypeContact.Bank)
+                            else if (state.typeQR == TypeContact.Bank) ...[
+                              const SizedBox(height: 30),
                               _buildBankView(
                                 type: state.typeQR,
                                 nameController: nameController,
@@ -155,7 +197,7 @@ class _SaveContactScreenState extends State<_BodyWidget> {
                                 dto: state.dto,
                                 bankTypeDto: state.bankTypeDTO,
                               )
-                            else
+                            ] else
                               _buildOtherView(
                                 type: state.typeQR,
                                 nameController: nameController,
@@ -202,21 +244,37 @@ class _SaveContactScreenState extends State<_BodyWidget> {
                               onTap: () {
                                 FocusManager.instance.primaryFocus?.unfocus();
 
-                                AddContactDTO dto = AddContactDTO(
-                                  additionalData: suggestController.text,
-                                  nickName: nameController.text,
-                                  type: state.typeQR.value.toString(),
-                                  value: state.qrCode,
-                                  userId: UserInformationHelper.instance
-                                      .getUserId(),
-                                  bankTypeId: state.bankTypeDTO?.id ?? '',
-                                  bankAccount: state.bankAccount ?? '',
-                                  colorType: provider.colorType,
-                                  image: provider.file,
-                                  relation: provider.model.type,
-                                );
+                                if (state.typeQR == TypeContact.VCard) {
+                                  VCardModel vCard = VCardModel(
+                                    fullname: nameController.text,
+                                    phoneNo: phoneController.text,
+                                    email: emailController.text,
+                                    companyName: companyController.text,
+                                    website: webController.text,
+                                    address: addressController.text,
+                                    userId: UserInformationHelper.instance
+                                        .getUserId(),
+                                    additionalData: suggestController.text,
+                                  );
+                                  _bloc.add(InsertVCardEvent([vCard],
+                                      isLoading: true));
+                                } else {
+                                  AddContactDTO dto = AddContactDTO(
+                                    additionalData: suggestController.text,
+                                    nickName: nameController.text,
+                                    type: state.typeQR.value.toString(),
+                                    value: state.qrCode,
+                                    userId: UserInformationHelper.instance
+                                        .getUserId(),
+                                    bankTypeId: state.bankTypeDTO?.id ?? '',
+                                    bankAccount: state.bankAccount ?? '',
+                                    colorType: provider.colorType,
+                                    image: provider.file,
+                                    relation: provider.model.type,
+                                  );
 
-                                _bloc.add(SaveContactEvent(dto: dto));
+                                  _bloc.add(SaveContactEvent(dto: dto));
+                                }
                               },
                             ),
                           )
@@ -369,8 +427,9 @@ class _buildVietQRIDState extends State<_buildVietQRID> {
                                   Image.asset(
                                     '${widget.model.url}',
                                     color: AppColor.BLACK,
-                                    width: 28,
+                                    width: 20,
                                   ),
+                                  const SizedBox(width: 6),
                                   Text(
                                     '${widget.model.title}',
                                     style: TextStyle(fontSize: 14),

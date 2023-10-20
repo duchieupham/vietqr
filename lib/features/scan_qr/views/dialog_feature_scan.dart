@@ -16,6 +16,7 @@ import 'package:vierqr/features/printer/views/printing_view.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/bluetooth_printer_dto.dart';
+import 'package:vierqr/models/contact_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/vietqr_dto.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
@@ -263,7 +264,7 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
     );
 
     if (data is bool) {
-      Navigator.of(context).pop();
+      Navigator.of(context).pop(true);
     }
   }
 
@@ -297,6 +298,9 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
       } else if (dto is VietQRDTO) {
         String prefix = '${dto.nickName}\nVietQR ID: ${dto.code}';
         text = '$prefix\nĐược tạo bởi vietqr.vn - Hotline 1900.6234';
+      } else if (dto is VCardModel) {
+        text =
+            '${dto.fullname} - ${dto.phoneNo}\nĐược tạo bởi vietqr.vn - Hotline 1900.6234';
       }
     } else {
       text = 'VietQR ID: $code\nĐược tạo bởi vietqr.vn - Hotline 1900.6234';

@@ -70,6 +70,7 @@ class VCardModel {
   final String? address;
   final String? userId;
   final String? additionalData;
+  final String code;
 
   VCardModel({
     this.fullname,
@@ -80,6 +81,7 @@ class VCardModel {
     this.address,
     this.userId,
     this.additionalData,
+    this.code = '',
   });
 
   factory VCardModel.fromJson(Map<String, dynamic> json) => VCardModel(

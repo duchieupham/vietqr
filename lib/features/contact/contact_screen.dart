@@ -71,7 +71,9 @@ class _ContactStateState extends State<_ContactState>
     initData();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _bloc.add(ContactEventGetList(isLoading: true));
+      int type =
+          Provider.of<ContactProvider>(context, listen: false).category!.type;
+      _bloc.add(ContactEventGetList(isLoading: true, type: type));
       _bloc.add(ContactEventGetListPending());
     });
 
@@ -79,8 +81,9 @@ class _ContactStateState extends State<_ContactState>
       _onRefresh();
     });
     _syncSub = eventBus.on<CheckSyncContact>().listen((_) {
-      if (Provider.of<ContactProvider>(context, listen: false).category!.type ==
-          4) {
+      int type =
+          Provider.of<ContactProvider>(context, listen: false).category!.type;
+      if (type == CategoryType.vcard.value) {
         _onCheckSyncContact();
       }
     });
@@ -172,7 +175,7 @@ class _ContactStateState extends State<_ContactState>
             id: e.id,
             nickname: e.displayName,
             status: 0,
-            type: 4,
+            type: CategoryType.vcard.value,
             imgId: '',
             description: '',
             phoneNo: e.phones.isNotEmpty ? e.phones.first.number : '',
@@ -395,14 +398,14 @@ class _ContactStateState extends State<_ContactState>
                               searchController.clear();
                               provider.updateCategory(value: model);
                               provider.updateOffset(0);
-                              if (model.type != 0) {
+                              if (model.type != CategoryType.suggest.value) {
                                 _bloc
                                     .add(ContactEventGetList(type: model.type));
                               } else {
                                 _bloc.add(ContactEventGetListPending());
                               }
 
-                              if (model.type == 4) {
+                              if (model.type == CategoryType.vcard.value) {
                                 _onCheckSyncContact();
                               }
                             },
@@ -410,7 +413,7 @@ class _ContactStateState extends State<_ContactState>
                                 title: model.title,
                                 url: model.url,
                                 isSelect: provider.category == model,
-                                index: index),
+                                type: model.type),
                           );
                         }).toList(),
                       ),
@@ -478,14 +481,12 @@ class _ContactStateState extends State<_ContactState>
                         await QRScannerUtils.instance.onScanNavi(data, context,
                             onCallBack: () {
                           _bloc.add(
-                            ContactEventGetList(
-                              type: provider.category?.type,
-                            ),
+                            ContactEventGetList(type: provider.category?.type),
                           );
                         });
                       }
-                      _bloc.add(
-                          ContactEventGetList(type: provider.category?.type));
+                      _bloc.add(ContactEventGetList(
+                          type: provider.category?.type, isLoading: false));
                     },
                     child: Container(
                       width: 50,
@@ -510,7 +511,7 @@ class _ContactStateState extends State<_ContactState>
       {required String title,
       required String url,
       bool isSelect = false,
-      int index = -1}) {
+      int type = -1}) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       margin: const EdgeInsets.only(right: 10),
@@ -521,12 +522,12 @@ class _ContactStateState extends State<_ContactState>
       child: Row(
         children: [
           Padding(
-            padding: index == 0
+            padding: type == CategoryType.community.value
                 ? const EdgeInsets.symmetric(vertical: 10.5, horizontal: 8.0)
                 : EdgeInsets.zero,
             child: Image.asset(
               url,
-              width: index == 0 ? 14 : 35,
+              width: type == CategoryType.community.value ? 14 : 35,
               color: isSelect ? AppColor.WHITE : AppColor.BLUE_TEXT,
             ),
           ),

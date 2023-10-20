@@ -155,11 +155,12 @@ class SearchUser extends ContactEvent {
 
 class InsertVCardEvent extends ContactEvent {
   final List<VCardModel> list;
+  final bool isLoading;
 
-  InsertVCardEvent(this.list);
+  InsertVCardEvent(this.list, {this.isLoading = false});
 
   @override
-  List<Object?> get props => [list];
+  List<Object?> get props => [list, isLoading];
 }
 
 class UpdateContactVCardEvent extends ContactEvent {
