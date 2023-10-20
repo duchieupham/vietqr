@@ -25,6 +25,7 @@ class ContactState extends Equatable {
   final bool isChange;
   final bool isLoadMore;
   final VCardModel? cardModel;
+  final int pageIndex;
 
   const ContactState({
     required this.listContactDTO,
@@ -47,6 +48,7 @@ class ContactState extends Equatable {
     this.isLoading = false,
     this.isChange = false,
     this.isLoadMore = false,
+    this.pageIndex = 0,
   });
 
   ContactState copyWith({
@@ -70,6 +72,7 @@ class ContactState extends Equatable {
     bool? isChange,
     bool? isLoadMore,
     VCardModel? cardModel,
+    int? pageIndex,
   }) {
     return ContactState(
       status: status ?? this.status,
@@ -93,6 +96,7 @@ class ContactState extends Equatable {
       isChange: isChange ?? this.isChange,
       isLoadMore: isLoadMore ?? this.isLoadMore,
       cardModel: cardModel ?? this.cardModel,
+      pageIndex: pageIndex ?? this.pageIndex,
     );
   }
 
@@ -115,5 +119,6 @@ class ContactState extends Equatable {
         listContactDetail,
         isLoadMore,
         cardModel,
+        pageIndex,
       ];
 }

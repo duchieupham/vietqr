@@ -96,6 +96,8 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
     type: 0,
   );
 
+  int pageIndex = 0;
+
   QRGeneratedDTO getQrDTO(ContactDetailDTO dto) {
     return QRGeneratedDTO(
       bankCode: dto.bankShortName,
@@ -279,6 +281,7 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
                     viewportFraction: 1,
                     animateToClosest: true,
                     height: height,
+                    initialPage: state.pageIndex,
                     enableInfiniteScroll: false,
                     scrollDirection: Axis.vertical,
                     onScrolled: (value) async {
@@ -310,14 +313,15 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
                           );
                         }
                       } else {
-                        if (!state.listContactDTO[index + 1].isGetDetail) {
-                          _bloc
-                              .add(ContactEventGetListDetail(index: index + 1));
-                        } else {
-                          if (state.listContactDTO[index].id.isEmpty) {
-                            _bloc.add(ContactEventGetListDetail(index: index));
-                          }
-                        }
+                        _bloc.add(ContactEventGetListDetail(index: index));
+                        // if (!state.listContactDTO[index + 1].isGetDetail) {
+                        //   _bloc
+                        //       .add(ContactEventGetListDetail(index: index + 1));
+                        // } else {
+                        //   if (state.listContactDTO[index].id.isEmpty) {
+                        //     _bloc.add(ContactEventGetListDetail(index: index));
+                        //   }
+                        // }
                       }
                     }),
                   ),
@@ -328,6 +332,8 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
       },
     );
   }
+
+  bool isPrev = false;
 
   Widget _buildTypeQr(ContactDetailDTO dto) {
     return Padding(
@@ -548,21 +554,17 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
                                       '${dto.website.isNotEmpty ? dto.website : ''}'),
                                   _buildItem('Ghi chú',
                                       '${dto.additionalData.isNotEmpty ? dto.additionalData : ''}'),
-                                  const Divider(
-                                      thickness: 1, color: AppColor.WHITE),
                                   const SizedBox(height: 20),
                                 ],
                               ),
                             ),
                           )
                         else ...[
-                          const Divider(thickness: 1, color: AppColor.WHITE),
                           _buildItem('Ghi chú',
-                              '${dto.additionalData.isNotEmpty ? dto.additionalData : '-'}'),
+                              '${dto.additionalData.isNotEmpty ? dto.additionalData : ''}'),
                           if (dto.type == 3 && dto.value.contains('https')) ...[
-                            const Divider(thickness: 1, color: AppColor.WHITE),
                             _buildItem('Đường dẫn',
-                                '${dto.value.isNotEmpty ? dto.value : '-'}',
+                                '${dto.value.isNotEmpty ? dto.value : ''}',
                                 style: TextStyle(
                                   color: Colors.lightBlueAccent,
                                   decoration: TextDecoration.underline,
@@ -741,10 +743,14 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
     }
     return Column(
       children: [
-        const Divider(thickness: 1, color: AppColor.WHITE),
-        Padding(
+        Container(
           padding: EdgeInsets.symmetric(
-              horizontal: 20, vertical: height < 750 ? 2 : 6),
+              horizontal: 20, vertical: height < 750 ? 9 : 14),
+          decoration: BoxDecoration(
+            border: Border.symmetric(
+              horizontal: BorderSide(width: 0.5, color: AppColor.WHITE),
+            ),
+          ),
           child: Row(
             children: [
               Expanded(

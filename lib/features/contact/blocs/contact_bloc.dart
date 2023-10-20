@@ -309,35 +309,44 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
         if (values.isNotEmpty) {
           index = values.indexWhere((element) => element.id == event.id);
           ContactDTO data = values[index];
-          values.removeAt(index);
-          values.insert(0, data);
 
           final result = await repository.getContactDetail(data.id);
           if (result.id.isNotEmpty) {
-            values[0].setIsGet(true);
-            details.removeAt(index);
-            details.insert(0, result);
+            values[index].setIsGet(true);
+            details[index] = result;
           }
 
-          if (values.length > 2) {
-            ContactDTO data1 = values[1];
+          if (index > 0) {
+            ContactDTO data1 = values[index - 1];
 
             final result1 = await repository.getContactDetail(data1.id);
             if (result1.id.isNotEmpty) {
-              details.removeAt(1);
-              details.insert(1, result1);
+              details.removeAt(index - 1);
+              details.insert(index - 1, result1);
+            }
+          }
+
+          if (values.length > (index + 1)) {
+            ContactDTO data1 = values[index + 1];
+
+            final result1 = await repository.getContactDetail(data1.id);
+            if (result1.id.isNotEmpty) {
+              details.removeAt(index + 1);
+              details.insert(index + 1, result1);
             }
           }
         }
         if (details.isNotEmpty) {
           emit(
             state.copyWith(
-                listContactDetail: details,
-                listContactDTO: values,
-                contactDetailDTO: details[0],
-                status: BlocStatus.UNLOADING,
-                type: ContactType.GET_DETAIL,
-                isChange: event.isChange),
+              listContactDetail: details,
+              listContactDTO: values,
+              contactDetailDTO: details[index],
+              status: BlocStatus.UNLOADING,
+              type: ContactType.GET_DETAIL,
+              isChange: event.isChange,
+              pageIndex: index,
+            ),
           );
         } else {
           emit(state.copyWith(
@@ -358,12 +367,30 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
         values.addAll(state.listContactDTO);
         details.addAll(state.listContactDetail);
         if (values.isNotEmpty) {
-          ContactDTO data = values[event.index];
-          final result = await repository.getContactDetail(data.id);
-          if (result.id.isNotEmpty) {
-            values[event.index].setIsGet(true);
-            details.removeAt(event.index);
-            details.insert(event.index, result);
+          if (event.index == 0) {
+            ContactDTO data = values[(event.index + 1)];
+            final result = await repository.getContactDetail(data.id);
+            if (result.id.isNotEmpty) {
+              values[event.index].setIsGet(true);
+              details.removeAt((event.index + 1));
+              details.insert((event.index + 1), result);
+            }
+          } else if (event.index > 0) {
+            ContactDTO data = values[(event.index + 1)];
+            final result = await repository.getContactDetail(data.id);
+            if (result.id.isNotEmpty) {
+              values[event.index].setIsGet(true);
+              details.removeAt((event.index + 1));
+              details.insert((event.index + 1), result);
+            }
+
+            ContactDTO data1 = values[(event.index - 1)];
+            final result1 = await repository.getContactDetail(data1.id);
+            if (result.id.isNotEmpty) {
+              values[(event.index - 1)].setIsGet(true);
+              details.removeAt((event.index - 1));
+              details.insert((event.index - 1), result1);
+            }
           }
 
           if (details.isNotEmpty) {
