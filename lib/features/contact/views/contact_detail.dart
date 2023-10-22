@@ -720,10 +720,12 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
                     const SizedBox(height: 30),
                     Text(
                       'Trượt lên và xuống để xem thẻ QR khác',
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                         color: AppColor.WHITE,
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
+                        height: 1.4,
                       ),
                     )
                   ],

@@ -262,18 +262,19 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                             children: [
                                               Row(
                                                 children: [
-                                                  Text(
-                                                    '${state.bankAccountDTO?.bankCode ?? ''} - ${state.bankAccountDTO?.bankName ?? ''}',
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: const TextStyle(
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                        color: AppColor.BLACK),
+                                                  Expanded(
+                                                    child: Text(
+                                                      '${state.bankAccountDTO?.bankCode ?? ''} - ${state.bankAccountDTO?.bankName ?? ''}',
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: const TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                          color: AppColor.BLACK),
+                                                    ),
                                                   ),
-                                                  const Spacer(),
                                                   Icon(Icons
                                                       .keyboard_arrow_down_outlined),
                                                   const SizedBox(width: 8),
@@ -726,66 +727,91 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
 
   Widget _buildDropList(
           List<BankAccountDTO> list, BankAccountDTO? bankAccountDTO) =>
-      Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(5)),
-              color: Colors.white,
-              boxShadow: <BoxShadow>[
-                BoxShadow(
-                  color: Theme.of(context).shadowColor.withOpacity(0.2),
-                  spreadRadius: 0,
-                  blurRadius: 4,
-                  offset: const Offset(1, 2),
+      Container(
+        height: MediaQuery.of(context).size.height * 0.6,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(Radius.circular(5)),
+                  color: Colors.white,
+                  boxShadow: <BoxShadow>[
+                    BoxShadow(
+                      color: Theme.of(context).shadowColor.withOpacity(0.2),
+                      spreadRadius: 0,
+                      blurRadius: 4,
+                      offset: const Offset(1, 2),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            child: ListView.builder(
-              padding: EdgeInsets.zero,
-              shrinkWrap: true,
-              scrollDirection: Axis.vertical,
-              physics: const BouncingScrollPhysics(
-                  parent: NeverScrollableScrollPhysics()),
-              itemCount: list.length,
-              itemBuilder: (context, position) {
-                BankAccountDTO dto = list[position];
-                return Column(
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        _onChanged(dto);
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(5)),
-                          color: AppColor.WHITE,
-                        ),
-                        child: Row(
-                          children: [
-                            if (dto.imgId.isNotEmpty)
-                              Container(
-                                width: 60,
-                                height: 30,
-                                margin: const EdgeInsets.only(left: 4),
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image: ImageUtils.instance
-                                        .getImageNetWork(dto.imgId),
+                child: ListView.builder(
+                  padding: EdgeInsets.zero,
+                  shrinkWrap: true,
+                  scrollDirection: Axis.vertical,
+                  physics: const BouncingScrollPhysics(
+                      parent: NeverScrollableScrollPhysics()),
+                  itemCount: list.length,
+                  itemBuilder: (context, position) {
+                    BankAccountDTO dto = list[position];
+                    return Column(
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            _onChanged(dto);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            decoration: const BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5)),
+                              color: AppColor.WHITE,
+                            ),
+                            child: Row(
+                              children: [
+                                if (dto.imgId.isNotEmpty)
+                                  Container(
+                                    width: 60,
+                                    height: 30,
+                                    margin: const EdgeInsets.only(left: 4),
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        image: ImageUtils.instance
+                                            .getImageNetWork(dto.imgId),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                            const SizedBox(width: 4),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  Row(
+                                const SizedBox(width: 4),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
                                     children: [
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              '${dto.bankCode} - ${dto.bankName}',
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: AppColor.BLACK),
+                                            ),
+                                          ),
+                                          if (bankAccountDTO != null)
+                                            if (bankAccountDTO.bankAccount ==
+                                                dto.bankAccount)
+                                              Icon(Icons.check,
+                                                  color: AppColor.BLUE_TEXT),
+                                          const SizedBox(width: 8),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 4),
                                       Text(
-                                        '${dto.bankCode} - ${dto.bankName}',
+                                        dto.bankAccount,
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         style: const TextStyle(
@@ -793,48 +819,31 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                             fontWeight: FontWeight.w400,
                                             color: AppColor.BLACK),
                                       ),
-                                      const Spacer(),
-                                      if (bankAccountDTO != null)
-                                        if (bankAccountDTO.bankAccount ==
-                                            dto.bankAccount)
-                                          Icon(Icons.check,
-                                              color: AppColor.BLUE_TEXT),
-                                      const SizedBox(width: 8),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        dto.userBankName,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400,
+                                            color: AppColor.BLACK),
+                                      ),
                                     ],
                                   ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    dto.bankAccount,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w400,
-                                        color: AppColor.BLACK),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    dto.userBankName,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w400,
-                                        color: AppColor.BLACK),
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ),
-                    if (position != list.length - 1) const Divider(),
-                  ],
-                );
-              },
-            ),
+                        if (position != list.length - 1) const Divider(),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       );
 }
