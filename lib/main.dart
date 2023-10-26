@@ -56,7 +56,7 @@ import 'package:vierqr/features/personal/views/user_edit_view.dart';
 import 'package:vierqr/features/personal/views/user_update_password_view.dart';
 import 'package:vierqr/features/printer/views/printer_setting_screen.dart';
 import 'package:vierqr/features/report/report_screen.dart';
-import 'package:vierqr/features/scan_qr/scan_qr_lib.dart';
+import 'package:vierqr/features/scan_qr/scan_qr_screen.dart';
 import 'package:vierqr/features/setting_bdsd/setting_bdsd_screen.dart';
 
 // import 'package:vierqr/features/scan_qr/scan_qr_screen.dart';

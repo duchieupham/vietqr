@@ -78,6 +78,7 @@ enum TypeQR {
   OTHER,
   QR_LINK,
   QR_VCARD,
+  LOGIN_WEB,
   NEGATIVE_TWO,
   NEGATIVE_ONE,
 }
@@ -102,6 +103,7 @@ enum TypeContact {
   Bank,
   Other,
   VCard,
+  Login_Web,
   NONE,
   UPDATE,
   ERROR,

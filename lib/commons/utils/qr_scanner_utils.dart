@@ -7,12 +7,15 @@ import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/contact/save_contact_screen.dart';
+import 'package:vierqr/features/scan_qr/views/dialog_scan_login.dart';
 import 'package:vierqr/features/scan_qr/views/dialog_scan_type_bank.dart';
 import 'package:vierqr/features/scan_qr/views/dialog_scan_type_id.dart';
 import 'package:vierqr/features/scan_qr/views/dialog_scan_type_other.dart';
 import 'package:vierqr/features/scan_qr/views/dialog_scan_type_url.dart';
 import 'package:vierqr/features/scan_qr/views/dialog_scan_type_vcard.dart';
 import 'package:vierqr/models/viet_qr_scanned_dto.dart';
+import 'package:vierqr/services/aes_convert.dart';
+import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class QRScannerUtils {
   const QRScannerUtils._privateConstructor();
@@ -79,6 +82,8 @@ class QRScannerUtils {
   Future<TypeQR> checkScan(String code) async {
     VietQRScannedDTO vietQRScannedDTO =
         QRScannerUtils.instance.getBankAccountFromQR(code);
+    String dec = AESConvert.decrypt(code);
+
     if (vietQRScannedDTO.caiValue.isNotEmpty &&
         vietQRScannedDTO.bankAccount.isNotEmpty) {
       return TypeQR.QR_BANK;
@@ -90,6 +95,11 @@ class QRScannerUtils {
       return TypeQR.QR_LINK;
     } else if (code.trim().contains('VCARD')) {
       return TypeQR.QR_VCARD;
+    } else if (dec.contains(AESConvert.accessKey)) {
+      if (UserInformationHelper.instance.getUserId().isEmpty) {
+        return TypeQR.NEGATIVE_TWO;
+      }
+      return TypeQR.LOGIN_WEB;
     }
     return TypeQR.OTHER;
   }
@@ -156,6 +166,11 @@ class QRScannerUtils {
               fontSize: 15,
             );
           }
+          break;
+        case TypeContact.Login_Web:
+          DialogWidget.instance.openDialogLoginWeb(
+            child: DialogScanLogin(code: value),
+          );
           break;
         case TypeContact.Other:
           if (typeQR == TypeQR.QR_LINK) {

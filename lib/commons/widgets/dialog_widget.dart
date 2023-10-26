@@ -1271,4 +1271,17 @@ class DialogWidget {
       },
     );
   }
+
+  Future<dynamic> openDialogLoginWeb({required Widget child}) async {
+    return await showDialog(
+      barrierDismissible: false,
+      context: NavigationService.navigatorKey.currentContext!,
+      builder: (BuildContext context) {
+        return Material(
+          color: AppColor.TRANSPARENT,
+          child: Center(child: child),
+        );
+      },
+    );
+  }
 }
