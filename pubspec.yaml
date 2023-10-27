@@ -113,6 +113,7 @@ dependencies:
 
 
   nfc_manager: ^3.3.0
+  encrypt:
 
 
 #  audioplayers: ^4.1.0

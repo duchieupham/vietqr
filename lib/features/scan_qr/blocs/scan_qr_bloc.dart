@@ -148,12 +148,22 @@ class ScanQrBloc extends Bloc<ScanQrEvent, ScanQrState> {
                 typeQR: TypeQR.QR_VCARD,
                 request: ScanType.SCAN,
                 typeContact: TypeContact.VCard));
-          } else {
+          } else if (typeQR == TypeQR.LOGIN_WEB) {
+            emit(state.copyWith(
+                codeQR: event.code,
+                typeQR: TypeQR.LOGIN_WEB,
+                request: ScanType.SCAN,
+                typeContact: TypeContact.Login_Web));
+          } else if (typeQR == TypeQR.OTHER) {
             emit(state.copyWith(
                 codeQR: event.code,
                 typeQR: TypeQR.OTHER,
                 request: ScanType.SCAN,
                 typeContact: TypeContact.Other));
+          } else {
+            emit(state.copyWith(
+              request: ScanType.SCAN_ERROR,
+            ));
           }
         }
       }
