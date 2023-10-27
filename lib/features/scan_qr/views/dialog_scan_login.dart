@@ -41,6 +41,7 @@ class DialogScanLogin extends StatelessWidget {
           MButtonWidget(
             title: 'Đăng nhập',
             isEnable: true,
+            margin: EdgeInsets.symmetric(horizontal: 20),
             onTap: () => _onLoginWeb(context),
           ),
           MButtonWidget(
