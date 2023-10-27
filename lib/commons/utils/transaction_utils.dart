@@ -6,6 +6,7 @@ class TransactionUtils {
 
   static const TransactionUtils _instance =
       TransactionUtils._privateConsrtructor();
+
   static TransactionUtils get instance => _instance;
 
   //status = 0 => not paid
@@ -31,21 +32,27 @@ class TransactionUtils {
     return result;
   }
 
+  // status = 0 : chờ thanh toán
+  // status = 1 : thành công
+  // type: 2 : chuyển tiền từ ngân hàng khác
+  // type: 0 : chuyển tiền từ viet qr
+  ///
+  // status = 2 : đã huỷ
   Color getColorStatus(int status, int type, String transType) {
     Color result = AppColor.TRANSPARENT;
     if (transType.trim() == 'D') {
       result = AppColor.RED_CALENDAR;
     } else {
-      if (type == 2) {
-        result = AppColor.BLUE_TEXT;
-      } else {
-        if (status == 0) {
-          result = AppColor.ORANGE;
-        } else if (status == 1) {
+      if (status == 0) {
+        result = AppColor.ORANGE;
+      } else if (status == 1) {
+        if (type == 2) {
           result = AppColor.BLUE_TEXT;
-        } else {
-          result = AppColor.GREY_TEXT;
+        } else if (type == 0) {
+          result = AppColor.GREEN;
         }
+      } else if (status == 2) {
+        result = AppColor.GREY_TEXT;
       }
     }
 

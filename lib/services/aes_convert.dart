@@ -33,9 +33,15 @@ class AESConvert {
     return 'LOGIN$randomKey$accessKey$loginID';
   }
 
-  static String getLoginID() {
-    Uuid uuid = const Uuid();
-    String loginId = uuid.v4();
-    return loginId;
+  static List<String> splitsKey(String code) {
+    String dec = decrypt(code);
+    dec = dec.replaceAll('LOGIN', '');
+    if (dec.contains(accessKey)) {
+      List<String> splits = dec.split(accessKey);
+      if (splits.isNotEmpty) {
+        return splits;
+      }
+    }
+    return [];
   }
 }

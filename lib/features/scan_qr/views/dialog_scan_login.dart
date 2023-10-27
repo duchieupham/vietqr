@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:dudv_base/dudv_base.dart';
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
@@ -60,8 +58,13 @@ class DialogScanLogin extends StatelessWidget {
   }
 
   _onLoginWeb(BuildContext context) async {
-    String loginId = AESConvert.getLoginID();
-    String randomKey = AESConvert.getEncryptedString(loginId);
+    String loginId = '';
+    String randomKey = '';
+    List<String> splits = AESConvert.splitsKey(code);
+    if (splits.isNotEmpty) {
+      loginId = splits.last;
+      randomKey = splits.first;
+    }
 
     final body = {
       'loginId': loginId,
@@ -95,6 +98,7 @@ class DialogScanLogin extends StatelessWidget {
       );
       if (response.statusCode == 200 || response.statusCode == 400) {
         result = const ResponseMessageDTO(status: 'SUCCESS', message: '');
+        print(response.body);
         // var data = jsonDecode(response.body);
         // result = ResponseMessageDTO.fromJson(data);
       } else {
