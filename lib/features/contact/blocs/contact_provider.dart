@@ -190,14 +190,14 @@ class ContactProvider extends ChangeNotifier {
 
   final List<ContactDataModel> listCategories = [
     ContactDataModel(
-      title: 'Cộng đồng',
-      url: 'assets/images/gl-white.png',
-      type: CategoryType.community.value,
-    ),
-    ContactDataModel(
       title: 'VCard',
       url: 'assets/images/ic-contact-bank-blue.png',
       type: CategoryType.vcard.value,
+    ),
+    ContactDataModel(
+      title: 'Cộng đồng',
+      url: 'assets/images/gl-white.png',
+      type: CategoryType.community.value,
     ),
     ContactDataModel(
       title: 'Cá nhân',
