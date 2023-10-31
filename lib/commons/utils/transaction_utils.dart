@@ -5,7 +5,7 @@ class TransactionUtils {
   const TransactionUtils._privateConsrtructor();
 
   static const TransactionUtils _instance =
-      TransactionUtils._privateConsrtructor();
+  TransactionUtils._privateConsrtructor();
 
   static TransactionUtils get instance => _instance;
 
@@ -48,7 +48,7 @@ class TransactionUtils {
       } else if (status == 1) {
         if (type == 2) {
           result = AppColor.BLUE_TEXT;
-        } else if (type == 0) {
+        } else if (type == 0 || type == 4 || type == 5) {
           result = AppColor.GREEN;
         }
       } else if (status == 2) {

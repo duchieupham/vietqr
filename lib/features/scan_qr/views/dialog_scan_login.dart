@@ -41,6 +41,7 @@ class DialogScanLogin extends StatelessWidget {
           MButtonWidget(
             title: 'Đăng nhập',
             isEnable: true,
+            margin: EdgeInsets.symmetric(horizontal: 20),
             onTap: () => _onLoginWeb(context),
           ),
           MButtonWidget(
@@ -71,19 +72,20 @@ class DialogScanLogin extends StatelessWidget {
       'userId': UserInformationHelper.instance.getUserId(),
       'randomKey': randomKey,
     };
-
-    final result = await _loginWeb(body);
-    if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
-      Navigator.pop(context);
-      Fluttertoast.showToast(
-        msg: 'Đăng nhập thành công',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Theme.of(context).cardColor,
-        textColor: Theme.of(context).hintColor,
-        fontSize: 15,
-      );
-    }
+    try {
+      final result = await _loginWeb(body);
+      if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
+        Navigator.pop(context);
+        Fluttertoast.showToast(
+          msg: 'Đăng nhập thành công',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Theme.of(context).cardColor,
+          textColor: Theme.of(context).hintColor,
+          fontSize: 15,
+        );
+      }
+    } catch (e) {}
   }
 
   Future<ResponseMessageDTO> _loginWeb(body) async {
