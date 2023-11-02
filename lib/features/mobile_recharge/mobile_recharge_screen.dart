@@ -203,27 +203,27 @@ class MobileRechargeScreen extends StatelessWidget {
                                         fontWeight: FontWeight.bold),
                                   ),
                                   const Spacer(),
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.pushNamed(
-                                          context, Routes.TOP_UP);
-                                    },
-                                    child: Text(
-                                      int.parse(UserInformationHelper.instance
-                                                          .getWalletInfo()
-                                                          .amount ??
-                                                      '0') <
-                                                  int.parse(provider.money
-                                                      .replaceAll(',', '')) &&
-                                              provider.paymentTypeMethod == 0
-                                          ? 'Không đủ thanh toán.\n Nạp ngay'
-                                          : 'Nạp thêm',
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                          fontSize: 11,
-                                          color: AppColor.BLUE_TEXT),
-                                    ),
-                                  )
+                                  // GestureDetector(
+                                  //   onTap: () {
+                                  //     Navigator.pushNamed(
+                                  //         context, Routes.TOP_UP);
+                                  //   },
+                                  //   child: Text(
+                                  //     int.parse(UserInformationHelper.instance
+                                  //                         .getWalletInfo()
+                                  //                         .amount ??
+                                  //                     '0') <
+                                  //                 int.parse(provider.money
+                                  //                     .replaceAll(',', '')) &&
+                                  //             provider.paymentTypeMethod == 0
+                                  //         ? 'Không đủ thanh toán.\n Nạp ngay'
+                                  //         : 'Nạp thêm',
+                                  //     textAlign: TextAlign.center,
+                                  //     style: const TextStyle(
+                                  //         fontSize: 11,
+                                  //         color: AppColor.BLUE_TEXT),
+                                  //   ),
+                                  // )
                                 ],
                               ),
                             ),

@@ -118,12 +118,12 @@ class CardWallet extends StatelessWidget {
             Navigator.pushNamed(context, Routes.SEARCH_BANK);
           }),
         ),
-        Expanded(
-          child: _buildItemAction(
-              'assets/images/ic-money-add.png', 'Nạp tiền dịch vụ VietQR', () {
-            Navigator.pushNamed(context, Routes.TOP_UP);
-          }),
-        ),
+        // Expanded(
+        //   child: _buildItemAction(
+        //       'assets/images/ic-money-add.png', 'Nạp tiền dịch vụ VietQR', () {
+        //     Navigator.pushNamed(context, Routes.TOP_UP);
+        //   }),
+        // ),
         Expanded(
           child: _buildItemAction('assets/images/ic-tb-qr.png', 'Quét QR',
               () async {

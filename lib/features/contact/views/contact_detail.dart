@@ -314,14 +314,6 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
                         }
                       } else {
                         _bloc.add(ContactEventGetListDetail(index: index));
-                        // if (!state.listContactDTO[index + 1].isGetDetail) {
-                        //   _bloc
-                        //       .add(ContactEventGetListDetail(index: index + 1));
-                        // } else {
-                        //   if (state.listContactDTO[index].id.isEmpty) {
-                        //     _bloc.add(ContactEventGetListDetail(index: index));
-                        //   }
-                        // }
                       }
                     }),
                   ),
