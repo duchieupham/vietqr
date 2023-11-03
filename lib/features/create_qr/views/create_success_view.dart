@@ -43,69 +43,65 @@ class _CreateQRSuccessState extends State<CreateQRSuccess> {
 
     return Scaffold(
       body: SafeArea(
-        child: RepaintBoundaryWidget(
-          globalKey: globalKey,
-          builder: (key) {
-            return Container(
-              color: AppColor.GREY_BG,
-              child: ListView(
-                padding: EdgeInsets.zero,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 16),
-                    child: VietQr(qrGeneratedDTO: widget.dto),
-                  ),
-                  ValueListenableBuilder(
-                    valueListenable: _waterMarkProvider,
-                    builder: (_, provider, child) {
-                      return Visibility(
-                        visible: provider == true,
-                        child: Container(
-                          width: width,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 10,
+        child: Container(
+          color: AppColor.GREY_BG,
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              RepaintBoundaryWidget(
+                  globalKey: globalKey,
+                  builder: (key) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 16),
+                      child: VietQr(qrGeneratedDTO: widget.dto),
+                    );
+                  }),
+              ValueListenableBuilder(
+                valueListenable: _waterMarkProvider,
+                builder: (_, provider, child) {
+                  return Visibility(
+                    visible: provider == true,
+                    child: Container(
+                      width: width,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 10,
+                      ),
+                      child: RichText(
+                        textAlign: TextAlign.right,
+                        text: const TextSpan(
+                          style: TextStyle(
+                            color: AppColor.GREY_TEXT,
+                            fontSize: 12,
                           ),
-                          child: RichText(
-                            textAlign: TextAlign.right,
-                            text: const TextSpan(
+                          children: [
+                            TextSpan(text: 'Được tạo bởi '),
+                            TextSpan(
+                              text: 'vietqr.vn',
                               style: TextStyle(
-                                color: AppColor.GREY_TEXT,
+                                color: AppColor.BLUE_TEXT,
                                 fontSize: 12,
                               ),
-                              children: [
-                                TextSpan(text: 'Được tạo bởi '),
-                                TextSpan(
-                                  text: 'vietqr.vn',
-                                  style: TextStyle(
-                                    color: AppColor.BLUE_TEXT,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                TextSpan(text: ' - '),
-                                TextSpan(text: 'Hotline '),
-                                TextSpan(
-                                  text: '19006234',
-                                  style: TextStyle(
-                                    color: AppColor.BLUE_TEXT,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ],
                             ),
-                          ),
+                            TextSpan(text: ' - '),
+                            TextSpan(text: 'Hotline '),
+                            TextSpan(
+                              text: '19006234',
+                              style: TextStyle(
+                                color: AppColor.BLUE_TEXT,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
                         ),
-                      );
-                    },
-                  ),
-                  const SizedBox(
-                    height: 120,
-                  )
-                ],
+                      ),
+                    ),
+                  );
+                },
               ),
-            );
-          },
+            ],
+          ),
         ),
       ),
       bottomSheet: Consumer<CreateQRProvider>(

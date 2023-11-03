@@ -83,7 +83,8 @@ class RegisterProvider with ChangeNotifier {
   }
 
   void updateConfirmPassword(String value) {
-    if (value == passwordController.text) {
+    if (value == passwordController.text &&
+        passwordController.text.isNotEmpty) {
       confirmPassController.value =
           confirmPassController.value.copyWith(text: value);
       _isConfirmPassErr = false;

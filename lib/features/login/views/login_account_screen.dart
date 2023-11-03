@@ -180,6 +180,7 @@ class LoginAccountScreen extends StatelessWidget {
                         child: MButtonWidget(
                           title: '',
                           isEnable: true,
+                          colorEnableBgr: AppColor.WHITE,
                           margin: EdgeInsets.zero,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -189,10 +190,8 @@ class LoginAccountScreen extends StatelessWidget {
                               Text(
                                 'VQR ID Card',
                                 style: height < 800
-                                    ? TextStyle(
-                                        fontSize: 10, color: AppColor.WHITE)
-                                    : TextStyle(
-                                        fontSize: 12, color: AppColor.WHITE),
+                                    ? TextStyle(fontSize: 10)
+                                    : TextStyle(fontSize: 12),
                               ),
                             ],
                           ),
@@ -206,6 +205,7 @@ class LoginAccountScreen extends StatelessWidget {
                 Column(
                   children: [
                     child,
+                    const SizedBox(height: 28),
                     if (list.length == 1) ...[
                       SizedBox(height: height < 800 ? 0 : 16),
                       buttonNext,

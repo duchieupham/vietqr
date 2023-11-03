@@ -17,6 +17,7 @@ import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/encrypt_utils.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/phone_widget.dart';
@@ -218,7 +219,10 @@ class _LoginState extends State<_Login> {
               if (!mounted) return;
               final data = await Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => Register(phoneNo: state.phone ?? ''),
+                  builder: (context) => Register(
+                    phoneNo: state.phone ?? '',
+                    isFocus: false,
+                  ),
                   settings: const RouteSettings(
                     name: Routes.REGISTER,
                   ),
@@ -416,6 +420,7 @@ class _LoginState extends State<_Login> {
                                               child: MButtonWidget(
                                                 title: '',
                                                 isEnable: true,
+                                                colorEnableBgr: AppColor.WHITE,
                                                 margin: EdgeInsets.zero,
                                                 child: Row(
                                                   mainAxisAlignment:
@@ -428,13 +433,9 @@ class _LoginState extends State<_Login> {
                                                       'VQR ID Card',
                                                       style: height < 800
                                                           ? TextStyle(
-                                                              fontSize: 10,
-                                                              color: AppColor
-                                                                  .WHITE)
+                                                              fontSize: 10)
                                                           : TextStyle(
-                                                              fontSize: 12,
-                                                              color: AppColor
-                                                                  .WHITE),
+                                                              fontSize: 12),
                                                     ),
                                                   ],
                                                 ),
@@ -507,7 +508,10 @@ class _LoginState extends State<_Login> {
                         provider.updateInfoUser(null);
                         final data = await Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => Register(phoneNo: ''),
+                            builder: (context) => Register(
+                              phoneNo: '',
+                              isFocus: true,
+                            ),
                             settings: const RouteSettings(
                               name: Routes.REGISTER,
                             ),
@@ -604,6 +608,27 @@ class _LoginState extends State<_Login> {
                                 },
                               ),
                             ],
+                          )
+                        else
+                          Container(
+                            alignment: Alignment.center,
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: GestureDetector(
+                              onTap: () async {
+                                NavigatorUtils.navigatePage(
+                                    context,
+                                    Register(
+                                      phoneNo: '',
+                                      isFocus: true,
+                                    ));
+                              },
+                              child: const Text(
+                                'Đăng kí tài khoản mới',
+                                style: TextStyle(
+                                    color: AppColor.BLUE_TEXT,
+                                    decoration: TextDecoration.underline),
+                              ),
+                            ),
                           ),
                         SizedBox(height: height < 800 ? 16 : 20),
                       ],

@@ -21,8 +21,9 @@ import 'views/verify_otp_screen.dart';
 
 class Register extends StatelessWidget {
   final String phoneNo;
+  final bool isFocus;
 
-  const Register({super.key, required this.phoneNo});
+  const Register({super.key, required this.phoneNo, required this.isFocus});
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +31,7 @@ class Register extends StatelessWidget {
       create: (BuildContext context) => RegisterBloc(),
       child: ChangeNotifierProvider<RegisterProvider>(
         create: (_) => RegisterProvider(),
-        child: RegisterScreen(phoneNo: phoneNo),
+        child: RegisterScreen(phoneNo: phoneNo, isFocus: isFocus),
       ),
     );
   }
@@ -38,8 +39,10 @@ class Register extends StatelessWidget {
 
 class RegisterScreen extends StatefulWidget {
   final String phoneNo;
+  final bool isFocus;
 
-  const RegisterScreen({super.key, required this.phoneNo});
+  const RegisterScreen(
+      {super.key, required this.phoneNo, required this.isFocus});
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -86,115 +89,118 @@ class _RegisterScreenState extends State<RegisterScreen> {
       heights = viewInsets.bottom;
     }
 
-    return BlocConsumer<RegisterBloc, RegisterState>(
-      listener: (context, state) async {
-        if (state is RegisterLoadingState ||
-            state is RegisterSentOTPLoadingState) {
-          DialogWidget.instance.openLoadingDialog();
-        }
+    return Consumer<RegisterProvider>(
+      builder: (context, provider, child) {
+        return BlocConsumer<RegisterBloc, RegisterState>(
+          listener: (context, state) async {
+            if (state is RegisterLoadingState ||
+                state is RegisterSentOTPLoadingState) {
+              DialogWidget.instance.openLoadingDialog();
+            }
 
-        if (state is RegisterSentOTPSuccessState) {
-          Navigator.pop(context);
-          DialogWidget.instance
-              .showModalBottomContent(
-                widget: VerifyOTPView(
-                  phone: _phoneNoController.text,
-                  onChangePage: (index) {
-                    Provider.of<RegisterProvider>(context, listen: false)
-                        .updatePage(index);
-                    pageController.animateToPage(1,
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.ease);
-                  },
-                  onVerifyOTP:
-                      Provider.of<RegisterProvider>(context, listen: false)
-                          .verifyOTP,
-                  onResendOTP:
-                      Provider.of<RegisterProvider>(context, listen: false)
-                          .phoneAuthentication(_phoneNoController.text,
-                              onSentOtp: (type) {
-                    _bloc.add(RegisterEventSentOTP(typeOTP: type));
-                  }),
-                ),
-                height: height * 0.5,
-              )
-              .then((value) => isOpenOTP = false);
-        }
-
-        if (state is RegisterSentOTPFailedState) {
-          Navigator.pop(context);
-          Provider.of<RegisterProvider>(context, listen: false).updatePage(1);
-          pageController.animateToPage(1,
-              duration: const Duration(milliseconds: 300), curve: Curves.ease);
-        }
-
-        if (state is RegisterFailedState) {
-          //pop loading dialog
-          Navigator.pop(context);
-          //
-          DialogWidget.instance.openMsgDialog(
-            title: 'Không thể đăng ký',
-            msg: state.msg,
-          );
-        }
-        if (state is RegisterSuccessState) {
-          //pop loading dialog
-          Navigator.of(context).pop();
-          //pop to login page
-          backToPreviousPage(context, true);
-        }
-      },
-      builder: (context, state) {
-        return GestureDetector(
-          onTap: () {
-            FocusManager.instance.primaryFocus?.unfocus();
-          },
-          child: Scaffold(
-            appBar: const MAppBar(title: 'Đăng ký'),
-            resizeToAvoidBottomInset: false,
-            body: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  Expanded(
-                    child: PageView(
-                      controller: pageController,
-                      physics: NeverScrollableScrollPhysics(),
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: FormAccount(
-                            phoneController: _phoneNoController,
-                          ),
-                        ),
-                        ReferralCode()
-                      ],
+            if (state is RegisterSentOTPSuccessState) {
+              Navigator.pop(context);
+              DialogWidget.instance
+                  .showModalBottomContent(
+                    widget: VerifyOTPView(
+                      phone: _phoneNoController.text,
+                      onChangePage: (index) async {
+                        onRegister(provider, height);
+                      },
+                      onVerifyOTP: provider.verifyOTP,
+                      onResendOTP: provider.phoneAuthentication(
+                          _phoneNoController.text, onSentOtp: (type) {
+                        _bloc.add(RegisterEventSentOTP(typeOTP: type));
+                      }),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  (PlatformUtils.instance.checkResize(width))
-                      ? const SizedBox()
-                      : Consumer<RegisterProvider>(
-                          builder: (context, provider, child) {
-                            if (provider.page == 0) {
-                              return _buildButtonSubmitFormAccount();
-                            }
+                    height: height * 0.5,
+                  )
+                  .then((value) => isOpenOTP = false);
+            }
 
-                            return Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                _buildButtonSubmit(context, heights),
-                                if (!provider.isShowButton)
-                                  SizedBox(height: viewInsets.bottom),
-                                const SizedBox(height: 10),
-                              ],
-                            );
-                          },
+            if (state is RegisterSentOTPFailedState) {
+              Navigator.pop(context);
+              onRegister(provider, height);
+            }
+
+            if (state is RegisterFailedState) {
+              //pop loading dialog
+              Navigator.pop(context);
+              //
+              DialogWidget.instance.openMsgDialog(
+                title: 'Không thể đăng ký',
+                msg: state.msg,
+              );
+            }
+            if (state is RegisterSuccessState) {
+              //pop loading dialog
+              Navigator.of(context).pop();
+              //pop to login page
+              backToPreviousPage(context, true);
+            }
+          },
+          builder: (context, state) {
+            return GestureDetector(
+              onTap: () {
+                FocusManager.instance.primaryFocus?.unfocus();
+              },
+              child: Scaffold(
+                appBar: const MAppBar(title: 'Đăng ký'),
+                resizeToAvoidBottomInset: false,
+                body: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: PageView(
+                          controller: pageController,
+                          physics: NeverScrollableScrollPhysics(),
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16.0),
+                              child: FormAccount(
+                                phoneController: _phoneNoController,
+                                isFocus: widget.isFocus,
+                                onEnterIntro: (value) {
+                                  provider.updatePage(value);
+                                  pageController.animateToPage(value,
+                                      duration:
+                                          const Duration(milliseconds: 300),
+                                      curve: Curves.ease);
+                                },
+                              ),
+                            ),
+                            ReferralCode()
+                          ],
                         ),
-                ],
+                      ),
+                      const SizedBox(height: 20),
+                      (PlatformUtils.instance.checkResize(width))
+                          ? const SizedBox()
+                          : Consumer<RegisterProvider>(
+                              builder: (context, _provider, child) {
+                                if (_provider.page == 0) {
+                                  return _buildButtonSubmitFormAccount();
+                                }
+
+                                return Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    _buildButtonSubmit(context, heights),
+                                    if (!_provider.isShowButton)
+                                      SizedBox(height: viewInsets.bottom),
+                                    const SizedBox(height: 10),
+                                  ],
+                                );
+                              },
+                            ),
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ),
+            );
+          },
         );
       },
     );
@@ -247,43 +253,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 colorEnableBgr: AppColor.BLUE_TEXT.withOpacity(0.3),
                 colorEnableText: AppColor.BLUE_TEXT,
                 onTap: () async {
-                  provider.updateHeight(height, true);
-
-                  String phone = provider.phoneNoController.text;
-
-                  String password = provider.passwordController.text;
-                  String confirmPassword = provider.confirmPassController.text;
-
-                  String sharingCode = '';
-
-                  provider.updateErrs(
-                    phoneErr: (StringUtils.instance.isValidatePhone(phone)!),
-                    passErr: (!StringUtils.instance.isNumeric(password) ||
-                        (password.length != 6)),
-                    confirmPassErr: !StringUtils.instance
-                        .isValidConfirmText(password, confirmPassword),
-                  );
-
-                  if (provider.isValidValidation()) {
-                    String userIP =
-                        await UserInformationUtils.instance.getIPAddress();
-
-                    AccountLoginDTO dto = AccountLoginDTO(
-                      phoneNo: phone,
-                      password:
-                          EncryptUtils.instance.encrypted(phone, password),
-                      device: userIP,
-                      fcmToken: '',
-                      sharingCode: sharingCode,
-                      platform: PlatformUtils.instance.isIOsApp()
-                          ? 'MOBILE'
-                          : 'MOBILE_ADR',
-                    );
-                    if (!mounted) return;
-                    context
-                        .read<RegisterBloc>()
-                        .add(RegisterEventSubmit(dto: dto));
-                  }
+                  await provider.phoneAuthentication(_phoneNoController.text,
+                      onSentOtp: (type) {
+                    _bloc.add(RegisterEventSentOTP(typeOTP: type));
+                  });
                 },
               ),
             ),
@@ -292,47 +265,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
             Expanded(
               child: MButtonWidget(
-                title: 'Tiếp tục',
+                title: 'Đăng ký',
                 isEnable: provider.isEnableButton(),
                 margin: EdgeInsets.zero,
                 onTap: () async {
-                  provider.updateHeight(height, true);
-
-                  String phone = provider.phoneNoController.text;
-
-                  String password = provider.passwordController.text;
-                  String confirmPassword = provider.confirmPassController.text;
-
-                  String sharingCode = provider.introduceController.text;
-
-                  provider.updateErrs(
-                    phoneErr: (StringUtils.instance.isValidatePhone(phone)!),
-                    passErr: (!StringUtils.instance.isNumeric(password) ||
-                        (password.length != 6)),
-                    confirmPassErr: !StringUtils.instance
-                        .isValidConfirmText(password, confirmPassword),
-                  );
-
-                  if (provider.isValidValidation()) {
-                    String userIP =
-                        await UserInformationUtils.instance.getIPAddress();
-
-                    AccountLoginDTO dto = AccountLoginDTO(
-                      phoneNo: phone,
-                      password:
-                          EncryptUtils.instance.encrypted(phone, password),
-                      device: userIP,
-                      fcmToken: '',
-                      sharingCode: sharingCode,
-                      platform: PlatformUtils.instance.isIOsApp()
-                          ? 'MOBILE'
-                          : 'MOBILE_ADR',
-                    );
-                    if (!mounted) return;
-                    context
-                        .read<RegisterBloc>()
-                        .add(RegisterEventSubmit(dto: dto));
-                  }
+                  await provider.phoneAuthentication(_phoneNoController.text,
+                      onSentOtp: (type) {
+                    _bloc.add(RegisterEventSentOTP(typeOTP: type));
+                  });
                 },
               ),
             ),
@@ -340,6 +280,40 @@ class _RegisterScreenState extends State<RegisterScreen> {
         );
       },
     );
+  }
+
+  onRegister(provider, height) async {
+    provider.updateHeight(height, true);
+
+    String phone = provider.phoneNoController.text;
+
+    String password = provider.passwordController.text;
+    String confirmPassword = provider.confirmPassController.text;
+
+    String sharingCode = provider.introduceController.text;
+
+    provider.updateErrs(
+      phoneErr: (StringUtils.instance.isValidatePhone(phone)!),
+      passErr:
+          (!StringUtils.instance.isNumeric(password) || (password.length != 6)),
+      confirmPassErr:
+          !StringUtils.instance.isValidConfirmText(password, confirmPassword),
+    );
+
+    if (provider.isValidValidation()) {
+      String userIP = await UserInformationUtils.instance.getIPAddress();
+
+      AccountLoginDTO dto = AccountLoginDTO(
+        phoneNo: phone,
+        password: EncryptUtils.instance.encrypted(phone, password),
+        device: userIP,
+        fcmToken: '',
+        sharingCode: sharingCode,
+        platform: PlatformUtils.instance.isIOsApp() ? 'MOBILE' : 'MOBILE_ADR',
+      );
+      if (!mounted) return;
+      context.read<RegisterBloc>().add(RegisterEventSubmit(dto: dto));
+    }
   }
 
   bool isOpenOTP = false;

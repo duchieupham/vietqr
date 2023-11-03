@@ -1,16 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/layouts/pin_code_input.dart';
 
 import '../../../../commons/widgets/phone_widget.dart';
 import '../../../../services/providers/register_provider.dart';
 
-class FormAccount extends StatelessWidget {
+class FormAccount extends StatefulWidget {
   final TextEditingController phoneController;
+  final bool isFocus;
+  final Function(int) onEnterIntro;
 
-  const FormAccount({Key? key, required this.phoneController})
+  const FormAccount(
+      {Key? key,
+      required this.phoneController,
+      required this.isFocus,
+      required this.onEnterIntro})
       : super(key: key);
+
+  @override
+  State<FormAccount> createState() => _FormAccountState();
+}
+
+class _FormAccountState extends State<FormAccount> {
+  final repassFocus = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -42,8 +56,8 @@ class FormAccount extends StatelessWidget {
               ),
               PhoneWidget(
                 onChanged: provider.updatePhone,
-                phoneController: phoneController,
-                autoFocus: phoneController.text.isEmpty,
+                phoneController: widget.phoneController,
+                autoFocus: widget.isFocus,
               ),
               Visibility(
                 visible: provider.phoneErr,
@@ -85,6 +99,9 @@ class FormAccount extends StatelessWidget {
                   obscureText: true,
                   onChanged: (value) {
                     provider.updatePassword(value);
+                    if (value.length == 6) {
+                      repassFocus.requestFocus();
+                    }
                   },
                 ),
               ),
@@ -124,6 +141,7 @@ class FormAccount extends StatelessWidget {
                 child: PinCodeInput(
                   autoFocus: true,
                   obscureText: true,
+                  focusNode: repassFocus,
                   onChanged: (value) {
                     provider.updateConfirmPassword(value);
                   },
@@ -136,6 +154,28 @@ class FormAccount extends StatelessWidget {
                   child: Text(
                     'Mật khẩu không trùng khớp',
                     style: TextStyle(color: AppColor.RED_TEXT, fontSize: 13),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 40),
+              Container(
+                alignment: Alignment.center,
+                child: GestureDetector(
+                  onTap: () async {
+                    if (provider.isEnableButton()) {
+                      widget.onEnterIntro(1);
+                    } else {
+                      provider.updatePhone(provider.phoneNoController.text);
+                      provider.updatePassword(provider.passwordController.text);
+                      provider.updateConfirmPassword(
+                          provider.confirmPassController.text);
+                    }
+                  },
+                  child: const Text(
+                    'Nhập thông tin người giới thiệu (Không bắt buộc)',
+                    style: TextStyle(
+                        color: AppColor.BLUE_TEXT,
+                        decoration: TextDecoration.underline),
                   ),
                 ),
               ),
