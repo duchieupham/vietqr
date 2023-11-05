@@ -2,6 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
+import 'package:vierqr/features/register/register_screen.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/info_user_dto.dart';
 
@@ -205,7 +207,21 @@ class LoginAccountScreen extends StatelessWidget {
                 Column(
                   children: [
                     child,
-                    const SizedBox(height: 28),
+                    const SizedBox(height: 16),
+                    Container(
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: GestureDetector(
+                        onTap: onRegister,
+                        child: const Text(
+                          'Đăng kí tài khoản mới',
+                          style: TextStyle(
+                              color: AppColor.BLUE_TEXT,
+                              decoration: TextDecoration.underline),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
                     if (list.length == 1) ...[
                       SizedBox(height: height < 800 ? 0 : 16),
                       buttonNext,

@@ -13,7 +13,6 @@ import 'package:vierqr/features/scan_qr/widgets/general_dialog.dart';
 import 'package:vierqr/models/bank_name_search_dto.dart';
 import 'package:vierqr/models/contact_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 import 'events/scan_qr_event.dart';
 

@@ -17,7 +17,6 @@ import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/encrypt_utils.dart';
-import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/phone_widget.dart';
@@ -608,27 +607,6 @@ class _LoginState extends State<_Login> {
                                 },
                               ),
                             ],
-                          )
-                        else
-                          Container(
-                            alignment: Alignment.center,
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: GestureDetector(
-                              onTap: () async {
-                                NavigatorUtils.navigatePage(
-                                    context,
-                                    Register(
-                                      phoneNo: '',
-                                      isFocus: true,
-                                    ));
-                              },
-                              child: const Text(
-                                'Đăng kí tài khoản mới',
-                                style: TextStyle(
-                                    color: AppColor.BLUE_TEXT,
-                                    decoration: TextDecoration.underline),
-                              ),
-                            ),
                           ),
                         SizedBox(height: height < 800 ? 16 : 20),
                       ],

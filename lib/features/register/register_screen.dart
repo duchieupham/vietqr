@@ -207,19 +207,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void backToPreviousPage(BuildContext context, bool isRegisterSuccess) {
-    Navigator.pop(
-        context,
-        isRegisterSuccess
-            ? {
-                'phone': Provider.of<RegisterProvider>(context, listen: false)
-                    .phoneNoController
-                    .text,
-                'password':
-                    Provider.of<RegisterProvider>(context, listen: false)
-                        .passwordController
-                        .text,
-              }
-            : null);
+    Navigator.pop(context, {
+      'phone': Provider.of<RegisterProvider>(context, listen: false)
+          .phoneNoController
+          .text,
+      'password': Provider.of<RegisterProvider>(context, listen: false)
+          .passwordController
+          .text,
+    });
   }
 
   Widget _buildButtonSubmitFormAccount() {
