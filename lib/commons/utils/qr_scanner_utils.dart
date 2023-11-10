@@ -82,8 +82,6 @@ class QRScannerUtils {
   Future<TypeQR> checkScan(String code) async {
     VietQRScannedDTO vietQRScannedDTO =
         QRScannerUtils.instance.getBankAccountFromQR(code);
-    String dec = AESConvert.decrypt(code);
-
     if (vietQRScannedDTO.caiValue.isNotEmpty &&
         vietQRScannedDTO.bankAccount.isNotEmpty) {
       return TypeQR.QR_BANK;
@@ -95,11 +93,16 @@ class QRScannerUtils {
       return TypeQR.QR_LINK;
     } else if (code.trim().contains('VCARD')) {
       return TypeQR.QR_VCARD;
-    } else if (dec.contains(AESConvert.accessKey)) {
-      if (UserInformationHelper.instance.getUserId().isEmpty) {
-        return TypeQR.NEGATIVE_TWO;
+    } else {
+      if (code.trim().endsWith('=')) {
+        String dec = AESConvert.decrypt(code);
+        if (dec.contains(AESConvert.accessKey)) {
+          if (UserInformationHelper.instance.getUserId().isEmpty) {
+            return TypeQR.NEGATIVE_TWO;
+          }
+          return TypeQR.LOGIN_WEB;
+        }
       }
-      return TypeQR.LOGIN_WEB;
     }
     return TypeQR.OTHER;
   }

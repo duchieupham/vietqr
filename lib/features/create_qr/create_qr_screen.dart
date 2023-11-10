@@ -22,6 +22,7 @@ import 'package:vierqr/features/create_qr/states/create_qr_state.dart';
 import 'package:vierqr/features/create_qr/views/create_success_view.dart';
 import 'package:vierqr/features/create_qr/widgets/bottom_sheet_image.dart';
 import 'package:vierqr/features/transaction/widgets/transaction_sucess_widget.dart';
+import 'package:vierqr/features/web_view/views/custom_web_view.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
@@ -196,6 +197,16 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
       builder: (context, state) {
         return Consumer<CreateQRProvider>(
           builder: (context, provider, child) {
+            return Scaffold(
+              body: SafeArea(
+                child: CustomWebView(
+                  url: 'http://192.168.0.235:8989/service/vhitek/active',
+                  title: 'demo web',
+                  height: MediaQuery.of(context).size.height - 62,
+                ),
+              ),
+            );
+
             if (provider.page == 1) {
               return CreateQRSuccess(
                 dto: state.dto ?? dto,
@@ -272,7 +283,8 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                                           fontSize: 14,
                                                           fontWeight:
                                                               FontWeight.w400,
-                                                          color: AppColor.BLACK),
+                                                          color:
+                                                              AppColor.BLACK),
                                                     ),
                                                   ),
                                                   Icon(Icons
@@ -529,9 +541,8 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                     provider.money.replaceAll(',', '');
 
                                 String formattedName = StringUtils.instance
-                                    .removeDiacritic(StringUtils.instance
-                                        .capitalFirstCharacter(
-                                            provider.contentController.text));
+                                    .removeDiacritic(
+                                        provider.contentController.text);
 
                                 QRCreateDTO dto = QRCreateDTO(
                                   bankId: state.bankAccountDTO?.id ?? '',

@@ -94,7 +94,7 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>NSContactsUsageDescription</key>
-    <string>Reason we need access to the contact list</string>
+    <string>Lấy thông tin danh bạ để hiển thị danh bạ dạng VCard. Chia sẻ thông tin liên hệ với mọi người dễ dàng hơn.</string>
     <key>com.apple.developer.nfc.readersession.felica.systemcodes</key>
 	<array>
 		<string>0003</string>
