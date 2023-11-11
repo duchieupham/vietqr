@@ -22,6 +22,7 @@ import 'package:vierqr/features/create_qr/states/create_qr_state.dart';
 import 'package:vierqr/features/create_qr/views/create_success_view.dart';
 import 'package:vierqr/features/create_qr/widgets/bottom_sheet_image.dart';
 import 'package:vierqr/features/transaction/widgets/transaction_sucess_widget.dart';
+import 'package:vierqr/features/web_view/views/custom_inapp_webview.dart';
 import 'package:vierqr/features/web_view/views/custom_web_view.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
@@ -199,11 +200,16 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
           builder: (context, provider, child) {
             return Scaffold(
               body: SafeArea(
-                child: CustomWebView(
-                  url: 'http://192.168.0.235:8989/service/vhitek/active',
-                  title: 'demo web',
-                  height: MediaQuery.of(context).size.height - 62,
-                ),
+                child: Platform.isAndroid
+                    ? CustomWebView(
+                        url: 'http://192.168.52.102:8989/service/vhitek/active',
+                        title: 'demo web',
+                        height: MediaQuery.of(context).size.height - 62,
+                      )
+                    : CustomInAppWebView(
+                        url: 'http://192.168.52.102:8989/login',
+                        userId: UserInformationHelper.instance.getUserId(),
+                      ),
               ),
             );
 
