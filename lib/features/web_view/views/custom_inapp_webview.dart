@@ -19,10 +19,6 @@ class _CustomInAppWebViewState extends State<CustomInAppWebView> {
   InAppWebViewController? webViewController;
   final webViewKey = GlobalKey();
 
-  String url = "";
-  double progress = 0;
-  final urlController = TextEditingController();
-
   InAppWebViewGroupOptions options = InAppWebViewGroupOptions(
       crossPlatform: InAppWebViewOptions(
         useShouldOverrideUrlLoading: true,
@@ -102,10 +98,7 @@ class _CustomInAppWebViewState extends State<CustomInAppWebView> {
                       });
                 },
                 onLoadStart: (controller, url) async {
-                  setState(() {
-                    this.url = url.toString();
-                    urlController.text = this.url;
-                  });
+                  setState(() {});
                 },
                 androidOnPermissionRequest:
                     (controller, request, resources) async {
@@ -139,23 +132,14 @@ class _CustomInAppWebViewState extends State<CustomInAppWebView> {
                 },
                 onLoadStop: (controller, url) async {
                   sendDataToWebView(controller);
-                  setState(() {
-                    this.url = url.toString();
-                    urlController.text = this.url;
-                  });
+                  setState(() {});
                 },
                 onProgressChanged: (controller, progress) {
                   if (progress == 100) {}
-                  setState(() {
-                    this.progress = progress / 100;
-                    urlController.text = this.url;
-                  });
+                  setState(() {});
                 },
                 onUpdateVisitedHistory: (controller, url, isReload) {
-                  setState(() {
-                    this.url = url.toString();
-                    urlController.text = this.url;
-                  });
+                  setState(() {});
                 },
                 onConsoleMessage: (controller, consoleMessage) {
                   print(consoleMessage);
@@ -166,5 +150,11 @@ class _CustomInAppWebViewState extends State<CustomInAppWebView> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    webViewController!.clearCache();
+    super.dispose();
   }
 }
