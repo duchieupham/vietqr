@@ -113,6 +113,8 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
       if (bankTypeDTO != null) {
         Provider.of<AddBankProvider>(context, listen: false)
             .updateSelectBankType(bankTypeDTO, update: true);
+        Provider.of<AddBankProvider>(context, listen: false)
+            .updateEnableName(true);
       }
     } else {
       _bloc.add(const LoadDataBankEvent());
@@ -495,7 +497,9 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                                                   provider.resetValidate();
                                                   provider.updateSelectBankType(
                                                       state.listBanks![data]);
-                                                  Provider.of<AddBankProvider>(context, listen: false)
+                                                  Provider.of<AddBankProvider>(
+                                                          context,
+                                                          listen: false)
                                                       .updateEnableName(true);
                                                 }
                                               },

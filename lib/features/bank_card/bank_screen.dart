@@ -199,6 +199,7 @@ class _BankScreenState extends State<_BankScreen>
                   sizedBox,
                   _refresh,
                   state.listBankTypeDTO,
+                  state.isEmpty,
                 );
               },
             ),
@@ -325,6 +326,7 @@ class _BankScreenState extends State<_BankScreen>
     double sizeBox,
     RefreshCallback? onRefresh,
     List<BankTypeDTO> listBanks,
+    bool isEmpty,
   ) {
     return StackedList(
       maxListHeight: maxListHeight,
@@ -335,6 +337,7 @@ class _BankScreenState extends State<_BankScreen>
       sizeBox: sizeBox,
       onRefresh: onRefresh,
       listBanks: listBanks,
+      isEmpty: isEmpty,
       getListBank: () {
         getListBank(context);
       },
@@ -406,6 +409,7 @@ class StackedList extends StatefulWidget {
   final RefreshCallback? onRefresh;
   final Function getListBank;
   final List<BankTypeDTO> listBanks;
+  final bool isEmpty;
 
   const StackedList({
     super.key,
@@ -418,6 +422,7 @@ class StackedList extends StatefulWidget {
     this.onRefresh,
     required this.getListBank,
     required this.listBanks,
+    required this.isEmpty,
   });
 
   @override
@@ -471,7 +476,7 @@ class _StackedList extends State<StackedList> {
             children: fillListBankAccount(widget.list).map(
               (item) {
                 int index = fillListBankAccount(widget.list).indexOf(item);
-                return Padding(
+                return Container(
                   padding: EdgeInsets.only(top: index * 97),
                   child: _buildCardItem(
                       context: context,
@@ -482,7 +487,89 @@ class _StackedList extends State<StackedList> {
                 );
               },
             ).toList(),
-          )
+          ),
+          if (widget.isEmpty)
+            Container(
+              height: MediaQuery.of(context).size.height - 120,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    'Danh sách ngân hàng',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  ),
+                  const SizedBox(height: 16),
+                  Expanded(
+                    child: GridView.builder(
+                      padding: EdgeInsets.zero,
+                      physics: NeverScrollableScrollPhysics(),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 4,
+                        crossAxisSpacing: 8,
+                        mainAxisSpacing: 8,
+                        childAspectRatio: 2.5,
+                      ),
+                      itemCount: widget.listBanks.length,
+                      itemBuilder: (context, index) {
+                        var data = widget.listBanks[index];
+                        return GestureDetector(
+                          onTap: () async {
+                            await Navigator.pushNamed(
+                              context,
+                              Routes.ADD_BANK_CARD,
+                              arguments: {
+                                'step': 0,
+                                'bankDTO': data,
+                                'bankAccount': '',
+                                'name': ''
+                              },
+                            );
+                            widget.getListBank();
+                          },
+                          child: Stack(
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  border:
+                                      Border.all(color: AppColor.grey979797),
+                                  image: DecorationImage(
+                                      image: ImageUtils.instance
+                                          .getImageNetWork(data.imageId)),
+                                ),
+                                margin:
+                                    EdgeInsets.only(top: 4, right: 4, left: 4),
+                              ),
+                              Align(
+                                alignment: Alignment.topRight,
+                                child: Container(
+                                  padding: EdgeInsets.all(2),
+                                  decoration: BoxDecoration(
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(25)),
+                                    color: data.bankCode == 'MB'
+                                        ? AppColor.BLUE_TEXT
+                                        : AppColor.TRANSPARENT,
+                                  ),
+                                  child: Icon(
+                                    Icons.check,
+                                    color: data.bankCode == 'MB'
+                                        ? AppColor.WHITE
+                                        : AppColor.TRANSPARENT,
+                                    size: 8,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
         ],
       ),
     );
@@ -503,9 +590,9 @@ class _StackedList extends State<StackedList> {
       }
     });
 
-    if (index == 0) {
+    if (dto.id.isEmpty && index == 0 && dto.isFirst) {
       return _buildCardWallet();
-    } else if (index == maxLengthList - 1) {
+    } else if (dto.id.isEmpty && index == maxLengthList - 1 && !dto.isFirst) {
       return _buildAddBankCard(width);
     }
     return (dto.id.isNotEmpty)
@@ -608,13 +695,6 @@ class _StackedList extends State<StackedList> {
                           onTap: () async {
                             NavigatorUtils.navigatePage(
                                 context, CreateQrScreen(bankAccountDTO: dto));
-                            // Navigator.pushNamed(
-                            //   context,
-                            //   Routes.CREATE_QR,
-                            //   arguments: {
-                            //     'bankInfo': dto,
-                            //   },
-                            // );
                           },
                           child: BoxLayout(
                             width: 95,
@@ -818,7 +898,6 @@ class _StackedList extends State<StackedList> {
   Widget _buildAddBankCard(double width) {
     return GestureDetector(
       onTap: () async {
-        // _pickAndProcessQRImage();
         await Navigator.pushNamed(context, Routes.ADD_BANK_CARD);
         widget.getListBank();
       },

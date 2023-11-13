@@ -67,10 +67,19 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
       try {
         if (event is LoadDataBankEvent) {
           List<BankTypeDTO> list = await bankCardRepository.getBankTypes();
+          if (list.isNotEmpty) {
+            int index = list.indexWhere(
+                (element) => element.bankCode.toUpperCase().trim() == 'MB');
+            if (index != -1) {
+              BankTypeDTO dto = list[index];
+              list.removeAt(index);
+              list.insert(0, dto);
+            }
+          }
+
           banks = list;
-          emit(
-            state.copyWith(listBankTypeDTO: list, request: BankType.GET_BANK),
-          );
+          emit(state.copyWith(
+              listBankTypeDTO: list, request: BankType.GET_BANK));
         }
       } catch (e) {
         LOG.error(e.toString());
@@ -86,11 +95,18 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
   void _getBankAccounts(BankEvent event, Emitter emit) async {
     try {
       if (event is BankCardEventGetList) {
+        bool isEmpty = false;
+
         if (state.status == BlocStatus.NONE) {
           emit(state.copyWith(status: BlocStatus.LOADING));
         }
         List<BankAccountDTO> list =
             await bankCardRepository.getListBankAccount(userId);
+
+        if (list.isEmpty) {
+          isEmpty = true;
+        }
+
         final List<Color> colors = [];
         PaletteGenerator? paletteGenerator;
         BuildContext context = NavigationService.navigatorKey.currentContext!;
@@ -113,13 +129,18 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
             }
           }
         }
-        list = [otd, ...list, otd2];
+        if (list.isNotEmpty) {
+          list = [otd, ...list, otd2];
+        } else {
+          list = [otd2];
+        }
 
         emit(state.copyWith(
             request: BankType.BANK,
             listBanks: list,
             colors: colors,
-            status: BlocStatus.UNLOADING));
+            status: BlocStatus.UNLOADING,
+            isEmpty: isEmpty));
       }
     } catch (e) {
       LOG.error(e.toString());
@@ -147,6 +168,7 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
     isAuthenticated: false,
     businessName: '',
     bankColor: Colors.white,
+    isFirst: true,
   );
   final otd2 = BankAccountDTO(
     id: '',
@@ -162,5 +184,6 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
     isAuthenticated: false,
     businessName: '',
     bankColor: Colors.black26,
+    isFirst: false,
   );
 }

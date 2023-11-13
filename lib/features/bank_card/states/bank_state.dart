@@ -5,7 +5,6 @@ import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 
-
 class BankState extends Equatable {
   final String? msg;
   final BlocStatus status;
@@ -17,6 +16,7 @@ class BankState extends Equatable {
   final List<BankTypeDTO> listBankTypeDTO;
   final TypeQR typeQR;
   final String? barCode;
+  final bool isEmpty;
 
   const BankState({
     this.msg,
@@ -29,6 +29,7 @@ class BankState extends Equatable {
     required this.listBanks,
     required this.colors,
     required this.listBankTypeDTO,
+    this.isEmpty = false,
   });
 
   BankState copyWith({
@@ -43,6 +44,7 @@ class BankState extends Equatable {
     BankTypeDTO? bankTypeDTO,
     TypeQR? typeQR,
     String? barCode,
+    bool? isEmpty,
   }) {
     return BankState(
       status: status ?? this.status,
@@ -55,6 +57,7 @@ class BankState extends Equatable {
       listBanks: listBanks ?? this.listBanks,
       colors: colors ?? this.colors,
       listBankTypeDTO: listBankTypeDTO ?? this.listBankTypeDTO,
+      isEmpty: isEmpty ?? this.isEmpty,
     );
   }
 
@@ -68,5 +71,6 @@ class BankState extends Equatable {
         listBanks,
         typeQR,
         barCode,
+        isEmpty,
       ];
 }

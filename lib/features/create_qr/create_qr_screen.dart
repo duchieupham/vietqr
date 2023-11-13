@@ -22,6 +22,8 @@ import 'package:vierqr/features/create_qr/states/create_qr_state.dart';
 import 'package:vierqr/features/create_qr/views/create_success_view.dart';
 import 'package:vierqr/features/create_qr/widgets/bottom_sheet_image.dart';
 import 'package:vierqr/features/transaction/widgets/transaction_sucess_widget.dart';
+import 'package:vierqr/features/web_view/views/custom_inapp_webview.dart';
+import 'package:vierqr/features/web_view/views/custom_web_view.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
@@ -520,10 +522,9 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                             ),
                             MButtonWidget(
                               title: 'Tạo mã QR',
-                              isEnable: provider.amountErr,
-                              colorEnableText: provider.amountErr
-                                  ? AppColor.WHITE
-                                  : AppColor.GREY_TEXT,
+                              isEnable: true,
+                              colorEnableText:
+                                  true ? AppColor.WHITE : AppColor.GREY_TEXT,
                               onTap: () {
                                 FocusManager.instance.primaryFocus?.unfocus();
                                 String money =

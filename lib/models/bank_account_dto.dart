@@ -16,6 +16,7 @@ class BankAccountDTO {
   final String? userId;
 
   Color? bankColor;
+  bool isFirst;
 
   // final String branchCode;
   // final String businessCode;
@@ -35,6 +36,7 @@ class BankAccountDTO {
     required this.isAuthenticated,
     this.userId,
     this.bankColor,
+    this.isFirst = false,
     // required this.branchCode,
     // required this.businessCode,
   });
@@ -58,6 +60,7 @@ class BankAccountDTO {
       businessName: json['businessName'] ?? '',
       isAuthenticated: json['authenticated'] ?? false,
       userId: json['userId'] ?? '',
+      isFirst: false,
       // branchCode: json['branchCode'],
       // businessCode: json['businessCode'],
     );

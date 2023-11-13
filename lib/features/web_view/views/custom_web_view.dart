@@ -70,57 +70,21 @@ class _CustomWebViewState extends State<CustomWebView> {
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
     initialServices(context);
-    return Column(
-      children: [
-        SizedBox(
-          width: width,
-          height: 50,
-          child: Row(
-            children: [
-              const SizedBox(
-                width: 80,
-                height: 50,
-              ),
-              Expanded(
-                child: Container(
-                  alignment: Alignment.center,
-                  child: Text(
-                    widget.title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 15,
-                    ),
-                  ),
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: SizedBox(
+                width: width,
+                child: WebViewWidget(
+                  controller: controller,
                 ),
               ),
-              InkWell(
-                onTap: () async {
-                  Navigator.pop(context);
-                },
-                child: Container(
-                  width: 80,
-                  alignment: Alignment.centerRight,
-                  child: const Text(
-                    'Xong',
-                    style: TextStyle(
-                      color: AppColor.BLUE_TEXT,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        DividerWidget(width: width),
-        Expanded(
-          child: SizedBox(
-            width: width,
-            child: WebViewWidget(
-              controller: controller,
             ),
-          ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

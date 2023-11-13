@@ -43,6 +43,15 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
             emit(state.copyWith(status: BlocStatus.LOADING));
           }
           List<BankTypeDTO> list = await bankTypeRepository.getBankTypes();
+          if (list.isNotEmpty) {
+            int index = list.indexWhere(
+                (element) => element.bankCode.toUpperCase().trim() == 'MB');
+            if (index != -1) {
+              BankTypeDTO dto = list[index];
+              list.removeAt(index);
+              list.insert(0, dto);
+            }
+          }
           banks = list;
           emit(
             state.copyWith(
