@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:vierqr/commons/constants/configurations/theme.dart';
 
 class CustomInAppWebView extends StatefulWidget {
   final String url;
@@ -56,6 +57,32 @@ class _CustomInAppWebViewState extends State<CustomInAppWebView> {
       body: SafeArea(
         child: Column(
           children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Icon(
+                        Icons.close,
+                        size: 20,
+                        color: AppColor.BLACK_BUTTON,
+                      )),
+                  const Spacer(),
+                  Container(
+                    width: 50,
+                    height: 40,
+                    margin: const EdgeInsets.only(right: 20),
+                    child: Image.asset(
+                      'assets/images/ic-viet-qr.png',
+                      height: 40,
+                    ),
+                  ),
+                ],
+              ),
+            ),
             Expanded(
               child: InAppWebView(
                 key: webViewKey,
@@ -64,6 +91,15 @@ class _CustomInAppWebViewState extends State<CustomInAppWebView> {
                 initialOptions: options,
                 onWebViewCreated: (controller) async {
                   webViewController = controller;
+                  controller.addJavaScriptHandler(
+                      handlerName: 'sendDataToFlutter',
+                      callback: (data) {
+                        if (data.isNotEmpty) {
+                          if (data.contains('CLOSE_WEB')) {
+                            Navigator.pop(context);
+                          }
+                        }
+                      });
                 },
                 onLoadStart: (controller, url) async {
                   setState(() {

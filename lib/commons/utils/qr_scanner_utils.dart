@@ -187,17 +187,10 @@ class QRScannerUtils {
         case TypeContact.Sale:
           NavigatorUtils.navigatePage(
             context,
-            Platform.isAndroid
-                ? CustomWebView(
-                    url: 'https://vietqr.vn/service/vhitek/active?mid=$value',
-                    title: '',
-                    height: MediaQuery.of(context).size.height,
-                    userId: UserInformationHelper.instance.getUserId(),
-                  )
-                : CustomInAppWebView(
-                    url: 'https://vietqr.vn/service/vhitek/active?mid=$value',
-                    userId: UserInformationHelper.instance.getUserId(),
-                  ),
+            CustomInAppWebView(
+              url: 'https://vietqr.vn/service/vhitek/active?mid=$value',
+              userId: UserInformationHelper.instance.getUserId(),
+            ),
           );
           break;
         case TypeContact.Other:
