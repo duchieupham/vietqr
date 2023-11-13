@@ -6,12 +6,14 @@ import 'package:webview_flutter/webview_flutter.dart';
 class CustomWebView extends StatefulWidget {
   final String url;
   final String title;
+  final String? userId;
   final double height;
 
   const CustomWebView({
     super.key,
     required this.url,
     required this.title,
+    this.userId,
     required this.height,
   });
 
@@ -60,8 +62,7 @@ class _CustomWebViewState extends State<CustomWebView> {
   }
 
   void sendDataToWebView() async {
-    String sampleData = 'Hello from Flutter!';
-    String jsCode = 'receiveDataFromFlutter("$sampleData");';
+    String jsCode = 'receiveDataFromFlutter("${widget.userId}");';
     controller.runJavaScript(jsCode);
   }
 

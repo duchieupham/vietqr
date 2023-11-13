@@ -160,6 +160,12 @@ class ScanQrBloc extends Bloc<ScanQrEvent, ScanQrState> {
                 typeQR: TypeQR.OTHER,
                 request: ScanType.SCAN,
                 typeContact: TypeContact.Other));
+          } else if (typeQR == TypeQR.QR_SALE) {
+            emit(state.copyWith(
+                codeQR: event.code,
+                typeQR: TypeQR.QR_SALE,
+                request: ScanType.SCAN,
+                typeContact: TypeContact.Sale));
           } else {
             emit(state.copyWith(
               request: ScanType.SCAN_ERROR,

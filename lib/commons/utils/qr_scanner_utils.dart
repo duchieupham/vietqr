@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
@@ -5,6 +7,7 @@ import 'package:vierqr/commons/constants/vietqr/aid.dart';
 import 'package:vierqr/commons/constants/vietqr/viet_qr_id.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/log.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/contact/save_contact_screen.dart';
 import 'package:vierqr/features/scan_qr/views/dialog_scan_login.dart';
@@ -13,6 +16,8 @@ import 'package:vierqr/features/scan_qr/views/dialog_scan_type_id.dart';
 import 'package:vierqr/features/scan_qr/views/dialog_scan_type_other.dart';
 import 'package:vierqr/features/scan_qr/views/dialog_scan_type_url.dart';
 import 'package:vierqr/features/scan_qr/views/dialog_scan_type_vcard.dart';
+import 'package:vierqr/features/web_view/views/custom_inapp_webview.dart';
+import 'package:vierqr/features/web_view/views/custom_web_view.dart';
 import 'package:vierqr/models/viet_qr_scanned_dto.dart';
 import 'package:vierqr/services/aes_convert.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
@@ -93,6 +98,10 @@ class QRScannerUtils {
       return TypeQR.QR_LINK;
     } else if (code.trim().contains('VCARD')) {
       return TypeQR.QR_VCARD;
+    } else if (code.toUpperCase().trim().contains('VHI') ||
+        code.toUpperCase().trim().contains('TSE') ||
+        code.toUpperCase().trim().contains('VTS')) {
+      return TypeQR.QR_SALE;
     } else {
       if (code.trim().endsWith('=')) {
         String dec = AESConvert.decrypt(code);
@@ -173,6 +182,22 @@ class QRScannerUtils {
         case TypeContact.Login_Web:
           DialogWidget.instance.openDialogLoginWeb(
             child: DialogScanLogin(code: value),
+          );
+          break;
+        case TypeContact.Sale:
+          NavigatorUtils.navigatePage(
+            context,
+            Platform.isAndroid
+                ? CustomWebView(
+                    url: 'https://vietqr.vn/service/vhitek/active?mid=$value',
+                    title: '',
+                    height: MediaQuery.of(context).size.height,
+                    userId: UserInformationHelper.instance.getUserId(),
+                  )
+                : CustomInAppWebView(
+                    url: 'https://vietqr.vn/service/vhitek/active?mid=$value',
+                    userId: UserInformationHelper.instance.getUserId(),
+                  ),
           );
           break;
         case TypeContact.Other:

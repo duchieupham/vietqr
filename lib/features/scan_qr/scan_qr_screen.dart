@@ -192,6 +192,12 @@ class _ScanQrScreenState extends State<_BodyWidget> {
               'typeQR': TypeQR.LOGIN_WEB,
               'data': state.codeQR ?? '',
             });
+          } else if (state.typeQR == TypeQR.QR_SALE) {
+            Navigator.of(context).pop({
+              'type': state.typeContact,
+              'typeQR': TypeQR.QR_SALE,
+              'data': state.codeQR ?? '',
+            });
           }
         }
       },

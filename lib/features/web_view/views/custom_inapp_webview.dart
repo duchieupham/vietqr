@@ -1,10 +1,7 @@
 import 'dart:collection';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/commons/widgets/divider_widget.dart';
 
 class CustomInAppWebView extends StatefulWidget {
   final String url;
@@ -40,15 +37,9 @@ class _CustomInAppWebViewState extends State<CustomInAppWebView> {
         allowsInlineMediaPlayback: true,
       ));
 
-  late MethodChannel _methodChannel;
-
   @override
   void initState() {
     super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // sendDataToWebView();
-    });
   }
 
   void sendDataToWebView(InAppWebViewController controller) async {
@@ -63,54 +54,12 @@ class _CustomInAppWebViewState extends State<CustomInAppWebView> {
     final width = MediaQuery.of(context).size.width;
     return Column(
       children: [
-        SizedBox(
-          width: width,
-          height: 50,
-          child: Row(
-            children: [
-              const SizedBox(
-                width: 80,
-                height: 50,
-              ),
-              Expanded(
-                child: Container(
-                  alignment: Alignment.center,
-                  child: Text(
-                    'Demo Web',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 15,
-                    ),
-                  ),
-                ),
-              ),
-              InkWell(
-                onTap: () async {
-                  Navigator.pop(context);
-                },
-                child: Container(
-                  width: 80,
-                  alignment: Alignment.centerRight,
-                  child: const Text(
-                    'Xong',
-                    style: TextStyle(
-                      color: AppColor.BLUE_TEXT,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        DividerWidget(width: width),
         Expanded(
           child: InAppWebView(
             key: webViewKey,
             initialUrlRequest: URLRequest(url: Uri.parse(widget.url)),
             initialUserScripts: UnmodifiableListView<UserScript>([]),
             initialOptions: options,
-            // contextMenu: contextMenu,
-            // pullToRefreshController: pullToRefreshController,
             onWebViewCreated: (controller) async {
               webViewController = controller;
             },
