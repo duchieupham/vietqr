@@ -252,18 +252,26 @@ class ContactRepository {
     return list;
   }
 
-  Future<ResponseMessageDTO> insertVCard(List<VCardModel> list) async {
+  Future<ResponseMessageDTO> insertVCard(List<VCardModel> list,
+      {String? token, String? tokenFree}) async {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
       String url = '${EnvConfig.getBaseUrl()}contacts/vcard';
       final response = await BaseAPIClient.postAPI(
-          url: url, type: AuthenticationType.SYSTEM, body: {'list': list});
+        url: url,
+        type: AuthenticationType.SYSTEM,
+        body: {'list': list},
+        token: token,
+        tokenFree: tokenFree,
+      );
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         if (data != null) {
           result = ResponseMessageDTO.fromJson(data);
         }
+      } else {
+        result = const ResponseMessageDTO(status: 'FAILED', message: '');
       }
     } catch (e) {
       LOG.error('Error at requestPermissions - PermissionRepository: $e');

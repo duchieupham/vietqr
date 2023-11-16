@@ -32,8 +32,8 @@ class SyncContactEvent {
 }
 
 class SentDataToContact {
-  final VCardModel model;
+  final List<VCardModel> datas;
   final int length;
 
-  SentDataToContact(this.model, this.length);
+  SentDataToContact(this.datas, this.length);
 }

@@ -36,12 +36,15 @@ class BaseAPIClient {
     required dynamic body,
     AuthenticationType? type,
     Map<String, String>? header,
+    String? token,
+    String? tokenFree,
   }) async {
     _removeBodyNullValues(body);
     final http.Response result = await http
         .post(
       Uri.parse(url),
-      headers: _getHeader(type: type, header: header),
+      headers: _getHeader(
+          type: type, header: header, token: token, tokenFree: tokenFree),
       encoding: Encoding.getByName('utf-8'),
       body: jsonEncode(body),
     )
@@ -123,12 +126,17 @@ class BaseAPIClient {
     return result;
   }
 
-  static Map<String, String>? _getHeader(
-      {AuthenticationType? type, Map<String, String>? header}) {
+  static Map<String, String>? _getHeader({
+    AuthenticationType? type,
+    Map<String, String>? header,
+    String? token,
+    String? tokenFree,
+  }) {
     Map<String, String>? result = {};
     type ??= AuthenticationType.NONE;
-    final String token = AccountHelper.instance.getToken();
-    final String? tokenFree = AccountHelper.instance.getTokenFree();
+
+    token ??= AccountHelper.instance.getToken();
+    tokenFree ??= AccountHelper.instance.getTokenFree();
 
     switch (type) {
       case AuthenticationType.SYSTEM:

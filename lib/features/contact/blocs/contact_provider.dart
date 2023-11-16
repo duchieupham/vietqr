@@ -19,8 +19,6 @@ class ContactProvider extends ChangeNotifier {
   List<List<ContactDTO>> listAll = [];
   List<List<ContactDTO>> listAllSearch = [];
 
-  List<VCardModel> listInsert = [];
-
   String colorType = '0';
 
   // Màu thẻ QR:
@@ -46,19 +44,6 @@ class ContactProvider extends ChangeNotifier {
   void initData() {
     category = listCategories.first;
     isIntro = userRes.getIntroContact();
-    notifyListeners();
-  }
-
-  void addDataInsert(value) {
-    if (listInsert.length == 50) {
-      updateListInsert();
-    }
-    listInsert.add(value);
-    notifyListeners();
-  }
-
-  void updateListInsert() {
-    listInsert.clear();
     notifyListeners();
   }
 

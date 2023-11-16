@@ -1259,10 +1259,11 @@ class DialogWidget {
     );
   }
 
-  Future<dynamic> openDialogIntroduce({required Widget child}) async {
+  Future<dynamic> openDialogIntroduce(
+      {required Widget child, BuildContext? ctx}) async {
     return await showDialog(
       barrierDismissible: false,
-      context: NavigationService.navigatorKey.currentContext!,
+      context: ctx ?? NavigationService.navigatorKey.currentContext!,
       builder: (BuildContext context) {
         return Material(
           color: AppColor.TRANSPARENT,

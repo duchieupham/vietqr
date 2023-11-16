@@ -157,7 +157,10 @@ class InsertVCardEvent extends ContactEvent {
   final List<VCardModel> list;
   final bool isLoading;
 
-  InsertVCardEvent(this.list, {this.isLoading = false});
+  InsertVCardEvent(
+    this.list, {
+    this.isLoading = false,
+  });
 
   @override
   List<Object?> get props => [list, isLoading];

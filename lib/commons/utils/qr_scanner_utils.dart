@@ -188,7 +188,7 @@ class QRScannerUtils {
           NavigatorUtils.navigatePage(
             context,
             CustomInAppWebView(
-              url: 'https://vietqr.vn/service/vhitek/active?mid=$value',
+              url: 'https://vietqr.vn/service/may-ban-hang/active?mid=$value',
               userId: UserInformationHelper.instance.getUserId(),
             ),
           );

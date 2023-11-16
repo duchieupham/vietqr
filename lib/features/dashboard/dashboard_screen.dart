@@ -151,7 +151,9 @@ class _DashBoardScreen extends State<DashBoardScreen>
     }
   }
 
+
   Future<void> _heavyTaskStreamReceiver(List<ContactDTO> list) async {
+    List<VCardModel> listVCards = [];
     final receivePort = ReceivePort();
     Isolate.spawn(heavyTask, [receivePort.sendPort, list]);
     await for (var message in receivePort) {
@@ -172,12 +174,13 @@ class _DashBoardScreen extends State<DashBoardScreen>
               additionalData: e.notes.isNotEmpty ? e.notes.first.note : '',
             );
 
-            eventBus.fire(SentDataToContact(contact, list.length));
+            listVCards.add(contact);
           }
         }
 
         if (message.progress >= 1) {
           receivePort.close();
+          eventBus.fire(SentDataToContact(listVCards, list.length));
           Provider.of<DashBoardProvider>(context, listen: false)
               .updateSync(false);
           return;

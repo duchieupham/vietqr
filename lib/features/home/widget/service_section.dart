@@ -11,7 +11,9 @@ import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/account/views/vietqr_id_card_view.dart';
 import 'package:vierqr/features/home/widget/dialog_update.dart';
+import 'package:vierqr/features/web_view/views/custom_inapp_webview.dart';
 import 'package:vierqr/main.dart';
+import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class ServiceSection extends StatefulWidget {
   const ServiceSection({Key? key}) : super(key: key);
@@ -144,6 +146,20 @@ class _ServiceSectionState extends State<ServiceSection> {
           'VQR-ID Card',
           () async {
             NavigatorUtils.navigatePage(context, VietQRIDCardView());
+          },
+        ),
+        _buildItemService(
+          context,
+          'assets/images/ic-active-terminal.png',
+          'Kích hoạt máy bán hàng',
+          () async {
+            NavigatorUtils.navigatePage(
+              context,
+              CustomInAppWebView(
+                url: 'https://vietqr.vn/service/may-ban-hang/active?mid=0',
+                userId: UserInformationHelper.instance.getUserId(),
+              ),
+            );
           },
         ),
       ],

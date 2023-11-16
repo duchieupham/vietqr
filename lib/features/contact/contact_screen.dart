@@ -7,9 +7,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
+import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/events.dart';
+import 'package:vierqr/commons/utils/check_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
@@ -21,8 +23,11 @@ import 'package:vierqr/features/contact/states/contact_state.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_provider.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/contact_dto.dart';
+import 'package:vierqr/models/response_message_dto.dart';
+import 'package:vierqr/services/shared_references/account_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
+import 'repostiroties/contact_repository.dart';
 import 'save_contact_screen.dart';
 import 'views/contact_detail.dart';
 import 'widgets/introduce_widget.dart';
@@ -64,17 +69,21 @@ class _ContactStateState extends State<_ContactState>
 
   Timer? _debounce;
 
+  static const int maxLength = 50;
+
   @override
   void initState() {
     super.initState();
-
     initData();
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       int type =
           Provider.of<ContactProvider>(context, listen: false).category!.type;
       _bloc.add(ContactEventGetList(isLoading: true, type: type));
       _bloc.add(ContactEventGetListPending());
+
+      if (type == CategoryType.vcard.value) {
+        _onCheckSyncContact();
+      }
     });
 
     _subscription = eventBus.on<ReloadContact>().listen((_) {
@@ -87,21 +96,40 @@ class _ContactStateState extends State<_ContactState>
         _onCheckSyncContact();
       }
     });
-    _syncGetSub = eventBus.on<SentDataToContact>().listen((data) {
-      Provider.of<ContactProvider>(context, listen: false)
-          .addDataInsert(data.model);
-      List<VCardModel> listInsert =
-          Provider.of<ContactProvider>(context, listen: false).listInsert;
+    _syncGetSub = eventBus.on<SentDataToContact>().listen((data) async {
+      List<VCardModel> listVCards = data.datas;
+      if (listVCards.isNotEmpty) {
+        if (listVCards.length > maxLength) {
+          int num = (listVCards.length / maxLength).floor();
 
-      if (data.length > 50) {
-        if (listInsert.length == 50) {
-          _bloc.add(InsertVCardEvent(listInsert));
-        }
-      } else {
-        if (listInsert.length == data.length) {
-          _bloc.add(InsertVCardEvent(listInsert));
-          Provider.of<ContactProvider>(context, listen: false)
-              .updateListInsert();
+          List<List<VCardModel>> datas = [];
+          for (int i = 0; i < num; i++) {
+            List<VCardModel> values =
+                listVCards.sublist(i * maxLength, (i + 1) * maxLength);
+            datas = [...datas, values];
+          }
+
+          if (num * maxLength < listVCards.length) {
+            List<VCardModel> values =
+                listVCards.sublist(num * maxLength, listVCards.length);
+            datas = [...datas, values];
+          }
+          for (var e in datas) {
+            final data = await _insertContacts(e);
+            if (data.status == Stringify.RESPONSE_STATUS_FAILED) {
+              await DialogWidget.instance.openMsgDialog(
+                  title: 'Không thể lưu danh bạ',
+                  msg: CheckUtils.instance.getCheckMessage(data.message) ?? '');
+
+              return;
+            }
+          }
+          int type = Provider.of<ContactProvider>(context, listen: false)
+              .category!
+              .type;
+          _bloc.add(ContactEventGetList(type: type, isLoading: false));
+        } else {
+          _bloc.add(InsertVCardEvent(listVCards));
         }
       }
     });
@@ -109,16 +137,45 @@ class _ContactStateState extends State<_ContactState>
     scrollController.addListener(_loadMore);
   }
 
+  Future<ResponseMessageDTO> _insertContacts(List<VCardModel> list) async {
+    final String token = AccountHelper.instance.getToken();
+    final String tokenFree = AccountHelper.instance.getTokenFree();
+    ReceivePort port = ReceivePort();
+    await Isolate.spawn(_handleInsert, [port.sendPort, list, token, tokenFree]);
+    ResponseMessageDTO data = await port.first;
+    port.close();
+    return data;
+  }
+
+  static ContactRepository repository = ContactRepository();
+
+  static void _handleInsert(List<dynamic> params) async {
+    SendPort sendPort = params[0];
+    List<VCardModel> data = params[1];
+    final String token = params[2];
+    final String tokenFree = params[3];
+
+    final result =
+        await repository.insertVCard(data, token: token, tokenFree: tokenFree);
+    sendPort.send(result);
+  }
+
+  initData() async {
+    _bloc = BlocProvider.of(context);
+    _pageController = PageController(
+        initialPage: Provider.of<ContactProvider>(context, listen: false).tab,
+        keepPage: true);
+  }
+
   void _onCheckSyncContact() async {
     if (!Provider.of<ContactProvider>(context, listen: false).isIntro) {
       DialogWidget.instance.openDialogIntroduce(
+        ctx: context,
         child: ContactIntroWidget(
           onSync: () async {
             Navigator.pop(context);
             Provider.of<ContactProvider>(context, listen: false)
                 .updateIntro(true);
-            Provider.of<ContactProvider>(context, listen: false)
-                .updateListInsert();
             final data = await _fetchContacts();
 
             eventBus.fire(SyncContactEvent(data));
@@ -136,18 +193,10 @@ class _ContactStateState extends State<_ContactState>
   }
 
   void _onUpdateContact() async {
-    Provider.of<ContactProvider>(context, listen: false).updateListInsert();
     Provider.of<DashBoardProvider>(context, listen: false).updateSync(true);
     final data = await _fetchContacts();
 
     eventBus.fire(SyncContactEvent(data));
-  }
-
-  initData() async {
-    _bloc = BlocProvider.of(context);
-    _pageController = PageController(
-        initialPage: Provider.of<ContactProvider>(context, listen: false).tab,
-        keepPage: true);
   }
 
   Future<List<ContactDTO>> _fetchContacts() async {
