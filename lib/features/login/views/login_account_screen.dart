@@ -156,28 +156,28 @@ class LoginAccountScreen extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: Row(
                     children: [
-                      Expanded(
-                        child: MButtonWidget(
-                          title: '',
-                          isEnable: true,
-                          colorEnableBgr: AppColor.WHITE,
-                          margin: EdgeInsets.zero,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset('assets/images/logo-google.png'),
-                              Text(
-                                'Đăng nhập với Google',
-                                style: height < 800
-                                    ? TextStyle(fontSize: 10)
-                                    : TextStyle(fontSize: 12),
-                              ),
-                            ],
-                          ),
-                          onTap: () {},
-                        ),
-                      ),
-                      const SizedBox(width: 16),
+                      // Expanded(
+                      //   child: MButtonWidget(
+                      //     title: '',
+                      //     isEnable: true,
+                      //     colorEnableBgr: AppColor.WHITE,
+                      //     margin: EdgeInsets.zero,
+                      //     child: Row(
+                      //       mainAxisAlignment: MainAxisAlignment.center,
+                      //       children: [
+                      //         Image.asset('assets/images/logo-google.png'),
+                      //         Text(
+                      //           'Đăng nhập với Google',
+                      //           style: height < 800
+                      //               ? TextStyle(fontSize: 10)
+                      //               : TextStyle(fontSize: 12),
+                      //         ),
+                      //       ],
+                      //     ),
+                      //     onTap: () {},
+                      //   ),
+                      // ),
+                      // const SizedBox(width: 16),
                       Expanded(
                         child: MButtonWidget(
                           title: '',
