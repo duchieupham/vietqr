@@ -28,6 +28,7 @@ enum CheckType { C01, C02, C03, C04, C06 }
 enum TypeOTP {
   SUCCESS,
   FAILED,
+  TOO_MANY_REQUEST,
   ERROR,
   AWAIT,
   NONE,

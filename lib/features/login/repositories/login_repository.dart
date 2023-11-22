@@ -191,4 +191,28 @@ class LoginRepository {
     }
     return false;
   }
+
+  Future<ResponseMessageDTO> forgotPass(body) async {
+    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    try {
+      String url = '${EnvConfig.getBaseUrl()}accounts/password/reset';
+      final response = await BaseAPIClient.postAPI(
+        url: url,
+        type: AuthenticationType.NONE,
+        body: body,
+      );
+      if (response.statusCode == 200 || response.statusCode == 400) {
+        var data = jsonDecode(response.body);
+        if (data != null) {
+          result = ResponseMessageDTO.fromJson(data);
+        }
+      } else {
+        result = ResponseMessageDTO(status: 'FAILED', message: 'E05');
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      result = ResponseMessageDTO(status: 'FAILED', message: 'E05');
+    }
+    return result;
+  }
 }

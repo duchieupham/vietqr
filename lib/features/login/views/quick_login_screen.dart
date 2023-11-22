@@ -3,11 +3,13 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/encrypt_utils.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
-import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/pin_code_input.dart';
 import 'package:vierqr/models/account_login_dto.dart';
+
+import 'forgot_password_screen.dart';
 
 class QuickLoginScreen extends StatefulWidget {
   final String userName;
@@ -177,13 +179,18 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
                                 ),
                                 GestureDetector(
                                   onTap: () {
-                                    DialogWidget.instance.openMsgDialog(
-                                      title: 'Tính năng đang bảo trì',
-                                      msg: 'Vui lòng thử lại sau',
+                                    FocusManager.instance.primaryFocus
+                                        ?.unfocus();
+                                    NavigatorUtils.navigatePage(
+                                      context,
+                                      ForgotPasswordScreen(
+                                        userName: widget.userName,
+                                        phone: widget.phone,
+                                      ),
                                     );
                                   },
                                   child: const Text(
-                                    'Quên mật khẩu',
+                                    'Quên mật khẩu?',
                                     style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w500,
