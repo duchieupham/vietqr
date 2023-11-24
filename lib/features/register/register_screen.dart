@@ -181,7 +181,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           : Consumer<RegisterProvider>(
                               builder: (context, _provider, child) {
                                 if (_provider.page == 0) {
-                                  return _buildButtonSubmitFormAccount();
+                                  return _buildButtonSubmitFormAccount(height);
                                 }
 
                                 return Column(
@@ -217,7 +217,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     });
   }
 
-  Widget _buildButtonSubmitFormAccount() {
+  Widget _buildButtonSubmitFormAccount(double height) {
     return Consumer<RegisterProvider>(
       builder: (context, provider, child) {
         return MButtonWidget(
@@ -225,10 +225,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
           isEnable: provider.isEnableButton(),
           margin: EdgeInsets.zero,
           onTap: () async {
-            await provider.phoneAuthentication(_phoneNoController.text,
-                onSentOtp: (type) {
-              _bloc.add(RegisterEventSentOTP(typeOTP: type));
-            });
+            // await provider.phoneAuthentication(_phoneNoController.text,
+            //     onSentOtp: (type) {
+            //   _bloc.add(RegisterEventSentOTP(typeOTP: type));
+            // });
+            onRegister(provider, height);
           },
         );
       },
@@ -264,10 +265,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 isEnable: provider.isEnableButton(),
                 margin: EdgeInsets.zero,
                 onTap: () async {
-                  await provider.phoneAuthentication(_phoneNoController.text,
-                      onSentOtp: (type) {
-                    _bloc.add(RegisterEventSentOTP(typeOTP: type));
-                  });
+                  onRegister(provider, height);
+                  // await provider.phoneAuthentication(_phoneNoController.text,
+                  //     onSentOtp: (type) {
+                  //   _bloc.add(RegisterEventSentOTP(typeOTP: type));
+                  // });
                 },
               ),
             ),
