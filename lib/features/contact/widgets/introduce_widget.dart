@@ -26,7 +26,7 @@ class _ContactIntroWidgetState extends State<ContactIntroWidget> {
         Container(
           alignment: Alignment.center,
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-          margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           decoration: BoxDecoration(
             color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(10),
@@ -63,22 +63,24 @@ class _ContactIntroWidgetState extends State<ContactIntroWidget> {
                 height: 120,
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
                 child: RichText(
                   textAlign: TextAlign.center,
                   text: TextSpan(
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: 12,
                       color: AppColor.textBlack,
                       height: 1.4,
                       fontWeight: FontWeight.w500,
                     ),
                     children: [
-                      TextSpan(text: '$textContent\n'),
+                      TextSpan(text: '$textContent\n\n'),
+                      TextSpan(text: '$textSecurity\n\n'),
+                      TextSpan(text: 'Để biết thêm chi tiết, '),
                       TextSpan(
                         text: 'Xem chi tiết tại đây',
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 12,
                           fontWeight: FontWeight.w400,
                           color: AppColor.BLUE_TEXT,
                           height: 1.5,
@@ -135,5 +137,7 @@ class _ContactIntroWidgetState extends State<ContactIntroWidget> {
   }
 
   static String textContent =
-      'Đồng bộ danh bạ để hiển thị thông tin dưới dạng QR.Bạn có thể chia sẻ dễ dàng thông tin danh bạ của mình với mọi người';
+      'Chia sẻ và bảo mật thông tin của bạn một cách tuyệt đối.Giờ đây, bạn có thể chia sẻ danh bạ của mình thông qua mã QR, đồng thời tận hưởng sự tiện lợi trong việc lưu trữ và quản lý. Kết nối nhanh chóng với bạn bè và người thân.';
+  static String textSecurity =
+      'Dữ liệu danh bạ của bạn sẽ được đồng bộ lên hệ thống của chúng tôi, và chúng tôi cam kết bảo mật thông tin của bạn một cách tuyệt đối.';
 }

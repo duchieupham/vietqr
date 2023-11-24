@@ -94,7 +94,7 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>NSContactsUsageDescription</key>
-    <string>Lấy thông tin danh bạ để hiển thị danh bạ dạng VCard. Chia sẻ thông tin liên hệ với mọi người dễ dàng hơn.</string>
+    <string>Lấy thông tin danh bạ để hiển thị danh bạ dạng VCard. Chia sẻ thông tin liên hệ với mọi người dễ dàng hơn. Dữ liệu danh bạ của bạn sẽ được đồng bộ lên hệ thống của chúng tôi, và chúng tôi cam kết bảo mật thông tin của bạn một cách tuyệt đối.</string>
     <key>com.apple.developer.nfc.readersession.felica.systemcodes</key>
 	<array>
 		<string>0003</string>
