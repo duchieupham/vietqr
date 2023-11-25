@@ -43,6 +43,7 @@ import 'package:vierqr/features/dashboard/dashboard_screen.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/dashboard/theme_setting.dart';
 import 'package:vierqr/features/generate_qr/views/qr_share_view.dart';
+import 'package:vierqr/features/home/widget/dialog_update.dart';
 import 'package:vierqr/features/introduce/views/introduce_screen.dart';
 import 'package:vierqr/features/login/login_screen.dart';
 import 'package:vierqr/features/mobile_recharge/mobile_recharge_screen.dart';
@@ -65,6 +66,7 @@ import 'package:vierqr/features/top_up/top_up_screen.dart';
 import 'package:vierqr/features/top_up/widget/pop_up_top_up_sucsess.dart';
 import 'package:vierqr/features/transaction/transaction_detail_screen.dart';
 import 'package:vierqr/features/transaction/widgets/transaction_sucess_widget.dart';
+import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/notification_transaction_success_dto.dart';
 import 'package:vierqr/models/respone_top_up_dto.dart';
 import 'package:vierqr/models/top_up_sucsess_dto.dart';
@@ -317,9 +319,8 @@ class _VietQRApp extends State<VietQRApp> {
             create: (BuildContext context) => NotificationBloc(context),
           ),
           BlocProvider<DashBoardBloc>(
-            create: (BuildContext context) => DashBoardBloc(context)
-              ..add(GetPointEvent())
-              ..add(GetVersionAppEvent()),
+            create: (BuildContext context) =>
+                DashBoardBloc(context)..add(GetVersionAppEvent()),
           ),
           BlocProvider<BusinessInformationBloc>(
             create: (BuildContext context) => BusinessInformationBloc(),

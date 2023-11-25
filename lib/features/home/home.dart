@@ -36,10 +36,7 @@ class _HomeScreen extends State<HomeScreen> {
     final data = await Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
     if (data is Map<String, dynamic>) {
       if (!mounted) return;
-      QRScannerUtils.instance.onScanNavi(
-        data,
-        context,
-      );
+      QRScannerUtils.instance.onScanNavi(data, context);
     }
   }
 

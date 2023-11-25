@@ -101,7 +101,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       emit(state.copyWith(status: BlocStatus.NONE, request: LoginType.NONE));
       await loginRepository.getFreeToken();
       emit(state.copyWith(
-          status: BlocStatus.NONE, request: LoginType.FREE_TOKEN));
+          status: BlocStatus.NONE,
+          request: LoginType.FREE_TOKEN,
+          isCheckApp: event.isCheckVer));
     }
   }
 

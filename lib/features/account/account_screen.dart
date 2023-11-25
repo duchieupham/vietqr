@@ -20,6 +20,8 @@ import 'package:vierqr/features/account/events/account_event.dart';
 import 'package:vierqr/features/account/states/account_state.dart';
 import 'package:vierqr/features/account/views/dialog_my_qr.dart';
 import 'package:vierqr/features/account/widget/my_QR_bottom_sheet.dart';
+import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
+import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/home/widget/dialog_update.dart';
 import 'package:vierqr/features/personal/views/introduce_bottom_sheet.dart';
 import 'package:vierqr/main.dart';
@@ -669,7 +671,13 @@ class _SettingWidget extends StatelessWidget {
                       barrierDismissible: false,
                       context: NavigationService.navigatorKey.currentContext!,
                       builder: (BuildContext context) {
-                        return DialogUpdateView();
+                        return DialogUpdateView(
+                          onCheckUpdate: () {
+                            context
+                                .read<DashBoardBloc>()
+                                .add(GetVersionAppEvent(isCheckVer: true));
+                          },
+                        );
                       },
                     );
                   },

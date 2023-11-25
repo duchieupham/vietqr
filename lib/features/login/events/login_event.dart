@@ -87,7 +87,14 @@ class CheckExitsPhoneEvent extends LoginEvent {
   List<Object?> get props => [phone];
 }
 
-class GetFreeToken extends LoginEvent {}
+class GetFreeToken extends LoginEvent {
+  final bool isCheckVer;
+
+  GetFreeToken({this.isCheckVer = false});
+
+  @override
+  List<Object?> get props => [isCheckVer];
+}
 
 class UpdateEvent extends LoginEvent {}
 

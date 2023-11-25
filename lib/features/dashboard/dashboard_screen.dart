@@ -32,6 +32,7 @@ import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
 import 'package:vierqr/features/dashboard/widget/background_app_bar_home.dart';
 import 'package:vierqr/features/dashboard/widget/maintain_widget.dart';
 import 'package:vierqr/features/home/home.dart';
+import 'package:vierqr/features/home/widget/dialog_update.dart';
 import 'package:vierqr/features/notification/blocs/notification_bloc.dart';
 import 'package:vierqr/features/notification/events/notification_event.dart';
 import 'package:vierqr/features/notification/states/notification_state.dart';
@@ -151,7 +152,6 @@ class _DashBoardScreen extends State<DashBoardScreen>
     }
   }
 
-
   Future<void> _heavyTaskStreamReceiver(List<ContactDTO> list) async {
     List<VCardModel> listVCards = [];
     final receivePort = ReceivePort();
@@ -193,10 +193,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
     final data = await Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
     if (data is Map<String, dynamic>) {
       if (!mounted) return;
-      QRScannerUtils.instance.onScanNavi(
-        data,
-        context,
-      );
+      QRScannerUtils.instance.onScanNavi(data, context);
     }
   }
 
@@ -269,11 +266,11 @@ class _DashBoardScreen extends State<DashBoardScreen>
   void initialServices(BuildContext context) {
     checkUserInformation();
     _dashBoardBloc.add(const TokenEventCheckValid());
+    _dashBoardBloc.add(GetPointEvent());
     if (Provider.of<AuthProvider>(context, listen: false).introduceDTO ==
         null) {
       _dashBoardBloc.add(GetPointEvent());
     }
-    _dashBoardBloc.add(GetVersionAppEvent());
     _dashBoardBloc.add(GetUserInformation());
     _notificationBloc.add(NotificationGetCounterEvent());
   }
@@ -349,6 +346,22 @@ class _DashBoardScreen extends State<DashBoardScreen>
         if (state.request == DashBoardType.APP_VERSION) {
           Provider.of<AuthProvider>(context, listen: false)
               .updateAppInfoDTO(state.appInfoDTO, isCheckApp: state.isCheckApp);
+          if (Provider.of<AuthProvider>(context, listen: false)
+              .isUpdateVersion) {
+            if (!state.isCheckApp)
+              showDialog(
+                barrierDismissible: false,
+                context: NavigationService.navigatorKey.currentContext!,
+                builder: (BuildContext context) {
+                  return DialogUpdateView(
+                    isHideClose: true,
+                    onCheckUpdate: () {
+                      _dashBoardBloc.add(GetVersionAppEvent(isCheckVer: true));
+                    },
+                  );
+                },
+              );
+          }
         }
 
         if (state.request == DashBoardType.TOKEN) {

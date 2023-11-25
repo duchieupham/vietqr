@@ -122,12 +122,28 @@ class _LoginState extends State<_Login> {
             }
 
             if (state.request == LoginType.FREE_TOKEN) {
-              _bloc.add(GetVersionAppEvent());
+              _bloc.add(GetVersionAppEvent(isCheckVer: state.isCheckApp));
             }
             if (state.request == LoginType.APP_VERSION) {
               Provider.of<AuthProvider>(context, listen: false)
                   .updateAppInfoDTO(state.appInfoDTO,
                       isCheckApp: state.isCheckApp);
+              if (Provider.of<AuthProvider>(context, listen: false)
+                  .isUpdateVersion) {
+                if (!state.isCheckApp)
+                  showDialog(
+                    barrierDismissible: false,
+                    context: NavigationService.navigatorKey.currentContext!,
+                    builder: (BuildContext context) {
+                      return DialogUpdateView(
+                        isHideClose: true,
+                        onCheckUpdate: () {
+                          _bloc.add(GetFreeToken(isCheckVer: true));
+                        },
+                      );
+                    },
+                  );
+              }
             }
 
             if (state.request == LoginType.TOAST) {
@@ -718,7 +734,11 @@ class _LoginState extends State<_Login> {
                 barrierDismissible: false,
                 context: NavigationService.navigatorKey.currentContext!,
                 builder: (BuildContext context) {
-                  return DialogUpdateView();
+                  return DialogUpdateView(
+                    onCheckUpdate: () {
+                      _bloc.add(GetFreeToken(isCheckVer: true));
+                    },
+                  );
                 },
               );
             },

@@ -25,6 +25,7 @@ class _CustomInAppWebViewState extends State<CustomInAppWebView> {
         mediaPlaybackRequiresUserGesture: false,
         javaScriptCanOpenWindowsAutomatically: true,
         useShouldInterceptFetchRequest: true,
+        clearCache: true,
       ),
       android: AndroidInAppWebViewOptions(
         useShouldInterceptRequest: true,

@@ -9,6 +9,12 @@ import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/services/providers/auth_provider.dart';
 
 class DialogUpdateView extends StatefulWidget {
+  final bool isHideClose;
+  final Function() onCheckUpdate;
+
+  const DialogUpdateView(
+      {super.key, this.isHideClose = false, required this.onCheckUpdate});
+
   @override
   State<DialogUpdateView> createState() => _DialogUpdateViewState();
 }
@@ -114,22 +120,23 @@ class _DialogUpdateViewState extends State<DialogUpdateView> {
                                 borderRadius: 5,
                                 function: () {
                                   provider.updateIsCheckApp(true);
-                                  context.read<DashBoardBloc>().add(
-                                      GetVersionAppEvent(isCheckVer: true));
+                                  widget.onCheckUpdate();
                                 },
                               ),
                         const SizedBox(height: 10),
-                        ButtonWidget(
-                          height: 40,
-                          text: 'Đóng',
-                          textColor: AppColor.BLACK,
-                          bgColor: AppColor.GREY_EBEBEB,
-                          borderRadius: 5,
-                          function: () {
-                            Navigator.pop(context);
-                          },
-                        ),
-                        const SizedBox(height: 10),
+                        if (!widget.isHideClose) ...[
+                          ButtonWidget(
+                            height: 40,
+                            text: 'Đóng',
+                            textColor: AppColor.BLACK,
+                            bgColor: AppColor.GREY_EBEBEB,
+                            borderRadius: 5,
+                            function: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                          const SizedBox(height: 10),
+                        ]
                       ],
                     ),
                   );
