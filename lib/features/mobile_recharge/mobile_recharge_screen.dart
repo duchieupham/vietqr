@@ -98,7 +98,12 @@ class MobileRechargeScreen extends StatelessWidget {
                     .openLoadingDialog(msg: 'Đang thực hiện thanh toán');
               }
               if (state is MobileRechargeMobileMoneySuccessState) {
-                updateMobileCarrierType(context);
+                if (UserInformationHelper.instance.getPhoneNo() ==
+                    Provider.of<TopUpProvider>(context, listen: false)
+                        .phoneNo) {
+                  updateMobileCarrierType(context);
+                }
+
                 eventBus.fire(ReloadWallet());
                 Navigator.pop(context);
                 Navigator.pop(context);
@@ -159,7 +164,7 @@ class MobileRechargeScreen extends StatelessWidget {
                         ),
                         _buildTemplateSection(
                           'Số điện thoại',
-                          child: _buildPhoneNumber(context,
+                          child: _buildPhoneNumber(context, state,
                               accountInformationDTO: UserInformationHelper
                                   .instance
                                   .getAccountInformation(),
@@ -358,7 +363,7 @@ class MobileRechargeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPhoneNumber(BuildContext context,
+  Widget _buildPhoneNumber(BuildContext context, MobileRechargeState state,
       {required AccountInformationDTO accountInformationDTO,
       required String phoneNumber}) {
     double height = MediaQuery.of(context).size.height;
@@ -373,7 +378,20 @@ class MobileRechargeScreen extends StatelessWidget {
             String imgId = provider.networkProviders.imgId;
             return Row(
               children: [
-                if (imgId.isNotEmpty)
+                if (state is MobileRechargeLoadingState)
+                  Container(
+                    width: 45,
+                    height: 45,
+                    padding: EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(
+                          width: 0.5,
+                          color: AppColor.GREY_TEXT.withOpacity(0.3)),
+                    ),
+                    child: CircularProgressIndicator(),
+                  )
+                else if (imgId.isNotEmpty)
                   GestureDetector(
                     onTap: () {
                       DialogWidget.instance.showModalBottomContent(
