@@ -2,16 +2,17 @@ import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/transaction_utils.dart';
 
 class TransactionReceiveDTO {
+  final String bankId;
+  final String bankAccount;
+  final String bankCode;
+  final String bankShortName;
+  final String bankAccountName;
   final int time;
   final int timePaid;
   final int status;
   final String id;
   final int type;
   final String content;
-  final String bankAccount;
-  final String bankAccountName;
-  final String bankId;
-  final String bankCode;
   final String bankName;
   final String imgId;
   final int amount;
@@ -19,6 +20,9 @@ class TransactionReceiveDTO {
   final String traceId;
   final String refId;
   final String referenceNumber;
+  final String note;
+  final String orderId;
+  final String terminalCode;
 
   const TransactionReceiveDTO({
     required this.time,
@@ -29,6 +33,7 @@ class TransactionReceiveDTO {
     required this.content,
     required this.bankAccount,
     required this.bankAccountName,
+    required this.bankShortName,
     required this.bankId,
     required this.bankCode,
     required this.bankName,
@@ -38,6 +43,9 @@ class TransactionReceiveDTO {
     required this.traceId,
     required this.refId,
     required this.referenceNumber,
+    required this.note,
+    required this.orderId,
+    required this.terminalCode,
   });
 
   String get getTransType => TransactionUtils.instance.getTransType(transType);
@@ -60,6 +68,7 @@ class TransactionReceiveDTO {
       content: json['content'] ?? '',
       bankAccount: json['bankAccount'] ?? '',
       bankAccountName: json['bankAccountName'] ?? '',
+      bankShortName: json['bankShortName'] ?? '',
       bankId: json['bankId'] ?? '',
       bankCode: json['bankCode'] ?? '',
       bankName: json['bankName'] ?? '',
@@ -69,6 +78,9 @@ class TransactionReceiveDTO {
       traceId: json['traceId'] ?? '',
       refId: json['refId'] ?? '',
       referenceNumber: json['referenceNumber'] ?? '',
+      note: json['note'] ?? '',
+      orderId: json['orderId'] ?? '',
+      terminalCode: json['terminalCode'] ?? '',
     );
   }
 

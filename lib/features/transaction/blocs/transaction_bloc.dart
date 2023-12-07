@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/base_manager.dart';
+import 'package:vierqr/commons/utils/error_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/transaction/events/transaction_event.dart';
 import 'package:vierqr/features/transaction/repositories/transaction_repository.dart';
 import 'package:vierqr/features/transaction/states/transaction_state.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
+import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/models/transaction_receive_dto.dart';
 
 class TransactionBloc extends Bloc<TransactionEvent, TransactionState>
@@ -21,6 +24,8 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState>
     on<TransactionEventGetDetail>(_getDetail);
     on<TransactionEventGetImage>(_loadImage);
     on<TransEventQRRegenerate>(_regenerateQR);
+    on<UpdateNoteEvent>(_updateNote);
+
     // on<TransactionEventGetListBranch>(_getTransactionsBranch);
     // on<TransactionEventFetchBranch>(_fetchTransactionsBranch);
     // on<TransactionEventGetList>(_getTransactions);
@@ -84,6 +89,32 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState>
     } catch (e) {
       LOG.error(e.toString());
       emit(state.copyWith(status: BlocStatus.ERROR));
+    }
+  }
+
+  void _updateNote(TransactionEvent event, Emitter emit) async {
+    ResponseMessageDTO result;
+    try {
+      if (event is UpdateNoteEvent) {
+        emit(state.copyWith(status: BlocStatus.LOADING));
+        result = await transactionRepository.updateNote(event.param);
+        if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
+          emit(state.copyWith(
+            type: TransactionType.UPDATE_NOTE,
+            status: BlocStatus.UNLOADING,
+          ));
+        } else {
+          String msg = ErrorUtils.instance.getErrorMessage(result.message);
+          emit(state.copyWith(type: TransactionType.ERROR, msg: msg));
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      ResponseMessageDTO responseMessageDTO =
+          const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+      String msg =
+          ErrorUtils.instance.getErrorMessage(responseMessageDTO.message);
+      emit(state.copyWith(type: TransactionType.ERROR, msg: msg));
     }
   }
 

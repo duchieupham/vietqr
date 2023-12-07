@@ -8,6 +8,7 @@ import 'package:vierqr/models/business_detail_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/qr_recreate_dto.dart';
 import 'package:vierqr/models/related_transaction_receive_dto.dart';
+import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/models/transaction_branch_input_dto.dart';
 import 'package:vierqr/models/transaction_input_dto.dart';
 import 'package:vierqr/models/transaction_receive_dto.dart';
@@ -15,12 +16,42 @@ import 'package:vierqr/models/transaction_receive_dto.dart';
 class TransactionRepository {
   const TransactionRepository();
 
-  Future<List<RelatedTransactionReceiveDTO>> getTrans(
+  Future<List<RelatedTransactionReceiveDTO>> getTransStatus(
       TransactionInputDTO dto) async {
     List<RelatedTransactionReceiveDTO> result = [];
     try {
       final String url =
           '${EnvConfig.getBaseUrl()}transactions?bankId=${dto.bankId}&status=${dto.status}&offset=${dto.offset}';
+
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        result = data
+            .map<RelatedTransactionReceiveDTO>(
+                (json) => RelatedTransactionReceiveDTO.fromJson(json))
+            .toList();
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return result;
+  }
+
+  // - 9: all
+  // - 1: reference_number (mã giao dịch)
+  // - 2: order_id
+  // - 3: content
+  // - 4: terminal code
+  // - 5: status
+  Future<List<RelatedTransactionReceiveDTO>> getTrans(
+      TransactionInputDTO dto) async {
+    List<RelatedTransactionReceiveDTO> result = [];
+    try {
+      final String url =
+          '${EnvConfig.getBaseUrl()}transactions/list?bankId=${dto.bankId}&type=${dto.type}&offset=${dto.offset}&value=${dto.value}&from=${dto.from}&to=${dto.to}';
 
       final response = await BaseAPIClient.getAPI(
         url: url,
@@ -58,6 +89,10 @@ class TransactionRepository {
       traceId: '',
       refId: '',
       referenceNumber: '',
+      note: '',
+      orderId: '',
+      terminalCode: '',
+      bankShortName: '',
     );
     try {
       final String url = '${EnvConfig.getBaseUrl()}transaction/$id';
@@ -143,6 +178,26 @@ class TransactionRepository {
       }
     } catch (e) {
       LOG.error(e.toString());
+    }
+    return result;
+  }
+
+  Future<ResponseMessageDTO> updateNote(Map<String, dynamic> param) async {
+    ResponseMessageDTO result =
+        const ResponseMessageDTO(status: '', message: '');
+    try {
+      final String url = '${EnvConfig.getBaseUrl()}transactions/note';
+      final response = await BaseAPIClient.postAPI(
+          url: url, type: AuthenticationType.SYSTEM, body: param);
+      if (response.statusCode == 200 || response.statusCode == 400) {
+        var data = jsonDecode(response.body);
+        result = ResponseMessageDTO.fromJson(data);
+      } else {
+        result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
     }
     return result;
   }

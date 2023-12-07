@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:vierqr/models/transaction_branch_input_dto.dart';
+import 'package:vierqr/models/transaction_input_dto.dart';
 
 class TransHistoryEvent extends Equatable {
   @override
@@ -16,19 +17,38 @@ class TransactionEventGetListBranch extends TransHistoryEvent {
 }
 
 class TransactionEventGetList extends TransHistoryEvent {
-  final int status;
+  final TransactionInputDTO dto;
 
-  TransactionEventGetList(this.status);
+  TransactionEventGetList(this.dto);
 
   @override
-  List<Object?> get props => [status];
+  List<Object?> get props => [dto];
+}
+
+class TransactionStatusEventGetList extends TransHistoryEvent {
+  final TransactionInputDTO dto;
+
+  TransactionStatusEventGetList(this.dto);
+
+  @override
+  List<Object?> get props => [dto];
 }
 
 class TransactionEventFetch extends TransHistoryEvent {
-  final int status;
+  final TransactionInputDTO dto;
 
-  TransactionEventFetch(this.status);
+  TransactionEventFetch(this.dto);
 
   @override
-  List<Object?> get props => [status];
+  List<Object?> get props => [dto];
 }
+
+class TransactionStatusEventFetch extends TransHistoryEvent {
+  final TransactionInputDTO dto;
+
+  TransactionStatusEventFetch(this.dto);
+
+  @override
+  List<Object?> get props => [dto];
+}
+

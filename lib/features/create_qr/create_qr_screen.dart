@@ -759,9 +759,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                     return Column(
                       children: [
                         InkWell(
-                          onTap: () {
-                            _onChanged(dto);
-                          },
+                          onTap: () => _onChanged(dto),
                           child: Container(
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             decoration: const BoxDecoration(

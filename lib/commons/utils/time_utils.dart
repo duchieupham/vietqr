@@ -9,6 +9,26 @@ class TimeUtils {
 
   static TimeUtils get instance => _instance;
 
+  String formatDateToString(DateTime? now, {bool isExport = false}) {
+    now ??= DateTime.now();
+    DateFormat format;
+    if (isExport) {
+      format = DateFormat('dd/MM/yyyy');
+    } else {
+      format = DateFormat('HH:mm:ss dd/MM/yyyy');
+    }
+
+    String formatted = format.format(now);
+    return formatted;
+  }
+
+  String getCurrentDate(DateTime? now) {
+    now ??= DateTime.now();
+    DateFormat format = DateFormat('yyyy-MM-dd HH:mm:ss');
+    String formatted = format.format(now);
+    return formatted;
+  }
+
   DateTime getDateFromString(String time) {
     List<String> times = time.split('/');
     DateTime result = DateTime.now();

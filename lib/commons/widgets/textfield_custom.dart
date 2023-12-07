@@ -37,6 +37,7 @@ class TextFieldCustom extends StatefulWidget {
   final GestureTapCallback? onTap;
   final EdgeInsetsGeometry? contentPadding;
   final bool readOnly;
+
   //Border textfield
   final bool isRequired;
   final Color? fillColor;
@@ -179,9 +180,9 @@ class _TextFieldWidgetState extends State<TextFieldCustom> {
                   height: 1.4,
                 ),
               ),
-            ]
+            ],
+            const SizedBox(height: 8),
           ],
-          const SizedBox(height: 8),
           Container(
             alignment: Alignment.centerLeft,
             child: Column(
