@@ -376,32 +376,42 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
                         ),
                       )
                     else
-                      GestureDetector(
-                        onTap: () => provider.onChangeDropTime(false),
-                        child: Row(
-                          children: [
-                            Text(
-                              'Từ ${TimeUtils.instance.formatDateToString(provider.fromDate, isExport: true)}',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: AppColor.BLACK,
+                      Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () => provider.openBottomTime(context),
+                            child: Container(
+                              color: Colors.transparent,
+                              child: Row(
+                                children: [
+                                  Text(
+                                    'Từ ${TimeUtils.instance.formatDateToString(provider.fromDate, isExport: true)}',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: AppColor.BLACK,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Text(
+                                    'Đến ${TimeUtils.instance.formatDateToString(provider.toDate, isExport: true)}',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: AppColor.BLACK,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            const SizedBox(width: 16),
-                            Text(
-                              'Đến ${TimeUtils.instance.formatDateToString(provider.toDate, isExport: true)}',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: AppColor.BLACK,
-                              ),
+                          ),
+                          const SizedBox(width: 16),
+                          GestureDetector(
+                            onTap: () => provider.onChangeDropTime(false),
+                            child: const Icon(
+                              Icons.clear,
+                              size: 20,
                             ),
-                            const SizedBox(width: 16),
-                            const Icon(
-                              Icons.expand_more,
-                              size: 18,
-                            )
-                          ],
-                        ),
+                          )
+                        ],
                       ),
                   ],
                 ),

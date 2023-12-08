@@ -488,7 +488,7 @@ class _StackedList extends State<StackedList> {
               },
             ).toList(),
           ),
-          if (widget.isEmpty)
+          if (widget.isEmpty || (widget.list.length - 2) < 5)
             Container(
               height: MediaQuery.of(context).size.height - 120,
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -532,8 +532,8 @@ class _StackedList extends State<StackedList> {
                             children: [
                               Container(
                                 decoration: BoxDecoration(
-                                  border:
-                                      Border.all(color: AppColor.grey979797),
+                                  borderRadius: BorderRadius.circular(5),
+                                  color: AppColor.WHITE,
                                   image: DecorationImage(
                                       image: ImageUtils.instance
                                           .getImageNetWork(data.imageId)),

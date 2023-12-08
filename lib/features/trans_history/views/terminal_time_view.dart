@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
+import 'package:vierqr/layouts/m_button_widget.dart';
 
 class TerminalTimeView extends StatefulWidget {
   final DateTime? toDate;
@@ -53,9 +54,7 @@ class _TerminalTimeViewState extends State<TerminalTimeView> {
                 ),
               ),
               GestureDetector(
-                onTap: () {
-                  Navigator.pop(context, [fromDate, toDate]);
-                },
+                onTap: () => Navigator.pop(context),
                 child: Icon(Icons.clear),
               ),
             ],
@@ -159,7 +158,7 @@ class _TerminalTimeViewState extends State<TerminalTimeView> {
                             Icons.calendar_month_outlined,
                             size: 16,
                           ),
-                        ]
+                        ],
                       ],
                     ),
                   ),
@@ -167,6 +166,16 @@ class _TerminalTimeViewState extends State<TerminalTimeView> {
               ],
             ),
           ),
+          const SizedBox(height: 12),
+          MButtonWidget(
+            title: 'Xong',
+            isEnable: toDate != null,
+            colorDisableBgr: AppColor.GREY_BUTTON,
+            colorDisableText: AppColor.BLACK,
+            margin: EdgeInsets.zero,
+            onTap: () => Navigator.pop(context, [fromDate, toDate]),
+          ),
+          const SizedBox(height: 12),
         ],
       ),
     );

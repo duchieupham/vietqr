@@ -142,7 +142,11 @@ class TransProvider with ChangeNotifier {
 
   onChangeDropTime(bool value) {
     enableDropTime = value;
-    if (!value) {}
+    if (!value) {
+      updateFromDate(DateTime.now());
+      updateToDate(null);
+      _valueTimeFilter = const FilterTimeTransaction(id: 0, title: 'Tất cả');
+    }
     notifyListeners();
   }
 
@@ -186,15 +190,12 @@ class TransProvider with ChangeNotifier {
       DateTime now = DateTime.now();
       DateTime fromDate = DateTime(now.year, now.month, now.day);
       if (value.id == TypeTimeFilter.PERIOD.id) {
-        // DateTime endDate = fromDate
-        //     .add(const Duration(days: 1))
-        //     .subtract(const Duration(seconds: 1));
         final data = await DialogWidget.instance.showModelBottomSheet(
           context: context,
           padding: EdgeInsets.zero,
           bgrColor: AppColor.TRANSPARENT,
           widget: TerminalTimeView(
-            toDate: _toDate,
+            toDate: null,
             fromDate: fromDate,
           ),
         );
@@ -204,6 +205,8 @@ class TransProvider with ChangeNotifier {
           onChangeDropTime(true);
         } else {
           updateFromDate(fromDate);
+          _valueTimeFilter =
+              const FilterTimeTransaction(id: 0, title: 'Tất cả');
         }
       } else if (value.id == TypeTimeFilter.TODAY.id) {
         DateTime endDate = fromDate
@@ -254,7 +257,7 @@ class TransProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void updateToDate(DateTime value) {
+  void updateToDate(DateTime? value) {
     _toDate = value;
     notifyListeners();
   }
@@ -307,6 +310,24 @@ class TransProvider with ChangeNotifier {
   setBankId(String value) {
     bankId = value;
     notifyListeners();
+  }
+
+  void openBottomTime(BuildContext context) async {
+    final data = await DialogWidget.instance.showModelBottomSheet(
+      context: context,
+      padding: EdgeInsets.zero,
+      bgrColor: AppColor.TRANSPARENT,
+      widget: TerminalTimeView(
+        toDate: _toDate,
+        fromDate: fromDate,
+      ),
+    );
+
+    if (data is List) {
+      updateFromDate(data[0]);
+      updateToDate(data[1]);
+      onChangeDropTime(true);
+    }
   }
 }
 
