@@ -10,6 +10,7 @@ class PolicyView extends StatefulWidget {
   final ValueChanged<bool?>? onSelectPolicy;
   final bool? isAgreeWithPolicy;
   final String bankAccount;
+  final String bankCode;
 
   const PolicyView({
     super.key,
@@ -17,6 +18,7 @@ class PolicyView extends StatefulWidget {
     this.onSelectPolicy,
     this.isAgreeWithPolicy = false,
     required this.bankAccount,
+    required this.bankCode,
   });
 
   @override
@@ -75,7 +77,9 @@ class _PolicyViewState extends State<PolicyView> {
                                 color: AppColor.BLACK,
                               ),
                               child: Text(
-                                'Điều khoản dịch vụ',
+                                widget.bankCode == 'MB'
+                                    ? 'Điều khoản dịch vụ'
+                                    : 'Mô tả',
                               ),
                             ),
                           ),

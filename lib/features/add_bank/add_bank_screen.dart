@@ -456,6 +456,9 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                                               accountName: formattedName,
                                               applicationType: 'MOBILE',
                                               phoneNumber: phoneController.text,
+                                              bankCode: provider
+                                                      .bankTypeDTO?.bankCode ??
+                                                  '',
                                             );
                                             _bloc.add(BankCardEventRequestOTP(
                                                 dto: dto));
@@ -751,6 +754,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
               onSelectPolicy: provider.updatePolicy,
               isAgreeWithPolicy: provider.isAgreeWithPolicy,
               bankAccount: bankAccountController.text,
+              bankCode: provider.bankTypeDTO?.bankCode ?? '',
               onTap: () {
                 if (provider.isAgreeWithPolicy) {
                   String formattedName = StringUtils.instance.removeDiacritic(
@@ -762,6 +766,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                     accountName: formattedName,
                     applicationType: 'MOBILE',
                     phoneNumber: phoneController.text,
+                    bankCode: provider.bankTypeDTO?.bankCode ?? '',
                   );
                   context
                       .read<AddBankBloc>()
@@ -785,6 +790,8 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
           requestId: requestId,
           otpValue: otpController.text,
           applicationType: 'MOBILE',
+          bankAccount: bankAccountController.text,
+          bankCode: provider.bankTypeDTO?.bankCode ?? '',
         );
         _bloc.add(BankCardEventConfirmOTP(dto: confirmDTO));
       },

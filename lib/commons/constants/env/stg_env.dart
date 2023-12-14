@@ -9,6 +9,7 @@ class StgEnv implements Env {
 
   @override
   String getBaseUrl() {
+    // return 'https://dev.vietqr.org/vqr/';
     return 'https://dev.vietqr.org/vqr/api/';
   }
 

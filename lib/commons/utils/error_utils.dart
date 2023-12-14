@@ -4,6 +4,7 @@ class ErrorUtils {
   const ErrorUtils._privateConsrtructor();
 
   static const ErrorUtils _instance = ErrorUtils._privateConsrtructor();
+
   static ErrorUtils get instance => _instance;
 
   String getErrorMessage(String message) {
@@ -84,7 +85,7 @@ class ErrorUtils {
         result = 'Không thể đăng ký nhận BĐSD. Vui lòng thử lại sau';
         break;
       case ErrorType.E23:
-        result = 'TK đã đăng ký nhận BĐSD';
+        result = 'TK đã được liên kết với hệ thống';
         break;
       case ErrorType.E46:
         result = 'Có vấn đề xảy ra khi thực hiện yêu cầu. Vui lòng thử lại sau';
