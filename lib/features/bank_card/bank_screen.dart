@@ -548,13 +548,13 @@ class _StackedList extends State<StackedList> {
                                   decoration: BoxDecoration(
                                     borderRadius: const BorderRadius.all(
                                         Radius.circular(25)),
-                                    color: data.bankCode == 'MB'
+                                    color: data.status == 1
                                         ? AppColor.BLUE_TEXT
                                         : AppColor.TRANSPARENT,
                                   ),
                                   child: Icon(
                                     Icons.check,
-                                    color: data.bankCode == 'MB'
+                                    color: data.status == 1
                                         ? AppColor.WHITE
                                         : AppColor.TRANSPARENT,
                                     size: 8,
