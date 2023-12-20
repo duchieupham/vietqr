@@ -257,6 +257,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                   phoneAuthenticated: phoneController.text,
                   bankAccountName: nameController.text,
                   bankAccount: bankAccountController.text,
+                  ewalletToken: state.ewalletToken ?? '',
                 );
 
                 _bloc.add(BankCardEventRegisterLinkBank(dto: dto));
@@ -279,6 +280,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                   branchId: '',
                   nationalId: cmtController.text,
                   phoneAuthenticated: phoneController.text,
+                  ewalletToken: state.ewalletToken ?? '',
                 );
                 _bloc.add(BankCardEventInsert(dto: dto));
               }

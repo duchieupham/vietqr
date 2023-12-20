@@ -21,6 +21,7 @@ class AddBankState {
   final String? requestId;
   final String? barCode;
   final TypeQR? typeQR;
+  final String? ewalletToken;
 
   AddBankState({
     this.titleMsg,
@@ -40,6 +41,7 @@ class AddBankState {
     this.dto,
     this.requestId,
     this.barCode,
+    this.ewalletToken,
   });
 
   AddBankState copyWith({
@@ -60,6 +62,7 @@ class AddBankState {
     String? requestId,
     String? barCode,
     TypeQR? typeQR,
+    String? ewalletToken,
   }) {
     return AddBankState(
       status: status ?? this.status,
@@ -79,6 +82,7 @@ class AddBankState {
       dto: dto ?? this.dto,
       requestId: requestId ?? this.requestId,
       barCode: barCode ?? this.barCode,
+      ewalletToken: ewalletToken ?? this.ewalletToken,
     );
   }
 
@@ -102,6 +106,7 @@ class AddBankState {
           typeQR == other.typeQR &&
           requestId == other.requestId &&
           barCode == other.barCode &&
+          ewalletToken == other.ewalletToken &&
           errorName == other.errorName;
 
   @override
@@ -121,5 +126,6 @@ class AddBankState {
       qr.hashCode ^
       dto.hashCode ^
       requestId.hashCode ^
+      ewalletToken.hashCode ^
       bankSelected.hashCode;
 }

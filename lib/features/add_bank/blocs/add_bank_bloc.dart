@@ -245,8 +245,12 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
         final ResponseMessageDTO responseMessageDTO =
             await bankCardRepository.confirmOTP(event.dto);
         if (responseMessageDTO.status == Stringify.RESPONSE_STATUS_SUCCESS) {
-          emit(state.copyWith(
-              status: BlocStatus.UNLOADING, request: AddBankType.OTP_BANK));
+          emit(
+            state.copyWith(
+                status: BlocStatus.UNLOADING,
+                request: AddBankType.OTP_BANK,
+                ewalletToken: responseMessageDTO.ewalletToken),
+          );
         } else {
           emit(
             state.copyWith(

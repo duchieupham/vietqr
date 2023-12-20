@@ -184,7 +184,7 @@ extension TypeContactExt2 on TypeContact {
   }
 }
 
-enum BankDetailType { NONE, SUCCESS, DELETED, ERROR, UN_LINK, OTP }
+enum BankDetailType { NONE, SUCCESS, DELETED, ERROR, REQUEST_OTP, OTP, UN_LINK }
 
 enum AccountType { NONE, LOG_OUT, POINT, AVATAR, ERROR }
 
@@ -446,6 +446,20 @@ extension TypeFilterExt on int {
         return TypeFilter.STATUS_TRANS;
       default:
         return TypeFilter.NONE;
+    }
+  }
+}
+
+enum LinkBankType { LINK, NOT_LINK }
+
+extension LinkBankTypeExt on LinkBankType {
+  int get type {
+    switch (this) {
+      case LinkBankType.LINK:
+        return 1;
+      case LinkBankType.NOT_LINK:
+      default:
+        return 0;
     }
   }
 }

@@ -16,25 +16,30 @@ class AccountBankDetailDTO {
   final List<BusinessDetails> businessDetails;
   final List<Transactions> transactions;
   final bool authenticated;
+  final String? ewalletToken;
+  final int? unlinkedType;
 
-  AccountBankDetailDTO(
-      {required this.id,
-      required this.bankAccount,
-      required this.userBankName,
-      required this.bankCode,
-      required this.bankName,
-      required this.imgId,
-      required this.type,
-      required this.caiValue,
-      required this.userId,
-      required this.bankTypeId,
-      required this.bankTypeStatus,
-      required this.nationalId,
-      required this.qrCode,
-      required this.phoneAuthenticated,
-      required this.businessDetails,
-      required this.transactions,
-      required this.authenticated});
+  AccountBankDetailDTO({
+    required this.id,
+    required this.bankAccount,
+    required this.userBankName,
+    required this.bankCode,
+    required this.bankName,
+    required this.imgId,
+    required this.type,
+    required this.caiValue,
+    required this.userId,
+    required this.bankTypeId,
+    required this.bankTypeStatus,
+    required this.nationalId,
+    required this.qrCode,
+    required this.phoneAuthenticated,
+    required this.businessDetails,
+    required this.transactions,
+    required this.authenticated,
+    this.ewalletToken,
+    this.unlinkedType,
+  });
 
   factory AccountBankDetailDTO.fromJson(Map<String, dynamic> json) {
     final List<BusinessDetails> businessDetails = [];
@@ -67,6 +72,8 @@ class AccountBankDetailDTO {
       businessDetails: businessDetails,
       transactions: transactions,
       authenticated: json['authenticated'] ?? false,
+      ewalletToken: json['ewalletToken'] ?? '',
+      unlinkedType: json['unlinkedType'] ?? 0,
     );
   }
 
@@ -92,6 +99,8 @@ class AccountBankDetailDTO {
         : transactions.map((v) => v.toJson()).toList();
 
     data['authenticated'] = authenticated;
+    data['ewalletToken'] = ewalletToken;
+    data['unlinkedType'] = unlinkedType;
     return data;
   }
 }

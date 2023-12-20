@@ -6,6 +6,7 @@ class BankTypeDTO {
   final String imageId;
   final int status;
   final String caiValue;
+  final int? unlinkedType;
 
   const BankTypeDTO({
     required this.id,
@@ -15,6 +16,7 @@ class BankTypeDTO {
     required this.imageId,
     required this.status,
     required this.caiValue,
+    this.unlinkedType,
   });
 
   get name => '${(bankShortName ?? '')} - $bankName';
@@ -28,6 +30,7 @@ class BankTypeDTO {
       imageId: json['imageId'] ?? '',
       status: json['status'] ?? 0,
       caiValue: json['caiValue'] ?? '',
+      unlinkedType: json['unlinkedType'],
     );
   }
 
@@ -39,6 +42,7 @@ class BankTypeDTO {
     data['imageId'] = imageId;
     data['status'] = status;
     data['caiValue'] = caiValue;
+    data['unlinkedType'] = unlinkedType;
     return data;
   }
 }

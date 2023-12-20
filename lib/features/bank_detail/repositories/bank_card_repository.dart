@@ -292,7 +292,8 @@ class BankCardRepository {
       caiValue: '',
     );
     try {
-      final String url = '${EnvConfig.getBaseUrl()}account-bank/detail/$bankId';
+      final String url =
+          '${EnvConfig.getBaseUrl()}account-bank/detail/web/$bankId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -360,6 +361,28 @@ class BankCardRepository {
         const ResponseMessageDTO(status: '', message: '');
     try {
       final String url = '${EnvConfig.getUrl()}bank/api/unregister_request';
+      final response = await BaseAPIClient.postAPI(
+        url: url,
+        body: body,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200 || response.statusCode == 400) {
+        var data = jsonDecode(response.body);
+        result = ResponseMessageDTO.fromJson(data);
+      } else {
+        result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return result;
+  }
+
+  Future<ResponseMessageDTO> unLinked(body) async {
+    ResponseMessageDTO result =
+        const ResponseMessageDTO(status: '', message: '');
+    try {
+      final String url = '${EnvConfig.getUrl()}bank/api/account-bank/unlinked';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: body,

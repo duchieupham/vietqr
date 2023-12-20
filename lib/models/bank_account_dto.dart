@@ -14,6 +14,7 @@ class BankAccountDTO {
   final String businessName;
   final bool isAuthenticated;
   final String? userId;
+  final String? unlinkedType;
 
   Color? bankColor;
   bool isFirst;
@@ -37,6 +38,7 @@ class BankAccountDTO {
     this.userId,
     this.bankColor,
     this.isFirst = false,
+    this.unlinkedType,
     // required this.branchCode,
     // required this.businessCode,
   });
@@ -60,6 +62,7 @@ class BankAccountDTO {
       businessName: json['businessName'] ?? '',
       isAuthenticated: json['authenticated'] ?? false,
       userId: json['userId'] ?? '',
+      unlinkedType: json['unlinkedType'] ?? '',
       isFirst: false,
       // branchCode: json['branchCode'],
       // businessCode: json['businessCode'],
@@ -81,6 +84,7 @@ class BankAccountDTO {
     data['businessName'] = businessName;
     data['authenticated'] = isAuthenticated;
     data['userId'] = userId;
+    data['unlinkedType'] = unlinkedType;
     return data;
   }
 }

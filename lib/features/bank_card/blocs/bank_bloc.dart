@@ -68,13 +68,15 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
         if (event is LoadDataBankEvent) {
           List<BankTypeDTO> list = await bankCardRepository.getBankTypes();
           if (list.isNotEmpty) {
-            int index = list.indexWhere(
-                (element) => element.bankCode.toUpperCase().trim() == 'MB');
-            if (index != -1) {
-              BankTypeDTO dto = list[index];
-              list.removeAt(index);
-              list.insert(0, dto);
-            }
+            List<BankTypeDTO> listLinks = list
+                .where((element) => element.status == LinkBankType.LINK.type)
+                .toList();
+            List<BankTypeDTO> listUnLinks = list
+                .where(
+                    (element) => element.status == LinkBankType.NOT_LINK.type)
+                .toList();
+
+            list = [...listLinks, ...listUnLinks];
           }
 
           banks = list;

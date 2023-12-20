@@ -225,10 +225,21 @@ class InfoDetailBankAccount extends StatelessWidget {
                                   isSecondBT: true,
                                   functionConfirm: () {
                                     Navigator.of(context).pop();
-                                    bloc.add(
-                                      BankCardEventUnlink(
-                                          accountNumber: dto.bankAccount),
-                                    );
+                                    if (dto.unlinkedType == 1) {
+                                      Map<String, dynamic> body = {
+                                        'ewalletToken': dto.ewalletToken,
+                                        'bankAccount': dto.bankAccount,
+                                        'bankCode': dto.bankCode,
+                                      };
+                                      bloc.add(
+                                        BankCardEventUnLink(body: body),
+                                      );
+                                    } else {
+                                      bloc.add(
+                                        BankCardEventUnRequestOTP(
+                                            accountNumber: dto.bankAccount),
+                                      );
+                                    }
                                   },
                                 );
                               },
@@ -388,9 +399,7 @@ class InfoDetailBankAccount extends StatelessWidget {
               bgColor: AppColor.WHITE,
               textSize: 12,
               title: 'Lịch sử giao dịch',
-              function: () {
-                onChangePage!();
-              },
+              function: onChangePage!,
               textColor: AppColor.BLUE_TEXT,
             ),
             const SizedBox(width: 10),
@@ -427,11 +436,6 @@ class InfoDetailBankAccount extends StatelessWidget {
                   );
                   NavigatorUtils.navigatePage(
                       context, CreateQrScreen(bankAccountDTO: bankAccountDTO));
-                  // Navigator.pushNamed(
-                  //   context,
-                  //   Routes.CREATE_QR,
-                  //   arguments: {'bankInfo': bankAccountDTO},
-                  // );
                 },
                 textColor: AppColor.WHITE,
                 bgColor: AppColor.BLUE_TEXT,

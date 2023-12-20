@@ -166,7 +166,7 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                               Navigator.pop(context);
                             }
 
-                            if (state.request == BankDetailType.UN_LINK) {
+                            if (state.request == BankDetailType.REQUEST_OTP) {
                               showDialog(
                                 barrierDismissible: false,
                                 context: NavigationService
@@ -175,8 +175,9 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                                   return DialogOTPView(
                                     phone: dto.phoneAuthenticated,
                                     onResend: () {
-                                      bankCardBloc.add(BankCardEventUnlink(
-                                          accountNumber: dto.bankAccount));
+                                      bankCardBloc.add(
+                                          BankCardEventUnRequestOTP(
+                                              accountNumber: dto.bankAccount));
                                     },
                                     onChangeOTP: (value) {
                                       otpController.value = otpController.value
@@ -200,7 +201,8 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                               );
                             }
 
-                            if (state.request == BankDetailType.OTP) {
+                            if (state.request == BankDetailType.OTP ||
+                                state.request == BankDetailType.UN_LINK) {
                               Navigator.of(context).pop();
                               bankCardBloc.add(const BankCardGetDetailEvent());
                             }
