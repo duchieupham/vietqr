@@ -6,6 +6,7 @@ import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/commons/utils/transaction_utils.dart';
 import 'package:vierqr/commons/widgets/textfield_custom.dart';
@@ -13,10 +14,10 @@ import 'package:vierqr/features/trans_history/blocs/trans_history_bloc.dart';
 import 'package:vierqr/features/trans_history/blocs/trans_history_provider.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/related_transaction_receive_dto.dart';
-import 'package:vierqr/models/transaction_input_dto.dart';
 
 import 'events/trans_history_event.dart';
 import 'states/trans_history_state.dart';
+import 'views/dialog_edit_view.dart';
 
 class TransHistoryScreen extends StatelessWidget {
   final String bankId;
@@ -237,33 +238,52 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
               ),
             ),
             const SizedBox(height: 8),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            Row(
               children: [
-                _buildItem('Thời gian tạo:',
-                    TimeUtils.instance.formatDateFromInt(dto.time, false)),
-                if (dto.type != 0)
-                  _buildItem(
-                      'Thời gian thanh toán:',
-                      TimeUtils.instance
-                          .formatDateFromInt(dto.timePaid, false)),
-                _buildItem(
-                  'Trạng thái:',
-                  TransactionUtils.instance.getStatusString(dto.status),
-                  style: TextStyle(
-                    color: TransactionUtils.instance.getColorStatus(
-                      dto.status,
-                      dto.type,
-                      dto.transType,
-                    ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildItem(
+                          'Thời gian tạo:',
+                          TimeUtils.instance
+                              .formatDateFromInt(dto.time, false)),
+                      if (dto.type != 0)
+                        _buildItem(
+                            'Thời gian thanh toán:',
+                            TimeUtils.instance
+                                .formatDateFromInt(dto.timePaid, false)),
+                      _buildItem(
+                        'Trạng thái:',
+                        TransactionUtils.instance.getStatusString(dto.status),
+                        style: TextStyle(
+                          color: TransactionUtils.instance.getColorStatus(
+                            dto.status,
+                            dto.type,
+                            dto.transType,
+                          ),
+                        ),
+                      ),
+                      _buildItem(
+                        'Nội dung:',
+                        dto.content,
+                        style: const TextStyle(color: AppColor.GREY_TEXT),
+                        maxLines: 2,
+                      ),
+                    ],
                   ),
                 ),
-                _buildItem(
-                  'Nội dung:',
-                  dto.content,
-                  style: const TextStyle(color: AppColor.GREY_TEXT),
-                  maxLines: 2,
-                ),
+                IconButton(
+                  onPressed: () async {
+                    await NavigatorUtils.showGeneralDialog(
+                      context: context,
+                      child: DialogEditView(id: dto.transactionId),
+                    );
+                  },
+                  constraints: BoxConstraints(),
+                  padding: EdgeInsets.zero,
+                  icon: Icon(Icons.edit, size: 20),
+                )
               ],
             ),
             const SizedBox(height: 8),
@@ -272,6 +292,8 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
       ),
     );
   }
+
+  bool isEdit = false;
 
   Widget _buildDropTime() {
     return Consumer<TransProvider>(builder: (context, provider, child) {
