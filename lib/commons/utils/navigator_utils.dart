@@ -6,7 +6,7 @@ class NavigatorUtils {
 
   static BuildContext? context() => navigatorKey.currentContext;
 
-  static Future<bool> showGeneralDialog({
+  static Future<dynamic> showGeneralDialog({
     BuildContext? context,
     Widget? child,
   }) async {

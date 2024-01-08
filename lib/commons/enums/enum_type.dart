@@ -293,9 +293,21 @@ enum LoginType {
   APP_VERSION,
 }
 
-enum TransactionType { NONE, LOAD_DATA, REFRESH, GET_LIST }
+enum TransactionType {
+  NONE,
+  LOAD_DATA,
+  REFRESH,
+  GET_LIST,
+  ERROR,
+  UPDATE_NOTE,
+}
 
-enum TransHistoryType { NONE, ERROR, LOAD_DATA }
+enum TransHistoryType {
+  NONE,
+  ERROR,
+  LOAD_DATA,
+  UPDATE_NOTE,
+}
 
 enum ScanType {
   NONE,
@@ -369,6 +381,71 @@ extension categoryExt on CategoryType {
       case CategoryType.suggest:
       default:
         return 0;
+    }
+  }
+}
+
+enum TypeTimeFilter {
+  ALL,
+  TODAY,
+  SEVEN_LAST_DAY,
+  THIRTY_LAST_DAY,
+  THREE_MONTH_LAST_DAY,
+  PERIOD,
+  NONE
+}
+
+extension TypeTimeFilterExt on TypeTimeFilter {
+  int get id {
+    switch (this) {
+      case TypeTimeFilter.ALL:
+        return 0;
+      case TypeTimeFilter.TODAY:
+        return 1;
+      case TypeTimeFilter.SEVEN_LAST_DAY:
+        return 2;
+      case TypeTimeFilter.THIRTY_LAST_DAY:
+        return 3;
+      case TypeTimeFilter.THREE_MONTH_LAST_DAY:
+        return 4;
+      case TypeTimeFilter.PERIOD:
+        return 5;
+      default:
+        return 0;
+    }
+  }
+}
+
+enum TypeFilter {
+  ALL,
+  BANK_NUMBER,
+  TRANS_CODE,
+  ORDER_ID,
+  CODE_SALE,
+  CONTENT,
+  STATUS_TRANS,
+  NONE
+}
+
+extension TypeFilterExt on int {
+  TypeFilter get typeTrans {
+    switch (this) {
+      case 9:
+        return TypeFilter.ALL;
+      case 0:
+        return TypeFilter.BANK_NUMBER;
+      case 1:
+        return TypeFilter.TRANS_CODE;
+      case 2:
+        return TypeFilter.ORDER_ID;
+      case 3:
+        return TypeFilter.CONTENT;
+      case 4:
+        return TypeFilter.CODE_SALE;
+      case 5:
+        return TypeFilter.STATUS_TRANS;
+      default:
+        return TypeFilter.NONE;
     }
   }
 }
