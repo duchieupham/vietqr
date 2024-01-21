@@ -99,8 +99,14 @@ class _LoginState extends State<_Login> {
       }
     });
 
-    Provider.of<DashBoardProvider>(context, listen: false).initFileTheme();
-    Provider.of<DashBoardProvider>(context, listen: false).updateFileLogo('');
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<DashBoardProvider>(context, listen: false)
+          .updateEventTheme(null);
+      Provider.of<DashBoardProvider>(context, listen: false)
+          .updateFileThemeLogin('');
+      Provider.of<DashBoardProvider>(context, listen: false).initFileTheme();
+      Provider.of<DashBoardProvider>(context, listen: false).updateFileLogo('');
+    });
 
     _bloc.add(GetFreeToken());
   }
@@ -140,6 +146,8 @@ class _LoginState extends State<_Login> {
                 provider.updateAppInfo(state.appInfoDTO);
 
                 int logoVersion = ThemeHelper.instance.getLogoVer();
+                int themeVersion = ThemeHelper.instance.getThemeVerLogin();
+                bool isEventTheme = ThemeHelper.instance.getEventTheme();
 
                 if (logoVersion != state.appInfoDTO!.logoVer) {
                   ThemeHelper.instance.updateLogoVer(state.appInfoDTO!.logoVer);
@@ -153,6 +161,28 @@ class _LoginState extends State<_Login> {
                   ThemeHelper.instance.updateLogoTheme(localPath);
                   Provider.of<DashBoardProvider>(context, listen: false)
                       .updateFileLogo(localPath);
+                }
+
+                if (themeVersion != state.appInfoDTO!.themeVer) {
+                  if (state.appInfoDTO!.isEventTheme) {
+                    String path = state.appInfoDTO!.themeImgUrl.split('/').last;
+                    if (path.contains('.png')) {
+                      path.replaceAll('.png', '');
+                    }
+                    String localPath = await downloadAndSaveImage(
+                        state.appInfoDTO!.themeImgUrl, path);
+
+                    ThemeHelper.instance.updateThemeLogin(localPath);
+                    Provider.of<DashBoardProvider>(context, listen: false)
+                        .updateFileThemeLogin(localPath);
+                  }
+                }
+
+                if (isEventTheme != state.appInfoDTO!.isEventTheme) {
+                  ThemeHelper.instance
+                      .updateEventTheme(state.appInfoDTO!.isEventTheme);
+                  Provider.of<DashBoardProvider>(context, listen: false)
+                      .updateEventTheme(state.appInfoDTO!.isEventTheme);
                 }
               }
               Provider.of<AuthProvider>(context, listen: false)
@@ -289,7 +319,9 @@ class _LoginState extends State<_Login> {
                                     Consumer<DashBoardProvider>(
                                       builder: (context, page, child) {
                                         return BackgroundAppBarLogin(
-                                          file: page.file,
+                                          file: page.isEventTheme
+                                              ? page.fileThemeLogin
+                                              : page.file,
                                           url: provider.appInfoDTO.themeImgUrl,
                                           isEventTheme:
                                               provider.appInfoDTO.isEventTheme,
@@ -301,11 +333,18 @@ class _LoginState extends State<_Login> {
                                               margin: const EdgeInsets.only(
                                                   top: 50),
                                               decoration: BoxDecoration(
-                                                image: DecorationImage(
-                                                  image:
-                                                      FileImage(page.fileLogo),
-                                                  fit: BoxFit.contain,
-                                                ),
+                                                image: page.fileLogo.path
+                                                        .isNotEmpty
+                                                    ? DecorationImage(
+                                                        image: FileImage(
+                                                            page.fileLogo),
+                                                        fit: BoxFit.contain,
+                                                      )
+                                                    : DecorationImage(
+                                                        image: AssetImage(
+                                                            'assets/images/logo_vietgr_payment.png'),
+                                                        fit: BoxFit.contain,
+                                                      ),
                                               ),
                                             ),
                                           ),

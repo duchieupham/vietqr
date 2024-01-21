@@ -10,6 +10,7 @@ import 'package:vierqr/features/register/register_screen.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/info_user_dto.dart';
+import 'package:vierqr/services/shared_references/theme_helper.dart';
 
 import '../../../commons/utils/image_utils.dart';
 import 'bgr_app_bar_login.dart';
@@ -67,7 +68,7 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
                 Consumer<DashBoardProvider>(
                   builder: (context, page, child) {
                     return BackgroundAppBarLogin(
-                      file: page.file,
+                      file: page.isEventTheme ? page.fileThemeLogin : page.file,
                       url: widget.appInfoDTO.themeImgUrl,
                       isEventTheme: widget.appInfoDTO.isEventTheme,
                       child: Align(
@@ -77,10 +78,16 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
                           width: MediaQuery.of(context).size.width / 2,
                           margin: const EdgeInsets.only(top: 50),
                           decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: FileImage(page.fileLogo),
-                              fit: BoxFit.contain,
-                            ),
+                            image: page.fileLogo.path.isNotEmpty
+                                ? DecorationImage(
+                                    image: FileImage(page.fileLogo),
+                                    fit: BoxFit.contain,
+                                  )
+                                : DecorationImage(
+                                    image: AssetImage(
+                                        'assets/images/logo_vietgr_payment.png'),
+                                    fit: BoxFit.contain,
+                                  ),
                           ),
                         ),
                       ),

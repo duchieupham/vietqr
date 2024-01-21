@@ -23,14 +23,7 @@ class BackgroundAppBarLogin extends StatelessWidget {
       width: width,
       alignment: Alignment.topCenter,
       decoration: BoxDecoration(
-          image: isEventTheme
-              ? DecorationImage(image: NetworkImage(url), fit: BoxFit.cover)
-              : file.path.isNotEmpty
-                  ? DecorationImage(
-                      image: FileImage(file), fit: BoxFit.cover)
-                  : DecorationImage(
-                      image: AssetImage('assets/images/bgr-header.png'),
-                      fit: BoxFit.cover)),
+          image: DecorationImage(image: FileImage(file), fit: BoxFit.cover)),
       child: Stack(
         children: [
           Align(

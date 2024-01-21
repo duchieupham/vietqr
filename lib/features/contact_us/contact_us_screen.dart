@@ -43,7 +43,9 @@ class _ContactUSScreenState extends State<ContactUSScreen> {
                   Consumer<DashBoardProvider>(
                     builder: (context, page, child) {
                       return BackgroundAppBarLogin(
-                        file: page.file,
+                        file: widget.appInfoDTO.isEventTheme
+                            ? page.fileThemeLogin
+                            : page.file,
                         url: widget.appInfoDTO.themeImgUrl,
                         isEventTheme: widget.appInfoDTO.isEventTheme,
                         child: Align(
@@ -52,10 +54,16 @@ class _ContactUSScreenState extends State<ContactUSScreen> {
                             height: 100,
                             width: MediaQuery.of(context).size.width / 2,
                             decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: FileImage(page.fileLogo),
-                                fit: BoxFit.contain,
-                              ),
+                              image: page.fileLogo.path.isNotEmpty
+                                  ? DecorationImage(
+                                      image: FileImage(page.fileLogo),
+                                      fit: BoxFit.contain,
+                                    )
+                                  : DecorationImage(
+                                      image: AssetImage(
+                                          'assets/images/logo_vietgr_payment.png'),
+                                      fit: BoxFit.contain,
+                                    ),
                             ),
                           ),
                         ),

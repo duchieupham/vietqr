@@ -44,11 +44,17 @@ class _DialogUpdateViewState extends State<DialogUpdateView> {
             children: [
               Consumer<DashBoardProvider>(builder: (context, provider, child) {
                 return Expanded(
-                  child: Image.file(
-                    provider.fileLogo,
-                    width: 130,
-                    height: 130,
-                  ),
+                  child: provider.fileLogo.path.isNotEmpty
+                      ? Image.file(
+                          provider.fileLogo,
+                          width: 130,
+                          height: 130,
+                        )
+                      : Image.asset(
+                          'assets/images/logo_vietgr_payment.png',
+                          width: 130,
+                          height: 130,
+                        ),
                 );
               }),
               const Padding(padding: EdgeInsets.only(top: 10)),

@@ -45,8 +45,20 @@ class DashBoardProvider with ChangeNotifier {
 
   File file = File('');
   File fileLogo = File('');
+  File fileThemeLogin = File('');
+
+  bool isEventTheme = false;
 
   int themeVer = 0;
+
+  void updateEventTheme(value) {
+    if (value == null) {
+      isEventTheme = ThemeHelper.instance.getEventTheme();
+    } else {
+      isEventTheme = value;
+    }
+    notifyListeners();
+  }
 
   void updateFileLogo(String file) async {
     if (file.isNotEmpty) {
@@ -54,6 +66,16 @@ class DashBoardProvider with ChangeNotifier {
     } else {
       String url = ThemeHelper.instance.getLogoTheme();
       fileLogo = await getImageFile(url);
+    }
+    notifyListeners();
+  }
+
+  void updateFileThemeLogin(String url) async {
+    if (url.isNotEmpty) {
+      fileThemeLogin = await getImageFile(url);
+    } else {
+      String _url = ThemeHelper.instance.getThemeLogin();
+      fileThemeLogin = await getImageFile(_url);
     }
     notifyListeners();
   }

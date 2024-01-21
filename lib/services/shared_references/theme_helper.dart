@@ -59,4 +59,43 @@ class ThemeHelper {
   int getLogoVer() {
     return sharedPrefs.getInt('LOGO_VER') ?? -1;
   }
+
+  Future<void> updateThemeVerLogin(int theme) async {
+    if (!sharedPrefs.containsKey('THEME_VER') ||
+        sharedPrefs.getInt('THEME_VER') == null) {
+      await sharedPrefs.setInt('THEME_VER', theme);
+      return;
+    }
+    await sharedPrefs.setInt('THEME_VER', theme);
+  }
+
+  int getThemeVerLogin() {
+    return sharedPrefs.getInt('THEME_VER') ?? -1;
+  }
+
+  Future<void> updateThemeLogin(String theme) async {
+    if (!sharedPrefs.containsKey('THEME_LOGIN') ||
+        sharedPrefs.getString('THEME_LOGIN') == null) {
+      await sharedPrefs.setString('THEME_LOGIN', theme);
+      return;
+    }
+    await sharedPrefs.setString('THEME_LOGIN', theme);
+  }
+
+  String getThemeLogin() {
+    return sharedPrefs.getString('THEME_LOGIN') ?? '';
+  }
+
+  Future<void> updateEventTheme(bool theme) async {
+    if (!sharedPrefs.containsKey('EVENT_THEME') ||
+        sharedPrefs.getBool('EVENT_THEME') == null) {
+      await sharedPrefs.setBool('EVENT_THEME', theme);
+      return;
+    }
+    await sharedPrefs.setBool('EVENT_THEME', theme);
+  }
+
+  bool getEventTheme() {
+    return sharedPrefs.getBool('EVENT_THEME') ?? false;
+  }
 }

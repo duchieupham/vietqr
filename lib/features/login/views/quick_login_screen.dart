@@ -75,7 +75,9 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
                       Consumer<DashBoardProvider>(
                           builder: (context, page, child) {
                         return BackgroundAppBarLogin(
-                          file: page.file,
+                          file: page.isEventTheme
+                              ? page.fileThemeLogin
+                              : page.file,
                           url: widget.appInfoDTO.themeImgUrl,
                           isEventTheme: widget.appInfoDTO.isEventTheme,
                           child: const SizedBox(),
@@ -118,9 +120,15 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
                                 Consumer<DashBoardProvider>(
                                   builder: (context, page, child) {
                                     return SizedBox(
-                                        width: 80,
-                                        height: 40,
-                                        child: Image.file(page.fileLogo));
+                                      width: 80,
+                                      height: 40,
+                                      child: page.fileLogo.path.isNotEmpty
+                                          ? Image.file(page.fileLogo)
+                                          : Image.asset(
+                                              'assets/images/ic-viet-qr.png',
+                                              height: 40,
+                                            ),
+                                    );
                                   },
                                 ),
                               ],
