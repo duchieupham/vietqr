@@ -15,6 +15,8 @@ import 'package:provider/provider.dart';
 import 'package:vierqr/models/theme_dto.dart';
 import 'package:vierqr/models/theme_dto_local.dart';
 
+import 'states/custom_radio.dart';
+
 class ThemeSettingView extends StatefulWidget {
   ThemeSettingView({super.key});
 
@@ -130,45 +132,28 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 12),
-              _buildContainer(
-                child: Consumer<DashBoardProvider>(
-                    builder: (context, provider, _) {
-                  return StreamBuilder(
-                    stream: _imageListStreamController.stream,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        List<File> imageList = snapshot.data as List<File>;
-                        return Column(
-                          children: List.generate(imageList.length, (index) {
-                            ThemeDTO e = provider.themes[index];
+              Consumer<DashBoardProvider>(builder: (context, provider, _) {
+                return _buildContainer(
+                  color: provider.settingDTO.themeType == 0
+                      ? AppColor.GREY_BG
+                      : AppColor.WHITE,
+                  padding: EdgeInsets.zero,
+                  child: Column(
+                    children: [
+                      StreamBuilder(
+                        stream: _imageListStreamController.stream,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            List<File> imageList = snapshot.data as List<File>;
                             return Padding(
-                              padding: const EdgeInsets.only(bottom: 24),
-                              child: Row(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(8),
-                                    child: imageList[index].path.isNotEmpty
-                                        ? Image.file(
-                                            imageList[index],
-                                            width: 90,
-                                            height: 50,
-                                            fit: BoxFit.cover,
-                                          )
-                                        : CachedNetworkImage(
-                                            imageUrl: e.imgUrl,
-                                            width: 90,
-                                            height: 50,
-                                            fit: BoxFit.cover,
-                                          ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Text(e.name),
-                                  const Spacer(),
-                                  Radio(
-                                    value: provider.themeDTO.type,
-                                    activeColor: AppColor.BLUE_TEXT,
-                                    groupValue: e.type,
-                                    onChanged: (value) {
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              child: Column(
+                                children:
+                                    List.generate(imageList.length, (index) {
+                                  ThemeDTO e = provider.themes[index];
+                                  return GestureDetector(
+                                    onTap: () {
                                       if (provider.settingDTO.themeType == 0)
                                         return;
                                       ThemeDTOLocal dto = ThemeDTOLocal(
@@ -184,22 +169,112 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
                                           .read<DashBoardBloc>()
                                           .add(UpdateThemeEvent(e.type));
                                     },
-                                  ),
-                                ],
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          bottom: 16, top: 16),
+                                      child: Row(
+                                        children: [
+                                          ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            child:
+                                                imageList[index].path.isNotEmpty
+                                                    ? Image.file(
+                                                        imageList[index],
+                                                        width: 90,
+                                                        height: 50,
+                                                        fit: BoxFit.cover,
+                                                      )
+                                                    : CachedNetworkImage(
+                                                        imageUrl: e.imgUrl,
+                                                        width: 90,
+                                                        height: 50,
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                          ),
+                                          const SizedBox(width: 12),
+                                          Text(e.name),
+                                          const Spacer(),
+                                          CustomRadio(
+                                            value: provider.themeDTO.type,
+                                            groupValue: e.type,
+                                            isDisable:
+                                                provider.settingDTO.themeType ==
+                                                    0,
+                                            onChanged: (value) {},
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
                               ),
                             );
-                          }).toList(),
-                        );
-                      } else {
-                        return const SizedBox(
-                          height: 50,
-                          width: 90,
-                        );
-                      }
-                    },
-                  );
-                }),
-              ),
+                          } else {
+                            return const SizedBox(
+                              height: 50,
+                              width: 90,
+                            );
+                          }
+                        },
+                      ),
+                      if (provider.settingDTO.themeType == 0)
+                        GestureDetector(
+                          onTap: () {},
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 16, horizontal: 20),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.vertical(
+                                    bottom: Radius.circular(8))),
+                            child: Row(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: provider.file.path.isNotEmpty
+                                      ? Image.file(
+                                          provider.file,
+                                          width: 90,
+                                          height: 50,
+                                          fit: BoxFit.cover,
+                                        )
+                                      : CachedNetworkImage(
+                                          imageUrl:
+                                              provider.settingDTO.themeImgUrl,
+                                          width: 90,
+                                          height: 50,
+                                          fit: BoxFit.cover,
+                                        ),
+                                ),
+                                const SizedBox(width: 12),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('Sự kiện'),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'Chủ đề sự kiện đang được diễn ra.',
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          color: AppColor.grey979797),
+                                    ),
+                                  ],
+                                ),
+                                const Spacer(),
+                                CustomRadio(
+                                  value: provider.themeDTO.type,
+                                  groupValue: provider.settingDTO.themeType,
+                                  onChanged: (value) {},
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                    ],
+                  ),
+                );
+              }),
             ],
           ],
         ),
@@ -219,12 +294,17 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
     return title;
   }
 
-  Widget _buildContainer({required Widget child}) {
+  Widget _buildContainer({
+    required Widget child,
+    Color? color,
+    EdgeInsetsGeometry? padding,
+  }) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+      padding:
+          padding ?? const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
-        color: AppColor.WHITE,
+        color: color ?? AppColor.WHITE,
       ),
       child: child,
     );
