@@ -409,20 +409,6 @@ class InfoDetailBankAccount extends StatelessWidget {
                     bankName: dto.bankName,
                     imgId: dto.imgId,
                     type: dto.type,
-                    branchId: (dto.businessDetails.isEmpty)
-                        ? ''
-                        : dto
-                            .businessDetails.first.branchDetails.first.branchId,
-                    businessId: (dto.businessDetails.isEmpty)
-                        ? ''
-                        : dto.businessDetails.first.businessId,
-                    branchName: (dto.businessDetails.isEmpty)
-                        ? ''
-                        : dto.businessDetails.first.branchDetails.first
-                            .branchName,
-                    businessName: (dto.businessDetails.isEmpty)
-                        ? ''
-                        : dto.businessDetails.first.businessName,
                     isAuthenticated: dto.authenticated,
                   );
                   NavigatorUtils.navigatePage(

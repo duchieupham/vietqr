@@ -13,6 +13,7 @@ import 'package:vierqr/features/connect_telegram/repositories/connect_telegram_r
 import 'package:vierqr/models/business_branch_dto.dart';
 import 'package:vierqr/models/info_tele_dto.dart';
 import 'package:vierqr/models/member_branch_model.dart';
+import 'package:vierqr/models/member_search_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 
 class ShareBDSDBloc extends Bloc<ShareBDSDEvent, ShareBDSDState>
@@ -26,18 +27,22 @@ class ShareBDSDBloc extends Bloc<ShareBDSDEvent, ShareBDSDState>
             listMember: [],
             listTelegram: [],
             listLark: [],
+            listMemberSearch: [],
           ),
         ) {
     on<GetBusinessAvailDTOEvent>(_getBusinessAvailDTO);
     on<ConnectBranchEvent>(_connectBranch);
     on<GetMemberEvent>(_getMember);
-    on<DeleteMemberEvent>(_removeMember);
+    on<RemoveMemberEvent>(_removeMember);
+    on<RemoveAllMemberEvent>(_removeAllMember);
     on<GetInfoTelegramEvent>(_getInfoTeleConnected);
     on<GetInfoLarkEvent>(_getInfoLarkConnected);
     on<AddBankLarkEvent>(_addBankLark);
     on<AddBankTelegramEvent>(_addBankTelegram);
     on<RemoveBankTelegramEvent>(_removeBankTelegram);
     on<RemoveBankLarkEvent>(_removeBankLark);
+    on<SearchMemberEvent>(_searchMember);
+    on<ShareUserBDSDEvent>(_shareBDSD);
   }
 
   ShareBDSDRepository repository = ShareBDSDRepository();
@@ -164,22 +169,36 @@ class ShareBDSDBloc extends Bloc<ShareBDSDEvent, ShareBDSDState>
           state.copyWith(
               status: BlocStatus.LOADING_PAGE, request: ShareBDSDType.NONE),
         );
-        String branchId = '';
-
-        if (state.branchId != null) {
-          branchId = state.branchId ?? '';
-        } else {
-          branchId = event.branchId ?? '';
-        }
 
         final List<MemberBranchModel> list =
-            await repository.getMemberBranch(branchId);
+            await repository.getMemberBranch(event.bankId);
         emit(state.copyWith(
           status: BlocStatus.NONE,
           listMember: list,
           request: ShareBDSDType.MEMBER,
-          branchId: event.branchId,
-          businessId: event.businessId,
+          isLoading: false,
+        ));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(status: BlocStatus.NONE));
+    }
+  }
+
+  void _searchMember(ShareBDSDEvent event, Emitter emit) async {
+    try {
+      if (event is SearchMemberEvent) {
+        emit(
+          state.copyWith(
+              status: BlocStatus.LOADING, request: ShareBDSDType.SEARCH_MEMBER),
+        );
+
+        final List<MemberSearchDto> list = await repository.searchMember(
+            event.bankId.trim(), event.value, event.type);
+        emit(state.copyWith(
+          status: BlocStatus.NONE,
+          listMemberSearch: list,
+          request: ShareBDSDType.SEARCH_MEMBER,
           isLoading: false,
         ));
       }
@@ -235,15 +254,54 @@ class ShareBDSDBloc extends Bloc<ShareBDSDEvent, ShareBDSDState>
 
   void _removeMember(ShareBDSDEvent event, Emitter emit) async {
     try {
-      if (event is DeleteMemberEvent) {
+      if (event is RemoveMemberEvent) {
         emit(state.copyWith(
             status: BlocStatus.LOADING, request: ShareBDSDType.NONE));
         Map<String, dynamic> body = {
           'userId': event.userId,
-          'businessId': event.businessId,
+          'bankId': event.bankId,
         };
 
         final responseMessageDTO = await repository.removeMember(body);
+        if (responseMessageDTO.status == Stringify.RESPONSE_STATUS_SUCCESS) {
+          emit(state.copyWith(
+              status: BlocStatus.UNLOADING,
+              request: ShareBDSDType.DELETE_MEMBER));
+        } else {
+          emit(
+            state.copyWith(
+              msg: ErrorUtils.instance
+                  .getErrorMessage(responseMessageDTO.message),
+              request: ShareBDSDType.ERROR,
+              status: BlocStatus.UNLOADING,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      ResponseMessageDTO responseMessageDTO =
+          const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+      emit(
+        state.copyWith(
+          msg: ErrorUtils.instance.getErrorMessage(responseMessageDTO.message),
+          request: ShareBDSDType.ERROR,
+          status: BlocStatus.UNLOADING,
+        ),
+      );
+    }
+  }
+
+  void _removeAllMember(ShareBDSDEvent event, Emitter emit) async {
+    try {
+      if (event is RemoveAllMemberEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, request: ShareBDSDType.NONE));
+        Map<String, dynamic> body = {
+          'bankId': event.bankId,
+        };
+
+        final responseMessageDTO = await repository.removeAllMember(body);
         if (responseMessageDTO.status == Stringify.RESPONSE_STATUS_SUCCESS) {
           emit(state.copyWith(
               status: BlocStatus.UNLOADING,
@@ -392,6 +450,42 @@ class ShareBDSDBloc extends Bloc<ShareBDSDEvent, ShareBDSDState>
           emit(state.copyWith(
               status: BlocStatus.UNLOADING,
               request: ShareBDSDType.REMOVE_TELEGRAM));
+        } else {
+          emit(
+            state.copyWith(
+              msg: ErrorUtils.instance
+                  .getErrorMessage(responseMessageDTO.message),
+              request: ShareBDSDType.ERROR,
+              status: BlocStatus.UNLOADING,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      ResponseMessageDTO responseMessageDTO =
+          const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+      emit(
+        state.copyWith(
+          msg: ErrorUtils.instance.getErrorMessage(responseMessageDTO.message),
+          request: ShareBDSDType.ERROR,
+          status: BlocStatus.UNLOADING,
+        ),
+      );
+    }
+  }
+
+  void _shareBDSD(ShareBDSDEvent event, Emitter emit) async {
+    try {
+      if (event is ShareUserBDSDEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING_POPUP,
+            request: ShareBDSDType.SHARE_BDSD));
+
+        final responseMessageDTO = await repository.shareBDSD(event.body);
+        if (responseMessageDTO.status == Stringify.RESPONSE_STATUS_SUCCESS) {
+          emit(state.copyWith(
+              status: BlocStatus.UNLOADING, request: ShareBDSDType.SHARE_BDSD));
         } else {
           emit(
             state.copyWith(

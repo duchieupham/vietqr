@@ -85,7 +85,7 @@ class _SearchBankViewState extends State<SearchBankView> {
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: Scaffold(
@@ -357,26 +357,16 @@ class _SearchBankViewState extends State<SearchBankView> {
                           InkWell(
                             onTap: () {
                               BankAccountDTO bankAccountDTO = BankAccountDTO(
-                                id: dto.id,
-                                bankAccount: dto.bankAccount,
-                                userBankName: dto.userBankName,
-                                bankCode: dto.bankCode,
-                                bankName: dto.bankName,
-                                imgId: dto.imgId,
-                                type: dto.type,
-                                branchId:
-                                    (dto.branchId.isEmpty) ? '' : dto.branchId,
-                                businessId: (dto.businessId.isEmpty)
-                                    ? ''
-                                    : dto.businessId,
-                                branchName: (dto.branchName.isEmpty)
-                                    ? ''
-                                    : dto.branchName,
-                                businessName: (dto.businessName.isEmpty)
-                                    ? ''
-                                    : dto.businessName,
-                                isAuthenticated: dto.isAuthenticated,
-                              );
+                                  id: dto.id,
+                                  bankAccount: dto.bankAccount,
+                                  userBankName: dto.userBankName,
+                                  bankCode: dto.bankCode,
+                                  bankName: dto.bankName,
+                                  imgId: dto.imgId,
+                                  type: dto.type,
+                                  isAuthenticated: dto.isAuthenticated,
+                                  isOwner: dto.isOwner,
+                                  bankShortName: dto.bankShortName);
                               NavigatorUtils.navigatePage(
                                   context,
                                   CreateQrScreen(

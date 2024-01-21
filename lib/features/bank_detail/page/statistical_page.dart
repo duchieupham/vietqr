@@ -11,6 +11,7 @@ import 'package:vierqr/models/statistical_dto.dart';
 import 'package:vierqr/services/providers/statistical_provider.dart';
 
 import '../views/line_chart.dart';
+import '../views/line_chart_static.dart';
 
 // ignore: must_be_immutable
 class Statistical extends StatelessWidget {
@@ -38,31 +39,31 @@ class Statistical extends StatelessWidget {
           if (state is StatisticGetAllDataSuccessState) {
             return ListView(
               children: [
-                // Container(
-                //   padding: const EdgeInsets.fromLTRB(0, 40, 4, 12),
-                //   width: MediaQuery.of(context).size.width,
-                //   height: 400,
-                //   decoration: BoxDecoration(
-                //       borderRadius: BorderRadius.circular(16),
-                //       color: AppColor.WHITE),
-                //   child: Row(
-                //     crossAxisAlignment: CrossAxisAlignment.end,
-                //     children: [
-                //       Expanded(
-                //           child: StatisticalLineChart(
-                //         listData: state.listData,
-                //       )),
-                //       const Padding(
-                //         padding: EdgeInsets.only(bottom: 20, left: 4),
-                //         child: Text(
-                //           'Thời gian\n(Tháng)',
-                //           textAlign: TextAlign.center,
-                //           style: TextStyle(fontSize: 10),
-                //         ),
-                //       )
-                //     ],
-                //   ),
-                // ),
+                Container(
+                  padding: const EdgeInsets.fromLTRB(0, 40, 4, 12),
+                  width: MediaQuery.of(context).size.width,
+                  height: 400,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      color: AppColor.WHITE),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Expanded(
+                          child: StatisticalLineChart(
+                        listData: state.listData,
+                      )),
+                      const Padding(
+                        padding: EdgeInsets.only(bottom: 20, left: 4),
+                        child: Text(
+                          'Thời gian\n(Tháng)',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 10),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
                 _buildOverView(state.dto, state.listData),
                 const SizedBox(
                   height: 24,

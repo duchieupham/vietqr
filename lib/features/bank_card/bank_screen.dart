@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
-
 // import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
@@ -26,8 +25,8 @@ import 'package:vierqr/features/bank_card/widgets/function_bank_widget.dart';
 import 'package:vierqr/features/bank_detail/bank_card_detail_screen.dart';
 import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
 import 'package:vierqr/features/create_qr/create_qr_screen.dart';
-import 'package:vierqr/features/dashboard/blocs/dashboard_provider.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
+import 'package:vierqr/features/dashboard/blocs/dashboard_provider.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
 import 'package:vierqr/layouts/box_layout.dart';
@@ -40,8 +39,6 @@ import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:vierqr/services/providers/bank_card_select_provider.dart';
 import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
-
-import 'views/share_bdsd_view.dart';
 
 class BankScreen extends StatelessWidget {
   const BankScreen({super.key});
@@ -262,25 +259,25 @@ class _BankScreenState extends State<_BankScreen>
                 des: 'Thêm hoặc liên kết TK ngân hàng để nhận BDSD',
               ),
             ),
-            const SizedBox(width: 4),
-            Expanded(
-              child: _buildSection(
-                'assets/images/ic_share_code.png',
-                () async {
-                  await DialogWidget.instance.showModelBottomSheet(
-                    context: context,
-                    sigmaX: 0,
-                    sigmaY: 0,
-                    padding: EdgeInsets.zero,
-                    height:
-                        MediaQuery.of(context).size.height - kToolbarHeight * 2,
-                    widget: ShareBDSDView(),
-                  );
-                },
-                title: 'Chia sẻ BĐSD',
-                des: 'Thêm hoặc liên kết TK ngân hàng để nhận BĐSD',
-              ),
-            ),
+            // const SizedBox(width: 4),
+            // Expanded(
+            //   child: _buildSection(
+            //     'assets/images/ic_share_code.png',
+            //     () async {
+            //       await DialogWidget.instance.showModelBottomSheet(
+            //         context: context,
+            //         sigmaX: 0,
+            //         sigmaY: 0,
+            //         padding: EdgeInsets.zero,
+            //         height:
+            //             MediaQuery.of(context).size.height - kToolbarHeight * 2,
+            //         widget: ShareBDSDView(),
+            //       );
+            //     },
+            //     title: 'Chia sẻ BĐSD',
+            //     des: 'Thêm hoặc liên kết TK ngân hàng để nhận BĐSD',
+            //   ),
+            // ),
           ],
         ),
       ),

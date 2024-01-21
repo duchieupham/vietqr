@@ -6,6 +6,7 @@ class AccountBankDetailDTO {
   final String bankName;
   final String imgId;
   final int type;
+  final String bankShortName;
   final String caiValue;
   final String userId;
   final String bankTypeId;
@@ -34,7 +35,8 @@ class AccountBankDetailDTO {
       required this.phoneAuthenticated,
       required this.businessDetails,
       required this.transactions,
-      required this.authenticated});
+      required this.authenticated,
+      this.bankShortName = ''});
 
   factory AccountBankDetailDTO.fromJson(Map<String, dynamic> json) {
     final List<BusinessDetails> businessDetails = [];
@@ -57,6 +59,7 @@ class AccountBankDetailDTO {
       bankName: json['bankName'] ?? '',
       imgId: json['imgId'] ?? '',
       type: json['type'] ?? 0,
+      bankShortName: json['bankShortName'] ?? '',
       caiValue: json['caiValue'] ?? '',
       userId: json['userId'] ?? '',
       bankTypeId: json['bankTypeId'] ?? '',

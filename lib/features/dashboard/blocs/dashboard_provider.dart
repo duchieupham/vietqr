@@ -46,9 +46,7 @@ class DashBoardProvider with ChangeNotifier {
   }
 
   void updateListBanks(List<BankAccountDTO> value) {
-    listBanks = value.where((element) {
-      return element.branchId.isNotEmpty && element.branchId.isNotEmpty;
-    }).toList();
+    listBanks = value;
     notifyListeners();
   }
 

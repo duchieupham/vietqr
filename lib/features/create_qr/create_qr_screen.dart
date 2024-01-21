@@ -22,10 +22,8 @@ import 'package:vierqr/features/create_qr/states/create_qr_state.dart';
 import 'package:vierqr/features/create_qr/views/create_success_view.dart';
 import 'package:vierqr/features/create_qr/widgets/bottom_sheet_image.dart';
 import 'package:vierqr/features/transaction/widgets/transaction_sucess_widget.dart';
-import 'package:vierqr/features/web_view/views/custom_inapp_webview.dart';
-import 'package:vierqr/features/web_view/views/custom_web_view.dart';
-import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
+import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/qr_create_dto.dart';
@@ -430,19 +428,6 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                                 'Chuyen khoan den ${state.bankAccountDTO?.bankAccount ?? ''}',
                                           ),
                                           if (state.bankAccountDTO?.type ==
-                                              1) ...[
-                                            _buildItemSuggest(
-                                              onChange: provider.updateSuggest,
-                                              text:
-                                                  'Thanh toan cho ${state.bankAccountDTO?.businessName ?? ''}',
-                                            ),
-                                            _buildItemSuggest(
-                                              onChange: provider.updateSuggest,
-                                              text:
-                                                  'Giao dich ${state.bankAccountDTO?.branchName ?? ''}',
-                                            ),
-                                          ],
-                                          if (state.bankAccountDTO?.type ==
                                               0) ...[
                                             _buildItemSuggest(
                                               onChange: provider.updateSuggest,
@@ -538,10 +523,6 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                   bankId: state.bankAccountDTO?.id ?? '',
                                   amount: money,
                                   content: formattedName,
-                                  branchId:
-                                      state.bankAccountDTO?.branchId ?? '',
-                                  businessId:
-                                      state.bankAccountDTO?.businessId ?? '',
                                   userId: UserInformationHelper.instance
                                       .getUserId(),
                                 );

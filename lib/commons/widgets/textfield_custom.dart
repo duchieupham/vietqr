@@ -10,7 +10,7 @@ class TextFieldCustom extends StatefulWidget {
   final TextEditingController? controller;
   final ValueChanged<String>? onChange;
   final VoidCallback? onEditingComplete;
-  final ValueChanged<Object>? onSubmitted;
+  final ValueChanged<String>? onSubmitted;
   final TextInputAction? keyboardAction;
   final TextInputType inputType;
   final bool isObscureText;
@@ -100,6 +100,7 @@ class _TextFieldWidgetState extends State<TextFieldCustom> {
       inputFormatters: widget.inputFormatter,
       onTapOutside: widget.onTapOutside,
       maxLength: widget.maxLength,
+      onFieldSubmitted: widget.onSubmitted,
       enabled: widget.enable,
       readOnly: widget.readOnly,
       autofocus: widget.autoFocus ?? false,
@@ -188,7 +189,7 @@ class _TextFieldWidgetState extends State<TextFieldCustom> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                textFiledTypeLabel,
+                SizedBox(height: 40, child: textFiledTypeLabel),
                 if (_msgError != null && !widget.isShowToast)
                   Container(
                     width: double.infinity,

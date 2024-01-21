@@ -7,8 +7,8 @@ import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/features/bank_card/events/bank_event.dart';
-import 'package:vierqr/features/bank_detail/repositories/bank_card_repository.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
+import 'package:vierqr/features/bank_detail/repositories/bank_card_repository.dart';
 import 'package:vierqr/features/home/blocs/home_bloc.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
@@ -162,11 +162,7 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
     bankName: '',
     imgId: '',
     type: 0,
-    branchId: '',
-    businessId: '',
-    branchName: '',
     isAuthenticated: false,
-    businessName: '',
     bankColor: Colors.white,
     isFirst: true,
   );
@@ -178,11 +174,7 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
     bankName: '',
     imgId: '',
     type: 0,
-    branchId: '',
-    businessId: '',
-    branchName: '',
     isAuthenticated: false,
-    businessName: '',
     bankColor: Colors.black26,
     isFirst: false,
   );

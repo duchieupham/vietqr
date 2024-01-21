@@ -78,6 +78,7 @@ class _BankCardDetailState extends State<BankCardDetailState> {
     bankTypeStatus: 0,
     nationalId: '',
     qrCode: '',
+    bankShortName: '',
     phoneAuthenticated: '',
     businessDetails: [],
     transactions: [],
@@ -106,7 +107,7 @@ class _BankCardDetailState extends State<BankCardDetailState> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const MAppBar(title: 'Chi tiết ngân hàng'),
+      appBar: const MAppBar(title: 'Chi tiết TK ngân hàng'),
       body: ChangeNotifierProvider(
         create: (_) => AccountBankDetailProvider(),
         child: Consumer<AccountBankDetailProvider>(

@@ -4,23 +4,21 @@ import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
-import 'package:vierqr/commons/utils/string_utils.dart';
-import 'package:vierqr/commons/utils/user_information_utils.dart';
+import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
+import 'package:vierqr/commons/widgets/textfield_custom.dart';
 import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_detail/blocs/share_bdsd_bloc.dart';
 import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
 import 'package:vierqr/features/bank_detail/events/share_bdsd_event.dart';
 import 'package:vierqr/features/bank_detail/states/share_bdsd_state.dart';
-import 'package:vierqr/features/bank_detail/views/connect_business_view.dart';
-import 'package:vierqr/features/branch/widgets/add_branch_member_widget.dart';
+import 'package:vierqr/features/bank_detail/views/bottom_sheet_add_user_bdsd.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
-import 'package:vierqr/layouts/m_text_form_field.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
-import 'package:vierqr/models/business_branch_dto.dart';
 import 'package:vierqr/models/info_tele_dto.dart';
-import 'package:vierqr/models/member_branch_model.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
+
+import '../../../models/member_branch_model.dart';
 
 class ShareBDSDScreen extends StatelessWidget {
   final String bankId;
@@ -60,6 +58,8 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
 
   String get userId => UserInformationHelper.instance.getUserId();
 
+  List<MemberBranchModel> listMemberData = [];
+  List<MemberBranchModel> listMember = [];
   @override
   void initState() {
     super.initState();
@@ -72,18 +72,7 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
   initData() {
     _bloc.add(GetInfoTelegramEvent(bankId: widget.bankId, isLoading: true));
     _bloc.add(GetInfoLarkEvent(bankId: widget.bankId));
-    if (widget.dto.businessDetails.isEmpty) {
-      _bloc.add(GetBusinessAvailDTOEvent());
-    } else {
-      String branchId = '';
-      String businessId = widget.dto.businessDetails.first.businessId;
-
-      if (widget.dto.businessDetails.first.branchDetails.isNotEmpty) {
-        branchId =
-            widget.dto.businessDetails.first.branchDetails.first.branchId;
-      }
-      _bloc.add(GetMemberEvent(branchId: branchId, businessId: businessId));
-    }
+    _bloc.add(GetMemberEvent(bankId: widget.bankId));
   }
 
   Future<void> onRefresh() async {
@@ -102,7 +91,13 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
           Navigator.pop(context);
         }
 
-        if (state.request == ShareBDSDType.Avail) {}
+        if (state.request == ShareBDSDType.MEMBER) {
+          if (state.listMember.length >= 1) {
+            listMember = state.listMember;
+            listMember.removeWhere((member) => member.isOwner);
+            listMemberData = listMember;
+          }
+        }
 
         if (state.request == ShareBDSDType.CONNECT) {
           widget.bloc.add(const BankCardGetDetailEvent());
@@ -111,7 +106,9 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
         }
 
         if (state.request == ShareBDSDType.DELETE_MEMBER) {
-          _bloc.add(GetMemberEvent());
+          print('-----------');
+
+          _bloc.add(GetMemberEvent(bankId: widget.bankId));
         }
         if (state.request == ShareBDSDType.ADD_TELEGRAM ||
             state.request == ShareBDSDType.REMOVE_TELEGRAM) {
@@ -134,98 +131,344 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
               ),
             ),
           );
-        return RefreshIndicator(
-          onRefresh: onRefresh,
-          child: ListView(
-            children: [
-              if (widget.dto.businessDetails.isEmpty)
-                _BuildNotConnectWidget(
-                  list: state.listBusinessAvailDTO,
-                  onCallBack: () {
-                    _bloc.add(GetBusinessAvailDTOEvent());
-                    Navigator.pop(context);
-                  },
-                  onConnect: (BusinessId, branchId) {
-                    _bloc.add(
-                      ConnectBranchEvent(
-                        businessId: BusinessId,
-                        branchId: branchId,
+        return Stack(
+          children: [
+            RefreshIndicator(
+              onRefresh: onRefresh,
+              child: ListView(
+                children: [
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  const Text(
+                    'Tài khoản chia sẻ',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    decoration: BoxDecoration(
+                        color: AppColor.WHITE,
+                        borderRadius: BorderRadius.circular(8)),
+                    child: Row(
+                      children: [
+                        Container(
+                          height: 36,
+                          width: 36,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30),
+                              border: Border.all(
+                                  color:
+                                      AppColor.BLACK_BUTTON.withOpacity(0.2)),
+                              image: DecorationImage(
+                                  image: ImageUtils.instance
+                                      .getImageNetWork(widget.dto.imgId))),
+                        ),
+                        const SizedBox(
+                          width: 16,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${widget.dto.bankCode} Bank - ${widget.dto.bankAccount}',
+                              style: TextStyle(fontWeight: FontWeight.w600),
+                            ),
+                            const SizedBox(
+                              height: 2,
+                            ),
+                            Text(
+                              '${widget.dto.userBankName}',
+                              style: TextStyle(fontSize: 12),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 24,
+                  ),
+                  const Text(
+                    'Chia sẻ qua mạng xã hội',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+                  if (state.listTelegram.isEmpty && state.listLark.isEmpty)
+                    _buildSocialNetwork(context)
+                  else
+                    Column(
+                      children: [
+                        ...[
+                          if (state.listTelegram.isNotEmpty)
+                            _buildListChatTelegram(
+                                state.listTelegram, state.isTelegram)
+                          else
+                            GestureDetector(
+                              onTap: () async {
+                                await Navigator.pushNamed(
+                                    context, Routes.CONNECT_TELEGRAM);
+                                _bloc.add(GetInfoTelegramEvent());
+                              },
+                              child: _buildItemNetWork('Kết nối Telegram',
+                                  'assets/images/logo-telegram.png'),
+                            )
+                        ],
+                        const SizedBox(height: 20),
+                        ...[
+                          if (state.listLark.isNotEmpty)
+                            _buildListConnectLark(state.listLark, state.isLark)
+                          else
+                            GestureDetector(
+                              onTap: () async {
+                                await Navigator.pushNamed(
+                                    context, Routes.CONNECT_LARK);
+                                _bloc.add(GetInfoLarkEvent());
+                              },
+                              child: _buildItemNetWork('Kết nối Lark',
+                                  'assets/images/logo-lark.png'),
+                            )
+                        ]
+                      ],
+                    ),
+                  const SizedBox(
+                    height: 24,
+                  ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Danh sách thành viên',
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(
+                              height: 2,
+                            ),
+                            const Text(
+                              'Nhận thông tin Biến động số dư qua hệ thống VietQR VN',
+                              style: TextStyle(fontSize: 12),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(right: 8, left: 12),
+                        decoration: BoxDecoration(
+                            color: AppColor.BLUE_TEXT.withOpacity(0.3),
+                            borderRadius: BorderRadius.circular(20)),
+                        child: Row(
+                          children: [
+                            Text(
+                              '${listMember.length}',
+                              style: TextStyle(color: AppColor.BLUE_TEXT),
+                            ),
+                            Image.asset(
+                              'assets/images/ic-member-bdsd-blue.png',
+                              height: 26,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (listMember.isNotEmpty)
+                    Expanded(
+                        child: Column(
+                      children: [
+                        const SizedBox(
+                          height: 12,
+                        ),
+                        Container(
+                          height: 41,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              border: Border.all(
+                                  color: AppColor.BLACK_BUTTON.withOpacity(0.5),
+                                  width: 0.5)),
+                          child: TextFieldCustom(
+                            isObscureText: false,
+                            maxLines: 1,
+                            fillColor: AppColor.WHITE,
+                            // controller: searchController,
+                            hintText: 'Tìm kiếm người dùng',
+                            inputType: TextInputType.text,
+                            prefixIcon: const Icon(Icons.search),
+                            keyboardAction: TextInputAction.search,
+                            onChange: (value) {
+                              setState(() {
+                                listMemberData = listMember
+                                    .where((element) => element.fullName
+                                        .toLowerCase()
+                                        .contains(value.toLowerCase()))
+                                    .toList();
+                              });
+                              // _valueSearch = value;
+                            },
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 12,
+                        ),
+                        Column(
+                          children: [
+                            ...listMemberData.map((e) {
+                              return _buildItemMember(e);
+                            }).toList(),
+                            Align(
+                              alignment: Alignment.topRight,
+                              child: ButtonWidget(
+                                height: 32,
+                                width: 140,
+                                fontSize: 12,
+                                text: 'Xóa tất cả thành viên',
+                                textColor: AppColor.RED_TEXT,
+                                bgColor: AppColor.RED_TEXT.withOpacity(0.2),
+                                function: () {
+                                  _bloc.add(RemoveAllMemberEvent(
+                                      bankId: widget.bankId));
+                                },
+                              ),
+                            )
+                          ],
+                        )
+                      ],
+                    ))
+                  else
+                    Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const SizedBox(
+                            height: 60,
+                          ),
+                          Image.asset(
+                            'assets/images/ic-member-empty.png',
+                            height: 100,
+                          ),
+                          const SizedBox(
+                            height: 12,
+                          ),
+                          Text('Không tìm thấy người dùng'),
+                        ],
+                      ),
+                    )
+                ],
+              ),
+            ),
+            Positioned(
+                bottom: 40,
+                right: 0,
+                child: GestureDetector(
+                  onTap: () async {
+                    await DialogWidget.instance.showModelBottomSheet(
+                      padding: EdgeInsets.only(left: 12, right: 12, bottom: 32),
+                      height: MediaQuery.of(context).size.height * 0.8,
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(16),
+                          topRight: Radius.circular(16)),
+                      widget: BottomSheetAddUserBDSD(
                         bankId: widget.bankId,
                       ),
                     );
+                    _bloc.add(GetMemberEvent(bankId: widget.bankId));
                   },
-                )
-              else
-                _BuildConnectWidget(
-                  dto: widget.dto,
-                  list: state.listMember,
-                  isAdmin: widget.dto.userId == userId,
-                  branchId: state.branchId ?? '',
-                  businessId: state.businessId ?? '',
-                  onCallBack: () {
-                    widget.bloc.add(const BankCardGetDetailEvent());
-                    _bloc.add(GetBusinessAvailDTOEvent());
-                  },
-                  onGetMember: () {
-                    _bloc.add(GetMemberEvent());
-                  },
-                  onRemoveMember: (value) {
-                    String businessId = '';
-                    if (widget.dto.businessDetails.isNotEmpty) {
-                      businessId = widget.dto.businessDetails.first.businessId;
-                    }
-                    _bloc.add(DeleteMemberEvent(
-                        businessId: businessId, userId: value));
-                  },
-                ),
-              const SizedBox(height: 30),
-              const Text(
-                'Chia sẻ qua mạng xã hội',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-              ),
-              const SizedBox(height: 16),
-              if (state.listTelegram.isEmpty && state.listLark.isEmpty)
-                _buildSocialNetwork(context)
-              else
-                Column(
-                  children: [
-                    ...[
-                      if (state.listTelegram.isNotEmpty)
-                        _buildListChatTelegram(
-                            state.listTelegram, state.isTelegram)
-                      else
-                        GestureDetector(
-                          onTap: () async {
-                            await Navigator.pushNamed(
-                                context, Routes.CONNECT_TELEGRAM);
-                            _bloc.add(GetInfoTelegramEvent());
-                          },
-                          child: _buildItemNetWork('Kết nối Telegram',
-                              'assets/images/logo-telegram.png'),
+                  child: Container(
+                    height: 40,
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      color: AppColor.BLUE_TEXT,
+                    ),
+                    child: Row(
+                      children: [
+                        Image.asset(
+                          'assets/images/ic-add-member-bdsd-white.png',
+                          height: 26,
+                        ),
+                        Text(
+                          'Thêm thành viên',
+                          style: TextStyle(fontSize: 12, color: AppColor.WHITE),
                         )
-                    ],
-                    const SizedBox(height: 20),
-                    ...[
-                      if (state.listLark.isNotEmpty)
-                        _buildListConnectLark(state.listLark, state.isLark)
-                      else
-                        GestureDetector(
-                          onTap: () async {
-                            await Navigator.pushNamed(
-                                context, Routes.CONNECT_LARK);
-                            _bloc.add(GetInfoLarkEvent());
-                          },
-                          child: _buildItemNetWork(
-                              'Kết nối Lark', 'assets/images/logo-lark.png'),
-                        )
-                    ]
-                  ],
-                ),
-              const SizedBox(height: 30),
-            ],
-          ),
+                      ],
+                    ),
+                  ),
+                )),
+          ],
         );
       },
+    );
+  }
+
+  Widget _buildItemMember(MemberBranchModel dto) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+          color: AppColor.WHITE, borderRadius: BorderRadius.circular(5)),
+      child: Row(
+        children: [
+          dto.imgId.isNotEmpty
+              ? Container(
+                  width: 32,
+                  height: 32,
+                  margin: EdgeInsets.only(top: 2),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                    image: DecorationImage(
+                        image: ImageUtils.instance.getImageNetWork(dto.imgId),
+                        fit: BoxFit.cover),
+                  ),
+                )
+              : Container(
+                  width: 32,
+                  height: 32,
+                  margin: EdgeInsets.only(top: 2),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                    image: DecorationImage(
+                        image: AssetImage('assets/images/ic-avatar.png')),
+                  ),
+                ),
+          const SizedBox(
+            width: 16,
+          ),
+          Expanded(
+              child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                dto.fullName,
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(
+                height: 2,
+              ),
+              Text(
+                dto.phoneNo ?? '',
+                style: TextStyle(fontSize: 12),
+              )
+            ],
+          )),
+          GestureDetector(
+            onTap: () {
+              _bloc.add(
+                  RemoveMemberEvent(bankId: widget.bankId, userId: dto.id));
+            },
+            child: Image.asset(
+              'assets/images/ic-remove-red.png',
+              height: 36,
+            ),
+          )
+        ],
+      ),
     );
   }
 
@@ -627,276 +870,5 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
   String getDeviceType() {
     final data = MediaQueryData.fromWindow(WidgetsBinding.instance.window);
     return data.size.shortestSide < 600 ? 'phone' : 'tablet';
-  }
-}
-
-class _BuildNotConnectWidget extends StatelessWidget {
-  final List<BusinessAvailDTO> list;
-  final Function(String, String) onConnect;
-  final VoidCallback onCallBack;
-
-  const _BuildNotConnectWidget(
-      {required this.list, required this.onConnect, required this.onCallBack});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(child: _buildItemNotConnect(context));
-  }
-
-  _buildItemNotConnect(BuildContext context) {
-    return Container(
-      child: Column(
-        children: [
-          Text(
-              'Kết nối doanh nghiệp và chia sẻ biến động số dư với mọi người. Để quản lý chi tiêu dễ hơn'),
-          const SizedBox(height: 24),
-          MButtonWidget(
-            title: '',
-            margin: EdgeInsets.zero,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            isEnable: true,
-            onTap: () async {
-              await showGeneralDialog(
-                context: context,
-                barrierDismissible: true,
-                barrierLabel:
-                    MaterialLocalizations.of(context).modalBarrierDismissLabel,
-                barrierColor: Colors.black45,
-                transitionDuration: const Duration(milliseconds: 200),
-                pageBuilder: (BuildContext buildContext, Animation animation,
-                    Animation secondaryAnimation) {
-                  return ConnectBusinessView(
-                    list: list,
-                    onConnect: onConnect,
-                    onCallBack: onCallBack,
-                  );
-                },
-              );
-            },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset('assets/images/ic-next-user.png', width: 32),
-                Expanded(
-                  child: Center(
-                    child: Text(
-                      'Kết nối doanh nghiệp',
-                      style: TextStyle(color: AppColor.WHITE),
-                    ),
-                  ),
-                ),
-                Image.asset(
-                  'assets/images/ic-next-user.png',
-                  color: AppColor.WHITE,
-                  width: 32,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _BuildConnectWidget extends StatelessWidget {
-  final AccountBankDetailDTO dto;
-  final List<MemberBranchModel> list;
-  final Function(String) onRemoveMember;
-  final bool isAdmin;
-  final String branchId;
-  final String businessId;
-  final VoidCallback onGetMember;
-  final VoidCallback onCallBack;
-
-  const _BuildConnectWidget({
-    required this.dto,
-    required this.list,
-    required this.onRemoveMember,
-    required this.isAdmin,
-    required this.branchId,
-    required this.businessId,
-    required this.onGetMember,
-    required this.onCallBack,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final double height = MediaQuery.of(context).size.height;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (isAdmin) ...[
-          Text(
-              'Tìm kiếm và thêm thành viên có thể nhận thông báo biến động số dư của bạn. Để quản lý chi tiêu dễ dàng hơn'),
-          const SizedBox(height: 20),
-          GestureDetector(
-            onTap: () async {
-              await DialogWidget.instance.showModelBottomSheet(
-                context: context,
-                height: height * 0.7,
-                widget: AddBranchMemberWidget(
-                  branchId: branchId,
-                  businessId: businessId,
-                ),
-              );
-
-              onGetMember();
-            },
-            child: MTextFieldCustom(
-              hintText: 'Thêm thành viên bằng số điện thoại',
-              keyboardAction: TextInputAction.next,
-              onChange: (value) {},
-              enable: false,
-              inputType: TextInputType.text,
-              isObscureText: false,
-              hintColor: AppColor.BLUE_TEXT,
-              fontSize: 16,
-              fillColor: AppColor.BLUE_TEXT.withOpacity(0.25),
-              prefixIcon: Icon(
-                Icons.search,
-                color: AppColor.BLUE_TEXT,
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-        ],
-        if (dto.businessDetails.isNotEmpty)
-          ...List.generate(dto.businessDetails.length, (index) {
-            BusinessDetails model = dto.businessDetails[index];
-            return GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(
-                  context,
-                  Routes.BUSINESS_INFORMATION_VIEW,
-                  arguments: {'heroId': model.businessId},
-                ).then((value) {
-                  onCallBack();
-                });
-              },
-              child: _buildItemBusiness(model),
-            );
-          }).toList(),
-        const SizedBox(height: 16),
-        Text(
-          'Danh sách thành viên',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-        ),
-        const SizedBox(height: 12),
-        if (list.isNotEmpty) ...[
-          ...List.generate(list.length, (index) {
-            MemberBranchModel model = list[index];
-            return _buildItemMember(
-              model,
-              onRemoveMember,
-              isAdmin,
-            );
-          }).toList()
-        ] else
-          Center(
-            child: Text(
-              'Chưa có thành viên nào được thêm',
-              style: TextStyle(fontSize: 16),
-            ),
-          ),
-      ],
-    );
-  }
-
-  Widget _buildItemBusiness(BusinessDetails model) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        color: AppColor.WHITE,
-      ),
-      child: Row(
-        children: [
-          Image.asset(
-            'assets/images/ic-tb-business-selected.png',
-            width: 32,
-            color: AppColor.BLACK,
-          ),
-          Expanded(
-            child: Text(
-              model.businessName,
-              style: TextStyle(fontSize: 15),
-            ),
-          ),
-          Image.asset(
-            'assets/images/ic-next-user.png',
-            width: 32,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildItemMember(
-    MemberBranchModel model,
-    Function(String) onRemove,
-    bool isAdmin,
-  ) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-      margin: const EdgeInsets.only(bottom: 10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        color: AppColor.WHITE,
-      ),
-      child: Row(
-        children: [
-          if (model.imgId != null && model.imgId!.trim().isNotEmpty)
-            ClipRRect(
-              borderRadius: BorderRadius.circular(100),
-              child: Image(
-                image: ImageUtils.instance.getImageNetWork(model.imgId!),
-                width: 36,
-                height: 36,
-              ),
-            )
-          else
-            ClipRRect(
-              borderRadius: BorderRadius.circular(100),
-              child: Image.asset(
-                'assets/images/ic-avatar.png',
-                width: 36,
-              ),
-            ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  UserInformationUtils.instance
-                      .formatFullName(model.firstName ?? '',
-                          model.middleName ?? '', model.lastName ?? '')
-                      .trim(),
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                Text(
-                  StringUtils.instance.formatPhoneNumberVN(model.phoneNo ?? ''),
-                  style: TextStyle(fontSize: 15, color: AppColor.GREY_TEXT),
-                ),
-              ],
-            ),
-          ),
-          if (isAdmin)
-            GestureDetector(
-              onTap: () {
-                onRemove(model.id ?? '');
-              },
-              child: Image.asset(
-                'assets/images/ic-remove-red.png',
-                width: 36,
-              ),
-            ),
-        ],
-      ),
-    );
   }
 }

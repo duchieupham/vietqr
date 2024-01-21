@@ -459,7 +459,7 @@ class _BuildStepSecondState extends State<_BuildStepSecond> {
         data = nameController.text.trim().replaceAll(' ', '-');
       }
       final responseDTO = await branchRepository.searchMemberBranch(
-          data.trim().replaceAll(" ", ""), widget.dto.businessId, typeSearch);
+          data.trim().replaceAll(" ", ""), widget.dto.userId, typeSearch);
       if (!mounted) return;
       if (responseDTO is BusinessMemberDTO) {
         BusinessMemberDTO result = responseDTO;
@@ -767,8 +767,8 @@ class _BuildStepSecondState extends State<_BuildStepSecond> {
               onTap: () {
                 BranchMemberInsertDTO branchMemberInsertDTO =
                     BranchMemberInsertDTO(
-                  branchId: widget.dto.branchId,
-                  businessId: widget.dto.businessId,
+                  branchId: 'widget.dto.branchId',
+                  businessId: 'widget.dto.businessId',
                   userId: dto.userId,
                   role: 4,
                 );
