@@ -2,7 +2,7 @@ import 'package:dudv_base/dudv_base.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
-import 'package:qr_flutter/qr_flutter.dart';
+
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/count_down_minus_second.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
@@ -10,6 +10,7 @@ import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
+import 'package:vierqr/commons/widgets/viet_qr.dart';
 import 'package:vierqr/features/top_up/blocs/top_up_bloc.dart';
 import 'package:vierqr/features/top_up/states/top_up_state.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
@@ -19,6 +20,7 @@ import 'package:vierqr/services/providers/top_up_provider.dart';
 class QRTopUpScreen extends StatefulWidget {
   final ResponseTopUpDTO dto;
   final String phoneNo;
+
   const QRTopUpScreen({super.key, required this.dto, required this.phoneNo});
 
   @override
@@ -125,15 +127,9 @@ class _QRTopUpScreenState extends State<QRTopUpScreen>
                                               Padding(
                                                 padding:
                                                     const EdgeInsets.all(8.0),
-                                                child: QrImage(
-                                                  data: widget.dto.qrCode,
-                                                  version: QrVersions.auto,
-                                                  embeddedImage: const AssetImage(
-                                                      'assets/images/ic-viet-qr-small.png'),
-                                                  embeddedImageStyle:
-                                                      QrEmbeddedImageStyle(
-                                                    size: const Size(30, 30),
-                                                  ),
+                                                child: VietQr(
+                                                  qrCode: widget.dto.qrCode,
+                                                  qrGeneratedDTO: null,
                                                 ),
                                               ),
                                               Padding(

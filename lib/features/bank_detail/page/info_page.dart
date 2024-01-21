@@ -29,8 +29,9 @@ import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 import 'package:vierqr/services/sqflite/local_database.dart';
+import 'package:wakelock/wakelock.dart';
 
-class InfoDetailBankAccount extends StatelessWidget {
+class InfoDetailBankAccount extends StatefulWidget {
   final BankCardBloc bloc;
   final RefreshCallback refresh;
   final AccountBankDetailDTO dto;
@@ -48,6 +49,11 @@ class InfoDetailBankAccount extends StatelessWidget {
     this.onChangePage,
   }) : super(key: key);
 
+  @override
+  State<InfoDetailBankAccount> createState() => _InfoDetailBankAccountState();
+}
+
+class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
   String get userId => UserInformationHelper.instance.getUserId();
 
   final globalKey = GlobalKey();
@@ -81,7 +87,7 @@ class InfoDetailBankAccount extends StatelessWidget {
       children: [
         Expanded(
           child: RefreshIndicator(
-            onRefresh: refresh,
+            onRefresh: widget.refresh,
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,7 +95,9 @@ class InfoDetailBankAccount extends StatelessWidget {
                   RepaintBoundaryWidget(
                     globalKey: globalKey,
                     builder: (key) {
-                      return VietQr(qrGeneratedDTO: qrGeneratedDTO);
+                      return VietQr(
+                          qrGeneratedDTO: widget.qrGeneratedDTO,
+                          isVietQR: true);
                     },
                   ),
                   const Padding(padding: EdgeInsets.only(top: 16)),
@@ -101,8 +109,9 @@ class InfoDetailBankAccount extends StatelessWidget {
                       left: 20,
                       right: 20,
                       top: 20,
-                      bottom:
-                          (dto.bankCode.trim().toUpperCase() != 'MB') ? 20 : 0,
+                      bottom: (widget.dto.bankCode.trim().toUpperCase() != 'MB')
+                          ? 20
+                          : 0,
                     ),
                     child: Column(
                       children: [
@@ -110,12 +119,12 @@ class InfoDetailBankAccount extends StatelessWidget {
                           context: context,
                           width: width,
                           title: 'Trạng thái',
-                          isAuthenticated: dto.authenticated,
-                          description: (dto.authenticated)
+                          isAuthenticated: widget.dto.authenticated,
+                          description: (widget.dto.authenticated)
                               ? 'Đã liên kết'
                               : 'Chưa liên kết',
                         ),
-                        if (!dto.authenticated) ...[
+                        if (!widget.dto.authenticated) ...[
                           const Padding(padding: EdgeInsets.only(top: 10)),
                           const Text(
                             'Liên kết TK ngân hàng để nhận thông báo biến động số dư',
@@ -125,32 +134,32 @@ class InfoDetailBankAccount extends StatelessWidget {
                             ),
                           ),
                         ],
-                        if (dto.nationalId.isNotEmpty) ...[
+                        if (widget.dto.nationalId.isNotEmpty) ...[
                           Padding(
                             padding: const EdgeInsets.only(top: 20),
                             child: _buildElement(
                               context: context,
                               width: width,
                               title: 'CCCD/CMT',
-                              description: dto.nationalId,
+                              description: widget.dto.nationalId,
                             ),
                           ),
                         ],
-                        if (dto.phoneAuthenticated.isNotEmpty) ...[
+                        if (widget.dto.phoneAuthenticated.isNotEmpty) ...[
                           Padding(
                             padding: const EdgeInsets.only(top: 20),
                             child: _buildElement(
                               context: context,
                               width: width,
                               title: 'SĐT xác thực',
-                              description: dto.phoneAuthenticated,
+                              description: widget.dto.phoneAuthenticated,
                             ),
                           ),
                         ],
                         const SizedBox(height: 10),
-                        if (!dto.authenticated &&
-                            dto.bankCode.trim().toUpperCase() == 'MB' &&
-                            (userId == dto.userId)) ...[
+                        if (!widget.dto.authenticated &&
+                            widget.dto.bankCode.trim().toUpperCase() == 'MB' &&
+                            (userId == widget.dto.userId)) ...[
                           DividerWidget(width: width),
                           const SizedBox(height: 10),
                           ButtonIconWidget(
@@ -159,26 +168,27 @@ class InfoDetailBankAccount extends StatelessWidget {
                             title: 'Liên kết ngay',
                             function: () {
                               BankTypeDTO bankTypeDTO = BankTypeDTO(
-                                  id: dto.bankTypeId,
-                                  bankCode: dto.bankCode,
-                                  bankName: dto.bankName,
-                                  imageId: dto.imgId,
-                                  bankShortName: dto.bankCode,
-                                  status: dto.bankTypeStatus,
-                                  caiValue: dto.caiValue);
+                                  id: widget.dto.bankTypeId,
+                                  bankCode: widget.dto.bankCode,
+                                  bankName: widget.dto.bankName,
+                                  imageId: widget.dto.imgId,
+                                  bankShortName: widget.dto.bankCode,
+                                  status: widget.dto.bankTypeStatus,
+                                  caiValue: widget.dto.caiValue);
                               Navigator.pushNamed(
                                 context,
                                 Routes.ADD_BANK_CARD,
                                 arguments: {
                                   'step': 1,
-                                  'bankAccount': dto.bankAccount,
-                                  'name': dto.userBankName,
+                                  'bankAccount': widget.dto.bankAccount,
+                                  'name': widget.dto.userBankName,
                                   'bankDTO': bankTypeDTO,
-                                  'bankId': dto.id,
+                                  'bankId': widget.dto.id,
                                 },
                               ).then((value) {
                                 if (value is bool) {
-                                  bloc.add(const BankCardGetDetailEvent());
+                                  widget.bloc
+                                      .add(const BankCardGetDetailEvent());
                                 }
                               });
                             },
@@ -190,12 +200,14 @@ class InfoDetailBankAccount extends StatelessWidget {
                       ],
                     ),
                   ),
-                  if (dto.authenticated && dto.businessDetails.isNotEmpty) ...[
+                  if (widget.dto.authenticated &&
+                      widget.dto.businessDetails.isNotEmpty) ...[
                     const SizedBox(height: 24),
                     _buildTitle(title: 'Thông tin doanh nghiệp'),
-                    _buildBusinessInformation(context, dto.businessDetails),
+                    _buildBusinessInformation(
+                        context, widget.dto.businessDetails),
                   ],
-                  if (userId == dto.userId) ...[
+                  if (userId == widget.dto.userId) ...[
                     const SizedBox(height: 16),
                     _buildTitle(title: 'Thiết lập nâng cao'),
                     BoxLayout(
@@ -206,7 +218,7 @@ class InfoDetailBankAccount extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          if (dto.authenticated)
+                          if (widget.dto.authenticated)
                             ButtonIconWidget(
                               width: width,
                               height: 40,
@@ -225,9 +237,10 @@ class InfoDetailBankAccount extends StatelessWidget {
                                   isSecondBT: true,
                                   functionConfirm: () {
                                     Navigator.of(context).pop();
-                                    bloc.add(
+                                    widget.bloc.add(
                                       BankCardEventUnlink(
-                                          accountNumber: dto.bankAccount),
+                                          accountNumber:
+                                              widget.dto.bankAccount),
                                     );
                                   },
                                 );
@@ -244,7 +257,7 @@ class InfoDetailBankAccount extends StatelessWidget {
                             alignment: Alignment.centerLeft,
                             title: 'Xoá TK ngân hàng',
                             function: () {
-                              if (dto.authenticated) {
+                              if (widget.dto.authenticated) {
                                 DialogWidget.instance.openMsgDialog(
                                   title: 'Cảnh báo',
                                   msg:
@@ -253,11 +266,11 @@ class InfoDetailBankAccount extends StatelessWidget {
                               } else {
                                 BankAccountRemoveDTO bankAccountRemoveDTO =
                                     BankAccountRemoveDTO(
-                                  bankId: bankId,
-                                  type: dto.type,
-                                  isAuthenticated: dto.authenticated,
+                                  bankId: widget.bankId,
+                                  type: widget.dto.type,
+                                  isAuthenticated: widget.dto.authenticated,
                                 );
-                                bloc.add(BankCardEventRemove(
+                                widget.bloc.add(BankCardEventRemove(
                                     dto: bankAccountRemoveDTO));
                               }
                             },
@@ -295,7 +308,7 @@ class InfoDetailBankAccount extends StatelessWidget {
                       DialogWidget.instance.showFullModalBottomContent(
                           widget: const PrintingView());
                       await PrinterUtils.instance
-                          .print(qrGeneratedDTO)
+                          .print(widget.qrGeneratedDTO)
                           .then((value) {
                         Navigator.pop(context);
                         isPrinting = false;
@@ -336,8 +349,8 @@ class InfoDetailBankAccount extends StatelessWidget {
                 pathIcon: 'assets/images/ic-copy-blue.png',
                 title: '',
                 function: () async {
-                  await FlutterClipboard.copy(
-                          ShareUtils.instance.getTextSharing(qrGeneratedDTO))
+                  await FlutterClipboard.copy(ShareUtils.instance
+                          .getTextSharing(widget.qrGeneratedDTO))
                       .then(
                     (value) => Fluttertoast.showToast(
                       msg: 'Đã sao chép',
@@ -367,7 +380,7 @@ class InfoDetailBankAccount extends StatelessWidget {
                   Provider.of<AuthProvider>(context, listen: false)
                       .updateAction(false);
                   Navigator.pushNamed(context, Routes.QR_SHARE_VIEW,
-                      arguments: {'qrGeneratedDTO': qrGeneratedDTO});
+                      arguments: {'qrGeneratedDTO': widget.qrGeneratedDTO});
                 },
                 bgColor: Theme.of(context).cardColor,
                 textColor: AppColor.BLUE_TEXT,
@@ -389,7 +402,7 @@ class InfoDetailBankAccount extends StatelessWidget {
               textSize: 12,
               title: 'Lịch sử giao dịch',
               function: () {
-                onChangePage!();
+                widget.onChangePage!();
               },
               textColor: AppColor.BLUE_TEXT,
             ),
@@ -402,31 +415,32 @@ class InfoDetailBankAccount extends StatelessWidget {
                 title: 'Tạo QR giao dịch',
                 function: () {
                   BankAccountDTO bankAccountDTO = BankAccountDTO(
-                    id: dto.id,
-                    bankAccount: dto.bankAccount,
-                    userBankName: dto.userBankName,
-                    bankCode: dto.bankCode,
-                    bankName: dto.bankName,
-                    imgId: dto.imgId,
-                    type: dto.type,
-                    branchId: (dto.businessDetails.isEmpty)
+                    id: widget.dto.id,
+                    bankAccount: widget.dto.bankAccount,
+                    userBankName: widget.dto.userBankName,
+                    bankCode: widget.dto.bankCode,
+                    bankName: widget.dto.bankName,
+                    imgId: widget.dto.imgId,
+                    type: widget.dto.type,
+                    branchId: (widget.dto.businessDetails.isEmpty)
                         ? ''
-                        : dto
-                            .businessDetails.first.branchDetails.first.branchId,
-                    businessId: (dto.businessDetails.isEmpty)
+                        : widget.dto.businessDetails.first.branchDetails.first
+                            .branchId,
+                    businessId: (widget.dto.businessDetails.isEmpty)
                         ? ''
-                        : dto.businessDetails.first.businessId,
-                    branchName: (dto.businessDetails.isEmpty)
+                        : widget.dto.businessDetails.first.businessId,
+                    branchName: (widget.dto.businessDetails.isEmpty)
                         ? ''
-                        : dto.businessDetails.first.branchDetails.first
+                        : widget.dto.businessDetails.first.branchDetails.first
                             .branchName,
-                    businessName: (dto.businessDetails.isEmpty)
+                    businessName: (widget.dto.businessDetails.isEmpty)
                         ? ''
-                        : dto.businessDetails.first.businessName,
-                    isAuthenticated: dto.authenticated,
+                        : widget.dto.businessDetails.first.businessName,
+                    isAuthenticated: widget.dto.authenticated,
                   );
                   NavigatorUtils.navigatePage(
-                      context, CreateQrScreen(bankAccountDTO: bankAccountDTO));
+                      context, CreateQrScreen(bankAccountDTO: bankAccountDTO),
+                      routeName: CreateQrScreen.routeName);
                   // Navigator.pushNamed(
                   //   context,
                   //   Routes.CREATE_QR,
@@ -517,7 +531,7 @@ class InfoDetailBankAccount extends StatelessWidget {
                         Routes.BUSINESS_INFORMATION_VIEW,
                         arguments: {'heroId': heroId},
                       ).then((value) {
-                        bloc.add(
+                        widget.bloc.add(
                             const BankCardGetDetailEvent(isLoading: false));
                       });
                     },

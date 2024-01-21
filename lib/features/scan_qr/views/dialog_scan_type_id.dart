@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:qr_flutter/qr_flutter.dart';
+
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
+import 'package:vierqr/commons/widgets/viet_qr.dart';
 import 'package:vierqr/features/scan_qr/views/dialog_feature_scan.dart';
 import 'package:vierqr/models/vietqr_dto.dart';
 
@@ -61,10 +62,11 @@ class DialogScanTypeID extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: AppColor.WHITE,
                           ),
-                          child: QrImage(
-                            data: dto.code ?? '',
-                            version: QrVersions.auto,
+                          child: VietQr(
+                            qrGeneratedDTO: null,
+                            qrCode: dto.code ?? '',
                             size: isSmall ? width / 2 : null,
+                            isEmbeddedImage: true,
                           ),
                         ),
                         Positioned.fill(

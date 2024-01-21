@@ -106,7 +106,8 @@ class _NFCWidgetState extends State<NFCWidget> {
                 isEnable: true,
                 onTap: () {
                   Navigator.pop(context);
-                  NavigatorUtils.navigatePage(context, MobileRechargeScreen());
+                  NavigatorUtils.navigatePage(context, MobileRechargeScreen(),
+                      routeName: MobileRechargeScreen.routeName);
                 },
               ),
               MButtonWidget(

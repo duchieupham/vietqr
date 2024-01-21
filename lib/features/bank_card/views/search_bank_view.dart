@@ -85,7 +85,7 @@ class _SearchBankViewState extends State<SearchBankView> {
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: Scaffold(
@@ -355,38 +355,7 @@ class _SearchBankViewState extends State<SearchBankView> {
                             ),
                           ),
                           InkWell(
-                            onTap: () {
-                              BankAccountDTO bankAccountDTO = BankAccountDTO(
-                                id: dto.id,
-                                bankAccount: dto.bankAccount,
-                                userBankName: dto.userBankName,
-                                bankCode: dto.bankCode,
-                                bankName: dto.bankName,
-                                imgId: dto.imgId,
-                                type: dto.type,
-                                branchId:
-                                    (dto.branchId.isEmpty) ? '' : dto.branchId,
-                                businessId: (dto.businessId.isEmpty)
-                                    ? ''
-                                    : dto.businessId,
-                                branchName: (dto.branchName.isEmpty)
-                                    ? ''
-                                    : dto.branchName,
-                                businessName: (dto.businessName.isEmpty)
-                                    ? ''
-                                    : dto.businessName,
-                                isAuthenticated: dto.isAuthenticated,
-                              );
-                              NavigatorUtils.navigatePage(
-                                  context,
-                                  CreateQrScreen(
-                                      bankAccountDTO: bankAccountDTO));
-                              // Navigator.pushNamed(
-                              //   context,
-                              //   Routes.CREATE_QR,
-                              //   arguments: {'bankInfo': bankAccountDTO},
-                              // );
-                            },
+                            onTap: () => _onCreateQR(dto),
                             child: BoxLayout(
                               width: 110,
                               borderRadius: 5,
@@ -424,5 +393,25 @@ class _SearchBankViewState extends State<SearchBankView> {
             ),
           )
         : const SizedBox();
+  }
+
+  void _onCreateQR(BankAccountDTO dto) {
+    BankAccountDTO bankAccountDTO = BankAccountDTO(
+      id: dto.id,
+      bankAccount: dto.bankAccount,
+      userBankName: dto.userBankName,
+      bankCode: dto.bankCode,
+      bankName: dto.bankName,
+      imgId: dto.imgId,
+      type: dto.type,
+      branchId: (dto.branchId.isEmpty) ? '' : dto.branchId,
+      businessId: (dto.businessId.isEmpty) ? '' : dto.businessId,
+      branchName: (dto.branchName.isEmpty) ? '' : dto.branchName,
+      businessName: (dto.businessName.isEmpty) ? '' : dto.businessName,
+      isAuthenticated: dto.isAuthenticated,
+    );
+    NavigatorUtils.navigatePage(
+        context, CreateQrScreen(bankAccountDTO: bankAccountDTO),
+        routeName: CreateQrScreen.routeName);
   }
 }

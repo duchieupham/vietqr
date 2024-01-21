@@ -18,13 +18,18 @@ import 'package:vierqr/features/create_qr_un_authen/blocs/qrcode_un_authen_bloc.
 import 'package:vierqr/features/create_qr_un_authen/states/qrcode_un_authen_state.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
+import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 
 import '../../services/providers/create_qr_un_authen_provider.dart';
 import 'events/qrcode_un_authen_event.dart';
 
 class CreateQrUnQuthen extends StatefulWidget {
-  const CreateQrUnQuthen({Key? key}) : super(key: key);
+  const CreateQrUnQuthen({Key? key, required this.appInfo}) : super(key: key);
+
+  static String routeName = '/create_un_authen';
+
+  final AppInfoDTO? appInfo;
 
   @override
   State<CreateQrUnQuthen> createState() => _CreateQrUnQuthenState();
@@ -59,8 +64,11 @@ class _CreateQrUnQuthenState extends State<CreateQrUnQuthen> {
                 Navigator.pop(context);
               }
 
-              Navigator.pushNamed(context, Routes.SHOW_QR,
-                  arguments: state.dto);
+              Navigator.pushNamed(
+                context,
+                Routes.SHOW_QR,
+                arguments: {'dto': state.dto, 'appInfo': widget.appInfo},
+              );
             }
             if (state is GetBankTYpeSuccessState) {
               list = state.list;
@@ -209,24 +217,7 @@ class _CreateQrUnQuthenState extends State<CreateQrUnQuthen> {
                                           ),
                                           const SizedBox(width: 8),
                                           GestureDetector(
-                                            onTap: () async {
-                                              FocusManager.instance.primaryFocus
-                                                  ?.unfocus();
-                                              final data = await NavigatorUtils
-                                                  .navigatePage(context,
-                                                      CalculatorScreen());
-
-                                              if (data != null &&
-                                                  data is String) {
-                                                double money =
-                                                    double.parse(data);
-                                                amountController.text =
-                                                    StringUtils.formatNumber(
-                                                        money.round());
-                                                provider.updateMoney(
-                                                    money.round().toString());
-                                              }
-                                            },
+                                            onTap: () => _updateMoney(provider),
                                             child: Image.asset(
                                               'assets/images/logo-calculator.png',
                                               width: 28,
@@ -368,20 +359,7 @@ class _CreateQrUnQuthenState extends State<CreateQrUnQuthen> {
                               width: 100,
                               height: 100,
                               child: GestureDetector(
-                                onTap: () async {
-                                  FocusManager.instance.primaryFocus?.unfocus();
-                                  final data =
-                                      await NavigatorUtils.navigatePage(
-                                          context, CalculatorScreen());
-
-                                  if (data != null && data is String) {
-                                    double money = double.parse(data);
-                                    amountController.text =
-                                        StringUtils.formatNumber(money.round());
-                                    provider
-                                        .updateMoney(money.round().toString());
-                                  }
-                                },
+                                onTap: () => _updateMoney(provider),
                                 child: Opacity(
                                   opacity: 0.6,
                                   child: Container(
@@ -489,5 +467,17 @@ class _CreateQrUnQuthenState extends State<CreateQrUnQuthen> {
         ),
       ],
     );
+  }
+
+  _updateMoney(CreateQrUnATProvider provider) async {
+    FocusManager.instance.primaryFocus?.unfocus();
+    final data = await NavigatorUtils.navigatePage(context, CalculatorScreen(),
+        routeName: CalculatorScreen.routeName);
+
+    if (data != null && data is String) {
+      double money = double.parse(data);
+      amountController.text = StringUtils.formatNumber(money.round());
+      provider.updateMoney(money.round().toString());
+    }
   }
 }

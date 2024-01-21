@@ -6,6 +6,7 @@ import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/introduce_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
+import 'package:vierqr/models/theme_dto.dart';
 
 class DashBoardState extends Equatable {
   final String? msg;
@@ -23,6 +24,9 @@ class DashBoardState extends Equatable {
   final TokenType typeToken;
   final bool isCheckApp;
   final QRGeneratedDTO? qrDto;
+  final List<ThemeDTO> themes;
+  final ThemeDTO? themeDTO;
+  final bool keepValue;
 
   const DashBoardState({
     this.msg,
@@ -39,7 +43,10 @@ class DashBoardState extends Equatable {
     this.appInfoDTO,
     this.typeToken = TokenType.NONE,
     this.isCheckApp = false,
+    this.keepValue = false,
     this.qrDto,
+    this.themeDTO,
+    required this.themes,
   });
 
   DashBoardState copyWith({
@@ -61,6 +68,9 @@ class DashBoardState extends Equatable {
     AppInfoDTO? appInfoDTO,
     bool? isCheckApp,
     QRGeneratedDTO? qrDto,
+    List<ThemeDTO>? themes,
+    ThemeDTO? themeDTO,
+    bool? keepValue,
   }) {
     return DashBoardState(
       status: status ?? this.status,
@@ -78,6 +88,9 @@ class DashBoardState extends Equatable {
       typeToken: typeToken ?? this.typeToken,
       isCheckApp: isCheckApp ?? this.isCheckApp,
       qrDto: qrDto ?? this.qrDto,
+      themes: themes ?? this.themes,
+      themeDTO: themeDTO ?? this.themeDTO,
+      keepValue: keepValue ?? this.keepValue,
     );
   }
 
@@ -94,5 +107,8 @@ class DashBoardState extends Equatable {
         listBanks,
         typeContact,
         qrDto,
+        themes,
+        themeDTO,
+        keepValue,
       ];
 }

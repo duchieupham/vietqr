@@ -34,10 +34,14 @@ class NavigatorUtils {
     return data;
   }
 
-  static Future navigatePage(BuildContext context, Widget widget) async {
-    return Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => widget,
-    ));
+  static Future navigatePage(BuildContext context, Widget widget,
+      {required String routeName}) async {
+    return Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => widget,
+        settings: RouteSettings(name: routeName),
+      ),
+    );
   }
 
   static void navigateToRoot(

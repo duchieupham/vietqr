@@ -6,12 +6,16 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/introduce_dto.dart';
+import 'package:vierqr/models/theme_dto.dart';
+import 'package:vierqr/models/user_repository.dart';
 import 'package:vierqr/services/shared_references/bank_arrangement_helper.dart';
 import 'package:vierqr/services/shared_references/theme_helper.dart';
 import 'package:flutter/material.dart';
 
 class AuthProvider with ChangeNotifier {
   String _themeSystem = ThemeHelper.instance.getTheme();
+
+  UserRepository get userRes => UserRepository.instance;
 
   get themeSystem => _themeSystem;
 

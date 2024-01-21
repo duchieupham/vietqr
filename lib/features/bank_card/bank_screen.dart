@@ -18,11 +18,9 @@ import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/commons/widgets/viet_qr_widget.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
-import 'package:vierqr/features/bank_card/widgets/function_bank_widget.dart';
 import 'package:vierqr/features/bank_detail/bank_card_detail_screen.dart';
 import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
 import 'package:vierqr/features/create_qr/create_qr_screen.dart';
@@ -35,7 +33,6 @@ import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/qr_create_dto.dart';
-import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:vierqr/services/providers/bank_card_select_provider.dart';
 import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
@@ -352,38 +349,6 @@ class _BankScreenState extends State<_BankScreen>
     _bloc.add(QREventGenerateList(list: list));
   }
 
-  void addQRWidget(double width, double height, List<QRGeneratedDTO> list,
-      List<BankAccountDTO> bankAccounts) {
-    if (list.isNotEmpty) {
-      for (int i = 0; i < list.length; i++) {
-        final Widget qrWidget = Padding(
-          padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-          child: InkWell(
-            onTap: () {
-              DialogWidget.instance.showModalBottomContent(
-                widget: FunctionBankWidget(
-                  bankAccountDTO: bankAccounts[i],
-                  qrGeneratedDTO: list[i],
-                  businessInformationBloc: businessInformationBloc,
-                ),
-                height: height * 0.35,
-              );
-            },
-            child: VietQRWidget(
-              width: width - 10,
-              qrGeneratedDTO: list[i],
-              content: '',
-              isCopy: true,
-              isStatistic: true,
-              // isSmallWidget: (height <= 800),
-            ),
-          ),
-        );
-        cardWidgets.add(qrWidget);
-      }
-    }
-  }
-
   void resetProvider(BuildContext context) {
     Provider.of<BankCardSelectProvider>(context, listen: false).reset();
   }
@@ -694,7 +659,8 @@ class _StackedList extends State<StackedList> {
                         InkWell(
                           onTap: () async {
                             NavigatorUtils.navigatePage(
-                                context, CreateQrScreen(bankAccountDTO: dto));
+                                context, CreateQrScreen(bankAccountDTO: dto),
+                                routeName: CreateQrScreen.routeName);
                           },
                           child: BoxLayout(
                             width: 95,

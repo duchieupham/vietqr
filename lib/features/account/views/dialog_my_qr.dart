@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:qr_flutter/qr_flutter.dart';
+
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
+import 'package:vierqr/commons/widgets/viet_qr.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 
 class DialogMyQR extends StatelessWidget {
@@ -75,34 +76,30 @@ class DialogMyQR extends StatelessWidget {
                 ),
                 const SizedBox(height: 60),
                 RepaintBoundaryWidget(
-                    globalKey: globalKey,
-                    builder: (key) {
-                      return Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 40),
-                        padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(25),
-                          color: AppColor.WHITE,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.3),
-                              spreadRadius: 2,
-                              blurRadius: 7,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: QrImage(
-                          data: code,
-                          version: QrVersions.auto,
-                          embeddedImage: const AssetImage(
-                              'assets/images/ic-viet-qr-small.png'),
-                          embeddedImageStyle: QrEmbeddedImageStyle(
-                            size: const Size(30, 30),
+                  globalKey: globalKey,
+                  builder: (key) {
+                    return Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 40),
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(25),
+                        color: AppColor.WHITE,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.3),
+                            spreadRadius: 2,
+                            blurRadius: 7,
+                            offset: const Offset(0, 3),
                           ),
-                        ),
-                      );
-                    }),
+                        ],
+                      ),
+                      child: VietQr(
+                        qrGeneratedDTO: null,
+                        qrCode: code,
+                      ),
+                    );
+                  },
+                ),
                 const SizedBox(height: 20),
                 Text(
                   userName,

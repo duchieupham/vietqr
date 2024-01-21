@@ -16,6 +16,7 @@ import 'package:vierqr/models/bank_name_information_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
+import 'package:vierqr/models/theme_dto.dart';
 import 'package:vierqr/models/viet_qr_scanned_dto.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
@@ -24,7 +25,7 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
   @override
   final BuildContext context;
 
-  DashBoardBloc(this.context) : super(const DashBoardState()) {
+  DashBoardBloc(this.context) : super(const DashBoardState(themes: [])) {
     on<TokenEventCheckValid>(_checkValidToken);
     on<TokenFcmUpdateEvent>(_updateFcmToken);
     on<GetUserInformation>(_getUserInformation);
@@ -33,10 +34,12 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
     on<GetPointEvent>(_getPointAccount);
     on<GetVersionAppEvent>(_getVersionApp);
     on<PermissionEventRequest>(_requestPermissions);
-    on<ScanQrEventGetBankType>(_getBankType);
     on<DashBoardEventSearchName>(_searchBankName);
     on<DashBoardEventInsertUnauthenticated>(_insertBankCardUnauthenticated);
     on<UpdateEvent>(_updateEvent);
+    on<GetListThemeEvent>(_getListTheme);
+    on<UpdateThemeEvent>(_updateTheme);
+    on<UpdateKeepBrightEvent>(_updateKeepBright);
   }
 
   void _checkValidToken(DashBoardEvent event, Emitter emit) async {
@@ -150,6 +153,8 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
           state.copyWith(status: BlocStatus.NONE, request: DashBoardType.NONE));
       if (event is GetVersionAppEvent) {
         final result = await dashBoardRepository.getVersionApp();
+
+        print(result.themeVer);
         emit(state.copyWith(
           appInfoDTO: result,
           status: BlocStatus.NONE,
@@ -203,84 +208,6 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
     } catch (e) {
       LOG.error('Error at _requestPermissions - PermissionBloc: $e');
       emit(state.copyWith(typePermission: DashBoardTypePermission.Error));
-    }
-  }
-
-  void _getBankType(DashBoardEvent event, Emitter emit) async {
-    try {
-      if (event is ScanQrEventGetBankType) {
-        state.copyWith(
-            typeQR: TypeQR.NONE,
-            request: DashBoardType.NONE,
-            status: BlocStatus.NONE);
-        TypeQR typeQR = await QRScannerUtils.instance.checkScan(event.code);
-        if (typeQR == TypeQR.QR_BANK) {
-          VietQRScannedDTO vietQRScannedDTO =
-              QRScannerUtils.instance.getBankAccountFromQR(event.code);
-          if (vietQRScannedDTO.caiValue.isNotEmpty &&
-              vietQRScannedDTO.bankAccount.isNotEmpty) {
-            BankTypeDTO dto = await dashBoardRepository
-                .getBankTypeByCaiValue(vietQRScannedDTO.caiValue);
-            if (dto.id.isNotEmpty) {
-              emit(
-                state.copyWith(
-                    bankTypeDTO: dto,
-                    bankAccount: vietQRScannedDTO.bankAccount,
-                    typeQR: TypeQR.QR_BANK,
-                    request: DashBoardType.SCAN,
-                    codeQR: event.code,
-                    typeContact: TypeContact.Bank),
-              );
-            } else {
-              emit(state.copyWith(request: DashBoardType.SCAN_ERROR));
-            }
-          }
-        } else if (typeQR == TypeQR.QR_CMT) {
-          NationalScannerDTO nationalScannerDTO =
-              dashBoardRepository.getNationalInformation(event.code);
-          if (nationalScannerDTO.nationalId.trim().isNotEmpty) {
-            emit(
-              state.copyWith(
-                  nationalScannerDTO: nationalScannerDTO,
-                  request: DashBoardType.SCAN,
-                  typeQR: TypeQR.QR_CMT,
-                  codeQR: event.code,
-                  typeContact: TypeContact.Other),
-            );
-          } else {
-            emit(state.copyWith(request: DashBoardType.SCAN_NOT_FOUND));
-          }
-        } else if (typeQR == TypeQR.QR_ID) {
-          emit(
-            state.copyWith(
-                codeQR: event.code,
-                request: DashBoardType.SCAN,
-                typeQR: TypeQR.QR_ID,
-                typeContact: TypeContact.VietQR_ID),
-          );
-        } else if (typeQR == TypeQR.QR_BARCODE) {
-          if (event.code.isNotEmpty) {
-            emit(
-              state.copyWith(
-                  barCode: event.code,
-                  request: DashBoardType.SCAN,
-                  typeQR: TypeQR.QR_BARCODE,
-                  typeContact: TypeContact.Other),
-            );
-          }
-        } else if (typeQR == TypeQR.QR_LINK) {
-          emit(
-            state.copyWith(
-                codeQR: event.code,
-                request: DashBoardType.SCAN,
-                typeQR: TypeQR.QR_LINK,
-                typeContact: TypeContact.Other),
-          );
-        }
-      }
-    } catch (e) {
-      LOG.error(e.toString());
-      emit(state.copyWith(request: DashBoardType.SCAN_NOT_FOUND));
     }
   }
 
@@ -351,6 +278,8 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
   void _getUserInformation(DashBoardEvent event, Emitter emit) async {
     try {
       if (event is GetUserInformation) {
+        emit(state.copyWith(
+            status: BlocStatus.NONE, request: DashBoardType.NONE));
         final result = await accRepository.getUserInformation(userId);
         if (result.userId.isNotEmpty) {
           await UserInformationHelper.instance.setAccountInformation(result);
@@ -359,10 +288,111 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
         if (settingAccount.userId.isNotEmpty) {
           await UserInformationHelper.instance
               .setAccountSetting(settingAccount);
+          emit(state.copyWith(
+              status: BlocStatus.NONE,
+              request: DashBoardType.GET_USER_SETTING));
         }
       }
     } catch (e) {
       LOG.error('Error at _getPointAccount: $e');
+    }
+  }
+
+  void _getListTheme(DashBoardEvent event, Emitter emit) async {
+    try {
+      if (event is GetListThemeEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.NONE, request: DashBoardType.NONE));
+        List<ThemeDTO> result = await accRepository.getListTheme();
+        emit(state.copyWith(
+          status: BlocStatus.NONE,
+          request: DashBoardType.THEMES,
+          themes: result,
+        ));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+  }
+
+  void _updateTheme(DashBoardEvent event, Emitter emit) async {
+    try {
+      if (event is UpdateThemeEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.NONE, request: DashBoardType.NONE));
+        final ResponseMessageDTO result = await accRepository.updateTheme(
+          UserInformationHelper.instance.getUserId(),
+          event.type,
+        );
+        if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
+          ThemeDTO dto =
+              state.themes.where((element) => element.type == event.type).first;
+
+          emit(state.copyWith(
+            status: BlocStatus.NONE,
+            request: DashBoardType.UPDATE_THEME,
+            themeDTO: dto,
+          ));
+        } else {
+          emit(
+            state.copyWith(
+              msg: ErrorUtils.instance.getErrorMessage(result.message),
+              status: BlocStatus.NONE,
+              request: DashBoardType.UPDATE_THEME_ERROR,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      ResponseMessageDTO dto =
+          const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+      emit(state.copyWith(
+        msg: ErrorUtils.instance.getErrorMessage(dto.message),
+        status: BlocStatus.NONE,
+        request: DashBoardType.UPDATE_THEME_ERROR,
+      ));
+    }
+  }
+
+  void _updateKeepBright(DashBoardEvent event, Emitter emit) async {
+    try {
+      if (event is UpdateKeepBrightEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.NONE, request: DashBoardType.NONE));
+        final ResponseMessageDTO result = await accRepository.updateKeepBright(
+          UserInformationHelper.instance.getUserId(),
+          event.keepValue,
+        );
+        if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
+          emit(
+            state.copyWith(
+                status: BlocStatus.NONE,
+                request: DashBoardType.KEEP_BRIGHT,
+                keepValue: event.keepValue),
+          );
+        } else {
+          emit(
+            state.copyWith(
+                msg: ErrorUtils.instance.getErrorMessage(result.message),
+                request: DashBoardType.ERROR),
+          );
+        }
+      }
+    } catch (e) {
+      ResponseMessageDTO responseMessageDTO = const ResponseMessageDTO(
+        status: 'FAILED',
+        message: 'E05',
+      );
+
+      emit(
+        state.copyWith(
+            msg:
+                ErrorUtils.instance.getErrorMessage(responseMessageDTO.message),
+            request: DashBoardType.ERROR),
+      );
+
+      LOG.error(e.toString());
     }
   }
 

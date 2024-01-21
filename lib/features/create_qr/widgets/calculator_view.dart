@@ -8,6 +8,8 @@ import 'package:vierqr/layouts/m_button_widget.dart';
 import 'custom_button.dart';
 
 class CalculatorScreen extends StatefulWidget {
+  static String routeName = '/calculator_screen';
+
   CalculatorScreen({Key? key}) : super(key: key);
 
   @override

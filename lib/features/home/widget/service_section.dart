@@ -154,7 +154,8 @@ class _ServiceSectionState extends State<ServiceSection> {
           'assets/images/shortcut-nfc.png',
           'VQR-ID Card',
           () async {
-            NavigatorUtils.navigatePage(context, VietQRIDCardView());
+            NavigatorUtils.navigatePage(context, VietQRIDCardView(),
+                routeName: VietQRIDCardView.routeName);
           },
         ),
         _buildItemService(
@@ -163,12 +164,12 @@ class _ServiceSectionState extends State<ServiceSection> {
           'Kích hoạt máy bán hàng',
           () async {
             NavigatorUtils.navigatePage(
-              context,
-              CustomInAppWebView(
-                url: 'https://vietqr.vn/service/may-ban-hang/active?mid=0',
-                userId: UserInformationHelper.instance.getUserId(),
-              ),
-            );
+                context,
+                CustomInAppWebView(
+                  url: 'https://vietqr.vn/service/may-ban-hang/active?mid=0',
+                  userId: UserInformationHelper.instance.getUserId(),
+                ),
+                routeName: CustomInAppWebView.routeName);
           },
         ),
       ],

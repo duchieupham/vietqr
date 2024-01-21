@@ -30,6 +30,8 @@ import 'events/mobile_recharge_event.dart';
 class MobileRechargeScreen extends StatelessWidget {
   MobileRechargeScreen({super.key});
 
+  static String routeName = '/mobile_recharge';
+
   late FocusNode myFocusNode = FocusNode();
 
   String getIdImage(List<NetworkProviders> list) {

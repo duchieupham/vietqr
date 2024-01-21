@@ -59,6 +59,8 @@ class UserInformationHelper {
   }
 
   Future<void> setAccountSetting(SettingAccountDTO dto) async {
+    Map<String, dynamic> json = dto.toSPJson();
+
     await sharedPrefs.setString('ACCOUNT_SETTING', dto.toSPJson().toString());
   }
 

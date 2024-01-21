@@ -3,18 +3,31 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
+import 'package:vierqr/features/dashboard/blocs/dashboard_provider.dart';
+import 'package:vierqr/models/app_info_dto.dart';
 
 class ContactUSScreen extends StatefulWidget {
-  const ContactUSScreen({super.key});
+  const ContactUSScreen({super.key, required this.appInfoDTO});
+
+  final AppInfoDTO appInfoDTO;
+
+  static String routeName = '/contact_us_screen';
 
   @override
   State<ContactUSScreen> createState() => _ContactUSScreenState();
 }
 
 class _ContactUSScreenState extends State<ContactUSScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<DashBoardProvider>(context, listen: false).initFileTheme();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,11 +43,27 @@ class _ContactUSScreenState extends State<ContactUSScreen> {
                     child: Container(
                       height: MediaQuery.of(context).size.height * 0.3,
                       width: MediaQuery.of(context).size.width,
-                      decoration: const BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage('assets/images/bgr-header.png'),
-                          fit: BoxFit.fill,
-                        ),
+                      decoration: BoxDecoration(
+                        image: widget.appInfoDTO.isEventTheme
+                            ? DecorationImage(
+                                image:
+                                    NetworkImage(widget.appInfoDTO.themeImgUrl),
+                                fit: BoxFit.cover)
+                            : Provider.of<DashBoardProvider>(context,
+                                        listen: false)
+                                    .file
+                                    .path
+                                    .isNotEmpty
+                                ? DecorationImage(
+                                    image: FileImage(
+                                        Provider.of<DashBoardProvider>(context,
+                                                listen: false)
+                                            .file),
+                                    fit: BoxFit.cover)
+                                : DecorationImage(
+                                    image: AssetImage(
+                                        'assets/images/bgr-header.png'),
+                                    fit: BoxFit.cover),
                       ),
                     ),
                   ),

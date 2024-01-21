@@ -1,15 +1,18 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
+import 'package:vierqr/features/dashboard/blocs/dashboard_provider.dart';
 import 'package:vierqr/features/register/register_screen.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
+import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/info_user_dto.dart';
 
 import '../../../commons/utils/image_utils.dart';
 
-class LoginAccountScreen extends StatelessWidget {
+class LoginAccountScreen extends StatefulWidget {
   final Function(InfoUserDTO)? onQuickLogin;
   final Function(int)? onRemoveAccount;
   final GestureTapCallback? onBackLogin;
@@ -18,6 +21,7 @@ class LoginAccountScreen extends StatelessWidget {
   final List<InfoUserDTO> list;
   final Widget child;
   final Widget buttonNext;
+  final AppInfoDTO appInfoDTO;
 
   const LoginAccountScreen({
     super.key,
@@ -29,7 +33,20 @@ class LoginAccountScreen extends StatelessWidget {
     required this.list,
     required this.child,
     required this.buttonNext,
+    required this.appInfoDTO,
   });
+
+  @override
+  State<LoginAccountScreen> createState() => _LoginAccountScreenState();
+}
+
+class _LoginAccountScreenState extends State<LoginAccountScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Provider.of<DashBoardProvider>(context, listen: false).initFileTheme();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,11 +66,27 @@ class LoginAccountScreen extends StatelessWidget {
                   child: Container(
                     height: height * 0.3,
                     width: width,
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('assets/images/bgr-header.png'),
-                        fit: BoxFit.fill,
-                      ),
+                    decoration: BoxDecoration(
+                      image: widget.appInfoDTO.isEventTheme
+                          ? DecorationImage(
+                              image:
+                                  NetworkImage(widget.appInfoDTO.themeImgUrl),
+                              fit: BoxFit.cover)
+                          : Provider.of<DashBoardProvider>(context,
+                                      listen: false)
+                                  .file
+                                  .path
+                                  .isNotEmpty
+                              ? DecorationImage(
+                                  image: FileImage(
+                                      Provider.of<DashBoardProvider>(context,
+                                              listen: false)
+                                          .file),
+                                  fit: BoxFit.cover)
+                              : DecorationImage(
+                                  image: AssetImage(
+                                      'assets/images/bgr-header.png'),
+                                  fit: BoxFit.cover),
                     ),
                   ),
                 ),
@@ -99,18 +132,18 @@ class LoginAccountScreen extends StatelessWidget {
             child: Column(
               children: [
                 Column(
-                  children: List.generate(list.length, (index) {
+                  children: List.generate(widget.list.length, (index) {
                     return GestureDetector(
                       onTap: () {
-                        onQuickLogin!(list[index]);
+                        widget.onQuickLogin!(widget.list[index]);
                       },
-                      child: _buildItem(list[index], index, height),
+                      child: _buildItem(widget.list[index], index, height),
                     );
                   }).toList(),
                 ),
                 SizedBox(height: height < 800 ? 4 : 16),
                 GestureDetector(
-                  onTap: onBackLogin,
+                  onTap: widget.onBackLogin,
                   child: Container(
                     width: MediaQuery.of(context).size.width,
                     padding: const EdgeInsets.symmetric(vertical: 10),
@@ -197,7 +230,7 @@ class LoginAccountScreen extends StatelessWidget {
                               ),
                             ],
                           ),
-                          onTap: onLoginCard,
+                          onTap: widget.onLoginCard,
                         ),
                       ),
                     ],
@@ -206,13 +239,13 @@ class LoginAccountScreen extends StatelessWidget {
                 const Spacer(),
                 Column(
                   children: [
-                    child,
+                    widget.child,
                     const SizedBox(height: 16),
                     Container(
                       alignment: Alignment.center,
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: GestureDetector(
-                        onTap: onRegister,
+                        onTap: widget.onRegister,
                         child: const Text(
                           'Đăng kí tài khoản mới',
                           style: TextStyle(
@@ -222,9 +255,9 @@ class LoginAccountScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 24),
-                    if (list.length == 1) ...[
+                    if (widget.list.length == 1) ...[
                       SizedBox(height: height < 800 ? 0 : 16),
-                      buttonNext,
+                      widget.buttonNext,
                       SizedBox(height: height < 800 ? 0 : 16),
                     ] else
                       const SizedBox(height: 16),
@@ -286,7 +319,7 @@ class LoginAccountScreen extends StatelessWidget {
             ),
             GestureDetector(
               onTap: () {
-                onRemoveAccount!(index);
+                widget.onRemoveAccount!(index);
               },
               child: Image.asset(
                 'assets/images/ic-next-user.png',

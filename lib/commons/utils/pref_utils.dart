@@ -1,5 +1,8 @@
 import 'dart:async';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:vierqr/models/theme_dto.dart';
+import 'package:vierqr/models/theme_dto_local.dart';
 
 /// Tuyệt đối không được dùng box.clear()
 /// vì nó sẽ xoá toàn bộ dữ liệu local app
@@ -22,8 +25,11 @@ class HivePrefs {
     if (_initEd) {
       completer.complete(_instance);
     } else {
-      await Hive.initFlutter();
-      prefs = await Hive.openBox(keys.vCardKey);
+      final document = await getApplicationDocumentsDirectory();
+      await Hive.initFlutter(document.path);
+      Hive.registerAdapter(ThemeDTOAdapter());
+      Hive.registerAdapter(ThemeDTOLocalAdapter());
+      prefs = await Hive.openBox(keys.prefKey);
       _initEd = true;
       completer.complete(_instance);
     }

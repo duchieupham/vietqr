@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:float_bubble/float_bubble.dart';
 import 'package:flutter/material.dart';
@@ -17,9 +16,13 @@ import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/encrypt_utils.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/phone_widget.dart';
+import 'package:vierqr/features/contact_us/contact_us_screen.dart';
+import 'package:vierqr/features/create_qr_un_authen/create_qr_un_quthen.dart';
+import 'package:vierqr/features/dashboard/blocs/dashboard_provider.dart';
 import 'package:vierqr/features/home/widget/dialog_update.dart';
 import 'package:vierqr/features/home/widget/nfc_adr_widget.dart';
 import 'package:vierqr/features/login/blocs/login_bloc.dart';
@@ -32,6 +35,7 @@ import 'package:vierqr/features/register/register_screen.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/account_login_dto.dart';
+import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/info_user_dto.dart';
 import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:vierqr/services/shared_references/account_helper.dart';
@@ -92,6 +96,8 @@ class _LoginState extends State<_Login> {
       }
     });
 
+    Provider.of<DashBoardProvider>(context, listen: false).initFileTheme();
+
     _bloc.add(GetFreeToken());
   }
 
@@ -110,6 +116,7 @@ class _LoginState extends State<_Login> {
       isLogoutEnterHome = arg['isLogout'] ?? false;
     }
     final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
     return Consumer<LoginProvider>(
       builder: (context, provider, child) {
         return BlocConsumer<LoginBloc, LoginState>(
@@ -125,6 +132,9 @@ class _LoginState extends State<_Login> {
               _bloc.add(GetVersionAppEvent(isCheckVer: state.isCheckApp));
             }
             if (state.request == LoginType.APP_VERSION) {
+              if (state.appInfoDTO != null) {
+                provider.updateAppInfo(state.appInfoDTO);
+              }
               Provider.of<AuthProvider>(context, listen: false)
                   .updateAppInfoDTO(state.appInfoDTO,
                       isCheckApp: state.isCheckApp);
@@ -148,42 +158,7 @@ class _LoginState extends State<_Login> {
 
             if (state.request == LoginType.TOAST) {
               if (provider.infoUserDTO != null) {
-                List<String> list = [];
-                List<InfoUserDTO> listCheck =
-                    UserInformationHelper.instance.getLoginAccount();
-
-                if (listCheck.isNotEmpty) {
-                  if (listCheck.length == 3) {
-                    listCheck.removeWhere((element) =>
-                        element.phoneNo!.trim() ==
-                        provider.infoUserDTO!.phoneNo);
-
-                    if (listCheck.length < 3) {
-                      listCheck.add(provider.infoUserDTO!);
-                    } else {
-                      listCheck.sort((a, b) =>
-                          a.expiryAsDateTime.compareTo(b.expiryAsDateTime));
-                      listCheck.removeAt(2);
-                    }
-                  } else {
-                    listCheck.removeWhere((element) =>
-                        element.phoneNo!.trim() ==
-                        provider.infoUserDTO!.phoneNo);
-
-                    listCheck.add(provider.infoUserDTO!);
-                  }
-                } else {
-                  listCheck.add(provider.infoUserDTO!);
-                }
-
-                if (listCheck.length >= 2) {
-                  listCheck.sort((a, b) =>
-                      a.expiryAsDateTime.compareTo(b.expiryAsDateTime));
-                }
-
-                listCheck.forEach((element) {
-                  list.add(element.toSPJson().toString());
-                });
+                List<String> list = _saveAccount(provider);
 
                 await UserInformationHelper.instance.setLoginAccount(list);
                 provider.updateListInfoUser();
@@ -284,56 +259,73 @@ class _LoginState extends State<_Login> {
                               child: Column(
                                 children: [
                                   SizedBox(
-                                    height: MediaQuery.of(context).size.height *
-                                        0.3,
-                                    width: MediaQuery.of(context).size.width,
+                                    height: height * 0.3,
+                                    width: width,
                                     child: Stack(
                                       children: [
-                                        Center(
-                                          child: Container(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.3,
-                                            width: MediaQuery.of(context)
-                                                .size
-                                                .width,
-                                            decoration: const BoxDecoration(
-                                              image: DecorationImage(
-                                                image: AssetImage(
-                                                    'assets/images/bgr-header.png'),
-                                                fit: BoxFit.fill,
+                                        if (provider.appInfoDTO.isEventTheme)
+                                          Center(
+                                            child: Container(
+                                              height: height * 0.3,
+                                              width: width,
+                                              decoration: BoxDecoration(
+                                                image: DecorationImage(
+                                                    image: NetworkImage(provider
+                                                        .appInfoDTO
+                                                        .themeImgUrl),
+                                                    fit: BoxFit.fill),
                                               ),
                                             ),
-                                          ),
-                                        ),
-                                        Positioned(
-                                          bottom: 0,
-                                          left: 0,
-                                          right: 0,
-                                          child: ClipRect(
-                                            child: BackdropFilter(
-                                              filter: ImageFilter.blur(
-                                                  sigmaX: 25, sigmaY: 25),
-                                              child: Opacity(
-                                                opacity: 0.6,
+                                          )
+                                        else
+                                          Consumer<DashBoardProvider>(
+                                            builder: (context, page, _) {
+                                              return Center(
                                                 child: Container(
-                                                  height: 30,
-                                                  color: Colors.transparent,
+                                                  height: height * 0.3,
+                                                  width: width,
+                                                  decoration: BoxDecoration(
+                                                    image: page.file.path
+                                                            .isNotEmpty
+                                                        ? DecorationImage(
+                                                            image: FileImage(
+                                                                page.file),
+                                                            fit:
+                                                                BoxFit.fitWidth)
+                                                        : DecorationImage(
+                                                            image: AssetImage(
+                                                                'assets/images/bgr-header.png'),
+                                                            fit: BoxFit
+                                                                .fitWidth),
+                                                  ),
                                                 ),
-                                              ),
-                                            ),
+                                              );
+                                            },
                                           ),
-                                        ),
+                                        // Positioned(
+                                        //   bottom: 0,
+                                        //   left: 0,
+                                        //   right: 0,
+                                        //   child: ClipRect(
+                                        //     child: BackdropFilter(
+                                        //       filter: ImageFilter.blur(
+                                        //           sigmaX: 25, sigmaY: 25),
+                                        //       child: Opacity(
+                                        //         opacity: 0.6,
+                                        //         child: Container(
+                                        //           height: 30,
+                                        //           color: Colors.transparent,
+                                        //         ),
+                                        //       ),
+                                        //     ),
+                                        //   ),
+                                        // ),
                                         Positioned(
                                           child: Align(
                                             alignment: Alignment.center,
                                             child: Container(
                                               height: 100,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width /
-                                                  2,
+                                              width: width / 2,
                                               margin: const EdgeInsets.only(
                                                   top: 50),
                                               decoration: const BoxDecoration(
@@ -405,32 +397,6 @@ class _LoginState extends State<_Login> {
                                         const SizedBox(height: 16),
                                         Row(
                                           children: [
-                                            // Expanded(
-                                            //   child: MButtonWidget(
-                                            //     title: '',
-                                            //     isEnable: true,
-                                            //     colorEnableBgr: AppColor.WHITE,
-                                            //     margin: EdgeInsets.zero,
-                                            //     child: Row(
-                                            //       mainAxisAlignment:
-                                            //           MainAxisAlignment.center,
-                                            //       children: [
-                                            //         Image.asset(
-                                            //             'assets/images/logo-google.png'),
-                                            //         Text(
-                                            //           'Đăng nhập với Google',
-                                            //           style: height < 800
-                                            //               ? TextStyle(
-                                            //                   fontSize: 10)
-                                            //               : TextStyle(
-                                            //                   fontSize: 12),
-                                            //         ),
-                                            //       ],
-                                            //     ),
-                                            //     onTap: () {},
-                                            //   ),
-                                            // ),
-                                            // const SizedBox(width: 16),
                                             Expanded(
                                               child: MButtonWidget(
                                                 title: '',
@@ -489,6 +455,7 @@ class _LoginState extends State<_Login> {
                     visible: provider.isQuickLogin == 1,
                     child: LoginAccountScreen(
                       list: provider.listInfoUsers,
+                      appInfoDTO: provider.appInfoDTO,
                       onRemoveAccount: (dto) async {
                         List<String> listString = [];
                         List<InfoUserDTO> list = provider.listInfoUsers;
@@ -552,7 +519,7 @@ class _LoginState extends State<_Login> {
                         }
                       },
                       onLoginCard: onLoginCard,
-                      child: _buildButtonBottom(),
+                      child: _buildButtonBottom(state.appInfoDTO),
                       buttonNext: MButtonWidget(
                         title: 'Tiếp tục',
                         isEnable: true,
@@ -581,6 +548,7 @@ class _LoginState extends State<_Login> {
                         provider.updateQuickLogin(0);
                         provider.updateInfoUser(null);
                       },
+                      appInfoDTO: provider.appInfoDTO,
                     ),
                   ),
                   Positioned(
@@ -589,7 +557,8 @@ class _LoginState extends State<_Login> {
                     right: 0,
                     child: Column(
                       children: [
-                        if (provider.isQuickLogin != 1) _buildButtonBottom(),
+                        if (provider.isQuickLogin != 1)
+                          _buildButtonBottom(state.appInfoDTO),
                         SizedBox(height: 16),
                         if (provider.isQuickLogin == 0 ||
                             provider.isQuickLogin == 2)
@@ -686,7 +655,7 @@ class _LoginState extends State<_Login> {
     );
   }
 
-  Widget _buildButtonBottom() {
+  Widget _buildButtonBottom(AppInfoDTO? appInfoDTO) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Row(
@@ -716,14 +685,22 @@ class _LoginState extends State<_Login> {
           ),
           _buildCustomButtonIcon(
             onTap: () async {
-              Navigator.pushNamed(context, Routes.CREATE_UN_AUTHEN);
+              FocusManager.instance.primaryFocus?.unfocus();
+              NavigatorUtils.navigatePage(
+                  context, CreateQrUnQuthen(appInfo: appInfoDTO),
+                  routeName: CreateQrUnQuthen.routeName);
             },
             title: 'Tạo mã VietQR',
             pathIcon: 'assets/images/ic-viet-qr-small.png',
           ),
           _buildCustomButtonIcon(
             onTap: () {
-              Navigator.pushNamed(context, Routes.CONTACT_US_SCREEN);
+              NavigatorUtils.navigatePage(
+                  context,
+                  ContactUSScreen(
+                    appInfoDTO: appInfoDTO ?? AppInfoDTO(),
+                  ),
+                  routeName: ContactUSScreen.routeName);
             },
             title: 'Liên hệ',
             pathIcon: 'assets/images/ic-introduce.png',
@@ -750,10 +727,11 @@ class _LoginState extends State<_Login> {
     );
   }
 
-  Widget _buildCustomButtonIcon(
-      {required String title,
-      required Function onTap,
-      required String pathIcon}) {
+  Widget _buildCustomButtonIcon({
+    required String title,
+    required Function() onTap,
+    required String pathIcon,
+  }) {
     return InkWell(
       onTap: () {
         onTap();
@@ -994,5 +972,44 @@ class _LoginState extends State<_Login> {
       onReadNFC();
     }
     onReadRFID();
+  }
+
+  List<String> _saveAccount(provider) {
+    List<String> list = [];
+    List<InfoUserDTO> listCheck =
+        UserInformationHelper.instance.getLoginAccount();
+
+    if (listCheck.isNotEmpty) {
+      if (listCheck.length == 3) {
+        listCheck.removeWhere((element) =>
+            element.phoneNo!.trim() == provider.infoUserDTO!.phoneNo);
+
+        if (listCheck.length < 3) {
+          listCheck.add(provider.infoUserDTO!);
+        } else {
+          listCheck
+              .sort((a, b) => a.expiryAsDateTime.compareTo(b.expiryAsDateTime));
+          listCheck.removeAt(2);
+        }
+      } else {
+        listCheck.removeWhere((element) =>
+            element.phoneNo!.trim() == provider.infoUserDTO!.phoneNo);
+
+        listCheck.add(provider.infoUserDTO!);
+      }
+    } else {
+      listCheck.add(provider.infoUserDTO!);
+    }
+
+    if (listCheck.length >= 2) {
+      listCheck
+          .sort((a, b) => a.expiryAsDateTime.compareTo(b.expiryAsDateTime));
+    }
+
+    listCheck.forEach((element) {
+      list.add(element.toSPJson().toString());
+    });
+
+    return list;
   }
 }
