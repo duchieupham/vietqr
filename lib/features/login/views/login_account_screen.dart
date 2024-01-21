@@ -5,12 +5,14 @@ import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_provider.dart';
+import 'package:vierqr/features/dashboard/widget/background_app_bar_home.dart';
 import 'package:vierqr/features/register/register_screen.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/info_user_dto.dart';
 
 import '../../../commons/utils/image_utils.dart';
+import 'bgr_app_bar_login.dart';
 
 class LoginAccountScreen extends StatefulWidget {
   final Function(InfoUserDTO)? onQuickLogin;
@@ -62,67 +64,29 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
             width: width,
             child: Stack(
               children: [
-                Center(
-                  child: Container(
-                    height: height * 0.3,
-                    width: width,
-                    decoration: BoxDecoration(
-                      image: widget.appInfoDTO.isEventTheme
-                          ? DecorationImage(
-                              image:
-                                  NetworkImage(widget.appInfoDTO.themeImgUrl),
-                              fit: BoxFit.cover)
-                          : Provider.of<DashBoardProvider>(context,
-                                      listen: false)
-                                  .file
-                                  .path
-                                  .isNotEmpty
-                              ? DecorationImage(
-                                  image: FileImage(
-                                      Provider.of<DashBoardProvider>(context,
-                                              listen: false)
-                                          .file),
-                                  fit: BoxFit.cover)
-                              : DecorationImage(
-                                  image: AssetImage(
-                                      'assets/images/bgr-header.png'),
-                                  fit: BoxFit.cover),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: ClipRect(
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
-                      child: Opacity(
-                        opacity: 0.6,
+                Consumer<DashBoardProvider>(
+                  builder: (context, page, child) {
+                    return BackgroundAppBarLogin(
+                      file: page.file,
+                      url: widget.appInfoDTO.themeImgUrl,
+                      isEventTheme: widget.appInfoDTO.isEventTheme,
+                      child: Align(
+                        alignment: Alignment.center,
                         child: Container(
-                          height: 30,
-                          color: Colors.transparent,
+                          height: 100,
+                          width: MediaQuery.of(context).size.width / 2,
+                          margin: const EdgeInsets.only(top: 50),
+                          decoration: const BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage(
+                                  'assets/images/logo_vietgr_payment.png'),
+                              fit: BoxFit.contain,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Container(
-                      height: 100,
-                      width: MediaQuery.of(context).size.width / 2,
-                      margin: const EdgeInsets.only(top: 50),
-                      decoration: const BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage(
-                              'assets/images/logo_vietgr_payment.png'),
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    ),
-                  ),
+                    );
+                  },
                 ),
               ],
             ),

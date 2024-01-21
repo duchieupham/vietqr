@@ -41,6 +41,8 @@ import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:vierqr/services/shared_references/account_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
+import 'views/bgr_app_bar_login.dart';
+
 class Login extends StatelessWidget {
   const Login({Key? key}) : super(key: key);
 
@@ -164,6 +166,8 @@ class _LoginState extends State<_Login> {
                 provider.updateListInfoUser();
               }
 
+              Provider.of<DashBoardProvider>(context, listen: false).initFileTheme();
+
               Navigator.of(context).popUntil((route) => route.isFirst);
               Navigator.of(context)
                   .pushReplacementNamed(Routes.DASHBOARD, arguments: {
@@ -258,88 +262,31 @@ class _LoginState extends State<_Login> {
                             child: SingleChildScrollView(
                               child: Column(
                                 children: [
-                                  SizedBox(
-                                    height: height * 0.3,
-                                    width: width,
-                                    child: Stack(
-                                      children: [
-                                        if (provider.appInfoDTO.isEventTheme)
-                                          Center(
-                                            child: Container(
-                                              height: height * 0.3,
-                                              width: width,
-                                              decoration: BoxDecoration(
-                                                image: DecorationImage(
-                                                    image: NetworkImage(provider
-                                                        .appInfoDTO
-                                                        .themeImgUrl),
-                                                    fit: BoxFit.fill),
-                                              ),
-                                            ),
-                                          )
-                                        else
-                                          Consumer<DashBoardProvider>(
-                                            builder: (context, page, _) {
-                                              return Center(
-                                                child: Container(
-                                                  height: height * 0.3,
-                                                  width: width,
-                                                  decoration: BoxDecoration(
-                                                    image: page.file.path
-                                                            .isNotEmpty
-                                                        ? DecorationImage(
-                                                            image: FileImage(
-                                                                page.file),
-                                                            fit:
-                                                                BoxFit.fitWidth)
-                                                        : DecorationImage(
-                                                            image: AssetImage(
-                                                                'assets/images/bgr-header.png'),
-                                                            fit: BoxFit
-                                                                .fitWidth),
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                        // Positioned(
-                                        //   bottom: 0,
-                                        //   left: 0,
-                                        //   right: 0,
-                                        //   child: ClipRect(
-                                        //     child: BackdropFilter(
-                                        //       filter: ImageFilter.blur(
-                                        //           sigmaX: 25, sigmaY: 25),
-                                        //       child: Opacity(
-                                        //         opacity: 0.6,
-                                        //         child: Container(
-                                        //           height: 30,
-                                        //           color: Colors.transparent,
-                                        //         ),
-                                        //       ),
-                                        //     ),
-                                        //   ),
-                                        // ),
-                                        Positioned(
-                                          child: Align(
-                                            alignment: Alignment.center,
-                                            child: Container(
-                                              height: 100,
-                                              width: width / 2,
-                                              margin: const EdgeInsets.only(
-                                                  top: 50),
-                                              decoration: const BoxDecoration(
-                                                image: DecorationImage(
-                                                  image: AssetImage(
-                                                      'assets/images/logo_vietgr_payment.png'),
-                                                  fit: BoxFit.contain,
-                                                ),
+                                  Consumer<DashBoardProvider>(
+                                    builder: (context, page, child) {
+                                      return BackgroundAppBarLogin(
+                                        file: page.file,
+                                        url: provider.appInfoDTO.themeImgUrl,
+                                        isEventTheme:
+                                            provider.appInfoDTO.isEventTheme,
+                                        child: Align(
+                                          alignment: Alignment.center,
+                                          child: Container(
+                                            height: 100,
+                                            width: width / 2,
+                                            margin:
+                                                const EdgeInsets.only(top: 50),
+                                            decoration: const BoxDecoration(
+                                              image: DecorationImage(
+                                                image: AssetImage(
+                                                    'assets/images/logo_vietgr_payment.png'),
+                                                fit: BoxFit.contain,
                                               ),
                                             ),
                                           ),
                                         ),
-                                      ],
-                                    ),
+                                      );
+                                    },
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(

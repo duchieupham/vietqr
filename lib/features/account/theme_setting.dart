@@ -98,28 +98,27 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
                       ),
                     ),
                     const SizedBox(width: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          'Bật',
-                          style: TextStyle(fontSize: 14),
-                        ),
-                        const SizedBox(width: 8),
-                        Consumer<DashBoardProvider>(
-                          builder: (context, provider, _) {
-                            return CustomSwitch(
-                              value: provider.settingDTO.keepScreenOn,
-                              onChanged: (value) {
-                                context
-                                    .read<DashBoardBloc>()
-                                    .add(UpdateKeepBrightEvent(value));
-                              },
-                            );
-                          },
-                        ),
-                      ],
-                    ),
+                    Consumer<DashBoardProvider>(
+                        builder: (context, provider, _) {
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            provider.settingDTO.keepScreenOn ? 'Bật' : 'Tắt',
+                            style: TextStyle(fontSize: 14),
+                          ),
+                          const SizedBox(width: 8),
+                          CustomSwitch(
+                            value: provider.settingDTO.keepScreenOn,
+                            onChanged: (value) {
+                              context
+                                  .read<DashBoardBloc>()
+                                  .add(UpdateKeepBrightEvent(value));
+                            },
+                          )
+                        ],
+                      );
+                    }),
                   ],
                 ),
               ),

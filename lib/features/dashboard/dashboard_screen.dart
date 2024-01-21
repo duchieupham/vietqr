@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:float_bubble/float_bubble.dart';
 import 'package:flutter/material.dart';
@@ -863,18 +864,18 @@ class _DashBoardScreen extends State<DashBoardScreen>
               : Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Container(
-                      width: 60,
-                      height: 30,
-                      decoration: BoxDecoration(
-                        //color: Theme.of(context).cardColor,
-                        borderRadius: BorderRadius.circular(10),
+                    if (page.settingDTO.logoUrl.isNotEmpty)
+                      Container(
+                        width: 60,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: CachedNetworkImage(
+                          imageUrl: page.settingDTO.logoUrl,
+                          width: 50,
+                        ),
                       ),
-                      child: Image.asset(
-                        'assets/images/ic-viet-qr.png',
-                        width: 50,
-                      ),
-                    ),
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -882,76 +883,74 @@ class _DashBoardScreen extends State<DashBoardScreen>
                       ),
                     ),
                     SizedBox(
-                        width: 50,
-                        height: 60,
-                        child:
-                            BlocConsumer<NotificationBloc, NotificationState>(
-                          listener: (context, state) {
-                            //
-                          },
-                          builder: (context, state) {
-                            if (state is NotificationCountSuccessState) {
-                              _notificationCount = state.count;
-                            }
-                            if (state is NotificationUpdateStatusSuccessState) {
-                              _notificationCount = 0;
-                            }
-                            return Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                ButtonIconWidget(
-                                  width: 40,
-                                  height: 40,
-                                  borderRadius: 40,
-                                  icon: Icons.notifications_outlined,
-                                  title: '',
-                                  function: () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      Routes.NOTIFICATION_VIEW,
-                                      arguments: {
-                                        'notificationBloc': _notificationBloc,
-                                      },
-                                    ).then((value) {
-                                      _notificationBloc.add(
-                                        NotificationUpdateStatusEvent(),
-                                      );
-                                    });
-                                  },
-                                  bgColor: Theme.of(context).cardColor,
-                                  textColor: Theme.of(context).hintColor,
-                                ),
-                                if (_notificationCount != 0)
-                                  Positioned(
-                                    top: 5,
-                                    right: 0,
-                                    child: Container(
-                                      width: 20,
-                                      height: 20,
-                                      alignment: Alignment.center,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(30),
-                                        color: AppColor.RED_CALENDAR,
-                                      ),
-                                      child: Text(
-                                        _notificationCount.toString(),
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: (_notificationCount
-                                                      .toString()
-                                                      .length >=
-                                                  3)
-                                              ? 8
-                                              : 10,
-                                          color: AppColor.WHITE,
-                                        ),
+                      width: 50,
+                      height: 60,
+                      child: BlocConsumer<NotificationBloc, NotificationState>(
+                        listener: (context, state) {},
+                        builder: (context, state) {
+                          if (state is NotificationCountSuccessState) {
+                            _notificationCount = state.count;
+                          }
+                          if (state is NotificationUpdateStatusSuccessState) {
+                            _notificationCount = 0;
+                          }
+                          return Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              ButtonIconWidget(
+                                width: 40,
+                                height: 40,
+                                borderRadius: 40,
+                                icon: Icons.notifications_outlined,
+                                title: '',
+                                function: () {
+                                  Navigator.pushNamed(
+                                    context,
+                                    Routes.NOTIFICATION_VIEW,
+                                    arguments: {
+                                      'notificationBloc': _notificationBloc,
+                                    },
+                                  ).then((value) {
+                                    _notificationBloc.add(
+                                      NotificationUpdateStatusEvent(),
+                                    );
+                                  });
+                                },
+                                bgColor: Theme.of(context).cardColor,
+                                textColor: Theme.of(context).hintColor,
+                              ),
+                              if (_notificationCount != 0)
+                                Positioned(
+                                  top: 5,
+                                  right: 0,
+                                  child: Container(
+                                    width: 20,
+                                    height: 20,
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(30),
+                                      color: AppColor.RED_CALENDAR,
+                                    ),
+                                    child: Text(
+                                      _notificationCount.toString(),
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: (_notificationCount
+                                                    .toString()
+                                                    .length >=
+                                                3)
+                                            ? 8
+                                            : 10,
+                                        color: AppColor.WHITE,
                                       ),
                                     ),
                                   ),
-                              ],
-                            );
-                          },
-                        )),
+                                ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
                     const Padding(padding: EdgeInsets.only(left: 5)),
                     GestureDetector(
                         onTap: () {

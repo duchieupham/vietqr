@@ -47,12 +47,11 @@ class _VietQrState extends State<VietQr> {
 
   @override
   void dispose() {
+    if (!mounted) return;
     // Tắt chế độ giữ màn hình sáng khi widget bị hủy
-    if (Provider.of<DashBoardProvider>(context, listen: false)
-        .settingDTO
-        .keepScreenOn) {
-      Wakelock.disable();
-    }
+
+    Wakelock.disable();
+
     // resetBrightness();
     super.dispose();
   }

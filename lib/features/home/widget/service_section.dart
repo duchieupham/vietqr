@@ -121,14 +121,14 @@ class _ServiceSectionState extends State<ServiceSection> {
             );
           }
         }),
-        _buildItemService(
-          context,
-          'assets/images/ic-business-3D.png',
-          'Doanh nghiệp',
-          () async {
-            Navigator.pushNamed(context, Routes.BUSINESS);
-          },
-        ),
+        // _buildItemService(
+        //   context,
+        //   'assets/images/ic-business-3D.png',
+        //   'Doanh nghiệp',
+        //   () async {
+        //     Navigator.pushNamed(context, Routes.BUSINESS);
+        //   },
+        // ),
         _buildItemService(
           context,
           'assets/images/logo-check-app-version.png',

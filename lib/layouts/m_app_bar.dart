@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -82,8 +83,8 @@ class MAppBar extends StatelessWidget implements PreferredSizeWidget {
                     width: 50,
                     height: 40,
                     margin: const EdgeInsets.only(right: 20),
-                    child: Image.asset(
-                      'assets/images/ic-viet-qr.png',
+                    child: CachedNetworkImage(
+                      imageUrl: page.settingDTO.logoUrl,
                       height: 40,
                     ),
                   ),

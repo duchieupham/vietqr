@@ -7,11 +7,13 @@ import 'package:vierqr/commons/utils/encrypt_utils.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_provider.dart';
+import 'package:vierqr/features/dashboard/widget/background_app_bar_home.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/pin_code_input.dart';
 import 'package:vierqr/models/account_login_dto.dart';
 import 'package:vierqr/models/app_info_dto.dart';
 
+import 'bgr_app_bar_login.dart';
 import 'forgot_password_screen.dart';
 
 class QuickLoginScreen extends StatefulWidget {
@@ -69,49 +71,15 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
                 children: [
                   Stack(
                     children: [
-                      Container(
-                        height: 300,
-                        padding:
-                            const EdgeInsets.only(top: 70, left: 40, right: 40),
-                        width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(
-                          image: widget.appInfoDTO.isEventTheme
-                              ? DecorationImage(
-                                  image: NetworkImage(
-                                      widget.appInfoDTO.themeImgUrl),
-                                  fit: BoxFit.cover)
-                              : Provider.of<DashBoardProvider>(context,
-                                          listen: false)
-                                      .file
-                                      .path
-                                      .isNotEmpty
-                                  ? DecorationImage(
-                                      image: FileImage(
-                                          Provider.of<DashBoardProvider>(
-                                                  context,
-                                                  listen: false)
-                                              .file),
-                                      fit: BoxFit.cover)
-                                  : DecorationImage(
-                                      image: AssetImage(
-                                          'assets/images/bgr-header.png'),
-                                      fit: BoxFit.cover),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        child: ClipRect(
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 0, sigmaY: 30),
-                            child: Container(
-                              color: Colors.white.withOpacity(0.0),
-                              height: 40,
-                            ),
-                          ),
-                        ),
-                      ),
+                      Consumer<DashBoardProvider>(
+                          builder: (context, page, child) {
+                        return BackgroundAppBarLogin(
+                          file: page.file,
+                          url: widget.appInfoDTO.themeImgUrl,
+                          isEventTheme: widget.appInfoDTO.isEventTheme,
+                          child: const SizedBox(),
+                        );
+                      }),
                       Container(
                         height: 300,
                         padding:

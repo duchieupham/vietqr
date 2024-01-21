@@ -2,8 +2,6 @@ import 'package:hive/hive.dart';
 import 'package:vierqr/models/theme_dto.dart';
 import 'package:vierqr/models/theme_dto_local.dart';
 
-import 'base_local_storage.dart';
-
 class ThemeStorageRepository {
   Type boxType = ThemeDTOLocal;
 
@@ -12,16 +10,22 @@ class ThemeStorageRepository {
     return box;
   }
 
-  List<ThemeDTOLocal> getWishlist(Box box) {
+  List<ThemeDTOLocal> getWishlist(Box box, String userId) {
     return box.values.toList() as List<ThemeDTOLocal>;
   }
 
-  Future<void> addProductToWishlist(Box box, ThemeDTOLocal model) async {
-    await box.put(model.id, model);
+  ThemeDTOLocal? getWishTheme(Box box, String userId) {
+    print(box.containsKey(userId));
+    return box.get(userId);
   }
 
-  Future<void> removeProductFromWishlist(Box box, ThemeDTOLocal model) async {
-    await box.deleteAll(box.keys);
+  Future<void> addProductToWishlist(
+      Box box, ThemeDTOLocal model, String userId) async {
+    await box.put(userId, model);
+  }
+
+  Future<void> removeProductFromWishlist(Box box, String userId) async {
+    await box.delete(userId);
   }
 
   Future<void> clearWishlist(Box box) async {

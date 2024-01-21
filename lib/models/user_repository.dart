@@ -38,17 +38,14 @@ class UserRepository {
 
   Future<ThemeDTOLocal?> getThemeDTO() async {
     Box box = await themLocal.openBox(theme_dto_key);
-    if (themLocal.getWishlist(box).isNotEmpty) {
-      themesDTO = themLocal.getWishlist(box).first;
-    }
+    themesDTO = themLocal.getWishTheme(box, userId);
     return themesDTO;
   }
 
   Future<void> updateThemeDTO(ThemeDTOLocal value) async {
     Box box = await themLocal.openBox(theme_dto_key);
-    await themLocal.removeProductFromWishlist(
-        box, themesDTO ?? ThemeDTOLocal());
-    await themLocal.addProductToWishlist(box, value);
+    await themLocal.removeProductFromWishlist(box, userId);
+    await themLocal.addProductToWishlist(box, value, userId);
   }
 
   Future<List<ThemeDTO>> getTheme() async {
