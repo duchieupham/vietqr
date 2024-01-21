@@ -5,7 +5,7 @@ class MemberSearchDto {
   final String? firstName;
   final String imgId;
   final String? id;
-  final int existed;
+  late int existed;
 
   MemberSearchDto({
     this.phoneNo,

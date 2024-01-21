@@ -19,6 +19,7 @@ class ShareBDSDState extends Equatable {
   final bool isTelegram;
   final bool isLark;
   final bool isLoading;
+  final String userIdSelect;
 
   ShareBDSDState({
     this.status = BlocStatus.NONE,
@@ -34,6 +35,7 @@ class ShareBDSDState extends Equatable {
     this.isLark = false,
     this.isTelegram = false,
     this.isLoading = false,
+    this.userIdSelect = '',
   });
 
   ShareBDSDState copyWith({
@@ -50,6 +52,7 @@ class ShareBDSDState extends Equatable {
     bool? isTelegram,
     bool? isLark,
     bool? isLoading,
+    String? userIdSelect,
   }) {
     return ShareBDSDState(
       status: status ?? this.status,
@@ -65,6 +68,7 @@ class ShareBDSDState extends Equatable {
       isLark: isLark ?? this.isLark,
       isTelegram: isTelegram ?? this.isTelegram,
       isLoading: isLoading ?? this.isLoading,
+      userIdSelect: userIdSelect ?? this.userIdSelect,
     );
   }
 

@@ -479,7 +479,8 @@ class ShareBDSDBloc extends Bloc<ShareBDSDEvent, ShareBDSDState>
     try {
       if (event is ShareUserBDSDEvent) {
         emit(state.copyWith(
-            status: BlocStatus.LOADING_POPUP,
+            userIdSelect: event.body['userId'],
+            status: BlocStatus.LOADING_SHARE,
             request: ShareBDSDType.SHARE_BDSD));
 
         final responseMessageDTO = await repository.shareBDSD(event.body);

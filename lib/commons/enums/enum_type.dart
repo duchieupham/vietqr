@@ -4,7 +4,7 @@ enum BlocStatus {
   LOADING_PAGE,
   NONE,
   LOADING,
-  LOADING_POPUP,
+  LOADING_SHARE,
   UNLOADING,
   ERROR,
   AWAIT,

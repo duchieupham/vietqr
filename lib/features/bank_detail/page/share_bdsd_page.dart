@@ -186,51 +186,57 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(
-                    height: 24,
-                  ),
-                  const Text(
-                    'Chia sẻ qua mạng xã hội',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 16),
-                  if (state.listTelegram.isEmpty && state.listLark.isEmpty)
-                    _buildSocialNetwork(context)
-                  else
-                    Column(
-                      children: [
-                        ...[
-                          if (state.listTelegram.isNotEmpty)
-                            _buildListChatTelegram(
-                                state.listTelegram, state.isTelegram)
-                          else
-                            GestureDetector(
-                              onTap: () async {
-                                await Navigator.pushNamed(
-                                    context, Routes.CONNECT_TELEGRAM);
-                                _bloc.add(GetInfoTelegramEvent());
-                              },
-                              child: _buildItemNetWork('Kết nối Telegram',
-                                  'assets/images/logo-telegram.png'),
-                            )
-                        ],
-                        const SizedBox(height: 20),
-                        ...[
-                          if (state.listLark.isNotEmpty)
-                            _buildListConnectLark(state.listLark, state.isLark)
-                          else
-                            GestureDetector(
-                              onTap: () async {
-                                await Navigator.pushNamed(
-                                    context, Routes.CONNECT_LARK);
-                                _bloc.add(GetInfoLarkEvent());
-                              },
-                              child: _buildItemNetWork('Kết nối Lark',
-                                  'assets/images/logo-lark.png'),
-                            )
-                        ]
-                      ],
+
+                  if (widget.dto.userId ==
+                      UserInformationHelper.instance.getUserId()) ...[
+                    const SizedBox(
+                      height: 24,
                     ),
+                    const Text(
+                      'Chia sẻ qua mạng xã hội',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 16),
+                    _buildSocialNetwork(context)
+                  ],
+                  // if (state.listTelegram.isEmpty && state.listLark.isEmpty)
+                  //
+                  // else
+                  // Column(
+                  //   children: [
+                  //     ...[
+                  //       if (state.listTelegram.isNotEmpty)
+                  //         _buildListChatTelegram(
+                  //             state.listTelegram, state.isTelegram)
+                  //       else
+                  //         GestureDetector(
+                  //           onTap: () async {
+                  //             await Navigator.pushNamed(
+                  //                 context, Routes.CONNECT_TELEGRAM);
+                  //             _bloc.add(GetInfoTelegramEvent());
+                  //           },
+                  //           child: _buildItemNetWork('Kết nối Telegram',
+                  //               'assets/images/logo-telegram.png'),
+                  //         )
+                  //     ],
+                  //     const SizedBox(height: 20),
+                  //     ...[
+                  //       if (state.listLark.isNotEmpty)
+                  //         _buildListConnectLark(state.listLark, state.isLark)
+                  //       else
+                  //         GestureDetector(
+                  //           onTap: () async {
+                  //             await Navigator.pushNamed(
+                  //                 context, Routes.CONNECT_LARK);
+                  //             _bloc.add(GetInfoLarkEvent());
+                  //           },
+                  //           child: _buildItemNetWork('Kết nối Lark',
+                  //               'assets/images/logo-lark.png'),
+                  //         )
+                  //     ]
+                  //   ],
+                  // ),
                   const SizedBox(
                     height: 24,
                   ),
@@ -259,24 +265,25 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                       const SizedBox(
                         width: 8,
                       ),
-                      Container(
-                        padding: EdgeInsets.only(right: 8, left: 12),
-                        decoration: BoxDecoration(
-                            color: AppColor.BLUE_TEXT.withOpacity(0.3),
-                            borderRadius: BorderRadius.circular(20)),
-                        child: Row(
-                          children: [
-                            Text(
-                              '${listMember.length}',
-                              style: TextStyle(color: AppColor.BLUE_TEXT),
-                            ),
-                            Image.asset(
-                              'assets/images/ic-member-bdsd-blue.png',
-                              height: 26,
-                            ),
-                          ],
+                      if (listMember.isNotEmpty)
+                        Container(
+                          padding: EdgeInsets.only(right: 8, left: 12),
+                          decoration: BoxDecoration(
+                              color: AppColor.BLUE_TEXT.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(20)),
+                          child: Row(
+                            children: [
+                              Text(
+                                '${listMember.length}',
+                                style: TextStyle(color: AppColor.BLUE_TEXT),
+                              ),
+                              Image.asset(
+                                'assets/images/ic-member-bdsd-blue.png',
+                                height: 26,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
                     ],
                   ),
                   if (listMember.isNotEmpty)
@@ -317,27 +324,28 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                         const SizedBox(
                           height: 12,
                         ),
-                        Column(
-                          children: [
-                            ...listMemberData.map((e) {
-                              return _buildItemMember(e);
-                            }).toList(),
-                            Align(
-                              alignment: Alignment.topRight,
-                              child: ButtonWidget(
-                                height: 32,
-                                width: 140,
-                                fontSize: 12,
-                                text: 'Xóa tất cả thành viên',
-                                textColor: AppColor.RED_TEXT,
-                                bgColor: AppColor.RED_TEXT.withOpacity(0.2),
-                                function: () {
-                                  _bloc.add(RemoveAllMemberEvent(
-                                      bankId: widget.bankId));
-                                },
-                              ),
-                            )
-                          ],
+                        ...listMemberData.map((e) {
+                          return _buildItemMember(e);
+                        }).toList(),
+                        if (widget.dto.userId ==
+                            UserInformationHelper.instance.getUserId())
+                          Align(
+                            alignment: Alignment.topRight,
+                            child: ButtonWidget(
+                              height: 32,
+                              width: 140,
+                              fontSize: 12,
+                              text: 'Xóa tất cả thành viên',
+                              textColor: AppColor.RED_TEXT,
+                              bgColor: AppColor.RED_TEXT.withOpacity(0.2),
+                              function: () {
+                                _bloc.add(RemoveAllMemberEvent(
+                                    bankId: widget.bankId));
+                              },
+                            ),
+                          ),
+                        const SizedBox(
+                          height: 100,
                         )
                       ],
                     ))
@@ -356,51 +364,55 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                           const SizedBox(
                             height: 12,
                           ),
-                          Text('Không tìm thấy người dùng'),
+                          Text('Chưa có thành viên nào được chia sẻ.'),
                         ],
                       ),
                     )
                 ],
               ),
             ),
-            Positioned(
-                bottom: 40,
-                right: 0,
-                child: GestureDetector(
-                  onTap: () async {
-                    await DialogWidget.instance.showModelBottomSheet(
-                      padding: EdgeInsets.only(left: 12, right: 12, bottom: 32),
-                      height: MediaQuery.of(context).size.height * 0.8,
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(16),
-                          topRight: Radius.circular(16)),
-                      widget: BottomSheetAddUserBDSD(
-                        bankId: widget.bankId,
-                      ),
-                    );
-                    _bloc.add(GetMemberEvent(bankId: widget.bankId));
-                  },
-                  child: Container(
-                    height: 40,
-                    padding: EdgeInsets.symmetric(horizontal: 12),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
-                      color: AppColor.BLUE_TEXT,
-                    ),
-                    child: Row(
-                      children: [
-                        Image.asset(
-                          'assets/images/ic-add-member-bdsd-white.png',
-                          height: 26,
+            if (widget.dto.userId == UserInformationHelper.instance.getUserId())
+              Positioned(
+                  bottom: 40,
+                  right: 0,
+                  child: GestureDetector(
+                    onTap: () async {
+                      await DialogWidget.instance.showModelBottomSheet(
+                        isDismissible: true,
+                        padding:
+                            EdgeInsets.only(left: 12, right: 12, bottom: 32),
+                        height: MediaQuery.of(context).size.height * 0.8,
+                        margin:
+                            EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                        borderRadius: BorderRadius.circular(16),
+                        widget: BottomSheetAddUserBDSD(
+                          bankId: widget.bankId,
                         ),
-                        Text(
-                          'Thêm thành viên',
-                          style: TextStyle(fontSize: 12, color: AppColor.WHITE),
-                        )
-                      ],
+                      );
+                      _bloc.add(GetMemberEvent(bankId: widget.bankId));
+                    },
+                    child: Container(
+                      height: 40,
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
+                        color: AppColor.BLUE_TEXT,
+                      ),
+                      child: Row(
+                        children: [
+                          Image.asset(
+                            'assets/images/ic-add-member-bdsd-white.png',
+                            height: 26,
+                          ),
+                          Text(
+                            'Thêm thành viên',
+                            style:
+                                TextStyle(fontSize: 12, color: AppColor.WHITE),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                )),
+                  )),
           ],
         );
       },
@@ -457,16 +469,17 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
               )
             ],
           )),
-          GestureDetector(
-            onTap: () {
-              _bloc.add(
-                  RemoveMemberEvent(bankId: widget.bankId, userId: dto.id));
-            },
-            child: Image.asset(
-              'assets/images/ic-remove-red.png',
-              height: 36,
-            ),
-          )
+          if (widget.dto.userId == UserInformationHelper.instance.getUserId())
+            GestureDetector(
+              onTap: () {
+                _bloc.add(
+                    RemoveMemberEvent(bankId: widget.bankId, userId: dto.id));
+              },
+              child: Image.asset(
+                'assets/images/ic-remove-red.png',
+                height: 36,
+              ),
+            )
         ],
       ),
     );

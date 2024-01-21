@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
@@ -140,6 +139,17 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
                         },
                         onChange: (value) {
                           _valueSearch = value;
+
+                          if (provider.typeSearch == 0) {
+                            if (value.length >= 8) {
+                              int type = provider.typeSearch;
+                              String bankId = widget.bankId;
+                              bloc.add(SearchMemberEvent(
+                                  bankId: bankId,
+                                  type: type,
+                                  value: _valueSearch));
+                            }
+                          }
                         },
                       ),
                     ),
@@ -174,21 +184,21 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
                 child: BlocConsumer<ShareBDSDBloc, ShareBDSDState>(
               listener: (context, state) {
                 if (state.request == ShareBDSDType.SHARE_BDSD) {
-                  if (state.status == BlocStatus.LOADING_POPUP) {
-                    DialogWidget.instance.openLoadingDialog();
-                  }
-                  if (state.status == BlocStatus.UNLOADING) {
-                    Navigator.pop(context);
-                    Fluttertoast.showToast(
-                      msg: 'Chia sẻ BĐSD thành công',
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.CENTER,
-                      backgroundColor: Theme.of(context).cardColor,
-                      textColor: Theme.of(context).hintColor,
-                      fontSize: 15,
-                    );
-                    Navigator.pop(context);
-                  }
+                  // if (state.status == BlocStatus.LOADING_SHARE) {
+                  //   DialogWidget.instance.openLoadingDialog();
+                  // }
+                  // if (state.status == BlocStatus.UNLOADING) {
+                  //   Navigator.pop(context);
+                  //   Fluttertoast.showToast(
+                  //     msg: 'Chia sẻ BĐSD thành công',
+                  //     toastLength: Toast.LENGTH_SHORT,
+                  //     gravity: ToastGravity.CENTER,
+                  //     backgroundColor: Theme.of(context).cardColor,
+                  //     textColor: Theme.of(context).hintColor,
+                  //     fontSize: 15,
+                  //   );
+                  //   Navigator.pop(context);
+                  // }
                   if (state.request == ShareBDSDType.ERROR) {
                     DialogWidget.instance.openMsgDialog(
                         title: 'Đã có lỗi xảy ra', msg: state.msg ?? '');
@@ -233,7 +243,7 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
                       Expanded(
                         child: ListView(
                           children: state.listMemberSearch.map((e) {
-                            return _buildItemUser(e);
+                            return _buildItemUser(e, state);
                           }).toList(),
                         ),
                       ),
@@ -292,7 +302,10 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
     );
   }
 
-  Widget _buildItemUser(MemberSearchDto dto) {
+  Widget _buildItemUser(MemberSearchDto dto, ShareBDSDState state) {
+    if (state.status == BlocStatus.UNLOADING && state.userIdSelect == dto.id) {
+      dto.existed = 1;
+    }
     return GestureDetector(
       onTap: () async {},
       child: Container(
@@ -340,14 +353,17 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            'Họ tên:',
-                            style: TextStyle(color: AppColor.GREY_TEXT),
+                          SizedBox(
+                            width: 96,
+                            child: Text(
+                              'Họ tên:',
+                              style: TextStyle(color: AppColor.GREY_TEXT),
+                            ),
                           ),
                           Expanded(
                             child: Text(
                               dto.fullName,
-                              textAlign: TextAlign.end,
+                              textAlign: TextAlign.start,
                               style: TextStyle(fontWeight: FontWeight.w600),
                             ),
                           ),
@@ -359,13 +375,16 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            'Số điện thoại:',
-                            style: TextStyle(color: AppColor.GREY_TEXT),
+                          SizedBox(
+                            width: 96,
+                            child: Text(
+                              'Số điện thoại:',
+                              style: TextStyle(color: AppColor.GREY_TEXT),
+                            ),
                           ),
                           Expanded(
                             child: Text(dto.phoneNo ?? '',
-                                textAlign: TextAlign.end,
+                                textAlign: TextAlign.start,
                                 style: TextStyle(fontWeight: FontWeight.w600)),
                           ),
                         ],
@@ -374,38 +393,85 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
                   ),
                 ),
                 const SizedBox(width: 16),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 20),
-                    child: dto.existed == 0
-                        ? ButtonWidget(
-                            height: 32,
-                            width: 80,
-                            text: 'Chia sẻ',
-                            textColor: AppColor.WHITE,
-                            bgColor: AppColor.BLUE_TEXT,
-                            function: () {
-                              Map<String, dynamic> param = {};
-                              param['userId'] = dto.id;
-                              param['bankId'] = widget.bankId;
-                              bloc.add(ShareUserBDSDEvent(param));
-                            },
-                            fontSize: 12,
-                            borderRadius: 5,
-                          )
-                        : SizedBox(
-                            width: 80,
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 10),
-                              child: Text(
-                                'Đã thêm',
-                                textAlign: TextAlign.end,
-                                style: TextStyle(color: AppColor.BLUE_TEXT),
+                if (state.status == BlocStatus.LOADING_SHARE &&
+                    state.userIdSelect == dto.id)
+                  Expanded(
+                      child: Padding(
+                    padding: EdgeInsets.only(left: 20),
+                    child: UnconstrainedBox(
+                      child: SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                            color: AppColor.BLUE_TEXT),
+                      ),
+                    ),
+                  ))
+                // else if (state.status == BlocStatus.UNLOADING &&
+                //     state.userIdSelect == dto.id)
+                //   SizedBox(
+                //     width: 80,
+                //     child: Padding(
+                //       padding: const EdgeInsets.only(top: 10, left: 8),
+                //       child: Row(
+                //         children: [
+                //           Text(
+                //             'Đã thêm',
+                //             textAlign: TextAlign.end,
+                //             style: TextStyle(color: AppColor.BLUE_TEXT),
+                //           ),
+                //           Icon(
+                //             Icons.check,
+                //             color: AppColor.BLUE_TEXT,
+                //             size: 18,
+                //           )
+                //         ],
+                //       ),
+                //     ),
+                //   )
+                else
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 20),
+                      child: dto.existed == 0
+                          ? ButtonWidget(
+                              height: 32,
+                              width: 80,
+                              text: 'Chia sẻ',
+                              textColor: AppColor.WHITE,
+                              bgColor: AppColor.BLUE_TEXT,
+                              function: () {
+                                Map<String, dynamic> param = {};
+                                param['userId'] = dto.id;
+                                param['bankId'] = widget.bankId;
+                                bloc.add(ShareUserBDSDEvent(param));
+                              },
+                              fontSize: 12,
+                              borderRadius: 5,
+                            )
+                          : SizedBox(
+                              width: 80,
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 10),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      'Đã thêm',
+                                      textAlign: TextAlign.end,
+                                      style:
+                                          TextStyle(color: AppColor.BLUE_TEXT),
+                                    ),
+                                    Icon(
+                                      Icons.check,
+                                      color: AppColor.BLUE_TEXT,
+                                      size: 18,
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                  ),
-                )
+                    ),
+                  )
               ],
             ),
           ],
