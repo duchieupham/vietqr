@@ -76,10 +76,9 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
                           height: 100,
                           width: MediaQuery.of(context).size.width / 2,
                           margin: const EdgeInsets.only(top: 50),
-                          decoration: const BoxDecoration(
+                          decoration: BoxDecoration(
                             image: DecorationImage(
-                              image: AssetImage(
-                                  'assets/images/logo_vietgr_payment.png'),
+                              image: FileImage(page.fileLogo),
                               fit: BoxFit.contain,
                             ),
                           ),

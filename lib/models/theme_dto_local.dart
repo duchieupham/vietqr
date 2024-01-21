@@ -39,10 +39,6 @@ class ThemeDTOLocal extends HiveObject {
     file = localPath;
   }
 
-  Future<File> getImageFile() async {
-    return File(file);
-  }
-
   void setType(int themeType) {
     type = themeType;
   }

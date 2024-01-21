@@ -153,23 +153,9 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
                                     List.generate(imageList.length, (index) {
                                   ThemeDTO e = provider.themes[index];
                                   return GestureDetector(
-                                    onTap: () {
-                                      if (provider.settingDTO.themeType == 0)
-                                        return;
-                                      ThemeDTOLocal dto = ThemeDTOLocal(
-                                        id: e.id,
-                                        type: e.type,
-                                        imgUrl: e.imgUrl,
-                                        name: e.name,
-                                        file: e.file,
-                                      );
-
-                                      provider.updateThemeDTO(dto);
-                                      context
-                                          .read<DashBoardBloc>()
-                                          .add(UpdateThemeEvent(e.type));
-                                    },
-                                    child: Padding(
+                                    onTap: () => onSelect(provider, e),
+                                    child: Container(
+                                      color: Colors.transparent,
                                       padding: const EdgeInsets.only(
                                           bottom: 16, top: 16),
                                       child: Row(
@@ -201,7 +187,9 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
                                             isDisable:
                                                 provider.settingDTO.themeType ==
                                                     0,
-                                            onChanged: (value) {},
+                                            onChanged: (value) {
+                                              onSelect(provider, e);
+                                            },
                                           ),
                                         ],
                                       ),
@@ -308,5 +296,19 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
       ),
       child: child,
     );
+  }
+
+  onSelect(provider, e) {
+    if (provider.settingDTO.themeType == 0) return;
+    ThemeDTOLocal dto = ThemeDTOLocal(
+      id: e.id,
+      type: e.type,
+      imgUrl: e.imgUrl,
+      name: e.name,
+      file: e.file,
+    );
+
+    provider.updateThemeDTO(dto);
+    context.read<DashBoardBloc>().add(UpdateThemeEvent(e.type));
   }
 }

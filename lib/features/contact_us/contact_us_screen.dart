@@ -51,10 +51,9 @@ class _ContactUSScreenState extends State<ContactUSScreen> {
                           child: Container(
                             height: 100,
                             width: MediaQuery.of(context).size.width / 2,
-                            decoration: const BoxDecoration(
+                            decoration: BoxDecoration(
                               image: DecorationImage(
-                                image: AssetImage(
-                                    'assets/images/logo_vietgr_payment.png'),
+                                image: FileImage(page.fileLogo),
                                 fit: BoxFit.contain,
                               ),
                             ),

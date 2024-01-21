@@ -39,6 +39,7 @@ import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/info_user_dto.dart';
 import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:vierqr/services/shared_references/account_helper.dart';
+import 'package:vierqr/services/shared_references/theme_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 import 'views/bgr_app_bar_login.dart';
@@ -99,6 +100,7 @@ class _LoginState extends State<_Login> {
     });
 
     Provider.of<DashBoardProvider>(context, listen: false).initFileTheme();
+    Provider.of<DashBoardProvider>(context, listen: false).updateFileLogo('');
 
     _bloc.add(GetFreeToken());
   }
@@ -136,6 +138,22 @@ class _LoginState extends State<_Login> {
             if (state.request == LoginType.APP_VERSION) {
               if (state.appInfoDTO != null) {
                 provider.updateAppInfo(state.appInfoDTO);
+
+                int logoVersion = ThemeHelper.instance.getLogoVer();
+
+                if (logoVersion != state.appInfoDTO!.logoVer) {
+                  ThemeHelper.instance.updateLogoVer(state.appInfoDTO!.logoVer);
+                  String path = state.appInfoDTO!.logoUrl.split('/').last;
+                  if (path.contains('.png')) {
+                    path.replaceAll('.png', '');
+                  }
+                  String localPath = await downloadAndSaveImage(
+                      state.appInfoDTO!.logoUrl, path);
+
+                  ThemeHelper.instance.updateLogoTheme(localPath);
+                  Provider.of<DashBoardProvider>(context, listen: false)
+                      .updateFileLogo(localPath);
+                }
               }
               Provider.of<AuthProvider>(context, listen: false)
                   .updateAppInfoDTO(state.appInfoDTO,
@@ -166,7 +184,8 @@ class _LoginState extends State<_Login> {
                 provider.updateListInfoUser();
               }
 
-              Provider.of<DashBoardProvider>(context, listen: false).initFileTheme();
+              Provider.of<DashBoardProvider>(context, listen: false)
+                  .initFileTheme();
 
               Navigator.of(context).popUntil((route) => route.isFirst);
               Navigator.of(context)
@@ -248,352 +267,361 @@ class _LoginState extends State<_Login> {
             }
           },
           builder: (context, state) {
-            return Scaffold(
-              resizeToAvoidBottomInset: false,
-              body: Stack(
-                children: [
-                  Visibility(
-                    visible: provider.isQuickLogin == 0,
-                    child: Scaffold(
-                      body: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Expanded(
-                            child: SingleChildScrollView(
-                              child: Column(
-                                children: [
-                                  Consumer<DashBoardProvider>(
-                                    builder: (context, page, child) {
-                                      return BackgroundAppBarLogin(
-                                        file: page.file,
-                                        url: provider.appInfoDTO.themeImgUrl,
-                                        isEventTheme:
-                                            provider.appInfoDTO.isEventTheme,
-                                        child: Align(
-                                          alignment: Alignment.center,
-                                          child: Container(
-                                            height: 100,
-                                            width: width / 2,
-                                            margin:
-                                                const EdgeInsets.only(top: 50),
-                                            decoration: const BoxDecoration(
-                                              image: DecorationImage(
-                                                image: AssetImage(
-                                                    'assets/images/logo_vietgr_payment.png'),
-                                                fit: BoxFit.contain,
+            return GestureDetector(
+              onTap: () {
+                if (!mounted) return;
+                FocusManager.instance.primaryFocus?.unfocus();
+              },
+              child: Scaffold(
+                resizeToAvoidBottomInset: false,
+                body: Stack(
+                  children: [
+                    Visibility(
+                      visible: provider.isQuickLogin == 0,
+                      child: Scaffold(
+                        body: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Expanded(
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  children: [
+                                    Consumer<DashBoardProvider>(
+                                      builder: (context, page, child) {
+                                        return BackgroundAppBarLogin(
+                                          file: page.file,
+                                          url: provider.appInfoDTO.themeImgUrl,
+                                          isEventTheme:
+                                              provider.appInfoDTO.isEventTheme,
+                                          child: Align(
+                                            alignment: Alignment.center,
+                                            child: Container(
+                                              height: 100,
+                                              width: width / 2,
+                                              margin: const EdgeInsets.only(
+                                                  top: 50),
+                                              decoration: BoxDecoration(
+                                                image: DecorationImage(
+                                                  image:
+                                                      FileImage(page.fileLogo),
+                                                  fit: BoxFit.contain,
+                                                ),
                                               ),
                                             ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20, vertical: 20),
+                                      child: Column(
+                                        children: [
+                                          PhoneWidget(
+                                            phoneController: phoneNoController,
+                                            onChanged: provider.updatePhone,
+                                            autoFocus:
+                                                provider.isQuickLogin == 0,
+                                          ),
+                                          Visibility(
+                                            visible:
+                                                provider.errorPhone != null,
+                                            child: Container(
+                                              alignment: Alignment.centerLeft,
+                                              padding: const EdgeInsets.only(
+                                                  left: 5, top: 5, right: 30),
+                                              child: Text(
+                                                provider.errorPhone ?? '',
+                                                textAlign: TextAlign.left,
+                                                style: const TextStyle(
+                                                    color: AppColor.RED_TEXT,
+                                                    fontSize: 13),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 16),
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: Container(
+                                                    height: 0.5,
+                                                    color: AppColor.BLACK
+                                                        .withOpacity(0.6)),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 8.0),
+                                                child: Text(
+                                                  'Hoặc',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w300),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                child: Container(
+                                                    height: 0.5,
+                                                    color: AppColor.BLACK
+                                                        .withOpacity(0.6)),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 16),
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: MButtonWidget(
+                                                  title: '',
+                                                  isEnable: true,
+                                                  colorEnableBgr:
+                                                      AppColor.WHITE,
+                                                  margin: EdgeInsets.zero,
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Image.asset(
+                                                          'assets/images/ic-card.png'),
+                                                      const SizedBox(width: 8),
+                                                      Text(
+                                                        'VQR ID Card',
+                                                        style: height < 800
+                                                            ? TextStyle(
+                                                                fontSize: 10)
+                                                            : TextStyle(
+                                                                fontSize: 12),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  onTap: onLoginCard,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            MButtonWidget(
+                              title: 'Tiếp tục',
+                              isEnable: provider.isEnableButton,
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 8),
+                              colorEnableText: provider.isEnableButton
+                                  ? AppColor.WHITE
+                                  : AppColor.GREY_TEXT,
+                              onTap: () {
+                                FocusManager.instance.primaryFocus?.unfocus();
+                                _bloc.add(CheckExitsPhoneEvent(
+                                    phone: provider.phone));
+                              },
+                            ),
+                            SizedBox(height: height < 800 ? 0 : 16),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Visibility(
+                      visible: provider.isQuickLogin == 1,
+                      child: LoginAccountScreen(
+                        list: provider.listInfoUsers,
+                        appInfoDTO: provider.appInfoDTO,
+                        onRemoveAccount: (dto) async {
+                          List<String> listString = [];
+                          List<InfoUserDTO> list = provider.listInfoUsers;
+                          list.removeAt(dto);
+                          if (list.length >= 2) {
+                            list.sort((a, b) => a.expiryAsDateTime
+                                .compareTo(b.expiryAsDateTime));
+                          }
+
+                          list.forEach((element) {
+                            listString.add(element.toSPJson().toString());
+                          });
+
+                          await UserInformationHelper.instance
+                              .setLoginAccount(listString);
+
+                          provider.updateListInfoUser();
+
+                          if (list.isEmpty) {
+                            provider.updateQuickLogin(0);
+                          }
+                        },
+                        onQuickLogin: (dto) {
+                          provider.updateQuickLogin(2);
+                          provider.updateInfoUser(dto);
+                        },
+                        onBackLogin: () {
+                          provider.updateInfoUser(null);
+                          provider.updateQuickLogin(0);
+                        },
+                        onRegister: () async {
+                          provider.updateInfoUser(null);
+                          final data = await Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => Register(
+                                phoneNo: '',
+                                isFocus: true,
+                              ),
+                              settings: const RouteSettings(
+                                name: Routes.REGISTER,
+                              ),
+                            ),
+                          );
+
+                          if (data is Map) {
+                            AccountLoginDTO dto = AccountLoginDTO(
+                              phoneNo: data['phone'],
+                              password: EncryptUtils.instance.encrypted(
+                                data['phone'],
+                                data['password'],
+                              ),
+                              device: '',
+                              fcmToken: '',
+                              platform: '',
+                              sharingCode: '',
+                            );
+                            if (!mounted) return;
+                            context.read<LoginBloc>().add(
+                                LoginEventByPhone(dto: dto, isToast: true));
+                          }
+                        },
+                        onLoginCard: onLoginCard,
+                        child: _buildButtonBottom(state.appInfoDTO),
+                        buttonNext: MButtonWidget(
+                          title: 'Tiếp tục',
+                          isEnable: true,
+                          onTap: () async {
+                            await provider
+                                .updateInfoUser(provider.listInfoUsers.first);
+                            provider.updateQuickLogin(2);
+                          },
+                        ),
+                      ),
+                    ),
+                    Visibility(
+                      visible: provider.isQuickLogin == 2,
+                      child: QuickLoginScreen(
+                        pinController: passController,
+                        passFocus: passFocus,
+                        userName: provider.infoUserDTO?.fullName ?? '',
+                        phone: provider.infoUserDTO?.phoneNo ?? '',
+                        onLogin: (dto) {
+                          context
+                              .read<LoginBloc>()
+                              .add(LoginEventByPhone(dto: dto));
+                        },
+                        onQuickLogin: () {
+                          passController.clear();
+                          provider.updateQuickLogin(0);
+                          provider.updateInfoUser(null);
+                        },
+                        appInfoDTO: provider.appInfoDTO,
+                      ),
+                    ),
+                    Positioned(
+                      bottom: height < 800 ? 50 : 66,
+                      left: 0,
+                      right: 0,
+                      child: Column(
+                        children: [
+                          if (provider.isQuickLogin != 1)
+                            _buildButtonBottom(state.appInfoDTO),
+                          SizedBox(height: 16),
+                          if (provider.isQuickLogin == 0 ||
+                              provider.isQuickLogin == 2)
+                            Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Consumer<LoginProvider>(
+                                  builder: (context, auth, child) {
+                                    if (auth.listInfoUsers.isNotEmpty) {
+                                      return Container(
+                                        alignment: Alignment.center,
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20),
+                                        child: GestureDetector(
+                                          onTap: () async {
+                                            provider.updateQuickLogin(1);
+                                          },
+                                          child: const Text(
+                                            'Đăng nhập bằng tài khoản trước đó',
+                                            style: TextStyle(
+                                                color: AppColor.BLUE_TEXT,
+                                                decoration:
+                                                    TextDecoration.underline),
                                           ),
                                         ),
                                       );
+                                    } else {
+                                      return const SizedBox();
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
+                          SizedBox(height: height < 800 ? 16 : 20),
+                        ],
+                      ),
+                    ),
+                    Consumer<AuthProvider>(
+                      builder: (context, provider, child) {
+                        return Positioned(
+                          bottom: 80,
+                          left: 0,
+                          right: 0,
+                          top: 0,
+                          child: FloatBubble(
+                            show: provider.isUpdateVersion,
+                            initialAlignment: Alignment.bottomRight,
+                            child: SizedBox(
+                              width: 100,
+                              height: 105,
+                              child: Stack(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () async {
+                                      Uri uri = Uri.parse(Stringify.urlStore);
+                                      if (!await launchUrl(uri,
+                                          mode: LaunchMode
+                                              .externalApplication)) {}
                                     },
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20, vertical: 20),
-                                    child: Column(
-                                      children: [
-                                        PhoneWidget(
-                                          phoneController: phoneNoController,
-                                          onChanged: provider.updatePhone,
-                                          autoFocus: provider.isQuickLogin == 0,
-                                        ),
-                                        Visibility(
-                                          visible: provider.errorPhone != null,
-                                          child: Container(
-                                            alignment: Alignment.centerLeft,
-                                            padding: const EdgeInsets.only(
-                                                left: 5, top: 5, right: 30),
-                                            child: Text(
-                                              provider.errorPhone ?? '',
-                                              textAlign: TextAlign.left,
-                                              style: const TextStyle(
-                                                  color: AppColor.RED_TEXT,
-                                                  fontSize: 13),
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(height: 16),
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: Container(
-                                                  height: 0.5,
-                                                  color: AppColor.BLACK
-                                                      .withOpacity(0.6)),
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 8.0),
-                                              child: Text(
-                                                'Hoặc',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.w300),
-                                              ),
-                                            ),
-                                            Expanded(
-                                              child: Container(
-                                                  height: 0.5,
-                                                  color: AppColor.BLACK
-                                                      .withOpacity(0.6)),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 16),
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: MButtonWidget(
-                                                title: '',
-                                                isEnable: true,
-                                                colorEnableBgr: AppColor.WHITE,
-                                                margin: EdgeInsets.zero,
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    Image.asset(
-                                                        'assets/images/ic-card.png'),
-                                                    const SizedBox(width: 8),
-                                                    Text(
-                                                      'VQR ID Card',
-                                                      style: height < 800
-                                                          ? TextStyle(
-                                                              fontSize: 10)
-                                                          : TextStyle(
-                                                              fontSize: 12),
-                                                    ),
-                                                  ],
-                                                ),
-                                                onTap: onLoginCard,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
+                                    child: Image.asset(
+                                      'assets/images/banner-update.png',
+                                      width: 100,
+                                      height: 100,
+                                      fit: BoxFit.cover,
                                     ),
                                   ),
+                                  Positioned(
+                                    right: 0,
+                                    top: 0,
+                                    child: GestureDetector(
+                                      onTap: provider.onClose,
+                                      child: Image.asset(
+                                        'assets/images/ic-close-banner.png',
+                                        width: 24,
+                                        height: 24,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  )
                                 ],
                               ),
                             ),
                           ),
-                          MButtonWidget(
-                            title: 'Tiếp tục',
-                            isEnable: provider.isEnableButton,
-                            margin: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 8),
-                            colorEnableText: provider.isEnableButton
-                                ? AppColor.WHITE
-                                : AppColor.GREY_TEXT,
-                            onTap: () {
-                              FocusManager.instance.primaryFocus?.unfocus();
-                              _bloc.add(
-                                  CheckExitsPhoneEvent(phone: provider.phone));
-                            },
-                          ),
-                          SizedBox(height: height < 800 ? 0 : 16),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Visibility(
-                    visible: provider.isQuickLogin == 1,
-                    child: LoginAccountScreen(
-                      list: provider.listInfoUsers,
-                      appInfoDTO: provider.appInfoDTO,
-                      onRemoveAccount: (dto) async {
-                        List<String> listString = [];
-                        List<InfoUserDTO> list = provider.listInfoUsers;
-                        list.removeAt(dto);
-                        if (list.length >= 2) {
-                          list.sort((a, b) =>
-                              a.expiryAsDateTime.compareTo(b.expiryAsDateTime));
-                        }
-
-                        list.forEach((element) {
-                          listString.add(element.toSPJson().toString());
-                        });
-
-                        await UserInformationHelper.instance
-                            .setLoginAccount(listString);
-
-                        provider.updateListInfoUser();
-
-                        if (list.isEmpty) {
-                          provider.updateQuickLogin(0);
-                        }
-                      },
-                      onQuickLogin: (dto) {
-                        provider.updateQuickLogin(2);
-                        provider.updateInfoUser(dto);
-                      },
-                      onBackLogin: () {
-                        provider.updateInfoUser(null);
-                        provider.updateQuickLogin(0);
-                      },
-                      onRegister: () async {
-                        provider.updateInfoUser(null);
-                        final data = await Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => Register(
-                              phoneNo: '',
-                              isFocus: true,
-                            ),
-                            settings: const RouteSettings(
-                              name: Routes.REGISTER,
-                            ),
-                          ),
                         );
-
-                        if (data is Map) {
-                          AccountLoginDTO dto = AccountLoginDTO(
-                            phoneNo: data['phone'],
-                            password: EncryptUtils.instance.encrypted(
-                              data['phone'],
-                              data['password'],
-                            ),
-                            device: '',
-                            fcmToken: '',
-                            platform: '',
-                            sharingCode: '',
-                          );
-                          if (!mounted) return;
-                          context
-                              .read<LoginBloc>()
-                              .add(LoginEventByPhone(dto: dto, isToast: true));
-                        }
                       },
-                      onLoginCard: onLoginCard,
-                      child: _buildButtonBottom(state.appInfoDTO),
-                      buttonNext: MButtonWidget(
-                        title: 'Tiếp tục',
-                        isEnable: true,
-                        onTap: () async {
-                          await provider
-                              .updateInfoUser(provider.listInfoUsers.first);
-                          provider.updateQuickLogin(2);
-                        },
-                      ),
                     ),
-                  ),
-                  Visibility(
-                    visible: provider.isQuickLogin == 2,
-                    child: QuickLoginScreen(
-                      pinController: passController,
-                      passFocus: passFocus,
-                      userName: provider.infoUserDTO?.fullName ?? '',
-                      phone: provider.infoUserDTO?.phoneNo ?? '',
-                      onLogin: (dto) {
-                        context
-                            .read<LoginBloc>()
-                            .add(LoginEventByPhone(dto: dto));
-                      },
-                      onQuickLogin: () {
-                        passController.clear();
-                        provider.updateQuickLogin(0);
-                        provider.updateInfoUser(null);
-                      },
-                      appInfoDTO: provider.appInfoDTO,
-                    ),
-                  ),
-                  Positioned(
-                    bottom: height < 800 ? 50 : 66,
-                    left: 0,
-                    right: 0,
-                    child: Column(
-                      children: [
-                        if (provider.isQuickLogin != 1)
-                          _buildButtonBottom(state.appInfoDTO),
-                        SizedBox(height: 16),
-                        if (provider.isQuickLogin == 0 ||
-                            provider.isQuickLogin == 2)
-                          Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Consumer<LoginProvider>(
-                                builder: (context, auth, child) {
-                                  if (auth.listInfoUsers.isNotEmpty) {
-                                    return Container(
-                                      alignment: Alignment.center,
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 20),
-                                      child: GestureDetector(
-                                        onTap: () async {
-                                          provider.updateQuickLogin(1);
-                                        },
-                                        child: const Text(
-                                          'Đăng nhập bằng tài khoản trước đó',
-                                          style: TextStyle(
-                                              color: AppColor.BLUE_TEXT,
-                                              decoration:
-                                                  TextDecoration.underline),
-                                        ),
-                                      ),
-                                    );
-                                  } else {
-                                    return const SizedBox();
-                                  }
-                                },
-                              ),
-                            ],
-                          ),
-                        SizedBox(height: height < 800 ? 16 : 20),
-                      ],
-                    ),
-                  ),
-                  Consumer<AuthProvider>(
-                    builder: (context, provider, child) {
-                      return Positioned(
-                        bottom: 80,
-                        left: 0,
-                        right: 0,
-                        top: 0,
-                        child: FloatBubble(
-                          show: provider.isUpdateVersion,
-                          initialAlignment: Alignment.bottomRight,
-                          child: SizedBox(
-                            width: 100,
-                            height: 105,
-                            child: Stack(
-                              children: [
-                                GestureDetector(
-                                  onTap: () async {
-                                    Uri uri = Uri.parse(Stringify.urlStore);
-                                    if (!await launchUrl(uri,
-                                        mode:
-                                            LaunchMode.externalApplication)) {}
-                                  },
-                                  child: Image.asset(
-                                    'assets/images/banner-update.png',
-                                    width: 100,
-                                    height: 100,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                Positioned(
-                                  right: 0,
-                                  top: 0,
-                                  child: GestureDetector(
-                                    onTap: provider.onClose,
-                                    child: Image.asset(
-                                      'assets/images/ic-close-banner.png',
-                                      width: 24,
-                                      height: 24,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ],
+                  ],
+                ),
               ),
             );
           },
@@ -610,6 +638,7 @@ class _LoginState extends State<_Login> {
         children: [
           _buildCustomButtonIcon(
             onTap: () async {
+              FocusManager.instance.primaryFocus?.unfocus();
               _bloc.add(GetFreeToken());
               final data = await Navigator.pushNamed(
                 context,
@@ -642,6 +671,7 @@ class _LoginState extends State<_Login> {
           ),
           _buildCustomButtonIcon(
             onTap: () {
+              FocusManager.instance.primaryFocus?.unfocus();
               NavigatorUtils.navigatePage(
                   context,
                   ContactUSScreen(
@@ -654,6 +684,7 @@ class _LoginState extends State<_Login> {
           ),
           _buildCustomButtonIcon(
             onTap: () async {
+              FocusManager.instance.primaryFocus?.unfocus();
               showDialog(
                 barrierDismissible: false,
                 context: NavigationService.navigatorKey.currentContext!,

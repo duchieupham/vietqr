@@ -21,23 +21,23 @@ class ThemeHelper {
     return sharedPrefs.getString('THEME_SYSTEM')!;
   }
 
-  Future<void> updateKeepBright(bool theme) async {
-    if (!sharedPrefs.containsKey('KEEP_BRIGHT') ||
-        sharedPrefs.getBool('KEEP_BRIGHT') == null) {
-      await sharedPrefs.setBool('KEEP_BRIGHT', false);
+  Future<void> updateLogoTheme(String theme) async {
+    if (!sharedPrefs.containsKey('LOGO_THEME') ||
+        sharedPrefs.getString('LOGO_THEME') == null) {
+      await sharedPrefs.setString('LOGO_THEME', theme);
       return;
     }
-    await sharedPrefs.setBool('KEEP_BRIGHT', theme);
+    await sharedPrefs.setString('LOGO_THEME', theme);
   }
 
-  bool getKeepBright() {
-    return sharedPrefs.getBool('KEEP_BRIGHT') ?? false;
+  String getLogoTheme() {
+    return sharedPrefs.getString('LOGO_THEME') ?? '';
   }
 
   Future<void> updateThemeKey(int theme) async {
     if (!sharedPrefs.containsKey('THEME_KEY') ||
         sharedPrefs.getInt('THEME_KEY') == null) {
-      await sharedPrefs.setInt('THEME_KEY', -1);
+      await sharedPrefs.setInt('THEME_KEY', theme);
       return;
     }
     await sharedPrefs.setInt('THEME_KEY', theme);
@@ -45,5 +45,18 @@ class ThemeHelper {
 
   int getThemeKey() {
     return sharedPrefs.getInt('THEME_KEY') ?? -1;
+  }
+
+  Future<void> updateLogoVer(int theme) async {
+    if (!sharedPrefs.containsKey('LOGO_VER') ||
+        sharedPrefs.getInt('LOGO_VER') == null) {
+      await sharedPrefs.setInt('LOGO_VER', theme);
+      return;
+    }
+    await sharedPrefs.setInt('LOGO_VER', theme);
+  }
+
+  int getLogoVer() {
+    return sharedPrefs.getInt('LOGO_VER') ?? -1;
   }
 }

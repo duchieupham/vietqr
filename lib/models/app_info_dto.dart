@@ -58,6 +58,13 @@ class AppInfoDTO {
     return -1;
   }
 
+  int get logoVer {
+    if (logoVersion.isNotEmpty) {
+      return int.parse(logoVersion.replaceAll('.', ''));
+    }
+    return -1;
+  }
+
   factory AppInfoDTO.fromJson(Map<String, dynamic> json) {
     return AppInfoDTO(
       id: json['id'] ?? '',

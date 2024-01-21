@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
@@ -114,13 +115,13 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
                                     ],
                                   ),
                                 ),
-                                SizedBox(
-                                  width: 80,
-                                  height: 40,
-                                  child: Image.asset(
-                                    'assets/images/ic-viet-qr.png',
-                                    height: 40,
-                                  ),
+                                Consumer<DashBoardProvider>(
+                                  builder: (context, page, child) {
+                                    return SizedBox(
+                                        width: 80,
+                                        height: 40,
+                                        child: Image.file(page.fileLogo));
+                                  },
                                 ),
                               ],
                             ),

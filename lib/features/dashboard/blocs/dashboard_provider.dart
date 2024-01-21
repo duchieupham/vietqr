@@ -44,8 +44,19 @@ class DashBoardProvider with ChangeNotifier {
   List<ThemeDTO> themes = [];
 
   File file = File('');
+  File fileLogo = File('');
 
   int themeVer = 0;
+
+  void updateFileLogo(String file) async {
+    if (file.isNotEmpty) {
+      fileLogo = await getImageFile(file);
+    } else {
+      String url = ThemeHelper.instance.getLogoTheme();
+      fileLogo = await getImageFile(url);
+    }
+    notifyListeners();
+  }
 
   void updateThemeVer(value) {
     themeVer = value;
@@ -56,7 +67,7 @@ class DashBoardProvider with ChangeNotifier {
   void updateThemeDTO(value) async {
     if (value == null) return;
     themeDTO = value;
-    file = await themeDTO.getImageFile();
+    file = await getImageFile(themeDTO.file);
     await userRes.updateThemeDTO(themeDTO);
     notifyListeners();
   }
@@ -89,7 +100,7 @@ class DashBoardProvider with ChangeNotifier {
   void initFileTheme() async {
     if ((await userRes.getThemeDTO()) != null) {
       themeDTO = (await userRes.getThemeDTO())!;
-      file = await themeDTO.getImageFile();
+      file = await getImageFile(themeDTO.file);
     }
   }
 
@@ -99,10 +110,9 @@ class DashBoardProvider with ChangeNotifier {
 
       if ((await userRes.getThemeDTO()) != null) {
         themeDTO = (await userRes.getThemeDTO())!;
-        if (settingDTO.themeType == 0 && themeDTO.type == 0 ||
-            settingDTO.themeType != 0) {
-          file = await themeDTO.getImageFile();
-        } else if (settingDTO.themeType == 0 && themeDTO.type != 0) {
+        if (settingDTO.themeType == themeDTO.type) {
+          file = await getImageFile(themeDTO.file);
+        } else {
           String path = settingDTO.themeImgUrl.split('/').last;
           if (path.contains('.png')) {
             path.replaceAll('.png', '');
@@ -115,7 +125,7 @@ class DashBoardProvider with ChangeNotifier {
           themeDTO.setType(settingDTO.themeType);
 
           userRes.updateThemeDTO(themeDTO);
-          file = await themeDTO.getImageFile();
+          file = await getImageFile(themeDTO.file);
         }
       } else {
         String path = settingDTO.themeImgUrl.split('/').last;
@@ -130,7 +140,7 @@ class DashBoardProvider with ChangeNotifier {
         themeDTO.setType(settingDTO.themeType);
 
         userRes.updateThemeDTO(themeDTO);
-        file = await themeDTO.getImageFile();
+        file = await getImageFile(themeDTO.file);
       }
     }
 

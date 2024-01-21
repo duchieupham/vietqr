@@ -119,6 +119,10 @@ Future<String> downloadAndSaveImage(String imageUrl, String path) async {
   return localImagePath;
 }
 
+Future<File> getImageFile(String file) async {
+  return File(file);
+}
+
 //go into EnvConfig to change env
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
