@@ -101,10 +101,12 @@ class _BodyWidgetState extends State<_BodyWidget> {
         if (state.type == TransactionType.REFRESH) {
           if (state.newTransaction) {
             await NavigatorUtils.navigatePage(
-                context, CreateQrScreen(qrDto: state.qrGeneratedDTO));
+                context, CreateQrScreen(qrDto: state.qrGeneratedDTO),
+                routeName: CreateQrScreen.routeName);
           } else {
             NavigatorUtils.navigatePage(
-                context, CreateQrScreen(qrDto: state.qrGeneratedDTO, page: 1));
+                context, CreateQrScreen(qrDto: state.qrGeneratedDTO, page: 1),
+                routeName: CreateQrScreen.routeName);
           }
         }
       },

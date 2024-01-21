@@ -8,6 +8,8 @@ class CustomInAppWebView extends StatefulWidget {
   final String url;
   final String userId;
 
+  static String routeName = '/custom_inapp_webview';
+
   const CustomInAppWebView(
       {super.key, required this.url, required this.userId});
 
@@ -49,7 +51,6 @@ class _CustomInAppWebViewState extends State<CustomInAppWebView> {
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
     return Scaffold(
       body: SafeArea(
         child: Column(

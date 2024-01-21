@@ -10,18 +10,26 @@ import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/encrypt_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
+import 'package:vierqr/features/dashboard/blocs/dashboard_provider.dart';
 import 'package:vierqr/features/login/repositories/login_repository.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/pin_code_input.dart';
+import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/services/providers/verify_otp_provider.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   final String userName;
   final String phone;
+  final AppInfoDTO appInfoDTO;
+
+  static String routeName = '/forgot_password';
 
   const ForgotPasswordScreen(
-      {super.key, required this.userName, required this.phone});
+      {super.key,
+      required this.userName,
+      required this.phone,
+      required this.appInfoDTO});
 
   @override
   State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
@@ -39,6 +47,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {});
     countdownProvider = CountDownOTPNotifier(120);
+    Provider.of<DashBoardProvider>(context, listen: false).initFileTheme();
   }
 
   @override
@@ -72,11 +81,28 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                         padding:
                             const EdgeInsets.only(top: 70, left: 40, right: 40),
                         width: MediaQuery.of(context).size.width,
-                        decoration: const BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage('assets/images/bgr-header.png'),
-                            fit: BoxFit.fill,
-                          ),
+                        decoration: BoxDecoration(
+                          image: widget.appInfoDTO.isEventTheme
+                              ? DecorationImage(
+                                  image: NetworkImage(
+                                      widget.appInfoDTO.themeImgUrl),
+                                  fit: BoxFit.cover)
+                              : Provider.of<DashBoardProvider>(context,
+                                          listen: false)
+                                      .file
+                                      .path
+                                      .isNotEmpty
+                                  ? DecorationImage(
+                                      image: FileImage(
+                                          Provider.of<DashBoardProvider>(
+                                                  context,
+                                                  listen: false)
+                                              .file),
+                                      fit: BoxFit.cover)
+                                  : DecorationImage(
+                                      image: AssetImage(
+                                          'assets/images/bgr-header.png'),
+                                      fit: BoxFit.cover),
                         ),
                       ),
                       Positioned(

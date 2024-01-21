@@ -1,39 +1,42 @@
 import 'dart:io';
-
-import 'package:float_bubble/float_bubble.dart';
+import 'widgets/calculator_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:provider/provider.dart';
+import 'package:vierqr/layouts/m_app_bar.dart';
+import 'package:float_bubble/float_bubble.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
-import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/models/qr_create_dto.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
-import 'package:vierqr/commons/enums/textfield_type.dart';
+import 'package:vierqr/layouts/m_button_widget.dart';
+import 'package:vierqr/layouts/m_button_widget.dart';
+import 'package:vierqr/models/bank_account_dto.dart';
+import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/commons/utils/file_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
-import 'package:vierqr/commons/utils/navigator_utils.dart';
+import 'package:vierqr/layouts/m_text_form_field.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
+import 'package:vierqr/commons/enums/textfield_type.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_custom.dart';
+import 'package:vierqr/services/providers/create_qr_provider.dart';
+import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/features/create_qr/blocs/create_qr_bloc.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:vierqr/features/create_qr/events/create_qr_event.dart';
 import 'package:vierqr/features/create_qr/states/create_qr_state.dart';
 import 'package:vierqr/features/create_qr/views/create_success_view.dart';
 import 'package:vierqr/features/create_qr/widgets/bottom_sheet_image.dart';
-import 'package:vierqr/features/transaction/widgets/transaction_sucess_widget.dart';
-import 'package:vierqr/layouts/m_app_bar.dart';
-import 'package:vierqr/layouts/m_button_widget.dart';
-import 'package:vierqr/layouts/m_text_form_field.dart';
-import 'package:vierqr/models/bank_account_dto.dart';
-import 'package:vierqr/models/qr_create_dto.dart';
-import 'package:vierqr/models/qr_generated_dto.dart';
-import 'package:vierqr/services/providers/create_qr_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/features/transaction/widgets/transaction_sucess_widget.dart';
 
-import 'widgets/calculator_view.dart';
+
 
 class CreateQrScreen extends StatelessWidget {
+  static const routeName = '/create_qr';
+
   final BankAccountDTO? bankAccountDTO;
   final QRGeneratedDTO? qrDto;
   final int page;
@@ -343,22 +346,8 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                           ),
                                           const SizedBox(width: 8),
                                           GestureDetector(
-                                            onTap: () async {
-                                              FocusManager.instance.primaryFocus
-                                                  ?.unfocus();
-                                              final data = await NavigatorUtils
-                                                  .navigatePage(context,
-                                                      CalculatorScreen());
-
-                                              if (data != null &&
-                                                  data is String) {
-                                                double money =
-                                                    double.parse(data);
-
-                                                provider.updateMoney(
-                                                    money.round().toString());
-                                              }
-                                            },
+                                            onTap: () =>
+                                                _onUpdateMoney(provider),
                                             child: Image.asset(
                                               'assets/images/logo-calculator.png',
                                               width: 28,
@@ -508,8 +497,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                             MButtonWidget(
                               title: 'Tạo mã QR',
                               isEnable: true,
-                              colorEnableText:
-                                  true ? AppColor.WHITE : AppColor.GREY_TEXT,
+                              colorEnableText: AppColor.WHITE,
                               onTap: () {
                                 FocusManager.instance.primaryFocus?.unfocus();
                                 String money =
@@ -546,17 +534,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                           width: 100,
                           height: 100,
                           child: GestureDetector(
-                            onTap: () async {
-                              FocusManager.instance.primaryFocus?.unfocus();
-                              final data = await NavigatorUtils.navigatePage(
-                                  context, CalculatorScreen());
-
-                              if (data != null && data is String) {
-                                double money = double.parse(data);
-
-                                provider.updateMoney(money.round().toString());
-                              }
-                            },
+                            onTap: () => _onUpdateMoney(provider),
                             child: Opacity(
                               opacity: 0.6,
                               child: Container(
@@ -826,4 +804,16 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
           ),
         ),
       );
+
+  void _onUpdateMoney(provider) async {
+    FocusManager.instance.primaryFocus?.unfocus();
+    final data = await NavigatorUtils.navigatePage(context, CalculatorScreen(),
+        routeName: CalculatorScreen.routeName);
+
+    if (data != null && data is String) {
+      double money = double.parse(data);
+
+      provider.updateMoney(money.round().toString());
+    }
+  }
 }

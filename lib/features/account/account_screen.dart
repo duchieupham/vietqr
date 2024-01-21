@@ -20,11 +20,16 @@ import 'package:vierqr/features/account/events/account_event.dart';
 import 'package:vierqr/features/account/states/account_state.dart';
 import 'package:vierqr/features/account/views/dialog_my_qr.dart';
 import 'package:vierqr/features/account/widget/my_QR_bottom_sheet.dart';
+import 'package:vierqr/features/contact_us/contact_us_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
+import 'package:vierqr/features/account/theme_setting.dart';
 import 'package:vierqr/features/home/widget/dialog_update.dart';
 import 'package:vierqr/features/personal/views/introduce_bottom_sheet.dart';
+import 'package:vierqr/features/printer/views/printer_setting_screen.dart';
+import 'package:vierqr/features/setting_bdsd/setting_bdsd_screen.dart';
 import 'package:vierqr/main.dart';
+import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
@@ -423,7 +428,7 @@ class _IntroduceWidget extends StatelessWidget {
                 child: Row(
                   children: [
                     Image.asset(
-                      'assets/images/ic_share_code.png',
+                      'assets/images/logo_vietgr_payment.png',
                       width: 30,
                       height: 30,
                     ),
@@ -505,7 +510,15 @@ class _SupportWidget extends StatelessWidget {
                 const Divider(),
                 GestureDetector(
                   onTap: () async {
-                    Navigator.pushNamed(context, Routes.CONTACT_US_SCREEN);
+                    NavigatorUtils.navigatePage(
+                        context,
+                        ContactUSScreen(
+                          appInfoDTO:
+                              Provider.of<AuthProvider>(context, listen: false)
+                                      .appInfoDTO ??
+                                  AppInfoDTO(),
+                        ),
+                        routeName: ContactUSScreen.routeName);
                   },
                   child: Row(
                     children: [
@@ -559,146 +572,46 @@ class _SettingWidget extends StatelessWidget {
             ),
             child: Column(
               children: [
-                GestureDetector(
+                _buildItem(
                   onTap: () async {
-                    Navigator.pushNamed(context, Routes.SETTING_BDSD);
+                    NavigatorUtils.navigatePage(context, const SettingBDSD(),
+                        routeName: SettingBDSD.routeName);
                   },
-                  child: Row(
-                    children: [
-                      Image.asset(
-                        'assets/images/ic-setting-bdsd.png',
-                        width: 30,
-                        height: 30,
-                      ),
-                      const SizedBox(width: 8),
-                      const Expanded(
-                        child: Text(
-                          'Cài đặt nhận biến động số dư',
-                          style: TextStyle(
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  urlImage: 'assets/images/ic-setting-bdsd.png',
+                  title: 'Nhận biến động số dư',
                 ),
                 const Divider(),
-                GestureDetector(
+                _buildItem(
                   onTap: () async {
-                    NavigatorUtils.navigatePage(context, VietQRIDCardView());
+                    NavigatorUtils.navigatePage(context, VietQRIDCardView(),
+                        routeName: VietQRIDCardView.routeName);
                   },
-                  child: Row(
-                    children: [
-                      Image.asset(
-                        'assets/images/ic-vietqr-id-setting.png',
-                        width: 30,
-                        height: 30,
-                      ),
-                      const SizedBox(width: 8),
-                      const Expanded(
-                        child: Text(
-                          'Liên kết thẻ NFC/VQR-ID Card',
-                          style: TextStyle(
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  urlImage: 'assets/images/ic-vietqr-id-setting.png',
+                  title: 'Thẻ NFC/VQR-ID Card',
                 ),
                 const Divider(),
-                GestureDetector(
-                  onTap: () async {
-                    if (PlatformUtils.instance.isPhysicalDevice()) {
-                      if (PlatformUtils.instance.isAndroidApp()) {
-                        await Permission.bluetooth.request();
-                        await Permission.bluetoothScan.request();
-                        await Permission.bluetoothConnect.request();
-                      }
-                      await Permission.bluetooth.request().then((value) =>
-                          Navigator.pushNamed(context, Routes.PRINTER_SETTING));
-                    } else {
-                      Navigator.pushNamed(context, Routes.PRINTER_SETTING);
-                    }
-                  },
-                  child: Row(
-                    children: [
-                      Image.asset(
-                        'assets/images/ic-printer-setting.png',
-                        width: 30,
-                        height: 30,
-                      ),
-                      const SizedBox(width: 8),
-                      const Expanded(
-                        child: Text(
-                          'Cài đặt máy in',
-                          style: TextStyle(
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                _buildItem(
+                  onTap: () => _onPrint(context),
+                  urlImage: 'assets/images/ic-printer-setting.png',
+                  title: 'Máy in',
                 ),
                 const Divider(),
-                GestureDetector(
+                _buildItem(
                   onTap: () async {
-                    Navigator.of(context).pushNamed(Routes.UI_SETTING);
-                  },
-                  child: Row(
-                    children: [
-                      Image.asset(
-                        'assets/images/ic-theme-setting.png',
-                        width: 28,
-                        height: 28,
-                      ),
-                      const SizedBox(width: 8),
-                      const Expanded(
-                        child: Text(
-                          'Thay đổi giao diện',
-                          style: TextStyle(
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const Divider(),
-                GestureDetector(
-                  onTap: () async {
-                    showDialog(
-                      barrierDismissible: false,
-                      context: NavigationService.navigatorKey.currentContext!,
-                      builder: (BuildContext context) {
-                        return DialogUpdateView(
-                          onCheckUpdate: () {
-                            context
-                                .read<DashBoardBloc>()
-                                .add(GetVersionAppEvent(isCheckVer: true));
-                          },
-                        );
-                      },
+                    NavigatorUtils.navigatePage(
+                      context,
+                      ThemeSettingView(),
+                      routeName: ThemeSettingView.routeName,
                     );
                   },
-                  child: Row(
-                    children: [
-                      Image.asset(
-                        'assets/images/ic-gear.png',
-                        width: 28,
-                        height: 28,
-                      ),
-                      const SizedBox(width: 8),
-                      const Expanded(
-                        child: Text(
-                          'Kiểm tra phiên bản app',
-                          style: TextStyle(
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  urlImage: 'assets/images/ic-theme-setting.png',
+                  title: 'Giao diện',
+                ),
+                const Divider(),
+                _buildItem(
+                  onTap: _onCheckAppVersion,
+                  urlImage: 'assets/images/ic-gear.png',
+                  title: 'Kiểm tra phiên bản app',
                 ),
               ],
             ),
@@ -706,5 +619,54 @@ class _SettingWidget extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget _buildItem({
+    GestureTapCallback? onTap,
+    required String urlImage,
+    required String title,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Row(
+        children: [
+          Image.asset(urlImage, width: 30, height: 30),
+          const SizedBox(width: 8),
+          Expanded(child: Text(title, style: TextStyle(fontSize: 14))),
+        ],
+      ),
+    );
+  }
+
+  void _onCheckAppVersion() {
+    showDialog(
+      barrierDismissible: false,
+      context: NavigationService.navigatorKey.currentContext!,
+      builder: (BuildContext context) {
+        return DialogUpdateView(
+          onCheckUpdate: () {
+            context
+                .read<DashBoardBloc>()
+                .add(GetVersionAppEvent(isCheckVer: true));
+          },
+        );
+      },
+    );
+  }
+
+  void _onPrint(BuildContext context) async {
+    if (PlatformUtils.instance.isPhysicalDevice()) {
+      if (PlatformUtils.instance.isAndroidApp()) {
+        await Permission.bluetooth.request();
+        await Permission.bluetoothScan.request();
+        await Permission.bluetoothConnect.request();
+      }
+      await Permission.bluetooth.request().then((value) =>
+          NavigatorUtils.navigatePage(context, PrinterSettingScreen(),
+              routeName: PrinterSettingScreen.routeName));
+    } else {
+      NavigatorUtils.navigatePage(context, PrinterSettingScreen(),
+          routeName: PrinterSettingScreen.routeName);
+    }
   }
 }

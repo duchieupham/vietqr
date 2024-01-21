@@ -23,15 +23,6 @@ class PermissionEventGetStatus extends DashBoardEvent {
   List<Object?> get props => [];
 }
 
-class ScanQrEventGetBankType extends DashBoardEvent {
-  final String code;
-
-  const ScanQrEventGetBankType({required this.code});
-
-  @override
-  List<Object?> get props => [code];
-}
-
 class DashBoardEventSearchName extends DashBoardEvent {
   final BankNameSearchDTO dto;
 
@@ -80,3 +71,24 @@ class TokenFcmUpdateEvent extends DashBoardEvent {
 class TokenEventLogout extends DashBoardEvent {}
 
 class GetUserInformation extends DashBoardEvent {}
+
+class GetListThemeEvent extends DashBoardEvent {}
+
+class UpdateThemeEvent extends DashBoardEvent {
+  final int type;
+
+  const UpdateThemeEvent(this.type);
+
+  @override
+  List<Object?> get props => [type];
+}
+
+
+class UpdateKeepBrightEvent extends DashBoardEvent {
+  final bool keepValue;
+
+  UpdateKeepBrightEvent(this.keepValue);
+
+  @override
+  List<Object?> get props => [keepValue];
+}

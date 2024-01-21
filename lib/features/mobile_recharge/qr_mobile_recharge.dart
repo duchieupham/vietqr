@@ -1,7 +1,6 @@
 import 'package:dudv_base/dudv_base.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/count_down_minus_second.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
@@ -9,6 +8,7 @@ import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
+import 'package:vierqr/commons/widgets/viet_qr.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/respone_top_up_dto.dart';
 import 'package:vierqr/services/providers/top_up_provider.dart';
@@ -17,6 +17,7 @@ class QRMobileRechargeScreen extends StatefulWidget {
   final ResponseTopUpDTO dto;
   final String phoneNo;
   final String nwProviders;
+
   const QRMobileRechargeScreen(
       {super.key,
       required this.dto,
@@ -113,18 +114,11 @@ class _QRMobileRechargeScreenState extends State<QRMobileRechargeScreen>
                                     child: Column(
                                       children: [
                                         Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: QrImage(
-                                            data: widget.dto.qrCode,
-                                            version: QrVersions.auto,
-                                            embeddedImage: const AssetImage(
-                                                'assets/images/ic-viet-qr-small.png'),
-                                            embeddedImageStyle:
-                                                QrEmbeddedImageStyle(
-                                              size: const Size(30, 30),
-                                            ),
-                                          ),
-                                        ),
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: VietQr(
+                                              qrGeneratedDTO: null,
+                                              qrCode: widget.dto.qrCode,
+                                            )),
                                         Padding(
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 20),

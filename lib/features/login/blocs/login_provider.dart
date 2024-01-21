@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
+import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/info_user_dto.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
@@ -12,6 +13,8 @@ class LoginProvider with ChangeNotifier {
   InfoUserDTO? infoUserDTO;
   List<InfoUserDTO> listInfoUsers = [];
 
+  AppInfoDTO appInfoDTO = AppInfoDTO();
+
   //0: trang login ban đầu
   // 1: trang login gần nhất
   //2 : quickLogin
@@ -22,6 +25,11 @@ class LoginProvider with ChangeNotifier {
     if (listInfoUsers.isNotEmpty) {
       isQuickLogin = 1;
     }
+    notifyListeners();
+  }
+
+  void updateAppInfo(value) {
+    appInfoDTO = value;
     notifyListeners();
   }
 

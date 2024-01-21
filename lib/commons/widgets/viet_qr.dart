@@ -1,15 +1,83 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
+import 'package:vierqr/features/dashboard/blocs/dashboard_provider.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
+import 'package:wakelock/wakelock.dart';
 
-class VietQr extends StatelessWidget {
-  final QRGeneratedDTO qrGeneratedDTO;
+class VietQr extends StatefulWidget {
+  final QRGeneratedDTO? qrGeneratedDTO;
   final String? content;
+  final bool isVietQR;
+  final String? qrCode;
+  final double? size;
+  final bool isEmbeddedImage;
 
-  const VietQr({super.key, required this.qrGeneratedDTO, this.content});
+  const VietQr({
+    super.key,
+    required this.qrGeneratedDTO,
+    this.content,
+    this.isVietQR = false,
+    this.isEmbeddedImage = false,
+    this.qrCode,
+    this.size,
+  });
+
+  @override
+  State<VietQr> createState() => _VietQrState();
+}
+
+class _VietQrState extends State<VietQr> {
+  @override
+  void initState() {
+    super.initState();
+    // Bật chế độ giữ màn hình sáng
+    if (Provider.of<DashBoardProvider>(context, listen: false)
+        .settingDTO
+        .keepScreenOn) {
+      Wakelock.enable();
+    }
+
+    // setBrightness(1.0);
+  }
+
+  @override
+  void dispose() {
+    if (!mounted) return;
+    // Tắt chế độ giữ màn hình sáng khi widget bị hủy
+
+    Wakelock.disable();
+
+    // resetBrightness();
+    super.dispose();
+  }
+
+  // double currentBright = 0.0;
+  //
+  // Future<void> setBrightness(double brightness) async {
+  //   try {
+  //     currentBright = await ScreenBrightness().current;
+  //     setState(() {});
+  //     await ScreenBrightness().setScreenBrightness(brightness);
+  //   } catch (e) {
+  //     debugPrint(e.toString());
+  //     throw 'Failed to set brightness';
+  //   }
+  // }
+  //
+  // Future<void> resetBrightness() async {
+  //   try {
+  //     await ScreenBrightness().setScreenBrightness(currentBright);
+  //     await ScreenBrightness().resetScreenBrightness();
+  //   } catch (e) {
+  //     debugPrint(e.toString());
+  //     throw 'Failed to reset brightness';
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +85,23 @@ class VietQr extends StatelessWidget {
     final height = MediaQuery.of(context).size.height;
 
     bool isSmallWidget = height < 800;
+
+    if (!widget.isVietQR) {
+      return QrImage(
+        data: widget.qrCode ?? '',
+        size: widget.size,
+        version: QrVersions.auto,
+        embeddedImage: widget.isEmbeddedImage
+            ? null
+            : const AssetImage('assets/images/ic-viet-qr-small.png'),
+        embeddedImageStyle: widget.isEmbeddedImage
+            ? null
+            : QrEmbeddedImageStyle(size: const Size(30, 30)),
+      );
+    }
+
+    if (widget.qrGeneratedDTO == null) return const SizedBox();
+
     return Container(
       width: width,
       margin: height < 750
@@ -66,7 +151,7 @@ class VietQr extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: QrImage(
                     size: height < 750 ? height / 3.5 : null,
-                    data: qrGeneratedDTO.qrCode,
+                    data: widget.qrGeneratedDTO!.qrCode,
                     version: QrVersions.auto,
                     embeddedImage:
                         const AssetImage('assets/images/ic-viet-qr-small.png'),
@@ -85,12 +170,12 @@ class VietQr extends StatelessWidget {
                         width: height < 800 ? width / 2 * 0.3 : width / 2 * 0.5,
                       ),
                     ),
-                    if (qrGeneratedDTO.imgId.isNotEmpty)
+                    if (widget.qrGeneratedDTO!.imgId.isNotEmpty)
                       Padding(
                         padding: const EdgeInsets.only(right: 12),
                         child: Image(
                           image: ImageUtils.instance
-                              .getImageNetWork(qrGeneratedDTO.imgId),
+                              .getImageNetWork(widget.qrGeneratedDTO!.imgId),
                           width: height < 800
                               ? (width / 2 * 0.3)
                               : (width / 2 * 0.5),
@@ -108,10 +193,10 @@ class VietQr extends StatelessWidget {
               ],
             ),
           ),
-          if (qrGeneratedDTO.amount.isNotEmpty &&
-              qrGeneratedDTO.amount != '0') ...[
+          if (widget.qrGeneratedDTO!.amount.isNotEmpty &&
+              widget.qrGeneratedDTO!.amount != '0') ...[
             Text(
-              '${CurrencyUtils.instance.getCurrencyFormatted(qrGeneratedDTO.amount)} VND',
+              '${CurrencyUtils.instance.getCurrencyFormatted(widget.qrGeneratedDTO!.amount)} VND',
               style: const TextStyle(
                 color: AppColor.ORANGE,
                 fontSize: 25,
@@ -124,7 +209,7 @@ class VietQr extends StatelessWidget {
             child: Column(
               children: [
                 Text(
-                  qrGeneratedDTO.userBankName.toUpperCase(),
+                  widget.qrGeneratedDTO!.userBankName.toUpperCase(),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: (isSmallWidget) ? 12 : 15,
@@ -133,7 +218,7 @@ class VietQr extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  qrGeneratedDTO.bankAccount,
+                  widget.qrGeneratedDTO!.bankAccount,
                   style: TextStyle(
                     fontSize: (isSmallWidget) ? 12 : 15,
                     fontWeight: FontWeight.w600,
@@ -141,7 +226,7 @@ class VietQr extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  qrGeneratedDTO.bankName,
+                  widget.qrGeneratedDTO!.bankName,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: (isSmallWidget) ? 12 : 15,
@@ -152,11 +237,11 @@ class VietQr extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          if (qrGeneratedDTO.content.isNotEmpty) ...[
+          if (widget.qrGeneratedDTO!.content.isNotEmpty) ...[
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Text(
-                qrGeneratedDTO.content,
+                widget.qrGeneratedDTO!.content,
                 maxLines: 2,
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
@@ -169,5 +254,26 @@ class VietQr extends StatelessWidget {
         ],
       ),
     );
+    // return FutureBuilder<double>(
+    //   future: ScreenBrightness().current,
+    //   builder: (context, snapshot) {
+    //     double currentBrightness = 0;
+    //     if (snapshot.hasData) {
+    //       currentBrightness = snapshot.data!;
+    //     }
+    //
+    //     return StreamBuilder<double>(
+    //       stream: ScreenBrightness().onCurrentBrightnessChanged,
+    //       builder: (context, snapshot) {
+    //         double changedBrightness = currentBrightness;
+    //         if (snapshot.hasData) {
+    //           changedBrightness = snapshot.data!;
+    //         }
+    //
+    //
+    //       },
+    //     );
+    //   },
+    // );
   }
 }

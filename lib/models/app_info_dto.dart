@@ -4,6 +4,11 @@ class AppInfoDTO {
   final String? iosVersion;
   final String? telegramChatId;
   final String? webhookUrl;
+  final String themeVersion;
+  final String logoVersion;
+  final String themeImgUrl;
+  final String logoUrl;
+  final bool isEventTheme;
 
   AppInfoDTO({
     this.id,
@@ -11,6 +16,11 @@ class AppInfoDTO {
     this.iosVersion,
     this.telegramChatId,
     this.webhookUrl,
+    this.isEventTheme = false,
+    this.themeVersion = '',
+    this.logoVersion = '',
+    this.themeImgUrl = '',
+    this.logoUrl = '',
   });
 
   int get buildAdr {
@@ -41,6 +51,20 @@ class AppInfoDTO {
     return -1;
   }
 
+  int get themeVer {
+    if (themeVersion.isNotEmpty) {
+      return int.parse(themeVersion.replaceAll('.', ''));
+    }
+    return -1;
+  }
+
+  int get logoVer {
+    if (logoVersion.isNotEmpty) {
+      return int.parse(logoVersion.replaceAll('.', ''));
+    }
+    return -1;
+  }
+
   factory AppInfoDTO.fromJson(Map<String, dynamic> json) {
     return AppInfoDTO(
       id: json['id'] ?? '',
@@ -48,6 +72,11 @@ class AppInfoDTO {
       iosVersion: json['iosVersion'] ?? '',
       telegramChatId: json['telegramChatId'] ?? '',
       webhookUrl: json['webhookUrl'] ?? '',
+      logoVersion: json['logoVersion'] ?? '',
+      themeVersion: json['themeVersion'] ?? '',
+      themeImgUrl: json['themeImgUrl'] ?? '',
+      logoUrl: json['logoUrl'] ?? '',
+      isEventTheme: json['eventTheme'] ?? false,
     );
   }
 }

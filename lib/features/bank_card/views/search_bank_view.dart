@@ -1,19 +1,19 @@
+import 'package:vierqr/main.dart';
 import 'package:flutter/material.dart';
-import 'package:palette_generator/palette_generator.dart';
-import 'package:vierqr/commons/constants/configurations/route.dart';
-import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
+import 'package:vierqr/layouts/m_app_bar.dart';
+import 'package:vierqr/layouts/box_layout.dart';
+import 'package:vierqr/models/bank_account_dto.dart';
+import 'package:vierqr/commons/utils/image_utils.dart';
+import 'package:palette_generator/palette_generator.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/widgets/textfield_widget.dart';
-import 'package:vierqr/features/bank_detail/bank_card_detail_screen.dart';
-import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/create_qr/create_qr_screen.dart';
-import 'package:vierqr/layouts/box_layout.dart';
-import 'package:vierqr/layouts/m_app_bar.dart';
-import 'package:vierqr/main.dart';
-import 'package:vierqr/models/bank_account_dto.dart';
+import 'package:vierqr/commons/constants/configurations/route.dart';
+import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/services/providers/search_clear_provider.dart';
+import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
+import 'package:vierqr/features/bank_detail/bank_card_detail_screen.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class SearchBankView extends StatefulWidget {
@@ -355,28 +355,7 @@ class _SearchBankViewState extends State<SearchBankView> {
                             ),
                           ),
                           InkWell(
-                            onTap: () {
-                              BankAccountDTO bankAccountDTO = BankAccountDTO(
-                                  id: dto.id,
-                                  bankAccount: dto.bankAccount,
-                                  userBankName: dto.userBankName,
-                                  bankCode: dto.bankCode,
-                                  bankName: dto.bankName,
-                                  imgId: dto.imgId,
-                                  type: dto.type,
-                                  isAuthenticated: dto.isAuthenticated,
-                                  isOwner: dto.isOwner,
-                                  bankShortName: dto.bankShortName);
-                              NavigatorUtils.navigatePage(
-                                  context,
-                                  CreateQrScreen(
-                                      bankAccountDTO: bankAccountDTO));
-                              // Navigator.pushNamed(
-                              //   context,
-                              //   Routes.CREATE_QR,
-                              //   arguments: {'bankInfo': bankAccountDTO},
-                              // );
-                            },
+                            onTap: () => _onCreateQR(dto),
                             child: BoxLayout(
                               width: 110,
                               borderRadius: 5,
@@ -414,5 +393,21 @@ class _SearchBankViewState extends State<SearchBankView> {
             ),
           )
         : const SizedBox();
+  }
+
+  void _onCreateQR(BankAccountDTO dto) {
+    BankAccountDTO bankAccountDTO = BankAccountDTO(
+      id: dto.id,
+      bankAccount: dto.bankAccount,
+      userBankName: dto.userBankName,
+      bankCode: dto.bankCode,
+      bankName: dto.bankName,
+      imgId: dto.imgId,
+      type: dto.type,
+      isAuthenticated: dto.isAuthenticated,
+    );
+    NavigatorUtils.navigatePage(
+        context, CreateQrScreen(bankAccountDTO: bankAccountDTO),
+        routeName: CreateQrScreen.routeName);
   }
 }

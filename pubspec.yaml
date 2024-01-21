@@ -118,6 +118,8 @@ dependencies:
   encrypt:
   dropdown_button2: ^2.1.4
   jiffy:
+  wakelock: ^0.6.2
+#  screen_brightness: ^0.2.2+1
 
 
 #  audioplayers: ^4.1.0

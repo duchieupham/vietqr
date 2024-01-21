@@ -15,6 +15,8 @@ import 'package:vierqr/services/providers/countdown_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class PrinterSettingScreen extends StatelessWidget {
+  static String routeName = '/print_setting_screen';
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider<PrinterBloc>(

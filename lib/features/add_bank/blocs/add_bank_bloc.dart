@@ -219,7 +219,7 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
               state.copyWith(
                 msg: ErrorUtils.instance
                     .getErrorMessage(responseMessageDTO.message),
-                request: AddBankType.ERROR,
+                request: AddBankType.ERROR_SYSTEM,
                 status: BlocStatus.UNLOADING,
               ),
             );

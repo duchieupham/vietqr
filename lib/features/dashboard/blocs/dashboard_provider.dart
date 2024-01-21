@@ -1,11 +1,21 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bottom_nav_dto.dart';
 import 'package:vierqr/models/contact_dto.dart';
+import 'package:vierqr/models/setting_account_sto.dart';
+import 'package:vierqr/models/theme_dto.dart';
+import 'package:vierqr/models/theme_dto_local.dart';
+import 'package:vierqr/models/user_repository.dart';
+import 'package:vierqr/services/shared_references/theme_helper.dart';
 
 class DashBoardProvider with ChangeNotifier {
+  UserRepository get userRes => UserRepository.instance;
+
   int _indexSelected = 0;
   int _notificationCount = 0;
 
@@ -28,6 +38,114 @@ class DashBoardProvider with ChangeNotifier {
   bool isSync = false;
 
   NfcTag? tag;
+
+  SettingAccountDTO settingDTO = SettingAccountDTO();
+  ThemeDTOLocal themeDTO = ThemeDTOLocal();
+  List<ThemeDTO> themes = [];
+
+  File file = File('');
+  File fileLogo = File('');
+
+  int themeVer = 0;
+
+  void updateFileLogo(String file) async {
+    if (file.isNotEmpty) {
+      fileLogo = await getImageFile(file);
+    } else {
+      String url = ThemeHelper.instance.getLogoTheme();
+      fileLogo = await getImageFile(url);
+    }
+    notifyListeners();
+  }
+
+  void updateThemeVer(value) {
+    themeVer = value;
+    ThemeHelper.instance.updateThemeKey(themeVer);
+    notifyListeners();
+  }
+
+  void updateThemeDTO(value) async {
+    if (value == null) return;
+    themeDTO = value;
+    file = await getImageFile(themeDTO.file);
+    await userRes.updateThemeDTO(themeDTO);
+    notifyListeners();
+  }
+
+  void updateListTheme(List<ThemeDTO> value, {bool saveLocal = false}) async {
+    int themeKey = ThemeHelper.instance.getThemeKey();
+    List<ThemeDTO> listLocal = await userRes.getTheme();
+
+    if (themes.isEmpty) {
+      themes = listLocal;
+      if (themes.isEmpty) {
+        themes = value;
+      }
+      themes.sort((a, b) => a.type.compareTo(b.type));
+      notifyListeners();
+      return;
+    }
+
+    if (themeKey != themeVer || listLocal.isEmpty) {
+      for (int i = 0; i < value.length; i++) {
+        await userRes.updateTheme(value[i]);
+      }
+      themes = value;
+    }
+
+    themes.sort((a, b) => a.type.compareTo(b.type));
+    notifyListeners();
+  }
+
+  void initFileTheme() async {
+    if ((await userRes.getThemeDTO()) != null) {
+      themeDTO = (await userRes.getThemeDTO())!;
+      file = await getImageFile(themeDTO.file);
+    }
+  }
+
+  void updateSettingDTO(value) async {
+    if (value != null) {
+      settingDTO = value;
+
+      if ((await userRes.getThemeDTO()) != null) {
+        themeDTO = (await userRes.getThemeDTO())!;
+        if (settingDTO.themeType == themeDTO.type) {
+          file = await getImageFile(themeDTO.file);
+        } else {
+          String path = settingDTO.themeImgUrl.split('/').last;
+          if (path.contains('.png')) {
+            path.replaceAll('.png', '');
+          }
+
+          String localPath =
+              await downloadAndSaveImage(settingDTO.themeImgUrl, path);
+
+          themeDTO.setFile(localPath);
+          themeDTO.setType(settingDTO.themeType);
+
+          userRes.updateThemeDTO(themeDTO);
+          file = await getImageFile(themeDTO.file);
+        }
+      } else {
+        String path = settingDTO.themeImgUrl.split('/').last;
+        if (path.contains('.png')) {
+          path.replaceAll('.png', '');
+        }
+
+        String localPath =
+            await downloadAndSaveImage(settingDTO.themeImgUrl, path);
+
+        themeDTO.setFile(localPath);
+        themeDTO.setType(settingDTO.themeType);
+
+        userRes.updateThemeDTO(themeDTO);
+        file = await getImageFile(themeDTO.file);
+      }
+    }
+
+    notifyListeners();
+  }
 
   void updateSync(value) {
     isSync = value;
@@ -106,6 +224,11 @@ class DashBoardProvider with ChangeNotifier {
 
   void updateNotificationCount(int count) {
     _notificationCount = count;
+    notifyListeners();
+  }
+
+  void updateKeepBright(bool keepValue) {
+    settingDTO.keepScreenOn = keepValue;
     notifyListeners();
   }
 }

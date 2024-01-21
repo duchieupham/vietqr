@@ -41,6 +41,7 @@ class TextFieldCustom extends StatefulWidget {
   //Border textfield
   final bool isRequired;
   final Color? fillColor;
+  final InputBorder? inputBorder;
 
   const TextFieldCustom(
       {Key? key,
@@ -76,6 +77,7 @@ class TextFieldCustom extends StatefulWidget {
       this.isRequired = false,
       this.onTap,
       this.contentPadding,
+      this.inputBorder,
       this.readOnly = false,
       this.titleSize})
       : super(key: key);
@@ -110,7 +112,7 @@ class _TextFieldWidgetState extends State<TextFieldCustom> {
       textInputAction: widget.keyboardAction,
       decoration: InputDecoration(
         hintText: widget.hintText,
-        border: InputBorder.none,
+        border: widget.inputBorder ?? InputBorder.none,
         hintStyle: TextStyle(
           fontSize: (widget.fontSize != null) ? widget.fontSize : 14,
           color: (widget.title != null)

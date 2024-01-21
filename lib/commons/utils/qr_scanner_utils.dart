@@ -16,6 +16,7 @@ import 'package:vierqr/features/scan_qr/views/dialog_scan_type_id.dart';
 import 'package:vierqr/features/scan_qr/views/dialog_scan_type_other.dart';
 import 'package:vierqr/features/scan_qr/views/dialog_scan_type_url.dart';
 import 'package:vierqr/features/scan_qr/views/dialog_scan_type_vcard.dart';
+import 'package:vierqr/features/scan_qr/views/dialog_scan_wordpress.dart';
 import 'package:vierqr/features/web_view/views/custom_inapp_webview.dart';
 import 'package:vierqr/features/web_view/views/custom_web_view.dart';
 import 'package:vierqr/models/viet_qr_scanned_dto.dart';
@@ -105,11 +106,16 @@ class QRScannerUtils {
     } else {
       if (code.trim().endsWith('=')) {
         String dec = AESConvert.decrypt(code);
-        if (dec.contains(AESConvert.accessKey)) {
+        if (dec.contains(AESConvert.accessKeyLoginWeb)) {
           if (UserInformationHelper.instance.getUserId().isEmpty) {
             return TypeQR.NEGATIVE_TWO;
           }
           return TypeQR.LOGIN_WEB;
+        } else if (dec.contains(AESConvert.accessKeyTokenPlugin)) {
+          if (UserInformationHelper.instance.getUserId().isEmpty) {
+            return TypeQR.NEGATIVE_TWO;
+          }
+          return TypeQR.TOKEN_PLUGIN;
         }
       }
     }
@@ -184,6 +190,11 @@ class QRScannerUtils {
             child: DialogScanLogin(code: value),
           );
           break;
+        case TypeContact.token_plugin:
+          DialogWidget.instance.openDialogLoginWeb(
+            child: DialogScanWordPress(code: value),
+          );
+          break;
         case TypeContact.Sale:
           NavigatorUtils.navigatePage(
             context,
@@ -191,6 +202,7 @@ class QRScannerUtils {
               url: 'https://vietqr.vn/service/may-ban-hang/active?mid=$value',
               userId: UserInformationHelper.instance.getUserId(),
             ),
+            routeName: CustomInAppWebView.routeName,
           );
           break;
         case TypeContact.Other:

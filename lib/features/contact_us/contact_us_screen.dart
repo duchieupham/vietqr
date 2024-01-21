@@ -3,18 +3,32 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
+import 'package:vierqr/features/dashboard/blocs/dashboard_provider.dart';
+import 'package:vierqr/features/login/views/bgr_app_bar_login.dart';
+import 'package:vierqr/models/app_info_dto.dart';
 
 class ContactUSScreen extends StatefulWidget {
-  const ContactUSScreen({super.key});
+  const ContactUSScreen({super.key, required this.appInfoDTO});
+
+  final AppInfoDTO appInfoDTO;
+
+  static String routeName = '/contact_us_screen';
 
   @override
   State<ContactUSScreen> createState() => _ContactUSScreenState();
 }
 
 class _ContactUSScreenState extends State<ContactUSScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<DashBoardProvider>(context, listen: false).initFileTheme();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,54 +40,30 @@ class _ContactUSScreenState extends State<ContactUSScreen> {
               width: MediaQuery.of(context).size.width,
               child: Stack(
                 children: [
-                  Center(
-                    child: Container(
-                      height: MediaQuery.of(context).size.height * 0.3,
-                      width: MediaQuery.of(context).size.width,
-                      decoration: const BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage('assets/images/bgr-header.png'),
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: ClipRect(
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
-                        child: Opacity(
-                          opacity: 0.6,
+                  Consumer<DashBoardProvider>(
+                    builder: (context, page, child) {
+                      return BackgroundAppBarLogin(
+                        file: page.file,
+                        url: widget.appInfoDTO.themeImgUrl,
+                        isEventTheme: widget.appInfoDTO.isEventTheme,
+                        child: Align(
+                          alignment: Alignment.center,
                           child: Container(
-                            height: 30,
-                            color: Colors.transparent,
+                            height: 100,
+                            width: MediaQuery.of(context).size.width / 2,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: FileImage(page.fileLogo),
+                                fit: BoxFit.contain,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
+                      );
+                    },
                   ),
                   Positioned(
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Container(
-                        height: MediaQuery.of(context).size.height * 0.12,
-                        width: MediaQuery.of(context).size.width / 2,
-                        margin: const EdgeInsets.only(top: 50),
-                        decoration: const BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage(
-                                'assets/images/logo_vietgr_payment.png'),
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: kToolbarHeight,
+                    top: 40,
                     child: Align(
                       alignment: Alignment.topLeft,
                       child: IconButton(
@@ -82,7 +72,7 @@ class _ContactUSScreenState extends State<ContactUSScreen> {
                         icon: const Icon(
                           Icons.arrow_back_ios,
                           color: Colors.black,
-                          size: 18,
+                          size: 24,
                         ),
                       ),
                     ),

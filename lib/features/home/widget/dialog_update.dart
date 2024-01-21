@@ -5,6 +5,7 @@ import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
+import 'package:vierqr/features/dashboard/blocs/dashboard_provider.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/services/providers/auth_provider.dart';
 
@@ -41,13 +42,15 @@ class _DialogUpdateViewState extends State<DialogUpdateView> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Expanded(
-                child: Image.asset(
-                  'assets/images/logo_vietgr_payment.png',
-                  width: 130,
-                  height: 130,
-                ),
-              ),
+              Consumer<DashBoardProvider>(builder: (context, provider, child) {
+                return Expanded(
+                  child: Image.file(
+                    provider.fileLogo,
+                    width: 130,
+                    height: 130,
+                  ),
+                );
+              }),
               const Padding(padding: EdgeInsets.only(top: 10)),
               Consumer<AuthProvider>(
                 builder: (context, provider, child) {

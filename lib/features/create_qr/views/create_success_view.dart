@@ -54,7 +54,7 @@ class _CreateQRSuccessState extends State<CreateQRSuccess> {
                     return Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 20, vertical: 16),
-                      child: VietQr(qrGeneratedDTO: widget.dto),
+                      child: VietQr(qrGeneratedDTO: widget.dto, isVietQR: true),
                     );
                   }),
               ValueListenableBuilder(

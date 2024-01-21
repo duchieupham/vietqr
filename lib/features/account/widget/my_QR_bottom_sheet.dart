@@ -2,13 +2,14 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:qr_flutter/qr_flutter.dart';
+
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
+import 'package:vierqr/commons/widgets/viet_qr.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class MyQRBottomSheet extends StatefulWidget {
@@ -74,10 +75,10 @@ class _MyQRBottomSheetState extends State<MyQRBottomSheet> {
                             decoration: BoxDecoration(
                               color: AppColor.WHITE,
                             ),
-                            child: QrImage(
-                              data:
+                            child: VietQr(
+                              qrGeneratedDTO: null,
+                              qrCode:
                                   UserInformationHelper.instance.getWalletId(),
-                              version: QrVersions.auto,
                               size: isSmall ? width / 2 : null,
                             ),
                           ),

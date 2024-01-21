@@ -15,6 +15,7 @@ import 'package:vierqr/models/card_dto.dart';
 import 'package:vierqr/models/introduce_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/models/setting_account_sto.dart';
+import 'package:vierqr/models/theme_dto.dart';
 import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
 import 'package:vierqr/services/shared_references/account_helper.dart';
@@ -40,6 +41,32 @@ class AccountRepository {
       LOG.error(e.toString());
     }
     return IntroduceDTO();
+  }
+
+  Future<ResponseMessageDTO> updateKeepBright(String userId, bool value) async {
+    ResponseMessageDTO result =
+        const ResponseMessageDTO(status: '', message: '');
+    try {
+      final String url = '${EnvConfig.getBaseUrl()}accounts/setting/screen';
+      final response = await BaseAPIClient.postAPI(
+        url: url,
+        body: {
+          'value': value,
+          'userId': userId,
+        },
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        result = ResponseMessageDTO.fromJson(data);
+      } else {
+        result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+    }
+    return result;
   }
 
   Future<ResponseMessageDTO> updateAvatar(
@@ -190,6 +217,30 @@ class AccountRepository {
     return result;
   }
 
+  Future<ResponseMessageDTO> updateTheme(String userId, int value) async {
+    ResponseMessageDTO result =
+        const ResponseMessageDTO(status: '', message: '');
+
+    try {
+      final String url = '${EnvConfig.getBaseUrl()}accounts/setting/theme';
+      final response = await BaseAPIClient.postAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+        body: {'value': value, 'userId': userId},
+      );
+      if (response.statusCode == 200 || response.statusCode == 400) {
+        var data = jsonDecode(response.body);
+        result = ResponseMessageDTO.fromJson(data);
+      } else {
+        result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+    }
+    return result;
+  }
+
   Future<bool> logout() async {
     bool result = false;
     try {
@@ -207,6 +258,27 @@ class AccountRepository {
       LOG.error(e.toString());
     }
     return result;
+  }
+
+  Future<List<ThemeDTO>> getListTheme() async {
+    try {
+      final String url = '${EnvConfig.getBaseUrl()}theme/list';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        if (data != null) {
+          return data.map<ThemeDTO>((json) {
+            return ThemeDTO.fromJson(json);
+          }).toList();
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return [];
   }
 
   Future<void> _resetServices() async {

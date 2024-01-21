@@ -82,6 +82,7 @@ enum TypeQR {
   QR_VCARD,
   QR_SALE,
   LOGIN_WEB,
+  TOKEN_PLUGIN,
   NEGATIVE_TWO,
   NEGATIVE_ONE,
 }
@@ -108,6 +109,7 @@ enum TypeContact {
   VCard,
   Login_Web,
   Sale,
+  token_plugin,
   NONE,
   UPDATE,
   ERROR,
@@ -257,6 +259,11 @@ enum DashBoardType {
   POINT,
   TOKEN,
   APP_VERSION,
+  THEMES,
+  UPDATE_THEME,
+  UPDATE_THEME_ERROR,
+  GET_USER_SETTING,
+  KEEP_BRIGHT
 }
 
 enum DashBoardTypePermission {

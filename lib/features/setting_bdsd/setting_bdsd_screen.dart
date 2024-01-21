@@ -10,6 +10,8 @@ import 'package:vierqr/services/shared_references/user_information_helper.dart';
 class SettingBDSD extends StatefulWidget {
   const SettingBDSD({Key? key}) : super(key: key);
 
+  static String routeName = '/setting_bdsd';
+
   @override
   State<SettingBDSD> createState() => _SettingBDSDState();
 }
