@@ -169,7 +169,7 @@ class _BankScreenState extends State<_BankScreen>
                   if (scrollController.hasClients) {
                     scrollController.jumpTo(0);
                   }
-                  Provider.of<DashBoardProvider>(context, listen: false)
+                  Provider.of<AuthProvider>(context, listen: false)
                       .updateListBanks(state.listBanks);
                 }
               },

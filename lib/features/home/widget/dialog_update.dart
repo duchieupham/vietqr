@@ -44,7 +44,7 @@ class _DialogUpdateViewState extends State<DialogUpdateView> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Consumer<DashBoardProvider>(builder: (context, provider, child) {
+              Consumer<AuthProvider>(builder: (context, provider, child) {
                 return Expanded(
                   child: UserInformationHelper.instance.getUserId().isNotEmpty
                       ? CachedNetworkImage(

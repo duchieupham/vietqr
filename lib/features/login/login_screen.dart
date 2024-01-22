@@ -100,12 +100,12 @@ class _LoginState extends State<_Login> {
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<DashBoardProvider>(context, listen: false)
+      Provider.of<AuthProvider>(context, listen: false)
           .updateEventTheme(null);
-      Provider.of<DashBoardProvider>(context, listen: false)
+      Provider.of<AuthProvider>(context, listen: false)
           .updateFileThemeLogin('');
-      Provider.of<DashBoardProvider>(context, listen: false).initFileTheme();
-      Provider.of<DashBoardProvider>(context, listen: false).updateFileLogo('');
+      Provider.of<AuthProvider>(context, listen: false).initFileTheme();
+      Provider.of<AuthProvider>(context, listen: false).updateFileLogo('');
     });
 
     _bloc.add(GetFreeToken());
@@ -159,7 +159,7 @@ class _LoginState extends State<_Login> {
                       state.appInfoDTO!.logoUrl, path);
 
                   ThemeHelper.instance.updateLogoTheme(localPath);
-                  Provider.of<DashBoardProvider>(context, listen: false)
+                  Provider.of<AuthProvider>(context, listen: false)
                       .updateFileLogo(localPath);
                 }
 
@@ -175,7 +175,7 @@ class _LoginState extends State<_Login> {
                     ThemeHelper.instance.updateThemeLogin(localPath);
                     ThemeHelper.instance
                         .updateThemeVerLogin(state.appInfoDTO!.themeVer);
-                    Provider.of<DashBoardProvider>(context, listen: false)
+                    Provider.of<AuthProvider>(context, listen: false)
                         .updateFileThemeLogin(localPath);
                   }
                 }
@@ -183,7 +183,7 @@ class _LoginState extends State<_Login> {
                 if (isEventTheme != state.appInfoDTO!.isEventTheme) {
                   ThemeHelper.instance
                       .updateEventTheme(state.appInfoDTO!.isEventTheme);
-                  Provider.of<DashBoardProvider>(context, listen: false)
+                  Provider.of<AuthProvider>(context, listen: false)
                       .updateEventTheme(state.appInfoDTO!.isEventTheme);
                 }
               }
@@ -216,7 +216,7 @@ class _LoginState extends State<_Login> {
                 provider.updateListInfoUser();
               }
 
-              Provider.of<DashBoardProvider>(context, listen: false)
+              Provider.of<AuthProvider>(context, listen: false)
                   .initFileTheme();
 
               Navigator.of(context).popUntil((route) => route.isFirst);
@@ -318,7 +318,7 @@ class _LoginState extends State<_Login> {
                               child: SingleChildScrollView(
                                 child: Column(
                                   children: [
-                                    Consumer<DashBoardProvider>(
+                                    Consumer<AuthProvider>(
                                       builder: (context, page, child) {
                                         return BackgroundAppBarLogin(
                                           file: page.isEventTheme

@@ -7,9 +7,9 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
-import 'package:vierqr/features/dashboard/blocs/dashboard_provider.dart';
 import 'package:vierqr/features/login/views/bgr_app_bar_login.dart';
 import 'package:vierqr/models/app_info_dto.dart';
+import 'package:vierqr/services/providers/auth_provider.dart';
 
 class ContactUSScreen extends StatefulWidget {
   const ContactUSScreen({super.key, required this.appInfoDTO});
@@ -26,7 +26,7 @@ class _ContactUSScreenState extends State<ContactUSScreen> {
   @override
   void initState() {
     super.initState();
-    Provider.of<DashBoardProvider>(context, listen: false).initFileTheme();
+    Provider.of<AuthProvider>(context, listen: false).initFileTheme();
   }
 
   @override
@@ -40,7 +40,7 @@ class _ContactUSScreenState extends State<ContactUSScreen> {
               width: MediaQuery.of(context).size.width,
               child: Stack(
                 children: [
-                  Consumer<DashBoardProvider>(
+                  Consumer<AuthProvider>(
                     builder: (context, page, child) {
                       return BackgroundAppBarLogin(
                         file: widget.appInfoDTO.isEventTheme

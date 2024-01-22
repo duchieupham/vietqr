@@ -20,10 +20,10 @@ import 'package:vierqr/features/contact/blocs/contact_bloc.dart';
 import 'package:vierqr/features/contact/blocs/contact_provider.dart';
 import 'package:vierqr/features/contact/events/contact_event.dart';
 import 'package:vierqr/features/contact/states/contact_state.dart';
-import 'package:vierqr/features/dashboard/blocs/dashboard_provider.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/contact_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
+import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:vierqr/services/shared_references/account_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
@@ -193,7 +193,7 @@ class _ContactStateState extends State<_ContactState>
   }
 
   void _onUpdateContact() async {
-    Provider.of<DashBoardProvider>(context, listen: false).updateSync(true);
+    Provider.of<AuthProvider>(context, listen: false).updateSync(true);
     final data = await _fetchContacts();
 
     eventBus.fire(SyncContactEvent(data));
@@ -374,7 +374,7 @@ class _ContactStateState extends State<_ContactState>
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Consumer<DashBoardProvider>(
+                    Consumer<AuthProvider>(
                       builder: (context, dashProvider, child) {
                         return Padding(
                           padding: const EdgeInsets.fromLTRB(20, 0, 20, 4),

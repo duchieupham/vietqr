@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:isolate';
 
 import 'package:camera/camera.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -38,10 +37,7 @@ import 'package:vierqr/features/connect_lark/connect_lark_screen.dart';
 import 'package:vierqr/features/connect_telegram/connect_telegram_screen.dart';
 import 'package:vierqr/features/connect_telegram/widget/connect_screen.dart';
 import 'package:vierqr/features/contact/contact_screen.dart';
-import 'package:vierqr/features/contact_us/contact_us_screen.dart';
-import 'package:vierqr/features/create_qr_un_authen/create_qr_un_quthen.dart';
 import 'package:vierqr/features/create_qr_un_authen/show_qr.dart';
-import 'package:vierqr/features/dashboard/blocs/dashboard_provider.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/dashboard_screen.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
@@ -69,7 +65,6 @@ import 'package:vierqr/features/transaction/widgets/transaction_sucess_widget.da
 import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/notification_transaction_success_dto.dart';
 import 'package:vierqr/models/respone_top_up_dto.dart';
-import 'package:vierqr/models/theme_dto.dart';
 import 'package:vierqr/models/top_up_sucsess_dto.dart';
 import 'package:vierqr/services/local_notification/notification_service.dart';
 import 'package:vierqr/services/providers/auth_provider.dart';
@@ -369,7 +364,6 @@ class _VietQRApp extends State<VietQRApp> {
         child: MultiProvider(
           providers: [
             ChangeNotifierProvider(create: (context) => AuthProvider()),
-            ChangeNotifierProvider(create: (context) => DashBoardProvider()),
             ChangeNotifierProvider(create: (context) => PinProvider()),
             ChangeNotifierProvider(create: (context) => UserEditProvider()),
             ChangeNotifierProvider(

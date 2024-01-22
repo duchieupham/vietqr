@@ -1,18 +1,16 @@
 import 'dart:ui';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/encrypt_utils.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
-import 'package:vierqr/features/dashboard/blocs/dashboard_provider.dart';
-import 'package:vierqr/features/dashboard/widget/background_app_bar_home.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/pin_code_input.dart';
 import 'package:vierqr/models/account_login_dto.dart';
 import 'package:vierqr/models/app_info_dto.dart';
+import 'package:vierqr/services/providers/auth_provider.dart';
 
 import 'bgr_app_bar_login.dart';
 import 'forgot_password_screen.dart';
@@ -56,7 +54,7 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
   @override
   void initState() {
     super.initState();
-    Provider.of<DashBoardProvider>(context, listen: false).initFileTheme();
+    Provider.of<AuthProvider>(context, listen: false).initFileTheme();
   }
 
   @override
@@ -72,7 +70,7 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
                 children: [
                   Stack(
                     children: [
-                      Consumer<DashBoardProvider>(
+                      Consumer<AuthProvider>(
                           builder: (context, page, child) {
                         return BackgroundAppBarLogin(
                           file: page.isEventTheme
@@ -117,7 +115,7 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
                                     ],
                                   ),
                                 ),
-                                Consumer<DashBoardProvider>(
+                                Consumer<AuthProvider>(
                                   builder: (context, page, child) {
                                     return SizedBox(
                                       width: 80,

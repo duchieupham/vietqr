@@ -13,7 +13,6 @@ import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/branch/blocs/branch_bloc.dart';
-import 'package:vierqr/features/dashboard/blocs/dashboard_provider.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
@@ -21,6 +20,7 @@ import 'package:vierqr/models/branch_member_insert_dto.dart';
 import 'package:vierqr/models/business_member_dto.dart';
 import 'package:vierqr/models/member_branch_model.dart';
 import 'package:vierqr/models/response_message_dto.dart';
+import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:vierqr/services/providers/search_clear_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
@@ -218,7 +218,7 @@ class _BuildStepFirst extends StatelessWidget {
           child: ListView(
             padding: EdgeInsets.zero,
             children: [
-              Consumer<DashBoardProvider>(
+              Consumer<AuthProvider>(
                 builder: (context, provider, child) {
                   return Stack(
                     children: provider.listBanks.map(

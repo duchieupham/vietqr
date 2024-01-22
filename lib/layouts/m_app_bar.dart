@@ -1,10 +1,8 @@
-import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:vierqr/features/dashboard/blocs/dashboard_provider.dart';
+import 'package:vierqr/services/providers/auth_provider.dart';
 
 class MAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
@@ -28,7 +26,7 @@ class MAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<DashBoardProvider>(builder: (context, page, child) {
+    return Consumer<AuthProvider>(builder: (context, page, child) {
       String url = page.settingDTO.themeImgUrl;
       return Container(
         decoration: BoxDecoration(

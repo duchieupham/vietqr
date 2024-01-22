@@ -11,10 +11,10 @@ import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
 import 'package:vierqr/commons/widgets/viet_qr.dart';
-import 'package:vierqr/features/dashboard/blocs/dashboard_provider.dart';
 import 'package:vierqr/features/printer/views/printing_view.dart';
 import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/bluetooth_printer_dto.dart';
+import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:vierqr/services/sqflite/local_database.dart';
 
 import '../../models/qr_generated_dto.dart';
@@ -123,7 +123,7 @@ class _ShowQrState extends State<ShowQr> {
   @override
   void initState() {
     super.initState();
-    Provider.of<DashBoardProvider>(context, listen: false).initFileTheme();
+    Provider.of<AuthProvider>(context, listen: false).initFileTheme();
   }
 
   @override
@@ -139,12 +139,12 @@ class _ShowQrState extends State<ShowQr> {
                   ? DecorationImage(
                       image: NetworkImage(widget.appInfo.themeImgUrl),
                       fit: BoxFit.cover)
-                  : Provider.of<DashBoardProvider>(context, listen: false)
+                  : Provider.of<AuthProvider>(context, listen: false)
                           .file
                           .path
                           .isNotEmpty
                       ? DecorationImage(
-                          image: FileImage(Provider.of<DashBoardProvider>(
+                          image: FileImage(Provider.of<AuthProvider>(
                                   context,
                                   listen: false)
                               .file),

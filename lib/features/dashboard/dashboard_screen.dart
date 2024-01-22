@@ -47,7 +47,6 @@ import 'package:vierqr/services/providers/account_balance_home_provider.dart';
 import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
 import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
-import 'package:vierqr/services/shared_references/theme_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 import 'events/dashboard_event.dart';
@@ -100,7 +99,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
     _notificationBloc = BlocProvider.of(context);
     _pageController = PageController(
       initialPage:
-          Provider.of<DashBoardProvider>(context, listen: false).indexSelected,
+          Provider.of<AuthProvider>(context, listen: false).indexSelected,
       keepPage: true,
     );
     _listScreens.addAll(
@@ -112,9 +111,6 @@ class _DashBoardScreen extends State<DashBoardScreen>
       ],
     );
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Provider.of<DashBoardProvider>(context, listen: false)
-      //     .updateListTheme([]);
-
       initialServices(context);
       listenNewNotification();
     });
@@ -204,7 +200,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
 
         if (message.progress >= 1) {
           receivePort.close();
-          Provider.of<DashBoardProvider>(context, listen: false)
+          Provider.of<AuthProvider>(context, listen: false)
               .updateListTheme(listThemeLocal, saveLocal: true);
           return;
         }
@@ -241,8 +237,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
         if (message.progress >= 1) {
           receivePort.close();
           eventBus.fire(SentDataToContact(listVCards, list.length));
-          Provider.of<DashBoardProvider>(context, listen: false)
-              .updateSync(false);
+          Provider.of<AuthProvider>(context, listen: false).updateSync(false);
           return;
         }
       }
@@ -274,26 +269,26 @@ class _DashBoardScreen extends State<DashBoardScreen>
 
   Future checkConnection() async {
     bool isInternet =
-        Provider.of<DashBoardProvider>(context, listen: false).isInternet;
+        Provider.of<AuthProvider>(context, listen: false).isInternet;
 
     try {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         if (isInternet) {
-          Provider.of<DashBoardProvider>(context, listen: false)
+          Provider.of<AuthProvider>(context, listen: false)
               .updateInternet(false, TypeInternet.CONNECT);
           _onChangeInternet(false);
         }
       } else {
         if (!isInternet) {
-          Provider.of<DashBoardProvider>(context, listen: false)
+          Provider.of<AuthProvider>(context, listen: false)
               .updateInternet(true, TypeInternet.DISCONNECT);
           _onChangeInternet(true);
         }
       }
     } on SocketException catch (_) {
       if (!isInternet) {
-        Provider.of<DashBoardProvider>(context, listen: false)
+        Provider.of<AuthProvider>(context, listen: false)
             .updateInternet(true, TypeInternet.DISCONNECT);
         _onChangeInternet(true);
       }
@@ -303,10 +298,10 @@ class _DashBoardScreen extends State<DashBoardScreen>
   Future<void> _updateConnectionStatus(ConnectivityResult result) async {
     if (!mounted) return;
     bool isInternet =
-        Provider.of<DashBoardProvider>(context, listen: false).isInternet;
+        Provider.of<AuthProvider>(context, listen: false).isInternet;
     if (result == ConnectivityResult.none) {
       if (!isInternet) {
-        Provider.of<DashBoardProvider>(context, listen: false)
+        Provider.of<AuthProvider>(context, listen: false)
             .updateInternet(true, TypeInternet.DISCONNECT);
         _onChangeInternet(true);
       }
@@ -318,7 +313,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
   Future _onChangeInternet(bool isInternet) async {
     await Future.delayed(Duration(seconds: 3)).then((v) {
       if (!mounted) return;
-      Provider.of<DashBoardProvider>(context, listen: false)
+      Provider.of<AuthProvider>(context, listen: false)
           .updateInternet(isInternet, TypeInternet.NONE);
     });
   }
@@ -404,19 +399,18 @@ class _DashBoardScreen extends State<DashBoardScreen>
           List<ThemeDTO> list = [...state.themes];
           list.sort((a, b) => a.type.compareTo(b.type));
 
-          Provider.of<DashBoardProvider>(context, listen: false)
+          Provider.of<AuthProvider>(context, listen: false)
               .updateListTheme(list);
 
           _saveImageTaskStreamReceiver(list);
         }
 
         if (state.request == DashBoardType.GET_USER_SETTING) {
-          Provider.of<DashBoardProvider>(context, listen: false)
-              .updateSettingDTO(
-                  UserInformationHelper.instance.getAccountSetting());
+          Provider.of<AuthProvider>(context, listen: false).updateSettingDTO(
+              UserInformationHelper.instance.getAccountSetting());
         }
         if (state.request == DashBoardType.KEEP_BRIGHT) {
-          Provider.of<DashBoardProvider>(context, listen: false)
+          Provider.of<AuthProvider>(context, listen: false)
               .updateKeepBright(state.keepValue);
         }
 
@@ -427,7 +421,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
 
         if (state.request == DashBoardType.APP_VERSION) {
           if (state.appInfoDTO != null) {
-            Provider.of<DashBoardProvider>(context, listen: false)
+            Provider.of<AuthProvider>(context, listen: false)
                 .updateThemeVer(state.appInfoDTO!.themeVer);
           }
           Provider.of<AuthProvider>(context, listen: false)
@@ -553,16 +547,23 @@ class _DashBoardScreen extends State<DashBoardScreen>
         }
       },
       child: Scaffold(
-        body: Stack(
-          children: [
-            _buildAppBar(),
-            Column(
+        body: Consumer<AuthProvider>(builder: (context, provider, _) {
+          if (!provider.isRenderUI)
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Expanded(
-                  child: Consumer<DashBoardProvider>(
-                      builder: (context, page, child) {
-                    return Padding(
-                      padding: (page.indexSelected == 3)
+                // const SizedBox(height: 60),
+                // Center(child: CircularProgressIndicator()),
+              ],
+            );
+          return Stack(
+            children: [
+              _buildAppBar(),
+              Column(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: (provider.indexSelected == 3)
                           ? EdgeInsets.zero
                           : const EdgeInsets.only(top: 110),
                       child: SizedBox(
@@ -570,12 +571,10 @@ class _DashBoardScreen extends State<DashBoardScreen>
                         child: Listener(
                           onPointerMove: (moveEvent) {
                             if (moveEvent.delta.dx > 0) {
-                              Provider.of<DashBoardProvider>(context,
-                                      listen: false)
+                              Provider.of<AuthProvider>(context, listen: false)
                                   .updateMoveEvent(TypeMoveEvent.RIGHT);
                             } else {
-                              Provider.of<DashBoardProvider>(context,
-                                      listen: false)
+                              Provider.of<AuthProvider>(context, listen: false)
                                   .updateMoveEvent(TypeMoveEvent.LEFT);
                             }
                           },
@@ -584,123 +583,114 @@ class _DashBoardScreen extends State<DashBoardScreen>
                             physics: const AlwaysScrollableScrollPhysics(),
                             controller: _pageController,
                             onPageChanged: (index) async {
-                              Provider.of<DashBoardProvider>(context,
-                                      listen: false)
+                              Provider.of<AuthProvider>(context, listen: false)
                                   .updateIndex(index);
                             },
                             children: _listScreens,
                           ),
                         ),
                       ),
-                    );
-                  }),
-                ),
-              ],
-            ),
-            Consumer<AuthProvider>(
-              builder: (context, provider, child) {
-                return Positioned(
-                  child: FloatBubble(
-                    show: provider.isUpdateVersion,
-                    initialAlignment: Alignment.bottomRight,
-                    child: SizedBox(
-                      width: 100,
-                      height: 105,
-                      child: Stack(
-                        children: [
-                          GestureDetector(
-                            onTap: () async {
-                              Uri uri = Uri.parse(Stringify.urlStore);
-                              if (!await launchUrl(uri,
-                                  mode: LaunchMode.externalApplication)) {}
-                            },
+                    ),
+                  ),
+                ],
+              ),
+              Positioned(
+                child: FloatBubble(
+                  show: provider.isUpdateVersion,
+                  initialAlignment: Alignment.bottomRight,
+                  child: SizedBox(
+                    width: 100,
+                    height: 105,
+                    child: Stack(
+                      children: [
+                        GestureDetector(
+                          onTap: () async {
+                            Uri uri = Uri.parse(Stringify.urlStore);
+                            if (!await launchUrl(uri,
+                                mode: LaunchMode.externalApplication)) {}
+                          },
+                          child: Image.asset(
+                            'assets/images/banner-update.png',
+                            width: 100,
+                            height: 100,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        Positioned(
+                          right: 0,
+                          top: 0,
+                          child: GestureDetector(
+                            onTap: provider.onClose,
                             child: Image.asset(
-                              'assets/images/banner-update.png',
-                              width: 100,
-                              height: 100,
+                              'assets/images/ic-close-banner.png',
+                              width: 24,
+                              height: 24,
                               fit: BoxFit.cover,
                             ),
                           ),
-                          Positioned(
-                            right: 0,
-                            top: 0,
-                            child: GestureDetector(
-                              onTap: provider.onClose,
-                              child: Image.asset(
-                                'assets/images/ic-close-banner.png',
-                                width: 24,
-                                height: 24,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
+                        )
+                      ],
                     ),
                   ),
-                );
-              },
-            ),
-            Consumer<DashBoardProvider>(
-              builder: (context, page, child) {
-                return Positioned(
-                  bottom: 10,
-                  left: 20,
-                  right: 20,
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 350),
-                    child: page.type == TypeInternet.CONNECT
-                        ? Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 6, horizontal: 8),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                                color: AppColor.BLACK_DARK.withOpacity(0.95)),
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.wifi,
-                                  color: AppColor.GREEN,
-                                ),
-                                const SizedBox(width: 10),
-                                Text(
-                                  'Đã có kết nối internet',
-                                  style: TextStyle(color: AppColor.WHITE),
-                                )
-                              ],
-                            ),
-                          )
-                        : page.type == TypeInternet.DISCONNECT
-                            ? Container(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 6, horizontal: 8),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5),
-                                    color:
-                                        AppColor.BLACK_DARK.withOpacity(0.95)),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.wifi_off,
-                                      color: AppColor.error700,
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Text(
-                                      'Mất kết nối internet',
-                                      style: TextStyle(color: AppColor.WHITE),
-                                    )
-                                  ],
-                                ),
+                ),
+              ),
+              Positioned(
+                bottom: 10,
+                left: 20,
+                right: 20,
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 350),
+                  child: provider.type == TypeInternet.CONNECT
+                      ? Container(
+                          padding:
+                              EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: AppColor.BLACK_DARK.withOpacity(0.95)),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.wifi,
+                                color: AppColor.GREEN,
+                              ),
+                              const SizedBox(width: 10),
+                              Text(
+                                'Đã có kết nối internet',
+                                style: TextStyle(color: AppColor.WHITE),
                               )
-                            : const SizedBox(),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-        bottomNavigationBar: Consumer<DashBoardProvider>(
+                            ],
+                          ),
+                        )
+                      : provider.type == TypeInternet.DISCONNECT
+                          ? Container(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 6, horizontal: 8),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  color: AppColor.BLACK_DARK.withOpacity(0.95)),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.wifi_off,
+                                    color: AppColor.error700,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Text(
+                                    'Mất kết nối internet',
+                                    style: TextStyle(color: AppColor.WHITE),
+                                  )
+                                ],
+                              ),
+                            )
+                          : const SizedBox(),
+                ),
+              ),
+            ],
+          );
+        }),
+        bottomNavigationBar: Consumer<AuthProvider>(
           builder: (context, page, child) {
+            if (!page.isRenderUI) return const SizedBox();
             return Container(
               padding: const EdgeInsets.only(bottom: 12),
               decoration: const BoxDecoration(
@@ -797,8 +787,8 @@ class _DashBoardScreen extends State<DashBoardScreen>
       }
     } catch (e) {
       _pageController = PageController(
-        initialPage: Provider.of<DashBoardProvider>(context, listen: false)
-            .indexSelected,
+        initialPage:
+            Provider.of<AuthProvider>(context, listen: false).indexSelected,
         keepPage: true,
       );
       _animatedToPage(index);
@@ -852,7 +842,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
 
 //header
   Widget _buildAppBar() {
-    return Consumer<DashBoardProvider>(builder: (context, page, child) {
+    return Consumer<AuthProvider>(builder: (context, page, child) {
       return BackgroundAppBarHome(
         file: page.file,
         url: page.settingDTO.themeImgUrl,
@@ -875,6 +865,11 @@ class _DashBoardScreen extends State<DashBoardScreen>
                           imageUrl: page.settingDTO.logoUrl,
                           width: 50,
                         ),
+                      )
+                    else
+                      Container(
+                        width: 60,
+                        height: 30,
                       ),
                     Expanded(
                       child: Padding(
@@ -954,7 +949,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
                     const Padding(padding: EdgeInsets.only(left: 5)),
                     GestureDetector(
                         onTap: () {
-                          Provider.of<DashBoardProvider>(context, listen: false)
+                          Provider.of<AuthProvider>(context, listen: false)
                               .updateIndex(3);
 
                           _animatedToPage(3);

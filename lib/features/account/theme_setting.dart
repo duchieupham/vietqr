@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/models/theme_dto.dart';
 import 'package:vierqr/models/theme_dto_local.dart';
+import 'package:vierqr/services/providers/auth_provider.dart';
 
 import 'states/custom_radio.dart';
 
@@ -45,7 +46,7 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
   void initState() {
     super.initState();
     List<ThemeDTO> listDto =
-        Provider.of<DashBoardProvider>(context, listen: false).themes;
+        Provider.of<AuthProvider>(context, listen: false).themes;
     _loadImage(listDto);
   }
 
@@ -91,8 +92,7 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
                       ),
                     ),
                     const SizedBox(width: 16),
-                    Consumer<DashBoardProvider>(
-                        builder: (context, provider, _) {
+                    Consumer<AuthProvider>(builder: (context, provider, _) {
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
@@ -123,7 +123,7 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 12),
-              Consumer<DashBoardProvider>(builder: (context, provider, _) {
+              Consumer<AuthProvider>(builder: (context, provider, _) {
                 return _buildContainer(
                   color: provider.settingDTO.themeType == 0
                       ? AppColor.GREY_BG

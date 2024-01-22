@@ -7,6 +7,7 @@ import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_provider.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
+import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:wakelock/wakelock.dart';
 
 class VietQr extends StatefulWidget {
@@ -36,7 +37,7 @@ class _VietQrState extends State<VietQr> {
   void initState() {
     super.initState();
     // Bật chế độ giữ màn hình sáng
-    if (Provider.of<DashBoardProvider>(context, listen: false)
+    if (Provider.of<AuthProvider>(context, listen: false)
         .settingDTO
         .keepScreenOn) {
       Wakelock.enable();

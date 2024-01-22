@@ -1,16 +1,10 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/commons/utils/navigator_utils.dart';
-import 'package:vierqr/features/dashboard/blocs/dashboard_provider.dart';
-import 'package:vierqr/features/dashboard/widget/background_app_bar_home.dart';
-import 'package:vierqr/features/register/register_screen.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/info_user_dto.dart';
-import 'package:vierqr/services/shared_references/theme_helper.dart';
+import 'package:vierqr/services/providers/auth_provider.dart';
 
 import '../../../commons/utils/image_utils.dart';
 import 'bgr_app_bar_login.dart';
@@ -46,9 +40,8 @@ class LoginAccountScreen extends StatefulWidget {
 class _LoginAccountScreenState extends State<LoginAccountScreen> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    Provider.of<DashBoardProvider>(context, listen: false).initFileTheme();
+    Provider.of<AuthProvider>(context, listen: false).initFileTheme();
   }
 
   @override
@@ -65,7 +58,7 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
             width: width,
             child: Stack(
               children: [
-                Consumer<DashBoardProvider>(
+                Consumer<AuthProvider>(
                   builder: (context, page, child) {
                     return BackgroundAppBarLogin(
                       file: page.isEventTheme ? page.fileThemeLogin : page.file,
