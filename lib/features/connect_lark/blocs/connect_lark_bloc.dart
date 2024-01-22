@@ -13,6 +13,8 @@ class ConnectLarkBloc extends Bloc<ConnectLarkEvent, ConnectLarkState> {
     on<SendFirstMessage>(_sendFirstMessage);
     on<GetInformationLarkConnect>(_getInfoLarkConnected);
     on<RemoveLarkConnect>(_removeLark);
+    on<RemoveBankLarkEvent>(_removeBankLark);
+    on<AddBankLarkEvent>(_addBankLark);
   }
 }
 
@@ -79,5 +81,43 @@ void _removeLark(ConnectLarkEvent event, Emitter emit) async {
   } catch (e) {
     LOG.error(e.toString());
     emit(RemoveLarkFailedState(dto: result));
+  }
+}
+
+void _removeBankLark(ConnectLarkEvent event, Emitter emit) async {
+  ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
+  try {
+    if (event is RemoveBankLarkEvent) {
+      emit(RemoveLarkConnectLoadingState());
+
+      result = await repository.removeBankLark(event.body);
+      if (result.status == 'SUCCESS') {
+        emit(RemoveBankLarkSuccessState(dto: result));
+      } else {
+        emit(RemoveLarkFailedState(dto: result));
+      }
+    }
+  } catch (e) {
+    LOG.error(e.toString());
+    emit(RemoveLarkFailedState(dto: result));
+  }
+}
+
+void _addBankLark(ConnectLarkEvent event, Emitter emit) async {
+  ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
+  try {
+    if (event is AddBankLarkEvent) {
+      emit(RemoveLarkConnectLoadingState());
+
+      result = await repository.addBankLark(event.body);
+      if (result.status == 'SUCCESS') {
+        emit(AddBankLarkSuccessState(dto: result));
+      } else {
+        emit(AddBankLarkFailedState(dto: result));
+      }
+    }
+  } catch (e) {
+    LOG.error(e.toString());
+    emit(AddBankLarkFailedState(dto: result));
   }
 }

@@ -73,3 +73,47 @@ class RemoveLarkFailedState extends ConnectLarkState {
   @override
   List<Object?> get props => [dto];
 }
+
+class RemoveBankLarkSuccessState extends ConnectLarkState {
+  final ResponseMessageDTO dto;
+
+  const RemoveBankLarkSuccessState({
+    required this.dto,
+  });
+
+  @override
+  List<Object?> get props => [dto];
+}
+
+class RemoveBankLarkFailedState extends ConnectLarkState {
+  final ResponseMessageDTO dto;
+
+  const RemoveBankLarkFailedState({
+    required this.dto,
+  });
+
+  @override
+  List<Object?> get props => [dto];
+}
+
+class AddBankLarkSuccessState extends ConnectLarkState {
+  final ResponseMessageDTO dto;
+
+  const AddBankLarkSuccessState({
+    required this.dto,
+  });
+
+  @override
+  List<Object?> get props => [dto];
+}
+
+class AddBankLarkFailedState extends ConnectLarkState {
+  final ResponseMessageDTO dto;
+
+  const AddBankLarkFailedState({
+    required this.dto,
+  });
+
+  @override
+  List<Object?> get props => [dto];
+}

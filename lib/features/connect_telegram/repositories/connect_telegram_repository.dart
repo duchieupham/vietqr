@@ -89,4 +89,48 @@ class ConnectTelegramRepository {
     }
     return result;
   }
+
+  Future<ResponseMessageDTO> removeBankTelegram(body) async {
+    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    try {
+      final String url = '${EnvConfig.getBaseUrl()}service/telegram/bank';
+      final response = await BaseAPIClient.deleteAPI(
+        url: url,
+        body: body,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200 || response.statusCode == 400) {
+        var data = jsonDecode(response.body);
+        result = ResponseMessageDTO.fromJson(data);
+      } else {
+        result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+    }
+    return result;
+  }
+
+  Future<ResponseMessageDTO> addBankTelegram(body) async {
+    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    try {
+      final String url = '${EnvConfig.getBaseUrl()}service/telegram/bank';
+      final response = await BaseAPIClient.postAPI(
+        url: url,
+        body: body,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200 || response.statusCode == 400) {
+        var data = jsonDecode(response.body);
+        result = ResponseMessageDTO.fromJson(data);
+      } else {
+        result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+    }
+    return result;
+  }
 }
