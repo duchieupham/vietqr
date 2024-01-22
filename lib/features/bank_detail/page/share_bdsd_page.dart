@@ -287,8 +287,7 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                     ],
                   ),
                   if (listMember.isNotEmpty)
-                    Expanded(
-                        child: Column(
+                    Column(
                       children: [
                         const SizedBox(
                           height: 12,
@@ -348,7 +347,7 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                           height: 100,
                         )
                       ],
-                    ))
+                    )
                   else
                     Center(
                       child: Column(
@@ -379,11 +378,9 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                     onTap: () async {
                       await DialogWidget.instance.showModelBottomSheet(
                         isDismissible: true,
-                        padding:
-                            EdgeInsets.only(left: 12, right: 12, bottom: 32),
                         height: MediaQuery.of(context).size.height * 0.8,
-                        margin:
-                            EdgeInsets.only(left: 10, right: 10, bottom: 10),
+                        margin: EdgeInsets.only(
+                            left: 10, right: 10, bottom: 10, top: 200),
                         borderRadius: BorderRadius.circular(16),
                         widget: BottomSheetAddUserBDSD(
                           bankId: widget.bankId,
