@@ -23,7 +23,8 @@ class BackgroundAppBarHome extends StatelessWidget {
           image: file.path.isNotEmpty
               ? DecorationImage(image: FileImage(file), fit: BoxFit.fitWidth)
               : DecorationImage(
-                  image: NetworkImage(url), fit: BoxFit.fitWidth)),
+                  image: AssetImage('assets/images/bgr-header.png'),
+                  fit: BoxFit.fitWidth)),
       child: Stack(
         children: [
           Align(

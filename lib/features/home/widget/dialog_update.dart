@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -8,6 +9,7 @@ import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_provider.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/services/providers/auth_provider.dart';
+import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class DialogUpdateView extends StatefulWidget {
   final bool isHideClose;
@@ -44,17 +46,23 @@ class _DialogUpdateViewState extends State<DialogUpdateView> {
             children: [
               Consumer<DashBoardProvider>(builder: (context, provider, child) {
                 return Expanded(
-                  child: provider.fileLogo.path.isNotEmpty
-                      ? Image.file(
-                          provider.fileLogo,
+                  child: UserInformationHelper.instance.getUserId().isNotEmpty
+                      ? CachedNetworkImage(
+                          imageUrl: provider.settingDTO.logoUrl,
                           width: 130,
                           height: 130,
                         )
-                      : Image.asset(
-                          'assets/images/logo_vietgr_payment.png',
-                          width: 130,
-                          height: 130,
-                        ),
+                      : provider.fileLogo.path.isNotEmpty
+                          ? Image.file(
+                              provider.fileLogo,
+                              width: 130,
+                              height: 130,
+                            )
+                          : Image.asset(
+                              'assets/images/logo_vietgr_payment.png',
+                              width: 130,
+                              height: 130,
+                            ),
                 );
               }),
               const Padding(padding: EdgeInsets.only(top: 10)),

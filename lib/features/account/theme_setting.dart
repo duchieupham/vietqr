@@ -3,8 +3,6 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/features/account/blocs/account_bloc.dart';
-import 'package:vierqr/features/account/events/account_event.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_provider.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
@@ -21,13 +19,6 @@ class ThemeSettingView extends StatefulWidget {
   ThemeSettingView({super.key});
 
   static String routeName = '/theme_setting';
-
-  //asset UI list
-  static final List<String> _assetList = [
-    'assets/images/ic-light-theme.png',
-    'assets/images/ic-dark-theme.png',
-    'assets/images/ic-system-theme.png',
-  ];
 
   @override
   State<ThemeSettingView> createState() => _ThemeSettingViewState();

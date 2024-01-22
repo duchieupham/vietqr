@@ -173,6 +173,8 @@ class _LoginState extends State<_Login> {
                         state.appInfoDTO!.themeImgUrl, path);
 
                     ThemeHelper.instance.updateThemeLogin(localPath);
+                    ThemeHelper.instance
+                        .updateThemeVerLogin(state.appInfoDTO!.themeVer);
                     Provider.of<DashBoardProvider>(context, listen: false)
                         .updateFileThemeLogin(localPath);
                   }
