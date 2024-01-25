@@ -6,18 +6,14 @@ import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/base_manager.dart';
 import 'package:vierqr/commons/utils/error_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
-import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/features/account/blocs/account_bloc.dart';
 import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/dashboard/repostiroties/dashboard_repository.dart';
 import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
 import 'package:vierqr/models/bank_name_information_dto.dart';
-import 'package:vierqr/models/bank_type_dto.dart';
-import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/models/theme_dto.dart';
-import 'package:vierqr/models/viet_qr_scanned_dto.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>

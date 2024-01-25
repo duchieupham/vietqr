@@ -10,7 +10,7 @@ import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/pin_code_input.dart';
 import 'package:vierqr/models/account_login_dto.dart';
 import 'package:vierqr/models/app_info_dto.dart';
-import 'package:vierqr/services/providers/auth_provider.dart';
+import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 
 import 'bgr_app_bar_login.dart';
 import 'forgot_password_screen.dart';
@@ -54,7 +54,7 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
   @override
   void initState() {
     super.initState();
-    Provider.of<AuthProvider>(context, listen: false).initFileTheme();
+    Provider.of<AuthProvider>(context, listen: false).initThemeDTO();
   }
 
   @override

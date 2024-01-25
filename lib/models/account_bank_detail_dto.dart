@@ -5,37 +5,39 @@ class AccountBankDetailDTO {
   final String bankCode;
   final String bankName;
   final String imgId;
-  final int type;
-  final String bankShortName;
-  final String caiValue;
-  final String userId;
   final String bankTypeId;
   final int bankTypeStatus;
+  final String caiValue;
+  final String userId;
+  final int type;
   final String nationalId;
   final String qrCode;
   final String phoneAuthenticated;
-  final List<BusinessDetails> businessDetails;
-  final List<Transactions> transactions;
+  final dynamic ewalletToken;
+  final int unlinkedType;
   final bool authenticated;
+  final String bankShortName;
+  final List<Transactions>? transactions;
 
   AccountBankDetailDTO(
-      {required this.id,
-      required this.bankAccount,
-      required this.userBankName,
-      required this.bankCode,
-      required this.bankName,
-      required this.imgId,
-      required this.type,
-      required this.caiValue,
-      required this.userId,
-      required this.bankTypeId,
-      required this.bankTypeStatus,
-      required this.nationalId,
-      required this.qrCode,
-      required this.phoneAuthenticated,
-      required this.businessDetails,
-      required this.transactions,
-      required this.authenticated,
+      {this.id = '',
+      this.bankAccount = '',
+      this.userBankName = '',
+      this.bankCode = '',
+      this.bankName = '',
+      this.imgId = '',
+      this.type = 0,
+      this.caiValue = '',
+      this.userId = '',
+      this.bankTypeId = '',
+      this.bankTypeStatus = 0,
+      this.nationalId = '',
+      this.qrCode = '',
+      this.phoneAuthenticated = '',
+      this.ewalletToken = null,
+      this.unlinkedType = 0,
+      this.authenticated = false,
+      this.transactions,
       this.bankShortName = ''});
 
   factory AccountBankDetailDTO.fromJson(Map<String, dynamic> json) {
@@ -67,7 +69,8 @@ class AccountBankDetailDTO {
       nationalId: json['nationalId'] ?? '',
       qrCode: json['qrCode'] ?? '',
       phoneAuthenticated: json['phoneAuthenticated'] ?? '',
-      businessDetails: businessDetails,
+      ewalletToken: json['ewalletToken'] ?? '',
+      unlinkedType: json['unlinkedType'] ?? '',
       transactions: transactions,
       authenticated: json['authenticated'] ?? false,
     );
@@ -85,14 +88,9 @@ class AccountBankDetailDTO {
     data['nationalId'] = nationalId;
     data['qrCode'] = qrCode;
     data['phoneAuthenticated'] = phoneAuthenticated;
-
-    data['businessDetails'] = (businessDetails.isEmpty)
-        ? []
-        : businessDetails.map((v) => v.toJson()).toList();
-
-    data['transactions'] = (transactions.isEmpty)
-        ? []
-        : transactions.map((v) => v.toJson()).toList();
+    data['ewalletToken'] = ewalletToken;
+    data['unlinkedType'] = unlinkedType;
+    data['phoneAuthenticated'] = phoneAuthenticated;
 
     data['authenticated'] = authenticated;
     return data;

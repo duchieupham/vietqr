@@ -19,7 +19,6 @@ class Routes {
   static const String SELECT_BANK_TYPE = '/selectBankType';
   static const String BANK_CARD_GENERATED_VIEW = '/bankCardGenerated';
   static const String QR_SHARE_VIEW = '/qrShare';
-  static const String ADD_BUSINESS_VIEW = '/addBusiness';
   static const String BUSINESS_INFORMATION_VIEW = '/businessInformation';
   static const String BANK_CARD_DETAIL_VEW = '/bankCardDetail';
   static const String TRANSACTION_HISTORY_VIEW = '/transactionHistoryView';
@@ -28,7 +27,6 @@ class Routes {
   static const String NOTIFICATION_VIEW = '/notification';
   static const String NATIONAL_INFORMATION = '/nationalInformation';
   static const String BUSINESS_TRANSACTION = '/businessTransaction';
-  static const String BRANCH_DETAIL = '/branchDetail';
   static const String PHONE_BOOK = '/phoneBook';
   static const String PHONE_BOOK_DETAIL = '/phone_book_detail';
   static const String UPDATE_PHONE_BOOK = '/update_phone_book';
@@ -45,6 +43,5 @@ class Routes {
   static const String CONNECT_STEP_LARK_SCREEN = '/connect_step_lark_screen';
   // static const String SETTING_BDSD = '/setting_bdsd';
   static const String TRANSACTION_WALLET = '/transaction_wallet';
-  static const String BUSINESS = '/business';
   static const String SHOW_QR = '/show_qr';
 }

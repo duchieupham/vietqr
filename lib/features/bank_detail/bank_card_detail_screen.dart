@@ -65,26 +65,7 @@ class _BankCardDetailState extends State<BankCardDetailState> {
       qrCode: '',
       imgId: '');
 
-  late AccountBankDetailDTO dto = AccountBankDetailDTO(
-    id: '',
-    bankAccount: '',
-    userBankName: '',
-    bankCode: '',
-    bankName: '',
-    imgId: '',
-    type: 0,
-    userId: '',
-    bankTypeId: '',
-    bankTypeStatus: 0,
-    nationalId: '',
-    qrCode: '',
-    bankShortName: '',
-    phoneAuthenticated: '',
-    businessDetails: [],
-    transactions: [],
-    authenticated: false,
-    caiValue: '',
-  );
+  late AccountBankDetailDTO dto = AccountBankDetailDTO();
   final otpController = TextEditingController();
 
   Future<void> _refresh() async {

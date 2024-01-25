@@ -22,7 +22,6 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/phone_widget.dart';
 import 'package:vierqr/features/contact_us/contact_us_screen.dart';
 import 'package:vierqr/features/create_qr_un_authen/create_qr_un_quthen.dart';
-import 'package:vierqr/features/dashboard/blocs/dashboard_provider.dart';
 import 'package:vierqr/features/home/widget/dialog_update.dart';
 import 'package:vierqr/features/home/widget/nfc_adr_widget.dart';
 import 'package:vierqr/features/login/blocs/login_bloc.dart';
@@ -37,7 +36,7 @@ import 'package:vierqr/main.dart';
 import 'package:vierqr/models/account_login_dto.dart';
 import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/info_user_dto.dart';
-import 'package:vierqr/services/providers/auth_provider.dart';
+import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/services/shared_references/account_helper.dart';
 import 'package:vierqr/services/shared_references/theme_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
@@ -104,7 +103,7 @@ class _LoginState extends State<_Login> {
           .updateEventTheme(null);
       Provider.of<AuthProvider>(context, listen: false)
           .updateFileThemeLogin('');
-      Provider.of<AuthProvider>(context, listen: false).initFileTheme();
+      Provider.of<AuthProvider>(context, listen: false).initThemeDTO();
       Provider.of<AuthProvider>(context, listen: false).updateFileLogo('');
     });
 
@@ -217,7 +216,7 @@ class _LoginState extends State<_Login> {
               }
 
               Provider.of<AuthProvider>(context, listen: false)
-                  .initFileTheme();
+                  .initThemeDTO();
 
               Navigator.of(context).popUntil((route) => route.isFirst);
               Navigator.of(context)

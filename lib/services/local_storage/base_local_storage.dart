@@ -1,16 +1,19 @@
 import 'package:hive/hive.dart';
-import 'package:vierqr/models/theme_dto.dart';
 
-abstract class BaseLocalStorageRepository {
-  Future<Box> openBox(String boxName);
-
-  List<ThemeDTO> getWishlist(Box box);
-
-  ThemeDTO getThemeDTO(Box box);
-
-  Future<void> addProductToWishlist(Box box, ThemeDTO model);
-
-  Future<void> removeProductFromWishlist(Box box, ThemeDTO model);
-
+abstract class HiveLocalRepository<T> {
   Future<void> clearWishlist(Box box);
+
+  Future<void> removeItemFromWishlist(Box box, T model);
+
+  Future<void> addProductToWishlist(Box box, T model);
+
+  Future<void> addSingleToWishBox(Box box, T model, String id);
+
+  Future<void> removeSingleFromBox(Box box, String id);
+
+  T? getSingleWish(Box box, String id);
+
+  List<T> getWishlist(Box box);
+
+  Future<Box> openBox(String boxName);
 }

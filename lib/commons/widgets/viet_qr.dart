@@ -5,9 +5,8 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
-import 'package:vierqr/features/dashboard/blocs/dashboard_provider.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
-import 'package:vierqr/services/providers/auth_provider.dart';
+import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:wakelock/wakelock.dart';
 
 class VietQr extends StatefulWidget {

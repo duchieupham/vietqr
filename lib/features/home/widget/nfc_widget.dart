@@ -5,7 +5,7 @@ import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/features/mobile_recharge/mobile_recharge_screen.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
-import 'package:vierqr/services/providers/auth_provider.dart';
+import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 
 class NFCWidget extends StatefulWidget {
   @override

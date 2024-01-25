@@ -34,7 +34,7 @@ import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/account_information_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
-import 'package:vierqr/services/providers/auth_provider.dart';
+import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
 import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
@@ -285,9 +285,7 @@ class _UserEditViewState extends State<UserEditView> {
                                       File? file = File(pickedFile.path);
                                       File? compressedFile = FileUtils.instance
                                           .compressImage(file);
-                                      Provider.of<AuthProvider>(context,
-                                              listen: false)
-                                          .setImage(compressedFile);
+
                                       await Future.delayed(
                                           const Duration(milliseconds: 200),
                                           () {

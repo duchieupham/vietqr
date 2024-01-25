@@ -15,7 +15,7 @@ import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/pin_code_input.dart';
 import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
-import 'package:vierqr/services/providers/auth_provider.dart';
+import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/services/providers/verify_otp_provider.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -47,7 +47,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {});
     countdownProvider = CountDownOTPNotifier(120);
-    Provider.of<AuthProvider>(context, listen: false).initFileTheme();
+    Provider.of<AuthProvider>(context, listen: false).initThemeDTO();
   }
 
   @override

@@ -25,6 +25,16 @@ class ThemeDTO extends HiveObject {
     this.file = '',
   });
 
+  ThemeDTO get copy {
+    final objectInstance = ThemeDTO()
+      ..id = id
+      ..type = type
+      ..imgUrl = imgUrl
+      ..name = name
+      ..file = file;
+    return objectInstance;
+  }
+
   factory ThemeDTO.fromJson(Map<String, dynamic> json) {
     return ThemeDTO(
       id: json['id'] ?? '',
@@ -39,7 +49,7 @@ class ThemeDTO extends HiveObject {
     file = localPath;
   }
 
-  Future<File> getImageFile() async {
-    return File(file);
+  void setType(int themeType) {
+    type = themeType;
   }
 }

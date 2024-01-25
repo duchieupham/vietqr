@@ -1,18 +1,15 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
-import 'package:vierqr/features/dashboard/blocs/dashboard_provider.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/dashboard/widget/custom_switch_view.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/models/theme_dto.dart';
-import 'package:vierqr/models/theme_dto_local.dart';
-import 'package:vierqr/services/providers/auth_provider.dart';
+import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 
 import 'states/custom_radio.dart';
 
@@ -26,35 +23,13 @@ class ThemeSettingView extends StatefulWidget {
 }
 
 class _ThemeSettingViewState extends State<ThemeSettingView> {
-  final StreamController<List<File>> _imageListStreamController =
-      StreamController<List<File>>();
-
-  Future<void> _loadImage(List<ThemeDTO> listDto) async {
-    if (_imageListStreamController.hasListener) {
-      _imageListStreamController.close();
-    }
-    List<File> listFile = [];
-    listDto.forEach((element) async {
-      File file = await element.getImageFile();
-      listFile.add(file);
-    });
-
-    _imageListStreamController.add(listFile);
-  }
-
   @override
   void initState() {
     super.initState();
-    List<ThemeDTO> listDto =
-        Provider.of<AuthProvider>(context, listen: false).themes;
-    _loadImage(listDto);
   }
 
   @override
   void dispose() {
-    if (_imageListStreamController.hasListener) {
-      _imageListStreamController.close();
-    }
     super.dispose();
   }
 
@@ -124,6 +99,7 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
               ),
               const SizedBox(height: 12),
               Consumer<AuthProvider>(builder: (context, provider, _) {
+                provider.loadImage();
                 return _buildContainer(
                   color: provider.settingDTO.themeType == 0
                       ? AppColor.GREY_BG
@@ -131,8 +107,8 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
                   padding: EdgeInsets.zero,
                   child: Column(
                     children: [
-                      StreamBuilder(
-                        stream: _imageListStreamController.stream,
+                      StreamBuilder<List<File>>(
+                        stream: provider.broadcastStream,
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             List<File> imageList = snapshot.data as List<File>;
@@ -152,23 +128,23 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
                                       child: Row(
                                         children: [
                                           ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                            child:
-                                                imageList[index].path.isNotEmpty
-                                                    ? Image.file(
-                                                        imageList[index],
-                                                        width: 90,
-                                                        height: 50,
-                                                        fit: BoxFit.cover,
-                                                      )
-                                                    : CachedNetworkImage(
-                                                        imageUrl: e.imgUrl,
-                                                        width: 90,
-                                                        height: 50,
-                                                        fit: BoxFit.cover,
-                                                      ),
-                                          ),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              child: imageList[index]
+                                                      .path
+                                                      .isNotEmpty
+                                                  ? Image.file(
+                                                      imageList[index],
+                                                      width: 90,
+                                                      height: 50,
+                                                      fit: BoxFit.cover,
+                                                    )
+                                                  : Image.asset(
+                                                      'assets/images/bgr-header.png',
+                                                      width: 90,
+                                                      height: 50,
+                                                      fit: BoxFit.cover,
+                                                    )),
                                           const SizedBox(width: 12),
                                           Text(e.name),
                                           const Spacer(),
@@ -261,18 +237,6 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
     );
   }
 
-  String getTitleTheme(int index) {
-    String title = '';
-    if (index == 0) {
-      title = 'Sáng';
-    } else if (index == 1) {
-      title = 'Tối';
-    } else {
-      title = 'Hệ thống';
-    }
-    return title;
-  }
-
   Widget _buildContainer({
     required Widget child,
     Color? color,
@@ -289,17 +253,9 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
     );
   }
 
-  onSelect(provider, e) {
+  onSelect(provider, ThemeDTO e) {
     if (provider.settingDTO.themeType == 0) return;
-    ThemeDTOLocal dto = ThemeDTOLocal(
-      id: e.id,
-      type: e.type,
-      imgUrl: e.imgUrl,
-      name: e.name,
-      file: e.file,
-    );
-
-    provider.updateThemeDTO(dto);
+    provider.updateThemeDTO(e);
     context.read<DashBoardBloc>().add(UpdateThemeEvent(e.type));
   }
 }

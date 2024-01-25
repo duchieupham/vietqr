@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wakelock/wakelock.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:dudv_base/dudv_base.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -20,7 +19,7 @@ import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
 import 'package:vierqr/models/bank_account_remove_dto.dart';
 import 'package:vierqr/services/sqflite/local_database.dart';
-import 'package:vierqr/services/providers/auth_provider.dart';
+import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/features/create_qr/create_qr_screen.dart';
 import 'package:vierqr/features/printer/views/printing_view.dart';
@@ -200,13 +199,6 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
                       ],
                     ),
                   ),
-                  if (widget.dto.authenticated &&
-                      widget.dto.businessDetails.isNotEmpty) ...[
-                    const SizedBox(height: 24),
-                    _buildTitle(title: 'Thông tin doanh nghiệp'),
-                    _buildBusinessInformation(
-                        context, widget.dto.businessDetails),
-                  ],
                   if (userId == widget.dto.userId) ...[
                     const SizedBox(height: 16),
                     _buildTitle(title: 'Thiết lập nâng cao'),
@@ -443,92 +435,6 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
             padding: EdgeInsets.only(
                 bottom: (PlatformUtils.instance.isIOsApp()) ? 20 : 20)),
       ],
-    );
-  }
-
-  Widget _buildBusinessInformation(
-      BuildContext context, List<BusinessDetails> list) {
-    final double width = MediaQuery.of(context).size.width;
-    return Column(
-      children: List.generate(list.length, (index) {
-        String heroId = list[index].businessId;
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            BoxLayout(
-              width: width,
-              borderRadius: 8,
-              padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Column(
-                    children: List.generate(list[index].branchDetails.length,
-                        (index2) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              const Expanded(child: Text('Doanh nghiệp')),
-                              Expanded(
-                                flex: 2,
-                                child: Text(
-                                  list[index].branchDetails[index2].branchName,
-                                  maxLines: 1,
-                                  textAlign: TextAlign.right,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const Padding(padding: EdgeInsets.only(top: 20)),
-                          Row(
-                            children: [
-                              const Expanded(
-                                child: Text('Địa chỉ'),
-                              ),
-                              Expanded(
-                                flex: 2,
-                                child: Text(
-                                  list[index].branchDetails[index2].address,
-                                  maxLines: 1,
-                                  textAlign: TextAlign.right,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      );
-                    }).toList(),
-                  ),
-                  const Padding(padding: EdgeInsets.only(top: 20)),
-                  DividerWidget(width: width),
-                  ButtonWidget(
-                    width: width,
-                    height: 40,
-                    text: 'Chi tiết doanh nghiệp',
-                    textColor: AppColor.BLUE_TEXT,
-                    bgColor: AppColor.TRANSPARENT,
-                    function: () {
-                      Navigator.pushNamed(
-                        context,
-                        Routes.BUSINESS_INFORMATION_VIEW,
-                        arguments: {'heroId': heroId},
-                      ).then((value) {
-                        widget.bloc.add(
-                            const BankCardGetDetailEvent(isLoading: false));
-                      });
-                    },
-                  )
-                ],
-              ),
-            ),
-            const SizedBox(height: 12),
-          ],
-        );
-      }).toList(),
     );
   }
 

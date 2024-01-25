@@ -23,16 +23,9 @@ import 'package:vierqr/commons/helper/media_helper.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/pref_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/features/account/blocs/account_bloc.dart';
 import 'package:vierqr/features/add_bank/add_bank_screen.dart';
 import 'package:vierqr/features/bank_card/views/search_bank_view.dart';
 import 'package:vierqr/features/bank_type/select_bank_type_screen.dart';
-import 'package:vierqr/features/branch/views/branch_detail_view.dart';
-import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
-import 'package:vierqr/features/business/views/add_business_view.dart';
-import 'package:vierqr/features/business/views/business_information_view.dart';
-import 'package:vierqr/features/business/views/business_screen.dart';
-import 'package:vierqr/features/business/views/business_transaction_view.dart';
 import 'package:vierqr/features/connect_lark/connect_lark_screen.dart';
 import 'package:vierqr/features/connect_telegram/connect_telegram_screen.dart';
 import 'package:vierqr/features/connect_telegram/widget/connect_screen.dart';
@@ -67,8 +60,7 @@ import 'package:vierqr/models/notification_transaction_success_dto.dart';
 import 'package:vierqr/models/respone_top_up_dto.dart';
 import 'package:vierqr/models/top_up_sucsess_dto.dart';
 import 'package:vierqr/services/local_notification/notification_service.dart';
-import 'package:vierqr/services/providers/auth_provider.dart';
-import 'package:vierqr/services/providers/business_inforamtion_provider.dart';
+import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/services/providers/pin_provider.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
 import 'package:vierqr/services/shared_references/account_helper.dart';
@@ -114,6 +106,17 @@ Future<String> downloadAndSaveImage(String imageUrl, String path) async {
   return localImagePath;
 }
 
+Future<String> saveImageToLocal(Uint8List uint8list, String path) async {
+  final directory = await getApplicationDocumentsDirectory();
+  final localImagePath = '${directory.path}/$path';
+
+  final file = File(localImagePath);
+  file.writeAsBytesSync(uint8list);
+
+  print('Image saved to: $localImagePath');
+  return localImagePath;
+}
+
 Future<File> getImageFile(String file) async {
   return File(file);
 }
@@ -133,25 +136,7 @@ void main() async {
   }
   cameras = await availableCameras();
   LOG.verbose('Config Environment: ${EnvConfig.getEnv()}');
-  // await getUserInformation();
   runApp(VietQRApp());
-}
-
-Future<void> getUserInformation() async {
-  try {
-    String userId = UserInformationHelper.instance.getUserId();
-    if (userId.isEmpty) return;
-    final result = await accRepository.getUserInformation(userId);
-    if (result.userId.isNotEmpty) {
-      await UserInformationHelper.instance.setAccountInformation(result);
-    }
-    final settingAccount = await accRepository.getSettingAccount(userId);
-    if (settingAccount.userId.isNotEmpty) {
-      await UserInformationHelper.instance.setAccountSetting(settingAccount);
-    }
-  } catch (e) {
-    LOG.error('Error at _getPointAccount: $e');
-  }
 }
 
 Future<void> _initialServiceHelper() async {
@@ -223,11 +208,10 @@ class _VietQRApp extends State<VietQRApp> {
       notificationController = BehaviorSubject<bool>();
     }
     notificationController.sink.add(false);
-// Đăng ký callback onMessage
+    // Đăng ký callback onMessage
     onFcmMessage();
-// Đăng ký callback onMessageOpenedApp
+    // Đăng ký callback onMessageOpenedApp
     onFcmMessageOpenedApp();
-//
     requestNotificationPermission();
     handleMessageOnBackground();
   }
@@ -239,7 +223,7 @@ class _VietQRApp extends State<VietQRApp> {
   void onFcmMessage() async {
     await NotificationService().initialNotification();
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-// Xử lý push notification nếu ứng dụng đang chạy
+      // Xử lý push notification nếu ứng dụng đang chạy
       LOG.info(
           "Push notification received: ${message.notification?.title} - ${message.notification?.body}");
       LOG.info("receive data: ${message.data}");
@@ -249,7 +233,7 @@ class _VietQRApp extends State<VietQRApp> {
         payload: json.encode(message.data),
       );
 
-//process when receive data
+      //process when receive data
       if (message.data.isNotEmpty) {
         if (message.data['notificationType'] != null &&
             message.data['notificationType'] == Stringify.NOTI_TYPE_TOPUP) {
@@ -275,7 +259,7 @@ class _VietQRApp extends State<VietQRApp> {
             );
           }
         }
-//process success transcation
+        //process success transcation
         if (message.data['notificationType'] != null &&
             message.data['notificationType'] ==
                 Stringify.NOTI_TYPE_UPDATE_TRANSACTION) {
@@ -298,14 +282,13 @@ class _VietQRApp extends State<VietQRApp> {
 
   void onFcmMessageOpenedApp() {
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-// Xử lý push notification nếu ứng dụng không đang chạy
+      // Xử lý push notification nếu ứng dụng không đang chạy
       if (message.data['transactionReceiveId'] != null) {
         Navigator.pushNamed(
           NavigationService.navigatorKey.currentContext!,
           Routes.TRANSACTION_DETAIL,
           arguments: {
             'transactionId': message.data['transactionReceiveId'],
-// 'bankId': bankId,
           },
         );
       }
@@ -326,7 +309,6 @@ class _VietQRApp extends State<VietQRApp> {
               Routes.TRANSACTION_DETAIL,
               arguments: {
                 'transactionId': remoteMessage.data['transactionReceiveId'],
-// 'bankId': bankId,
               },
             );
           }
@@ -357,28 +339,15 @@ class _VietQRApp extends State<VietQRApp> {
             create: (BuildContext context) =>
                 DashBoardBloc(context)..add(GetVersionAppEvent()),
           ),
-          BlocProvider<BusinessInformationBloc>(
-            create: (BuildContext context) => BusinessInformationBloc(),
-          ),
         ],
         child: MultiProvider(
           providers: [
             ChangeNotifierProvider(create: (context) => AuthProvider()),
             ChangeNotifierProvider(create: (context) => PinProvider()),
             ChangeNotifierProvider(create: (context) => UserEditProvider()),
-            ChangeNotifierProvider(
-                create: (context) => BusinessInformationProvider()),
           ],
           child: Consumer<AuthProvider>(
             builder: (context, authProvider, child) {
-              if (authProvider.typeBankArr != 0) {
-                authProvider.updateBankArr(0);
-              }
-
-              if (authProvider.getThemeIndex() != 0) {
-                authProvider.updateThemeByIndex(0);
-              }
-
               return MaterialApp(
                 navigatorKey: NavigationService.navigatorKey,
                 debugShowCheckedModeBanner: false,
@@ -402,9 +371,6 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.SELECT_BANK_TYPE: (context) =>
                       const SelectBankTypeScreen(),
                   Routes.QR_SHARE_VIEW: (context) => QRShareView(),
-                  Routes.BUSINESS_INFORMATION_VIEW: (context) =>
-                      const BusinessInformationView(),
-                  Routes.ADD_BUSINESS_VIEW: (context) => AddBusinessView(),
                   Routes.SCAN_QR_VIEW: (context) => const ScanQrScreen(),
                   Routes.SEARCH_BANK: (context) => SearchBankView(),
                   Routes.NOTIFICATION_VIEW: (context) =>
@@ -413,9 +379,6 @@ class _VietQRApp extends State<VietQRApp> {
                       const TransactionDetailScreen(),
                   Routes.NATIONAL_INFORMATION: (context) =>
                       const NationalInformationView(),
-                  Routes.BUSINESS_TRANSACTION: (context) =>
-                      const BusinessTransactionView(),
-                  Routes.BRANCH_DETAIL: (context) => BranchDetailScreen(),
                   Routes.INTRODUCE_SCREEN: (context) => const IntroduceScreen(),
                   Routes.PHONE_BOOK: (context) => const ContactScreen(),
                   Routes.TOP_UP: (context) => const TopUpScreen(),
@@ -429,17 +392,8 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.REPORT_SCREEN: (context) => const ReportScreen(),
                   Routes.TRANSACTION_WALLET: (context) =>
                       const TransWalletScreen(),
-                  Routes.BUSINESS: (context) => const BusinessScreen(),
                 },
                 onGenerateRoute: (settings) {
-                  if (settings.name == Routes.BUSINESS_INFORMATION_VIEW) {
-                    return PageRouteBuilder(
-                      pageBuilder: (context, animation1, animation2) =>
-                          const BusinessInformationView(),
-                      transitionDuration: const Duration(milliseconds: 300),
-                    );
-                  }
-
                   if (settings.name == Routes.SHOW_QR) {
                     Map map = settings.arguments as Map;
 

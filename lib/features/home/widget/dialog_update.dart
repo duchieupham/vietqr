@@ -5,10 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
-import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
-import 'package:vierqr/features/dashboard/blocs/dashboard_provider.dart';
-import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
-import 'package:vierqr/services/providers/auth_provider.dart';
+import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class DialogUpdateView extends StatefulWidget {

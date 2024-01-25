@@ -27,7 +27,6 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/account/account_screen.dart';
 import 'package:vierqr/features/bank_card/bank_screen.dart';
 import 'package:vierqr/features/contact/contact_screen.dart';
-import 'package:vierqr/features/dashboard/blocs/dashboard_provider.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
 import 'package:vierqr/features/dashboard/widget/background_app_bar_home.dart';
@@ -40,16 +39,58 @@ import 'package:vierqr/features/notification/states/notification_state.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_card_insert_unauthenticated.dart';
+import 'package:vierqr/models/bottom_nav_dto.dart';
 import 'package:vierqr/models/contact_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/models/theme_dto.dart';
+import 'package:vierqr/models/user_repository.dart';
 import 'package:vierqr/services/providers/account_balance_home_provider.dart';
-import 'package:vierqr/services/providers/auth_provider.dart';
+import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
 import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
+import 'package:vierqr/services/shared_references/theme_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 import 'events/dashboard_event.dart';
+import 'package:http/http.dart' as http;
+
+final listBottomNavigation = [
+  const NavigationDTO(
+    name: 'TK ngân hàng',
+    label: 'Tài khoản',
+    assetsActive: 'assets/images/ic-tb-card-selected.png',
+    assetsUnActive: 'assets/images/ic-tb-card.png',
+    index: 0,
+  ),
+  const NavigationDTO(
+    name: 'Trang chủ\n',
+    label: 'Trang chủ',
+    assetsActive: 'assets/images/ic-tb-dashboard-selected.png',
+    assetsUnActive: 'assets/images/ic-tb-dashboard.png',
+    index: 1,
+  ),
+  const NavigationDTO(
+    name: '',
+    label: 'Quét QR',
+    assetsActive: 'assets/images/ic-tb-qr.png',
+    assetsUnActive: 'assets/images/ic-tb-qr.png',
+    index: -1,
+  ),
+  const NavigationDTO(
+    name: 'Ví QR',
+    label: 'Ví QR',
+    assetsActive: 'assets/images/ic-qr-wallet-blue.png',
+    assetsUnActive: 'assets/images/ic-qr-wallet-grey.png',
+    index: 2,
+  ),
+  const NavigationDTO(
+    name: 'Cá nhân',
+    label: 'Cá nhân',
+    assetsActive: 'assets/images/ic-tb-personal-selected.png',
+    assetsUnActive: 'assets/images/ic-tb-personal.png',
+    index: 3,
+  ),
+];
 
 class DashBoardScreen extends StatefulWidget {
   const DashBoardScreen({Key? key}) : super(key: key);
@@ -158,25 +199,13 @@ class _DashBoardScreen extends State<DashBoardScreen>
     SendPort sendPort = args[0];
     List<ThemeDTO> list = args[1];
 
-    double progress = 0;
-    if (list.isNotEmpty) {
-      double amount = 1 / list.length;
-      for (int i = 0; i < list.length; i++) {
-        progress += amount;
-        if (i == list.length - 1) {
-          if (progress < 1) {
-            progress = 1;
-          }
-        } else if (progress > 1) {
-          progress = 1;
-        }
-
-        sendPort.send(HeavyTaskData(progress: progress, index: i));
-      }
-      sendPort.send(HeavyTaskData(progress: progress));
-    } else {
-      sendPort.send(HeavyTaskData(progress: 1.0));
+    for (var message in list) {
+      final response = await http.get(Uri.parse(message.imgUrl));
+      final bytes = response.bodyBytes;
+      sendPort
+          .send(SaveImageData(progress: bytes, index: list.indexOf(message)));
     }
+    sendPort.send(SaveImageData(progress: Uint8List(0), isDone: true));
   }
 
   Future<void> _saveImageTaskStreamReceiver(List<ThemeDTO> list) async {
@@ -184,7 +213,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
     final receivePort = ReceivePort();
     Isolate.spawn(saveImageTask, [receivePort.sendPort, list]);
     await for (var message in receivePort) {
-      if (message is HeavyTaskData) {
+      if (message is SaveImageData) {
         if (message.index != null) {
           ThemeDTO dto = list[message.index!];
 
@@ -193,13 +222,14 @@ class _DashBoardScreen extends State<DashBoardScreen>
             path.replaceAll('.png', '');
           }
 
-          String localPath = await downloadAndSaveImage(dto.imgUrl, path);
+          String localPath = await saveImageToLocal(message.progress, path);
           dto.file = localPath;
           listThemeLocal.add(dto);
         }
 
-        if (message.progress >= 1) {
+        if (message.isDone) {
           receivePort.close();
+          if (!mounted) return;
           Provider.of<AuthProvider>(context, listen: false)
               .updateListTheme(listThemeLocal, saveLocal: true);
           return;
@@ -319,7 +349,6 @@ class _DashBoardScreen extends State<DashBoardScreen>
   }
 
   void initialServices(BuildContext context) {
-    checkUserInformation();
     _dashBoardBloc.add(const TokenEventCheckValid());
     _dashBoardBloc.add(GetPointEvent());
     if (Provider.of<AuthProvider>(context, listen: false).introduceDTO ==
@@ -365,11 +394,6 @@ class _DashBoardScreen extends State<DashBoardScreen>
     super.dispose();
   }
 
-//check user information is updated before or not
-  void checkUserInformation() async {
-    _dashBoardBloc.add(GetListThemeEvent());
-  }
-
   void _updateFcmToken(bool isFromLogin) {
     if (!isFromLogin) {
       _dashBoardBloc.add(const TokenFcmUpdateEvent());
@@ -402,7 +426,14 @@ class _DashBoardScreen extends State<DashBoardScreen>
           Provider.of<AuthProvider>(context, listen: false)
               .updateListTheme(list);
 
-          _saveImageTaskStreamReceiver(list);
+          int themeVerLocal = ThemeHelper.instance.getThemeKey();
+          int themeVerSetting =
+              Provider.of<AuthProvider>(context, listen: false).themeVer;
+          List<ThemeDTO> listLocal = await UserRepository.instance.getThemes();
+
+          if (themeVerLocal != themeVerSetting || listLocal.isEmpty) {
+            _saveImageTaskStreamReceiver(list);
+          }
         }
 
         if (state.request == DashBoardType.GET_USER_SETTING) {
@@ -424,6 +455,10 @@ class _DashBoardScreen extends State<DashBoardScreen>
             Provider.of<AuthProvider>(context, listen: false)
                 .updateThemeVer(state.appInfoDTO!.themeVer);
           }
+
+          //gọi ở đây để check nếu themeVer có thay đổi hay k
+          _dashBoardBloc.add(GetListThemeEvent());
+
           Provider.of<AuthProvider>(context, listen: false)
               .updateAppInfoDTO(state.appInfoDTO, isCheckApp: state.isCheckApp);
           if (Provider.of<AuthProvider>(context, listen: false)
@@ -700,9 +735,9 @@ class _DashBoardScreen extends State<DashBoardScreen>
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: List.generate(
-                  page.listItem.length,
+                  listBottomNavigation.length,
                   (index) {
-                    var item = page.listItem.elementAt(index);
+                    var item = listBottomNavigation.elementAt(index);
 
                     String url = (item.index == page.indexSelected)
                         ? item.assetsActive
@@ -990,4 +1025,12 @@ class _DashBoardScreen extends State<DashBoardScreen>
       },
     );
   }
+}
+
+class SaveImageData {
+  SaveImageData({required this.progress, this.index, this.isDone = false});
+
+  Uint8List progress;
+  int? index;
+  bool isDone;
 }

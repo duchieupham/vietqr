@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+
 // import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
@@ -21,10 +22,8 @@ import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
 import 'package:vierqr/features/bank_detail/bank_card_detail_screen.dart';
-import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
 import 'package:vierqr/features/create_qr/create_qr_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
-import 'package:vierqr/features/dashboard/blocs/dashboard_provider.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
 import 'package:vierqr/layouts/box_layout.dart';
@@ -32,7 +31,7 @@ import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/qr_create_dto.dart';
-import 'package:vierqr/services/providers/auth_provider.dart';
+import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/services/providers/bank_card_select_provider.dart';
 import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
@@ -65,7 +64,6 @@ class _BankScreenState extends State<_BankScreen>
   final scrollController = ScrollController();
   final carouselController = CarouselController();
 
-  late BusinessInformationBloc businessInformationBloc;
   late BankBloc _bloc;
 
   String userId = UserInformationHelper.instance.getUserId();
@@ -73,7 +71,6 @@ class _BankScreenState extends State<_BankScreen>
   StreamSubscription? _subscription;
 
   initialServices(BuildContext context) {
-    businessInformationBloc = BlocProvider.of(context);
     _bloc = BlocProvider.of(context);
     Provider.of<BankCardSelectProvider>(context, listen: false).reset();
   }

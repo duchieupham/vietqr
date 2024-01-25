@@ -10,10 +10,6 @@ class ThemeStorageRepository {
     return box;
   }
 
-  List<ThemeDTOLocal> getWishlist(Box box, String userId) {
-    return box.values.toList() as List<ThemeDTOLocal>;
-  }
-
   ThemeDTOLocal? getWishTheme(Box box, String userId) {
     print(box.containsKey(userId));
     return box.get(userId);

@@ -60,6 +60,7 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
 
   List<MemberBranchModel> listMemberData = [];
   List<MemberBranchModel> listMember = [];
+
   @override
   void initState() {
     super.initState();

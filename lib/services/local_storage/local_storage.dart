@@ -3,7 +3,7 @@ import 'package:vierqr/models/theme_dto.dart';
 
 import 'base_local_storage.dart';
 
-class LocalStorageRepository extends BaseLocalStorageRepository {
+class ThemeDTORepository extends HiveLocalRepository<ThemeDTO> {
   Type boxType = ThemeDTO;
 
   @override
@@ -13,28 +13,38 @@ class LocalStorageRepository extends BaseLocalStorageRepository {
   }
 
   @override
-  List<ThemeDTO> getWishlist(Box box) {
-    return box.values.toList() as List<ThemeDTO>;
-  }
-
-  @override
-  Future<void> addProductToWishlist(Box box, ThemeDTO model) async {
+  Future<void> addProductToWishlist(Box<dynamic> box, ThemeDTO model) async {
     await box.put(model.id, model);
   }
 
   @override
-  Future<void> removeProductFromWishlist(Box box, ThemeDTO model) async {
+  Future<void> addSingleToWishBox(
+      Box<dynamic> box, ThemeDTO model, String id) async {
+    await box.put(id, model);
+  }
+
+  @override
+  ThemeDTO? getSingleWish(Box<dynamic> box, String id) {
+    return box.get(id);
+  }
+
+  @override
+  List<ThemeDTO> getWishlist(Box<dynamic> box) {
+    return box.values.toList() as List<ThemeDTO>;
+  }
+
+  @override
+  Future<void> removeSingleFromBox(Box<dynamic> box, String id) async {
+    await box.delete(id);
+  }
+
+  @override
+  Future<void> removeItemFromWishlist(Box<dynamic> box, ThemeDTO model) async {
     await box.delete(model.id);
   }
 
   @override
-  Future<void> clearWishlist(Box box) async {
+  Future<void> clearWishlist(Box<dynamic> box) async {
     await box.clear();
-  }
-
-  @override
-  ThemeDTO getThemeDTO(Box<dynamic> box) {
-    // TODO: implement getThemeDTO
-    throw UnimplementedError();
   }
 }

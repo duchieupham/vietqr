@@ -30,7 +30,7 @@ import 'package:vierqr/features/printer/views/printer_setting_screen.dart';
 import 'package:vierqr/features/setting_bdsd/setting_bdsd_screen.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/app_info_dto.dart';
-import 'package:vierqr/services/providers/auth_provider.dart';
+import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
@@ -628,12 +628,15 @@ class _SettingWidget extends StatelessWidget {
   }) {
     return GestureDetector(
       onTap: onTap,
-      child: Row(
-        children: [
-          Image.asset(urlImage, width: 30, height: 30),
-          const SizedBox(width: 8),
-          Expanded(child: Text(title, style: TextStyle(fontSize: 14))),
-        ],
+      child: Container(
+        color: Colors.transparent,
+        child: Row(
+          children: [
+            Image.asset(urlImage, width: 30, height: 30),
+            const SizedBox(width: 8),
+            Expanded(child: Text(title, style: TextStyle(fontSize: 14))),
+          ],
+        ),
       ),
     );
   }

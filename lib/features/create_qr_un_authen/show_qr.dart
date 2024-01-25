@@ -14,7 +14,7 @@ import 'package:vierqr/commons/widgets/viet_qr.dart';
 import 'package:vierqr/features/printer/views/printing_view.dart';
 import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/bluetooth_printer_dto.dart';
-import 'package:vierqr/services/providers/auth_provider.dart';
+import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/services/sqflite/local_database.dart';
 
 import '../../models/qr_generated_dto.dart';
@@ -123,7 +123,7 @@ class _ShowQrState extends State<ShowQr> {
   @override
   void initState() {
     super.initState();
-    Provider.of<AuthProvider>(context, listen: false).initFileTheme();
+    Provider.of<AuthProvider>(context, listen: false).initThemeDTO();
   }
 
   @override

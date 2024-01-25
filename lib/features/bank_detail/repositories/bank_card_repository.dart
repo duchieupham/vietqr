@@ -268,25 +268,7 @@ class BankCardRepository {
 
   //get detail
   Future<AccountBankDetailDTO> getAccountBankDetail(String bankId) async {
-    AccountBankDetailDTO result = AccountBankDetailDTO(
-      id: '',
-      bankAccount: '',
-      userBankName: '',
-      bankCode: '',
-      bankName: '',
-      imgId: '',
-      type: 0,
-      userId: '',
-      bankTypeId: '',
-      bankTypeStatus: 0,
-      nationalId: '',
-      qrCode: '',
-      phoneAuthenticated: '',
-      businessDetails: [],
-      transactions: [],
-      authenticated: false,
-      caiValue: '',
-    );
+    AccountBankDetailDTO result = AccountBankDetailDTO();
     try {
       final String url = '${EnvConfig.getBaseUrl()}account-bank/detail/$bankId';
       final response = await BaseAPIClient.getAPI(

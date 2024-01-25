@@ -3,7 +3,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/user_repository.dart';
-import 'package:vierqr/services/providers/auth_provider.dart';
+import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 
 ///1. quản lý view chung mà 80% các màn dùng: appbar, dialog confirm, button...
 ///2 lấy thông tin model chung: user
@@ -22,9 +22,6 @@ mixin BaseManager {
   set banks(List<BankTypeDTO> value) => userRes.banks = value;
 
   String get userId => userRes.userId;
-
-  int get getTypeBankArr =>
-      Provider.of<AuthProvider>(context, listen: false).typeBankArr;
 
   PackageInfo? get packageInfo =>
       Provider.of<AuthProvider>(context, listen: false).packageInfo;
