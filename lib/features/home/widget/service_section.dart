@@ -92,7 +92,8 @@ class _ServiceSectionState extends State<ServiceSection> {
         }),
         _buildItemService(context, 'assets/images/ic-mb.png', 'Mở TK\nMB Bank',
             () {
-          _launchUrl();
+          Navigator.pushNamed(context, Routes.OPEN_BANK_MB);
+          // _launchUrl();
         }),
         _buildItemService(
             context, 'assets/images/logo-login-web-3D.png', 'Đăng nhập\nweb',

@@ -1,34 +1,33 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:dudv_base/dudv_base.dart';
+import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:vierqr/layouts/box_layout.dart';
-import 'package:vierqr/models/bank_type_dto.dart';
-import 'package:vierqr/commons/widgets/viet_qr.dart';
-import 'package:vierqr/models/bank_account_dto.dart';
-import 'package:vierqr/models/qr_generated_dto.dart';
-import 'package:vierqr/commons/utils/share_utils.dart';
-import 'package:vierqr/commons/utils/printer_utils.dart';
-import 'package:vierqr/commons/utils/platform_utils.dart';
-import 'package:vierqr/models/bluetooth_printer_dto.dart';
-import 'package:vierqr/commons/utils/navigator_utils.dart';
-import 'package:vierqr/commons/widgets/button_widget.dart';
-import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/commons/widgets/divider_widget.dart';
-import 'package:vierqr/models/account_bank_detail_dto.dart';
-import 'package:vierqr/models/bank_account_remove_dto.dart';
-import 'package:vierqr/services/sqflite/local_database.dart';
-import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
-import 'package:vierqr/commons/widgets/button_icon_widget.dart';
-import 'package:vierqr/features/create_qr/create_qr_screen.dart';
-import 'package:vierqr/features/printer/views/printing_view.dart';
+import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
+import 'package:vierqr/commons/utils/platform_utils.dart';
+import 'package:vierqr/commons/utils/printer_utils.dart';
+import 'package:vierqr/commons/utils/share_utils.dart';
+import 'package:vierqr/commons/widgets/button_icon_widget.dart';
+import 'package:vierqr/commons/widgets/dialog_widget.dart';
+import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
+import 'package:vierqr/commons/widgets/widget_qr.dart';
 import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
+import 'package:vierqr/features/create_qr/create_qr_screen.dart';
+import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
+import 'package:vierqr/features/printer/views/printing_view.dart';
+import 'package:vierqr/layouts/box_layout.dart';
+import 'package:vierqr/models/account_bank_detail_dto.dart';
+import 'package:vierqr/models/bank_account_dto.dart';
+import 'package:vierqr/models/bank_account_remove_dto.dart';
+import 'package:vierqr/models/bank_type_dto.dart';
+import 'package:vierqr/models/bluetooth_printer_dto.dart';
+import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/sqflite/local_database.dart';
 
 class InfoDetailBankAccount extends StatefulWidget {
   final BankCardBloc bloc;
@@ -94,7 +93,7 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
                   RepaintBoundaryWidget(
                     globalKey: globalKey,
                     builder: (key) {
-                      return VietQr(
+                      return WidgetQr(
                           qrGeneratedDTO: widget.qrGeneratedDTO,
                           isVietQR: true);
                     },

@@ -13,6 +13,7 @@ class MAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool isLeading;
   final VoidCallback? onPressed;
   final VoidCallback? callBackHome;
+  final bool showBG;
 
   const MAppBar({
     Key? key,
@@ -21,6 +22,7 @@ class MAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.isLeading = true,
     this.onPressed,
     this.callBackHome,
+    this.showBG = true,
   })  : preferredSize = const Size.fromHeight(60),
         super(key: key);
 
@@ -29,11 +31,14 @@ class MAppBar extends StatelessWidget implements PreferredSizeWidget {
     return Consumer<AuthProvider>(builder: (context, page, child) {
       String url = page.settingDTO.themeImgUrl;
       return Container(
-        decoration: BoxDecoration(
-            image: page.file.path.isEmpty
-                ? DecorationImage(image: NetworkImage(url), fit: BoxFit.cover)
-                : DecorationImage(
-                    image: FileImage(page.file), fit: BoxFit.cover)),
+        decoration: showBG
+            ? BoxDecoration(
+                image: page.file.path.isEmpty
+                    ? DecorationImage(
+                        image: NetworkImage(url), fit: BoxFit.cover)
+                    : DecorationImage(
+                        image: FileImage(page.file), fit: BoxFit.cover))
+            : BoxDecoration(),
         child: AppBar(
           systemOverlayStyle: const SystemUiOverlayStyle(
             statusBarColor: Colors.transparent,

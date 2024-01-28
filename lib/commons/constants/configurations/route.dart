@@ -38,6 +38,7 @@ class Routes {
   static const String REPORT_SCREEN = '/report_screen';
   static const String RECHARGE_SUCCESS = '/recharge_success';
   static const String CONNECT_TELEGRAM = '/connect_telegram';
+  static const String OPEN_BANK_MB = '/open_bank_mb';
   static const String CONNECT_LARK = '/connect_lark';
   static const String CONNECT_STEP_TELE_SCREEN = '/connect_step_tele_screen';
   static const String CONNECT_STEP_LARK_SCREEN = '/connect_step_lark_screen';
