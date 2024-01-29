@@ -204,6 +204,7 @@ enum AddBankType {
   OTP_BANK,
   INSERT_OTP_BANK,
   SCAN_QR,
+  REQUEST_REGISTER,
   SCAN_NOT_FOUND
 }
 

@@ -20,11 +20,12 @@ class TextFieldCustom extends StatefulWidget {
   final String? unTitle;
   final String? subTitle;
   final bool? autoFocus;
+  final Color? colorBG;
   final bool? enable;
   final FocusNode? focusNode;
   final int? maxLines;
   final int? maxLength;
-
+  final double? height;
   final TextAlign? textAlign;
   final Function(PointerDownEvent)? onTapOutside;
   final bool isShowToast;
@@ -55,6 +56,7 @@ class TextFieldCustom extends StatefulWidget {
       required this.isObscureText,
       this.fontSize,
       this.textFieldType,
+      this.height,
       this.title,
       this.unTitle,
       this.autoFocus,
@@ -72,6 +74,7 @@ class TextFieldCustom extends StatefulWidget {
       this.validator,
       this.inputFormatter,
       this.prefixIcon,
+      this.colorBG,
       this.subTitle,
       this.suffixIcon,
       this.isRequired = false,
@@ -187,7 +190,10 @@ class _TextFieldWidgetState extends State<TextFieldCustom> {
             const SizedBox(height: 8),
           ],
           Container(
+            height: widget.height,
             alignment: Alignment.centerLeft,
+            decoration: BoxDecoration(
+                color: widget.colorBG, borderRadius: BorderRadius.circular(5)),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

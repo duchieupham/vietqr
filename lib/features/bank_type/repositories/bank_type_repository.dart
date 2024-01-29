@@ -5,6 +5,7 @@ import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
+import 'package:vierqr/models/response_message_dto.dart';
 
 class BankTypeRepository {
   const BankTypeRepository();
@@ -53,5 +54,28 @@ class BankTypeRepository {
       LOG.error(e.toString());
     }
     return listBanks;
+  }
+
+  Future<ResponseMessageDTO> requestRegisterBankAccount(
+      Map<String, dynamic> param) async {
+    ResponseMessageDTO dto = ResponseMessageDTO(status: '', message: '');
+
+    try {
+      String url = '${EnvConfig.getBaseUrl()}account-bank-request';
+      final response = await BaseAPIClient.postAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+        body: param,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        if (data != null) {
+          dto = ResponseMessageDTO.fromJson(data);
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return dto;
   }
 }

@@ -30,6 +30,7 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
     on<BankCardEventRegisterLinkBank>(_registerLinkBank);
     on<ScanQrEventGetBankType>(_getDataScan);
     on<UpdateAddBankEvent>(_updateEvent);
+    on<RequestRegisterBankAccount>(_requestRegisterBankAccount);
   }
 
   final bankCardRepository = const BankCardRepository();
@@ -378,5 +379,29 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
 
   void _updateEvent(AddBankEvent event, Emitter emit) {
     emit(state.copyWith(status: BlocStatus.NONE, request: AddBankType.NONE));
+  }
+
+  void _requestRegisterBankAccount(AddBankEvent event, Emitter emit) async {
+    if (event is RequestRegisterBankAccount) {
+      emit(state.copyWith(
+          request: AddBankType.REQUEST_REGISTER, status: BlocStatus.LOADING));
+      ResponseMessageDTO messageDTO =
+          await bankTypeRepository.requestRegisterBankAccount(event.dto);
+
+      if (messageDTO.status == Stringify.RESPONSE_STATUS_SUCCESS) {
+        emit(state.copyWith(
+          status: BlocStatus.SUCCESS,
+          request: AddBankType.REQUEST_REGISTER,
+        ));
+      } else {
+        emit(
+          state.copyWith(
+            msg: ErrorUtils.instance.getErrorMessage(messageDTO.message),
+            request: AddBankType.REQUEST_REGISTER,
+            status: BlocStatus.ERROR,
+          ),
+        );
+      }
+    }
   }
 }

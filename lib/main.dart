@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -31,6 +32,7 @@ import 'package:vierqr/features/connect_telegram/connect_telegram_screen.dart';
 import 'package:vierqr/features/connect_telegram/widget/connect_screen.dart';
 import 'package:vierqr/features/contact/contact_screen.dart';
 import 'package:vierqr/features/create_qr_un_authen/show_qr.dart';
+import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/dashboard_screen.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
@@ -46,9 +48,9 @@ import 'package:vierqr/features/personal/blocs/user_edit_bloc.dart';
 import 'package:vierqr/features/personal/views/national_information_view.dart';
 import 'package:vierqr/features/personal/views/user_edit_view.dart';
 import 'package:vierqr/features/personal/views/user_update_password_view.dart';
+import 'package:vierqr/features/register_new_bank/register_mb_bank.dart';
 import 'package:vierqr/features/report/report_screen.dart';
 import 'package:vierqr/features/scan_qr/scan_qr_screen.dart';
-
 // import 'package:vierqr/features/scan_qr/scan_qr_screen.dart';
 import 'package:vierqr/features/top_up/qr_top_up.dart';
 import 'package:vierqr/features/top_up/top_up_screen.dart';
@@ -60,7 +62,6 @@ import 'package:vierqr/models/notification_transaction_success_dto.dart';
 import 'package:vierqr/models/respone_top_up_dto.dart';
 import 'package:vierqr/models/top_up_sucsess_dto.dart';
 import 'package:vierqr/services/local_notification/notification_service.dart';
-import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/services/providers/pin_provider.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
 import 'package:vierqr/services/shared_references/account_helper.dart';
@@ -74,7 +75,6 @@ import 'package:vierqr/services/shared_references/user_information_helper.dart';
 import 'features/connect_lark/widget/connect_screen.dart';
 import 'features/transaction_wallet/trans_wallet_screen.dart';
 import 'models/qr_generated_dto.dart';
-import 'package:http/http.dart' as http;
 
 //Share Preferences
 late SharedPreferences sharedPrefs;
@@ -383,6 +383,7 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.PHONE_BOOK: (context) => const ContactScreen(),
                   Routes.TOP_UP: (context) => const TopUpScreen(),
                   Routes.MOBILE_RECHARGE: (context) => MobileRechargeScreen(),
+                  Routes.REGISTER_NEW_BANK: (context) => RegisterNewBank(),
                   Routes.CONNECT_TELEGRAM: (context) => ConnectTelegramScreen(),
                   Routes.CONNECT_STEP_TELE_SCREEN: (context) =>
                       ConnectTeleStepScreen(),
