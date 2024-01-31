@@ -5,19 +5,31 @@ class BankAccountDTO {
   final String bankAccount;
   final String userBankName;
   final String bankCode;
+  final String bankShortName;
   final String bankName;
   final String imgId;
   final int type;
-  final bool isAuthenticated;
-  final bool isOwner;
-  final String bankShortName;
   final String userId;
+  bool isAuthenticated;
+  bool isOwner;
+  int bankTypeStatus;
+  final String qrCode;
+  final String caiValue;
+  final String bankTypeId;
+  final String phoneAuthenticated;
+  final String nationalId;
+  final String ewalletToken;
+  final int unlinkedType;
 
+  //thêm
   Color? bankColor;
-  bool isFirst;
+  double position;
 
-  // final String branchCode;
-  // final String businessCode;
+  setPosition(double value) {
+    position = position - value;
+  }
+
+  bool get isLinked => (!isAuthenticated && bankTypeStatus == 1 && isOwner);
 
   BankAccountDTO({
     this.id = '',
@@ -32,9 +44,15 @@ class BankAccountDTO {
     this.isOwner = false,
     this.userId = '',
     this.bankColor,
-    this.isFirst = false,
-    // required this.branchCode,
-    // required this.businessCode,
+    this.position = 0.0,
+    this.qrCode = '',
+    this.caiValue = '',
+    this.bankTypeId = '',
+    this.phoneAuthenticated = '',
+    this.nationalId = '',
+    this.ewalletToken = '',
+    this.unlinkedType = -1,
+    this.bankTypeStatus = -1,
   });
 
   setColor(value) {
@@ -54,7 +72,14 @@ class BankAccountDTO {
       isAuthenticated: json['authenticated'] ?? false,
       isOwner: json['isOwner'] ?? false,
       userId: json['userId'] ?? '',
-      isFirst: false,
+      qrCode: json['qrCode'] ?? '',
+      bankTypeStatus: json['bankTypeStatus'] ?? -1,
+      caiValue: json['caiValue'] ?? '',
+      bankTypeId: json['bankTypeId'] ?? '',
+      phoneAuthenticated: json['phoneAuthenticated'] ?? '',
+      nationalId: json['nationalId'] ?? '',
+      ewalletToken: json['ewalletToken'] ?? '',
+      unlinkedType: json['unlinkedType'] ?? -1,
     );
   }
 

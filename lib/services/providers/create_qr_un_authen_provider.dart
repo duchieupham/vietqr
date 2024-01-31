@@ -5,23 +5,18 @@ import 'package:vierqr/models/bank_type_dto.dart';
 class CreateQrUnATProvider with ChangeNotifier {
   String _money = '';
   bool _showMoreOption = false;
+
   bool get showMoreOption => _showMoreOption;
+
   String get money => _money;
+
   void updateMoney(String value) {
     int data = int.parse(value.replaceAll('.', ''));
     _money = StringUtils.formatNumber(data);
     notifyListeners();
   }
 
-  BankTypeDTO _bankType = const BankTypeDTO(
-    id: '',
-    bankCode: '',
-    bankName: '',
-    bankShortName: '',
-    imageId: '',
-    status: 0,
-    caiValue: '',
-  );
+  BankTypeDTO _bankType = BankTypeDTO();
 
   bool _isNameErr = false;
   bool _isBankAccountErr = false;
@@ -33,13 +28,21 @@ class CreateQrUnATProvider with ChangeNotifier {
   bool _isValidCreate = true;
 
   BankTypeDTO get bankType => _bankType;
+
   bool get nameErr => _isNameErr;
+
   bool get bankAccountErr => _isBankAccountErr;
+
   bool get nationalErr => _isNationalErr;
+
   bool get phoneErr => _isPhoneErr;
+
   bool get agreeWithPolicy => _isAgreeWithPolicy;
+
   bool get showBankAccount => _isShowBankAccount;
+
   bool get isAmountErr => _isAmountErr;
+
   bool get isValidCreate => _isValidCreate;
 
   void updateShowBankAccount(bool value) {
@@ -107,15 +110,7 @@ class CreateQrUnATProvider with ChangeNotifier {
   }
 
   void reset() {
-    _bankType = const BankTypeDTO(
-      id: '',
-      bankCode: '',
-      bankName: '',
-      bankShortName: '',
-      imageId: '',
-      status: 0,
-      caiValue: '',
-    );
+    _bankType = BankTypeDTO();
     _isNameErr = false;
     _isBankAccountErr = false;
     _isNationalErr = false;

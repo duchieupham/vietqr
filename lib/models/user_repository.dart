@@ -1,8 +1,10 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:vierqr/commons/utils/pref_utils.dart';
+import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/theme_dto.dart';
 import 'package:vierqr/services/local_storage/local_storage.dart';
+import 'package:vierqr/services/local_storage/theme_local_storage.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class UserRepository {
@@ -14,6 +16,8 @@ class UserRepository {
 
   Box get _box => HivePrefs.instance.prefs!;
 
+  Box get _boxBank => HivePrefs.instance.bankPrefs!;
+
   String get userId => UserInformationHelper.instance.getUserId();
 
   String get intro_key => '${userId}_card';
@@ -23,9 +27,18 @@ class UserRepository {
   String get theme_dto_key => 'theme_dto_key';
 
   ThemeDTORepository local = ThemeDTORepository();
-  List<BankTypeDTO> banks = [];
+  LocalRepository<BankTypeDTO> bankLocal = LocalRepository<BankTypeDTO>();
+
+  List<BankTypeDTO> _banks = [];
+
+  List<BankTypeDTO> get banks => _banks;
 
   bool isIntroContact = false;
+
+  void init() async {
+    _banks = await getBanks();
+    getIntroContact();
+  }
 
   bool getIntroContact() {
     return isIntroContact = _box.get(intro_key) ?? false;
@@ -36,6 +49,25 @@ class UserRepository {
     await _box.put(intro_key, value);
   }
 
+  //bank-local
+  Future<List<BankTypeDTO>> getBanks() async {
+    List<BankTypeDTO> list = bankLocal.getWishlist(_boxBank);
+    for (int i = 0; i < list.length; i++) {
+      list[i].file = await getImageFile(list[i].fileImage);
+    }
+    return list;
+  }
+
+  Future<void> updateBanks(BankTypeDTO value) async {
+    var dto = value.copy;
+    await bankLocal.addProductToWishlist(_boxBank, dto);
+  }
+
+  setBanks(value) {
+    _banks = value;
+  }
+
+  //Theme
   Future<ThemeDTO?> getThemeDTO() async {
     Box box = await local.openBox(theme_dto_key);
     return local.getSingleWish(box, userId);

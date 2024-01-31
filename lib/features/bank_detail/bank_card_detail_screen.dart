@@ -33,6 +33,8 @@ import 'states/bank_card_state.dart';
 class BankCardDetailScreen extends StatelessWidget {
   final String bankId;
 
+  static String routeName = '/bank_card_detail_screen';
+
   const BankCardDetailScreen({super.key, required this.bankId});
 
   @override

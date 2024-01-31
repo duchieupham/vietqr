@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +18,7 @@ import '../events/share_bdsd_event.dart';
 
 class BottomSheetAddUserBDSD extends StatefulWidget {
   final String bankId;
+
   const BottomSheetAddUserBDSD({Key? key, required this.bankId})
       : super(key: key);
 
@@ -28,10 +31,26 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
   List<MemberSearchDto> listMember = [];
   bool isSearched = false;
   String _valueSearch = '';
+  Timer? _debounce;
+
   @override
   void initState() {
     bloc = ShareBDSDBloc(context);
     super.initState();
+  }
+
+  _onSearch(
+      {required String bankId, required int type, required String value}) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 300), () {
+      bloc.add(SearchMemberEvent(bankId: bankId, type: type, value: value));
+    });
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
   }
 
   @override
@@ -100,9 +119,7 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
                 ],
               );
             }),
-            const SizedBox(
-              height: 20,
-            ),
+            const SizedBox(height: 20),
             Consumer<AddUserBDSDProvider>(builder: (context, provider, child) {
               return Row(
                 children: [
@@ -117,9 +134,7 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
                       child: TextFieldCustom(
                         isObscureText: false,
                         maxLines: 1,
-
                         fillColor: AppColor.WHITE,
-                        // controller: searchController,
                         hintText: 'Tìm kiếm người dùng',
                         inputType: provider.typeSearch == 0
                             ? TextInputType.number
@@ -131,23 +146,21 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
                             int type = provider.typeSearch;
                             String bankId = widget.bankId;
                             String valueSearch = value.toString();
-                            bloc.add(SearchMemberEvent(
-                                bankId: bankId,
-                                type: type,
-                                value: valueSearch));
+                            _onSearch(
+                                bankId: bankId, type: type, value: valueSearch);
                           }
                         },
                         onChange: (value) {
                           _valueSearch = value;
-
                           if (provider.typeSearch == 0) {
                             if (value.length >= 8) {
                               int type = provider.typeSearch;
                               String bankId = widget.bankId;
-                              bloc.add(SearchMemberEvent(
-                                  bankId: bankId,
-                                  type: type,
-                                  value: _valueSearch));
+                              _onSearch(
+                                bankId: bankId,
+                                type: type,
+                                value: _valueSearch,
+                              );
                             }
                           }
                         },
@@ -170,8 +183,8 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
                           FocusScope.of(context).unfocus();
                           int type = provider.typeSearch;
                           String bankId = widget.bankId;
-                          bloc.add(SearchMemberEvent(
-                              bankId: bankId, type: type, value: _valueSearch));
+                          _onSearch(
+                              bankId: bankId, type: type, value: _valueSearch);
                         }
                       })
                 ],

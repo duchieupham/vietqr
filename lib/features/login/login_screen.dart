@@ -22,6 +22,7 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/phone_widget.dart';
 import 'package:vierqr/features/contact_us/contact_us_screen.dart';
 import 'package:vierqr/features/create_qr_un_authen/create_qr_un_quthen.dart';
+import 'package:vierqr/features/dashboard/dashboard_screen.dart';
 import 'package:vierqr/features/home/widget/dialog_update.dart';
 import 'package:vierqr/features/home/widget/nfc_adr_widget.dart';
 import 'package:vierqr/features/login/blocs/login_bloc.dart';
@@ -99,8 +100,7 @@ class _LoginState extends State<_Login> {
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<AuthProvider>(context, listen: false)
-          .updateEventTheme(null);
+      Provider.of<AuthProvider>(context, listen: false).updateEventTheme(null);
       Provider.of<AuthProvider>(context, listen: false)
           .updateFileThemeLogin('');
       Provider.of<AuthProvider>(context, listen: false).initThemeDTO();
@@ -215,15 +215,20 @@ class _LoginState extends State<_Login> {
                 provider.updateListInfoUser();
               }
 
-              Provider.of<AuthProvider>(context, listen: false)
-                  .initThemeDTO();
+              Provider.of<AuthProvider>(context, listen: false).initThemeDTO();
 
               Navigator.of(context).popUntil((route) => route.isFirst);
-              Navigator.of(context)
-                  .pushReplacementNamed(Routes.DASHBOARD, arguments: {
-                'isFromLogin': true,
-                'isLogoutEnterHome': isLogoutEnterHome,
-              });
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DashBoardScreen(
+                    isFromLogin: true,
+                    isLogoutEnterHome: isLogoutEnterHome,
+                  ),
+                  settings: RouteSettings(name: DashBoardScreen.routeName),
+                ),
+              );
+
               if (state.isToast) {
                 Fluttertoast.showToast(
                   msg: 'Đăng ký thành công',

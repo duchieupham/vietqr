@@ -17,17 +17,18 @@ import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/events.dart';
+import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
-import 'package:vierqr/commons/widgets/ambient_avatar_widget.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/account/account_screen.dart';
 import 'package:vierqr/features/bank_card/bank_screen.dart';
 import 'package:vierqr/features/contact/contact_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
+import 'package:vierqr/features/dashboard/curved_navi_bar/curved_nav_bar_model.dart';
 import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
 import 'package:vierqr/features/dashboard/widget/background_app_bar_home.dart';
 import 'package:vierqr/features/dashboard/widget/maintain_widget.dart';
@@ -39,61 +40,33 @@ import 'package:vierqr/features/notification/states/notification_state.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_card_insert_unauthenticated.dart';
-import 'package:vierqr/models/bottom_nav_dto.dart';
 import 'package:vierqr/models/contact_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/models/theme_dto.dart';
 import 'package:vierqr/models/user_repository.dart';
 import 'package:vierqr/services/providers/account_balance_home_provider.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
-import 'package:vierqr/services/providers/user_edit_provider.dart';
 import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
 import 'package:vierqr/services/shared_references/theme_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
+import 'curved_navi_bar/custom_navigation_bar.dart';
 import 'events/dashboard_event.dart';
 import 'package:http/http.dart' as http;
 
-final listBottomNavigation = [
-  const NavigationDTO(
-    name: 'TK ngân hàng',
-    label: 'Tài khoản',
-    assetsActive: 'assets/images/ic-tb-card-selected.png',
-    assetsUnActive: 'assets/images/ic-tb-card.png',
-    index: 0,
-  ),
-  const NavigationDTO(
-    name: 'Trang chủ\n',
-    label: 'Trang chủ',
-    assetsActive: 'assets/images/ic-tb-dashboard-selected.png',
-    assetsUnActive: 'assets/images/ic-tb-dashboard.png',
-    index: 1,
-  ),
-  const NavigationDTO(
-    name: '',
-    label: 'Quét QR',
-    assetsActive: 'assets/images/ic-tb-qr.png',
-    assetsUnActive: 'assets/images/ic-tb-qr.png',
-    index: -1,
-  ),
-  const NavigationDTO(
-    name: 'Ví QR',
-    label: 'Ví QR',
-    assetsActive: 'assets/images/ic-qr-wallet-blue.png',
-    assetsUnActive: 'assets/images/ic-qr-wallet-grey.png',
-    index: 2,
-  ),
-  const NavigationDTO(
-    name: 'Cá nhân',
-    label: 'Cá nhân',
-    assetsActive: 'assets/images/ic-tb-personal-selected.png',
-    assetsUnActive: 'assets/images/ic-tb-personal.png',
-    index: 3,
-  ),
-];
+import 'widget/disconnect_widget.dart';
 
 class DashBoardScreen extends StatefulWidget {
-  const DashBoardScreen({Key? key}) : super(key: key);
+  final bool isFromLogin;
+  final bool isLogoutEnterHome;
+
+  const DashBoardScreen({
+    Key? key,
+    this.isFromLogin = false,
+    this.isLogoutEnterHome = false,
+  }) : super(key: key);
+
+  static String routeName = '/dashboard_screen';
 
   @override
   State<DashBoardScreen> createState() => _DashBoardScreen();
@@ -140,13 +113,14 @@ class _DashBoardScreen extends State<DashBoardScreen>
     _notificationBloc = BlocProvider.of(context);
     _pageController = PageController(
       initialPage:
-          Provider.of<AuthProvider>(context, listen: false).indexSelected,
+          Provider.of<AuthProvider>(context, listen: false).pageSelected,
       keepPage: true,
     );
     _listScreens.addAll(
       [
         const BankScreen(key: PageStorageKey('QR_GENERATOR_PAGE')),
         const HomeScreen(key: PageStorageKey('HOME_PAGE')),
+        const SizedBox(key: PageStorageKey('SCAN_PAGE')),
         const ContactScreen(key: PageStorageKey('CONTACT_PAGE')),
         const AccountScreen(key: const PageStorageKey('USER_SETTING_PAGE')),
       ],
@@ -403,12 +377,6 @@ class _DashBoardScreen extends State<DashBoardScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    bool isFromLogin = false;
-    if (ModalRoute.of(context)!.settings.arguments != null) {
-      final arg = ModalRoute.of(context)!.settings.arguments as Map;
-      isFromLogin = arg['isFromLogin'] ?? false;
-    }
-
     return BlocListener<DashBoardBloc, DashBoardState>(
       listener: (context, state) async {
         if (state.status == BlocStatus.LOADING) {
@@ -478,10 +446,9 @@ class _DashBoardScreen extends State<DashBoardScreen>
               );
           }
         }
-
         if (state.request == DashBoardType.TOKEN) {
           if (state.typeToken == TokenType.Valid) {
-            _updateFcmToken(isFromLogin);
+            _updateFcmToken(widget.isFromLogin);
           } else if (state.typeToken == TokenType.MainSystem) {
             await DialogWidget.instance.showFullModalBottomContent(
               isDissmiss: false,
@@ -583,46 +550,34 @@ class _DashBoardScreen extends State<DashBoardScreen>
       },
       child: Scaffold(
         body: Consumer<AuthProvider>(builder: (context, provider, _) {
-          if (!provider.isRenderUI)
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // const SizedBox(height: 60),
-                // Center(child: CircularProgressIndicator()),
-              ],
-            );
+          if (!provider.isRenderUI) return const SizedBox();
           return Stack(
             children: [
               _buildAppBar(),
               Column(
                 children: [
                   Expanded(
-                    child: Padding(
-                      padding: (provider.indexSelected == 3)
-                          ? EdgeInsets.zero
-                          : const EdgeInsets.only(top: 110),
-                      child: SizedBox(
-                        height: MediaQuery.of(context).size.height,
-                        child: Listener(
-                          onPointerMove: (moveEvent) {
-                            if (moveEvent.delta.dx > 0) {
-                              Provider.of<AuthProvider>(context, listen: false)
-                                  .updateMoveEvent(TypeMoveEvent.RIGHT);
-                            } else {
-                              Provider.of<AuthProvider>(context, listen: false)
-                                  .updateMoveEvent(TypeMoveEvent.LEFT);
-                            }
+                    child: Container(
+                      padding:
+                          (provider.pageSelected.pageType == PageType.PERSON)
+                              ? EdgeInsets.zero
+                              : const EdgeInsets.only(top: kToolbarHeight * 2),
+                      child: Listener(
+                        onPointerMove: (moveEvent) {
+                          if (moveEvent.delta.dx > 0) {
+                            provider.updateMoveEvent(TypeMoveEvent.RIGHT);
+                          } else {
+                            provider.updateMoveEvent(TypeMoveEvent.LEFT);
+                          }
+                        },
+                        child: PageView(
+                          key: const PageStorageKey('PAGE_VIEW'),
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          controller: _pageController,
+                          onPageChanged: (index) async {
+                            provider.updateIndex(index);
                           },
-                          child: PageView(
-                            key: const PageStorageKey('PAGE_VIEW'),
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            controller: _pageController,
-                            onPageChanged: (index) async {
-                              Provider.of<AuthProvider>(context, listen: false)
-                                  .updateIndex(index);
-                            },
-                            children: _listScreens,
-                          ),
+                          children: _listScreens,
                         ),
                       ),
                     ),
@@ -673,141 +628,36 @@ class _DashBoardScreen extends State<DashBoardScreen>
                 bottom: 10,
                 left: 20,
                 right: 20,
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 350),
-                  child: provider.type == TypeInternet.CONNECT
-                      ? Container(
-                          padding:
-                              EdgeInsets.symmetric(vertical: 6, horizontal: 8),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              color: AppColor.BLACK_DARK.withOpacity(0.95)),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.wifi,
-                                color: AppColor.GREEN,
-                              ),
-                              const SizedBox(width: 10),
-                              Text(
-                                'Đã có kết nối internet',
-                                style: TextStyle(color: AppColor.WHITE),
-                              )
-                            ],
-                          ),
-                        )
-                      : provider.type == TypeInternet.DISCONNECT
-                          ? Container(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 6, horizontal: 8),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5),
-                                  color: AppColor.BLACK_DARK.withOpacity(0.95)),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.wifi_off,
-                                    color: AppColor.error700,
-                                  ),
-                                  const SizedBox(width: 10),
-                                  Text(
-                                    'Mất kết nối internet',
-                                    style: TextStyle(color: AppColor.WHITE),
-                                  )
-                                ],
-                              ),
-                            )
-                          : const SizedBox(),
-                ),
+                child: DisconnectWidget(type: provider.typeInternet),
               ),
             ],
           );
         }),
         bottomNavigationBar: Consumer<AuthProvider>(
-          builder: (context, page, child) {
-            if (!page.isRenderUI) return const SizedBox();
-            return Container(
-              padding: const EdgeInsets.only(bottom: 12),
-              decoration: const BoxDecoration(
-                border:
-                    Border(top: BorderSide(color: AppColor.GREY_TOP_TAB_BAR)),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: List.generate(
-                  listBottomNavigation.length,
-                  (index) {
-                    var item = listBottomNavigation.elementAt(index);
-
-                    String url = (item.index == page.indexSelected)
-                        ? item.assetsActive
-                        : item.assetsUnActive;
-
-                    return _buildShortcut(
-                      index: item.index,
-                      url: url,
-                      label: item.label,
-                      context: context,
-                      select: item.index == page.indexSelected,
-                    );
-                  },
-                ).toList(),
-              ),
-            );
+          builder: (context, page, _) {
+            return CurvedNavigationBar(
+                backgroundColor: AppColor.TRANSPARENT,
+                buttonBackgroundColor: AppColor.TRANSPARENT,
+                animationDuration: const Duration(milliseconds: 300),
+                index: PageType.SCAN_QR.pageIndex,
+                iconPadding: 0.0,
+                onTap: (index) async {
+                  if (index.pageType != PageType.SCAN_QR) {
+                    _animatedToPage(index);
+                  } else {
+                    if (QRScannerHelper.instance.getQrIntro()) {
+                      startBarcodeScanStream();
+                    } else {
+                      await DialogWidget.instance.showFullModalBottomContent(
+                        widget: const QRScanWidget(),
+                        color: AppColor.BLACK,
+                      );
+                      startBarcodeScanStream();
+                    }
+                  }
+                },
+                items: _listNavigation);
           },
-        ),
-      ),
-    );
-  }
-
-//build shorcuts in bottom bar
-  Widget _buildShortcut({
-    required int index,
-    required String url,
-    required String label,
-    bool select = false,
-    required BuildContext context,
-  }) {
-    return GestureDetector(
-      onTap: () async {
-        if (index != -1) {
-          _animatedToPage(index);
-        } else {
-          if (QRScannerHelper.instance.getQrIntro()) {
-            startBarcodeScanStream();
-          } else {
-            await DialogWidget.instance.showFullModalBottomContent(
-              widget: const QRScanWidget(),
-              color: AppColor.BLACK,
-            );
-            startBarcodeScanStream();
-          }
-        }
-      },
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 4),
-        height: 80,
-        decoration: BoxDecoration(
-          color: AppColor.TRANSPARENT,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              url,
-              width: 42,
-              height: 36,
-              fit: BoxFit.cover,
-            ),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 12,
-                color: select ? AppColor.BLUE_TEXT : AppColor.BLACK,
-              ),
-            ),
-          ],
         ),
       ),
     );
@@ -817,26 +667,27 @@ class _DashBoardScreen extends State<DashBoardScreen>
   void _animatedToPage(int index) {
     try {
       _pageController.jumpToPage(index);
-      if (index == 2) {
+      if (index.pageType == PageType.CARD_QR) {
         eventBus.fire(CheckSyncContact());
       }
     } catch (e) {
       _pageController = PageController(
         initialPage:
-            Provider.of<AuthProvider>(context, listen: false).indexSelected,
+            Provider.of<AuthProvider>(context, listen: false).pageSelected,
         keepPage: true,
       );
       _animatedToPage(index);
-      if (index == 2) {
+      if (index.pageType == PageType.CARD_QR) {
         eventBus.fire(CheckSyncContact());
       }
     }
   }
 
 //get title page
-  Widget _getTitlePaqe(BuildContext context, int indexSelected) {
+  Widget _getTitlePage(BuildContext context, int indexSelected) {
     Widget titleWidget = const SizedBox();
-    if (indexSelected == 0 || indexSelected == 1 || indexSelected == 2) {
+    if (indexSelected != PageType.PERSON.pageIndex ||
+        indexSelected == PageType.SCAN_QR.pageIndex) {
       titleWidget = ButtonIconWidget(
         width: double.infinity,
         height: 40,
@@ -845,7 +696,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
         iconSize: 18,
         contentPadding: const EdgeInsets.only(left: 16),
         alignment: Alignment.centerLeft,
-        title: 'TK ngân hàng',
+        title: 'Tìm kiếm',
         textSize: 11,
         function: () {
           Navigator.pushNamed(context, Routes.SEARCH_BANK);
@@ -855,176 +706,176 @@ class _DashBoardScreen extends State<DashBoardScreen>
       );
     }
 
-    if (indexSelected == 3) {
+    if (indexSelected == PageType.PERSON.pageIndex) {
       titleWidget = const SizedBox.shrink();
     }
-    if (indexSelected == 4) {
-      titleWidget = const Text(
-        'Cá nhân',
-        style: TextStyle(
-          fontFamily: 'NewYork',
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.2,
-        ),
-      );
-    }
+
     return titleWidget;
   }
 
-  @override
-  bool get wantKeepAlive => true;
-
 //header
   Widget _buildAppBar() {
-    return Consumer<AuthProvider>(builder: (context, page, child) {
-      return BackgroundAppBarHome(
-        file: page.file,
-        url: page.settingDTO.themeImgUrl,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 25),
-          height: 60,
-          child: page.indexSelected == 3
-              ? const SizedBox.shrink()
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    if (page.settingDTO.logoUrl.isNotEmpty)
-                      Container(
-                        width: 60,
-                        height: 30,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
+    return Consumer<AuthProvider>(
+      builder: (context, page, child) {
+        return BackgroundAppBarHome(
+          file: page.file,
+          url: page.settingDTO.themeImgUrl,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 25),
+            height: 56,
+            child: page.pageSelected.pageType == PageType.PERSON
+                ? const SizedBox.shrink()
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      if (page.settingDTO.logoUrl.isNotEmpty)
+                        Container(
+                          width: 60,
+                          height: 30,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: CachedNetworkImage(
+                            imageUrl: page.settingDTO.logoUrl,
+                            width: 50,
+                          ),
+                        )
+                      else
+                        Container(
+                          width: 60,
+                          height: 30,
                         ),
-                        child: CachedNetworkImage(
-                          imageUrl: page.settingDTO.logoUrl,
-                          width: 50,
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: _getTitlePage(context, page.pageSelected),
                         ),
-                      )
-                    else
-                      Container(
-                        width: 60,
-                        height: 30,
                       ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        child: _getTitlePaqe(context, page.indexSelected),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 50,
-                      height: 60,
-                      child: BlocConsumer<NotificationBloc, NotificationState>(
-                        listener: (context, state) {},
-                        builder: (context, state) {
-                          if (state is NotificationCountSuccessState) {
-                            _notificationCount = state.count;
-                          }
-                          if (state is NotificationUpdateStatusSuccessState) {
-                            _notificationCount = 0;
-                          }
-                          return Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              ButtonIconWidget(
-                                width: 40,
-                                height: 40,
-                                borderRadius: 40,
-                                icon: Icons.notifications_outlined,
-                                title: '',
-                                function: () {
-                                  Navigator.pushNamed(
-                                    context,
-                                    Routes.NOTIFICATION_VIEW,
-                                    arguments: {
-                                      'notificationBloc': _notificationBloc,
-                                    },
-                                  ).then((value) {
-                                    _notificationBloc.add(
-                                      NotificationUpdateStatusEvent(),
-                                    );
-                                  });
-                                },
-                                bgColor: Theme.of(context).cardColor,
-                                textColor: Theme.of(context).hintColor,
-                              ),
-                              if (_notificationCount != 0)
-                                Positioned(
-                                  top: 5,
-                                  right: 0,
-                                  child: Container(
-                                    width: 20,
-                                    height: 20,
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(30),
-                                      color: AppColor.RED_CALENDAR,
-                                    ),
-                                    child: Text(
-                                      _notificationCount.toString(),
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: (_notificationCount
-                                                    .toString()
-                                                    .length >=
-                                                3)
-                                            ? 8
-                                            : 10,
-                                        color: AppColor.WHITE,
+                      SizedBox(
+                        width: 50,
+                        height: 60,
+                        child:
+                            BlocConsumer<NotificationBloc, NotificationState>(
+                          listener: (context, state) {},
+                          builder: (context, state) {
+                            if (state is NotificationCountSuccessState) {
+                              _notificationCount = state.count;
+                            }
+                            if (state is NotificationUpdateStatusSuccessState) {
+                              _notificationCount = 0;
+                            }
+                            return Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                ButtonIconWidget(
+                                  width: 40,
+                                  height: 40,
+                                  borderRadius: 40,
+                                  icon: Icons.notifications_outlined,
+                                  title: '',
+                                  function: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      Routes.NOTIFICATION_VIEW,
+                                      arguments: {
+                                        'notificationBloc': _notificationBloc,
+                                      },
+                                    ).then((value) {
+                                      _notificationBloc.add(
+                                        NotificationUpdateStatusEvent(),
+                                      );
+                                    });
+                                  },
+                                  bgColor: Theme.of(context).cardColor,
+                                  textColor: Theme.of(context).hintColor,
+                                ),
+                                if (_notificationCount != 0)
+                                  Positioned(
+                                    top: 5,
+                                    right: 0,
+                                    child: Container(
+                                      width: 20,
+                                      height: 20,
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(30),
+                                        color: AppColor.RED_CALENDAR,
+                                      ),
+                                      child: Text(
+                                        _notificationCount.toString(),
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: (_notificationCount
+                                                      .toString()
+                                                      .length >=
+                                                  3)
+                                              ? 8
+                                              : 10,
+                                          color: AppColor.WHITE,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                            ],
-                          );
-                        },
+                              ],
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                    const Padding(padding: EdgeInsets.only(left: 5)),
-                    GestureDetector(
-                        onTap: () {
-                          Provider.of<AuthProvider>(context, listen: false)
-                              .updateIndex(3);
-
-                          _animatedToPage(3);
-                        },
-                        child: _buildAvatarWidget(context)),
-                  ],
-                ),
-        ),
-      );
-    });
-  }
-
-  Widget _buildAvatarWidget(BuildContext context) {
-    double size = 40;
-    String imgId = UserInformationHelper.instance.getAccountInformation().imgId;
-    return Consumer<UserEditProvider>(
-      builder: (context, provider, child) {
-        return (provider.imageFile != null)
-            ? AmbientAvatarWidget(
-                imgId: imgId,
-                size: size,
-                imageFile: provider.imageFile,
-                onlyImage: true,
-              )
-            : (imgId.isEmpty)
-                ? ClipOval(
-                    child: SizedBox(
-                      width: size,
-                      height: size,
-                      child: Image.asset('assets/images/ic-avatar.png'),
-                    ),
-                  )
-                : AmbientAvatarWidget(
-                    imgId: imgId,
-                    size: size,
-                    onlyImage: true,
-                  );
+                    ],
+                  ),
+          ),
+        );
       },
     );
   }
+
+  List<CurvedNavigationBarItem> _listNavigation = [
+    CurvedNavigationBarItem(
+      label: 'Tài khoản',
+      urlSelect: 'assets/images/ic-btm-list-bank-blue.png',
+      urlUnselect: 'assets/images/ic-btm-list-bank-grey.png',
+    ),
+    CurvedNavigationBarItem(
+      label: 'Trang chủ',
+      urlSelect: 'assets/images/ic-btm-dashboard-blue.png',
+      urlUnselect: 'assets/images/ic-btm-dashboard-grey.png',
+    ),
+    CurvedNavigationBarItem(
+      label: 'Quét QR',
+      urlSelect: 'assets/images/ic-menu-slide-home-blue.png',
+      urlUnselect: 'assets/images/ic-menu-slide-home-blue.png',
+    ),
+    CurvedNavigationBarItem(
+      label: 'Ví QR',
+      urlSelect: 'assets/images/ic-btm-qr-wallet-blue.png',
+      urlUnselect: 'assets/images/ic-btm-qr-wallet-grey.png',
+    ),
+    CurvedNavigationBarItem(
+      label: 'Cá nhân',
+      urlSelect: '',
+      urlUnselect: '',
+      child: Consumer<AuthProvider>(builder: (context, provider, _) {
+        String imgId =
+            UserInformationHelper.instance.getAccountInformation().imgId;
+        return Container(
+          width: 28,
+          height: 28,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            image: DecorationImage(
+              fit: BoxFit.cover,
+              image: provider.avatar.path.isEmpty
+                  ? ImageUtils.instance.getImageNetWork(imgId)
+                  : Image.file(provider.avatar).image,
+            ),
+          ),
+        );
+      }),
+    ),
+  ];
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class SaveImageData {

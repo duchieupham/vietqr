@@ -8,8 +8,8 @@ class QRGeneratedDTO {
   final String userBankName;
   final String amount;
   final String content;
-  final String qrCode;
-  final String imgId;
+  String qrCode;
+  String imgId;
   final String? transactionId;
   final int? existing;
   final String? bankTypeId;
@@ -24,10 +24,10 @@ class QRGeneratedDTO {
     required this.bankName,
     required this.bankAccount,
     required this.userBankName,
-    required this.amount,
-    required this.content,
-    required this.qrCode,
-    required this.imgId,
+    this.amount = '',
+    this.content = '',
+    this.qrCode = '',
+    this.imgId = '',
     this.transactionId,
     this.existing,
     this.bankTypeId,

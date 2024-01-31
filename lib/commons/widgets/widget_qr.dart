@@ -4,12 +4,15 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/helper/app_data_helper.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/bank_detail/views/bottom_sheet_input_money.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
+import 'package:vierqr/features/popup_bank/popup_bank_share.dart';
 import 'package:vierqr/models/qr_bank_detail.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:wakelock/wakelock.dart';
@@ -373,14 +376,26 @@ class _VietQrState extends State<WidgetQr> {
             children: [
               Expanded(
                 child: _buildButtonQR('assets/images/ic-save-img-blue.png',
-                    width < 420 ? 'Lưu ảnh' : 'Lưu ảnh vào thư viện', () {}),
+                    width < 420 ? 'Lưu ảnh' : 'Lưu ảnh vào thư viện', () {
+                  NavigatorUtils.navigatePage(
+                      context,
+                      PopupBankShare(
+                          dto: widget.qrGeneratedDTO, type: TypeImage.SAVE),
+                      routeName: PopupBankShare.routeName);
+                }),
               ),
               const SizedBox(
                 width: 20,
               ),
               Expanded(
-                child: _buildButtonQR('assets/images/ic-share-img-blue.png',
-                    'Chia sẻ mã QR', () {}),
+                child: _buildButtonQR(
+                    'assets/images/ic-share-img-blue.png', 'Chia sẻ mã QR', () {
+                  NavigatorUtils.navigatePage(
+                      context,
+                      PopupBankShare(
+                          dto: widget.qrGeneratedDTO, type: TypeImage.SHARE),
+                      routeName: PopupBankShare.routeName);
+                }),
               ),
             ],
           ),

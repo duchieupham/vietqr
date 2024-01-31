@@ -192,7 +192,7 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            if (widget.dto.authenticated)
+                            if (widget.dto.authenticated) ...[
                               GestureDetector(
                                 onTap: () {
                                   DialogWidget.instance.openMsgDialog(
@@ -218,10 +218,12 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
                                       'Ngừng nhận biến động số dư trên hệ thống VietQR',
                                 ),
                               ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              child: DividerWidget(width: width),
-                            ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 12),
+                                child: DividerWidget(width: width),
+                              ),
+                            ],
                             GestureDetector(
                               onTap: () {
                                 if (widget.dto.authenticated) {

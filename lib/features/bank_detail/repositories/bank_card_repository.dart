@@ -195,6 +195,30 @@ class BankCardRepository {
     return result;
   }
 
+  Future<ResponseMessageDTO> unRegisterBDSD(
+      {required String userId, required String bankId}) async {
+    ResponseMessageDTO result =
+        const ResponseMessageDTO(status: '', message: '');
+    try {
+      final body = {'userId': userId, 'bankId': bankId};
+      final String url = '${EnvConfig.getBaseUrl()}member/remove';
+      final response = await BaseAPIClient.deleteAPI(
+        url: url,
+        body: body,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200 || response.statusCode == 400) {
+        var data = jsonDecode(response.body);
+        result = ResponseMessageDTO.fromJson(data);
+      } else {
+        result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return result;
+  }
+
   Future<ResponseMessageDTO> removeMemberFromBankAccount(
       String bankId, String userId) async {
     ResponseMessageDTO result =

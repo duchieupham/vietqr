@@ -22,6 +22,7 @@ import 'package:vierqr/commons/widgets/checkbox_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_widget.dart';
+import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/dashboard_screen.dart';
 import 'package:vierqr/features/home/home.dart';
@@ -34,7 +35,6 @@ import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/account_information_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
-import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
 import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
@@ -751,13 +751,13 @@ class _UserEditViewState extends State<UserEditView> {
   Widget _buildAvatarWidget(BuildContext context) {
     double size = 60;
     String imgId = UserInformationHelper.instance.getAccountInformation().imgId;
-    return Consumer<UserEditProvider>(
+    return Consumer<AuthProvider>(
       builder: (context, provider, child) {
-        return (provider.imageFile != null)
+        return (provider.avatar.path.isNotEmpty)
             ? AmbientAvatarWidget(
                 imgId: imgId,
                 size: size,
-                imageFile: provider.imageFile,
+                imageFile: provider.avatar,
               )
             : (imgId.isEmpty)
                 ? ClipOval(
