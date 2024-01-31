@@ -75,126 +75,129 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocConsumer<TransHistoryBloc, TransHistoryState>(
-        listener: (context, state) {
-          if (state.status == BlocStatus.LOADING) {
-            // DialogWidget.instance.openLoadingDialog();
-          }
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: BlocConsumer<TransHistoryBloc, TransHistoryState>(
+          listener: (context, state) {
+            if (state.status == BlocStatus.LOADING) {
+              // DialogWidget.instance.openLoadingDialog();
+            }
 
-          if (state.status == BlocStatus.UNLOADING) {
-            // Navigator.pop(context);
-          }
-          if (state.type == TransHistoryType.LOAD_DATA) {
-            Provider.of<TransProvider>(context, listen: false)
-                .updateCallLoadMore(true);
-          }
-        },
-        builder: (context, state) {
-          return Stack(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _buildDropDown(),
-                  const SizedBox(height: 16),
-                  ...[
-                    _buildFormStatus(),
-                    _buildDropTime(),
-                    _buildFormSearch(),
+            if (state.status == BlocStatus.UNLOADING) {
+              // Navigator.pop(context);
+            }
+            if (state.type == TransHistoryType.LOAD_DATA) {
+              Provider.of<TransProvider>(context, listen: false)
+                  .updateCallLoadMore(true);
+            }
+          },
+          builder: (context, state) {
+            return Stack(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _buildDropDown(),
                     const SizedBox(height: 16),
-                  ],
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Danh sách giao dịch',
-                      style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  if (state.status == BlocStatus.LOADING)
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 100),
-                        child: const Center(
-                          child: CircularProgressIndicator(
-                            color: AppColor.BLUE_TEXT,
-                          ),
-                        ),
+                    ...[
+                      _buildFormStatus(),
+                      _buildDropTime(),
+                      _buildFormSearch(),
+                      const SizedBox(height: 16),
+                    ],
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Danh sách giao dịch',
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.bold),
                       ),
-                    )
-                  else ...[
-                    if (state.list.isEmpty)
+                    ),
+                    const SizedBox(height: 10),
+                    if (state.status == BlocStatus.LOADING)
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.only(bottom: 100),
                           child: const Center(
-                            child: Text('Không có giao dịch nào'),
+                            child: CircularProgressIndicator(
+                              color: AppColor.BLUE_TEXT,
+                            ),
                           ),
                         ),
                       )
-                    else
-                      Consumer<TransProvider>(
-                          builder: (context, provider, child) {
-                        return Expanded(
-                          child: RefreshIndicator(
-                            onRefresh: onRefresh,
-                            child: SingleChildScrollView(
-                              controller: provider.scrollControllerList,
-                              child: Column(
-                                children: [
-                                  ...List.generate(
-                                    state.list.length,
-                                    (index) {
-                                      return _buildElement(
-                                        context: context,
-                                        dto: state.list[index],
-                                      );
-                                    },
-                                  ).toList(),
-                                  if (!state.isLoadMore)
-                                    const UnconstrainedBox(
-                                      child: SizedBox(
-                                        width: 30,
-                                        height: 30,
-                                        child: CircularProgressIndicator(
-                                          color: AppColor.BLUE_TEXT,
-                                        ),
-                                      ),
-                                    )
-                                ],
-                              ),
+                    else ...[
+                      if (state.list.isEmpty)
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 100),
+                            child: const Center(
+                              child: Text('Không có giao dịch nào'),
                             ),
                           ),
-                        );
-                      }),
+                        )
+                      else
+                        Consumer<TransProvider>(
+                            builder: (context, provider, child) {
+                          return Expanded(
+                            child: RefreshIndicator(
+                              onRefresh: onRefresh,
+                              child: SingleChildScrollView(
+                                controller: provider.scrollControllerList,
+                                child: Column(
+                                  children: [
+                                    ...List.generate(
+                                      state.list.length,
+                                      (index) {
+                                        return _buildElement(
+                                          context: context,
+                                          dto: state.list[index],
+                                        );
+                                      },
+                                    ).toList(),
+                                    if (!state.isLoadMore)
+                                      const UnconstrainedBox(
+                                        child: SizedBox(
+                                          width: 30,
+                                          height: 30,
+                                          child: CircularProgressIndicator(
+                                            color: AppColor.BLUE_TEXT,
+                                          ),
+                                        ),
+                                      )
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        }),
+                    ],
                   ],
-                ],
-              ),
-              Consumer<TransProvider>(builder: (context, provider, child) {
-                if (provider.enableDropList) {
-                  return Container(
-                    padding: EdgeInsets.only(left: 20, top: 62),
-                    child: Row(
-                      children: [
-                        Text(
-                          'Trạng thái giao dịch',
-                          style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              color: AppColor.TRANSPARENT),
-                        ),
-                        const SizedBox(width: 30),
-                        Expanded(child: _buildSearchList()),
-                      ],
-                    ),
-                  );
-                }
-                return Container();
-              }),
-            ],
-          );
-        },
+                ),
+                Consumer<TransProvider>(builder: (context, provider, child) {
+                  if (provider.enableDropList) {
+                    return Container(
+                      padding: EdgeInsets.only(left: 20, top: 62),
+                      child: Row(
+                        children: [
+                          Text(
+                            'Trạng thái giao dịch',
+                            style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                color: AppColor.TRANSPARENT),
+                          ),
+                          const SizedBox(width: 30),
+                          Expanded(child: _buildSearchList()),
+                        ],
+                      ),
+                    );
+                  }
+                  return Container();
+                }),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

@@ -33,6 +33,10 @@ class UserInformationHelper {
         'ACCOUNT_INFORMATION', accountInformationDTO.toSPJson().toString());
   }
 
+  reset() {
+    sharedPrefs.clear();
+  }
+
   Future<void> setUserId(String userId) async {
     await sharedPrefs.setString('USER_ID', userId);
   }

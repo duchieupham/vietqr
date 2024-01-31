@@ -187,7 +187,7 @@ extension TypeContactExt2 on TypeContact {
   }
 }
 
-enum BankDetailType { NONE, SUCCESS, DELETED, ERROR, UN_LINK, OTP }
+enum BankDetailType { NONE, SUCCESS, DELETED, ERROR, UN_LINK, OTP, CREATE_QR }
 
 enum AccountType { NONE, LOG_OUT, POINT, AVATAR, ERROR }
 
@@ -204,6 +204,7 @@ enum AddBankType {
   OTP_BANK,
   INSERT_OTP_BANK,
   SCAN_QR,
+  REQUEST_REGISTER,
   SCAN_NOT_FOUND
 }
 

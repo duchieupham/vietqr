@@ -129,3 +129,12 @@ class BankCardEventUnConfirmOTP extends BankCardEvent {
 }
 
 class UpdateEvent extends BankCardEvent {}
+
+class BankCardGenerateDetailQR extends BankCardEvent {
+  final Map<String, dynamic> dto;
+
+  const BankCardGenerateDetailQR({required this.dto});
+
+  @override
+  List<Object?> get props => [dto];
+}

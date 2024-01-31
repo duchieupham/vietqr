@@ -35,6 +35,7 @@ class Routes {
   static const String QR_TOP_UP = '/qr_top_up';
   static const String QR_MOBILE_CHARGE = '/qr_mobile_charge';
   static const String MOBILE_RECHARGE = '/mobile_recharge';
+  static const String REGISTER_NEW_BANK = '/register_new_bank';
   static const String REPORT_SCREEN = '/report_screen';
   static const String RECHARGE_SUCCESS = '/recharge_success';
   static const String CONNECT_TELEGRAM = '/connect_telegram';

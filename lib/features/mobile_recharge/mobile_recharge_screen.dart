@@ -103,7 +103,7 @@ class MobileRechargeScreen extends StatelessWidget {
                 if (UserInformationHelper.instance.getPhoneNo() ==
                     Provider.of<TopUpProvider>(context, listen: false)
                         .phoneNo) {
-                  updateMobileCarrierType(context);
+                  // updateMobileCarrierType(context);
                 }
 
                 eventBus.fire(ReloadWallet());

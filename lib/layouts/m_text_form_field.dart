@@ -34,6 +34,7 @@ class MTextFieldCustom extends StatefulWidget {
   final Widget? prefixIcon;
   final Widget? suffixIcon;
   final String? value;
+  final bool showBorder;
 
   //Border textfield
   final bool isRequired;
@@ -72,6 +73,7 @@ class MTextFieldCustom extends StatefulWidget {
     this.isRequired = false,
     this.value,
     this.hintColor,
+    this.showBorder = false,
   }) : super(key: key);
 
   @override
@@ -190,7 +192,14 @@ class _TextFieldWidgetState extends State<MTextFieldCustom> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              textFiledTypeLabel,
+              Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      border: widget.showBorder
+                          ? Border.all(
+                              color: AppColor.GREY_LIGHT.withOpacity(0.5))
+                          : null),
+                  child: textFiledTypeLabel),
               if (_msgError != null && !widget.isShowToast)
                 Container(
                   width: double.infinity,

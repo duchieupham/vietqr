@@ -6,7 +6,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/commons/helper/app_data_helper.dart';
 import 'package:vierqr/commons/mixin/events.dart';
+import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
@@ -17,9 +19,11 @@ import 'package:vierqr/features/bank_detail/views/dialog_otp.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/dashboard/widget/background_app_bar_home.dart';
 import 'package:vierqr/features/trans_history/trans_history_screen.dart';
+import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
 import 'package:vierqr/models/confirm_otp_bank_dto.dart';
+import 'package:vierqr/models/qr_bank_detail.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
@@ -91,223 +95,270 @@ class _BankCardDetailState extends State<BankCardDetailState> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          _buildAppBar(),
-          Padding(
-            padding: const EdgeInsets.only(top: 100),
-            child: ChangeNotifierProvider(
-              create: (_) => AccountBankDetailProvider(),
-              child: Consumer<AccountBankDetailProvider>(
-                builder: (context, provider, child) {
-                  return Padding(
+      appBar: const MAppBar(title: 'Chi tiết TK ngân hàng'),
+      body: ChangeNotifierProvider(
+        create: (_) => AccountBankDetailProvider(),
+        child: Consumer<AccountBankDetailProvider>(
+          builder: (context, provider, child) {
+            return Padding(
+              padding: const EdgeInsets.only(top: 12),
+              child: Column(
+                children: [
+                  Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Column(
-                      children: [
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          controller: controllerTabar,
-                          child: Row(
-                            children: listTitle.map((title) {
-                              int index = listTitle.indexOf(title);
-                              return GestureDetector(
-                                onTap: () {
-                                  pageController.jumpToPage(index);
-                                  provider.changeCurrentPage(index);
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 6),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      controller: controllerTabar,
+                      child: Row(
+                        children: listTitle.map((title) {
+                          int index = listTitle.indexOf(title);
+                          return GestureDetector(
+                            onTap: () {
+                              pageController.jumpToPage(index);
+                              provider.changeCurrentPage(index);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 6),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: index == provider.currentPage
+                                    ? AppColor.BLUE_TEXT.withOpacity(0.3)
+                                    : AppColor.TRANSPARENT,
+                              ),
+                              child: Text(
+                                title,
+                                style: TextStyle(
+                                    fontSize: 16,
                                     color: index == provider.currentPage
-                                        ? AppColor.BLUE_TEXT.withOpacity(0.3)
-                                        : AppColor.TRANSPARENT,
-                                  ),
-                                  child: Text(
-                                    title,
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        color: index == provider.currentPage
-                                            ? AppColor.BLUE_TEXT
-                                            : AppColor.BLACK),
-                                  ),
-                                ),
-                              );
-                            }).toList(),
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 12,
-                        ),
-                        Expanded(
-                          child: StreamBuilder<bool>(
-                            stream: notificationController.stream,
-                            builder: (BuildContext context,
-                                AsyncSnapshot<bool> snapshot) {
-                              if (snapshot.hasData) {
-                                if (snapshot.data == true) {
-                                  bankCardBloc
-                                      .add(const BankCardGetDetailEvent());
-                                }
-                              }
-                              return BlocConsumer<BankCardBloc, BankCardState>(
-                                listener: (context, state) async {
-                                  if (state.status == BlocStatus.LOADING) {
-                                    DialogWidget.instance.openLoadingDialog();
-                                  }
+                                        ? AppColor.BLUE_TEXT
+                                        : AppColor.BLACK),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 12,
+                  ),
+                  Expanded(
+                    child: StreamBuilder<bool>(
+                      stream: notificationController.stream,
+                      builder:
+                          (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                        if (snapshot.hasData) {
+                          if (snapshot.data == true) {
+                            bankCardBloc.add(const BankCardGetDetailEvent());
+                          }
+                        }
+                        return BlocConsumer<BankCardBloc, BankCardState>(
+                          listener: (context, state) async {
+                            if (state.status == BlocStatus.LOADING) {
+                              DialogWidget.instance.openLoadingDialog();
+                            }
 
-                                  if (state.status == BlocStatus.UNLOADING) {
-                                    Navigator.pop(context);
-                                  }
+                            if (state.status == BlocStatus.UNLOADING) {
+                              Navigator.pop(context);
+                            }
 
-                                  if (state.request == BankDetailType.UN_LINK) {
-                                    showDialog(
-                                      barrierDismissible: false,
-                                      context: NavigationService
-                                          .navigatorKey.currentContext!,
-                                      builder: (BuildContext context) {
-                                        return DialogOTPView(
-                                          phone: dto.phoneAuthenticated,
-                                          onResend: () {
-                                            bankCardBloc.add(
-                                                BankCardEventUnlink(
-                                                    accountNumber:
-                                                        dto.bankAccount));
-                                          },
-                                          onChangeOTP: (value) {
-                                            otpController.value = otpController
-                                                .value
-                                                .copyWith(text: value);
-                                          },
-                                          onTap: () {
-                                            ConfirmOTPBankDTO confirmDTO =
-                                                ConfirmOTPBankDTO(
-                                              requestId: state.requestId ?? '',
-                                              otpValue: otpController.text,
-                                              applicationType: 'MOBILE',
-                                              bankAccount: state
-                                                  .bankDetailDTO?.bankAccount,
-                                            );
-                                            bankCardBloc.add(
-                                                BankCardEventUnConfirmOTP(
-                                                    dto: confirmDTO));
-                                          },
-                                        );
-                                      },
-                                    );
-                                  }
-
-                                  if (state.request == BankDetailType.OTP) {
-                                    Navigator.of(context).pop();
-                                    bankCardBloc
-                                        .add(const BankCardGetDetailEvent());
-                                  }
-
-                                  if (state.request == BankDetailType.DELETED) {
-                                    eventBus.fire(GetListBankScreen());
-                                    Fluttertoast.showToast(
-                                      msg: 'Đã xoá TK ngân hàng',
-                                      toastLength: Toast.LENGTH_SHORT,
-                                      gravity: ToastGravity.CENTER,
-                                      backgroundColor:
-                                          Theme.of(context).cardColor,
-                                      textColor: Theme.of(context).hintColor,
-                                      fontSize: 15,
-                                    );
-
-                                    Navigator.pop(context, true);
-                                  }
-
-                                  if (state.request == BankDetailType.SUCCESS) {
-                                    if (state.bankDetailDTO != null) {
-                                      dto = state.bankDetailDTO!;
-                                    }
-                                    qrGeneratedDTO = QRGeneratedDTO(
-                                      bankCode: dto.bankCode,
-                                      bankName: dto.bankName,
-                                      bankAccount: dto.bankAccount,
-                                      userBankName: dto.userBankName,
-                                      amount: '',
-                                      content: '',
-                                      qrCode: dto.qrCode,
-                                      imgId: dto.imgId,
-                                    );
-                                  }
-                                  if (state.request == BankDetailType.ERROR) {
-                                    await DialogWidget.instance.openMsgDialog(
-                                      title: 'Không thể xoá tài khoản',
-                                      msg: state.msg ?? '',
-                                    );
-                                  }
-
-                                  if (state.status != BlocStatus.NONE ||
-                                      state.request != BankDetailType.NONE) {
-                                    bankCardBloc.add(UpdateEvent());
-                                  }
-                                },
-                                builder: (context, state) {
-                                  if (state.bankDetailDTO == null) {
-                                    return Center(
-                                        child: CircularProgressIndicator());
-                                  }
-                                  return PageView(
-                                    controller: pageController,
-                                    onPageChanged: (index) {
-                                      if (index == 3) {
-                                        controllerTabar.animateTo(
-                                          controllerTabar
-                                              .position.maxScrollExtent,
-                                          curve: Curves.easeOut,
-                                          duration:
-                                              const Duration(milliseconds: 300),
-                                        );
-                                      } else if (index == 0) {
-                                        controllerTabar.animateTo(
-                                          controllerTabar
-                                              .position.minScrollExtent,
-                                          curve: Curves.easeOut,
-                                          duration:
-                                              const Duration(milliseconds: 300),
-                                        );
-                                      }
-                                      provider.changeCurrentPage(index);
+                            if (state.request == BankDetailType.UN_LINK) {
+                              showDialog(
+                                barrierDismissible: false,
+                                context: NavigationService
+                                    .navigatorKey.currentContext!,
+                                builder: (BuildContext context) {
+                                  return DialogOTPView(
+                                    phone: dto.phoneAuthenticated,
+                                    onResend: () {
+                                      bankCardBloc.add(BankCardEventUnlink(
+                                          accountNumber: dto.bankAccount));
                                     },
-                                    children: [
-                                      InfoDetailBankAccount(
-                                        bloc: bankCardBloc,
-                                        refresh: _refresh,
-                                        dto: dto,
-                                        qrGeneratedDTO: qrGeneratedDTO,
-                                        bankId: state.bankId ?? '',
-                                        onChangePage: () {
-                                          provider.changeCurrentPage(2);
-                                          pageController.jumpToPage(2);
-                                        },
-                                      ),
-                                      Statistical(bankId: state.bankId ?? ''),
-                                      TransHistoryScreen(
-                                          bankId: state.bankId ?? ''),
-                                      ShareBDSDScreen(
-                                        bankId: state.bankId ?? '',
-                                        dto: dto,
-                                        bloc: bankCardBloc,
-                                      ),
-                                    ],
+                                    onChangeOTP: (value) {
+                                      otpController.value = otpController.value
+                                          .copyWith(text: value);
+                                    },
+                                    onTap: () {
+                                      ConfirmOTPBankDTO confirmDTO =
+                                          ConfirmOTPBankDTO(
+                                        requestId: state.requestId ?? '',
+                                        otpValue: otpController.text,
+                                        applicationType: 'MOBILE',
+                                        bankAccount:
+                                            state.bankDetailDTO?.bankAccount,
+                                      );
+                                      bankCardBloc.add(
+                                          BankCardEventUnConfirmOTP(
+                                              dto: confirmDTO));
+                                    },
                                   );
                                 },
                               );
-                            },
-                          ),
-                        ),
-                      ],
+                            }
+
+                            if (state.request == BankDetailType.OTP) {
+                              Navigator.of(context).pop();
+                              bankCardBloc.add(const BankCardGetDetailEvent());
+                            }
+
+                            if (state.request == BankDetailType.DELETED) {
+                              eventBus.fire(GetListBankScreen());
+                              Fluttertoast.showToast(
+                                msg: 'Đã xoá TK ngân hàng',
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.CENTER,
+                                backgroundColor: Theme.of(context).cardColor,
+                                textColor: Theme.of(context).hintColor,
+                                fontSize: 15,
+                              );
+
+                              Navigator.pop(context, true);
+                            }
+
+                            if (state.request == BankDetailType.SUCCESS) {
+                              if (state.bankDetailDTO != null) {
+                                dto = state.bankDetailDTO!;
+                              }
+
+                              if (AppDataHelper.instance
+                                  .checkExitsBankAccount(dto.bankAccount)) {
+                                QRDetailBank qrDetail = AppDataHelper.instance
+                                    .getQrcodeByBankAccount(dto.bankAccount);
+                                if (qrDetail.money.isNotEmpty &&
+                                    qrDetail.money != '0') {
+                                  qrGeneratedDTO = QRGeneratedDTO(
+                                    bankCode: dto.bankCode,
+                                    bankName: dto.bankName,
+                                    bankAccount: dto.bankAccount,
+                                    userBankName: dto.userBankName,
+                                    amount: qrDetail.money,
+                                    content: qrDetail.content,
+                                    qrCode: qrDetail.qrCode,
+                                    imgId: dto.imgId,
+                                  );
+                                } else {
+                                  qrGeneratedDTO = QRGeneratedDTO(
+                                    bankCode: dto.bankCode,
+                                    bankName: dto.bankName,
+                                    bankAccount: dto.bankAccount,
+                                    userBankName: dto.userBankName,
+                                    amount: '',
+                                    content: '',
+                                    qrCode: dto.qrCode,
+                                    imgId: dto.imgId,
+                                  );
+                                }
+                              } else {
+                                qrGeneratedDTO = QRGeneratedDTO(
+                                  bankCode: dto.bankCode,
+                                  bankName: dto.bankName,
+                                  bankAccount: dto.bankAccount,
+                                  userBankName: dto.userBankName,
+                                  amount: '',
+                                  content: '',
+                                  qrCode: dto.qrCode,
+                                  imgId: dto.imgId,
+                                );
+                              }
+                            }
+
+                            if (state.request == BankDetailType.CREATE_QR) {
+                              Navigator.of(context).pop();
+                              if (state.qrGeneratedDTO!.amount.isNotEmpty &&
+                                  state.qrGeneratedDTO!.amount != '0') {
+                                qrGeneratedDTO = state.qrGeneratedDTO!;
+
+                                QRDetailBank qrDetailBank = QRDetailBank(
+                                    money: qrGeneratedDTO.amount,
+                                    content: qrGeneratedDTO.content,
+                                    qrCode: qrGeneratedDTO.qrCode,
+                                    bankAccount: qrGeneratedDTO.bankAccount);
+                                AppDataHelper.instance
+                                    .addListQRDetailBank(qrDetailBank);
+                              }
+                            }
+                            if (state.request == BankDetailType.ERROR) {
+                              await DialogWidget.instance.openMsgDialog(
+                                title: 'Không thể xoá tài khoản',
+                                msg: state.msg ?? '',
+                              );
+                            }
+
+                            if (state.status != BlocStatus.NONE ||
+                                state.request != BankDetailType.NONE) {
+                              bankCardBloc.add(UpdateEvent());
+                            }
+                          },
+                          builder: (context, state) {
+                            if (state.bankDetailDTO == null) {
+                              return Center(child: CircularProgressIndicator());
+                            }
+                            return PageView(
+                              controller: pageController,
+                              onPageChanged: (index) {
+                                if (index == 3) {
+                                  controllerTabar.animateTo(
+                                    controllerTabar.position.maxScrollExtent,
+                                    curve: Curves.easeOut,
+                                    duration: const Duration(milliseconds: 300),
+                                  );
+                                } else if (index == 0) {
+                                  controllerTabar.animateTo(
+                                    controllerTabar.position.minScrollExtent,
+                                    curve: Curves.easeOut,
+                                    duration: const Duration(milliseconds: 300),
+                                  );
+                                }
+                                provider.changeCurrentPage(index);
+                              },
+                              children: [
+                                InfoDetailBankAccount(
+                                  bloc: bankCardBloc,
+                                  refresh: _refresh,
+                                  dto: dto,
+                                  qrGeneratedDTO: qrGeneratedDTO,
+                                  bankId: state.bankId ?? '',
+                                  onChangePage: () {
+                                    provider.changeCurrentPage(2);
+                                    pageController.jumpToPage(2);
+                                  },
+                                  onChangePageThongKe: () {
+                                    provider.changeCurrentPage(1);
+                                    pageController.jumpToPage(1);
+                                  },
+                                  updateQRGeneratedDTO: (qrBankDetail) {
+                                    Map<String, dynamic> data = {};
+                                    data['bankAccount'] = dto.bankAccount;
+                                    data['userBankName'] = dto.userBankName;
+                                    data['bankCode'] = dto.bankCode;
+                                    data['amount'] =
+                                        qrBankDetail.money.replaceAll(',', '');
+                                    data['content'] = StringUtils.instance
+                                        .removeDiacritic(qrBankDetail.content);
+                                    bankCardBloc.add(
+                                        BankCardGenerateDetailQR(dto: data));
+                                  },
+                                ),
+                                Statistical(bankId: state.bankId ?? ''),
+                                TransHistoryScreen(bankId: state.bankId ?? ''),
+                                ShareBDSDScreen(
+                                  bankId: state.bankId ?? '',
+                                  dto: dto,
+                                  bloc: bankCardBloc,
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
                     ),
-                  );
-                },
+                  ),
+                ],
               ),
-            ),
-          ),
-        ],
+            );
+          },
+        ),
       ),
     );
   }

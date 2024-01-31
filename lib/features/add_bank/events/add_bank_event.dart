@@ -118,3 +118,12 @@ class ScanQrEventGetBankType extends AddBankEvent {
   @override
   List<Object?> get props => [code];
 }
+
+class RequestRegisterBankAccount extends AddBankEvent {
+  final Map<String, dynamic> dto;
+
+  const RequestRegisterBankAccount({required this.dto});
+
+  @override
+  List<Object?> get props => [dto];
+}

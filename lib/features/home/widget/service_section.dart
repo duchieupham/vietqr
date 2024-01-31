@@ -1,22 +1,22 @@
 import 'dart:io';
-
-import 'package:android_intent_plus/android_intent.dart';
+import 'package:vierqr/main.dart';
 import 'package:flutter/material.dart';
+import 'package:vierqr/commons/utils/log.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:vierqr/commons/constants/configurations/route.dart';
-import 'package:vierqr/commons/utils/log.dart';
-import 'package:vierqr/commons/utils/navigator_utils.dart';
+import 'package:android_intent_plus/android_intent.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
-import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/features/account/views/vietqr_id_card_view.dart';
+import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
+import 'package:vierqr/features/home/widget/dialog_update.dart';
+import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
-import 'package:vierqr/features/home/widget/dialog_update.dart';
+import 'package:vierqr/features/account/views/vietqr_id_card_view.dart';
 import 'package:vierqr/features/web_view/views/custom_inapp_webview.dart';
-import 'package:vierqr/main.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
+
 
 class ServiceSection extends StatefulWidget {
   const ServiceSection({Key? key}) : super(key: key);
@@ -92,7 +92,7 @@ class _ServiceSectionState extends State<ServiceSection> {
         }),
         _buildItemService(context, 'assets/images/ic-mb.png', 'Mở TK\nMB Bank',
             () {
-          Navigator.pushNamed(context, Routes.OPEN_BANK_MB);
+          Navigator.pushNamed(context, Routes.REGISTER_NEW_BANK);
           // _launchUrl();
         }),
         _buildItemService(
