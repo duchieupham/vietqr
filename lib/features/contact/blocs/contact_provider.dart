@@ -43,7 +43,7 @@ class ContactProvider extends ChangeNotifier {
 
   void initData() {
     category = listCategories.first;
-    isIntro = userRes.getIntroContact();
+    isIntro = userRes.isIntroContact;
     notifyListeners();
   }
 

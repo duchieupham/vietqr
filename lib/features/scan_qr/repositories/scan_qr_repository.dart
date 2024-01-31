@@ -14,14 +14,7 @@ class ScanQrRepository {
   const ScanQrRepository();
 
   Future<BankTypeDTO> getBankTypeByCaiValue(String caiValue) async {
-    BankTypeDTO result = const BankTypeDTO(
-      id: '',
-      bankCode: '',
-      bankName: '',
-      imageId: '',
-      status: 0,
-      caiValue: '',
-    );
+    BankTypeDTO result = BankTypeDTO();
     try {
       final String url = '${EnvConfig.getBaseUrl()}bank-type/cai/$caiValue';
       final response = await BaseAPIClient.getAPI(

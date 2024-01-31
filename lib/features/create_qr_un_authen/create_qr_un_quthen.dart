@@ -51,7 +51,7 @@ class _CreateQrUnQuthenState extends State<CreateQrUnQuthen> {
     return Scaffold(
       appBar: const MAppBar(title: 'Tạo mã VietQR'),
       body: BlocProvider<QRCodeUnUTBloc>(
-        create: (context) => QRCodeUnUTBloc()..add(LoadDataBankTypeEvent()),
+        create: (context) => QRCodeUnUTBloc(context)..add(LoadDataBankTypeEvent()),
         child: BlocConsumer<QRCodeUnUTBloc, QRCodeUnUTState>(
           listener: (context, state) {
             if (state is CreateQRLoadingState) {

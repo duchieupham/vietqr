@@ -17,6 +17,7 @@ import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/contact_dto.dart';
 import 'package:vierqr/models/setting_account_sto.dart';
+import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class AuthProvider with ChangeNotifier {
   UserRepository get userRes => UserRepository.instance;
@@ -44,7 +45,7 @@ class AuthProvider with ChangeNotifier {
   int _indexSelected = 0;
   int _notificationCount = 0;
 
-  get indexSelected => _indexSelected;
+  int get pageSelected => _indexSelected;
 
   get notificationCount => _notificationCount;
 
@@ -54,7 +55,7 @@ class AuthProvider with ChangeNotifier {
 
   get moveEvent => _moveEvent;
 
-  TypeInternet type = TypeInternet.NONE;
+  TypeInternet typeInternet = TypeInternet.NONE;
   bool isInternet = false;
 
   List<ContactDTO> listSync = [];
@@ -76,6 +77,14 @@ class AuthProvider with ChangeNotifier {
 
   final streamController = StreamController<List<File>>.broadcast();
   late Stream<List<File>> broadcastStream;
+
+  File avatar = File('');
+
+  void setImage(File? file) {
+    if (file == null) return;
+    avatar = file;
+    notifyListeners();
+  }
 
   Future<void> loadImage() async {
     List<File> listFile = [];
@@ -103,6 +112,7 @@ class AuthProvider with ChangeNotifier {
     PackageInfo data = await PackageInfo.fromPlatform();
     packageInfo = data;
     versionApp = packageInfo?.version ?? '';
+    userRes.init();
     initThemeDTO();
     if (!isRenderUI) isRenderUI = true;
     broadcastStream = streamController.stream;
@@ -237,7 +247,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   void updateInternet(value, typeInternet) {
-    type = typeInternet;
+    typeInternet = typeInternet;
     isInternet = value;
     notifyListeners();
   }

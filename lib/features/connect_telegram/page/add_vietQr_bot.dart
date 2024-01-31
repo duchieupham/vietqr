@@ -6,6 +6,7 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 
 class AddVietQrPage extends StatelessWidget {
   const AddVietQrPage({Key? key}) : super(key: key);
+
   Future<void> _launchUrl(String url) async {
     if (!await launchUrl(
       Uri.parse(url),
@@ -182,7 +183,7 @@ class AddVietQrPage extends StatelessWidget {
               ),
               const Spacer(),
               Image.asset(
-                'assets/images/ic-copy-bot.png',
+                'assets/images/ic-copy-blue.png',
                 width: 25,
                 height: 25,
               ),
@@ -224,7 +225,7 @@ class AddVietQrPage extends StatelessWidget {
               ),
               const Spacer(),
               Image.asset(
-                'assets/images/ic-copy-bot.png',
+                'assets/images/ic-copy-blue.png',
                 width: 25,
                 height: 25,
               ),

@@ -1,36 +1,36 @@
 import 'package:hive/hive.dart';
-import 'package:vierqr/models/theme_dto.dart';
 
-import 'base_local_storage.dart';
+import 'hive_local_storage.dart';
 
-class ThemeDTORepository extends HiveLocalRepository<ThemeDTO> {
-  Type boxType = ThemeDTO;
+class LocalRepository<T> extends HiveLocalRepository<T> {
+  Type boxType = T;
 
   @override
   Future<Box> openBox(String boxName) async {
-    Box box = await Hive.openBox<ThemeDTO>(boxName);
+    Box box = await Hive.openBox<T>(boxName);
     return box;
   }
 
   @override
-  Future<void> addProductToWishlist(Box<dynamic> box, ThemeDTO model) async {
-    await box.put(model.id, model);
+  Future<void> addProductToWishlist(Box<dynamic> box, T model) async {
+    String key = '${box.name}_${model.hashCode}';
+    print(key);
+    await box.put(key, model);
   }
 
   @override
-  Future<void> addSingleToWishBox(
-      Box<dynamic> box, ThemeDTO model, String id) async {
+  Future<void> addSingleToWishBox(Box<dynamic> box, T model, String id) async {
     await box.put(id, model);
   }
 
   @override
-  ThemeDTO? getSingleWish(Box<dynamic> box, String id) {
+  T? getSingleWish(Box<dynamic> box, String id) {
     return box.get(id);
   }
 
   @override
-  List<ThemeDTO> getWishlist(Box<dynamic> box) {
-    return box.values.toList() as List<ThemeDTO>;
+  List<T> getWishlist(Box<dynamic> box) {
+    return box.values.toList() as List<T>;
   }
 
   @override
@@ -39,8 +39,8 @@ class ThemeDTORepository extends HiveLocalRepository<ThemeDTO> {
   }
 
   @override
-  Future<void> removeItemFromWishlist(Box<dynamic> box, ThemeDTO model) async {
-    await box.delete(model.id);
+  Future<void> removeItemFromWishlist(Box<dynamic> box, T model) async {
+    await box.delete(model.hashCode);
   }
 
   @override

@@ -15,6 +15,44 @@ enum BlocStatus {
   DELETED_ERROR,
 }
 
+enum TypeImage { SAVE, SHARE }
+
+enum PageType { ACCOUNT, HOME, SCAN_QR, CARD_QR, PERSON }
+
+extension PageTypeExt on int {
+  PageType get pageType {
+    switch (this) {
+      case 1:
+        return PageType.HOME;
+      case 2:
+        return PageType.SCAN_QR;
+      case 3:
+        return PageType.CARD_QR;
+      case 4:
+        return PageType.PERSON;
+      default:
+        return PageType.ACCOUNT;
+    }
+  }
+}
+
+extension PageTypeExt2 on PageType {
+  int get pageIndex {
+    switch (this) {
+      case PageType.HOME:
+        return 1;
+      case PageType.SCAN_QR:
+        return 2;
+      case PageType.CARD_QR:
+        return 3;
+      case PageType.PERSON:
+        return 4;
+      default:
+        return 0;
+    }
+  }
+}
+
 enum ExitsType { ADD, LINKED }
 
 enum StepType { first_screen, second_screen, three_screen }
@@ -208,7 +246,13 @@ enum AddBankType {
   SCAN_NOT_FOUND
 }
 
-enum BankType { QR, NONE, SCAN, BANK, GET_BANK, SCAN_ERROR, SCAN_NOT_FOUND }
+enum BankType {
+  QR,
+  NONE,
+  BANK,
+  GET_BANK,
+  GET_BANK_LOCAL,
+}
 
 enum TransType { NONE, GET_TRANDS, GET_FILTER }
 

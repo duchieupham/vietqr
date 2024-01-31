@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:dudv_base/dudv_base.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:vierqr/features/add_bank/add_bank_screen.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/commons/widgets/viet_qr.dart';
@@ -167,29 +168,44 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
                             title: 'Liên kết ngay',
                             function: () {
                               BankTypeDTO bankTypeDTO = BankTypeDTO(
-                                  id: widget.dto.bankTypeId,
-                                  bankCode: widget.dto.bankCode,
-                                  bankName: widget.dto.bankName,
-                                  imageId: widget.dto.imgId,
-                                  bankShortName: widget.dto.bankCode,
-                                  status: widget.dto.bankTypeStatus,
-                                  caiValue: widget.dto.caiValue);
-                              Navigator.pushNamed(
-                                context,
-                                Routes.ADD_BANK_CARD,
-                                arguments: {
-                                  'step': 1,
-                                  'bankAccount': widget.dto.bankAccount,
-                                  'name': widget.dto.userBankName,
-                                  'bankDTO': bankTypeDTO,
-                                  'bankId': widget.dto.id,
-                                },
-                              ).then((value) {
+                                id: widget.dto.bankTypeId,
+                                bankCode: widget.dto.bankCode,
+                                bankName: widget.dto.bankName,
+                                imageId: widget.dto.imgId,
+                                bankShortName: widget.dto.bankCode,
+                                status: widget.dto.bankTypeStatus,
+                                caiValue: widget.dto.caiValue,
+                                bankId: widget.dto.id,
+                                bankAccount: widget.dto.bankAccount,
+                                userBankName: widget.dto.userBankName,
+                              );
+
+                              NavigatorUtils.navigatePage(context,
+                                      AddBankScreen(bankTypeDTO: bankTypeDTO),
+                                      routeName: AddBankScreen.routeName)
+                                  .then((value) {
                                 if (value is bool) {
                                   widget.bloc
                                       .add(const BankCardGetDetailEvent());
                                 }
                               });
+
+                              // Navigator.pushNamed(
+                              //   context,
+                              //   Routes.ADD_BANK_CARD,
+                              //   arguments: {
+                              //     'step': 1,
+                              //     'bankAccount': widget.dto.bankAccount,
+                              //     'name': widget.dto.userBankName,
+                              //     'bankDTO': bankTypeDTO,
+                              //     'bankId': widget.dto.id,
+                              //   },
+                              // ).then((value) {
+                              //   if (value is bool) {
+                              //     widget.bloc
+                              //         .add(const BankCardGetDetailEvent());
+                              //   }
+                              // });
                             },
                             bgColor: AppColor.TRANSPARENT,
                             textColor: AppColor.GREEN,

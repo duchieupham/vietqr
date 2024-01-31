@@ -1,4 +1,6 @@
 import 'package:event_bus/event_bus.dart';
+import 'package:vierqr/features/bank_card/events/bank_event.dart';
+import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/contact_dto.dart';
 
 EventBus eventBus = EventBus();

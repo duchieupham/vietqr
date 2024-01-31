@@ -80,10 +80,10 @@ class ShareUtils {
         email = '\nEmail: ${dto.email}';
       }
 
-      result = '$name $sdt $email\nĐược tạo từ VietQR VN';
+      result = '$name $sdt $email\nBy VietQR VN';
     } else {
       String prefix =
-          '${dto.bankAccount}\n${dto.userBankName}\n${dto.bankCode}${dto.bankName.isNotEmpty ? '-${dto.bankName}' : ''}';
+          '${dto.bankAccount}\n${dto.userBankName}\n${dto.bankCode}${dto.bankName.isNotEmpty ? ' - ${dto.bankName}' : ''}';
       String suffix = '';
       if (dto.amount.isNotEmpty && dto.amount != '0') {
         suffix =
@@ -92,7 +92,7 @@ class ShareUtils {
           suffix += dto.content;
         }
       }
-      result = '$prefix$suffix\nĐược tạo bởi vietqr.vn - Hotline 1900.6234';
+      result = '$prefix$suffix\nBy VietQR VN';
     }
 
     return result;

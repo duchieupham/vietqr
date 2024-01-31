@@ -10,20 +10,18 @@ class UserEditProvider with ChangeNotifier {
   bool _isOldPassErr = false;
   bool _isNewPassErr = false;
   bool _isConfirmPassErr = false;
-  File? _imageFile;
 
   get availableUpdate => _isAvailableUpdate;
-  int get gender => _gender;
-  get firstNameErr => _isFirstNameErr;
-  get oldPassErr => _isOldPassErr;
-  get newPassErr => _isNewPassErr;
-  get confirmPassErr => _isConfirmPassErr;
-  File? get imageFile => _imageFile;
 
-  void setImage(File? file) {
-    _imageFile = file;
-    notifyListeners();
-  }
+  int get gender => _gender;
+
+  get firstNameErr => _isFirstNameErr;
+
+  get oldPassErr => _isOldPassErr;
+
+  get newPassErr => _isNewPassErr;
+
+  get confirmPassErr => _isConfirmPassErr;
 
   void setAvailableUpdate(bool value) {
     _isAvailableUpdate = value;
@@ -64,7 +62,6 @@ class UserEditProvider with ChangeNotifier {
   }
 
   void reset() {
-    _imageFile = null;
     _isAvailableUpdate = false;
     _isFirstNameErr = false;
     _gender = UserInformationHelper.instance.getAccountInformation().gender;

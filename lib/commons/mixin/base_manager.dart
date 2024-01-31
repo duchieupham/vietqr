@@ -19,7 +19,7 @@ mixin BaseManager {
 
   List<BankTypeDTO> get banks => userRes.banks;
 
-  set banks(List<BankTypeDTO> value) => userRes.banks = value;
+  set banks(List<BankTypeDTO> value) => userRes.setBanks(value);
 
   String get userId => userRes.userId;
 

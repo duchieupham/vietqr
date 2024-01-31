@@ -8,9 +8,11 @@ import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/events.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/printer_utils.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
+import 'package:vierqr/features/add_bank/add_bank_screen.dart';
 import 'package:vierqr/features/contact/save_contact_screen.dart';
 import 'package:vierqr/features/printer/views/printing_view.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
@@ -233,16 +235,25 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
   void onSaveTK() async {
     if (widget.dto is QRGeneratedDTO) {
       QRGeneratedDTO value = widget.dto;
-      final data = await Navigator.pushNamed(
-        context,
-        Routes.ADD_BANK_CARD,
-        arguments: {
-          'step': 0,
-          'bankDTO': widget.bankTypeDTO,
-          'bankAccount': value.bankAccount,
-          'name': ''
-        },
-      );
+      BankTypeDTO? bankTypeDTO = widget.bankTypeDTO;
+      if (bankTypeDTO != null) {
+        bankTypeDTO.bankAccount = value.bankAccount;
+      }
+
+      final data = await NavigatorUtils.navigatePage(
+          context, AddBankScreen(bankTypeDTO: bankTypeDTO),
+          routeName: AddBankScreen.routeName);
+
+      // final data = await Navigator.pushNamed(
+      //   context,
+      //   Routes.ADD_BANK_CARD,
+      //   arguments: {
+      //     'step': 0,
+      //     'bankDTO': widget.bankTypeDTO,
+      //     'bankAccount': value.bankAccount,
+      //     'name': ''
+      //   },
+      // );
       eventBus.fire(GetListBankScreen());
 
       if (data is bool) {

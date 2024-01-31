@@ -1,5 +1,12 @@
 import 'package:equatable/equatable.dart';
+import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/qr_create_dto.dart';
+
+enum UpdateBankType {
+  DELETE,
+  UPDATE,
+  CALL_API,
+}
 
 class BankEvent extends Equatable {
   const BankEvent();
@@ -9,15 +16,6 @@ class BankEvent extends Equatable {
 }
 
 class BankCardEventGetList extends BankEvent {}
-
-class ScanQrEventGetBankType extends BankEvent {
-  final String code;
-
-  const ScanQrEventGetBankType({required this.code});
-
-  @override
-  List<Object?> get props => [code];
-}
 
 class QREventGenerateList extends BankEvent {
   final List<QRCreateDTO> list;
@@ -29,5 +27,15 @@ class QREventGenerateList extends BankEvent {
 }
 
 class UpdateEvent extends BankEvent {}
+
+class UpdateListBank extends BankEvent {
+  final BankAccountDTO dto;
+  final UpdateBankType type; // 0: edit; 1: delete
+
+  UpdateListBank(this.dto, this.type);
+
+  @override
+  List<Object?> get props => [dto];
+}
 
 class LoadDataBankEvent extends BankEvent {}

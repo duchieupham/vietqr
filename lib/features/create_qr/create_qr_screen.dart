@@ -10,7 +10,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:vierqr/models/qr_create_dto.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
-import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/commons/utils/file_utils.dart';

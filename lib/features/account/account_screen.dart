@@ -116,7 +116,7 @@ class _AccountScreenState extends State<_AccountScreen>
         }
 
         if (state.request == AccountType.AVATAR) {
-          Provider.of<UserEditProvider>(context, listen: false)
+          Provider.of<AuthProvider>(context, listen: false)
               .setImage(state.imageFile);
         }
 
@@ -233,13 +233,13 @@ class _BannerWidget extends StatelessWidget {
   Widget _buildAvatarWidget(BuildContext context) {
     double size = 80;
     String imgId = UserInformationHelper.instance.getAccountInformation().imgId;
-    return Consumer<UserEditProvider>(
+    return Consumer<AuthProvider>(
       builder: (context, provider, child) {
-        return (provider.imageFile != null)
+        return (provider.avatar.path.isNotEmpty)
             ? AmbientAvatarWidget(
                 imgId: imgId,
                 size: size,
-                imageFile: provider.imageFile,
+                imageFile: provider.avatar,
               )
             : (imgId.isEmpty)
                 ? ClipOval(
