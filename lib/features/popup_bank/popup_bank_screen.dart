@@ -13,7 +13,6 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
 import 'package:vierqr/commons/widgets/viet_qr_new.dart';
 import 'package:vierqr/features/add_bank/add_bank_screen.dart';
-import 'package:vierqr/features/bank_card/widgets/custom_dot_paint.dart';
 import 'package:vierqr/features/bank_detail/bank_card_detail_screen.dart';
 import 'package:vierqr/features/bank_detail/repositories/bank_card_repository.dart';
 import 'package:vierqr/features/bank_detail/views/bottom_sheet_add_user_bdsd.dart';

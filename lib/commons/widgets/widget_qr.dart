@@ -11,7 +11,6 @@ import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/viet_qr_new.dart';
-import 'package:vierqr/features/bank_card/widgets/custom_dot_paint.dart';
 import 'package:vierqr/features/bank_detail/views/bottom_sheet_input_money.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/popup_bank/popup_bank_share.dart';
@@ -77,8 +76,6 @@ class _VietQrState extends State<WidgetQr> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
-
-    bool isSmallWidget = height < 800;
 
     if (!widget.isVietQR) {
       return QrImage(

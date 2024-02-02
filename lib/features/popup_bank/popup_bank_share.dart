@@ -9,7 +9,6 @@ import 'package:vierqr/commons/widgets/dashed_line.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
 import 'package:vierqr/commons/widgets/viet_qr_new.dart';
-import 'package:vierqr/features/bank_card/widgets/custom_dot_paint.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 
 class PopupBankShare extends StatefulWidget {

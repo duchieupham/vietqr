@@ -13,6 +13,7 @@ import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
+import 'package:vierqr/commons/widgets/dashed_line.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/add_bank/add_bank_screen.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
@@ -31,7 +32,6 @@ import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 import 'widgets/card_widget.dart';
-import 'widgets/custom_dot_paint.dart';
 import 'package:http/http.dart' as http;
 
 class BankScreen extends StatelessWidget {
@@ -317,7 +317,10 @@ class _BankScreenState extends State<_BankScreen>
                 title: 'Copy QR',
               ),
             ),
-            CustomPaint(painter: DottedLinePainter(isSmall ? 1.8 : 1.9)),
+            Container(
+              height: isSmall ? 40 : 60,
+              child: VerticalDashedLine(),
+            ),
             Expanded(
               child: _buildSection(
                 pathIcon: 'assets/images/ic-add-bank.png',
@@ -330,7 +333,10 @@ class _BankScreenState extends State<_BankScreen>
                 title: 'Thêm Tài khoản',
               ),
             ),
-            CustomPaint(painter: DottedLinePainter(isSmall ? 1.8 : 1.9)),
+            Container(
+              height: isSmall ? 40 : 60,
+              child: VerticalDashedLine(),
+            ),
             Expanded(
               child: _buildSection(
                 pathIcon: 'assets/images/ic-share-bdsd.png',
