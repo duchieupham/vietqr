@@ -98,14 +98,14 @@ class _VietQrState extends State<VietQrNew> {
                   ),
                 ),
                 SizedBox(
-                  width: widget.width ?? (small ? 180 : 250),
+                  width: widget.width ?? (250),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Consumer<AuthProvider>(
                         builder: (context, provider, _) {
                           return Padding(
-                            padding: EdgeInsets.only(left: small ? 26 : 6),
+                            padding: EdgeInsets.only(left: small ? 20 : 6),
                             child: Image.asset(
                               'assets/images/logo_vietgr_payment.png',
                               width: 62,
@@ -115,7 +115,7 @@ class _VietQrState extends State<VietQrNew> {
                         },
                       ),
                       Padding(
-                        padding: EdgeInsets.only(right: small ? 30 : 10),
+                        padding: EdgeInsets.only(right: small ? 20 : 10),
                         child: Image.asset(
                           'assets/images/ic-napas247.png',
                           width: 70,

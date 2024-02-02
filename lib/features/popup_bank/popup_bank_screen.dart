@@ -183,14 +183,13 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
                                     ),
                                     Container(
                                       height: small ? 40 : 60,
-                                      padding: const EdgeInsets.only(
-                                          left: 12, right: 10),
                                       child: VerticalDashedLine(),
                                     ),
                                     Expanded(
-                                      child: Padding(
+                                      child: Container(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 10, horizontal: 8),
+                                        alignment: Alignment.center,
                                         child: Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
@@ -216,8 +215,6 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
                                     ),
                                     Container(
                                       height: small ? 40 : 60,
-                                      padding: const EdgeInsets.only(
-                                          left: 12, right: 10),
                                       child: VerticalDashedLine(),
                                     ),
                                     GestureDetector(

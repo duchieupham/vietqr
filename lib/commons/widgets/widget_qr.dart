@@ -123,6 +123,7 @@ class _VietQrState extends State<WidgetQr> {
                 child: IntrinsicHeight(
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
                         alignment: Alignment.center,
@@ -135,15 +136,18 @@ class _VietQrState extends State<WidgetQr> {
                           ),
                         ),
                       ),
-                      CustomPaint(
-                          size: Size(1, double.infinity),
-                          painter: DottedLinePainter(small ? 1.8 : 2)),
+                      Container(
+                        height: small ? 40 : 60,
+                        child: VerticalDashedLine(),
+                      ),
                       Expanded(
-                        child: Padding(
+                        child: Container(
                           padding: const EdgeInsets.symmetric(
                               vertical: 10, horizontal: 8),
+                          alignment: Alignment.center,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
                                 widget.qrGeneratedDTO.bankAccount,
@@ -165,8 +169,7 @@ class _VietQrState extends State<WidgetQr> {
                         ),
                       ),
                       Container(
-                        height: 60,
-                        padding: const EdgeInsets.only(left: 12, right: 10),
+                        height: small ? 40 : 60,
                         child: VerticalDashedLine(),
                       ),
                       GestureDetector(

@@ -5,6 +5,7 @@ import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
+import 'package:vierqr/commons/widgets/dashed_line.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
 import 'package:vierqr/commons/widgets/viet_qr_new.dart';
@@ -33,7 +34,7 @@ class _PopupBankShareState extends State<PopupBankShare> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(milliseconds: 1500), () async {
+    Future.delayed(const Duration(milliseconds: 500), () async {
       if (widget.type == TypeImage.SAVE) {
         onSaveImage(context);
       } else if (widget.type == TypeImage.SHARE) {
@@ -122,11 +123,14 @@ class _PopupBankShareState extends State<PopupBankShare> {
                                       ),
                                     ),
                                   ),
-                                  CustomPaint(
-                                      size: Size(1, double.infinity),
-                                      painter: DottedLinePainter(small ? 1.8 : 2)),
+                                  Container(
+                                    height: small ? 40 : 60,
+                                    padding: const EdgeInsets.only(
+                                        left: 12, right: 10),
+                                    child: VerticalDashedLine(),
+                                  ),
                                   Expanded(
-                                    child: Padding(
+                                    child: Container(
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 10, horizontal: 8),
                                       child: Column(
