@@ -1,9 +1,14 @@
 import 'package:event_bus/event_bus.dart';
-import 'package:vierqr/features/bank_card/events/bank_event.dart';
-import 'package:vierqr/models/bank_account_dto.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/models/contact_dto.dart';
 
 EventBus eventBus = EventBus();
+
+class ListenNetworkEvent {
+  final TypeInternet type;
+
+  ListenNetworkEvent(this.type);
+}
 
 class ChangeBottomBarEvent {
   final int page;

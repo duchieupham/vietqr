@@ -30,7 +30,7 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
   NfcTag? tag;
   Map<String, dynamic>? additionalData;
 
-  String get userId => UserInformationHelper.instance.getUserId();
+  String get userId => UserHelper.instance.getUserId();
 
   //CARD: RFID
   //NFC_CARD: NFC

@@ -1,6 +1,5 @@
 import 'package:dudv_base/dudv_base.dart';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
@@ -11,7 +10,6 @@ import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/textfield_custom.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
-import 'package:vierqr/layouts/m_text_form_field.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/services/aes_convert.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
@@ -54,7 +52,7 @@ class _DialogScanWordPressState extends State<DialogScanWordPress> {
             child: Row(
               children: [
                 Text('Số điện thoại: ', style: TextStyle(fontSize: 14)),
-                Text('${UserInformationHelper.instance.getPhoneNo()}',
+                Text('${UserHelper.instance.getPhoneNo()}',
                     style:
                         TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
               ],
@@ -86,7 +84,7 @@ class _DialogScanWordPressState extends State<DialogScanWordPress> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Text(
-                errorText ?? '',
+                errorText,
                 textAlign: TextAlign.left,
                 style: const TextStyle(
                   fontSize: 12,
@@ -158,9 +156,9 @@ class _DialogScanWordPressState extends State<DialogScanWordPress> {
     }
     final body = {
       'loginId': loginId,
-      'userId': UserInformationHelper.instance.getUserId(),
+      'userId': UserHelper.instance.getUserId(),
       'randomKey': randomKey,
-      'phoneNo': UserInformationHelper.instance.getPhoneNo(),
+      'phoneNo': UserHelper.instance.getPhoneNo(),
       'url': urlController.text,
     };
     try {

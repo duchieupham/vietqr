@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
@@ -48,6 +46,7 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
     } else {
       isButtonLogin = false;
     }
+    if (!mounted) return;
     setState(() {});
   }
 
@@ -70,8 +69,7 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
                 children: [
                   Stack(
                     children: [
-                      Consumer<AuthProvider>(
-                          builder: (context, page, child) {
+                      Consumer<AuthProvider>(builder: (context, page, child) {
                         return BackgroundAppBarLogin(
                           file: page.isEventTheme
                               ? page.fileThemeLogin

@@ -441,7 +441,7 @@ class _RegisterMbBankState extends State<RegisterNewBank> {
                             param['requestType'] = provider.typeAccount.type;
                             param['address'] = addressController.text.trim();
                             param['userId'] =
-                                UserInformationHelper.instance.getUserId();
+                                UserHelper.instance.getUserId();
                             print('--------------------------$param');
                             _bloc.add(RequestRegisterBankAccount(dto: param));
                           } else {

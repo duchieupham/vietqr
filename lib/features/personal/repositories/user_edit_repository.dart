@@ -36,7 +36,7 @@ class UserEditRepository {
       );
       if (response.statusCode != 403) {
         var data = jsonDecode(response.body);
-        UserInformationHelper.instance.setAccountInformation(dto);
+        UserHelper.instance.setAccountInformation(dto);
         result = ResponseMessageDTO.fromJson(data);
       } else {
         result = const ResponseMessageDTO(
@@ -69,7 +69,7 @@ class UserEditRepository {
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         accountInformationDTO = AccountInformationDTO.fromJson(data);
-        UserInformationHelper.instance
+        UserHelper.instance
             .setAccountInformation(accountInformationDTO);
       }
     } catch (e) {
@@ -137,7 +137,7 @@ class UserEditRepository {
           var data = jsonDecode(response.body);
           result = ResponseMessageDTO.fromJson(data);
           if (result.message.trim().isNotEmpty) {
-            await UserInformationHelper.instance.setImageId(result.message);
+            await UserHelper.instance.setImageId(result.message);
           }
         } else {
           result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
@@ -163,10 +163,10 @@ class UserEditRepository {
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         result = ResponseMessageDTO.fromJson(data);
-        final String phone = UserInformationHelper.instance.getPhoneNo();
+        final String phone = UserHelper.instance.getPhoneNo();
 
         List<InfoUserDTO> list =
-            UserInformationHelper.instance.getLoginAccount();
+            UserHelper.instance.getLoginAccount();
 
         List<String> listString = [];
 
@@ -176,7 +176,7 @@ class UserEditRepository {
           list.forEach((element) {
             listString.add(element.toSPJson().toString());
           });
-          await UserInformationHelper.instance.setLoginAccount(listString);
+          await UserHelper.instance.setLoginAccount(listString);
         }
 
         await _resetServices();
@@ -194,7 +194,7 @@ class UserEditRepository {
     BuildContext context = NavigationService.navigatorKey.currentContext!;
     Provider.of<UserEditProvider>(context, listen: false).reset();
     await EventBlocHelper.instance.updateLogoutBefore(true);
-    await UserInformationHelper.instance.initialUserInformationHelper();
+    await UserHelper.instance.initialUserInformationHelper();
     await AccountHelper.instance.setBankToken('');
     await AccountHelper.instance.setToken('');
   }

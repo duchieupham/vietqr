@@ -69,7 +69,7 @@ class DialogScanLogin extends StatelessWidget {
 
     final body = {
       'loginId': loginId,
-      'userId': UserInformationHelper.instance.getUserId(),
+      'userId': UserHelper.instance.getUserId(),
       'randomKey': randomKey,
     };
     try {

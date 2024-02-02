@@ -3,7 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/theme_dto.dart';
-import 'package:vierqr/services/local_storage/local_storage.dart';
+import 'package:vierqr/services/local_storage/hive_local/local_storage.dart';
 
 /// Tuyệt đối không được dùng box.clear()
 /// vì nó sẽ xoá toàn bộ dữ liệu local app

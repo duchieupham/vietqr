@@ -57,11 +57,11 @@ class AccountLinkView extends StatelessWidget {
           keyboardAction: TextInputAction.next,
           onChange: onChangePhone,
         ),
-        if (UserInformationHelper.instance.getPhoneNo().isNotEmpty)
+        if (UserHelper.instance.getPhoneNo().isNotEmpty)
           GestureDetector(
             onTap: () {
-              phone.text = UserInformationHelper.instance.getPhoneNo();
-              onChangePhone!(UserInformationHelper.instance.getPhoneNo());
+              phone.text = UserHelper.instance.getPhoneNo();
+              onChangePhone!(UserHelper.instance.getPhoneNo());
             },
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
@@ -73,7 +73,7 @@ class AccountLinkView extends StatelessWidget {
               ),
               child: Text(
                 StringUtils.instance.formatPhoneNumberVN(
-                    UserInformationHelper.instance.getPhoneNo()),
+                    UserHelper.instance.getPhoneNo()),
                 style: const TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w400,
@@ -121,16 +121,16 @@ class AccountLinkView extends StatelessWidget {
           ),
           onChange: onChangeCMT,
         ),
-        if (UserInformationHelper.instance
+        if (UserHelper.instance
             .getAccountInformation()
             .nationalId
             .isNotEmpty)
           GestureDetector(
             onTap: () {
-              cmt.text = UserInformationHelper.instance
+              cmt.text = UserHelper.instance
                   .getAccountInformation()
                   .nationalId;
-              onChangeCMT!(UserInformationHelper.instance
+              onChangeCMT!(UserHelper.instance
                   .getAccountInformation()
                   .nationalId);
             },
@@ -143,7 +143,7 @@ class AccountLinkView extends StatelessWidget {
                 color: AppColor.BLUE_TEXT.withOpacity(0.3),
               ),
               child: Text(
-                UserInformationHelper.instance
+                UserHelper.instance
                     .getAccountInformation()
                     .nationalId,
                 style: const TextStyle(

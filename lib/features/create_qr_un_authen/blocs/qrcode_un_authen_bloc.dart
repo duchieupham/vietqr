@@ -2,13 +2,12 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/mixin/base_manager.dart';
 import 'package:vierqr/commons/utils/log.dart';
+import 'package:vierqr/features/bank_detail/repositories/bank_card_repository.dart';
 import 'package:vierqr/features/create_qr_un_authen/events/qrcode_un_authen_event.dart';
 import 'package:vierqr/features/create_qr_un_authen/repositories/qrcode_un_authen_respository.dart';
 import 'package:vierqr/features/create_qr_un_authen/states/qrcode_un_authen_state.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
-
-import '../../bank_type/repositories/bank_type_repository.dart';
 
 class QRCodeUnUTBloc extends Bloc<QRCodeUnUTEvent, QRCodeUnUTState>
     with BaseManager {
@@ -53,5 +52,5 @@ class QRCodeUnUTBloc extends Bloc<QRCodeUnUTEvent, QRCodeUnUTState>
   }
 }
 
-final bankTypeRepository = const BankTypeRepository();
+final bankTypeRepository = const BankCardRepository();
 const QRCodeUnUTRepository _repository = QRCodeUnUTRepository();

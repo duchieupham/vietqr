@@ -7,13 +7,18 @@ import 'package:vierqr/models/introduce_dto.dart';
 
 import '../../models/setting_account_sto.dart';
 
-class UserInformationHelper {
-  const UserInformationHelper._privateConsrtructor();
+class UserHelper {
+  const UserHelper._privateConstructor();
 
-  static const UserInformationHelper _instance =
-      UserInformationHelper._privateConsrtructor();
+  static const UserHelper _instance = UserHelper._privateConstructor();
 
-  static UserInformationHelper get instance => _instance;
+  static UserHelper get instance => _instance;
+
+  static String user_key = 'USER_ID';
+  static String phone_key = 'USER_ID';
+  static String wallet_key = 'WALLET_ID';
+  static String account_setting_key = 'ACCOUNT_SETTING';
+  static String account_info_key = 'ACCOUNT_INFORMATION';
 
   Future<void> initialUserInformationHelper() async {
     const AccountInformationDTO accountInformationDTO = AccountInformationDTO(
@@ -27,8 +32,6 @@ class UserInformationHelper {
       email: '',
       imgId: '',
     );
-    await sharedPrefs.setString('USER_ID', '');
-    await sharedPrefs.setString('PHONE_NO', '');
     await sharedPrefs.setString(
         'ACCOUNT_INFORMATION', accountInformationDTO.toSPJson().toString());
   }
@@ -38,10 +41,20 @@ class UserInformationHelper {
   }
 
   Future<void> setUserId(String userId) async {
+    if (!sharedPrefs.containsKey(user_key) ||
+        sharedPrefs.getString('USER_ID') == null) {
+      await sharedPrefs.setString('USER_ID', userId);
+      return;
+    }
     await sharedPrefs.setString('USER_ID', userId);
   }
 
   Future<void> setPhoneNo(String phoneNo) async {
+    if (!sharedPrefs.containsKey('PHONE_NO') ||
+        sharedPrefs.getString('PHONE_NO') == null) {
+      await sharedPrefs.setString('PHONE_NO', phoneNo);
+      return;
+    }
     await sharedPrefs.setString('PHONE_NO', phoneNo);
   }
 
@@ -49,8 +62,13 @@ class UserInformationHelper {
     return sharedPrefs.getString('PHONE_NO')!;
   }
 
-  Future<void> setWalletId(String phoneNo) async {
-    await sharedPrefs.setString('WALLET_ID', phoneNo);
+  Future<void> setWalletId(String walletId) async {
+    if (!sharedPrefs.containsKey('WALLET_ID') ||
+        sharedPrefs.getString('WALLET_ID') == null) {
+      await sharedPrefs.setString('WALLET_ID', walletId);
+      return;
+    }
+    await sharedPrefs.setString('WALLET_ID', walletId);
   }
 
   String getWalletId() {
@@ -63,8 +81,6 @@ class UserInformationHelper {
   }
 
   Future<void> setAccountSetting(SettingAccountDTO dto) async {
-    Map<String, dynamic> json = dto.toSPJson();
-
     await sharedPrefs.setString('ACCOUNT_SETTING', dto.toSPJson().toString());
   }
 
@@ -92,7 +108,7 @@ class UserInformationHelper {
 
   SettingAccountDTO getAccountSetting() {
     return SettingAccountDTO.fromJson(
-        json.decode(sharedPrefs.getString('ACCOUNT_SETTING')!));
+        json.decode(sharedPrefs.getString('ACCOUNT_SETTING') ?? ''));
   }
 
   Future<void> setWalletInfo(String info) async {
@@ -101,14 +117,14 @@ class UserInformationHelper {
 
   IntroduceDTO getWalletInfo() {
     return IntroduceDTO.fromJson(
-        json.decode(sharedPrefs.getString('WALLET_INFO')!));
+        json.decode(sharedPrefs.getString('WALLET_INFO') ?? ''));
   }
 
   String getUserId() {
-    return sharedPrefs.getString('USER_ID')!;
+    return sharedPrefs.getString('USER_ID') ?? '';
   }
 
-  String getUserFullname() {
+  String getUserFullName() {
     return ('${getAccountInformation().lastName} ${getAccountInformation().middleName} ${getAccountInformation().firstName}')
         .trim();
   }

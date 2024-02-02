@@ -316,7 +316,7 @@ class _CreateQRSuccessState extends State<CreateQRSuccess> {
   }
 
   onPrint(QRGeneratedDTO qrGeneratedDTO) async {
-    String userId = UserInformationHelper.instance.getUserId();
+    String userId = UserHelper.instance.getUserId();
     BluetoothPrinterDTO bluetoothPrinterDTO =
         await LocalDatabase.instance.getBluetoothPrinter(userId);
     if (bluetoothPrinterDTO.id.isNotEmpty) {

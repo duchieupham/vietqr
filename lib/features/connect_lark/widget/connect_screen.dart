@@ -183,7 +183,7 @@ class _ConnectLarkStepScreenState extends State<_ConnectLarkStepScreen> {
                     if (provider.webHook.isNotEmpty) {
                       data['webhook'] = provider.webHook;
                       data['userId'] =
-                          UserInformationHelper.instance.getUserId();
+                          UserHelper.instance.getUserId();
                       data['bankIds'] = provider.bankIds;
                       BlocProvider.of<ConnectLarkBloc>(context)
                           .add(InsertLark(data: data));

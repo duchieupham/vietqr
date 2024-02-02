@@ -6,6 +6,7 @@ class Routes {
   static const String LOGIN_ACCOUNT = '/login_account';
   static const String REGISTER = '/register';
   static const String DASHBOARD = '/dashboard';
+
   // static const String CREATE_QR = '/createQR';
   static const String QR_GENERATED = '/qrGenerated';
   static const String TRANSACTION_DETAIL = '/transactionDetail';
@@ -13,10 +14,10 @@ class Routes {
   static const String UPDATE_PASSWORD = '/updatePassword';
   static const String QR_SCAN = '/qrScan';
   static const String BANK_MANAGE = '/bankManage';
+
   // static const String UI_SETTING = '/uiSetting';
   static const String TRANSACTION_HISTORY = '/transactionHistory';
   static const String ADD_BANK_CARD = '/addBankCard';
-  static const String SELECT_BANK_TYPE = '/selectBankType';
   static const String BANK_CARD_GENERATED_VIEW = '/bankCardGenerated';
   static const String QR_SHARE_VIEW = '/qrShare';
   static const String BUSINESS_INFORMATION_VIEW = '/businessInformation';
@@ -43,6 +44,7 @@ class Routes {
   static const String CONNECT_LARK = '/connect_lark';
   static const String CONNECT_STEP_TELE_SCREEN = '/connect_step_tele_screen';
   static const String CONNECT_STEP_LARK_SCREEN = '/connect_step_lark_screen';
+
   // static const String SETTING_BDSD = '/setting_bdsd';
   static const String TRANSACTION_WALLET = '/transaction_wallet';
   static const String SHOW_QR = '/show_qr';

@@ -31,8 +31,6 @@ import 'package:vierqr/features/personal/views/introduce_bottom_sheet.dart';
 import 'package:vierqr/features/printer/views/printer_setting_screen.dart';
 import 'package:vierqr/features/setting_bdsd/setting_bdsd_screen.dart';
 import 'package:vierqr/main.dart';
-import 'package:vierqr/models/app_info_dto.dart';
-import 'package:vierqr/services/providers/user_edit_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 import 'views/vietqr_id_card_view.dart';
@@ -111,7 +109,7 @@ class _AccountScreenState extends State<_AccountScreen>
           if (Navigator.canPop(context)) {
             Navigator.pop(context);
           }
-          UserInformationHelper.instance.reset();
+          UserHelper.instance.reset();
           AppDataHelper.instance.clearListQRDetailBank();
           Navigator.of(context).pushReplacementNamed(Routes.LOGIN);
           eventBus.fire(ChangeBottomBarEvent(0));
@@ -167,7 +165,7 @@ class _AccountScreenState extends State<_AccountScreen>
           Consumer<AuthProvider>(
             builder: (context, provider, child) {
               return Text(
-                  'Phiên bản ứng dụng: ${provider.packageInfo?.version ?? ''}');
+                  'Phiên bản ứng dụng: ${provider.packageInfo.version}');
             },
           ),
           Container(
@@ -210,7 +208,7 @@ class _BannerWidget extends StatelessWidget {
           _buildAvatarWidget(context),
           const SizedBox(height: 16),
           Text(
-            UserInformationHelper.instance.getUserFullname(),
+            UserHelper.instance.getUserFullName(),
             style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -219,8 +217,8 @@ class _BannerWidget extends StatelessWidget {
           ),
           const SizedBox(height: 2),
           Text(
-            StringUtils.instance.formatPhoneNumberVN(
-                UserInformationHelper.instance.getPhoneNo()),
+            StringUtils.instance
+                .formatPhoneNumberVN(UserHelper.instance.getPhoneNo()),
             style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
@@ -234,7 +232,7 @@ class _BannerWidget extends StatelessWidget {
 
   Widget _buildAvatarWidget(BuildContext context) {
     double size = 80;
-    String imgId = UserInformationHelper.instance.getAccountInformation().imgId;
+    String imgId = UserHelper.instance.getAccountInformation().imgId;
     return Consumer<AuthProvider>(
       builder: (context, provider, child) {
         return (provider.avatar.path.isNotEmpty)
@@ -325,9 +323,8 @@ class _FeatureWidget extends StatelessWidget {
         if (pickedFile != null) {
           File? file = File(pickedFile.path);
           File? compressedFile = FileUtils.instance.compressImage(file);
-          String userId = UserInformationHelper.instance.getUserId();
-          String imgId =
-              UserInformationHelper.instance.getAccountInformation().imgId;
+          String userId = UserHelper.instance.getUserId();
+          String imgId = UserHelper.instance.getAccountInformation().imgId;
           context.read<AccountBloc>().add(UpdateAvatarEvent(
               userId: userId, imgId: imgId, image: compressedFile));
         }
@@ -515,11 +512,9 @@ class _SupportWidget extends StatelessWidget {
                     NavigatorUtils.navigatePage(
                         context,
                         ContactUSScreen(
-                          appInfoDTO:
-                              Provider.of<AuthProvider>(context, listen: false)
-                                      .appInfoDTO ??
-                                  AppInfoDTO(),
-                        ),
+                            appInfoDTO: Provider.of<AuthProvider>(context,
+                                    listen: false)
+                                .appInfoDTO),
                         routeName: ContactUSScreen.routeName);
                   },
                   child: Row(

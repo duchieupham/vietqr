@@ -510,7 +510,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                   bankId: state.bankAccountDTO?.id ?? '',
                                   amount: money,
                                   content: formattedName,
-                                  userId: UserInformationHelper.instance
+                                  userId: UserHelper.instance
                                       .getUserId(),
                                 );
 

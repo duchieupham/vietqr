@@ -112,6 +112,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       emit(state.copyWith(status: BlocStatus.NONE, request: LoginType.NONE));
       if (event is GetVersionAppEvent) {
         final result = await dashBoardRepository.getVersionApp();
+        result.isCheckApp = event.isCheckVer;
         emit(state.copyWith(
           appInfoDTO: result,
           status: BlocStatus.NONE,

@@ -5,9 +5,6 @@ import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/features/home/widget/card_wallet.dart';
 import 'package:vierqr/features/home/widget/service_section.dart';
 
-import 'package:vierqr/models/national_scanner_dto.dart';
-import 'package:vierqr/services/providers/account_balance_home_provider.dart';
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -16,17 +13,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreen extends State<HomeScreen> {
-  //focus node
-  final FocusNode focusNode = FocusNode();
-
-  //blocs
-
-  NationalScannerDTO? identityDTO;
-
-  //providers
-  final AccountBalanceHomeProvider accountBalanceHomeProvider =
-      AccountBalanceHomeProvider('');
-
   @override
   void initState() {
     super.initState();

@@ -44,11 +44,11 @@ class ConfirmPassProvider extends ChangeNotifier {
     DialogWidget.instance.openLoadingDialog(msg: 'Đang xác thực mật khẩu');
     Map<String, dynamic> data = {};
     String passWord = EncryptUtils.instance.encrypted(
-      UserInformationHelper.instance.getPhoneNo(),
+      UserHelper.instance.getPhoneNo(),
       pass,
     );
     data['password'] = passWord;
-    data['userId'] = UserInformationHelper.instance.getUserId();
+    data['userId'] = UserHelper.instance.getUserId();
     data['paymentType'] = 1;
 
     ResponseMessageDTO responseMessageDTO =

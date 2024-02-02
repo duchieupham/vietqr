@@ -9,20 +9,6 @@ class DashBoardEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class PermissionEventRequest extends DashBoardEvent {
-  const PermissionEventRequest();
-
-  @override
-  List<Object?> get props => [];
-}
-
-class PermissionEventGetStatus extends DashBoardEvent {
-  const PermissionEventGetStatus();
-
-  @override
-  List<Object?> get props => [];
-}
-
 class DashBoardEventSearchName extends DashBoardEvent {
   final BankNameSearchDTO dto;
 
@@ -72,6 +58,8 @@ class TokenEventLogout extends DashBoardEvent {}
 
 class GetUserInformation extends DashBoardEvent {}
 
+class GetBanksEvent extends DashBoardEvent {}
+
 class GetListThemeEvent extends DashBoardEvent {}
 
 class UpdateThemeEvent extends DashBoardEvent {
@@ -83,7 +71,6 @@ class UpdateThemeEvent extends DashBoardEvent {
   List<Object?> get props => [type];
 }
 
-
 class UpdateKeepBrightEvent extends DashBoardEvent {
   final bool keepValue;
 
@@ -92,3 +79,9 @@ class UpdateKeepBrightEvent extends DashBoardEvent {
   @override
   List<Object?> get props => [keepValue];
 }
+
+class GetCountNotifyEvent extends DashBoardEvent {}
+
+class NotifyUpdateStatusEvent extends DashBoardEvent {}
+
+class CheckConnectivity extends DashBoardEvent {}

@@ -38,7 +38,7 @@ class _SearchBankViewState extends State<SearchBankView> {
   }
 
   void _getBankAccounts() async {
-    String userId = UserInformationHelper.instance.getUserId();
+    String userId = UserHelper.instance.getUserId();
 
     try {
       List<BankAccountDTO> list =

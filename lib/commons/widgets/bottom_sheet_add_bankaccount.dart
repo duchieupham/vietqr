@@ -19,7 +19,7 @@ class BottomSheetAddBankAccount extends StatelessWidget {
       child: BlocConsumer<BankBloc, BankState>(
           listener: (context, state) async {},
           builder: (context, state) {
-            String userId = UserInformationHelper.instance.getUserId();
+            String userId = UserHelper.instance.getUserId();
             List<BankAccountDTO> listBank = state.listBanks
                 .where((dto) => dto.userId == userId && dto.isAuthenticated)
                 .toList();

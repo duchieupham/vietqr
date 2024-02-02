@@ -141,7 +141,7 @@ class BaseAPIClient {
     switch (type) {
       case AuthenticationType.SYSTEM:
         result['Authorization'] =
-            'Bearer ${(tokenFree != null && tokenFree.isNotEmpty) ? tokenFree : token}';
+            'Bearer ${(tokenFree.isNotEmpty) ? tokenFree : token}';
         result['Content-Type'] = 'application/json';
         result['Accept'] = '*/*';
         break;

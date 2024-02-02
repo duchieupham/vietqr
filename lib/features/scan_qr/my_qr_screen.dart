@@ -55,12 +55,12 @@ class _MyQrScreenState extends State<MyQrScreen> {
                       ],
                     ),
                     child: VietQr(
-                      qrCode: UserInformationHelper.instance.getWalletId(),
+                      qrCode: UserHelper.instance.getWalletId(),
                       qrGeneratedDTO: null,
                     ),
                   ),
                   Text(
-                    UserInformationHelper.instance.getUserFullname(),
+                    UserHelper.instance.getUserFullName(),
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.w400),
                   ),
@@ -82,7 +82,7 @@ class _MyQrScreenState extends State<MyQrScreen> {
               borderRadius: 8,
               enableShadow: true,
               function: () {
-                share(name: UserInformationHelper.instance.getUserFullname());
+                share(name: UserHelper.instance.getUserFullName());
               },
             ),
           ),

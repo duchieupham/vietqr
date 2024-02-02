@@ -95,7 +95,7 @@ class TransProvider with ChangeNotifier {
       bankId: bankId,
       offset: 0,
       value: '',
-      userId: UserInformationHelper.instance.getUserId(),
+      userId: UserHelper.instance.getUserId(),
       status: 0,
       from: '0',
       to: '0',
@@ -112,7 +112,7 @@ class TransProvider with ChangeNotifier {
             bankId: bankId,
             offset: offset,
             value: keywordSearch,
-            userId: UserInformationHelper.instance.getUserId(),
+            userId: UserHelper.instance.getUserId(),
             status: statusValue.id,
           );
           if (valueTimeFilter.id == TypeTimeFilter.ALL.id ||
@@ -287,7 +287,7 @@ class TransProvider with ChangeNotifier {
         bankId: bankId,
         offset: offset,
         value: keywordSearch,
-        userId: UserInformationHelper.instance.getUserId(),
+        userId: UserHelper.instance.getUserId(),
         status: statusValue.id,
       );
       if (valueTimeFilter.id == TypeTimeFilter.ALL.id ||

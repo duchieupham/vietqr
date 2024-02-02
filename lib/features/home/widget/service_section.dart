@@ -168,7 +168,7 @@ class _ServiceSectionState extends State<ServiceSection> {
                 context,
                 CustomInAppWebView(
                   url: 'https://vietqr.vn/service/may-ban-hang/active?mid=0',
-                  userId: UserInformationHelper.instance.getUserId(),
+                  userId: UserHelper.instance.getUserId(),
                 ),
                 routeName: CustomInAppWebView.routeName);
           },

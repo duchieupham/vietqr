@@ -33,7 +33,7 @@ class ConnectTelegramScreen extends StatelessWidget {
         child: BlocProvider<ConnectTelegramBloc>(
           create: (context) => ConnectTelegramBloc()
             ..add(GetInformationTeleConnect(
-                userId: UserInformationHelper.instance.getUserId())),
+                userId: UserHelper.instance.getUserId())),
           child: BlocConsumer<ConnectTelegramBloc, ConnectTelegramState>(
             listener: (context, state) {
               if (state is RemoveTelegramLoadingState) {
@@ -45,7 +45,7 @@ class ConnectTelegramScreen extends StatelessWidget {
                 Navigator.pop(context);
                 BlocProvider.of<ConnectTelegramBloc>(context).add(
                     GetInformationTeleConnect(
-                        userId: UserInformationHelper.instance.getUserId()));
+                        userId: UserHelper.instance.getUserId()));
               }
               if (state is RemoveTeleFailedState) {
                 Navigator.pop(context);
@@ -321,7 +321,7 @@ class ConnectTelegramScreen extends StatelessWidget {
                     if (!existed) {
                       final Map<String, dynamic> body = {
                         'id': dto.id,
-                        'userId': UserInformationHelper.instance.getUserId(),
+                        'userId': UserHelper.instance.getUserId(),
                         'bankId': bankAccount.id,
                       };
 
@@ -391,7 +391,7 @@ class ConnectTelegramScreen extends StatelessWidget {
                           final Map<String, dynamic> body = {
                             'id': dto.id,
                             'userId':
-                                UserInformationHelper.instance.getUserId(),
+                                UserHelper.instance.getUserId(),
                             'bankId': bank.bankId,
                           };
                           BlocProvider.of<ConnectTelegramBloc>(context)

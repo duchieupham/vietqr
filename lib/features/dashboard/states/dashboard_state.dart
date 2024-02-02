@@ -17,16 +17,16 @@ class DashBoardState extends Equatable {
   final NationalScannerDTO? nationalScannerDTO;
   final String? codeQR;
   final String? barCode;
-  final List<BankTypeDTO>? listBanks;
+  final List<BankTypeDTO> listBanks;
   final TypeContact typeContact;
   final IntroduceDTO? introduceDTO;
   final AppInfoDTO? appInfoDTO;
   final TokenType typeToken;
-  final bool isCheckApp;
   final QRGeneratedDTO? qrDto;
   final List<ThemeDTO> themes;
   final ThemeDTO? themeDTO;
   final bool keepValue;
+  final int countNotify;
 
   const DashBoardState({
     this.msg,
@@ -37,16 +37,16 @@ class DashBoardState extends Equatable {
     this.nationalScannerDTO,
     this.codeQR,
     this.barCode,
-    this.listBanks,
+    required this.listBanks,
     this.typeContact = TypeContact.NONE,
     this.introduceDTO,
     this.appInfoDTO,
     this.typeToken = TokenType.NONE,
-    this.isCheckApp = false,
     this.keepValue = false,
     this.qrDto,
     this.themeDTO,
     required this.themes,
+    this.countNotify = 0,
   });
 
   DashBoardState copyWith({
@@ -66,11 +66,11 @@ class DashBoardState extends Equatable {
     IntroduceDTO? introduceDTO,
     TokenType? typeToken,
     AppInfoDTO? appInfoDTO,
-    bool? isCheckApp,
     QRGeneratedDTO? qrDto,
     List<ThemeDTO>? themes,
     ThemeDTO? themeDTO,
     bool? keepValue,
+    int? countNotify,
   }) {
     return DashBoardState(
       status: status ?? this.status,
@@ -86,11 +86,11 @@ class DashBoardState extends Equatable {
       introduceDTO: introduceDTO ?? this.introduceDTO,
       appInfoDTO: appInfoDTO ?? this.appInfoDTO,
       typeToken: typeToken ?? this.typeToken,
-      isCheckApp: isCheckApp ?? this.isCheckApp,
       qrDto: qrDto ?? this.qrDto,
       themes: themes ?? this.themes,
       themeDTO: themeDTO ?? this.themeDTO,
       keepValue: keepValue ?? this.keepValue,
+      countNotify: countNotify ?? this.countNotify,
     );
   }
 
@@ -110,5 +110,19 @@ class DashBoardState extends Equatable {
         themes,
         themeDTO,
         keepValue,
+        countNotify,
       ];
+}
+
+enum TokenType {
+  NONE,
+  InValid,
+  Valid,
+  MainSystem,
+  Internet,
+  Expired,
+  Logout,
+  Logout_failed,
+  Fcm_success,
+  Fcm_failed
 }

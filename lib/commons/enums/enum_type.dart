@@ -243,6 +243,7 @@ enum AddBankType {
   INSERT_OTP_BANK,
   SCAN_QR,
   REQUEST_REGISTER,
+  GET_BANK_LOCAL,
   SCAN_NOT_FOUND
 }
 
@@ -291,16 +292,9 @@ enum CreateQRType {
 
 enum DashBoardType {
   GET_BANK,
+  GET_BANK_LOCAL,
   NONE,
-  SCAN_ERROR,
-  SCAN_NOT_FOUND,
-  SCAN,
-  SEARCH_BANK_NAME,
-  ADD_BOOK_CONTACT,
-  ADD_BOOK_CONTACT_EXIST,
   ERROR,
-  EXIST_BANK,
-  INSERT_BANK,
   POINT,
   TOKEN,
   APP_VERSION,
@@ -308,7 +302,9 @@ enum DashBoardType {
   UPDATE_THEME,
   UPDATE_THEME_ERROR,
   GET_USER_SETTING,
-  KEEP_BRIGHT
+  KEEP_BRIGHT,
+  COUNT_NOTIFY,
+  UPDATE_STATUS_NOTIFY,
 }
 
 enum DashBoardTypePermission {
@@ -370,19 +366,6 @@ enum ScanType {
   SEARCH_NAME,
   PERMISSION,
   NICK_NAME,
-}
-
-enum TokenType {
-  NONE,
-  InValid,
-  Valid,
-  MainSystem,
-  Internet,
-  Expired,
-  Logout,
-  Logout_failed,
-  Fcm_success,
-  Fcm_failed,
 }
 
 enum TypeInternet {
@@ -501,6 +484,20 @@ extension TypeFilterExt on int {
         return TypeFilter.STATUS_TRANS;
       default:
         return TypeFilter.NONE;
+    }
+  }
+}
+
+enum LinkBankType { LINK, NOT_LINK }
+
+extension LinkBankTypeExt on int {
+  LinkBankType get linkType {
+    switch (this) {
+      case 1:
+        return LinkBankType.LINK;
+      case 0:
+      default:
+        return LinkBankType.NOT_LINK;
     }
   }
 }

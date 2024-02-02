@@ -289,7 +289,7 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
                                     'assets/images/ic-popup-bank-stop-share-bdsd.png',
                                 color: AppColor.RED_EC1010,
                                 onTap: () {
-                                  String userId = UserInformationHelper.instance
+                                  String userId = UserHelper.instance
                                       .getUserId();
                                   String bankId = state.bankAccountDTO.id;
                                   bloc.add(PopupBankEventUnRegisterBDSD(

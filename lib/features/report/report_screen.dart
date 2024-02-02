@@ -81,7 +81,7 @@ class _ReportScreenState extends State<ReportScreen> {
     DialogWidget.instance.openLoadingDialog();
     final ResponseMessageDTO dto =
         await dashBoardRepository.sendReport(list: imageFileList, data: {
-      'userId': UserInformationHelper.instance.getUserId(),
+      'userId': UserHelper.instance.getUserId(),
       'type': '${model.type}',
       'description': desController.text,
     });

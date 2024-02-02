@@ -8,6 +8,7 @@ class NotificationEvent extends Equatable {
   List<Object?> get props => [];
 }
 
+
 class NotificationGetListEvent extends NotificationEvent {
   final NotificationInputDTO dto;
 

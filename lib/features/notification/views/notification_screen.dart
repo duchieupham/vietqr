@@ -13,20 +13,46 @@ import 'package:vierqr/models/notification_dto.dart';
 import 'package:vierqr/models/notification_input_dto.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
-class NotificationView extends StatelessWidget {
-  static ScrollController scrollController = ScrollController();
-  static int offset = 0;
-  static bool isEnded = false;
-  static final List<NotificationDTO> notifications = [];
+class NotificationScreen extends StatelessWidget {
+  static String routeName = '/notification_screen';
 
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider<NotificationBloc>(
+      create: (BuildContext context) => NotificationBloc(context),
+      child: NotificationView(),
+    );
+  }
+}
+
+class NotificationView extends StatefulWidget {
   const NotificationView({super.key});
 
-  void initialServices(
-      BuildContext context, NotificationBloc notificationBloc) {
+  @override
+  State<NotificationView> createState() => _NotificationViewState();
+}
+
+class _NotificationViewState extends State<NotificationView> {
+  final scrollController = ScrollController();
+  int offset = 0;
+  bool isEnded = false;
+  List<NotificationDTO> notifications = [];
+  late NotificationBloc notificationBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    notificationBloc = BlocProvider.of(context);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      initialServices();
+    });
+  }
+
+  void initialServices() {
     isEnded = false;
     offset = 0;
     notifications.clear();
-    String userId = UserInformationHelper.instance.getUserId();
+    String userId = UserHelper.instance.getUserId();
     scrollController.addListener(() {
       if (scrollController.position.pixels ==
           scrollController.position.maxScrollExtent) {
@@ -44,79 +70,74 @@ class NotificationView extends StatelessWidget {
     notificationBloc.add(NotificationGetListEvent(dto: dto));
   }
 
-  Future<void> _refresh(NotificationBloc notificationBloc) async {
-    String userId = UserInformationHelper.instance.getUserId();
+  Future<void> _refresh() async {
+    String userId = UserHelper.instance.getUserId();
     NotificationInputDTO dto = NotificationInputDTO(userId: userId, offset: 0);
     notificationBloc.add(NotificationGetListEvent(dto: dto));
   }
 
   @override
   Widget build(BuildContext context) {
-    final arg = ModalRoute.of(context)!.settings.arguments as Map;
-    final NotificationBloc notificationBloc = arg['notificationBloc'];
-    initialServices(context, notificationBloc);
+    // final arg = ModalRoute.of(context)!.settings.arguments as Map;
+    // final NotificationBloc notificationBloc = arg['notificationBloc'];
 
     return Scaffold(
       appBar: const MAppBar(title: 'Thông báo'),
-      body: Column(
-        children: [
-          Expanded(
-            child: RefreshIndicator(
-              onRefresh: () async {
-                await _refresh(notificationBloc);
-              },
-              child: BlocConsumer<NotificationBloc, NotificationState>(
-                listener: (context, state) {
-                  if (state is NotificationGetListSuccessState) {
-                    notifications.clear();
-                    if (state.list.isEmpty || state.list.length < 20) {
-                      isEnded = true;
-                    }
-                    if (notifications.isEmpty) {
-                      notifications.addAll(state.list);
-                    }
-                  }
-                  if (state is NotificationFetchSuccessState) {
-                    if (state.list.isEmpty || state.list.length < 20) {
-                      isEnded = true;
-                    }
-                    notifications.addAll(state.list);
-                  }
-                },
-                builder: (context, state) {
-                  return (notifications.isEmpty)
-                      ? const SizedBox()
-                      : ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: notifications.length + 1,
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          controller: scrollController,
-                          itemBuilder: (context, index) {
-                            return (index == notifications.length && !isEnded)
-                                ? const UnconstrainedBox(
-                                    child: SizedBox(
-                                      width: 50,
-                                      height: 50,
-                                      child: CircularProgressIndicator(
-                                        color: AppColor.BLUE_TEXT,
-                                      ),
-                                    ),
-                                  )
-                                : (index == notifications.length && isEnded)
-                                    ? const SizedBox()
-                                    : _buildElement(
-                                        context: context,
-                                        dto: notifications[index],
-                                        notificationBloc: notificationBloc,
-                                      );
-                          },
-                        );
-                },
-              ),
-            ),
-          ),
-          const Padding(padding: EdgeInsets.only(top: 10)),
-        ],
+      body: BlocConsumer<NotificationBloc, NotificationState>(
+        listener: (context, state) {
+          if (state is NotificationGetListSuccessState) {
+            notifications.clear();
+            if (state.list.isEmpty || state.list.length < 20) {
+              isEnded = true;
+            }
+            if (notifications.isEmpty) {
+              notifications.addAll(state.list);
+            }
+          }
+          if (state is NotificationFetchSuccessState) {
+            if (state.list.isEmpty || state.list.length < 20) {
+              isEnded = true;
+            }
+            notifications.addAll(state.list);
+          }
+        },
+        builder: (context, state) {
+          return Stack(
+            children: [
+              if (notifications.isNotEmpty)
+                RefreshIndicator(
+                  onRefresh: _refresh,
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: notifications.length + 1,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    controller: scrollController,
+                    itemBuilder: (context, index) {
+                      return (index == notifications.length && !isEnded)
+                          ? const UnconstrainedBox(
+                              child: SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(
+                                  color: AppColor.BLUE_TEXT,
+                                ),
+                              ),
+                            )
+                          : (index == notifications.length && isEnded)
+                              ? const SizedBox()
+                              : _buildElement(
+                                  context: context,
+                                  dto: notifications[index],
+                                  notificationBloc: notificationBloc,
+                                );
+                    },
+                  ),
+                ),
+              if (state is NotificationInitialState)
+                Center(child: CircularProgressIndicator())
+            ],
+          );
+        },
       ),
     );
   }

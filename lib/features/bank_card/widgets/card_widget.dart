@@ -19,7 +19,7 @@ class CardWidget extends StatelessWidget {
     this.onLinked,
   });
 
-  String get userId => UserInformationHelper.instance.getUserId();
+  String get userId => UserHelper.instance.getUserId();
 
   double get heightCard => 120;
 

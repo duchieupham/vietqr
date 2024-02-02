@@ -4,8 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/commons/utils/currency_utils.dart';
-import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:wakelock/wakelock.dart';

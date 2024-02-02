@@ -187,8 +187,8 @@ class UserUpdatePassword extends StatelessWidget {
                     .isValidUpdatePassword()) {
                   _userEditBloc.add(
                     UserEditPasswordEvent(
-                      userId: UserInformationHelper.instance.getUserId(),
-                      phoneNo: UserInformationHelper.instance.getPhoneNo(),
+                      userId: UserHelper.instance.getUserId(),
+                      phoneNo: UserHelper.instance.getPhoneNo(),
                       oldPassword: _oldPasswordController.text,
                       newPassword: _newPasswordController.text,
                     ),

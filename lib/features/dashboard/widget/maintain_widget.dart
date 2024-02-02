@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
-import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
-import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 
 class MaintainWidget extends StatelessWidget {
-  final DashBoardBloc tokenBloc;
+  final Function() onRetry;
 
-  const MaintainWidget({
-    super.key,
-    required this.tokenBloc,
-  });
+  const MaintainWidget({super.key, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
@@ -43,12 +39,11 @@ class MaintainWidget extends StatelessWidget {
           height: 40,
           icon: Icons.refresh_rounded,
           title: 'Thử lại',
-          function: () {
-            tokenBloc.add(TokenEventCheckValid());
-            Navigator.pop(context);
+          function: (){
+            onRetry();
           },
-          bgColor: Theme.of(context).canvasColor,
-          textColor: Theme.of(context).hintColor,
+          bgColor: AppColor.BLUE_TEXT,
+          textColor: AppColor.WHITE,
         ),
         const Padding(
           padding: EdgeInsets.only(bottom: 30),

@@ -6,7 +6,6 @@ import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class DialogUpdateView extends StatefulWidget {
   final bool isHideClose;
@@ -43,7 +42,7 @@ class _DialogUpdateViewState extends State<DialogUpdateView> {
             children: [
               Consumer<AuthProvider>(builder: (context, provider, child) {
                 return Expanded(
-                  child: UserInformationHelper.instance.getUserId().isNotEmpty
+                  child: provider.userId.isNotEmpty
                       ? CachedNetworkImage(
                           imageUrl: provider.settingDTO.logoUrl,
                           width: 130,
@@ -65,7 +64,7 @@ class _DialogUpdateViewState extends State<DialogUpdateView> {
               const Padding(padding: EdgeInsets.only(top: 10)),
               Consumer<AuthProvider>(
                 builder: (context, provider, child) {
-                  if (provider.isCheckApp) {
+                  if (provider.appInfoDTO.isCheckApp) {
                     return Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 6, vertical: 10),
@@ -104,7 +103,7 @@ class _DialogUpdateViewState extends State<DialogUpdateView> {
                         SizedBox(
                           width: 250,
                           child: Text(
-                            'Phiên bản hiện tại: ${provider.packageInfo?.version ?? ''}',
+                            'Phiên bản hiện tại: ${provider.packageInfo.version}',
                             textAlign: TextAlign.center,
                             maxLines: 3,
                             overflow: TextOverflow.ellipsis,

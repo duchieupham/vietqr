@@ -6,6 +6,10 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
+import 'package:vierqr/commons/utils/printer_utils.dart';
+import 'package:vierqr/commons/utils/platform_utils.dart';
+import 'package:vierqr/models/bluetooth_printer_dto.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
@@ -50,7 +54,7 @@ class InfoDetailBankAccount extends StatefulWidget {
 }
 
 class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
-  String get userId => UserInformationHelper.instance.getUserId();
+  String get userId => UserHelper.instance.getUserId();
 
   final globalKey = GlobalKey();
 

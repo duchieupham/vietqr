@@ -62,7 +62,7 @@ class _UserEditViewState extends State<UserEditView> {
 
   void initialServices(BuildContext context) {
     final AccountInformationDTO accountInformationDTO =
-        UserInformationHelper.instance.getAccountInformation();
+        UserHelper.instance.getAccountInformation();
     if (accountInformationDTO.lastName.isNotEmpty &&
         _lastNameController.text.isEmpty) {
       _lastNameController.value = _lastNameController.value
@@ -243,8 +243,8 @@ class _UserEditViewState extends State<UserEditView> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          UserInformationHelper.instance
-                                              .getUserFullname(),
+                                          UserHelper.instance
+                                              .getUserFullName(),
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                           style: const TextStyle(
@@ -253,7 +253,7 @@ class _UserEditViewState extends State<UserEditView> {
                                           ),
                                         ),
                                         Text(
-                                          UserInformationHelper.instance
+                                          UserHelper.instance
                                               .getPhoneNo(),
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
@@ -289,10 +289,10 @@ class _UserEditViewState extends State<UserEditView> {
                                       await Future.delayed(
                                           const Duration(milliseconds: 200),
                                           () {
-                                        String userId = UserInformationHelper
+                                        String userId = UserHelper
                                             .instance
                                             .getUserId();
-                                        String imgId = UserInformationHelper
+                                        String imgId = UserHelper
                                             .instance
                                             .getAccountInformation()
                                             .imgId;
@@ -663,7 +663,7 @@ class _UserEditViewState extends State<UserEditView> {
                                       'Tài khoản của bạn sẽ bị vô hiệu hoá và không thể đăng nhập lại vào hệ thống',
                                   confirmFunction: () async {
                                     Navigator.pop(context);
-                                    String userId = UserInformationHelper
+                                    String userId = UserHelper
                                         .instance
                                         .getUserId();
                                     _userEditBloc
@@ -713,7 +713,7 @@ class _UserEditViewState extends State<UserEditView> {
                               if (provider.isValidUpdate()) {
                                 AccountInformationDTO accountInformationDTO =
                                     AccountInformationDTO(
-                                  userId: UserInformationHelper.instance
+                                  userId: UserHelper.instance
                                       .getUserId(),
                                   firstName: _firstNameController.text,
                                   middleName: _middleNameController.text,
@@ -725,7 +725,7 @@ class _UserEditViewState extends State<UserEditView> {
                                   nationalDate: _nationalDate,
                                   nationalId: _nationalIdController.text,
                                   oldNationalId: _oldNationalIdController.text,
-                                  imgId: UserInformationHelper.instance
+                                  imgId: UserHelper.instance
                                       .getAccountInformation()
                                       .imgId,
                                 );
@@ -750,7 +750,7 @@ class _UserEditViewState extends State<UserEditView> {
 
   Widget _buildAvatarWidget(BuildContext context) {
     double size = 60;
-    String imgId = UserInformationHelper.instance.getAccountInformation().imgId;
+    String imgId = UserHelper.instance.getAccountInformation().imgId;
     return Consumer<AuthProvider>(
       builder: (context, provider, child) {
         return (provider.avatar.path.isNotEmpty)

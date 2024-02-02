@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:isolate';
 
 import 'package:dudv_base/dudv_base.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
@@ -66,7 +65,7 @@ class _ContactStateState extends State<_ContactState>
   StreamSubscription? _syncSub;
   StreamSubscription? _syncGetSub;
 
-  String get userId => UserInformationHelper.instance.getUserId();
+  String get userId => UserHelper.instance.getUserId();
 
   Timer? _debounce;
 
@@ -98,41 +97,7 @@ class _ContactStateState extends State<_ContactState>
       }
     });
     _syncGetSub = eventBus.on<SentDataToContact>().listen((data) async {
-      List<VCardModel> listVCards = data.datas;
-      if (listVCards.isNotEmpty) {
-        if (listVCards.length > maxLength) {
-          int num = (listVCards.length / maxLength).floor();
-
-          List<List<VCardModel>> datas = [];
-          for (int i = 0; i < num; i++) {
-            List<VCardModel> values =
-                listVCards.sublist(i * maxLength, (i + 1) * maxLength);
-            datas = [...datas, values];
-          }
-
-          if (num * maxLength < listVCards.length) {
-            List<VCardModel> values =
-                listVCards.sublist(num * maxLength, listVCards.length);
-            datas = [...datas, values];
-          }
-          for (var e in datas) {
-            final data = await _insertContacts(e);
-            if (data.status == Stringify.RESPONSE_STATUS_FAILED) {
-              await DialogWidget.instance.openMsgDialog(
-                  title: 'Không thể lưu danh bạ',
-                  msg: CheckUtils.instance.getCheckMessage(data.message) ?? '');
-
-              return;
-            }
-          }
-          int type = Provider.of<ContactProvider>(context, listen: false)
-              .category!
-              .type;
-          _bloc.add(ContactEventGetList(type: type, isLoading: false));
-        } else {
-          _bloc.add(InsertVCardEvent(listVCards));
-        }
-      }
+      _onSyncCard(data.datas);
     });
 
     scrollController.addListener(_loadMore);
@@ -909,6 +874,42 @@ class _ContactStateState extends State<_ContactState>
         ],
       ),
     );
+  }
+
+  void _onSyncCard(List<VCardModel> listVCards) async {
+    if (listVCards.isNotEmpty) {
+      if (listVCards.length > maxLength) {
+        int num = (listVCards.length / maxLength).floor();
+
+        List<List<VCardModel>> datas = [];
+        for (int i = 0; i < num; i++) {
+          List<VCardModel> values =
+              listVCards.sublist(i * maxLength, (i + 1) * maxLength);
+          datas = [...datas, values];
+        }
+
+        if (num * maxLength < listVCards.length) {
+          List<VCardModel> values =
+              listVCards.sublist(num * maxLength, listVCards.length);
+          datas = [...datas, values];
+        }
+        for (var e in datas) {
+          final data = await _insertContacts(e);
+          if (data.status == Stringify.RESPONSE_STATUS_FAILED) {
+            await DialogWidget.instance.openMsgDialog(
+                title: 'Không thể lưu danh bạ',
+                msg: CheckUtils.instance.getCheckMessage(data.message));
+
+            return;
+          }
+        }
+        int type =
+            Provider.of<ContactProvider>(context, listen: false).category!.type;
+        _bloc.add(ContactEventGetList(type: type, isLoading: false));
+      } else {
+        _bloc.add(InsertVCardEvent(listVCards));
+      }
+    }
   }
 
   @override
