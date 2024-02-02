@@ -102,7 +102,7 @@ class _ShowQrState extends State<ShowQr> {
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           backgroundColor: Theme.of(context).cardColor,
-          textColor: Theme.of(context).cardColor,
+          textColor: Theme.of(context).hintColor,
           fontSize: 15,
         );
       });

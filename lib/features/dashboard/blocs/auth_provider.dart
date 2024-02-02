@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/introduce_dto.dart';
@@ -299,6 +300,8 @@ class AuthProvider with ChangeNotifier {
             msg: 'Không có bản cập nhật nào',
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.CENTER,
+            backgroundColor: AppColor.GREY_BG,
+            textColor: AppColor.textBlack,
             fontSize: 15,
           );
         }
@@ -321,6 +324,8 @@ class AuthProvider with ChangeNotifier {
             msg: 'Không có bản cập nhật nào',
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.CENTER,
+            backgroundColor: AppColor.GREY_BG,
+            textColor: AppColor.textBlack,
             fontSize: 15,
           );
         }

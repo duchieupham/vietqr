@@ -5,8 +5,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/events.dart';
+import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
+import 'package:vierqr/commons/widgets/dashed_line.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
 import 'package:vierqr/commons/widgets/viet_qr_new.dart';
@@ -68,7 +70,9 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
 
   final globalKey = GlobalKey();
 
-  double get paddingHorizontal => 40;
+  double get paddingHorizontal => 45;
+
+  bool get small => MediaQuery.of(context).size.height < 800;
 
   @override
   void initState() {
@@ -84,16 +88,18 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
         flightShuttleBuilder: (flightContext, animation, flightDirection,
             fromHeroContext, toHeroContext) {
           // Tạo và trả về một widget mới để tham gia vào hiệu ứng chuyển động
-          return Container(
-            height: MediaQuery.of(context).size.height,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/images/bg-qr-vqr.png'),
-                fit: BoxFit.fitHeight,
+          return Material(
+            child: Container(
+              height: MediaQuery.of(context).size.height,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/images/bg-qr-vqr.png'),
+                  fit: BoxFit.fitHeight,
+                ),
               ),
-            ),
-            child: const Center(
-              child: CircularProgressIndicator(),
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
             ),
           );
         },
@@ -140,18 +146,19 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const SizedBox(height: kToolbarHeight),
+                            SizedBox(height: small ? 40 : kToolbarHeight),
                             IconButton(
                               onPressed: () => Navigator.pop(context),
                               icon: Icon(Icons.close,
-                                  color: AppColor.WHITE, size: 36),
-                              padding: EdgeInsets.only(left: 16, bottom: 16),
+                                  color: AppColor.WHITE, size: small ? 28 : 36),
+                              padding: EdgeInsets.only(
+                                  left: 16, bottom: small ? 4 : 16),
                               constraints: const BoxConstraints(),
                             ),
-                            const SizedBox(height: 24),
+                            SizedBox(height: small ? 8 : 24),
                             Container(
                               margin: EdgeInsets.symmetric(
-                                  horizontal: paddingHorizontal),
+                                  horizontal: small ? 60 : paddingHorizontal),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(6),
                                 color: AppColor.GREY_BG,
@@ -163,17 +170,23 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
                                   children: [
                                     Container(
                                       alignment: Alignment.center,
+                                      width: small ? 60 : 80,
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: 16),
-                                      child: Text(
-                                        state.bankAccountDTO.bankShortName,
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold),
+                                          horizontal: 24),
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image: ImageUtils.instance
+                                              .getImageNetWork(
+                                                  widget.dto.imgId),
+                                        ),
                                       ),
                                     ),
-                                    CustomPaint(
-                                        size: Size(1, double.infinity),
-                                        painter: DottedLinePainter()),
+                                    Container(
+                                      height: small ? 40 : 60,
+                                      padding: const EdgeInsets.only(
+                                          left: 12, right: 10),
+                                      child: VerticalDashedLine(),
+                                    ),
                                     Expanded(
                                       child: Padding(
                                         padding: const EdgeInsets.symmetric(
@@ -186,7 +199,7 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
                                               state.bankAccountDTO.bankAccount,
                                               style: TextStyle(
                                                   color: AppColor.BLACK,
-                                                  fontSize: 15,
+                                                  fontSize: small ? 12 : 15,
                                                   fontWeight: FontWeight.bold),
                                             ),
                                             Text(
@@ -194,16 +207,19 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
                                                   .toUpperCase(),
                                               style: TextStyle(
                                                 color: AppColor.textBlack,
-                                                fontSize: 13,
+                                                fontSize: small ? 10 : 13,
                                               ),
                                             ),
                                           ],
                                         ),
                                       ),
                                     ),
-                                    CustomPaint(
-                                        size: Size(1, double.infinity),
-                                        painter: DottedLinePainter()),
+                                    Container(
+                                      height: small ? 40 : 60,
+                                      padding: const EdgeInsets.only(
+                                          left: 12, right: 10),
+                                      child: VerticalDashedLine(),
+                                    ),
                                     GestureDetector(
                                       onTap: () => onCopy(state.bankAccountDTO),
                                       child: Padding(
@@ -211,7 +227,7 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
                                             horizontal: 8.0),
                                         child: Image.asset(
                                           'assets/images/ic-copy-blue.png',
-                                          width: 36,
+                                          width: small ? 24 : 36,
                                           height: 36,
                                         ),
                                       ),
@@ -289,8 +305,8 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
                                     'assets/images/ic-popup-bank-stop-share-bdsd.png',
                                 color: AppColor.RED_EC1010,
                                 onTap: () {
-                                  String userId = UserHelper.instance
-                                      .getUserId();
+                                  String userId =
+                                      UserHelper.instance.getUserId();
                                   String bankId = state.bankAccountDTO.id;
                                   bloc.add(PopupBankEventUnRegisterBDSD(
                                       userId, bankId));
@@ -341,6 +357,8 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
       bankName: bankAccountDTO.bankName,
       bankAccount: bankAccountDTO.bankAccount,
       userBankName: bankAccountDTO.userBankName,
+      qrCode: bankAccountDTO.qrCode,
+      imgId: bankAccountDTO.imgId,
     );
     NavigatorUtils.navigatePage(
         context, PopupBankShare(dto: dto, type: TypeImage.SAVE),
@@ -461,7 +479,7 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 6),
+        padding: EdgeInsets.symmetric(horizontal: 24, vertical: small ? 0 : 6),
         decoration: BoxDecoration(
           border: Border(
               bottom: BorderSide(color: AppColor.grey979797.withOpacity(0.4))),
@@ -470,13 +488,16 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
           children: [
             Image.asset(
               url,
-              width: 36,
+              width: small ? 24 : 36,
               height: 36,
               color: colorIcon,
             ),
             Text(
               title,
-              style: TextStyle(color: color ?? AppColor.BLUE_TEXT),
+              style: TextStyle(
+                color: color ?? AppColor.BLUE_TEXT,
+                fontSize: small ? 10 : 14,
+              ),
             ),
           ],
         ),

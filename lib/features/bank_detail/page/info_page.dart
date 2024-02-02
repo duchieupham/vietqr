@@ -58,6 +58,8 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
 
   final globalKey = GlobalKey();
 
+  bool get small => MediaQuery.of(context).size.height < 800;
+
   void onSaveImage(BuildContext context) async {
     DialogWidget.instance.openLoadingDialog();
     await Future.delayed(
@@ -71,7 +73,7 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.CENTER,
               backgroundColor: Theme.of(context).cardColor,
-              textColor: Theme.of(context).cardColor,
+              textColor: Theme.of(context).hintColor,
               fontSize: 15,
             );
           },
@@ -94,9 +96,7 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(
-                      height: 12,
-                    ),
+                    SizedBox(height: small ? 8 : 12),
                     Align(
                       alignment: Alignment.center,
                       child: Text(
@@ -104,9 +104,7 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
                         style: TextStyle(fontSize: 12),
                       ),
                     ),
-                    const SizedBox(
-                      height: 4,
-                    ),
+                    const SizedBox(height: 8),
                     RepaintBoundaryWidget(
                       globalKey: globalKey,
                       builder: (key) {

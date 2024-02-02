@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
 class DottedLinePainter extends CustomPainter {
+  final double width;
+
+  DottedLinePainter(this.width);
+
   @override
   void paint(Canvas canvas, Size size) {
     Paint paint = Paint()
@@ -8,7 +12,7 @@ class DottedLinePainter extends CustomPainter {
       ..strokeWidth = 1.0
       ..strokeCap = StrokeCap.round;
 
-    double dashWidth = 2;
+    double dashWidth = width;
     double dashSpace = 2;
 
     double startY = 1;

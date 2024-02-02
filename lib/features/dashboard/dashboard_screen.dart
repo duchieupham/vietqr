@@ -67,14 +67,12 @@ class _DashBoardScreen extends State<DashBoardScreen>
         AutomaticKeepAliveClientMixin,
         SingleTickerProviderStateMixin {
   //page controller
-  late PageController _pageController =
-      PageController(initialPage: 0, keepPage: true);
+  late PageController _pageController;
 
   //list page
   final List<Widget> _listScreens = [
     const BankScreen(key: PageStorageKey('QR_GENERATOR_PAGE')),
     const HomeScreen(key: PageStorageKey('HOME_PAGE')),
-    const SizedBox(key: PageStorageKey('SCAN_PAGE')),
     const ContactScreen(key: PageStorageKey('CONTACT_PAGE')),
     const AccountScreen(key: const PageStorageKey('USER_SETTING_PAGE')),
   ];
@@ -83,9 +81,13 @@ class _DashBoardScreen extends State<DashBoardScreen>
   StreamSubscription? _subReloadWallet;
   StreamSubscription? _subSyncContact;
 
+  //
+  final _bottomBarController = StreamController<int>.broadcast();
+
   //blocs
   late DashBoardBloc _dashBoardBloc;
   late AuthProvider _provider;
+  late Stream<int> bottomBarStream;
 
   @override
   void initState() {
@@ -93,11 +95,9 @@ class _DashBoardScreen extends State<DashBoardScreen>
     WidgetsBinding.instance.addObserver(this);
     _dashBoardBloc = BlocProvider.of(context);
     _provider = Provider.of<AuthProvider>(context, listen: false);
-    ;
-    _pageController = PageController(
-      initialPage: _provider.pageSelected,
-      keepPage: true,
-    );
+
+    _pageController =
+        PageController(initialPage: _provider.pageSelected, keepPage: true);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       initialServices(context);
       listenNewNotification();
@@ -114,15 +114,18 @@ class _DashBoardScreen extends State<DashBoardScreen>
     _subSyncContact = eventBus.on<SyncContactEvent>().listen((data) {
       _heavyTaskStreamReceiver(data.list);
     });
+
+    bottomBarStream = _bottomBarController.stream;
   }
 
   void initialServices(BuildContext context) {
     _dashBoardBloc.add(const TokenEventCheckValid());
     _dashBoardBloc.add(GetPointEvent());
-    if (_provider.introduceDTO == null) {
-      _dashBoardBloc.add(GetPointEvent());
-    }
     _dashBoardBloc.add(GetCountNotifyEvent());
+  }
+
+  void sendDataFromBottomBar(int data) {
+    _bottomBarController.add(data);
   }
 
   static void heavyTask(List<dynamic> args) async {
@@ -240,6 +243,9 @@ class _DashBoardScreen extends State<DashBoardScreen>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    if (_bottomBarController.hasListener) {
+      _bottomBarController.close();
+    }
     _subscription?.cancel();
     _subscription = null;
     _subReloadWallet?.cancel();
@@ -339,18 +345,22 @@ class _DashBoardScreen extends State<DashBoardScreen>
                     : const EdgeInsets.only(top: kToolbarHeight * 2),
                 child: Listener(
                   onPointerMove: (moveEvent) {
-                    if (moveEvent.delta.dx > 0) {
-                      provider.updateMoveEvent(TypeMoveEvent.RIGHT);
+                    print(moveEvent.delta.dx);
+                    if (moveEvent.delta.dx < 0) {
+                      if (provider.moveEvent != TypeMoveEvent.RIGHT_TO_LEFT)
+                        provider.updateMoveEvent(TypeMoveEvent.RIGHT_TO_LEFT);
                     } else {
-                      provider.updateMoveEvent(TypeMoveEvent.LEFT);
+                      if (provider.moveEvent != TypeMoveEvent.LEFT_TO_RIGHT)
+                        provider.updateMoveEvent(TypeMoveEvent.LEFT_TO_RIGHT);
                     }
                   },
                   child: PageView(
                     key: const PageStorageKey('PAGE_VIEW'),
                     physics: const AlwaysScrollableScrollPhysics(),
                     controller: _pageController,
-                    onPageChanged: (index) async {
+                    onPageChanged: (index) {
                       provider.updateIndex(index);
+                      sendDataFromBottomBar(index);
                     },
                     children: _listScreens,
                   ),
@@ -402,15 +412,13 @@ class _DashBoardScreen extends State<DashBoardScreen>
                 right: 20,
                 child: BlocBuilder<NetworkBloc, NetworkState>(
                   builder: (context, state) {
-                    TypeInternet type = TypeInternet.NONE;
                     if (state is NetworkFailure) {
-                      type = TypeInternet.DISCONNECT;
+                      return DisconnectWidget(type: TypeInternet.DISCONNECT);
                     } else if (state is NetworkSuccess) {
-                      type = TypeInternet.CONNECT;
+                      return DisconnectWidget(type: TypeInternet.CONNECT);
+                    } else {
+                      return const SizedBox.shrink();
                     }
-                    eventBus.fire(ListenNetworkEvent(type));
-
-                    return DisconnectWidget(type: type);
                   },
                 ),
               ),
@@ -420,31 +428,36 @@ class _DashBoardScreen extends State<DashBoardScreen>
         bottomNavigationBar: Consumer<AuthProvider>(
           builder: (context, page, _) {
             return CurvedNavigationBar(
-                backgroundColor: AppColor.TRANSPARENT,
-                buttonBackgroundColor: AppColor.TRANSPARENT,
-                animationDuration: const Duration(milliseconds: 300),
-                index: PageType.SCAN_QR.pageIndex,
-                iconPadding: 0.0,
-                onTap: (index) async {
-                  if (index.pageType != PageType.SCAN_QR) {
-                    _animatedToPage(index);
-                  } else {
-                    if (QRScannerHelper.instance.getQrIntro()) {
-                      startBarcodeScanStream();
-                    } else {
-                      await DialogWidget.instance.showFullModalBottomContent(
-                        widget: const QRScanWidget(),
-                        color: AppColor.BLACK,
-                      );
-                      startBarcodeScanStream();
-                    }
-                  }
-                },
-                items: _listNavigation);
+              backgroundColor: AppColor.TRANSPARENT,
+              buttonBackgroundColor: AppColor.TRANSPARENT,
+              animationDuration: const Duration(milliseconds: 300),
+              indexPage: page.pageSelected,
+              indexPaint: 0,
+              iconPadding: 0.0,
+              onTap: onTapPage,
+              items: _listNavigation,
+              stream: bottomBarStream,
+            );
           },
         ),
       ),
     );
+  }
+
+  void onTapPage(int index) async {
+    if (index.pageType != PageType.SCAN_QR) {
+      _animatedToPage(index);
+    } else {
+      if (QRScannerHelper.instance.getQrIntro()) {
+        startBarcodeScanStream();
+      } else {
+        await DialogWidget.instance.showFullModalBottomContent(
+          widget: const QRScanWidget(),
+          color: AppColor.BLACK,
+        );
+        startBarcodeScanStream();
+      }
+    }
   }
 
 //navigate to page
@@ -598,26 +611,31 @@ class _DashBoardScreen extends State<DashBoardScreen>
       label: 'Tài khoản',
       urlSelect: 'assets/images/ic-btm-list-bank-blue.png',
       urlUnselect: 'assets/images/ic-btm-list-bank-grey.png',
+      index: 0,
     ),
     CurvedNavigationBarItem(
       label: 'Trang chủ',
       urlSelect: 'assets/images/ic-btm-dashboard-blue.png',
       urlUnselect: 'assets/images/ic-btm-dashboard-grey.png',
+      index: 1,
     ),
     CurvedNavigationBarItem(
       label: 'Quét QR',
       urlSelect: 'assets/images/ic-menu-slide-home-blue.png',
       urlUnselect: 'assets/images/ic-menu-slide-home-blue.png',
+      index: -1,
     ),
     CurvedNavigationBarItem(
       label: 'Ví QR',
       urlSelect: 'assets/images/ic-btm-qr-wallet-blue.png',
       urlUnselect: 'assets/images/ic-btm-qr-wallet-grey.png',
+      index: 2,
     ),
     CurvedNavigationBarItem(
       label: 'Cá nhân',
       urlSelect: '',
       urlUnselect: '',
+      index: 3,
       child: Consumer<AuthProvider>(builder: (context, provider, _) {
         String imgId = UserHelper.instance.getAccountInformation().imgId;
         return Container(

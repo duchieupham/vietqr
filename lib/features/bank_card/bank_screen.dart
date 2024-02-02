@@ -317,7 +317,7 @@ class _BankScreenState extends State<_BankScreen>
                 title: 'Copy QR',
               ),
             ),
-            CustomPaint(painter: DottedLinePainter()),
+            CustomPaint(painter: DottedLinePainter(isSmall ? 1.8 : 1.9)),
             Expanded(
               child: _buildSection(
                 pathIcon: 'assets/images/ic-add-bank.png',
@@ -330,7 +330,7 @@ class _BankScreenState extends State<_BankScreen>
                 title: 'Thêm Tài khoản',
               ),
             ),
-            CustomPaint(painter: DottedLinePainter()),
+            CustomPaint(painter: DottedLinePainter(isSmall ? 1.8 : 1.9)),
             Expanded(
               child: _buildSection(
                 pathIcon: 'assets/images/ic-share-bdsd.png',
@@ -373,7 +373,7 @@ class _BankScreenState extends State<_BankScreen>
                   crossAxisCount: 4,
                   crossAxisSpacing: 4,
                   mainAxisSpacing: 4,
-                  childAspectRatio: 2.5,
+                  childAspectRatio: 2,
                 ),
                 itemCount: list.length,
                 itemBuilder: (context, index) {
@@ -420,6 +420,8 @@ class _BankScreenState extends State<_BankScreen>
     return const SizedBox.shrink();
   }
 
+  bool get isSmall => MediaQuery.of(context).size.height < 800;
+
   Widget _buildSection({
     required String pathIcon,
     required GestureTapCallback? onTap,
@@ -430,7 +432,8 @@ class _BankScreenState extends State<_BankScreen>
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        padding: EdgeInsets.symmetric(
+            vertical: isSmall ? 6 : 8, horizontal: isSmall ? 6 : 12),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.horizontal(
             left: Radius.circular(radiusLeft ?? 8),

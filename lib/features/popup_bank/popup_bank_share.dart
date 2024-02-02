@@ -26,12 +26,14 @@ class PopupBankShare extends StatefulWidget {
 class _PopupBankShareState extends State<PopupBankShare> {
   final globalKey = GlobalKey();
 
-  double get paddingHorizontal => 40;
+  double get paddingHorizontal => 45;
+
+  bool get small => MediaQuery.of(context).size.height < 800;
 
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(milliseconds: 500), () async {
+    Future.delayed(const Duration(milliseconds: 1500), () async {
       if (widget.type == TypeImage.SAVE) {
         onSaveImage(context);
       } else if (widget.type == TypeImage.SHARE) {
@@ -64,7 +66,7 @@ class _PopupBankShareState extends State<PopupBankShare> {
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.CENTER,
               backgroundColor: Theme.of(context).cardColor,
-              textColor: Theme.of(context).cardColor,
+              textColor: Theme.of(context).hintColor,
               fontSize: 15,
             );
           },
@@ -99,7 +101,7 @@ class _PopupBankShareState extends State<PopupBankShare> {
                         children: [
                           Container(
                             margin: EdgeInsets.symmetric(
-                                horizontal: paddingHorizontal),
+                                horizontal: small ? 60 : paddingHorizontal),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(6),
                               color: AppColor.GREY_BG,
@@ -110,7 +112,7 @@ class _PopupBankShareState extends State<PopupBankShare> {
                                 children: [
                                   Container(
                                     alignment: Alignment.center,
-                                    width: 80,
+                                    width: small ? 60 : 80,
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 24),
                                     decoration: BoxDecoration(
@@ -122,7 +124,7 @@ class _PopupBankShareState extends State<PopupBankShare> {
                                   ),
                                   CustomPaint(
                                       size: Size(1, double.infinity),
-                                      painter: DottedLinePainter()),
+                                      painter: DottedLinePainter(small ? 1.8 : 2)),
                                   Expanded(
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(
@@ -135,7 +137,7 @@ class _PopupBankShareState extends State<PopupBankShare> {
                                             widget.dto.bankAccount,
                                             style: TextStyle(
                                                 color: AppColor.BLACK,
-                                                fontSize: 15,
+                                                fontSize: small ? 12 : 15,
                                                 fontWeight: FontWeight.bold),
                                           ),
                                           Text(
@@ -143,7 +145,7 @@ class _PopupBankShareState extends State<PopupBankShare> {
                                                 .toUpperCase(),
                                             style: TextStyle(
                                               color: AppColor.textBlack,
-                                              fontSize: 13,
+                                              fontSize: small ? 11 : 13,
                                             ),
                                           ),
                                         ],
@@ -208,6 +210,7 @@ class _PopupBankShareState extends State<PopupBankShare> {
                                 ],
                               ),
                             ),
+                          if (small) const SizedBox(height: 30),
                         ],
                       ),
                     ),
@@ -223,10 +226,11 @@ class _PopupBankShareState extends State<PopupBankShare> {
             },
           ),
           Positioned(
-            top: kToolbarHeight,
+            top: small ? 40 : kToolbarHeight,
             child: IconButton(
               onPressed: () {},
-              icon: Icon(Icons.close, color: AppColor.WHITE, size: 36),
+              icon: Icon(Icons.close,
+                  color: AppColor.WHITE, size: small ? 28 : 36),
               padding: EdgeInsets.only(left: 16),
               constraints: const BoxConstraints(),
             ),

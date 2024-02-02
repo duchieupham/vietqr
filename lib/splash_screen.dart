@@ -46,7 +46,6 @@ class _SplashScreenState extends State<SplashScreen> {
 
   String get userId => UserHelper.instance.getUserId().trim();
   late DashBoardBloc _bloc;
-  Timer? _debounce;
 
   //animation
   late final rive.StateMachineController _riveController;
@@ -93,6 +92,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   _openStartScreen() async {
+    if (!mounted) return;
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
           builder: (context) => DashBoardScreen(
@@ -195,7 +195,6 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   void dispose() {
-    _debounce?.cancel();
     if (_isRiveInit) {
       _riveController.dispose();
     }
@@ -232,8 +231,8 @@ class _SplashScreenState extends State<SplashScreen> {
               }
 
               if (isBanks && isThemes) {
-                if (_debounce?.isActive ?? false) _debounce!.cancel();
-                _debounce = Timer(const Duration(milliseconds: 2500), () {
+                print('jehhehe');
+                await Future.delayed(const Duration(milliseconds: 1000), () {
                   _openStartScreen();
                 });
               }

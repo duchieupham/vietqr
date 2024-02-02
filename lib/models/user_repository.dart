@@ -35,11 +35,6 @@ class UserRepository {
 
   bool isIntroContact = false;
 
-  void init() async {
-    _banks = await getBanks();
-    getIntroContact();
-  }
-
   bool getIntroContact() {
     return isIntroContact = _box.get(intro_key) ?? false;
   }

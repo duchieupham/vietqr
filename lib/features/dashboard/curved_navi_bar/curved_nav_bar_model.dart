@@ -5,6 +5,7 @@ class CurvedNavigationBarItem {
   final String urlSelect;
   final String urlUnselect;
   Widget? child;
+  final int index;
 
   /// Text of [CurvedNavigationBarItem].
   final String? label;
@@ -21,5 +22,6 @@ class CurvedNavigationBarItem {
     this.label,
     this.labelStyle,
     this.isSelected = false,
+    required this.index,
   });
 }

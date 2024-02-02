@@ -109,7 +109,7 @@ class _AccountScreenState extends State<_AccountScreen>
           if (Navigator.canPop(context)) {
             Navigator.pop(context);
           }
-          UserHelper.instance.reset();
+          // UserHelper.instance.reset();
           AppDataHelper.instance.clearListQRDetailBank();
           Navigator.of(context).pushReplacementNamed(Routes.LOGIN);
           eventBus.fire(ChangeBottomBarEvent(0));

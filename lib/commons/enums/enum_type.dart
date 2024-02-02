@@ -24,11 +24,11 @@ extension PageTypeExt on int {
     switch (this) {
       case 1:
         return PageType.HOME;
-      case 2:
+      case -1:
         return PageType.SCAN_QR;
-      case 3:
+      case 2:
         return PageType.CARD_QR;
-      case 4:
+      case 3:
         return PageType.PERSON;
       default:
         return PageType.ACCOUNT;
@@ -42,11 +42,11 @@ extension PageTypeExt2 on PageType {
       case PageType.HOME:
         return 1;
       case PageType.SCAN_QR:
-        return 2;
+        return -1;
       case PageType.CARD_QR:
-        return 3;
+        return 2;
       case PageType.PERSON:
-        return 4;
+        return 3;
       default:
         return 0;
     }
@@ -73,7 +73,7 @@ enum TypeOTP {
   NONE,
 }
 
-enum TypeMoveEvent { LEFT, RIGHT, NONE }
+enum TypeMoveEvent { LEFT_TO_RIGHT, RIGHT_TO_LEFT, NONE }
 
 enum TypeAddMember { MORE, ADDED, AWAIT }
 

@@ -529,7 +529,7 @@ class _BodyWidgetState extends State<_BodyWidget> {
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           backgroundColor: Theme.of(context).cardColor,
-          textColor: Theme.of(context).cardColor,
+          textColor: Theme.of(context).hintColor,
           fontSize: 15,
         );
       });

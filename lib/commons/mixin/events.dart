@@ -4,12 +4,6 @@ import 'package:vierqr/models/contact_dto.dart';
 
 EventBus eventBus = EventBus();
 
-class ListenNetworkEvent {
-  final TypeInternet type;
-
-  ListenNetworkEvent(this.type);
-}
-
 class ChangeBottomBarEvent {
   final int page;
 
