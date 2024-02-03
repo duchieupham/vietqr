@@ -4,7 +4,6 @@ import 'package:clipboard/clipboard.dart';
 import 'package:dudv_base/dudv_base.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/events.dart';
@@ -292,7 +291,7 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.CENTER,
               backgroundColor: Theme.of(context).cardColor,
-              textColor: Theme.of(context).cardColor,
+              textColor: Theme.of(context).hintColor,
               fontSize: 15,
             );
           },
@@ -348,7 +347,7 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
   }
 
   onPrint(String qr) async {
-    String userId = UserInformationHelper.instance.getUserId();
+    String userId = UserHelper.instance.getUserId();
     BluetoothPrinterDTO bluetoothPrinterDTO =
         await LocalDatabase.instance.getBluetoothPrinter(userId);
     if (bluetoothPrinterDTO.id.isNotEmpty) {

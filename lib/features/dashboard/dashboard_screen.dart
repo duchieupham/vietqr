@@ -1,15 +1,12 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:isolate';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:float_bubble/float_bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
@@ -18,10 +15,9 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
-import 'package:vierqr/commons/utils/log.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
-import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/account/account_screen.dart';
@@ -34,26 +30,19 @@ import 'package:vierqr/features/dashboard/widget/background_app_bar_home.dart';
 import 'package:vierqr/features/dashboard/widget/maintain_widget.dart';
 import 'package:vierqr/features/home/home.dart';
 import 'package:vierqr/features/home/widget/dialog_update.dart';
-import 'package:vierqr/features/notification/blocs/notification_bloc.dart';
-import 'package:vierqr/features/notification/events/notification_event.dart';
-import 'package:vierqr/features/notification/states/notification_state.dart';
+import 'package:vierqr/features/network/network_bloc.dart';
+import 'package:vierqr/features/network/network_state.dart';
+import 'package:vierqr/features/notification/views/notification_screen.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
 import 'package:vierqr/main.dart';
-import 'package:vierqr/models/bank_card_insert_unauthenticated.dart';
+import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/contact_dto.dart';
-import 'package:vierqr/models/national_scanner_dto.dart';
-import 'package:vierqr/models/theme_dto.dart';
-import 'package:vierqr/models/user_repository.dart';
-import 'package:vierqr/services/providers/account_balance_home_provider.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
-import 'package:vierqr/services/shared_references/theme_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 import 'curved_navi_bar/custom_navigation_bar.dart';
 import 'events/dashboard_event.dart';
-import 'package:http/http.dart' as http;
-
 import 'widget/disconnect_widget.dart';
 
 class DashBoardScreen extends StatefulWidget {
@@ -79,55 +68,40 @@ class _DashBoardScreen extends State<DashBoardScreen>
         SingleTickerProviderStateMixin {
   //page controller
   late PageController _pageController;
+
+  //list page
+  final List<Widget> _listScreens = [
+    const BankScreen(key: PageStorageKey('QR_GENERATOR_PAGE')),
+    const HomeScreen(key: PageStorageKey('HOME_PAGE')),
+    const ContactScreen(key: PageStorageKey('CONTACT_PAGE')),
+    const AccountScreen(key: const PageStorageKey('USER_SETTING_PAGE')),
+  ];
+
   StreamSubscription? _subscription;
   StreamSubscription? _subReloadWallet;
   StreamSubscription? _subSyncContact;
 
-  //list page
-  final List<Widget> _listScreens = [];
-
-  //focus node
-  final FocusNode focusNode = FocusNode();
+  //
+  final _bottomBarController = StreamController<int>.broadcast();
 
   //blocs
   late DashBoardBloc _dashBoardBloc;
-  late NotificationBloc _notificationBloc;
-
-  //notification count
-  int _notificationCount = 0;
-
-  NationalScannerDTO? identityDTO;
-
-  //providers
-  final accountBalanceHomeProvider = AccountBalanceHomeProvider('');
-
-  final Connectivity _connectivity = Connectivity();
-  StreamSubscription<ConnectivityResult>? _connectivitySubscription;
+  late AuthProvider _provider;
+  late Stream<int> bottomBarStream;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    initConnectivity();
     _dashBoardBloc = BlocProvider.of(context);
-    _notificationBloc = BlocProvider.of(context);
-    _pageController = PageController(
-      initialPage:
-          Provider.of<AuthProvider>(context, listen: false).pageSelected,
-      keepPage: true,
-    );
-    _listScreens.addAll(
-      [
-        const BankScreen(key: PageStorageKey('QR_GENERATOR_PAGE')),
-        const HomeScreen(key: PageStorageKey('HOME_PAGE')),
-        const SizedBox(key: PageStorageKey('SCAN_PAGE')),
-        const ContactScreen(key: PageStorageKey('CONTACT_PAGE')),
-        const AccountScreen(key: const PageStorageKey('USER_SETTING_PAGE')),
-      ],
-    );
+    _provider = Provider.of<AuthProvider>(context, listen: false);
+
+    _pageController =
+        PageController(initialPage: _provider.pageSelected, keepPage: true);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       initialServices(context);
       listenNewNotification();
+      onUpdateApp();
     });
 
     _subscription = eventBus.on<ChangeBottomBarEvent>().listen((data) {
@@ -141,7 +115,17 @@ class _DashBoardScreen extends State<DashBoardScreen>
       _heavyTaskStreamReceiver(data.list);
     });
 
-    _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+    bottomBarStream = _bottomBarController.stream;
+  }
+
+  void initialServices(BuildContext context) {
+    _dashBoardBloc.add(const TokenEventCheckValid());
+    _dashBoardBloc.add(GetPointEvent());
+    _dashBoardBloc.add(GetCountNotifyEvent());
+  }
+
+  void sendDataFromBottomBar(int data) {
+    _bottomBarController.add(data);
   }
 
   static void heavyTask(List<dynamic> args) async {
@@ -169,49 +153,6 @@ class _DashBoardScreen extends State<DashBoardScreen>
     }
   }
 
-  static void saveImageTask(List<dynamic> args) async {
-    SendPort sendPort = args[0];
-    List<ThemeDTO> list = args[1];
-
-    for (var message in list) {
-      final response = await http.get(Uri.parse(message.imgUrl));
-      final bytes = response.bodyBytes;
-      sendPort
-          .send(SaveImageData(progress: bytes, index: list.indexOf(message)));
-    }
-    sendPort.send(SaveImageData(progress: Uint8List(0), isDone: true));
-  }
-
-  Future<void> _saveImageTaskStreamReceiver(List<ThemeDTO> list) async {
-    List<ThemeDTO> listThemeLocal = [];
-    final receivePort = ReceivePort();
-    Isolate.spawn(saveImageTask, [receivePort.sendPort, list]);
-    await for (var message in receivePort) {
-      if (message is SaveImageData) {
-        if (message.index != null) {
-          ThemeDTO dto = list[message.index!];
-
-          String path = dto.imgUrl.split('/').last;
-          if (path.contains('.png')) {
-            path.replaceAll('.png', '');
-          }
-
-          String localPath = await saveImageToLocal(message.progress, path);
-          dto.file = localPath;
-          listThemeLocal.add(dto);
-        }
-
-        if (message.isDone) {
-          receivePort.close();
-          if (!mounted) return;
-          Provider.of<AuthProvider>(context, listen: false)
-              .updateListTheme(listThemeLocal, saveLocal: true);
-          return;
-        }
-      }
-    }
-  }
-
   Future<void> _heavyTaskStreamReceiver(List<ContactDTO> list) async {
     List<VCardModel> listVCards = [];
     final receivePort = ReceivePort();
@@ -230,7 +171,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
                   : '',
               website: e.websites.isNotEmpty ? e.websites.first.url : '',
               address: e.addresses.isNotEmpty ? e.addresses.first.address : '',
-              userId: UserInformationHelper.instance.getUserId(),
+              userId: UserHelper.instance.getUserId(),
               additionalData: e.notes.isNotEmpty ? e.notes.first.note : '',
             );
 
@@ -241,7 +182,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
         if (message.progress >= 1) {
           receivePort.close();
           eventBus.fire(SentDataToContact(listVCards, list.length));
-          Provider.of<AuthProvider>(context, listen: false).updateSync(false);
+          _provider.updateSync(false);
           return;
         }
       }
@@ -256,122 +197,62 @@ class _DashBoardScreen extends State<DashBoardScreen>
     }
   }
 
-  Future<void> initConnectivity() async {
-    late ConnectivityResult result;
-    try {
-      result = await _connectivity.checkConnectivity();
-    } on PlatformException catch (e) {
-      LOG.error('Couldn\'t check connectivity status $e');
-      return;
-    }
-    if (!mounted) {
-      return Future.value(null);
-    }
-
-    return _updateConnectionStatus(result);
-  }
-
-  Future checkConnection() async {
-    bool isInternet =
-        Provider.of<AuthProvider>(context, listen: false).isInternet;
-
-    try {
-      final result = await InternetAddress.lookup('google.com');
-      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        if (isInternet) {
-          Provider.of<AuthProvider>(context, listen: false)
-              .updateInternet(false, TypeInternet.CONNECT);
-          _onChangeInternet(false);
-        }
-      } else {
-        if (!isInternet) {
-          Provider.of<AuthProvider>(context, listen: false)
-              .updateInternet(true, TypeInternet.DISCONNECT);
-          _onChangeInternet(true);
-        }
-      }
-    } on SocketException catch (_) {
-      if (!isInternet) {
-        Provider.of<AuthProvider>(context, listen: false)
-            .updateInternet(true, TypeInternet.DISCONNECT);
-        _onChangeInternet(true);
-      }
-    }
-  }
-
-  Future<void> _updateConnectionStatus(ConnectivityResult result) async {
-    if (!mounted) return;
-    bool isInternet =
-        Provider.of<AuthProvider>(context, listen: false).isInternet;
-    if (result == ConnectivityResult.none) {
-      if (!isInternet) {
-        Provider.of<AuthProvider>(context, listen: false)
-            .updateInternet(true, TypeInternet.DISCONNECT);
-        _onChangeInternet(true);
-      }
-    } else {
-      checkConnection();
-    }
-  }
-
-  Future _onChangeInternet(bool isInternet) async {
-    await Future.delayed(Duration(seconds: 3)).then((v) {
-      if (!mounted) return;
-      Provider.of<AuthProvider>(context, listen: false)
-          .updateInternet(isInternet, TypeInternet.NONE);
-    });
-  }
-
-  void initialServices(BuildContext context) {
-    _dashBoardBloc.add(const TokenEventCheckValid());
-    _dashBoardBloc.add(GetPointEvent());
-    if (Provider.of<AuthProvider>(context, listen: false).introduceDTO ==
-        null) {
-      _dashBoardBloc.add(GetPointEvent());
-    }
-    _dashBoardBloc.add(GetUserInformation());
-    _notificationBloc.add(NotificationGetCounterEvent());
-  }
-
   void listenNewNotification() {
     notificationController.listen((isNotificationPushed) {
       if (isNotificationPushed) {
         notificationController.sink.add(false);
         Future.delayed(const Duration(milliseconds: 1000), () {
-          _notificationBloc.add(NotificationGetCounterEvent());
+          _dashBoardBloc.add(GetCountNotifyEvent());
         });
       }
     });
   }
 
+  void onUpdateApp() async {
+    bool isUpdateVersion = _provider.isUpdateVersion;
+    AppInfoDTO? appInfoDTO = _provider.appInfoDTO;
+    bool isCheckApp = appInfoDTO.isCheckApp;
+
+    if (isUpdateVersion && !isCheckApp) {
+      showDialog(
+        barrierDismissible: false,
+        context: NavigationService.navigatorKey.currentContext!,
+        builder: (BuildContext context) {
+          return DialogUpdateView(
+            isHideClose: true,
+            onCheckUpdate: () {
+              _dashBoardBloc.add(GetVersionAppEvent(isCheckVer: true));
+            },
+          );
+        },
+      );
+    }
+  }
+
+  void _updateFcmToken(bool isFromLogin) {
+    if (!isFromLogin) _dashBoardBloc.add(const TokenFcmUpdateEvent());
+  }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      if (!PlatformUtils.instance.isWeb()) {
-        // _dashBoardBloc.add(const PermissionEventGetStatus());
-      }
+      if (!PlatformUtils.instance.isWeb()) {}
     }
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    if (_bottomBarController.hasListener) {
+      _bottomBarController.close();
+    }
     _subscription?.cancel();
     _subscription = null;
     _subReloadWallet?.cancel();
     _subReloadWallet = null;
     _subSyncContact?.cancel();
     _subSyncContact = null;
-    if (_connectivitySubscription != null) {
-      _connectivitySubscription!.cancel();
-    }
     super.dispose();
-  }
-
-  void _updateFcmToken(bool isFromLogin) {
-    if (!isFromLogin) {
-      _dashBoardBloc.add(const TokenFcmUpdateEvent());
-    }
   }
 
   @override
@@ -387,72 +268,36 @@ class _DashBoardScreen extends State<DashBoardScreen>
           Navigator.pop(context);
         }
 
-        if (state.request == DashBoardType.THEMES) {
-          List<ThemeDTO> list = [...state.themes];
-          list.sort((a, b) => a.type.compareTo(b.type));
-
-          Provider.of<AuthProvider>(context, listen: false)
-              .updateListTheme(list);
-
-          int themeVerLocal = ThemeHelper.instance.getThemeKey();
-          int themeVerSetting =
-              Provider.of<AuthProvider>(context, listen: false).themeVer;
-          List<ThemeDTO> listLocal = await UserRepository.instance.getThemes();
-
-          if (themeVerLocal != themeVerSetting || listLocal.isEmpty) {
-            _saveImageTaskStreamReceiver(list);
-          }
-        }
-
-        if (state.request == DashBoardType.GET_USER_SETTING) {
-          Provider.of<AuthProvider>(context, listen: false).updateSettingDTO(
-              UserInformationHelper.instance.getAccountSetting());
-        }
         if (state.request == DashBoardType.KEEP_BRIGHT) {
-          Provider.of<AuthProvider>(context, listen: false)
-              .updateKeepBright(state.keepValue);
+          _provider.updateKeepBright(state.keepValue);
         }
 
         if (state.request == DashBoardType.POINT) {
-          Provider.of<AuthProvider>(context, listen: false)
-              .updateIntroduceDTO(state.introduceDTO);
+          _provider.updateIntroduceDTO(state.introduceDTO);
         }
 
         if (state.request == DashBoardType.APP_VERSION) {
           if (state.appInfoDTO != null) {
-            Provider.of<AuthProvider>(context, listen: false)
-                .updateThemeVer(state.appInfoDTO!.themeVer);
+            _provider.updateThemeVer(state.appInfoDTO!.themeVer);
+            _provider.updateAppInfoDTO(state.appInfoDTO);
           }
 
-          //gọi ở đây để check nếu themeVer có thay đổi hay k
           _dashBoardBloc.add(GetListThemeEvent());
-
-          Provider.of<AuthProvider>(context, listen: false)
-              .updateAppInfoDTO(state.appInfoDTO, isCheckApp: state.isCheckApp);
-          if (Provider.of<AuthProvider>(context, listen: false)
-              .isUpdateVersion) {
-            if (!state.isCheckApp)
-              showDialog(
-                barrierDismissible: false,
-                context: NavigationService.navigatorKey.currentContext!,
-                builder: (BuildContext context) {
-                  return DialogUpdateView(
-                    isHideClose: true,
-                    onCheckUpdate: () {
-                      _dashBoardBloc.add(GetVersionAppEvent(isCheckVer: true));
-                    },
-                  );
-                },
-              );
-          }
         }
+
+        //check lỗi hệ thống
         if (state.request == DashBoardType.TOKEN) {
           if (state.typeToken == TokenType.Valid) {
             _updateFcmToken(widget.isFromLogin);
           } else if (state.typeToken == TokenType.MainSystem) {
             await DialogWidget.instance.showFullModalBottomContent(
               isDissmiss: false,
-              widget: MaintainWidget(tokenBloc: _dashBoardBloc),
+              widget: MaintainWidget(
+                onRetry: () {
+                  _dashBoardBloc.add(TokenEventCheckValid());
+                  Navigator.pop(context);
+                },
+              ),
             );
           } else if (state.typeToken == TokenType.Expired) {
             await DialogWidget.instance.openMsgDialog(
@@ -472,69 +317,9 @@ class _DashBoardScreen extends State<DashBoardScreen>
           }
         }
 
-        if (state.request == DashBoardType.ADD_BOOK_CONTACT) {
-          if (!mounted) return;
-          Navigator.pop(context);
-          Fluttertoast.showToast(
-            msg: 'Đã thêm vào danh bạ',
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.TOP,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Theme.of(context).cardColor,
-            textColor: Theme.of(context).hintColor,
-            fontSize: 15,
-            webBgColor: 'rgba(255, 255, 255)',
-            webPosition: 'center',
-          );
-
-          Future.delayed(const Duration(milliseconds: 400), () {
-            Navigator.pushNamed(context, Routes.PHONE_BOOK);
-          });
-        }
-        if (state.request == DashBoardType.ADD_BOOK_CONTACT_EXIST) {
-          DialogWidget.instance.openMsgDialog(
-            title: 'Thất bại',
-            msg: 'Tài khoản đã tồn tại trong danh bạ',
-            function: () {
-              if (Navigator.canPop(context)) {
-                Navigator.pop(context);
-              }
-            },
-          );
-        }
-
-        if (state.request == DashBoardType.EXIST_BANK) {
-          String userId = UserInformationHelper.instance.getUserId();
-          String formattedName = StringUtils.instance.removeDiacritic(
-              StringUtils.instance
-                  .capitalFirstCharacter(state.qrDto?.userBankName ?? ''));
-          BankCardInsertUnauthenticatedDTO dto =
-              BankCardInsertUnauthenticatedDTO(
-            bankTypeId: state.qrDto?.bankTypeId ?? '',
-            userId: userId,
-            userBankName: formattedName,
-            bankAccount: state.qrDto?.bankAccount ?? '',
-          );
-          _dashBoardBloc.add(DashBoardEventInsertUnauthenticated(dto: dto));
-        }
-
-        if (state.request == DashBoardType.INSERT_BANK) {
-          if (!mounted) return;
-          eventBus.fire(GetListBankScreen());
-          Navigator.of(context).pop(true);
-          Fluttertoast.showToast(
-            msg: 'Thêm TK thành công',
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            backgroundColor: Theme.of(context).cardColor,
-            textColor: Theme.of(context).cardColor,
-            fontSize: 15,
-          );
-        }
-
         if (state.request == DashBoardType.ERROR) {
           await DialogWidget.instance
-              .openMsgDialog(title: 'Không thể thêm TK', msg: state.msg ?? '');
+              .openMsgDialog(title: 'Thông báo', msg: state.msg ?? '');
         }
         if (state.request == DashBoardType.UPDATE_THEME_ERROR) {
           await DialogWidget.instance
@@ -554,35 +339,32 @@ class _DashBoardScreen extends State<DashBoardScreen>
           return Stack(
             children: [
               _buildAppBar(),
-              Column(
-                children: [
-                  Expanded(
-                    child: Container(
-                      padding:
-                          (provider.pageSelected.pageType == PageType.PERSON)
-                              ? EdgeInsets.zero
-                              : const EdgeInsets.only(top: kToolbarHeight * 2),
-                      child: Listener(
-                        onPointerMove: (moveEvent) {
-                          if (moveEvent.delta.dx > 0) {
-                            provider.updateMoveEvent(TypeMoveEvent.RIGHT);
-                          } else {
-                            provider.updateMoveEvent(TypeMoveEvent.LEFT);
-                          }
-                        },
-                        child: PageView(
-                          key: const PageStorageKey('PAGE_VIEW'),
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          controller: _pageController,
-                          onPageChanged: (index) async {
-                            provider.updateIndex(index);
-                          },
-                          children: _listScreens,
-                        ),
-                      ),
-                    ),
+              Container(
+                padding: (provider.pageSelected.pageType == PageType.PERSON)
+                    ? EdgeInsets.zero
+                    : const EdgeInsets.only(top: kToolbarHeight * 2),
+                child: Listener(
+                  onPointerMove: (moveEvent) {
+                    print(moveEvent.delta.dx);
+                    if (moveEvent.delta.dx < 0) {
+                      if (provider.moveEvent != TypeMoveEvent.RIGHT_TO_LEFT)
+                        provider.updateMoveEvent(TypeMoveEvent.RIGHT_TO_LEFT);
+                    } else {
+                      if (provider.moveEvent != TypeMoveEvent.LEFT_TO_RIGHT)
+                        provider.updateMoveEvent(TypeMoveEvent.LEFT_TO_RIGHT);
+                    }
+                  },
+                  child: PageView(
+                    key: const PageStorageKey('PAGE_VIEW'),
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    controller: _pageController,
+                    onPageChanged: (index) {
+                      provider.updateIndex(index);
+                      sendDataFromBottomBar(index);
+                    },
+                    children: _listScreens,
                   ),
-                ],
+                ),
               ),
               Positioned(
                 child: FloatBubble(
@@ -625,10 +407,20 @@ class _DashBoardScreen extends State<DashBoardScreen>
                 ),
               ),
               Positioned(
-                bottom: 10,
+                bottom: 24,
                 left: 20,
                 right: 20,
-                child: DisconnectWidget(type: provider.typeInternet),
+                child: BlocBuilder<NetworkBloc, NetworkState>(
+                  builder: (context, state) {
+                    if (state is NetworkFailure) {
+                      return DisconnectWidget(type: TypeInternet.DISCONNECT);
+                    } else if (state is NetworkSuccess) {
+                      return DisconnectWidget(type: TypeInternet.CONNECT);
+                    } else {
+                      return const SizedBox.shrink();
+                    }
+                  },
+                ),
               ),
             ],
           );
@@ -636,31 +428,36 @@ class _DashBoardScreen extends State<DashBoardScreen>
         bottomNavigationBar: Consumer<AuthProvider>(
           builder: (context, page, _) {
             return CurvedNavigationBar(
-                backgroundColor: AppColor.TRANSPARENT,
-                buttonBackgroundColor: AppColor.TRANSPARENT,
-                animationDuration: const Duration(milliseconds: 300),
-                index: PageType.SCAN_QR.pageIndex,
-                iconPadding: 0.0,
-                onTap: (index) async {
-                  if (index.pageType != PageType.SCAN_QR) {
-                    _animatedToPage(index);
-                  } else {
-                    if (QRScannerHelper.instance.getQrIntro()) {
-                      startBarcodeScanStream();
-                    } else {
-                      await DialogWidget.instance.showFullModalBottomContent(
-                        widget: const QRScanWidget(),
-                        color: AppColor.BLACK,
-                      );
-                      startBarcodeScanStream();
-                    }
-                  }
-                },
-                items: _listNavigation);
+              backgroundColor: AppColor.TRANSPARENT,
+              buttonBackgroundColor: AppColor.TRANSPARENT,
+              animationDuration: const Duration(milliseconds: 300),
+              indexPage: page.pageSelected,
+              indexPaint: 0,
+              iconPadding: 0.0,
+              onTap: onTapPage,
+              items: _listNavigation,
+              stream: bottomBarStream,
+            );
           },
         ),
       ),
     );
+  }
+
+  void onTapPage(int index) async {
+    if (index.pageType != PageType.SCAN_QR) {
+      _animatedToPage(index);
+    } else {
+      if (QRScannerHelper.instance.getQrIntro()) {
+        startBarcodeScanStream();
+      } else {
+        await DialogWidget.instance.showFullModalBottomContent(
+          widget: const QRScanWidget(),
+          color: AppColor.BLACK,
+        );
+        startBarcodeScanStream();
+      }
+    }
   }
 
 //navigate to page
@@ -672,8 +469,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
       }
     } catch (e) {
       _pageController = PageController(
-        initialPage:
-            Provider.of<AuthProvider>(context, listen: false).pageSelected,
+        initialPage: _provider.pageSelected,
         keepPage: true,
       );
       _animatedToPage(index);
@@ -736,91 +532,65 @@ class _DashBoardScreen extends State<DashBoardScreen>
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: CachedNetworkImage(
-                            imageUrl: page.settingDTO.logoUrl,
-                            width: 50,
-                          ),
+                              imageUrl: page.settingDTO.logoUrl, width: 50),
                         )
                       else
-                        Container(
-                          width: 60,
-                          height: 30,
-                        ),
+                        const SizedBox(width: 60, height: 30),
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 12),
                           child: _getTitlePage(context, page.pageSelected),
                         ),
                       ),
-                      SizedBox(
-                        width: 50,
-                        height: 60,
-                        child:
-                            BlocConsumer<NotificationBloc, NotificationState>(
+                      BlocConsumer<DashBoardBloc, DashBoardState>(
                           listener: (context, state) {},
                           builder: (context, state) {
-                            if (state is NotificationCountSuccessState) {
-                              _notificationCount = state.count;
-                            }
-                            if (state is NotificationUpdateStatusSuccessState) {
-                              _notificationCount = 0;
-                            }
-                            return Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                ButtonIconWidget(
-                                  width: 40,
-                                  height: 40,
-                                  borderRadius: 40,
-                                  icon: Icons.notifications_outlined,
-                                  title: '',
-                                  function: () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      Routes.NOTIFICATION_VIEW,
-                                      arguments: {
-                                        'notificationBloc': _notificationBloc,
-                                      },
-                                    ).then((value) {
-                                      _notificationBloc.add(
-                                        NotificationUpdateStatusEvent(),
-                                      );
-                                    });
-                                  },
-                                  bgColor: Theme.of(context).cardColor,
-                                  textColor: Theme.of(context).hintColor,
-                                ),
-                                if (_notificationCount != 0)
-                                  Positioned(
-                                    top: 5,
-                                    right: 0,
-                                    child: Container(
-                                      width: 20,
-                                      height: 20,
-                                      alignment: Alignment.center,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(30),
-                                        color: AppColor.RED_CALENDAR,
-                                      ),
-                                      child: Text(
-                                        _notificationCount.toString(),
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: (_notificationCount
-                                                      .toString()
-                                                      .length >=
-                                                  3)
-                                              ? 8
-                                              : 10,
-                                          color: AppColor.WHITE,
+                            int lengthNotify =
+                                state.countNotify.toString().length;
+                            return SizedBox(
+                              width: 50,
+                              height: 60,
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  ButtonIconWidget(
+                                    width: 40,
+                                    height: 40,
+                                    borderRadius: 40,
+                                    icon: Icons.notifications_outlined,
+                                    title: '',
+                                    function: _onNotification,
+                                    bgColor: Theme.of(context).cardColor,
+                                    textColor: Theme.of(context).hintColor,
+                                  ),
+                                  if (state.countNotify != 0)
+                                    Positioned(
+                                      top: 4,
+                                      right: 0,
+                                      child: Container(
+                                        width: 20,
+                                        height: 20,
+                                        alignment: Alignment.center,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                          color: AppColor.RED_CALENDAR,
+                                        ),
+                                        child: Text(
+                                          state.countNotify.toString(),
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize:
+                                                (lengthNotify >= 3) ? 8 : 10,
+                                            color: AppColor.WHITE,
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                              ],
+                                ],
+                              ),
                             );
-                          },
-                        ),
-                      ),
+                          }),
                     ],
                   ),
           ),
@@ -829,34 +599,45 @@ class _DashBoardScreen extends State<DashBoardScreen>
     );
   }
 
+  void _onNotification() async {
+    _dashBoardBloc.add(NotifyUpdateStatusEvent());
+
+    NavigatorUtils.navigatePage(context, NotificationScreen(),
+        routeName: NotificationScreen.routeName);
+  }
+
   List<CurvedNavigationBarItem> _listNavigation = [
     CurvedNavigationBarItem(
       label: 'Tài khoản',
       urlSelect: 'assets/images/ic-btm-list-bank-blue.png',
       urlUnselect: 'assets/images/ic-btm-list-bank-grey.png',
+      index: 0,
     ),
     CurvedNavigationBarItem(
       label: 'Trang chủ',
       urlSelect: 'assets/images/ic-btm-dashboard-blue.png',
       urlUnselect: 'assets/images/ic-btm-dashboard-grey.png',
+      index: 1,
     ),
     CurvedNavigationBarItem(
       label: 'Quét QR',
       urlSelect: 'assets/images/ic-menu-slide-home-blue.png',
       urlUnselect: 'assets/images/ic-menu-slide-home-blue.png',
+      index: -1,
     ),
     CurvedNavigationBarItem(
       label: 'Ví QR',
       urlSelect: 'assets/images/ic-btm-qr-wallet-blue.png',
       urlUnselect: 'assets/images/ic-btm-qr-wallet-grey.png',
+      index: 2,
     ),
     CurvedNavigationBarItem(
       label: 'Cá nhân',
       urlSelect: '',
       urlUnselect: '',
+      index: 3,
       child: Consumer<AuthProvider>(builder: (context, provider, _) {
-        String imgId =
-            UserInformationHelper.instance.getAccountInformation().imgId;
+        String imgId = UserHelper.instance.getAccountInformation().imgId;
         return Container(
           width: 28,
           height: 28,

@@ -8,6 +8,8 @@ class NotificationState extends Equatable {
   List<Object?> get props => [];
 }
 
+class NotificationLoadingEvent extends NotificationState {}
+
 class NotificationInitialState extends NotificationState {}
 
 class NotificationCountingState extends NotificationState {}

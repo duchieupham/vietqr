@@ -1,11 +1,9 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class UserEditProvider with ChangeNotifier {
   bool _isAvailableUpdate = false;
-  int _gender = UserInformationHelper.instance.getAccountInformation().gender;
+  int _gender = UserHelper.instance.getAccountInformation().gender;
   bool _isFirstNameErr = false;
   bool _isOldPassErr = false;
   bool _isNewPassErr = false;
@@ -64,7 +62,7 @@ class UserEditProvider with ChangeNotifier {
   void reset() {
     _isAvailableUpdate = false;
     _isFirstNameErr = false;
-    _gender = UserInformationHelper.instance.getAccountInformation().gender;
+    _gender = UserHelper.instance.getAccountInformation().gender;
     notifyListeners();
   }
 }

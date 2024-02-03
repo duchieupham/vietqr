@@ -34,7 +34,7 @@ class AccountRepository {
       );
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
-        UserInformationHelper.instance.setWalletInfo(response.body);
+        UserHelper.instance.setWalletInfo(response.body);
         return IntroduceDTO.fromJson(data);
       }
     } catch (e) {
@@ -92,7 +92,7 @@ class AccountRepository {
           var data = jsonDecode(response.body);
           result = ResponseMessageDTO.fromJson(data);
           if (result.message.trim().isNotEmpty) {
-            await UserInformationHelper.instance.setImageId(result.message);
+            await UserHelper.instance.setImageId(result.message);
           }
         } else {
           result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
@@ -286,7 +286,7 @@ class AccountRepository {
     Provider.of<UserEditProvider>(context, listen: false).reset();
     Provider.of<AuthProvider>(context, listen: false).reset();
     await EventBlocHelper.instance.updateLogoutBefore(true);
-    await UserInformationHelper.instance.initialUserInformationHelper();
+    await UserHelper.instance.initialUserInformationHelper();
     await AccountHelper.instance.setBankToken('');
     await AccountHelper.instance.setToken('');
   }

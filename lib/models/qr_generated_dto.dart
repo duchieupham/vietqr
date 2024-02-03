@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class QRGeneratedDTO {
   String? bankId;
   final String bankCode;

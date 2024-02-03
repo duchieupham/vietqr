@@ -63,7 +63,7 @@ class _BankCardDetailState extends State<BankCardDetailState> {
     'Chia sẻ BĐSD'
   ];
   final PageController pageController = PageController();
-  String userId = UserInformationHelper.instance.getUserId();
+  String userId = UserHelper.instance.getUserId();
   late QRGeneratedDTO qrGeneratedDTO = QRGeneratedDTO(
       bankCode: '',
       bankName: '',

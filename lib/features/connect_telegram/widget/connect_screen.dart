@@ -182,7 +182,7 @@ class _ConnectTeleStepScreenState extends State<_ConnectTeleStepScreen> {
                       Map<String, dynamic> data = {};
                       data['chatId'] = provider.chatId;
                       data['userId'] =
-                          UserInformationHelper.instance.getUserId();
+                          UserHelper.instance.getUserId();
                       data['bankIds'] = provider.bankIds;
                       BlocProvider.of<ConnectTelegramBloc>(context)
                           .add(InsertTelegram(data: data));

@@ -13,7 +13,7 @@ class TopUpProvider extends ChangeNotifier {
 
   String get errorMoney => _errorMoney;
 
-  String _phoneNo = UserInformationHelper.instance.getPhoneNo();
+  String _phoneNo = UserHelper.instance.getPhoneNo();
   String get phoneNo => _phoneNo;
 
   String _carrierTypeId = '';
@@ -36,7 +36,7 @@ class TopUpProvider extends ChangeNotifier {
   init(List<NetworkProviders> list) {
     _listNetworkProviders = list;
     AccountInformationDTO accountInformationDTO =
-        UserInformationHelper.instance.getAccountInformation();
+        UserHelper.instance.getAccountInformation();
 
     for (var element in list) {
       if (accountInformationDTO.carrierTypeId == element.id) {

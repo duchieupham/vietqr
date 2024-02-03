@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:hive/hive.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 
 part 'bank_type_dto.g.dart';
 
@@ -27,6 +28,8 @@ class BankTypeDTO extends HiveObject {
   String bankId;
   String bankAccount;
   String userBankName;
+
+  LinkBankType get linkType => status.linkType;
 
   BankTypeDTO({
     this.id = '',

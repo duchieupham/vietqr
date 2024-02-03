@@ -614,7 +614,7 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
                     function: () async {
                       BluetoothPrinterDTO bluetoothPrinterDTO =
                           await LocalDatabase.instance.getBluetoothPrinter(
-                              UserInformationHelper.instance.getUserId());
+                              UserHelper.instance.getUserId());
                       if (bluetoothPrinterDTO.id.isNotEmpty) {
                         bool isPrinting = false;
                         if (!isPrinting) {

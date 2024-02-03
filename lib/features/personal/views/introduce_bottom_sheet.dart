@@ -19,7 +19,7 @@ class IntroduceBottomSheet extends StatefulWidget {
 }
 
 class _IntroduceBottomSheetState extends State<IntroduceBottomSheet> {
-  String userId = UserInformationHelper.instance.getUserId();
+  String userId = UserHelper.instance.getUserId();
 
   @override
   void initState() {

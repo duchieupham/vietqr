@@ -69,10 +69,10 @@ class LoginRepository {
         await AccountHelper.instance.setFcmToken(fcmToken);
         await AccountHelper.instance.setToken(token);
         await AccountHelper.instance.setTokenFree('');
-        await UserInformationHelper.instance.setPhoneNo(dto.phoneNo);
-        await UserInformationHelper.instance
+        await UserHelper.instance.setPhoneNo(dto.phoneNo);
+        await UserHelper.instance
             .setUserId(accountInformationDTO.userId);
-        await UserInformationHelper.instance
+        await UserHelper.instance
             .setAccountInformation(accountInformationDTO);
         result = true;
       }
@@ -131,10 +131,10 @@ class LoginRepository {
         await AccountHelper.instance.setFcmToken(fcmToken);
         await AccountHelper.instance.setToken(token);
         await AccountHelper.instance.setTokenFree('');
-        await UserInformationHelper.instance.setPhoneNo(dto.phoneNo);
-        await UserInformationHelper.instance
+        await UserHelper.instance.setPhoneNo(dto.phoneNo);
+        await UserHelper.instance
             .setUserId(accountInformationDTO.userId);
-        await UserInformationHelper.instance
+        await UserHelper.instance
             .setAccountInformation(accountInformationDTO);
         result = true;
       }

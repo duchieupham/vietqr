@@ -6,6 +6,10 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
+import 'package:vierqr/commons/utils/printer_utils.dart';
+import 'package:vierqr/commons/utils/platform_utils.dart';
+import 'package:vierqr/models/bluetooth_printer_dto.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
@@ -50,9 +54,11 @@ class InfoDetailBankAccount extends StatefulWidget {
 }
 
 class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
-  String get userId => UserInformationHelper.instance.getUserId();
+  String get userId => UserHelper.instance.getUserId();
 
   final globalKey = GlobalKey();
+
+  bool get small => MediaQuery.of(context).size.height < 800;
 
   void onSaveImage(BuildContext context) async {
     DialogWidget.instance.openLoadingDialog();
@@ -67,7 +73,7 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.CENTER,
               backgroundColor: Theme.of(context).cardColor,
-              textColor: Theme.of(context).cardColor,
+              textColor: Theme.of(context).hintColor,
               fontSize: 15,
             );
           },
@@ -90,9 +96,7 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(
-                      height: 12,
-                    ),
+                    SizedBox(height: small ? 8 : 12),
                     Align(
                       alignment: Alignment.center,
                       child: Text(
@@ -100,9 +104,7 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
                         style: TextStyle(fontSize: 12),
                       ),
                     ),
-                    const SizedBox(
-                      height: 4,
-                    ),
+                    const SizedBox(height: 8),
                     RepaintBoundaryWidget(
                       globalKey: globalKey,
                       builder: (key) {

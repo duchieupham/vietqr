@@ -4,7 +4,6 @@ import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
-import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_custom.dart';
@@ -13,7 +12,7 @@ import 'package:vierqr/features/bank_detail/blocs/share_bdsd_bloc.dart';
 import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
 import 'package:vierqr/features/bank_detail/events/share_bdsd_event.dart';
 import 'package:vierqr/features/bank_detail/states/share_bdsd_state.dart';
-import 'package:vierqr/features/bank_detail/widget/share_bdsd_invite.dart';
+import 'package:vierqr/features/bank_detail/views/bottom_sheet_add_user_bdsd.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
@@ -56,7 +55,7 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
   static String routeName = '/share_bdsd_invite';
   late ShareBDSDBloc _bloc;
 
-  String get userId => UserInformationHelper.instance.getUserId();
+  String get userId => UserHelper.instance.getUserId();
 
   List<MemberBranchModel> listMemberData = [];
   List<MemberBranchModel> listMember = [];
@@ -193,7 +192,7 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                     ),
 
                     if (widget.dto.userId ==
-                        UserInformationHelper.instance.getUserId()) ...[
+                        UserHelper.instance.getUserId()) ...[
                       const SizedBox(
                         height: 24,
                       ),
@@ -333,7 +332,7 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                             return _buildItemMember(e);
                           }).toList(),
                           if (widget.dto.userId ==
-                              UserInformationHelper.instance.getUserId())
+                              UserHelper.instance.getUserId())
                             Align(
                               alignment: Alignment.topRight,
                               child: ButtonWidget(
@@ -376,31 +375,31 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                   ],
                 ),
               ),
-              if (widget.dto.userId ==
-                  UserInformationHelper.instance.getUserId())
+              if (widget.dto.userId == UserHelper.instance.getUserId())
                 Positioned(
                     bottom: 40,
                     right: 0,
                     child: GestureDetector(
                       onTap: () async {
-                        // await DialogWidget.instance.showModelBottomSheet(
-                        //   isDismissible: true,
-                        //   height: MediaQuery.of(context).size.height * 0.8,
-                        //   margin: EdgeInsets.only(
-                        //       left: 10, right: 10, bottom: 10, top: 200),
-                        //   borderRadius: BorderRadius.circular(16),
-                        //   widget: BottomSheetAddUserBDSD(
-                        //     bankId: widget.bankId,
-                        //   ),
-                        // );
-                        // _bloc.add(GetMemberEvent(bankId: widget.bankId));
-                        NavigatorUtils.navigatePage(
-                            context,
-                            ShareBDSDInviteScreen(
-                              dto: widget.dto,
-                              bankId: widget.bankId,
-                            ),
-                            routeName: _ShareBDSDScreenState.routeName);
+                        await DialogWidget.instance.showModelBottomSheet(
+                          isDismissible: true,
+                          height: MediaQuery.of(context).size.height * 0.8,
+                          margin: EdgeInsets.only(
+                              left: 10, right: 10, bottom: 10, top: 200),
+                          borderRadius: BorderRadius.circular(16),
+                          widget: BottomSheetAddUserBDSD(
+                            bankId: widget.bankId,
+                            // onSelect: (MemberSearchDto) {},
+                          ),
+                        );
+                        _bloc.add(GetMemberEvent(bankId: widget.bankId));
+                        // NavigatorUtils.navigatePage(
+                        //     context,
+                        //     ShareBDSDInviteScreen(
+                        //       dto: widget.dto,
+                        //       bankId: widget.bankId,
+                        //     ),
+                        //     routeName: _ShareBDSDScreenState.routeName);
                       },
                       child: Container(
                         height: 40,
@@ -482,7 +481,7 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
               )
             ],
           )),
-          if (widget.dto.userId == UserInformationHelper.instance.getUserId())
+          if (widget.dto.userId == UserHelper.instance.getUserId())
             GestureDetector(
               onTap: () {
                 _bloc.add(

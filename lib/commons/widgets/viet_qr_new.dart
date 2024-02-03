@@ -4,8 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/commons/utils/currency_utils.dart';
-import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:wakelock/wakelock.dart';
@@ -16,6 +14,7 @@ class VietQrNew extends StatefulWidget {
   final String? content;
   final double? width;
   final double? height;
+  final double? paddingHorizontal;
 
   const VietQrNew({
     super.key,
@@ -24,6 +23,7 @@ class VietQrNew extends StatefulWidget {
     this.width,
     this.height,
     this.qrCode,
+    this.paddingHorizontal,
   });
 
   @override
@@ -31,6 +31,8 @@ class VietQrNew extends StatefulWidget {
 }
 
 class _VietQrState extends State<VietQrNew> {
+  bool get small => MediaQuery.of(context).size.height < 800;
+
   @override
   void initState() {
     super.initState();
@@ -55,18 +57,21 @@ class _VietQrState extends State<VietQrNew> {
     super.dispose();
   }
 
-  double get paddingHorizontal => 40;
+  double get paddingHorizontal => 45;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: paddingHorizontal),
+      padding: EdgeInsets.symmetric(
+          horizontal:
+              widget.paddingHorizontal ?? (small ? 60 : paddingHorizontal)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            padding: EdgeInsets.symmetric(
+                horizontal: small ? 16 : 24, vertical: small ? 12 : 24),
             width: MediaQuery.of(context).size.width,
             decoration: BoxDecoration(
               color: AppColor.WHITE,
@@ -84,7 +89,7 @@ class _VietQrState extends State<VietQrNew> {
               children: [
                 QrImage(
                   data: widget.qrGeneratedDTO?.qrCode ?? widget.qrCode ?? '',
-                  size: widget.width ?? 230,
+                  size: widget.width ?? (small ? 180 : 250),
                   version: QrVersions.auto,
                   embeddedImage:
                       const AssetImage('assets/images/ic-viet-qr-small.png'),
@@ -93,23 +98,24 @@ class _VietQrState extends State<VietQrNew> {
                   ),
                 ),
                 SizedBox(
-                  width: widget.width ?? 230,
+                  width: widget.width ?? (250),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Consumer<AuthProvider>(
                         builder: (context, provider, _) {
                           return Padding(
-                            padding: const EdgeInsets.only(left: 6),
-                            child: CachedNetworkImage(
-                              imageUrl: provider.settingDTO.logoUrl,
-                              height: 28,
+                            padding: EdgeInsets.only(left: small ? 20 : 6),
+                            child: Image.asset(
+                              'assets/images/logo_vietgr_payment.png',
+                              width: 62,
+                              fit: BoxFit.cover,
                             ),
                           );
                         },
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(right: 10),
+                        padding: EdgeInsets.only(right: small ? 20 : 10),
                         child: Image.asset(
                           'assets/images/ic-napas247.png',
                           width: 70,

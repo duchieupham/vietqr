@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/layouts/pin_code_input.dart';
 
 import '../../../../commons/widgets/phone_widget.dart';

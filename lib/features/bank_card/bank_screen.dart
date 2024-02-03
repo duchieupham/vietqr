@@ -5,8 +5,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
-
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
@@ -15,6 +13,7 @@ import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
+import 'package:vierqr/commons/widgets/dashed_line.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/add_bank/add_bank_screen.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
@@ -28,14 +27,11 @@ import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/qr_create_dto.dart';
-import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/models/user_repository.dart';
-import 'package:vierqr/services/providers/bank_card_select_provider.dart';
 import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 import 'widgets/card_widget.dart';
-import 'widgets/custom_dot_paint.dart';
 import 'package:http/http.dart' as http;
 
 class BankScreen extends StatelessWidget {
@@ -45,10 +41,7 @@ class BankScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<BankBloc>(
       create: (BuildContext context) => BankBloc(context),
-      child: ChangeNotifierProvider(
-        create: (context) => BankCardSelectProvider(),
-        child: const _BankScreen(),
-      ),
+      child: const _BankScreen(),
     );
   }
 }
@@ -68,13 +61,12 @@ class _BankScreenState extends State<_BankScreen>
 
   late BankBloc _bloc;
 
-  String userId = UserInformationHelper.instance.getUserId();
+  String userId = UserHelper.instance.getUserId();
 
   StreamSubscription? _subscription;
 
   initialServices(BuildContext context) {
     _bloc = BlocProvider.of(context);
-    Provider.of<BankCardSelectProvider>(context, listen: false).reset();
   }
 
   initData({bool isRefresh = false}) {
@@ -123,10 +115,6 @@ class _BankScreenState extends State<_BankScreen>
 
   void getListQR(BuildContext context, List<QRCreateDTO> list) {
     _bloc.add(QREventGenerateList(list: list));
-  }
-
-  void resetProvider(BuildContext context) {
-    Provider.of<BankCardSelectProvider>(context, listen: false).reset();
   }
 
   Future<void> _refresh() async {
@@ -201,8 +189,6 @@ class _BankScreenState extends State<_BankScreen>
           if (scrollController.hasClients) {
             scrollController.jumpTo(0);
           }
-          Provider.of<AuthProvider>(context, listen: false)
-              .updateListBanks(state.listBanks);
         }
       },
       builder: (context, state) {
@@ -331,7 +317,10 @@ class _BankScreenState extends State<_BankScreen>
                 title: 'Copy QR',
               ),
             ),
-            CustomPaint(painter: DottedLinePainter()),
+            Container(
+              height: isSmall ? 40 : 60,
+              child: VerticalDashedLine(),
+            ),
             Expanded(
               child: _buildSection(
                 pathIcon: 'assets/images/ic-add-bank.png',
@@ -344,7 +333,10 @@ class _BankScreenState extends State<_BankScreen>
                 title: 'Thêm Tài khoản',
               ),
             ),
-            CustomPaint(painter: DottedLinePainter()),
+            Container(
+              height: isSmall ? 40 : 60,
+              child: VerticalDashedLine(),
+            ),
             Expanded(
               child: _buildSection(
                 pathIcon: 'assets/images/ic-share-bdsd.png',
@@ -367,7 +359,7 @@ class _BankScreenState extends State<_BankScreen>
     List<BankTypeDTO> list = const [],
     List<BankAccountDTO> listBanks = const [],
   }) {
-    if (isEmpty || listBanks.length < 5) {
+    if (isEmpty || listBanks.length <= 5) {
       final height = MediaQuery.of(context).size.height;
       return Container(
         height: height,
@@ -375,7 +367,7 @@ class _BankScreenState extends State<_BankScreen>
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'Danh sách ngân hàng',
+              'Thêm tài khoản ngân hàng',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 16),
@@ -385,9 +377,9 @@ class _BankScreenState extends State<_BankScreen>
                 physics: NeverScrollableScrollPhysics(),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 4,
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 8,
-                  childAspectRatio: 2.5,
+                  crossAxisSpacing: 4,
+                  mainAxisSpacing: 4,
+                  childAspectRatio: 2,
                 ),
                 itemCount: list.length,
                 itemBuilder: (context, index) {
@@ -397,7 +389,6 @@ class _BankScreenState extends State<_BankScreen>
                       await NavigatorUtils.navigatePage(
                           context, AddBankScreen(bankTypeDTO: data),
                           routeName: AddBankScreen.routeName);
-                      getListBank(context);
                     },
                     child: Stack(
                       children: [
@@ -415,7 +406,7 @@ class _BankScreenState extends State<_BankScreen>
                         ),
                         Align(
                           alignment: Alignment.topRight,
-                          child: data.status == 1
+                          child: data.linkType == LinkBankType.LINK
                               ? Image.asset(
                                   'assets/images/ic-authenticated-bank.png',
                                   width: 20)
@@ -435,6 +426,8 @@ class _BankScreenState extends State<_BankScreen>
     return const SizedBox.shrink();
   }
 
+  bool get isSmall => MediaQuery.of(context).size.height < 800;
+
   Widget _buildSection({
     required String pathIcon,
     required GestureTapCallback? onTap,
@@ -445,7 +438,8 @@ class _BankScreenState extends State<_BankScreen>
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        padding: EdgeInsets.symmetric(
+            vertical: isSmall ? 6 : 8, horizontal: isSmall ? 6 : 12),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.horizontal(
             left: Radius.circular(radiusLeft ?? 8),

@@ -18,13 +18,13 @@ class SettingBDSD extends StatefulWidget {
 
 class _SettingBDSDState extends State<SettingBDSD> {
   void _updateVoiceSetting(param) async {
-    String userId = UserInformationHelper.instance.getUserId();
+    String userId = UserHelper.instance.getUserId();
     try {
       bool updateStatus = await accRepository.updateVoiceSetting(param);
       if (updateStatus) {
         final settingAccount = await accRepository.getSettingAccount(userId);
         if (settingAccount.userId.isNotEmpty) {
-          await UserInformationHelper.instance
+          await UserHelper.instance
               .setAccountSetting(settingAccount);
         }
       }
@@ -74,7 +74,7 @@ class _SettingBDSDState extends State<SettingBDSD> {
                           provider.updateOpenVoice(value);
                           Map<String, dynamic> param = {};
                           param['userId'] =
-                              UserInformationHelper.instance.getUserId();
+                              UserHelper.instance.getUserId();
                           param['value'] = value ? 1 : 0;
                           param['type'] = 0;
                           _updateVoiceSetting(param);

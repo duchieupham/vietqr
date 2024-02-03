@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/introduce_dto.dart';
@@ -14,23 +15,26 @@ import 'package:flutter/material.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/main.dart';
-import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/contact_dto.dart';
 import 'package:vierqr/models/setting_account_sto.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class AuthProvider with ChangeNotifier {
   UserRepository get userRes => UserRepository.instance;
 
   BuildContext? context;
 
+  String get userId => userRes.userId;
+
   String versionApp = '';
-  bool isCheckApp = false;
+
+  // = 1: Có bản cập nhật
+  // = 0: không có bản cập nhật
   int isShowToastUpdate = -1;
 
-  PackageInfo? packageInfo;
+  PackageInfo packageInfo =
+      PackageInfo(appName: '', packageName: '', version: '', buildNumber: '');
 
-  AppInfoDTO? appInfoDTO;
+  AppInfoDTO appInfoDTO = AppInfoDTO();
 
   IntroduceDTO? introduceDTO;
 
@@ -43,20 +47,12 @@ class AuthProvider with ChangeNotifier {
   bool isRenderUI = false;
 
   int _indexSelected = 0;
-  int _notificationCount = 0;
 
   int get pageSelected => _indexSelected;
 
-  get notificationCount => _notificationCount;
-
   TypeMoveEvent _moveEvent = TypeMoveEvent.NONE;
 
-  List<BankAccountDTO> listBanks = [];
-
   get moveEvent => _moveEvent;
-
-  TypeInternet typeInternet = TypeInternet.NONE;
-  bool isInternet = false;
 
   List<ContactDTO> listSync = [];
   bool isSync = false;
@@ -111,8 +107,7 @@ class AuthProvider with ChangeNotifier {
     context = ctx;
     PackageInfo data = await PackageInfo.fromPlatform();
     packageInfo = data;
-    versionApp = packageInfo?.version ?? '';
-    userRes.init();
+    versionApp = packageInfo.version;
     initThemeDTO();
     if (!isRenderUI) isRenderUI = true;
     broadcastStream = streamController.stream;
@@ -179,6 +174,7 @@ class AuthProvider with ChangeNotifier {
     if ((themeKey != themeVer || listLocal.isEmpty)) {
       for (int i = 0; i < value.length; i++) {
         await userRes.updateThemes(value[i]);
+        print('hehehheeeeeee $i');
       }
       themes = value;
       themes.sort((a, b) => a.type.compareTo(b.type));
@@ -246,17 +242,6 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void updateInternet(value, typeInternet) {
-    typeInternet = typeInternet;
-    isInternet = value;
-    notifyListeners();
-  }
-
-  void updateListBanks(List<BankAccountDTO> value) {
-    listBanks = value;
-    notifyListeners();
-  }
-
   updateMoveEvent(value) {
     if (_moveEvent == value) {
       return;
@@ -270,11 +255,6 @@ class AuthProvider with ChangeNotifier {
       return;
     }
     _indexSelected = index;
-    notifyListeners();
-  }
-
-  void updateNotificationCount(int count) {
-    _notificationCount = count;
     notifyListeners();
   }
 
@@ -293,71 +273,71 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void updateAppInfoDTO(value, {bool isCheckApp = false}) {
+  void updateAppInfoDTO(value) {
     appInfoDTO = value;
-    updateVersion(isCheckApp: isCheckApp);
-    updateIsCheckApp(false);
+    updateVersion();
+    updateIsCheckApp(appInfoDTO.isCheckApp);
     notifyListeners();
   }
 
   void updateIsCheckApp(value) {
-    isCheckApp = value;
+    appInfoDTO.isCheckApp = value;
     notifyListeners();
   }
 
-  void updateVersion({bool isCheckApp = false}) {
-    if (appInfoDTO != null && packageInfo != null) {
-      int packageVer = int.parse(packageInfo!.version.replaceAll('.', ''));
-      int packageBuild = int.parse(packageInfo!.buildNumber);
-      if (PlatformUtils.instance.isIOsApp()) {
-        if (packageVer == appInfoDTO!.iosVer) {
-          if (packageBuild < appInfoDTO!.buildIos) {
-            isUpdateVersion = true;
-          }
-          if (isCheckApp) {
-            isShowToastUpdate = 0;
-            Fluttertoast.showToast(
-              msg: 'Không có bản cập nhật nào',
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.CENTER,
-              backgroundColor: Theme.of(context!).cardColor,
-              textColor: Theme.of(context!).hintColor,
-              fontSize: 15,
-            );
-          }
-        } else if (packageVer < appInfoDTO!.iosVer) {
+  void updateVersion() {
+    int packageVer = int.parse(packageInfo.version.replaceAll('.', ''));
+    int packageBuild = int.parse(packageInfo.buildNumber);
+    if (PlatformUtils.instance.isIOsApp()) {
+      if (packageVer == appInfoDTO.iosVer) {
+        if (packageBuild < appInfoDTO.buildIos) {
           isUpdateVersion = true;
-          if (isCheckApp) {
-            versionApp = appInfoDTO!.iosVersion!.split('+').first;
-            isShowToastUpdate = 1;
-          }
         }
-      } else if (PlatformUtils.instance.isAndroidApp()) {
-        if (packageVer == appInfoDTO!.adrVer) {
-          if (packageBuild < appInfoDTO!.buildAdr) {
-            isUpdateVersion = true;
-          }
-          if (isCheckApp) {
-            isShowToastUpdate = 0;
-            Fluttertoast.showToast(
-              msg: 'Không có bản cập nhật nào',
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.CENTER,
-              backgroundColor: Theme.of(context!).cardColor,
-              textColor: Theme.of(context!).hintColor,
-              fontSize: 15,
-            );
-          }
-        } else if (packageVer < appInfoDTO!.adrVer) {
-          isUpdateVersion = true;
-          if (isCheckApp) {
-            versionApp = appInfoDTO!.androidVersion!.split('+').first;
-            isShowToastUpdate = 1;
-          }
+        if (appInfoDTO.isCheckApp) {
+          isShowToastUpdate = 0;
+          appInfoDTO.isCheckApp = false;
+          Fluttertoast.showToast(
+            msg: 'Không có bản cập nhật nào',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            backgroundColor: AppColor.GREY_BG,
+            textColor: AppColor.textBlack,
+            fontSize: 15,
+          );
+        }
+      } else if (packageVer < appInfoDTO.iosVer) {
+        isUpdateVersion = true;
+        if (appInfoDTO.isCheckApp) {
+          versionApp = appInfoDTO.iosVersion.split('+').first;
+          isShowToastUpdate = 1;
         }
       }
-      notifyListeners();
+    } else if (PlatformUtils.instance.isAndroidApp()) {
+      if (packageVer == appInfoDTO.adrVer) {
+        if (packageBuild < appInfoDTO.buildAdr) {
+          isUpdateVersion = true;
+        }
+        if (appInfoDTO.isCheckApp) {
+          isShowToastUpdate = 0;
+          appInfoDTO.isCheckApp = false;
+          Fluttertoast.showToast(
+            msg: 'Không có bản cập nhật nào',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            backgroundColor: AppColor.GREY_BG,
+            textColor: AppColor.textBlack,
+            fontSize: 15,
+          );
+        }
+      } else if (packageVer < appInfoDTO.adrVer) {
+        isUpdateVersion = true;
+        if (appInfoDTO.isCheckApp) {
+          versionApp = appInfoDTO.androidVersion.split('+').first;
+          isShowToastUpdate = 1;
+        }
+      }
     }
+    notifyListeners();
   }
 
   void onClose() {
@@ -370,7 +350,6 @@ class AuthProvider with ChangeNotifier {
     isUpdateVersion = false;
     _showActionShare = false;
     versionApp = '';
-    isCheckApp = false;
     isShowToastUpdate = -1;
     notifyListeners();
   }

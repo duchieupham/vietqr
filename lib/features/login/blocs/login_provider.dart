@@ -21,7 +21,7 @@ class LoginProvider with ChangeNotifier {
   int isQuickLogin = 0;
 
   init() async {
-    listInfoUsers = UserInformationHelper.instance.getLoginAccount();
+    listInfoUsers = UserHelper.instance.getLoginAccount();
     if (listInfoUsers.isNotEmpty) {
       isQuickLogin = 1;
     }
@@ -34,7 +34,7 @@ class LoginProvider with ChangeNotifier {
   }
 
   void updateListInfoUser() async {
-    listInfoUsers = UserInformationHelper.instance.getLoginAccount();
+    listInfoUsers = UserHelper.instance.getLoginAccount();
     notifyListeners();
   }
 

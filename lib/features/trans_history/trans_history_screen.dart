@@ -300,152 +300,154 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
 
   Widget _buildDropTime() {
     return Consumer<TransProvider>(builder: (context, provider, child) {
-      if (provider.valueFilter.id.typeTrans == TypeFilter.CODE_SALE) {
-        return Container(
-          width: MediaQuery.of(context).size.width,
-          alignment: Alignment.center,
-          child: Column(
-            children: [
-              Container(
-                width: MediaQuery.of(context).size.width,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                height: 50,
-                margin: const EdgeInsets.only(bottom: 16),
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: AppColor.WHITE,
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: const Text(
-                        'Thời gian',
-                        style:
-                            TextStyle(fontSize: 14, color: AppColor.GREY_TEXT),
-                      ),
+      return Container(
+        width: MediaQuery.of(context).size.width,
+        alignment: Alignment.center,
+        child: Column(
+          children: [
+            Container(
+              width: MediaQuery.of(context).size.width,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              height: 50,
+              margin: const EdgeInsets.only(bottom: 16),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: AppColor.WHITE,
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: const Text(
+                      'Thời gian',
+                      style: TextStyle(fontSize: 14, color: AppColor.GREY_TEXT),
                     ),
-                    const SizedBox(width: 20),
-                    if (!provider.enableDropTime)
-                      DropdownButtonHideUnderline(
-                        child: DropdownButton2<FilterTimeTransaction>(
-                          isExpanded: true,
-                          onMenuStateChange: provider.onMenuStateChange,
-                          hint: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  provider.valueTimeFilter.title,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(width: 20),
+                  if (!provider.enableDropTime)
+                    DropdownButtonHideUnderline(
+                      child: DropdownButton2<FilterTimeTransaction>(
+                        isExpanded: true,
+                        onMenuStateChange: provider.onMenuStateChange,
+                        hint: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                provider.valueTimeFilter.title,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
                                 ),
+                                overflow: TextOverflow.ellipsis,
                               ),
-                            ],
-                          ),
-                          items: provider.listTimeFilter
-                              .map(
-                                (FilterTimeTransaction item) =>
-                                    DropdownMenuItem<FilterTimeTransaction>(
-                                  value: item,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    children: [
-                                      Expanded(
-                                        child: Container(
-                                          alignment: Alignment.bottomLeft,
-                                          child: Text(
-                                            item.title,
-                                            style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500),
-                                          ),
+                            ),
+                          ],
+                        ),
+                        items: provider.listTimeFilter
+                            .map(
+                              (FilterTimeTransaction item) =>
+                                  DropdownMenuItem<FilterTimeTransaction>(
+                                value: item,
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    Expanded(
+                                      child: Container(
+                                        alignment: Alignment.bottomLeft,
+                                        child: Text(
+                                          item.title,
+                                          style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500),
                                         ),
                                       ),
-                                      const Divider()
-                                    ],
-                                  ),
+                                    ),
+                                    const Divider()
+                                  ],
                                 ),
-                              )
-                              .toList(),
-                          value: provider.valueTimeFilter,
-                          onChanged: (value) =>
-                              provider.changeTimeFilter(value, context),
-                          buttonStyleData: ButtonStyleData(
-                            height: 50,
-                            width: 200,
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              color: Colors.white,
-                            ),
-                          ),
-                          iconStyleData: const IconStyleData(
-                            icon: Icon(Icons.expand_more),
-                            iconSize: 16,
-                            iconEnabledColor: AppColor.BLACK,
-                            iconDisabledColor: Colors.grey,
-                          ),
-                          dropdownStyleData: DropdownStyleData(
-                            width: 200,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5)),
-                          ),
-                          menuItemStyleData: const MenuItemStyleData(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                              ),
+                            )
+                            .toList(),
+                        value: provider.valueTimeFilter,
+                        onChanged: (value) =>
+                            provider.changeTimeFilter(value, context, (dto) {
+                          _bloc.add(TransactionEventGetList(dto));
+                        }),
+                        buttonStyleData: ButtonStyleData(
+                          height: 50,
+                          width: 200,
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            color: Colors.white,
                           ),
                         ),
-                      )
-                    else
-                      Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () => provider.openBottomTime(context),
-                            child: Container(
-                              color: Colors.transparent,
-                              child: Row(
-                                children: [
-                                  Text(
-                                    'Từ ${TimeUtils.instance.formatDateToString(provider.fromDate, isExport: true)}',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: AppColor.BLACK,
-                                    ),
+                        iconStyleData: const IconStyleData(
+                          icon: Icon(Icons.expand_more),
+                          iconSize: 16,
+                          iconEnabledColor: AppColor.BLACK,
+                          iconDisabledColor: Colors.grey,
+                        ),
+                        dropdownStyleData: DropdownStyleData(
+                          width: 200,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5)),
+                        ),
+                        menuItemStyleData: const MenuItemStyleData(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                        ),
+                      ),
+                    )
+                  else
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () => provider.openBottomTime(context, (dto) {
+                            _bloc.add(TransactionEventGetList(dto));
+                          }),
+                          child: Container(
+                            color: Colors.transparent,
+                            child: Row(
+                              children: [
+                                Text(
+                                  'Từ ${TimeUtils.instance.formatDateToString(provider.fromDate, isExport: true)}',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: AppColor.BLACK,
                                   ),
-                                  const SizedBox(width: 16),
-                                  Text(
-                                    'Đến ${TimeUtils.instance.formatDateToString(provider.toDate, isExport: true)}',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: AppColor.BLACK,
-                                    ),
+                                ),
+                                const SizedBox(width: 16),
+                                Text(
+                                  'Đến ${TimeUtils.instance.formatDateToString(provider.toDate, isExport: true)}',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: AppColor.BLACK,
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
-                          const SizedBox(width: 16),
-                          GestureDetector(
-                            onTap: () => provider.onChangeDropTime(false),
-                            child: const Icon(
-                              Icons.clear,
-                              size: 20,
-                            ),
-                          )
-                        ],
-                      ),
-                  ],
-                ),
+                        ),
+                        const SizedBox(width: 16),
+                        GestureDetector(
+                          onTap: () => provider.resetFilterTime((dto) {
+                            _bloc.add(TransactionEventGetList(dto));
+                          }),
+                          child: const Icon(
+                            Icons.clear,
+                            size: 20,
+                          ),
+                        )
+                      ],
+                    ),
+                ],
               ),
-            ],
-          ),
-        );
-      }
-      return const SizedBox();
+            ),
+          ],
+        ),
+      );
     });
   }
 
@@ -495,6 +497,7 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
       if (provider.valueFilter.id.typeTrans == TypeFilter.STATUS_TRANS) {
         return Container(
           padding: EdgeInsets.symmetric(horizontal: 20),
+          margin: EdgeInsets.only(bottom: 12),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
             color: AppColor.WHITE,

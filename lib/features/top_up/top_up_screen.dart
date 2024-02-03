@@ -35,7 +35,7 @@ class TopUpScreen extends StatelessWidget {
                 Navigator.pop(context);
                 Map<String, dynamic> param = {};
                 param['dto'] = state.dto;
-                param['phoneNo'] = UserInformationHelper.instance.getPhoneNo();
+                param['phoneNo'] = UserHelper.instance.getPhoneNo();
                 Navigator.pop(context);
                 Navigator.pushNamed(context, Routes.QR_TOP_UP,
                     arguments: param);
@@ -58,10 +58,10 @@ class TopUpScreen extends StatelessWidget {
                         ),
                         _buildTemplateSection('Tài khoản',
                             child: _buildAccountInfo(context,
-                                accountInformationDTO: UserInformationHelper
+                                accountInformationDTO: UserHelper
                                     .instance
                                     .getAccountInformation(),
-                                phoneNumber: UserInformationHelper.instance
+                                phoneNumber: UserHelper.instance
                                     .getPhoneNo())),
                         const SizedBox(
                           height: 28,
@@ -97,7 +97,7 @@ class TopUpScreen extends StatelessWidget {
                                 FocusManager.instance.primaryFocus?.unfocus();
                                 Map<String, dynamic> data = {};
                                 data['phoneNo'] =
-                                    UserInformationHelper.instance.getPhoneNo();
+                                    UserHelper.instance.getPhoneNo();
                                 data['amount'] =
                                     provider.money.replaceAll(',', '');
                                 data['transType'] = 'C';

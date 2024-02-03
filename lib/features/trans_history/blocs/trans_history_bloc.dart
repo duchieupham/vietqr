@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/base_manager.dart';
-import 'package:vierqr/commons/utils/error_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/trans_history/events/trans_history_event.dart';
 import 'package:vierqr/features/trans_history/states/trans_history_state.dart';
 import 'package:vierqr/features/transaction/blocs/transaction_bloc.dart';
 import 'package:vierqr/models/related_transaction_receive_dto.dart';
-import 'package:vierqr/models/response_message_dto.dart';
 
 class TransHistoryBloc extends Bloc<TransHistoryEvent, TransHistoryState>
     with BaseManager {

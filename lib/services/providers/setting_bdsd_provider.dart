@@ -3,7 +3,7 @@ import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class SettingBDSDProvider extends ChangeNotifier {
   bool _enableVoice =
-      UserInformationHelper.instance.getAccountSetting().voiceMobile;
+      UserHelper.instance.getAccountSetting().voiceMobile;
   bool get enableVoice => _enableVoice;
 
   List<String> _bankIds = [];

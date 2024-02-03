@@ -50,7 +50,7 @@ class _ShareBDSDScreen extends StatefulWidget {
 class _ShareBDSDInviteState extends State<_ShareBDSDScreen> {
   late ShareBDSDBloc _bloc;
 
-  String get userId => UserInformationHelper.instance.getUserId();
+  String get userId => UserHelper.instance.getUserId();
 
   List<MemberBranchModel> listMemberData = [];
   List<MemberBranchModel> listMember = [];
@@ -246,9 +246,9 @@ class _ShareBDSDInviteState extends State<_ShareBDSDScreen> {
                             borderRadius: BorderRadius.circular(16),
                             widget: BottomSheetAddUserBDSD(
                               bankId: widget.bankId,
-                              onSelect: (dto){
-
-                              },
+                              // onSelect: (dto){
+                              //
+                              // },
                             ),
                           );
                           // _bloc.add(GetMemberEvent(bankId: widget.bankId));

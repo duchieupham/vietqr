@@ -19,7 +19,7 @@ class PrinterUtils {
 
   Future<void> print(QRGeneratedDTO dto) async {
     try {
-      String userId = UserInformationHelper.instance.getUserId();
+      String userId = UserHelper.instance.getUserId();
       BluetoothPrinterDTO bluetoothPrinterDTO =
           await LocalDatabase.instance.getBluetoothPrinter(userId);
       late PrinterBluetooth? myPrinter;
@@ -88,7 +88,7 @@ class PrinterUtils {
 
   Future<void> printQRCode(String qr) async {
     try {
-      String userId = UserInformationHelper.instance.getUserId();
+      String userId = UserHelper.instance.getUserId();
       BluetoothPrinterDTO bluetoothPrinterDTO =
           await LocalDatabase.instance.getBluetoothPrinter(userId);
       late PrinterBluetooth? myPrinter;

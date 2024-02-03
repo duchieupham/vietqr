@@ -200,7 +200,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                     Provider.of<AddBankProvider>(context, listen: false)
                         .bankTypeDTO!
                         .id;
-                String userId = UserInformationHelper.instance.getUserId();
+                String userId = UserHelper.instance.getUserId();
                 String formattedName = StringUtils.instance.removeDiacritic(
                     StringUtils.instance
                         .capitalFirstCharacter(nameController.text));
@@ -270,7 +270,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                     Provider.of<AddBankProvider>(context, listen: false)
                         .bankTypeDTO!
                         .id;
-                String userId = UserInformationHelper.instance.getUserId();
+                String userId = UserHelper.instance.getUserId();
                 String formattedName = StringUtils.instance.removeDiacritic(
                     StringUtils.instance
                         .capitalFirstCharacter(nameController.text));

@@ -15,7 +15,10 @@ class CurvedNavigationBar extends StatefulWidget {
   final List<CurvedNavigationBarItem> items;
 
   /// The index into [items] for the current active [CurvedNavigationBarItem].
-  final int index;
+  final int indexPage;
+
+  /// The index into [items] for the current PaintCustom
+  final int indexPaint;
 
   /// The color of the [CurvedNavigationBar] itself, default Colors.white.
   final Color color;
@@ -27,7 +30,7 @@ class CurvedNavigationBar extends StatefulWidget {
   final Color backgroundColor;
 
   /// Called when one of the [items] is tapped.
-  final ValueChanged<int>? onTap;
+  final ValueChanged<int> onTap;
 
   /// Function which takes page index as argument and returns bool. If function
   /// returns false then page is not changed on button tap. It returns true by
@@ -50,22 +53,26 @@ class CurvedNavigationBar extends StatefulWidget {
   final bool hasLabel;
   final bool isAnimation;
 
+  final Stream<int> stream;
+
   CurvedNavigationBar({
     Key? key,
     required this.items,
-    this.index = -1,
+    this.indexPaint = -1,
+    this.indexPage = -1,
     this.color = Colors.white,
     this.buttonBackgroundColor,
     this.backgroundColor = Colors.blueAccent,
-    this.onTap,
+    required this.onTap,
     _LetIndexPage? letIndexChange,
     this.animationCurve = Curves.easeOut,
     this.animationDuration = const Duration(milliseconds: 600),
     this.iconPadding = 12.0,
     this.isAnimation = false,
     double? height,
+    required this.stream,
   })  : assert(items.isNotEmpty),
-        assert(0 <= index && index < items.length),
+        assert(0 <= indexPaint && indexPaint < items.length),
         letIndexChange = letIndexChange ?? ((_) => true),
         height = height ?? (Platform.isAndroid ? 70.0 : 80.0),
         hasLabel = items.any((item) => item.label != null),
@@ -88,9 +95,14 @@ class CurvedNavigationBarState extends State<CurvedNavigationBar>
   @override
   void initState() {
     super.initState();
-    if (widget.index != -1) {
+    widget.stream.listen((event) {
+      _endingIndex = event;
+      setState(() {});
+    });
+
+    if (widget.indexPaint != -1) {
       _icon = Image.asset(
-        widget.items[widget.index].urlSelect,
+        'assets/images/ic-menu-slide-home-blue.png',
         width: 64,
         height: 64,
         fit: BoxFit.cover,
@@ -98,13 +110,13 @@ class CurvedNavigationBarState extends State<CurvedNavigationBar>
     }
 
     if (widget.isAnimation) {
-      _pos = widget.index / _length;
+      _pos = widget.indexPaint / _length;
     } else {
       _pos = 0.4;
     }
 
     _length = widget.items.length;
-    _startingPos = widget.index / _length;
+    _startingPos = widget.indexPaint / _length;
     _animationController = AnimationController(vsync: this, value: _pos);
     if (widget.isAnimation) {
       _animationController.addListener(() {
@@ -130,10 +142,10 @@ class CurvedNavigationBarState extends State<CurvedNavigationBar>
   @override
   void didUpdateWidget(CurvedNavigationBar oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.index != widget.index) {
-      final newPosition = widget.index / _length;
+    if (oldWidget.indexPaint != widget.indexPaint) {
+      final newPosition = widget.indexPaint / _length;
       _startingPos = _pos;
-      _endingIndex = widget.index;
+      _endingIndex = widget.indexPaint;
       _animationController.animateTo(
         newPosition,
         duration: widget.animationDuration,
@@ -209,7 +221,9 @@ class CurvedNavigationBarState extends State<CurvedNavigationBar>
                 children: widget.items.map((item) {
                   int indexOf = widget.items.indexOf(item);
                   return NavBarItemWidget(
-                    onTap: _buttonTap,
+                    onTap: (index) {
+                      _buttonTap(item.index);
+                    },
                     position: _pos,
                     length: _length,
                     index: indexOf,
@@ -220,7 +234,7 @@ class CurvedNavigationBarState extends State<CurvedNavigationBar>
                             width: 40,
                             height: 40,
                             fit: BoxFit.cover,
-                            color: indexOf == _endingIndex
+                            color: item.index == _endingIndex
                                 ? AppColor.BLUE_TEXT
                                 : null,
                           ),
@@ -228,8 +242,9 @@ class CurvedNavigationBarState extends State<CurvedNavigationBar>
                     label: item.label,
                     labelStyle: TextStyle(
                       fontSize: 12,
-                      color:
-                          indexOf == _endingIndex ? AppColor.BLUE_TEXT : null,
+                      color: item.index == _endingIndex
+                          ? AppColor.BLUE_TEXT
+                          : null,
                     ),
                   );
                 }).toList(),
@@ -249,9 +264,7 @@ class CurvedNavigationBarState extends State<CurvedNavigationBar>
     if (!widget.letIndexChange(index) || _animationController.isAnimating) {
       return;
     }
-    if (widget.onTap != null) {
-      widget.onTap!(index);
-    }
+    widget.onTap(index);
     final newPosition = index / _length;
     setState(() {
       _startingPos = _pos;

@@ -5,15 +5,12 @@ import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/base_manager.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
-import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
 import 'package:vierqr/features/bank_detail/repositories/bank_card_repository.dart';
-import 'package:vierqr/features/home/blocs/home_bloc.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
-import 'package:vierqr/models/viet_qr_scanned_dto.dart';
 
 class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
   @override
@@ -54,15 +51,8 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
       if (event is LoadDataBankEvent) {
         List<BankTypeDTO> list = await bankCardRepository.getBankTypes();
         if (list.isNotEmpty) {
-          int index = list.indexWhere(
-              (element) => element.bankCode.toUpperCase().trim() == 'MB');
-          if (index != -1) {
-            BankTypeDTO dto = list[index];
-            list.removeAt(index);
-            list.insert(0, dto);
-          }
+          list.sort((a, b) => a.linkType == LinkBankType.LINK ? -1 : 0);
         }
-
         banks = list;
         emit(state.copyWith(listBankTypeDTO: list, request: BankType.GET_BANK));
       }

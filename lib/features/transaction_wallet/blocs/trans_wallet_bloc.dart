@@ -27,7 +27,7 @@ class TransWalletBloc extends Bloc<TransWalletEvent, TransWalletState>
       if (event is TransactionWalletEventGetList) {
         bool isLoadMore = false;
         Map<String, dynamic> param = {};
-        param['userId'] = UserInformationHelper.instance.getUserId();
+        param['userId'] = UserHelper.instance.getUserId();
         param['status'] = event.status;
         param['offset'] = 0;
         emit(state.copyWith(status: BlocStatus.LOADING));
@@ -60,7 +60,7 @@ class TransWalletBloc extends Bloc<TransWalletEvent, TransWalletState>
         int offset = state.offset;
         offset += 1;
         Map<String, dynamic> param = {};
-        param['userId'] = UserInformationHelper.instance.getUserId();
+        param['userId'] = UserHelper.instance.getUserId();
         param['status'] = event.status;
         param['offset'] = offset * 20;
         List<TransWalletDto> data = state.list;

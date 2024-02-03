@@ -22,7 +22,6 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/phone_widget.dart';
 import 'package:vierqr/features/contact_us/contact_us_screen.dart';
 import 'package:vierqr/features/create_qr_un_authen/create_qr_un_quthen.dart';
-import 'package:vierqr/features/dashboard/dashboard_screen.dart';
 import 'package:vierqr/features/home/widget/dialog_update.dart';
 import 'package:vierqr/features/home/widget/nfc_adr_widget.dart';
 import 'package:vierqr/features/login/blocs/login_bloc.dart';
@@ -41,6 +40,7 @@ import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/services/shared_references/account_helper.dart';
 import 'package:vierqr/services/shared_references/theme_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/splash_screen.dart';
 
 import 'views/bgr_app_bar_login.dart';
 
@@ -75,6 +75,7 @@ class _LoginState extends State<_Login> {
   Uuid uuid = const Uuid();
 
   late LoginBloc _bloc;
+  late AuthProvider _provider;
 
   var controller = StreamController<AccountLoginDTO?>.broadcast();
 
@@ -82,6 +83,7 @@ class _LoginState extends State<_Login> {
   void initState() {
     super.initState();
     _bloc = BlocProvider.of(context);
+    _provider = Provider.of<AuthProvider>(context, listen: false);
     code = uuid.v1();
     controller.stream.listen((value) async {
       if (value != null) {
@@ -100,11 +102,10 @@ class _LoginState extends State<_Login> {
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<AuthProvider>(context, listen: false).updateEventTheme(null);
-      Provider.of<AuthProvider>(context, listen: false)
-          .updateFileThemeLogin('');
-      Provider.of<AuthProvider>(context, listen: false).initThemeDTO();
-      Provider.of<AuthProvider>(context, listen: false).updateFileLogo('');
+      _provider.updateEventTheme(null);
+      _provider.updateFileThemeLogin('');
+      _provider.initThemeDTO();
+      _provider.updateFileLogo('');
     });
 
     _bloc.add(GetFreeToken());
@@ -158,8 +159,7 @@ class _LoginState extends State<_Login> {
                       state.appInfoDTO!.logoUrl, path);
 
                   ThemeHelper.instance.updateLogoTheme(localPath);
-                  Provider.of<AuthProvider>(context, listen: false)
-                      .updateFileLogo(localPath);
+                  _provider.updateFileLogo(localPath);
                 }
 
                 if (themeVersion != state.appInfoDTO!.themeVer) {
@@ -174,24 +174,19 @@ class _LoginState extends State<_Login> {
                     ThemeHelper.instance.updateThemeLogin(localPath);
                     ThemeHelper.instance
                         .updateThemeVerLogin(state.appInfoDTO!.themeVer);
-                    Provider.of<AuthProvider>(context, listen: false)
-                        .updateFileThemeLogin(localPath);
+                    _provider.updateFileThemeLogin(localPath);
                   }
                 }
 
                 if (isEventTheme != state.appInfoDTO!.isEventTheme) {
                   ThemeHelper.instance
                       .updateEventTheme(state.appInfoDTO!.isEventTheme);
-                  Provider.of<AuthProvider>(context, listen: false)
-                      .updateEventTheme(state.appInfoDTO!.isEventTheme);
+                  _provider.updateEventTheme(state.appInfoDTO!.isEventTheme);
                 }
               }
-              Provider.of<AuthProvider>(context, listen: false)
-                  .updateAppInfoDTO(state.appInfoDTO,
-                      isCheckApp: state.isCheckApp);
-              if (Provider.of<AuthProvider>(context, listen: false)
-                  .isUpdateVersion) {
-                if (!state.isCheckApp)
+              _provider.updateAppInfoDTO(state.appInfoDTO);
+              if (_provider.isUpdateVersion) {
+                if (!state.appInfoDTO!.isCheckApp)
                   showDialog(
                     barrierDismissible: false,
                     context: NavigationService.navigatorKey.currentContext!,
@@ -211,21 +206,21 @@ class _LoginState extends State<_Login> {
               if (provider.infoUserDTO != null) {
                 List<String> list = _saveAccount(provider);
 
-                await UserInformationHelper.instance.setLoginAccount(list);
+                await UserHelper.instance.setLoginAccount(list);
                 provider.updateListInfoUser();
               }
 
-              Provider.of<AuthProvider>(context, listen: false).initThemeDTO();
+              _provider.initThemeDTO();
 
               Navigator.of(context).popUntil((route) => route.isFirst);
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => DashBoardScreen(
+                  builder: (context) => SplashScreen(
                     isFromLogin: true,
                     isLogoutEnterHome: isLogoutEnterHome,
                   ),
-                  settings: RouteSettings(name: DashBoardScreen.routeName),
+                  settings: RouteSettings(name: SplashScreen.routeName),
                 ),
               );
 
@@ -489,8 +484,7 @@ class _LoginState extends State<_Login> {
                             listString.add(element.toSPJson().toString());
                           });
 
-                          await UserInformationHelper.instance
-                              .setLoginAccount(listString);
+                          await UserHelper.instance.setLoginAccount(listString);
 
                           provider.updateListInfoUser();
 
@@ -999,8 +993,7 @@ class _LoginState extends State<_Login> {
 
   List<String> _saveAccount(provider) {
     List<String> list = [];
-    List<InfoUserDTO> listCheck =
-        UserInformationHelper.instance.getLoginAccount();
+    List<InfoUserDTO> listCheck = UserHelper.instance.getLoginAccount();
 
     if (listCheck.isNotEmpty) {
       if (listCheck.length == 3) {

@@ -33,7 +33,7 @@ class ConnectLarkScreen extends StatelessWidget {
         child: BlocProvider<ConnectLarkBloc>(
           create: (context) => ConnectLarkBloc()
             ..add(GetInformationLarkConnect(
-                userId: UserInformationHelper.instance.getUserId())),
+                userId: UserHelper.instance.getUserId())),
           child: BlocConsumer<ConnectLarkBloc, ConnectLarkState>(
             listener: (context, state) {
               if (state is RemoveLarkConnectLoadingState) {
@@ -43,19 +43,19 @@ class ConnectLarkScreen extends StatelessWidget {
                 Navigator.pop(context);
                 BlocProvider.of<ConnectLarkBloc>(context).add(
                     GetInformationLarkConnect(
-                        userId: UserInformationHelper.instance.getUserId()));
+                        userId: UserHelper.instance.getUserId()));
               }
               if (state is RemoveBankLarkSuccessState) {
                 Navigator.pop(context);
                 BlocProvider.of<ConnectLarkBloc>(context).add(
                     GetInformationLarkConnect(
-                        userId: UserInformationHelper.instance.getUserId()));
+                        userId: UserHelper.instance.getUserId()));
               }
               if (state is AddBankLarkSuccessState) {
                 Navigator.pop(context);
                 BlocProvider.of<ConnectLarkBloc>(context).add(
                     GetInformationLarkConnect(
-                        userId: UserInformationHelper.instance.getUserId()));
+                        userId: UserHelper.instance.getUserId()));
               }
               if (state is RemoveLarkFailedState) {
                 Navigator.pop(context);
@@ -333,7 +333,7 @@ class ConnectLarkScreen extends StatelessWidget {
                     if (!existed) {
                       final Map<String, dynamic> body = {
                         'id': dto.id,
-                        'userId': UserInformationHelper.instance.getUserId(),
+                        'userId': UserHelper.instance.getUserId(),
                         'bankId': bankAccount.id,
                       };
 
@@ -403,7 +403,7 @@ class ConnectLarkScreen extends StatelessWidget {
                           final Map<String, dynamic> body = {
                             'id': dto.id,
                             'userId':
-                                UserInformationHelper.instance.getUserId(),
+                                UserHelper.instance.getUserId(),
                             'bankId': bank.bankId,
                           };
 
@@ -461,7 +461,7 @@ class ConnectLarkScreen extends StatelessWidget {
                   context, Routes.CONNECT_STEP_LARK_SCREEN);
               BlocProvider.of<ConnectLarkBloc>(context).add(
                   GetInformationLarkConnect(
-                      userId: UserInformationHelper.instance.getUserId()));
+                      userId: UserHelper.instance.getUserId()));
             },
           ),
           const SizedBox(

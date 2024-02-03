@@ -194,10 +194,6 @@ class PopupBankBloc extends Bloc<PopupBankEvent, PopupBankState> {
       ));
     }
   }
-
-  void _updateEvent(PopupBankEvent event, Emitter emit) {
-    emit(state.copyWith(status: BlocStatus.NONE, request: PopupBankType.NONE));
-  }
 }
 
 const BankCardRepository bankCardRepository = BankCardRepository();

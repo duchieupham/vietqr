@@ -10,7 +10,6 @@ import 'package:vierqr/features/scan_qr/repositories/scan_qr_repository.dart';
 import 'package:vierqr/features/scan_qr/states/scan_qr_state.dart';
 import 'package:vierqr/models/bank_name_information_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
-import 'package:vierqr/models/contact_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/models/viet_qr_scanned_dto.dart';
 import 'package:vierqr/models/vietqr_dto.dart';
