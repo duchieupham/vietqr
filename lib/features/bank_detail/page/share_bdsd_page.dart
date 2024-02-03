@@ -4,16 +4,17 @@ import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
-import 'package:vierqr/commons/widgets/button_widget.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/commons/widgets/textfield_custom.dart';
 import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_detail/blocs/share_bdsd_bloc.dart';
 import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
 import 'package:vierqr/features/bank_detail/events/share_bdsd_event.dart';
 import 'package:vierqr/features/bank_detail/states/share_bdsd_state.dart';
-import 'package:vierqr/features/bank_detail/views/bottom_sheet_add_user_bdsd.dart';
+import 'package:vierqr/features/bank_detail/widget/detail_group.dart';
+import 'package:vierqr/features/bank_detail/widget/share_bdsd_invite.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
+import 'package:vierqr/models/terminal_response_dto.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 import '../../../models/member_branch_model.dart';
@@ -58,7 +59,7 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
   String get userId => UserHelper.instance.getUserId();
 
   List<MemberBranchModel> listMemberData = [];
-  List<MemberBranchModel> listMember = [];
+  TerminalDto terminalDto = TerminalDto(terminals: []);
 
   @override
   void initState() {
@@ -72,7 +73,8 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
   initData() {
     _bloc.add(GetInfoTelegramEvent(bankId: widget.bankId, isLoading: true));
     _bloc.add(GetInfoLarkEvent(bankId: widget.bankId));
-    _bloc.add(GetMemberEvent(bankId: widget.bankId));
+    _bloc.add(GetListGroupBDSDEvent(
+        userID: UserHelper.instance.getUserId(), type: 0, offset: 0));
   }
 
   Future<void> onRefresh() async {
@@ -93,14 +95,16 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
             Navigator.pop(context);
           }
 
-          if (state.request == ShareBDSDType.MEMBER) {
-            if (state.listMember.length >= 1) {
-              listMember = state.listMember;
-              listMember.removeWhere((member) => member.isOwner);
-              listMemberData = listMember;
-            }
+          // if (state.request == ShareBDSDType.MEMBER) {
+          //   if (state.listMember.length >= 1) {
+          //     listMember = state.listMember;
+          //     listMember.removeWhere((member) => member.isOwner);
+          //     listMemberData = listMember;
+          //   }
+          // }
+          if (state.request == ShareBDSDType.GET_LIST_GROUP) {
+            terminalDto = state.listGroup!;
           }
-
           if (state.request == ShareBDSDType.CONNECT) {
             widget.bloc.add(const BankCardGetDetailEvent());
             _bloc.add(GetBusinessAvailDTOEvent());
@@ -248,28 +252,16 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Danh sách thành viên',
-                                style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(
-                                height: 2,
-                              ),
-                              const Text(
-                                'Nhận thông tin Biến động số dư qua hệ thống VietQR VN',
-                                style: TextStyle(fontSize: 12),
-                              ),
-                            ],
+                          child: Text(
+                            'Danh sách nhóm',
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                         ),
                         const SizedBox(
                           width: 8,
                         ),
-                        if (listMember.isNotEmpty)
+                        if (terminalDto.totalTerminals > 0)
                           Container(
                             padding: EdgeInsets.only(right: 8, left: 12),
                             decoration: BoxDecoration(
@@ -278,7 +270,7 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                             child: Row(
                               children: [
                                 Text(
-                                  '${listMember.length}',
+                                  '${terminalDto.totalTerminals}',
                                   style: TextStyle(color: AppColor.BLUE_TEXT),
                                 ),
                                 Image.asset(
@@ -290,67 +282,20 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                           ),
                       ],
                     ),
-                    if (listMember.isNotEmpty)
+                    if (terminalDto.totalTerminals > 0)
                       Column(
                         children: [
                           const SizedBox(
                             height: 12,
                           ),
-                          Container(
-                            height: 41,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                                border: Border.all(
-                                    color:
-                                        AppColor.BLACK_BUTTON.withOpacity(0.5),
-                                    width: 0.5)),
-                            child: TextFieldCustom(
-                              isObscureText: false,
-                              maxLines: 1,
-                              fillColor: AppColor.WHITE,
-                              // controller: searchController,
-                              hintText: 'Tìm kiếm người dùng',
-                              inputType: TextInputType.text,
-                              prefixIcon: const Icon(Icons.search),
-                              keyboardAction: TextInputAction.search,
-                              onChange: (value) {
-                                setState(() {
-                                  listMemberData = listMember
-                                      .where((element) => element.fullName
-                                          .toLowerCase()
-                                          .contains(value.toLowerCase()))
-                                      .toList();
-                                });
-                                // _valueSearch = value;
-                              },
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 12,
-                          ),
-                          ...listMemberData.map((e) {
-                            return _buildItemMember(e);
+                          ...terminalDto.terminals.map((e) {
+                            return _buildItemGroup(e);
                           }).toList(),
                           if (widget.dto.userId ==
                               UserHelper.instance.getUserId())
-                            Align(
-                              alignment: Alignment.topRight,
-                              child: ButtonWidget(
-                                height: 32,
-                                width: 140,
-                                fontSize: 12,
-                                text: 'Xóa tất cả thành viên',
-                                textColor: AppColor.RED_TEXT,
-                                bgColor: AppColor.RED_TEXT.withOpacity(0.2),
-                                function: () {
-                                  _bloc.add(RemoveAllMemberEvent(
-                                      bankId: widget.bankId));
-                                },
-                              ),
-                            ),
-                          const SizedBox(
-                            height: 100,
-                          )
+                            const SizedBox(
+                              height: 100,
+                            )
                         ],
                       )
                     else
@@ -368,7 +313,7 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                             const SizedBox(
                               height: 12,
                             ),
-                            Text('Chưa có thành viên nào được chia sẻ.'),
+                            Text('Chưa có nhóm nào.'),
                           ],
                         ),
                       )
@@ -381,25 +326,28 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                     right: 0,
                     child: GestureDetector(
                       onTap: () async {
-                        await DialogWidget.instance.showModelBottomSheet(
-                          isDismissible: true,
-                          height: MediaQuery.of(context).size.height * 0.8,
-                          margin: EdgeInsets.only(
-                              left: 10, right: 10, bottom: 10, top: 200),
-                          borderRadius: BorderRadius.circular(16),
-                          widget: BottomSheetAddUserBDSD(
-                            bankId: widget.bankId,
-                            // onSelect: (MemberSearchDto) {},
-                          ),
-                        );
-                        _bloc.add(GetMemberEvent(bankId: widget.bankId));
-                        // NavigatorUtils.navigatePage(
-                        //     context,
-                        //     ShareBDSDInviteScreen(
-                        //       dto: widget.dto,
-                        //       bankId: widget.bankId,
-                        //     ),
-                        //     routeName: _ShareBDSDScreenState.routeName);
+                        // await DialogWidget.instance.showModelBottomSheet(
+                        //   isDismissible: true,
+                        //   height: MediaQuery.of(context).size.height * 0.8,
+                        //   margin: EdgeInsets.only(
+                        //       left: 10, right: 10, bottom: 10, top: 200),
+                        //   borderRadius: BorderRadius.circular(16),
+                        //   widget: BottomSheetAddUserBDSD(
+                        //     bankId: widget.bankId,
+                        //     // onSelect: (MemberSearchDto) {},
+                        //   ),
+                        // );
+                        // _bloc.add(GetMemberEvent(bankId: widget.bankId));
+                        await NavigatorUtils.navigatePage(
+                            context,
+                            ShareBDSDInviteScreen(
+                              bankId: widget.bankId,
+                            ),
+                            routeName: _ShareBDSDScreenState.routeName);
+                        _bloc.add(GetListGroupBDSDEvent(
+                            userID: UserHelper.instance.getUserId(),
+                            type: 0,
+                            offset: 0));
                       },
                       child: Container(
                         height: 40,
@@ -431,67 +379,122 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
     );
   }
 
-  Widget _buildItemMember(MemberBranchModel dto) {
+  Widget _buildItemGroup(TerminalResponseDTO dto) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       margin: EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
           color: AppColor.WHITE, borderRadius: BorderRadius.circular(5)),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          dto.imgId.isNotEmpty
-              ? Container(
-                  width: 32,
-                  height: 32,
-                  margin: EdgeInsets.only(top: 2),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    image: DecorationImage(
-                        image: ImageUtils.instance.getImageNetWork(dto.imgId),
-                        fit: BoxFit.cover),
-                  ),
-                )
-              : Container(
-                  width: 32,
-                  height: 32,
-                  margin: EdgeInsets.only(top: 2),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    image: DecorationImage(
-                        image: AssetImage('assets/images/ic-avatar.png')),
-                  ),
-                ),
           const SizedBox(
-            width: 16,
+            height: 4,
           ),
-          Expanded(
-              child: Column(
+          Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                dto.fullName,
-                style: TextStyle(fontWeight: FontWeight.w600),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Nhóm:',
+                      style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
+                    ),
+                    Text(
+                      dto.name,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 15),
+                    )
+                  ],
+                ),
               ),
-              const SizedBox(
-                height: 2,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Thành viên:',
+                    style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        dto.totalMembers.toString(),
+                        style: TextStyle(fontSize: 15),
+                      ),
+                      Image.asset(
+                        'assets/images/ic-member-black.png',
+                        width: 24,
+                      )
+                    ],
+                  )
+                ],
               ),
-              Text(
-                dto.phoneNo ?? '',
-                style: TextStyle(fontSize: 12),
+              SizedBox(
+                width: 60,
+              ),
+              GestureDetector(
+                onTap: () async {
+                  await NavigatorUtils.navigatePage(
+                      context,
+                      DetailGroupScreen(
+                        bankId: widget.bankId,
+                        groupId: dto.id,
+                      ),
+                      routeName: _ShareBDSDScreenState.routeName);
+                  _bloc.add(GetListGroupBDSDEvent(
+                      userID: UserHelper.instance.getUserId(),
+                      type: 0,
+                      offset: 0));
+                },
+                child: Icon(
+                  Icons.arrow_forward,
+                  color: AppColor.BLUE_TEXT,
+                  size: 18,
+                ),
               )
             ],
-          )),
-          if (widget.dto.userId == UserHelper.instance.getUserId())
-            GestureDetector(
-              onTap: () {
-                _bloc.add(
-                    RemoveMemberEvent(bankId: widget.bankId, userId: dto.id));
-              },
-              child: Image.asset(
-                'assets/images/ic-remove-red.png',
-                height: 36,
-              ),
-            )
+          ),
+          Text(
+            'Tài khoản chia sẻ:',
+            style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
+          ),
+          const SizedBox(
+            height: 2,
+          ),
+          ...dto.banks.map((e) {
+            return _buildShareBankItem(e);
+          }).toList(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildShareBankItem(TerminalBankResponseDTO dto) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        children: [
+          Container(
+            height: 20,
+            width: 40,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(3),
+                border:
+                    Border.all(color: AppColor.BLACK_BUTTON.withOpacity(0.2)),
+                image: DecorationImage(
+                    image:
+                        ImageUtils.instance.getImageNetWork(widget.dto.imgId))),
+          ),
+          const SizedBox(
+            width: 8,
+          ),
+          Expanded(
+              child: Text(
+            '${dto.bankAccount} - ${dto.userBankName}',
+            overflow: TextOverflow.ellipsis,
+          ))
         ],
       ),
     );

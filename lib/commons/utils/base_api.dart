@@ -136,6 +136,8 @@ class BaseAPIClient {
     type ??= AuthenticationType.NONE;
 
     token ??= AccountHelper.instance.getToken();
+
+    print('------------------------------$token');
     tokenFree ??= AccountHelper.instance.getTokenFree();
 
     switch (type) {

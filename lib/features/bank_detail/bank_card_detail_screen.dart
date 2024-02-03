@@ -62,6 +62,11 @@ class _BankCardDetailState extends State<BankCardDetailState> {
     'Giao dịch',
     'Chia sẻ BĐSD'
   ];
+  List<String> listTitle1 = [
+    'Thông tin',
+    'Thống kê',
+    'Giao dịch',
+  ];
   final PageController pageController = PageController();
   String userId = UserHelper.instance.getUserId();
   late QRGeneratedDTO qrGeneratedDTO = QRGeneratedDTO(
@@ -106,45 +111,6 @@ class _BankCardDetailState extends State<BankCardDetailState> {
               padding: const EdgeInsets.only(top: 12),
               child: Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      controller: controllerTabar,
-                      child: Row(
-                        children: listTitle.map((title) {
-                          int index = listTitle.indexOf(title);
-                          return GestureDetector(
-                            onTap: () {
-                              pageController.jumpToPage(index);
-                              provider.changeCurrentPage(index);
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 6),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                                color: index == provider.currentPage
-                                    ? AppColor.BLUE_TEXT.withOpacity(0.3)
-                                    : AppColor.TRANSPARENT,
-                              ),
-                              child: Text(
-                                title,
-                                style: TextStyle(
-                                    fontSize: 16,
-                                    color: index == provider.currentPage
-                                        ? AppColor.BLUE_TEXT
-                                        : AppColor.BLACK),
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 12,
-                  ),
                   Expanded(
                     child: StreamBuilder<bool>(
                       stream: notificationController.stream,
@@ -222,7 +188,10 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                               if (state.bankDetailDTO != null) {
                                 dto = state.bankDetailDTO!;
                               }
-
+                              if (dto.userId !=
+                                  UserHelper.instance.getUserId()) {
+                                listTitle.removeLast();
+                              }
                               if (AppDataHelper.instance
                                   .checkExitsBankAccount(dto.bankAccount)) {
                                 QRDetailBank qrDetail = AppDataHelper.instance
@@ -296,58 +265,118 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                             if (state.bankDetailDTO == null) {
                               return Center(child: CircularProgressIndicator());
                             }
-                            return PageView(
-                              controller: pageController,
-                              onPageChanged: (index) {
-                                if (index == 3) {
-                                  controllerTabar.animateTo(
-                                    controllerTabar.position.maxScrollExtent,
-                                    curve: Curves.easeOut,
-                                    duration: const Duration(milliseconds: 300),
-                                  );
-                                } else if (index == 0) {
-                                  controllerTabar.animateTo(
-                                    controllerTabar.position.minScrollExtent,
-                                    curve: Curves.easeOut,
-                                    duration: const Duration(milliseconds: 300),
-                                  );
-                                }
-                                provider.changeCurrentPage(index);
-                              },
+                            return Column(
                               children: [
-                                InfoDetailBankAccount(
-                                  bloc: bankCardBloc,
-                                  refresh: _refresh,
-                                  dto: dto,
-                                  qrGeneratedDTO: qrGeneratedDTO,
-                                  bankId: state.bankId ?? '',
-                                  onChangePage: () {
-                                    provider.changeCurrentPage(2);
-                                    pageController.jumpToPage(2);
-                                  },
-                                  onChangePageThongKe: () {
-                                    provider.changeCurrentPage(1);
-                                    pageController.jumpToPage(1);
-                                  },
-                                  updateQRGeneratedDTO: (qrBankDetail) {
-                                    Map<String, dynamic> data = {};
-                                    data['bankAccount'] = dto.bankAccount;
-                                    data['userBankName'] = dto.userBankName;
-                                    data['bankCode'] = dto.bankCode;
-                                    data['amount'] =
-                                        qrBankDetail.money.replaceAll(',', '');
-                                    data['content'] = StringUtils.instance
-                                        .removeDiacritic(qrBankDetail.content);
-                                    bankCardBloc.add(
-                                        BankCardGenerateDetailQR(dto: data));
-                                  },
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20),
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    controller: controllerTabar,
+                                    child: Row(
+                                      children: listTitle.map((title) {
+                                        int index = listTitle.indexOf(title);
+                                        return GestureDetector(
+                                          onTap: () {
+                                            pageController.jumpToPage(index);
+                                            provider.changeCurrentPage(index);
+                                          },
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 16, vertical: 6),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                              color:
+                                                  index == provider.currentPage
+                                                      ? AppColor.BLUE_TEXT
+                                                          .withOpacity(0.3)
+                                                      : AppColor.TRANSPARENT,
+                                            ),
+                                            child: Text(
+                                              title,
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  color: index ==
+                                                          provider.currentPage
+                                                      ? AppColor.BLUE_TEXT
+                                                      : AppColor.BLACK),
+                                            ),
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ),
                                 ),
-                                Statistical(bankId: state.bankId ?? ''),
-                                TransHistoryScreen(bankId: state.bankId ?? ''),
-                                ShareBDSDScreen(
-                                  bankId: state.bankId ?? '',
-                                  dto: dto,
-                                  bloc: bankCardBloc,
+                                const SizedBox(
+                                  height: 12,
+                                ),
+                                Expanded(
+                                  child: PageView(
+                                    controller: pageController,
+                                    onPageChanged: (index) {
+                                      if (index == 3) {
+                                        controllerTabar.animateTo(
+                                          controllerTabar
+                                              .position.maxScrollExtent,
+                                          curve: Curves.easeOut,
+                                          duration:
+                                              const Duration(milliseconds: 300),
+                                        );
+                                      } else if (index == 0) {
+                                        controllerTabar.animateTo(
+                                          controllerTabar
+                                              .position.minScrollExtent,
+                                          curve: Curves.easeOut,
+                                          duration:
+                                              const Duration(milliseconds: 300),
+                                        );
+                                      }
+                                      provider.changeCurrentPage(index);
+                                    },
+                                    children: [
+                                      InfoDetailBankAccount(
+                                        bloc: bankCardBloc,
+                                        refresh: _refresh,
+                                        dto: dto,
+                                        qrGeneratedDTO: qrGeneratedDTO,
+                                        bankId: state.bankId ?? '',
+                                        onChangePage: () {
+                                          provider.changeCurrentPage(2);
+                                          pageController.jumpToPage(2);
+                                        },
+                                        onChangePageThongKe: () {
+                                          provider.changeCurrentPage(1);
+                                          pageController.jumpToPage(1);
+                                        },
+                                        updateQRGeneratedDTO: (qrBankDetail) {
+                                          Map<String, dynamic> data = {};
+                                          data['bankAccount'] = dto.bankAccount;
+                                          data['userBankName'] =
+                                              dto.userBankName;
+                                          data['bankCode'] = dto.bankCode;
+                                          data['amount'] = qrBankDetail.money
+                                              .replaceAll(',', '');
+                                          data['content'] = StringUtils.instance
+                                              .removeDiacritic(
+                                                  qrBankDetail.content);
+                                          bankCardBloc.add(
+                                              BankCardGenerateDetailQR(
+                                                  dto: data));
+                                        },
+                                      ),
+                                      Statistical(bankId: state.bankId ?? ''),
+                                      TransHistoryScreen(
+                                          bankId: state.bankId ?? ''),
+                                      if (dto.userId ==
+                                          UserHelper.instance.getUserId())
+                                        ShareBDSDScreen(
+                                          bankId: state.bankId ?? '',
+                                          dto: dto,
+                                          bloc: bankCardBloc,
+                                        ),
+                                    ],
+                                  ),
                                 ),
                               ],
                             );

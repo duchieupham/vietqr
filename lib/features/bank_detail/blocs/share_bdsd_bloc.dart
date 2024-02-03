@@ -15,6 +15,7 @@ import 'package:vierqr/models/info_tele_dto.dart';
 import 'package:vierqr/models/member_branch_model.dart';
 import 'package:vierqr/models/member_search_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
+import 'package:vierqr/models/terminal_response_dto.dart';
 
 class ShareBDSDBloc extends Bloc<ShareBDSDEvent, ShareBDSDState>
     with BaseManager {
@@ -43,6 +44,7 @@ class ShareBDSDBloc extends Bloc<ShareBDSDEvent, ShareBDSDState>
     on<RemoveBankLarkEvent>(_removeBankLark);
     on<SearchMemberEvent>(_searchMember);
     on<ShareUserBDSDEvent>(_shareBDSD);
+    on<GetListGroupBDSDEvent>(_getListGroup);
   }
 
   ShareBDSDRepository repository = ShareBDSDRepository();
@@ -176,6 +178,28 @@ class ShareBDSDBloc extends Bloc<ShareBDSDEvent, ShareBDSDState>
           status: BlocStatus.NONE,
           listMember: list,
           request: ShareBDSDType.MEMBER,
+          isLoading: false,
+        ));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(status: BlocStatus.NONE));
+    }
+  }
+
+  void _getListGroup(ShareBDSDEvent event, Emitter emit) async {
+    try {
+      if (event is GetListGroupBDSDEvent) {
+        emit(
+          state.copyWith(
+              status: BlocStatus.LOADING_PAGE, request: ShareBDSDType.NONE),
+        );
+        final TerminalDto terminalDto = await repository.getListGroup(
+            event.userID, event.type, event.offset);
+        emit(state.copyWith(
+          status: BlocStatus.NONE,
+          listGroup: terminalDto,
+          request: ShareBDSDType.GET_LIST_GROUP,
           isLoading: false,
         ));
       }

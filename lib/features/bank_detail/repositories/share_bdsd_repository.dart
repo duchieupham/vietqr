@@ -8,6 +8,7 @@ import 'package:vierqr/models/business_branch_dto.dart';
 import 'package:vierqr/models/member_branch_model.dart';
 import 'package:vierqr/models/member_search_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
+import 'package:vierqr/models/terminal_response_dto.dart';
 
 class ShareBDSDRepository {
   const ShareBDSDRepository();
@@ -262,5 +263,27 @@ class ShareBDSDRepository {
       result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
     }
     return result;
+  }
+
+  Future<TerminalDto> getListGroup(String userId, int type, int offset) async {
+    TerminalDto result = TerminalDto(terminals: []);
+    try {
+      final String url =
+          '${EnvConfig.getBaseUrl()}terminal?userId=$userId&type=$type&offset=$offset';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        if (data != null) {
+          result = TerminalDto.fromJson(data);
+        }
+      }
+      return result;
+    } catch (e) {
+      LOG.error(e.toString());
+      return result;
+    }
   }
 }

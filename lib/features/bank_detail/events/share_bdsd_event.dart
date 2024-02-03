@@ -135,3 +135,14 @@ class ShareUserBDSDEvent extends ShareBDSDEvent {
   @override
   List<Object?> get props => [body];
 }
+
+class GetListGroupBDSDEvent extends ShareBDSDEvent {
+  final String userID;
+  final int type;
+  final int offset;
+
+  GetListGroupBDSDEvent({this.userID = '', this.type = 0, this.offset = 0});
+
+  @override
+  List<Object?> get props => [userID, type, offset];
+}

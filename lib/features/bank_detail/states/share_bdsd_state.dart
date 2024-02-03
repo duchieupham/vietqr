@@ -4,6 +4,7 @@ import 'package:vierqr/models/business_branch_dto.dart';
 import 'package:vierqr/models/info_tele_dto.dart';
 import 'package:vierqr/models/member_branch_model.dart';
 import 'package:vierqr/models/member_search_dto.dart';
+import 'package:vierqr/models/terminal_response_dto.dart';
 
 class ShareBDSDState extends Equatable {
   final BlocStatus status;
@@ -19,6 +20,7 @@ class ShareBDSDState extends Equatable {
   final bool isTelegram;
   final bool isLark;
   final bool isLoading;
+  final TerminalDto? listGroup;
   final String userIdSelect;
 
   ShareBDSDState({
@@ -36,6 +38,7 @@ class ShareBDSDState extends Equatable {
     this.isTelegram = false,
     this.isLoading = false,
     this.userIdSelect = '',
+    this.listGroup,
   });
 
   ShareBDSDState copyWith({
@@ -52,6 +55,7 @@ class ShareBDSDState extends Equatable {
     bool? isTelegram,
     bool? isLark,
     bool? isLoading,
+    TerminalDto? listGroup,
     String? userIdSelect,
   }) {
     return ShareBDSDState(
@@ -69,6 +73,7 @@ class ShareBDSDState extends Equatable {
       isTelegram: isTelegram ?? this.isTelegram,
       isLoading: isLoading ?? this.isLoading,
       userIdSelect: userIdSelect ?? this.userIdSelect,
+      listGroup: listGroup ?? this.listGroup,
     );
   }
 
@@ -80,5 +85,6 @@ class ShareBDSDState extends Equatable {
         listBusinessAvailDTO,
         listMember,
         listMemberSearch,
+        listGroup,
       ];
 }
