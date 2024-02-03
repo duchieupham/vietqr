@@ -485,13 +485,13 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
   }
 
   void onShareBDSD(BankAccountDTO dto) async {
-    await DialogWidget.instance.showModelBottomSheet(
-      isDismissible: true,
-      height: MediaQuery.of(context).size.height * 0.8,
-      margin: EdgeInsets.only(left: 10, right: 10, bottom: 10, top: 200),
-      borderRadius: BorderRadius.circular(16),
-      widget: BottomSheetAddUserBDSD(bankId: dto.id),
-    );
+    // await DialogWidget.instance.showModelBottomSheet(
+    //   isDismissible: true,
+    //   height: MediaQuery.of(context).size.height * 0.8,
+    //   margin: EdgeInsets.only(left: 10, right: 10, bottom: 10, top: 200),
+    //   borderRadius: BorderRadius.circular(16),
+    //   widget: BottomSheetAddUserBDSD(bankId: dto.id),
+    // );
   }
 
   void updateState() {

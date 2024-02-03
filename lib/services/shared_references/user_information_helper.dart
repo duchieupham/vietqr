@@ -34,7 +34,7 @@ class UserInformationHelper {
   }
 
   reset() {
-    sharedPrefs.clear();
+    initialUserInformationHelper();
   }
 
   Future<void> setUserId(String userId) async {

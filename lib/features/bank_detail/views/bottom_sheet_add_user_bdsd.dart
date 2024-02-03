@@ -17,9 +17,11 @@ import 'package:vierqr/models/member_search_dto.dart';
 import '../events/share_bdsd_event.dart';
 
 class BottomSheetAddUserBDSD extends StatefulWidget {
+  final Function(MemberSearchDto) onSelect;
   final String bankId;
 
-  const BottomSheetAddUserBDSD({Key? key, required this.bankId})
+  const BottomSheetAddUserBDSD(
+      {Key? key, required this.bankId, required this.onSelect})
       : super(key: key);
 
   @override
@@ -134,6 +136,7 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
                       child: TextFieldCustom(
                         isObscureText: false,
                         maxLines: 1,
+                        autoFocus: true,
                         fillColor: AppColor.WHITE,
                         hintText: 'Tìm kiếm người dùng',
                         inputType: provider.typeSearch == 0
@@ -454,10 +457,12 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
                               textColor: AppColor.WHITE,
                               bgColor: AppColor.BLUE_TEXT,
                               function: () {
-                                Map<String, dynamic> param = {};
-                                param['userId'] = dto.id;
-                                param['bankId'] = widget.bankId;
-                                bloc.add(ShareUserBDSDEvent(param));
+                                widget.onSelect(dto);
+                                Navigator.pop(context);
+                                // Map<String, dynamic> param = {};
+                                // param['userId'] = dto.id;
+                                // param['bankId'] = widget.bankId;
+                                // bloc.add(ShareUserBDSDEvent(param));
                               },
                               fontSize: 12,
                               borderRadius: 5,

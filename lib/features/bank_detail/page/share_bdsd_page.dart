@@ -4,6 +4,7 @@ import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_custom.dart';
@@ -12,10 +13,8 @@ import 'package:vierqr/features/bank_detail/blocs/share_bdsd_bloc.dart';
 import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
 import 'package:vierqr/features/bank_detail/events/share_bdsd_event.dart';
 import 'package:vierqr/features/bank_detail/states/share_bdsd_state.dart';
-import 'package:vierqr/features/bank_detail/views/bottom_sheet_add_user_bdsd.dart';
-import 'package:vierqr/layouts/m_button_widget.dart';
+import 'package:vierqr/features/bank_detail/widget/share_bdsd_invite.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
-import 'package:vierqr/models/info_tele_dto.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 import '../../../models/member_branch_model.dart';
@@ -54,6 +53,7 @@ class _ShareBDSDScreen extends StatefulWidget {
 }
 
 class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
+  static String routeName = '/share_bdsd_invite';
   late ShareBDSDBloc _bloc;
 
   String get userId => UserInformationHelper.instance.getUserId();
@@ -383,17 +383,24 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                     right: 0,
                     child: GestureDetector(
                       onTap: () async {
-                        await DialogWidget.instance.showModelBottomSheet(
-                          isDismissible: true,
-                          height: MediaQuery.of(context).size.height * 0.8,
-                          margin: EdgeInsets.only(
-                              left: 10, right: 10, bottom: 10, top: 200),
-                          borderRadius: BorderRadius.circular(16),
-                          widget: BottomSheetAddUserBDSD(
-                            bankId: widget.bankId,
-                          ),
-                        );
-                        _bloc.add(GetMemberEvent(bankId: widget.bankId));
+                        // await DialogWidget.instance.showModelBottomSheet(
+                        //   isDismissible: true,
+                        //   height: MediaQuery.of(context).size.height * 0.8,
+                        //   margin: EdgeInsets.only(
+                        //       left: 10, right: 10, bottom: 10, top: 200),
+                        //   borderRadius: BorderRadius.circular(16),
+                        //   widget: BottomSheetAddUserBDSD(
+                        //     bankId: widget.bankId,
+                        //   ),
+                        // );
+                        // _bloc.add(GetMemberEvent(bankId: widget.bankId));
+                        NavigatorUtils.navigatePage(
+                            context,
+                            ShareBDSDInviteScreen(
+                              dto: widget.dto,
+                              bankId: widget.bankId,
+                            ),
+                            routeName: _ShareBDSDScreenState.routeName);
                       },
                       child: Container(
                         height: 40,
@@ -405,11 +412,12 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                         child: Row(
                           children: [
                             Image.asset(
-                              'assets/images/ic-add-member-bdsd-white.png',
+                              'assets/images/ic_share_code.png',
                               height: 26,
+                              color: Colors.white,
                             ),
                             Text(
-                              'Thêm thành viên',
+                              'Chia sẻ BĐSD',
                               style: TextStyle(
                                   fontSize: 12, color: AppColor.WHITE),
                             )
@@ -487,356 +495,6 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
             )
         ],
       ),
-    );
-  }
-
-  Widget _buildItemNetWork(String title, String url) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        color: AppColor.WHITE,
-      ),
-      child: Row(
-        children: [
-          Image.asset(
-            url,
-            width: 32,
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              title,
-              style: TextStyle(fontSize: 15),
-            ),
-          ),
-          Image.asset(
-            'assets/images/ic-next-user.png',
-            width: 32,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildListConnectLark(List<InfoLarkDTO> list, bool isExist) {
-    return ListView.separated(
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        itemBuilder: (context, index) {
-          InfoLarkDTO dto = list[index];
-          return _buildItemChatLark(dto, context, isExist);
-        },
-        separatorBuilder: (context, index) {
-          return SizedBox(height: 20);
-        },
-        itemCount: list.length);
-  }
-
-  Widget _buildListChatTelegram(List<InfoTeleDTO> list, bool isExist) {
-    return ListView.separated(
-        physics: NeverScrollableScrollPhysics(),
-        itemBuilder: (context, index) {
-          return _buildItemChatTelegram(list[index], context, isExist);
-        },
-        shrinkWrap: true,
-        separatorBuilder: (context, index) {
-          return SizedBox(height: 20);
-        },
-        itemCount: list.length);
-  }
-
-  Widget _buildItemChatLark(
-      InfoLarkDTO dto, BuildContext context, bool isExist) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            color: AppColor.WHITE,
-          ),
-          child: Column(
-            children: [
-              const SizedBox(
-                height: 12,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  children: [
-                    Image.asset(
-                      'assets/images/logo-lark.png',
-                      height: 28,
-                      width: 28,
-                    ),
-                    const SizedBox(
-                      width: 4,
-                    ),
-                    Text(
-                      'Webhook Address',
-                      style: TextStyle(fontSize: 12),
-                    ),
-                    const SizedBox(
-                      width: 2,
-                    ),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Text(
-                          dto.webhook,
-                          maxLines: 1,
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(
-                height: 4,
-              ),
-              const Divider(
-                color: Colors.black,
-                thickness: 0.2,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 16, top: 8, right: 12),
-                child: Column(
-                  children: dto.banks.map((bank) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 25,
-                            height: 25,
-                            decoration: BoxDecoration(
-                              color: AppColor.WHITE,
-                              borderRadius: BorderRadius.circular(40),
-                              border: Border.all(
-                                  width: 0.5, color: AppColor.GREY_TEXT),
-                              image: DecorationImage(
-                                image: ImageUtils.instance.getImageNetWork(
-                                  bank.imageId,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const Padding(padding: EdgeInsets.only(left: 10)),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '${bank.bankCode} - ${bank.bankAccount}',
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                    color: AppColor.BLACK,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              Text(
-                                bank.userBankName.toUpperCase(),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  color: AppColor.BLACK,
-                                  fontSize: 10,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const Spacer(),
-                          if (widget.dto.id == bank.bankId &&
-                              widget.dto.userId == userId)
-                            GestureDetector(
-                              onTap: () {
-                                final Map<String, dynamic> body = {
-                                  'id': dto.id,
-                                  'userId': userId,
-                                  'bankId': widget.dto.id,
-                                };
-
-                                _bloc.add(RemoveBankLarkEvent(body));
-                              },
-                              child: Image.asset(
-                                'assets/images/ic-remove-red.png',
-                                width: 36,
-                              ),
-                            ),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ),
-            ],
-          ),
-        ),
-        if (!isExist && widget.dto.userId == userId && widget.dto.authenticated)
-          MButtonWidget(
-            title: 'Nhận BĐSD qua Lark',
-            isEnable: true,
-            colorEnableBgr: AppColor.BLUE_TEXT.withOpacity(0.25),
-            margin: EdgeInsets.symmetric(vertical: 10),
-            colorEnableText: AppColor.BLUE_TEXT,
-            onTap: () {
-              final Map<String, dynamic> body = {
-                'id': dto.id,
-                'userId': userId,
-                'bankId': widget.dto.id,
-              };
-
-              _bloc.add(AddBankLarkEvent(body));
-            },
-          )
-      ],
-    );
-  }
-
-  Widget _buildItemChatTelegram(
-    InfoTeleDTO dto,
-    BuildContext context,
-    bool isExist,
-  ) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            color: AppColor.WHITE,
-          ),
-          child: Column(
-            children: [
-              const SizedBox(
-                height: 12,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  children: [
-                    Image.asset(
-                      'assets/images/logo-telegram.png',
-                      height: 28,
-                      width: 28,
-                    ),
-                    const SizedBox(
-                      width: 4,
-                    ),
-                    Text(
-                      'Chat ID',
-                      style: TextStyle(fontSize: 12),
-                    ),
-                    const SizedBox(
-                      width: 2,
-                    ),
-                    Text(
-                      dto.chatId,
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const Spacer(),
-                  ],
-                ),
-              ),
-              const SizedBox(
-                height: 4,
-              ),
-              const Divider(
-                color: Colors.black,
-                thickness: 0.2,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 16, top: 8, right: 12),
-                child: Column(
-                  children: dto.banks.map((bank) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 25,
-                            height: 25,
-                            decoration: BoxDecoration(
-                              color: AppColor.WHITE,
-                              borderRadius: BorderRadius.circular(40),
-                              border: Border.all(
-                                  width: 0.5, color: AppColor.GREY_TEXT),
-                              image: DecorationImage(
-                                image: ImageUtils.instance.getImageNetWork(
-                                  bank.imageId,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const Padding(padding: EdgeInsets.only(left: 10)),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '${bank.bankCode} - ${bank.bankAccount}',
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                    color: AppColor.BLACK,
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              Text(
-                                bank.userBankName.toUpperCase(),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  color: AppColor.BLACK,
-                                  fontSize: 10,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const Spacer(),
-                          if (widget.dto.id == bank.bankId &&
-                              widget.dto.userId == userId)
-                            GestureDetector(
-                              onTap: () {
-                                final Map<String, dynamic> body = {
-                                  'id': dto.id,
-                                  'userId': userId,
-                                  'bankId': widget.dto.id,
-                                };
-
-                                _bloc.add(RemoveBankTelegramEvent(body));
-                              },
-                              child: Image.asset(
-                                'assets/images/ic-remove-red.png',
-                                width: 36,
-                              ),
-                            ),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ),
-            ],
-          ),
-        ),
-        if (!isExist && widget.dto.userId == userId && widget.dto.authenticated)
-          MButtonWidget(
-            title: 'Nhận BĐSD qua Telegram',
-            isEnable: true,
-            colorEnableBgr: AppColor.BLUE_TEXT.withOpacity(0.25),
-            margin: EdgeInsets.symmetric(vertical: 10),
-            colorEnableText: AppColor.BLUE_TEXT,
-            onTap: () {
-              final Map<String, dynamic> body = {
-                'id': dto.id,
-                'userId': userId,
-                'bankId': widget.dto.id,
-              };
-
-              _bloc.add(AddBankTelegramEvent(body));
-            },
-          )
-      ],
     );
   }
 
