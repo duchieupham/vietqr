@@ -90,9 +90,10 @@ void _updateVoiceSetting(AccountEvent event, Emitter emit) async {
       bool updateStatus = await accRepository.updateVoiceSetting(event.param);
       if (updateStatus) {
         final settingAccount = await accRepository.getSettingAccount(userId);
-        if (settingAccount.userId.isNotEmpty) {
-          await UserHelper.instance
-              .setAccountSetting(settingAccount);
+        if (settingAccount != null) {
+          if (settingAccount.userId.isNotEmpty) {
+            await UserHelper.instance.setAccountSetting(settingAccount);
+          }
         }
       }
     }

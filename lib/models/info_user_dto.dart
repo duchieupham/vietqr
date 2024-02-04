@@ -1,13 +1,13 @@
 import 'dart:convert';
 
 class InfoUserDTO {
-  final String? phoneNo;
-  final String? firstName;
-  final String? middleName;
-  final String? lastName;
-  final String? imgId;
-  final String? id;
-  final String? createdTime;
+  String? phoneNo;
+  String? firstName;
+  String? middleName;
+  String? lastName;
+  String? imgId;
+  String? id;
+  String? createdTime;
 
   get fullName => '${lastName ?? ''} ${middleName ?? ''} ${firstName ?? ''}';
 

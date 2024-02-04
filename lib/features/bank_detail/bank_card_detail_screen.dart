@@ -99,10 +99,19 @@ class _BankCardDetailState extends State<BankCardDetailState> {
     });
   }
 
+  _handleBack() {
+    eventBus.fire(GetListBankScreen());
+    FocusManager.instance.primaryFocus?.unfocus();
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const MAppBar(title: 'Chi tiết TK ngân hàng'),
+      appBar: MAppBar(
+        title: 'Chi tiết TK ngân hàng',
+        onPressed: _handleBack,
+      ),
       body: ChangeNotifierProvider(
         create: (_) => AccountBankDetailProvider(),
         child: Consumer<AccountBankDetailProvider>(

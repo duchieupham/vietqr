@@ -428,7 +428,7 @@ class DialogWidget {
     return showModalBottomSheet(
       isScrollControlled: true,
       enableDrag: false,
-      isDismissible: isDismissible,
+      isDismissible: true,
       useRootNavigator: true,
       context: context,
       backgroundColor: AppColor.TRANSPARENT,

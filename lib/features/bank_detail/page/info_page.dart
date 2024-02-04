@@ -6,10 +6,6 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
-import 'package:vierqr/commons/utils/printer_utils.dart';
-import 'package:vierqr/commons/utils/platform_utils.dart';
-import 'package:vierqr/models/bluetooth_printer_dto.dart';
-import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
@@ -101,6 +97,7 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
                       alignment: Alignment.center,
                       child: Text(
                         'Nhận tiền từ mọi ngân hàng và ví điện thử có hỗ trợ VietQR',
+                        textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 12),
                       ),
                     ),
@@ -129,9 +126,6 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
                           GestureDetector(
                             onTap: () {
                               DialogWidget.instance.showModelBottomSheet(
-                                height: 370,
-                                margin: EdgeInsets.only(
-                                    left: 10, right: 10, bottom: 10, top: 200),
                                 borderRadius: BorderRadius.circular(16),
                                 widget: BottomSheetDetail(
                                   dto: widget.dto,
@@ -230,9 +224,9 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
                               onTap: () {
                                 if (widget.dto.authenticated) {
                                   DialogWidget.instance.openMsgDialog(
-                                    title: 'Cảnh báo',
+                                    title: 'Không thể xoá TK',
                                     msg:
-                                        'Bạn phải huỷ liên kết Tk ngân hàng này trước khi xoá',
+                                        'Vui lòng huỷ liên kết tài khoản ngân hàng trước khi xoá.',
                                   );
                                 } else {
                                   BankAccountRemoveDTO bankAccountRemoveDTO =
@@ -422,7 +416,8 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
     required String description,
     required String icon,
   }) {
-    return SizedBox(
+    return Container(
+      color: Colors.transparent,
       width: width,
       child: Row(
         children: [

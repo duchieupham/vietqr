@@ -23,9 +23,10 @@ class _SettingBDSDState extends State<SettingBDSD> {
       bool updateStatus = await accRepository.updateVoiceSetting(param);
       if (updateStatus) {
         final settingAccount = await accRepository.getSettingAccount(userId);
-        if (settingAccount.userId.isNotEmpty) {
-          await UserHelper.instance
-              .setAccountSetting(settingAccount);
+        if (settingAccount != null) {
+          if (settingAccount.userId.isNotEmpty) {
+            await UserHelper.instance.setAccountSetting(settingAccount);
+          }
         }
       }
     } catch (e) {
@@ -73,8 +74,7 @@ class _SettingBDSDState extends State<SettingBDSD> {
                         onChanged: (bool value) {
                           provider.updateOpenVoice(value);
                           Map<String, dynamic> param = {};
-                          param['userId'] =
-                              UserHelper.instance.getUserId();
+                          param['userId'] = UserHelper.instance.getUserId();
                           param['value'] = value ? 1 : 0;
                           param['type'] = 0;
                           _updateVoiceSetting(param);

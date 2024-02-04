@@ -33,6 +33,7 @@ import 'package:vierqr/features/login/views/quick_login_screen.dart';
 import 'package:vierqr/features/register/register_screen.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/main.dart';
+import 'package:vierqr/models/account_information_dto.dart';
 import 'package:vierqr/models/account_login_dto.dart';
 import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/info_user_dto.dart';
@@ -203,7 +204,20 @@ class _LoginState extends State<_Login> {
             }
 
             if (state.request == LoginType.TOAST) {
+              AccountInformationDTO accountInformationDTO =
+                  UserHelper.instance.getAccountInformation();
+
               if (provider.infoUserDTO != null) {
+                InfoUserDTO infoUserDTO = provider.infoUserDTO!;
+
+                infoUserDTO.imgId = accountInformationDTO.imgId;
+                infoUserDTO.firstName = accountInformationDTO.firstName;
+                infoUserDTO.middleName = accountInformationDTO.middleName;
+                infoUserDTO.lastName = accountInformationDTO.lastName;
+                infoUserDTO.middleName = accountInformationDTO.middleName;
+
+                provider.updateInfoUser(infoUserDTO);
+
                 List<String> list = _saveAccount(provider);
 
                 await UserHelper.instance.setLoginAccount(list);

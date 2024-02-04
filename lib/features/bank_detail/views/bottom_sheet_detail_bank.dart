@@ -18,6 +18,7 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetDetail> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
           padding: const EdgeInsets.only(top: 16),
@@ -29,7 +30,7 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetDetail> {
               Expanded(
                 child: Center(
                   child: Text(
-                    'Tông tin tài khoản',
+                    'Thông tin tài khoản',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -75,6 +76,7 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetDetail> {
         ),
         _buildSectionInfo(
             'Căn cước công dân/Mã số thuê:', widget.dto.nationalId),
+        const SizedBox(height: 24),
       ],
     );
   }

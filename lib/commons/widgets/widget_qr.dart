@@ -29,6 +29,7 @@ class WidgetQr extends StatefulWidget {
   final double? size;
   final bool isEmbeddedImage;
   final Function(QRDetailBank) updateQRGeneratedDTO;
+  final bool isCreateQr;
 
   const WidgetQr({
     super.key,
@@ -39,6 +40,7 @@ class WidgetQr extends StatefulWidget {
     this.qrCode,
     this.size,
     required this.updateQRGeneratedDTO,
+    this.isCreateQr = false,
   });
 
   @override
@@ -75,7 +77,6 @@ class _VietQrState extends State<WidgetQr> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
 
     if (!widget.isVietQR) {
       return QrImage(
@@ -97,9 +98,6 @@ class _VietQrState extends State<WidgetQr> {
       children: [
         Container(
           width: width,
-          padding: small
-              ? const EdgeInsets.only(bottom: 12, left: 30, right: 30)
-              : const EdgeInsets.only(bottom: 12, left: 30, right: 30),
           decoration: BoxDecoration(
               image: DecorationImage(
                   image: AssetImage('assets/images/bg-qr-vqr.png'),
@@ -112,7 +110,8 @@ class _VietQrState extends State<WidgetQr> {
             children: [
               SizedBox(height: small ? 24 : 32),
               Container(
-                margin: EdgeInsets.symmetric(horizontal: small ? 16 : 10),
+                width: 300,
+                height: 60,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(6),
                   color: AppColor.GREY_BG,
@@ -124,7 +123,7 @@ class _VietQrState extends State<WidgetQr> {
                     children: [
                       Container(
                         alignment: Alignment.center,
-                        width: small ? 60 : 80,
+                        width: small ? 50 : 70,
                         padding: const EdgeInsets.symmetric(horizontal: 24),
                         decoration: BoxDecoration(
                           image: DecorationImage(
@@ -134,7 +133,7 @@ class _VietQrState extends State<WidgetQr> {
                         ),
                       ),
                       Container(
-                        height: small ? 40 : 60,
+                        height: 40,
                         child: VerticalDashedLine(),
                       ),
                       Expanded(
@@ -148,17 +147,20 @@ class _VietQrState extends State<WidgetQr> {
                             children: [
                               Text(
                                 widget.qrGeneratedDTO.bankAccount,
+                                maxLines: 1,
                                 style: TextStyle(
                                     color: AppColor.BLACK,
-                                    fontSize: small ? 12 : 15,
+                                    fontSize: small ? 12 : 14,
                                     fontWeight: FontWeight.bold),
                               ),
                               Text(
                                 widget.qrGeneratedDTO.userBankName
                                     .toUpperCase(),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                   color: AppColor.textBlack,
-                                  fontSize: small ? 10 : 13,
+                                  fontSize: small ? 10 : 12,
                                 ),
                               ),
                             ],
@@ -166,7 +168,7 @@ class _VietQrState extends State<WidgetQr> {
                         ),
                       ),
                       Container(
-                        height: small ? 40 : 60,
+                        height: 40,
                         child: VerticalDashedLine(),
                       ),
                       GestureDetector(
@@ -175,8 +177,8 @@ class _VietQrState extends State<WidgetQr> {
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child: Image.asset(
                             'assets/images/ic-copy-blue.png',
-                            width: small ? 24 : 36,
-                            height: 36,
+                            width: small ? 24 : 32,
+                            height: 32,
                           ),
                         ),
                       ),
@@ -185,17 +187,124 @@ class _VietQrState extends State<WidgetQr> {
                 ),
               ),
               const SizedBox(height: 12),
-              VietQrNew(
-                qrCode: widget.qrGeneratedDTO.qrCode,
-                paddingHorizontal: small ? 16 : 10,
-              ),
+              VietQrNew(qrCode: widget.qrGeneratedDTO.qrCode),
               const SizedBox(height: 12),
-              if (AppDataHelper.instance.checkExitsBankAccount(
-                      widget.qrGeneratedDTO.bankAccount) &&
-                  widget.qrGeneratedDTO.amount.isNotEmpty)
+              if (!widget.isCreateQr) ...[
+                if (AppDataHelper.instance.checkExitsBankAccount(
+                        widget.qrGeneratedDTO.bankAccount) &&
+                    widget.qrGeneratedDTO.amount.isNotEmpty)
+                  Container(
+                    width: 300,
+                    padding: EdgeInsets.symmetric(
+                        vertical: small ? 4 : 8, horizontal: 20),
+                    margin: EdgeInsets.symmetric(horizontal: small ? 16 : 10),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        color: AppColor.WHITE),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 2),
+                              child: Image.asset(
+                                'assets/images/ic-edit-phone.png',
+                                color: Colors.transparent,
+                                height: 30,
+                              ),
+                            ),
+                            Text(
+                              '${CurrencyUtils.instance.getCurrencyFormatted(widget.qrGeneratedDTO.amount)} VND',
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                            GestureDetector(
+                              onTap: () async {
+                                final result = await DialogWidget.instance
+                                    .showModelBottomSheet(
+                                  borderRadius: BorderRadius.circular(16),
+                                  widget: BottomSheetInputMoney(
+                                    dto: widget.qrGeneratedDTO,
+                                  ),
+                                );
+                                if (result != null && result is QRDetailBank) {
+                                  widget.updateQRGeneratedDTO(result);
+                                }
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.only(bottom: 2),
+                                child: Image.asset(
+                                  'assets/images/ic-edit-phone.png',
+                                  height: 30,
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                        if (widget.qrGeneratedDTO.content.isNotEmpty)
+                          Container(
+                            child: Text(
+                              widget.qrGeneratedDTO.content,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: AppColor.GREY_TEXT,
+                              ),
+                            ),
+                          )
+                      ],
+                    ),
+                  )
+                else
+                  GestureDetector(
+                    onTap: () async {
+                      final result =
+                          await DialogWidget.instance.showModelBottomSheet(
+                        borderRadius: BorderRadius.circular(16),
+                        widget: BottomSheetInputMoney(
+                          dto: widget.qrGeneratedDTO,
+                        ),
+                      );
+                      if (result != null && result is QRDetailBank) {
+                        widget.updateQRGeneratedDTO(result);
+                      }
+                    },
+                    child: Container(
+                      width: 300,
+                      margin: EdgeInsets.symmetric(horizontal: small ? 16 : 10),
+                      padding: EdgeInsets.symmetric(vertical: small ? 8 : 16),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          color: AppColor.WHITE.withOpacity(0.9),
+                          borderRadius: BorderRadius.circular(10)),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.add,
+                            size: 18,
+                            color: AppColor.BLUE_TEXT,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Thêm số tiền',
+                            maxLines: 1,
+                            style: TextStyle(
+                                color: AppColor.BLUE_TEXT, fontSize: 12),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+              ] else ...[
                 Container(
+                  width: 300,
                   padding: EdgeInsets.symmetric(
-                      vertical: small ? 4 : 8, horizontal: 20),
+                      vertical: small ? 6 : 12, horizontal: 20),
                   margin: EdgeInsets.symmetric(horizontal: small ? 16 : 10),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
@@ -204,108 +313,39 @@ class _VietQrState extends State<WidgetQr> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 2),
-                            child: Image.asset(
-                              'assets/images/ic-edit-phone.png',
-                              color: Colors.transparent,
-                              height: 30,
-                            ),
-                          ),
-                          Text(
-                            '${CurrencyUtils.instance.getCurrencyFormatted(widget.qrGeneratedDTO.amount)} VND',
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                          GestureDetector(
-                            onTap: () async {
-                              QRDetailBank qRDetailBank = await DialogWidget
-                                  .instance
-                                  .showModelBottomSheet(
-                                margin: EdgeInsets.only(
-                                    left: 10, right: 10, bottom: 10, top: 200),
-                                borderRadius: BorderRadius.circular(16),
-                                widget: BottomSheetInputMoney(
-                                  dto: widget.qrGeneratedDTO,
-                                ),
-                              );
-                              widget.updateQRGeneratedDTO(qRDetailBank);
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.only(bottom: 2),
-                              child: Image.asset(
-                                'assets/images/ic-edit-phone.png',
-                                height: 30,
-                              ),
-                            ),
-                          )
-                        ],
+                      Text(
+                        '+ ${CurrencyUtils.instance.getCurrencyFormatted(widget.qrGeneratedDTO.amount)} VND',
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: AppColor.ORANGE_DARK,
+                        ),
                       ),
                       if (widget.qrGeneratedDTO.content.isNotEmpty)
-                        Text(
-                          widget.qrGeneratedDTO.content,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: AppColor.GREY_TEXT,
+                        Container(
+                          child: Text(
+                            widget.qrGeneratedDTO.content,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 12,
+                              height: 1.4,
+                              color: AppColor.GREY_TEXT,
+                            ),
                           ),
                         )
                     ],
                   ),
-                )
-              else
-                GestureDetector(
-                  onTap: () async {
-                    QRDetailBank qRDetailBank =
-                        await DialogWidget.instance.showModelBottomSheet(
-                      margin: EdgeInsets.only(
-                          left: 10, right: 10, bottom: 10, top: 200),
-                      borderRadius: BorderRadius.circular(16),
-                      widget: BottomSheetInputMoney(
-                        dto: widget.qrGeneratedDTO,
-                      ),
-                    );
-                    widget.updateQRGeneratedDTO(qRDetailBank);
-                  },
-                  child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: small ? 16 : 10),
-                    padding: EdgeInsets.symmetric(vertical: small ? 8 : 16),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                        color: AppColor.WHITE.withOpacity(0.9),
-                        borderRadius: BorderRadius.circular(10)),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.add,
-                          size: 18,
-                          color: AppColor.BLUE_TEXT,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          'Thêm số tiền',
-                          style: TextStyle(
-                              color: AppColor.BLUE_TEXT, fontSize: 12),
-                        )
-                      ],
-                    ),
-                  ),
                 ),
-              const SizedBox(
-                height: 20,
-              ),
+              ],
+              const SizedBox(height: 20),
             ],
           ),
         ),
         Container(
           width: width,
           height: 70,
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
           decoration: BoxDecoration(
             color: AppColor.WHITE,
             borderRadius: BorderRadius.only(
@@ -316,7 +356,7 @@ class _VietQrState extends State<WidgetQr> {
             children: [
               Expanded(
                 child: _buildButtonQR('assets/images/ic-save-img-blue.png',
-                    width < 420 ? 'Lưu ảnh' : 'Lưu ảnh vào thư viện', () {
+                    'Lưu ảnh vào thư viện', () {
                   NavigatorUtils.navigatePage(
                       context,
                       PopupBankShare(
@@ -364,7 +404,8 @@ class _VietQrState extends State<WidgetQr> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 4, vertical: 12),
+        width: 150,
+        height: 35,
         decoration: BoxDecoration(
             border: Border.all(color: AppColor.BLUE_TEXT),
             borderRadius: BorderRadius.circular(5)),

@@ -90,7 +90,6 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetInputMoney> {
                               fontSize: 14, color: AppColor.textBlack),
                         ),
                         const SizedBox(width: 8),
-                        const SizedBox(width: 8),
                       ],
                     ),
                     inputFormatter: [
@@ -126,6 +125,25 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetInputMoney> {
                     inputFormatter: [
                       LengthLimitingTextInputFormatter(50),
                     ],
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: Wrap(
+                      alignment: WrapAlignment.start,
+                      spacing: 6,
+                      runSpacing: 10,
+                      children: [
+                        _buildItemSuggest(
+                          text: 'Thanh toan',
+                          onChange: provider.updateSuggest,
+                        ),
+                        _buildItemSuggest(
+                          onChange: provider.updateSuggest,
+                          text: 'Chuyen khoan den ${widget.dto.bankAccount}',
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 30),
                   Row(
@@ -180,5 +198,32 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetInputMoney> {
             );
           }),
         ));
+  }
+
+  Widget _buildItemSuggest({
+    ValueChanged<String>? onChange,
+    required String text,
+  }) {
+    return GestureDetector(
+      onTap: () {
+        onChange!(text);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: AppColor.BLUE_TEXT, width: 0.4),
+          color: AppColor.BLUE_TEXT.withOpacity(0.3),
+        ),
+        child: Text(
+          text,
+          style: const TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.w400,
+            height: 1.4,
+          ),
+        ),
+      ),
+    );
   }
 }

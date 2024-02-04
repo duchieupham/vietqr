@@ -105,7 +105,7 @@ class AccountRepository {
     return result;
   }
 
-  Future<AccountInformationDTO> getUserInformation(String userId) async {
+  Future<AccountInformationDTO?> getUserInformation(String userId) async {
     AccountInformationDTO result = AccountInformationDTO(
         userId: '',
         firstName: '',
@@ -125,6 +125,8 @@ class AccountRepository {
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         result = AccountInformationDTO.fromJson(data);
+      } else if (response.statusCode == 403) {
+        return null;
       }
     } catch (e) {
       LOG.error(e.toString());
@@ -133,7 +135,7 @@ class AccountRepository {
     return result;
   }
 
-  Future<SettingAccountDTO> getSettingAccount(String userId) async {
+  Future<SettingAccountDTO?> getSettingAccount(String userId) async {
     SettingAccountDTO result = SettingAccountDTO();
     try {
       final String url = '${EnvConfig.getBaseUrl()}accounts/setting/$userId';
@@ -144,6 +146,8 @@ class AccountRepository {
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         result = SettingAccountDTO.fromJson(data);
+      } else if (response.statusCode == 403) {
+        return null;
       }
     } catch (e) {
       LOG.error(e.toString());

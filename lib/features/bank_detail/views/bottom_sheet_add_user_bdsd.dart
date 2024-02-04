@@ -64,6 +64,7 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
       child: ChangeNotifierProvider<AddUserBDSDProvider>(
         create: (context) => AddUserBDSDProvider(),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Row(
               children: [

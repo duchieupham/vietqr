@@ -197,19 +197,42 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
         emit(state.copyWith(
             status: BlocStatus.NONE, request: DashBoardType.NONE));
         final result = await accRepository.getUserInformation(userId);
-        if (result.userId.isNotEmpty) {
-          await UserHelper.instance.setAccountInformation(result);
-        }
-        final settingAccount = await accRepository.getSettingAccount(userId);
-        if (settingAccount.userId.isNotEmpty) {
-          await UserHelper.instance.setAccountSetting(settingAccount);
+        if (result != null) {
+          if (result.userId.isNotEmpty) {
+            await UserHelper.instance.setAccountInformation(result);
+          } else {
+            emit(state.copyWith(msg: '', status: BlocStatus.ERROR));
+            return;
+          }
+        } else {
           emit(state.copyWith(
               status: BlocStatus.NONE,
-              request: DashBoardType.GET_USER_SETTING));
+              request: DashBoardType.TOKEN,
+              typeToken: TokenType.Expired));
+          return;
+        }
+        final settingAccount = await accRepository.getSettingAccount(userId);
+        if (settingAccount != null) {
+          if (settingAccount.userId.isNotEmpty) {
+            await UserHelper.instance.setAccountSetting(settingAccount);
+            emit(state.copyWith(
+                status: BlocStatus.NONE,
+                request: DashBoardType.GET_USER_SETTING));
+          } else {
+            emit(state.copyWith(msg: '', status: BlocStatus.ERROR));
+            return;
+          }
+        } else {
+          emit(state.copyWith(
+              status: BlocStatus.NONE,
+              request: DashBoardType.TOKEN,
+              typeToken: TokenType.Expired));
+          return;
         }
       }
     } catch (e) {
       LOG.error('Error at _getPointAccount: $e');
+      emit(state.copyWith(msg: '', status: BlocStatus.ERROR));
     }
   }
 

@@ -14,7 +14,6 @@ class VietQrNew extends StatefulWidget {
   final String? content;
   final double? width;
   final double? height;
-  final double? paddingHorizontal;
 
   const VietQrNew({
     super.key,
@@ -23,7 +22,6 @@ class VietQrNew extends StatefulWidget {
     this.width,
     this.height,
     this.qrCode,
-    this.paddingHorizontal,
   });
 
   @override
@@ -61,72 +59,51 @@ class _VietQrState extends State<VietQrNew> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(
-          horizontal:
-              widget.paddingHorizontal ?? (small ? 60 : paddingHorizontal)),
+    return Container(
+      width: 300,
+      height: 300,
+      decoration: BoxDecoration(
+        color: AppColor.WHITE,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).shadowColor.withOpacity(0.1),
+            spreadRadius: 2,
+            blurRadius: 3,
+            offset: const Offset(1, 2),
+          ),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Container(
-            padding: EdgeInsets.symmetric(
-                horizontal: small ? 16 : 24, vertical: small ? 12 : 24),
-            width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
-              color: AppColor.WHITE,
-              borderRadius: BorderRadius.circular(24),
-              boxShadow: [
-                BoxShadow(
-                  color: Theme.of(context).shadowColor.withOpacity(0.1),
-                  spreadRadius: 2,
-                  blurRadius: 3,
-                  offset: const Offset(1, 2),
-                ),
-              ],
+            child: QrImage(
+              data: widget.qrGeneratedDTO?.qrCode ?? widget.qrCode ?? '',
+              size: widget.width ?? (small ? 200 : 250),
+              version: QrVersions.auto,
+              embeddedImage:
+                  const AssetImage('assets/images/ic-viet-qr-small.png'),
+              embeddedImageStyle: QrEmbeddedImageStyle(
+                size: const Size(30, 30),
+              ),
             ),
-            child: Column(
+          ),
+          Container(
+            width: widget.width ?? (small ? 200 : 250),
+            height: 30,
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                QrImage(
-                  data: widget.qrGeneratedDTO?.qrCode ?? widget.qrCode ?? '',
-                  size: widget.width ?? (small ? 180 : 250),
-                  version: QrVersions.auto,
-                  embeddedImage:
-                      const AssetImage('assets/images/ic-viet-qr-small.png'),
-                  embeddedImageStyle: QrEmbeddedImageStyle(
-                    size: const Size(30, 30),
-                  ),
-                ),
-                SizedBox(
-                  width: widget.width ?? (250),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Consumer<AuthProvider>(
-                        builder: (context, provider, _) {
-                          return Padding(
-                            padding: EdgeInsets.only(left: small ? 20 : 6),
-                            child: Image.asset(
-                              'assets/images/logo_vietgr_payment.png',
-                              width: 62,
-                              fit: BoxFit.cover,
-                            ),
-                          );
-                        },
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(right: small ? 20 : 10),
-                        child: Image.asset(
-                          'assets/images/ic-napas247.png',
-                          width: 70,
-                        ),
-                      )
-                    ],
-                  ),
-                ),
+                Image.asset('assets/images/logo_vietgr_payment.png',
+                    height: 30),
+                Image.asset('assets/images/ic-napas247.png', height: 30),
               ],
             ),
           ),
+          const SizedBox(height: 6),
         ],
       ),
     );
