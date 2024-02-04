@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:jiffy/jiffy.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/utils/month_calculator.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
+import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 
 class TerminalTimeView extends StatefulWidget {
@@ -21,7 +22,7 @@ class TerminalTimeView extends StatefulWidget {
 class _TerminalTimeViewState extends State<TerminalTimeView> {
   DateTime? toDate;
   DateTime? fromDate;
-
+  MonthCalculator monthCalculator = MonthCalculator();
   @override
   void initState() {
     super.initState();
@@ -68,13 +69,27 @@ class _TerminalTimeViewState extends State<TerminalTimeView> {
                     DateTime? date = await showDateTimePicker(
                       context: context,
                       initialDate: fromDate,
-                      firstDate:
-                          Jiffy(DateTime.now()).subtract(months: 5).dateTime,
-                      lastDate: Jiffy(DateTime.now()).add(months: 5).dateTime,
+                      firstDate: DateTime(2021, 6),
+                      lastDate: DateTime.now(),
                     );
-                    setState(() {
-                      fromDate = date;
-                    });
+                    if (toDate != null) {
+                      int numberOfMonths = monthCalculator.calculateMonths(
+                          date ?? DateTime.now(), toDate ?? DateTime.now());
+                      if (numberOfMonths > 3) {
+                        DialogWidget.instance.openMsgDialog(
+                            title: 'Không hợp lệ',
+                            msg:
+                                'Vui lòng nhập khoảng thời gian tối đa là 3 tháng.');
+                      } else {
+                        setState(() {
+                          fromDate = date;
+                        });
+                      }
+                    } else {
+                      setState(() {
+                        fromDate = date;
+                      });
+                    }
                   },
                   child: Container(
                     height: 40,
@@ -117,14 +132,21 @@ class _TerminalTimeViewState extends State<TerminalTimeView> {
                     DateTime? date = await showDateTimePicker(
                       context: context,
                       initialDate: toDate,
-                      firstDate:
-                          Jiffy(DateTime.now()).subtract(months: 5).dateTime,
-                      lastDate: Jiffy(DateTime.now()).add(months: 5).dateTime,
+                      firstDate: DateTime(2021, 6),
+                      lastDate: DateTime.now(),
                     );
-
-                    setState(() {
-                      toDate = date;
-                    });
+                    int numberOfMonths = monthCalculator.calculateMonths(
+                        fromDate ?? DateTime.now(), date ?? DateTime.now());
+                    if (numberOfMonths > 3) {
+                      DialogWidget.instance.openMsgDialog(
+                          title: 'Không hợp lệ',
+                          msg:
+                              'Vui lòng nhập khoảng thời gian tối đa là 3 tháng.');
+                    } else {
+                      setState(() {
+                        toDate = date;
+                      });
+                    }
                   },
                   child: Container(
                     height: 40,

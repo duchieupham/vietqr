@@ -52,6 +52,7 @@ class _ShareBDSDScreen extends StatefulWidget {
 }
 
 class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
+  static String routeName = '/share_bdsd_invite';
   late ShareBDSDBloc _bloc;
 
   String get userId => UserHelper.instance.getUserId();
@@ -388,9 +389,17 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                           borderRadius: BorderRadius.circular(16),
                           widget: BottomSheetAddUserBDSD(
                             bankId: widget.bankId,
+                            // onSelect: (MemberSearchDto) {},
                           ),
                         );
                         _bloc.add(GetMemberEvent(bankId: widget.bankId));
+                        // NavigatorUtils.navigatePage(
+                        //     context,
+                        //     ShareBDSDInviteScreen(
+                        //       dto: widget.dto,
+                        //       bankId: widget.bankId,
+                        //     ),
+                        //     routeName: _ShareBDSDScreenState.routeName);
                       },
                       child: Container(
                         height: 40,
@@ -402,11 +411,12 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                         child: Row(
                           children: [
                             Image.asset(
-                              'assets/images/ic-add-member-bdsd-white.png',
+                              'assets/images/ic_share_code.png',
                               height: 26,
+                              color: Colors.white,
                             ),
                             Text(
-                              'Thêm thành viên',
+                              'Chia sẻ BĐSD',
                               style: TextStyle(
                                   fontSize: 12, color: AppColor.WHITE),
                             )
