@@ -8,8 +8,13 @@ class QRGeneratedDTO {
   final String content;
   String qrCode;
   String imgId;
-  final String? transactionId;
   final int? existing;
+  final String? transactionId;
+  final String? transactionRefId;
+  final String qrLink;
+  final String terminalCode;
+
+  //
   final String? bankTypeId;
   final bool isNaviAddBank;
   final String email;
@@ -33,6 +38,9 @@ class QRGeneratedDTO {
     this.type,
     this.phone = '',
     this.isNaviAddBank = false,
+    this.qrLink = '',
+    this.terminalCode = '',
+    this.transactionRefId = '',
   });
 
   setBankId(value) {
@@ -50,7 +58,10 @@ class QRGeneratedDTO {
       qrCode: json['qrCode'],
       imgId: json['imgId'],
       transactionId: json['transactionId'],
+      transactionRefId: json['transactionRefId'],
       existing: json['existing'],
+      qrLink: json['qrLink'],
+      terminalCode: json['terminalCode'],
     );
   }
 

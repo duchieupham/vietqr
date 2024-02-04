@@ -351,6 +351,7 @@ class AuthProvider with ChangeNotifier {
     _showActionShare = false;
     versionApp = '';
     isShowToastUpdate = -1;
+    avatar = File('');
     notifyListeners();
   }
 }

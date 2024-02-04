@@ -13,13 +13,11 @@ import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/commons/utils/file_utils.dart';
-import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/commons/widgets/textfield_custom.dart';
 import 'package:vierqr/services/providers/create_qr_provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/features/create_qr/blocs/create_qr_bloc.dart';
@@ -31,7 +29,7 @@ import 'package:vierqr/features/create_qr/widgets/bottom_sheet_image.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 import 'package:vierqr/features/transaction/widgets/transaction_sucess_widget.dart';
 
-
+import 'widgets/select_bank_view.dart';
 
 class CreateQrScreen extends StatelessWidget {
   static const routeName = '/create_qr';
@@ -52,7 +50,7 @@ class CreateQrScreen extends StatelessWidget {
     return BlocProvider<CreateQRBloc>(
       create: (_) => CreateQRBloc(context, bankAccountDTO, qrDto),
       child: ChangeNotifierProvider(
-        create: (context) => CreateQRProvider()..updatePage(page),
+        create: (context) => CreateQRProvider(context)..updatePage(page),
         child: _CreateQRScreen(),
       ),
     );
@@ -66,6 +64,7 @@ class _CreateQRScreen extends StatefulWidget {
 
 class _CreateQRScreenState extends State<_CreateQRScreen> {
   late CreateQRBloc _bloc;
+  late CreateQRProvider _provider;
 
   final imagePicker = ImagePicker();
   final _focusMoney = FocusNode();
@@ -87,6 +86,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
   void initState() {
     super.initState();
     _bloc = BlocProvider.of(context);
+    _provider = Provider.of<CreateQRProvider>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       initData(context);
     });
@@ -129,24 +129,22 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
         }
 
         if (state.type == CreateQRType.CREATE_QR) {
-          Provider.of<CreateQRProvider>(context, listen: false).updatePage(1);
-          File? file =
-              Provider.of<CreateQRProvider>(context, listen: false).imageFile;
+          _provider.updatePage(1);
+          File? file = _provider.imageFile;
           if (file != null) {
             _bloc.add(QREventUploadImage(dto: state.dto, file: file));
           }
         }
 
         if (state.type == CreateQRType.LOAD_DATA) {
-          Provider.of<CreateQRProvider>(context, listen: false)
-              .updatePage(state.page);
+          _provider.updatePage(state.page);
           if (state.page == 0) {
             _focusMoney.requestFocus();
           }
         }
 
         if (state.type == CreateQRType.UPLOAD_IMAGE) {
-          Provider.of<CreateQRProvider>(context, listen: false).setImage(null);
+          _provider.setImage(null);
         }
 
         if (state.type == CreateQRType.PAID) {
@@ -166,13 +164,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
         if (state.type == CreateQRType.SCAN_QR) {
           if (state.barCode != '-1') {
             if (!mounted) return;
-            Provider.of<CreateQRProvider>(context, listen: false)
-                    .contentController
-                    .value =
-                Provider.of<CreateQRProvider>(context, listen: false)
-                    .contentController
-                    .value
-                    .copyWith(text: state.barCode);
+            _provider.content = state.barCode ?? '';
           }
         }
 
@@ -201,20 +193,14 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
             if (provider.page == 1) {
               return CreateQRSuccess(
                 dto: state.dto ?? dto,
+                listBanks: provider.listBank,
                 onPaid: () {
                   _bloc.add(QREventPaid(state.dto?.transactionId ?? ''));
                 },
               );
             }
             return GestureDetector(
-              onTap: () {
-                FocusManager.instance.primaryFocus?.unfocus();
-                if (enableList) {
-                  setState(() {
-                    enableList = false;
-                  });
-                }
-              },
+              onTap: _onEnableList,
               child: Scaffold(
                 appBar: const MAppBar(title: 'Tạo QR'),
                 body: Stack(
@@ -228,91 +214,10 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                GestureDetector(
+                                SelectBankView(
+                                  dto: state.bankAccountDTO ?? BankAccountDTO(),
                                   onTap: _onHandleTap,
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 12),
-                                    decoration: const BoxDecoration(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(5)),
-                                      color: AppColor.WHITE,
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        if (state.bankAccountDTO != null &&
-                                            state.bankAccountDTO!.imgId
-                                                .isNotEmpty)
-                                          Container(
-                                            width: 60,
-                                            height: 30,
-                                            margin:
-                                                const EdgeInsets.only(left: 4),
-                                            decoration: BoxDecoration(
-                                              image: DecorationImage(
-                                                image: ImageUtils.instance
-                                                    .getImageNetWork(state
-                                                        .bankAccountDTO!.imgId),
-                                              ),
-                                            ),
-                                          ),
-                                        const SizedBox(width: 4),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.stretch,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Expanded(
-                                                    child: Text(
-                                                      '${state.bankAccountDTO?.bankCode ?? ''} - ${state.bankAccountDTO?.bankName ?? ''}',
-                                                      maxLines: 1,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: const TextStyle(
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                          color:
-                                                              AppColor.BLACK),
-                                                    ),
-                                                  ),
-                                                  Icon(Icons
-                                                      .keyboard_arrow_down_outlined),
-                                                  const SizedBox(width: 8),
-                                                ],
-                                              ),
-                                              const SizedBox(height: 4),
-                                              Text(
-                                                state.bankAccountDTO
-                                                        ?.bankAccount ??
-                                                    '',
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: const TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w400,
-                                                    color: AppColor.BLACK),
-                                              ),
-                                              const SizedBox(height: 4),
-                                              Text(
-                                                state.bankAccountDTO
-                                                        ?.userBankName ??
-                                                    '',
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: const TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w400,
-                                                    color: AppColor.BLACK),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
+                                  isShowIconDrop: true,
                                 ),
                                 const SizedBox(height: 30),
                                 Column(
@@ -331,28 +236,14 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                       keyboardAction: TextInputAction.next,
                                       onChange: provider.updateMoney,
                                       suffixIcon: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
                                         mainAxisSize: MainAxisSize.min,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
                                         children: [
-                                          const Text(
-                                            'VND',
-                                            style: TextStyle(
-                                                fontSize: 14,
-                                                color: AppColor.textBlack),
-                                          ),
-                                          const SizedBox(width: 8),
-                                          GestureDetector(
-                                            onTap: () =>
-                                                _onUpdateMoney(provider),
-                                            child: Image.asset(
-                                              'assets/images/logo-calculator.png',
-                                              width: 28,
-                                              height: 28,
-                                            ),
-                                          ),
+                                          const Text('VND',
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: AppColor.textBlack)),
                                           const SizedBox(width: 8),
                                         ],
                                       ),
@@ -374,13 +265,15 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                       ),
                                     ),
                                     const SizedBox(height: 30),
-                                    TextFieldCustom(
+                                    MTextFieldCustom(
                                       isObscureText: false,
                                       maxLines: 1,
                                       fillColor: AppColor.WHITE,
-                                      controller: provider.contentController,
+                                      value: provider.content,
+                                      maxLength: 50,
                                       textFieldType: TextfieldType.LABEL,
-                                      title: 'Nội dung',
+                                      title:
+                                          'Nội dung (${provider.content.length}/50 ký tự)',
                                       hintText: 'Nhập nội dung thanh toán',
                                       inputType: TextInputType.text,
                                       suffixIcon: GestureDetector(
@@ -396,7 +289,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                         ),
                                       ),
                                       keyboardAction: TextInputAction.next,
-                                      onChange: (value) {},
+                                      onChange: provider.updateSuggest,
                                     ),
                                     const SizedBox(height: 8),
                                     SizedBox(
@@ -426,106 +319,153 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                         ],
                                       ),
                                     ),
-                                    const SizedBox(height: 30),
-                                    if (provider.imageFile != null)
-                                      _buildImage(provider.imageFile!)
                                   ],
                                 ),
+                                const SizedBox(height: 30),
+                                ...[
+                                  GestureDetector(
+                                    onTap: _provider.updateExtra,
+                                    child: Row(
+                                      children: [
+                                        if (!_provider.isExtra) ...[
+                                          Icon(
+                                              Icons
+                                                  .keyboard_arrow_down_outlined,
+                                              color: AppColor.BLUE_TEXT),
+                                          Text(
+                                            'Tuỳ chọn thêm',
+                                            style: TextStyle(
+                                                color: AppColor.BLUE_TEXT,
+                                                fontSize: 15),
+                                          ),
+                                        ] else ...[
+                                          Icon(Icons.keyboard_arrow_up_outlined,
+                                              color: AppColor.BLUE_TEXT),
+                                          Text(
+                                            'Đóng tuỳ chọn',
+                                            style: TextStyle(
+                                                color: AppColor.BLUE_TEXT,
+                                                fontSize: 15),
+                                          ),
+                                        ]
+                                      ],
+                                    ),
+                                  ),
+                                  if (_provider.isExtra)
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const SizedBox(height: 24),
+                                        MTextFieldCustom(
+                                          isObscureText: false,
+                                          maxLines: 1,
+                                          value: provider.orderCode,
+                                          fillColor: AppColor.WHITE,
+                                          textFieldType: TextfieldType.LABEL,
+                                          maxLength: 13,
+                                          title:
+                                              'Mã đơn hàng (${provider.orderCode.length}/13 ký tự)',
+                                          hintText: 'Nhập mã đơn hàng',
+                                          inputType: TextInputType.number,
+                                          keyboardAction: TextInputAction.next,
+                                          onChange: provider.updateOrderCode,
+                                        ),
+                                        const SizedBox(height: 30),
+                                        MTextFieldCustom(
+                                          isObscureText: false,
+                                          maxLines: 1,
+                                          fillColor: AppColor.WHITE,
+                                          value: provider.branchCode,
+                                          textFieldType: TextfieldType.LABEL,
+                                          maxLength: 10,
+                                          title:
+                                              'Mã chi nhánh (${provider.branchCode.length}/10 ký tự)',
+                                          hintText:
+                                              'Nhập hoặc chọn mã chi nhánh/nhóm',
+                                          inputType: TextInputType.text,
+                                          keyboardAction: TextInputAction.next,
+                                          onChange: provider.updateBranchCode,
+                                        ),
+                                      ],
+                                    ),
+                                ]
                               ],
                             ),
                           ),
                         ),
-                        Column(
-                          children: [
-                            const SizedBox(height: 12),
-                            GestureDetector(
-                              onTap: () async {
-                                if (provider.imageFile == null) {
-                                  FocusManager.instance.primaryFocus?.unfocus();
-                                  final data = await DialogWidget.instance
-                                      .showModelBottomSheet(
-                                    context: context,
-                                    padding: EdgeInsets.zero,
-                                    margin: const EdgeInsets.symmetric(
-                                        horizontal: 10),
-                                    widget: BottomSheetImage(),
-                                  );
-
-                                  if (data is XFile) {
-                                    File? file = File(data.path);
-                                    File? compressedFile =
-                                        FileUtils.instance.compressImage(file);
-                                    provider.setImage(compressedFile);
-                                  }
-                                }
-                              },
-                              child: Container(
-                                height: 40,
-                                width: width,
-                                alignment: Alignment.center,
-                                margin:
-                                    const EdgeInsets.symmetric(horizontal: 20),
-                                padding:
-                                    const EdgeInsets.only(left: 8, right: 20),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5),
-                                  color: AppColor.WHITE,
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/ic-file-blue.png',
-                                      color: provider.imageFile == null
-                                          ? AppColor.BLUE_TEXT
-                                          : AppColor.GREY_TEXT,
-                                    ),
-                                    Text(
-                                      'Đính kèm hoá đơn',
-                                      style: TextStyle(
+                        Container(
+                          decoration: BoxDecoration(color: AppColor.WHITE),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 20, horizontal: 20),
+                          child: Column(
+                            children: [
+                              if (provider.imageFile != null) ...[
+                                _buildImage(provider.imageFile!),
+                                const SizedBox(height: 8),
+                                const Divider(color: AppColor.GREY_TEXT),
+                                const SizedBox(height: 8),
+                              ],
+                              Row(
+                                children: [
+                                  GestureDetector(
+                                    onTap: _onSelectImage,
+                                    child: Container(
+                                      height: 40,
+                                      padding: const EdgeInsets.only(right: 12),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(5),
                                         color: provider.imageFile == null
-                                            ? AppColor.BLUE_TEXT
-                                            : AppColor.GREY_TEXT,
-                                        fontSize: 14,
+                                            ? AppColor.WHITE
+                                            : AppColor.grey979797
+                                                .withOpacity(0.6),
+                                        border: provider.imageFile == null
+                                            ? Border.all(
+                                                color: AppColor.BLUE_TEXT)
+                                            : null,
                                       ),
-                                    )
-                                  ],
-                                ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Image.asset(
+                                            'assets/images/ic-bill.png',
+                                            color: provider.imageFile == null
+                                                ? AppColor.BLUE_TEXT
+                                                : AppColor.GREY_TEXT,
+                                          ),
+                                          Text(
+                                            'Kèm hoá đơn',
+                                            style: TextStyle(
+                                              color: provider.imageFile == null
+                                                  ? AppColor.BLUE_TEXT
+                                                  : AppColor.GREY_TEXT,
+                                              fontSize: 14,
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: MButtonWidget(
+                                      title: 'Tạo QR giao dịch',
+                                      isEnable: true,
+                                      margin: EdgeInsets.zero,
+                                      colorEnableText: AppColor.WHITE,
+                                      onTap: () =>
+                                          _onCreateQR(state.bankAccountDTO),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                            MButtonWidget(
-                              title: 'Tạo mã QR',
-                              isEnable: true,
-                              colorEnableText: AppColor.WHITE,
-                              onTap: () {
-                                FocusManager.instance.primaryFocus?.unfocus();
-                                String money =
-                                    provider.money.replaceAll(',', '');
-
-                                String formattedName = StringUtils.instance
-                                    .removeDiacritic(
-                                        provider.contentController.text);
-
-                                QRCreateDTO dto = QRCreateDTO(
-                                  bankId: state.bankAccountDTO?.id ?? '',
-                                  amount: money,
-                                  content: formattedName,
-                                  userId: UserHelper.instance
-                                      .getUserId(),
-                                );
-
-                                _bloc.add(QREventGenerate(dto: dto));
-                              },
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                        const SizedBox(height: 16),
                       ],
                     ),
-                    Positioned(
-                      bottom: 120,
-                      left: 0,
-                      right: 0,
+                    Positioned.fill(
+                      bottom: 160,
                       child: FloatBubble(
                         show: true,
                         initialAlignment: Alignment.bottomRight,
@@ -533,7 +473,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                           width: 100,
                           height: 100,
                           child: GestureDetector(
-                            onTap: () => _onUpdateMoney(provider),
+                            onTap: _onUpdateMoney,
                             child: Opacity(
                               opacity: 0.6,
                               child: Container(
@@ -591,65 +531,30 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
 
   Widget _buildImage(File url) {
     return SizedBox(
-      width: 140,
-      height: 200,
-      child: Column(
+      height: 40,
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text(
-            'Đính kèm',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          Container(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(2),
+              child: Image.file(url, width: 30, height: 40, fit: BoxFit.cover),
+            ),
           ),
-          const SizedBox(height: 10),
-          Expanded(
-            child: Stack(
-              children: [
-                Container(
-                  width: 130,
-                  height: 160,
-                  alignment: Alignment.centerLeft,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(5),
-                    child: Image.file(
-                      url,
-                      width: 125,
-                      height: 160,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                Positioned.fill(
-                  child: Align(
-                    alignment: Alignment.bottomRight,
-                    child: GestureDetector(
-                      onTap: () {
-                        Provider.of<CreateQRProvider>(context, listen: false)
-                            .setImage(null);
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(2),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(24),
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 1,
-                              blurRadius: 3,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: Image.asset(
-                          'assets/images/ic-trash.png',
-                          color: Colors.black,
-                          width: 30,
-                        ),
-                      ),
-                    ),
-                  ),
-                )
-              ],
+          const SizedBox(width: 8),
+          Center(
+            child: const Text(
+              ' 1 tệp đính kèm',
+              style: TextStyle(fontSize: 15),
+            ),
+          ),
+          const Spacer(),
+          GestureDetector(
+            onTap: () => _provider.setImage(null),
+            child: Image.asset(
+              'assets/images/ic-trash.png',
+              color: AppColor.error700,
+              width: 40,
             ),
           ),
         ],
@@ -714,87 +619,13 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                   itemCount: list.length,
                   itemBuilder: (context, position) {
                     BankAccountDTO dto = list[position];
-                    return Column(
-                      children: [
-                        InkWell(
-                          onTap: () => _onChanged(dto),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            decoration: const BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5)),
-                              color: AppColor.WHITE,
-                            ),
-                            child: Row(
-                              children: [
-                                if (dto.imgId.isNotEmpty)
-                                  Container(
-                                    width: 60,
-                                    height: 30,
-                                    margin: const EdgeInsets.only(left: 4),
-                                    decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                        image: ImageUtils.instance
-                                            .getImageNetWork(dto.imgId),
-                                      ),
-                                    ),
-                                  ),
-                                const SizedBox(width: 4),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: Text(
-                                              '${dto.bankCode} - ${dto.bankName}',
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: const TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w400,
-                                                  color: AppColor.BLACK),
-                                            ),
-                                          ),
-                                          if (bankAccountDTO != null)
-                                            if (bankAccountDTO.bankAccount ==
-                                                dto.bankAccount)
-                                              Icon(Icons.check,
-                                                  color: AppColor.BLUE_TEXT),
-                                          const SizedBox(width: 8),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        dto.bankAccount,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w400,
-                                            color: AppColor.BLACK),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        dto.userBankName,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w400,
-                                            color: AppColor.BLACK),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        if (position != list.length - 1) const Divider(),
-                      ],
+
+                    return SelectBankView(
+                      dto: dto,
+                      onTap: () => _onChanged(dto),
+                      isDivider: (position != list.length - 1),
+                      isSelect:
+                          (bankAccountDTO?.bankAccount == dto.bankAccount),
                     );
                   },
                 ),
@@ -804,7 +635,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
         ),
       );
 
-  void _onUpdateMoney(provider) async {
+  void _onUpdateMoney() async {
     FocusManager.instance.primaryFocus?.unfocus();
     final data = await NavigatorUtils.navigatePage(context, CalculatorScreen(),
         routeName: CalculatorScreen.routeName);
@@ -812,7 +643,56 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
     if (data != null && data is String) {
       double money = double.parse(data);
 
-      provider.updateMoney(money.round().toString());
+      _provider.updateMoney(money.round().toString());
+    }
+  }
+
+  void _onEnableList() {
+    FocusManager.instance.primaryFocus?.unfocus();
+    if (enableList) {
+      enableList = false;
+      updateState();
+    }
+  }
+
+  void updateState() {
+    setState(() {});
+  }
+
+  void _onCreateQR(BankAccountDTO? bankAccountDTO) {
+    FocusManager.instance.primaryFocus?.unfocus();
+    String money = _provider.money.replaceAll(',', '');
+
+    String formattedName =
+        StringUtils.instance.removeDiacritic(_provider.content);
+
+    QRCreateDTO dto = QRCreateDTO(
+      bankId: bankAccountDTO?.id ?? '',
+      amount: money,
+      content: formattedName,
+      userId: UserHelper.instance.getUserId(),
+      orderId: _provider.orderCode,
+      terminalCode: _provider.branchCode,
+    );
+
+    _bloc.add(QREventGenerate(dto: dto));
+  }
+
+  void _onSelectImage() async {
+    if (_provider.imageFile == null) {
+      FocusManager.instance.primaryFocus?.unfocus();
+      final data = await DialogWidget.instance.showModelBottomSheet(
+        context: context,
+        padding: EdgeInsets.zero,
+        margin: const EdgeInsets.symmetric(horizontal: 10),
+        widget: BottomSheetImage(),
+      );
+
+      if (data is XFile) {
+        File? file = File(data.path);
+        File? compressedFile = FileUtils.instance.compressImage(file);
+        _provider.setImage(compressedFile);
+      }
     }
   }
 }

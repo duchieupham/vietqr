@@ -133,6 +133,7 @@ class _TextFieldWidgetState extends State<MTextFieldCustom> {
       textInputAction: widget.keyboardAction,
       decoration: InputDecoration(
         hintText: widget.hintText,
+        counterText: '',
         border: InputBorder.none,
         hintStyle: TextStyle(
           fontSize: (widget.fontSize != null) ? widget.fontSize : 14,

@@ -93,15 +93,13 @@ class _PopupBankShareState extends State<PopupBankShare> {
                   ),
                 ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
-                            margin: EdgeInsets.symmetric(
-                                horizontal: small ? 60 : paddingHorizontal),
+                            width: 300,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(6),
                               color: AppColor.GREY_BG,
@@ -123,7 +121,7 @@ class _PopupBankShareState extends State<PopupBankShare> {
                                     ),
                                   ),
                                   Container(
-                                    height: small ? 40 : 60,
+                                    height: 40,
                                     padding: const EdgeInsets.only(
                                         left: 12, right: 10),
                                     child: VerticalDashedLine(),
@@ -138,6 +136,8 @@ class _PopupBankShareState extends State<PopupBankShare> {
                                         children: [
                                           Text(
                                             widget.dto.bankAccount,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
                                             style: TextStyle(
                                                 color: AppColor.BLACK,
                                                 fontSize: small ? 12 : 15,
@@ -146,6 +146,8 @@ class _PopupBankShareState extends State<PopupBankShare> {
                                           Text(
                                             widget.dto.userBankName
                                                 .toUpperCase(),
+                                            maxLines: 3,
+                                            overflow: TextOverflow.ellipsis,
                                             style: TextStyle(
                                               color: AppColor.textBlack,
                                               fontSize: small ? 11 : 13,
@@ -162,7 +164,8 @@ class _PopupBankShareState extends State<PopupBankShare> {
                           const SizedBox(height: 12),
                           VietQrNew(qrCode: widget.dto.qrCode),
                           const SizedBox(height: 12),
-                          if (widget.dto.amount.isNotEmpty)
+                          if (widget.dto.amount.isNotEmpty ||
+                              widget.dto.content.isNotEmpty)
                             Container(
                               margin: EdgeInsets.symmetric(
                                   horizontal: paddingHorizontal),
@@ -183,7 +186,7 @@ class _PopupBankShareState extends State<PopupBankShare> {
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    '${CurrencyUtils.instance.getCurrencyFormatted(widget.dto.amount)} VND',
+                                    '+ ${CurrencyUtils.instance.getCurrencyFormatted(widget.dto.amount)} VND',
                                     style: const TextStyle(
                                       color: AppColor.ORANGE_DARK,
                                       fontSize: 28,
@@ -191,22 +194,23 @@ class _PopupBankShareState extends State<PopupBankShare> {
                                     ),
                                     textAlign: TextAlign.center,
                                   ),
-                                  if (widget.dto.content.isEmpty) ...[
-                                    const Divider(),
+                                  if (widget.dto.content.isNotEmpty) ...[
+                                    const Divider(color: AppColor.GREY_TEXT),
                                     Text(
                                       'Nội dung:',
                                       style: TextStyle(
                                           color: AppColor.textBlack
                                               .withOpacity(0.6)),
                                     ),
+                                    const SizedBox(height: 4),
                                     Container(
                                       alignment: Alignment.centerLeft,
                                       child: Text(
                                         widget.dto.content,
                                         maxLines: 2,
-                                        textAlign: TextAlign.center,
                                         overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w500),
                                       ),
                                     ),
                                   ]

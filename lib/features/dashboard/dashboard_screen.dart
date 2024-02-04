@@ -611,43 +611,55 @@ class _DashBoardScreen extends State<DashBoardScreen>
       label: 'Tài khoản',
       urlSelect: 'assets/images/ic-btm-list-bank-blue.png',
       urlUnselect: 'assets/images/ic-btm-list-bank-grey.png',
-      index: 0,
+      index: PageType.ACCOUNT.pageIndex,
     ),
     CurvedNavigationBarItem(
       label: 'Trang chủ',
       urlSelect: 'assets/images/ic-btm-dashboard-blue.png',
       urlUnselect: 'assets/images/ic-btm-dashboard-grey.png',
-      index: 1,
+      index: PageType.HOME.pageIndex,
     ),
     CurvedNavigationBarItem(
       label: 'Quét QR',
       urlSelect: 'assets/images/ic-menu-slide-home-blue.png',
       urlUnselect: 'assets/images/ic-menu-slide-home-blue.png',
-      index: -1,
+      index: PageType.SCAN_QR.pageIndex,
     ),
     CurvedNavigationBarItem(
       label: 'Ví QR',
       urlSelect: 'assets/images/ic-btm-qr-wallet-blue.png',
       urlUnselect: 'assets/images/ic-btm-qr-wallet-grey.png',
-      index: 2,
+      index: PageType.CARD_QR.pageIndex,
     ),
     CurvedNavigationBarItem(
       label: 'Cá nhân',
       urlSelect: '',
       urlUnselect: '',
-      index: 3,
+      index: PageType.PERSON.pageIndex,
       child: Consumer<AuthProvider>(builder: (context, provider, _) {
         String imgId = UserHelper.instance.getAccountInformation().imgId;
         return Container(
           width: 28,
           height: 28,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            image: DecorationImage(
-              fit: BoxFit.cover,
-              image: provider.avatar.path.isEmpty
-                  ? ImageUtils.instance.getImageNetWork(imgId)
-                  : Image.file(provider.avatar).image,
+          padding: EdgeInsets.all(1),
+          decoration: provider.pageSelected == PageType.PERSON.pageIndex
+              ? BoxDecoration(
+                  border: Border.all(color: AppColor.BLUE_TEXT, width: 1),
+                  borderRadius: BorderRadius.circular(28),
+                  color: Colors.white,
+                )
+              : BoxDecoration(),
+          child: Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: provider.avatar.path.isEmpty
+                    ? (imgId.isNotEmpty
+                        ? ImageUtils.instance.getImageNetWork(imgId)
+                        : Image.asset('assets/images/ic-avatar.png').image)
+                    : Image.file(provider.avatar).image,
+              ),
             ),
           ),
         );

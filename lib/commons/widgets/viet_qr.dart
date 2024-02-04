@@ -56,29 +56,6 @@ class _VietQrState extends State<VietQr> {
     super.dispose();
   }
 
-  // double currentBright = 0.0;
-  //
-  // Future<void> setBrightness(double brightness) async {
-  //   try {
-  //     currentBright = await ScreenBrightness().current;
-  //     setState(() {});
-  //     await ScreenBrightness().setScreenBrightness(brightness);
-  //   } catch (e) {
-  //     debugPrint(e.toString());
-  //     throw 'Failed to set brightness';
-  //   }
-  // }
-  //
-  // Future<void> resetBrightness() async {
-  //   try {
-  //     await ScreenBrightness().setScreenBrightness(currentBright);
-  //     await ScreenBrightness().resetScreenBrightness();
-  //   } catch (e) {
-  //     debugPrint(e.toString());
-  //     throw 'Failed to reset brightness';
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;

@@ -225,7 +225,7 @@ class _BankScreenState extends State<_BankScreen>
                       ),
                       const SizedBox(height: 12),
                       SizedBox(
-                        height: (state.listBanks.length * 120) -
+                        height: (state.listBanks.length * 126) -
                             state.listBanks.length * 12 -
                             (state.listBanks.length - 1) * 8,
                         width: MediaQuery.of(context).size.width,
@@ -233,7 +233,7 @@ class _BankScreenState extends State<_BankScreen>
                           children: state.listBanks.map((e) {
                             int index = state.listBanks.indexOf(e);
                             return Positioned(
-                              top: index * 100,
+                              top: index * 106,
                               left: 0,
                               right: 0,
                               child: CardWidget(

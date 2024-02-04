@@ -31,7 +31,7 @@ class DialogScanBank extends StatelessWidget {
             builder: (key) {
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30),
-                child: VietQr(qrGeneratedDTO: dto),
+                child: VietQr(qrGeneratedDTO: dto, isVietQR: true),
               );
             },
           ),

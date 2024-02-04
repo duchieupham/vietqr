@@ -9,6 +9,7 @@ class InputMoneyProvider with ChangeNotifier {
   String errorAmount = '';
 
   bool _isAmountErr = false;
+
   bool get amountErr => _isAmountErr;
 
   init(String bankAccount) {
@@ -41,6 +42,11 @@ class InputMoneyProvider with ChangeNotifier {
       _isAmountErr = false;
     }
 
+    notifyListeners();
+  }
+
+  void updateSuggest(String text) {
+    content = text;
     notifyListeners();
   }
 

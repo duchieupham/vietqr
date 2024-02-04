@@ -143,21 +143,24 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
                     Expanded(
                       child: SingleChildScrollView(
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             SizedBox(height: small ? 40 : kToolbarHeight),
-                            IconButton(
-                              onPressed: () => Navigator.pop(context),
-                              icon: Icon(Icons.close,
-                                  color: AppColor.WHITE, size: small ? 28 : 36),
-                              padding: EdgeInsets.only(
-                                  left: 16, bottom: small ? 4 : 16),
-                              constraints: const BoxConstraints(),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: IconButton(
+                                onPressed: () => Navigator.pop(context),
+                                icon: Icon(Icons.close,
+                                    color: AppColor.WHITE,
+                                    size: small ? 28 : 36),
+                                padding: EdgeInsets.only(
+                                    left: 16, bottom: small ? 4 : 16),
+                                constraints: const BoxConstraints(),
+                              ),
                             ),
                             SizedBox(height: small ? 8 : 24),
                             Container(
-                              margin: EdgeInsets.symmetric(
-                                  horizontal: small ? 60 : paddingHorizontal),
+                              width: 300,
+                              height: 60,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(6),
                                 color: AppColor.GREY_BG,
@@ -181,7 +184,7 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
                                       ),
                                     ),
                                     Container(
-                                      height: small ? 40 : 60,
+                                      height: 40,
                                       child: VerticalDashedLine(),
                                     ),
                                     Expanded(
@@ -195,6 +198,8 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
                                           children: [
                                             Text(
                                               state.bankAccountDTO.bankAccount,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
                                               style: TextStyle(
                                                   color: AppColor.BLACK,
                                                   fontSize: small ? 12 : 15,
@@ -203,6 +208,8 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
                                             Text(
                                               state.bankAccountDTO.userBankName
                                                   .toUpperCase(),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
                                               style: TextStyle(
                                                 color: AppColor.textBlack,
                                                 fontSize: small ? 10 : 13,
@@ -213,7 +220,7 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
                                       ),
                                     ),
                                     Container(
-                                      height: small ? 40 : 60,
+                                      height: 40,
                                       child: VerticalDashedLine(),
                                     ),
                                     GestureDetector(
@@ -518,8 +525,8 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
   void _onRemoveBank(BankAccountDTO dto) {
     if (dto.isAuthenticated) {
       DialogWidget.instance.openMsgDialog(
-        title: 'Cảnh báo',
-        msg: 'Bạn phải huỷ liên kết Tk ngân hàng này trước khi xoá',
+        title: 'Không thể xoá TK',
+        msg: 'Vui lòng huỷ liên kết tài khoản ngân hàng trước khi xoá.',
       );
     } else {
       BankAccountRemoveDTO bankAccountRemoveDTO = BankAccountRemoveDTO(
