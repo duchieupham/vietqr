@@ -192,16 +192,30 @@ class ShareBDSDBloc extends Bloc<ShareBDSDEvent, ShareBDSDState>
       if (event is GetListGroupBDSDEvent) {
         emit(
           state.copyWith(
-              status: BlocStatus.LOADING_PAGE, request: ShareBDSDType.NONE),
+              status: event.loadingPage
+                  ? BlocStatus.LOADING_PAGE
+                  : BlocStatus.LOADING,
+              request: ShareBDSDType.NONE),
         );
-        final TerminalDto terminalDto = await repository.getListGroup(
-            event.userID, event.type, event.offset);
-        emit(state.copyWith(
-          status: BlocStatus.NONE,
-          listGroup: terminalDto,
-          request: ShareBDSDType.GET_LIST_GROUP,
-          isLoading: false,
-        ));
+        if (event.type == 0 || event.type == 2) {
+          final TerminalDto terminalDto = await repository.getListGroup(
+              event.userID, event.type, event.offset);
+          emit(state.copyWith(
+            status: BlocStatus.NONE,
+            listGroup: terminalDto,
+            request: ShareBDSDType.GET_LIST_GROUP,
+            isLoading: false,
+          ));
+        } else {
+          final BankTerminalDto bankTerminalDto = await repository
+              .getListBankShare(event.userID, event.type, event.offset);
+          emit(state.copyWith(
+            status: BlocStatus.NONE,
+            bankShareTerminal: bankTerminalDto,
+            request: ShareBDSDType.GET_LIST_GROUP,
+            isLoading: false,
+          ));
+        }
       }
     } catch (e) {
       LOG.error(e.toString());
@@ -218,7 +232,7 @@ class ShareBDSDBloc extends Bloc<ShareBDSDEvent, ShareBDSDState>
         );
 
         final List<MemberSearchDto> list = await repository.searchMember(
-            event.bankId.trim(), event.value, event.type);
+            event.terminalId, event.value, event.type);
         emit(state.copyWith(
           status: BlocStatus.NONE,
           listMemberSearch: list,

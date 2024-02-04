@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:vierqr/models/bank_account_dto.dart';
+import 'package:vierqr/models/bank_account_terminal.dart';
 import 'package:vierqr/models/member_search_dto.dart';
 
 class ShareBDSDInviteProvider with ChangeNotifier {
-  List<BankAccountDTO> _bankAccounts = [];
+  List<BankAccountTerminal> _bankAccounts = [];
 
-  List<BankAccountDTO> get bankAccounts => _bankAccounts;
+  List<BankAccountTerminal> get bankAccounts => _bankAccounts;
 
   List<MemberSearchDto> _member = [];
 
@@ -31,14 +31,14 @@ class ShareBDSDInviteProvider with ChangeNotifier {
     validateForm();
   }
 
-  void addListBankAccount(BankAccountDTO value) {
+  void addListBankAccount(BankAccountTerminal value) {
     _bankAccounts.add(value);
-    bankIDs.add(value.id);
+    bankIDs.add(value.bankId);
     validateForm();
   }
 
   void removeByBankID(String bankID) {
-    _bankAccounts.removeWhere((bankDto) => bankDto.id == bankID);
+    _bankAccounts.removeWhere((bankDto) => bankDto.bankId == bankID);
     bankIDs.removeWhere((id) => id == bankID);
     validateForm();
   }

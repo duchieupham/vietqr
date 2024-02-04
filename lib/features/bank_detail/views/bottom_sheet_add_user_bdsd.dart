@@ -18,11 +18,11 @@ import '../events/share_bdsd_event.dart';
 
 class BottomSheetAddUserBDSD extends StatefulWidget {
   final Function(MemberSearchDto) onSelect;
-  final String bankId;
+  final String terminalId;
 
   const BottomSheetAddUserBDSD({
     Key? key,
-    required this.bankId,
+    required this.terminalId,
     required this.onSelect,
   }) : super(key: key);
 
@@ -44,10 +44,11 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
   }
 
   _onSearch(
-      {required String bankId, required int type, required String value}) {
+      {required String terminalId, required int type, required String value}) {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
     _debounce = Timer(const Duration(milliseconds: 300), () {
-      bloc.add(SearchMemberEvent(bankId: bankId, type: type, value: value));
+      bloc.add(
+          SearchMemberEvent(terminalId: terminalId, type: type, value: value));
     });
   }
 
@@ -150,10 +151,12 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
                         onSubmitted: (value) {
                           if (value.isNotEmpty) {
                             int type = provider.typeSearch;
-                            String bankId = widget.bankId;
+                            String terminalId = widget.terminalId;
                             String valueSearch = value.toString();
                             _onSearch(
-                                bankId: bankId, type: type, value: valueSearch);
+                                terminalId: terminalId,
+                                type: type,
+                                value: valueSearch);
                           }
                         },
                         onChange: (value) {
@@ -161,9 +164,9 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
                           if (provider.typeSearch == 0) {
                             if (value.length >= 8) {
                               int type = provider.typeSearch;
-                              String bankId = widget.bankId;
+                              String terminalId = widget.terminalId;
                               _onSearch(
-                                bankId: bankId,
+                                terminalId: terminalId,
                                 type: type,
                                 value: _valueSearch,
                               );
@@ -188,9 +191,11 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
                         if (_valueSearch.isNotEmpty) {
                           FocusScope.of(context).unfocus();
                           int type = provider.typeSearch;
-                          String bankId = widget.bankId;
+                          String terminalId = widget.terminalId;
                           _onSearch(
-                              bankId: bankId, type: type, value: _valueSearch);
+                              terminalId: terminalId,
+                              type: type,
+                              value: _valueSearch);
                         }
                       })
                 ],

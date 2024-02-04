@@ -6,23 +6,28 @@ import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
-import 'package:vierqr/models/bank_account_dto.dart';
+import 'package:vierqr/models/bank_account_terminal.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class BottomSheetAddBankBDSD extends StatelessWidget {
-  final Function(BankAccountDTO) onSelect;
-  const BottomSheetAddBankBDSD({Key? key, required this.onSelect})
+  final String terminalId;
+
+  final Function(BankAccountTerminal) onSelect;
+  const BottomSheetAddBankBDSD(
+      {Key? key, required this.onSelect, this.terminalId = ''})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
     return BlocProvider<BankBloc>(
-      create: (context) => BankBloc(context)..add(BankCardEventGetList()),
+      create: (context) => BankBloc(context)
+        ..add(GetListBankAccountTerminal(
+            userId: UserHelper.instance.getUserId(), terminalId: terminalId)),
       child: BlocConsumer<BankBloc, BankState>(
           listener: (context, state) async {},
           builder: (context, state) {
             String userId = UserHelper.instance.getUserId();
-            List<BankAccountDTO> listBank = state.listBanks
-                .where((dto) => dto.userId == userId && dto.isAuthenticated)
+            List<BankAccountTerminal> listBank = state.listBankAccountTerminal
+                .where((dto) => dto.userId == userId)
                 .toList();
 
             return Column(

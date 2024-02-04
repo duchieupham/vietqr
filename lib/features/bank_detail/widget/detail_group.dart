@@ -11,6 +11,7 @@ import 'package:vierqr/features/bank_detail/blocs/detail_group_bloc.dart';
 import 'package:vierqr/features/bank_detail/states/detail_group_state.dart';
 import 'package:vierqr/features/bank_detail/views/bottom_sheet_add_bank_bdsd.dart';
 import 'package:vierqr/features/bank_detail/views/bottom_sheet_add_user_bdsd.dart';
+import 'package:vierqr/features/bank_detail/views/bottom_sheet_detail_bank_terminal.dart';
 import 'package:vierqr/features/bank_detail/widget/share_bdsd_invite.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/detail_group_dto.dart';
@@ -22,9 +23,8 @@ import '../events/detail_group_event.dart';
 
 class DetailGroupScreen extends StatefulWidget {
   final String groupId;
-  final String bankId;
 
-  const DetailGroupScreen({required this.groupId, required this.bankId});
+  const DetailGroupScreen({required this.groupId});
 
   @override
   State<DetailGroupScreen> createState() => _ShareBDSDInviteState();
@@ -57,10 +57,50 @@ class _ShareBDSDInviteState extends State<DetailGroupScreen> {
               if (state is DetailGroupSuccessState) {
                 detailDTO = state.data;
               }
-              if (state is RemoveMemberSuccessState) {
+              if (state is RemoveMemberSuccessState ||
+                  state is RemoveBankToGroupSuccessState) {
                 Navigator.pop(context);
+
                 _bloc.add(
                     GetDetailGroup(id: widget.groupId, loadingPage: false));
+                Fluttertoast.showToast(
+                  msg: 'Đã xóa',
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.CENTER,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Theme.of(context).cardColor,
+                  textColor: Theme.of(context).hintColor,
+                  fontSize: 15,
+                  webBgColor: 'rgba(255, 255, 255)',
+                  webPosition: 'center',
+                );
+              }
+              if (state is AddMemberSuccessState ||
+                  state is AddBankToGroupSuccessState) {
+                Navigator.pop(context);
+
+                _bloc.add(
+                    GetDetailGroup(id: widget.groupId, loadingPage: false));
+                Fluttertoast.showToast(
+                  msg: 'Đã thêm',
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.CENTER,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Theme.of(context).cardColor,
+                  textColor: Theme.of(context).hintColor,
+                  fontSize: 15,
+                  webBgColor: 'rgba(255, 255, 255)',
+                  webPosition: 'center',
+                );
+              }
+              if (state is RemoveMemberFailedState ||
+                  state is AddMemberFailedState ||
+                  state is AddBankToGroupFailedState ||
+                  state is RemoveBankToGroupFailedState) {
+                Navigator.pop(context);
+                DialogWidget.instance.openMsgDialog(
+                    title: 'Không thành công',
+                    msg: 'Đã có lỗi xảy ra vui lòng thử lại sau.');
               }
             },
             builder: (context, state) {
@@ -113,7 +153,7 @@ class _ShareBDSDInviteState extends State<DetailGroupScreen> {
                               await NavigatorUtils.navigatePage(
                                   context,
                                   ShareBDSDInviteScreen(
-                                    bankId: widget.bankId,
+                                    terminalId: detailDTO.id,
                                     isUpdate: true,
                                     groupDetailDTO: detailDTO,
                                   ),
@@ -292,19 +332,25 @@ class _ShareBDSDInviteState extends State<DetailGroupScreen> {
                       margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
                       borderRadius: BorderRadius.circular(16),
                       widget: BottomSheetAddBankBDSD(
+                        terminalId: detailDTO.id,
                         onSelect: (bankAccount) async {
-                          bool existed = false;
-                          await Future.forEach(detailDTO.banks,
-                              (TerminalBankResponseDTO bank) async {
-                            if (bank.bankAccount == bankAccount.id) {
-                              existed = true;
-                              DialogWidget.instance.openMsgDialog(
-                                  title: 'Thêm tài khoản',
-                                  msg: 'Tài khoản ngân hàng này đã được thêm');
-                            }
-                          });
-
-                          if (!existed) {}
+                          Map<String, dynamic> param = {};
+                          param['terminalId'] = detailDTO.id;
+                          param['bankId'] = bankAccount.bankId;
+                          param['userId'] = UserHelper.instance.getUserId();
+                          _bloc.add(AddBankToGroup(param: param));
+                          // bool existed = false;
+                          // await Future.forEach(detailDTO.banks,
+                          //     (TerminalBankResponseDTO bank) async {
+                          //   if (bank.bankAccount == bankAccount.bankAccount) {
+                          //     existed = true;
+                          //     DialogWidget.instance.openMsgDialog(
+                          //         title: 'Thêm tài khoản',
+                          //         msg: 'Tài khoản ngân hàng này đã được thêm');
+                          //   }
+                          // });
+                          //
+                          // if (!existed) {}
                         },
                       ),
                     );
@@ -369,8 +415,12 @@ class _ShareBDSDInviteState extends State<DetailGroupScreen> {
                           left: 10, right: 10, bottom: 10, top: 200),
                       borderRadius: BorderRadius.circular(16),
                       widget: BottomSheetAddUserBDSD(
-                        bankId: widget.bankId,
+                        terminalId: detailDTO.id,
                         onSelect: (dto) {
+                          Map<String, dynamic> param = {};
+                          param['userId'] = dto.id;
+                          param['terminalId'] = detailDTO.id;
+                          _bloc.add(AddMemberGroup(param: param));
                           // provider.addListMember(dto);
                         },
                       ),
@@ -428,7 +478,26 @@ class _ShareBDSDInviteState extends State<DetailGroupScreen> {
             ],
           )),
           GestureDetector(
-            onTap: () {},
+            onTap: () async {
+              await DialogWidget.instance.showModelBottomSheet(
+                isDismissible: true,
+                margin:
+                    EdgeInsets.only(left: 10, right: 10, bottom: 10, top: 40),
+                padding: EdgeInsets.zero,
+                borderRadius: BorderRadius.circular(16),
+                widget: BottomSheetDetailBankBDSD(
+                  dto: dto,
+                  onDelete: (bankId) {
+                    Map<String, dynamic> param = {};
+                    param['userId'] = UserHelper.instance.getUserId();
+                    param['terminalId'] = detailDTO.id;
+                    param['bankId'] = bankId;
+                    _bloc.add(RemoveBankToGroup(param: param));
+                    // provider.addListMember(dto);
+                  },
+                ),
+              );
+            },
             child: Container(
               margin: EdgeInsets.only(right: 16),
               decoration: BoxDecoration(

@@ -10,6 +10,7 @@ import 'package:vierqr/models/account_bank_detail_dto.dart';
 import 'package:vierqr/models/add_contact_dto.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_account_remove_dto.dart';
+import 'package:vierqr/models/bank_account_terminal.dart';
 import 'package:vierqr/models/bank_card_insert_dto.dart';
 import 'package:vierqr/models/bank_card_insert_unauthenticated.dart';
 import 'package:vierqr/models/bank_card_request_otp.dart';
@@ -164,6 +165,31 @@ class BankCardRepository {
         if (data != null) {
           result = data.map<BankAccountDTO>((json) {
             return BankAccountDTO.fromJson(json);
+          }).toList();
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return result;
+  }
+
+  Future<List<BankAccountTerminal>> getListBankAccountTerminal(
+      String userId, String terminalId) async {
+    List<BankAccountTerminal> result = [];
+
+    try {
+      final String url =
+          '${EnvConfig.getBaseUrl()}terminal/bank-account?terminalId=$terminalId&userId=$userId';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        if (data != null) {
+          result = data.map<BankAccountTerminal>((json) {
+            return BankAccountTerminal.fromJson(json);
           }).toList();
         }
       }

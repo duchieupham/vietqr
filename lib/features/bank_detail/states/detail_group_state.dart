@@ -38,3 +38,15 @@ class RemoveMemberSuccessState extends DetailGroupState {
 }
 
 class RemoveMemberFailedState extends DetailGroupState {}
+
+class AddMemberSuccessState extends DetailGroupState {}
+
+class AddMemberFailedState extends DetailGroupState {}
+
+class AddBankToGroupSuccessState extends DetailGroupState {}
+
+class AddBankToGroupFailedState extends DetailGroupState {}
+
+class RemoveBankToGroupSuccessState extends DetailGroupState {}
+
+class RemoveBankToGroupFailedState extends DetailGroupState {}

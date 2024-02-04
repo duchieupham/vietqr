@@ -17,6 +17,17 @@ class BankEvent extends Equatable {
 
 class BankCardEventGetList extends BankEvent {}
 
+class GetListBankAccountTerminal extends BankEvent {
+  final String userId;
+  final String terminalId;
+
+  const GetListBankAccountTerminal(
+      {required this.userId, required this.terminalId});
+
+  @override
+  List<Object?> get props => [userId, terminalId];
+}
+
 class QREventGenerateList extends BankEvent {
   final List<QRCreateDTO> list;
 

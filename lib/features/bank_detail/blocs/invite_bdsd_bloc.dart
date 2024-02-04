@@ -42,12 +42,13 @@ void _createNewGroup(InviteBDSDEvent event, Emitter emit) async {
       if (responseMessageDTO.status == Stringify.RESPONSE_STATUS_SUCCESS) {
         emit(CreateNewGroupSuccessState(dto: responseMessageDTO));
       } else {
-        emit(CreateNewGroupFailedState());
+        emit(CreateNewGroupFailedState(dto: responseMessageDTO));
       }
     }
   } catch (e) {
     LOG.error(e.toString());
-    emit(CreateNewGroupFailedState());
+    emit(CreateNewGroupFailedState(
+        dto: ResponseMessageDTO(status: '', message: 'E05')));
   }
 }
 
@@ -80,11 +81,12 @@ void _updateGroup(InviteBDSDEvent event, Emitter emit) async {
       if (responseMessageDTO.status == Stringify.RESPONSE_STATUS_SUCCESS) {
         emit(UpdateGroupSuccessState(dto: responseMessageDTO));
       } else {
-        emit(UpdateGroupFailedState());
+        emit(UpdateGroupFailedState(dto: responseMessageDTO));
       }
     }
   } catch (e) {
     LOG.error(e.toString());
-    emit(UpdateGroupFailedState());
+    emit(UpdateGroupFailedState(
+        dto: ResponseMessageDTO(status: '', message: 'E05')));
   }
 }

@@ -10,6 +10,7 @@ import 'package:vierqr/features/bank_card/states/bank_state.dart';
 import 'package:vierqr/features/bank_detail/repositories/bank_card_repository.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
+import 'package:vierqr/models/bank_account_terminal.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 
 class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
@@ -17,11 +18,16 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
   final BuildContext context;
 
   BankBloc(this.context)
-      : super(const BankState(listBanks: [], colors: [], listBankTypeDTO: [])) {
+      : super(const BankState(
+            listBanks: [],
+            colors: [],
+            listBankTypeDTO: [],
+            listBankAccountTerminal: [])) {
     on<BankCardEventGetList>(_getBankAccounts);
     on<UpdateEvent>(_updateEvent);
     on<LoadDataBankEvent>(_getListBankTypes);
     on<UpdateListBank>(_updateListBank);
+    on<GetListBankAccountTerminal>(_getBankAccountTerminal);
   }
 
   final bankCardRepository = const BankCardRepository();
@@ -106,6 +112,35 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
             request: BankType.BANK,
             listBanks: list,
             colors: colors,
+            status: BlocStatus.UNLOADING,
+            isEmpty: isEmpty));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+          status: BlocStatus.ERROR,
+          msg: 'Không thể tải danh sách. Vui lòng kiểm tra lại kết nối'));
+    }
+  }
+
+  void _getBankAccountTerminal(BankEvent event, Emitter emit) async {
+    try {
+      if (event is GetListBankAccountTerminal) {
+        bool isEmpty = false;
+
+        if (state.status == BlocStatus.NONE) {
+          emit(state.copyWith(status: BlocStatus.LOADING));
+        }
+        List<BankAccountTerminal> list = await bankCardRepository
+            .getListBankAccountTerminal(userId, event.terminalId);
+
+        if (list.isEmpty) {
+          isEmpty = true;
+        }
+
+        emit(state.copyWith(
+            request: BankType.BANK,
+            listBankTerminal: list,
             status: BlocStatus.UNLOADING,
             isEmpty: isEmpty));
       }

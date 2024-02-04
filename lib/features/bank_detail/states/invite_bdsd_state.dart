@@ -34,7 +34,15 @@ class CreateNewGroupSuccessState extends InviteBDSDState {
   List<Object?> get props => [dto];
 }
 
-class CreateNewGroupFailedState extends InviteBDSDState {}
+class CreateNewGroupFailedState extends InviteBDSDState {
+  final ResponseMessageDTO dto;
+  const CreateNewGroupFailedState({
+    required this.dto,
+  });
+
+  @override
+  List<Object?> get props => [dto];
+}
 
 class RemoveGroupSuccessState extends InviteBDSDState {
   final ResponseMessageDTO dto;
@@ -58,4 +66,12 @@ class UpdateGroupSuccessState extends InviteBDSDState {
   List<Object?> get props => [dto];
 }
 
-class UpdateGroupFailedState extends InviteBDSDState {}
+class UpdateGroupFailedState extends InviteBDSDState {
+  final ResponseMessageDTO dto;
+  const UpdateGroupFailedState({
+    required this.dto,
+  });
+
+  @override
+  List<Object?> get props => [dto];
+}

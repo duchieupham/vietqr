@@ -215,7 +215,7 @@ class ShareBDSDRepository {
   }
 
   Future<List<MemberSearchDto>> searchMember(
-    String bankID,
+    String terminalId,
     String value,
     int type,
   ) async {
@@ -223,7 +223,7 @@ class ShareBDSDRepository {
 
     try {
       String url =
-          '${EnvConfig.getBaseUrl()}member/search?type=$type&value=$value&bankId=$bankID';
+          '${EnvConfig.getBaseUrl()}terminal-member/search?type=$type&value=$value&terminalId=$terminalId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -278,6 +278,29 @@ class ShareBDSDRepository {
         var data = jsonDecode(response.body);
         if (data != null) {
           result = TerminalDto.fromJson(data);
+        }
+      }
+      return result;
+    } catch (e) {
+      LOG.error(e.toString());
+      return result;
+    }
+  }
+
+  Future<BankTerminalDto> getListBankShare(
+      String userId, int type, int offset) async {
+    BankTerminalDto result = BankTerminalDto(bankShares: []);
+    try {
+      final String url =
+          '${EnvConfig.getBaseUrl()}terminal?userId=$userId&type=$type&offset=$offset';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        if (data != null) {
+          result = BankTerminalDto.fromJson(data);
         }
       }
       return result;

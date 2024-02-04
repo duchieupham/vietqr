@@ -379,7 +379,7 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                                           bankId: state.bankId ?? ''),
                                       if (dto.userId ==
                                           UserHelper.instance.getUserId())
-                                        ShareBDSDScreen(
+                                        ShareBDSDPage(
                                           bankId: state.bankId ?? '',
                                           dto: dto,
                                           bloc: bankCardBloc,

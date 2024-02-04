@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/utils/error_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
@@ -14,7 +15,7 @@ import 'package:vierqr/features/bank_detail/states/invite_bdsd_state.dart';
 import 'package:vierqr/features/bank_detail/views/bottom_sheet_add_bank_bdsd.dart';
 import 'package:vierqr/features/bank_detail/views/bottom_sheet_add_user_bdsd.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
-import 'package:vierqr/models/bank_account_dto.dart';
+import 'package:vierqr/models/bank_account_terminal.dart';
 import 'package:vierqr/models/detail_group_dto.dart';
 import 'package:vierqr/models/member_branch_model.dart';
 import 'package:vierqr/models/member_search_dto.dart';
@@ -23,11 +24,11 @@ import 'package:vierqr/services/shared_references/user_information_helper.dart';
 import '../../../commons/widgets/button_icon_widget.dart';
 
 class ShareBDSDInviteScreen extends StatefulWidget {
-  final String bankId;
   final bool isUpdate;
+  final String terminalId;
   final GroupDetailDTO? groupDetailDTO;
   const ShareBDSDInviteScreen(
-      {required this.bankId, this.isUpdate = false, this.groupDetailDTO});
+      {this.terminalId = '', this.isUpdate = false, this.groupDetailDTO});
 
   @override
   State<ShareBDSDInviteScreen> createState() => _ShareBDSDInviteState();
@@ -145,13 +146,25 @@ class _ShareBDSDInviteState extends State<ShareBDSDInviteScreen> {
                   }
                 }
 
-                if (state is CreateNewGroupFailedState ||
-                    state is UpdateGroupFailedState ||
-                    state is RemoveGroupFailedState) {
+                if (state is RemoveGroupFailedState) {
                   Navigator.pop(context);
                   DialogWidget.instance.openMsgDialog(
-                      title: 'Lỗi',
-                      msg: 'Đã có lỗi xảy ra, vui lòng thử lại sau');
+                      title: 'Không thể xóa',
+                      msg: 'Đã có lỗi xay ra vui lòng thử lại sau.');
+                }
+                if (state is UpdateGroupFailedState) {
+                  Navigator.pop(context);
+                  DialogWidget.instance.openMsgDialog(
+                      title: 'Không thể cập nhật',
+                      msg: ErrorUtils.instance
+                          .getErrorMessage(state.dto.message));
+                }
+                if (state is CreateNewGroupFailedState) {
+                  Navigator.pop(context);
+                  DialogWidget.instance.openMsgDialog(
+                      title: 'Không thể tạo',
+                      msg: ErrorUtils.instance
+                          .getErrorMessage(state.dto.message));
                 }
               },
               builder: (context, state) {
@@ -444,9 +457,27 @@ class _ShareBDSDInviteState extends State<ShareBDSDInviteScreen> {
                         left: 10, right: 10, bottom: 10, top: 200),
                     borderRadius: BorderRadius.circular(16),
                     widget: BottomSheetAddUserBDSD(
-                      bankId: widget.bankId,
-                      onSelect: (dto) {
-                        provider.addListMember(dto);
+                      terminalId: '',
+                      onSelect: (dto) async {
+                        if (provider.member.isNotEmpty) {
+                          bool existed = false;
+                          await Future.forEach(provider.member,
+                              (MemberSearchDto member) async {
+                            if (member.id == dto.id) {
+                              existed = true;
+                              Navigator.pop(context);
+                              DialogWidget.instance.openMsgDialog(
+                                  title: 'Không thể thêm',
+                                  msg: 'Thành viên này đã được thêm');
+                            }
+                          });
+
+                          if (!existed) {
+                            provider.addListMember(dto);
+                          }
+                        } else {
+                          provider.addListMember(dto);
+                        }
                       },
                     ),
                   );
@@ -513,8 +544,8 @@ class _ShareBDSDInviteState extends State<ShareBDSDInviteScreen> {
                         if (provider.bankAccounts.isNotEmpty) {
                           bool existed = false;
                           await Future.forEach(provider.bankAccounts,
-                              (BankAccountDTO bank) async {
-                            if (bank.id == bankAccount.id) {
+                              (BankAccountTerminal bank) async {
+                            if (bank.bankId == bankAccount.bankId) {
                               existed = true;
                               DialogWidget.instance.openMsgDialog(
                                   title: 'Thêm tài khoản',
@@ -562,7 +593,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDInviteScreen> {
     });
   }
 
-  Widget _buildItemBank(BankAccountDTO dto, Function(String) remove) {
+  Widget _buildItemBank(BankAccountTerminal dto, Function(String) remove) {
     return Container(
       margin: EdgeInsets.only(top: 12),
       decoration: BoxDecoration(
@@ -610,7 +641,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDInviteScreen> {
           )),
           GestureDetector(
             onTap: () {
-              remove(dto.id);
+              remove(dto.bankId);
             },
             child: Padding(
               padding: const EdgeInsets.only(right: 12),

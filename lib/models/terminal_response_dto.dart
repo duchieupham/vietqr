@@ -70,13 +70,10 @@ class TerminalBankResponseDTO {
   final String userBankName;
   final String bankCode;
   final String bankShortName;
-
+  final String qrCode;
   final String bankName;
   final String imgId;
   final String terminalId;
-  final String userId;
-  final int totalbankShares;
-  final List<BankShareResponseDTO> bankShares;
 
   TerminalBankResponseDTO({
     this.bankId = '',
@@ -86,10 +83,8 @@ class TerminalBankResponseDTO {
     this.bankShortName = '',
     this.bankName = '',
     this.imgId = '',
-    required this.bankShares,
-    this.userId = '',
+    this.qrCode = '',
     this.terminalId = '',
-    this.totalbankShares = 0,
   });
 
   factory TerminalBankResponseDTO.fromJson(Map<String, dynamic> json) {
@@ -100,14 +95,30 @@ class TerminalBankResponseDTO {
       bankCode: json['bankCode'] ?? '',
       bankShortName: json['bankShortName'] ?? '',
       bankName: json['bankName'] ?? '',
+      qrCode: json['qrCode'] ?? '',
       imgId: json['imgId'] ?? '',
-      userId: json['userId'] ?? '',
       terminalId: json['terminalId'] ?? '',
-      totalbankShares: json['totalbankShares'] ?? 0,
+    );
+  }
+}
+
+class BankTerminalDto {
+  final String userId;
+  final int totalBankShares;
+  final List<BankShareResponseDTO> bankShares;
+  BankTerminalDto({
+    required this.bankShares,
+    this.userId = '',
+    this.totalBankShares = 0,
+  });
+  factory BankTerminalDto.fromJson(Map<String, dynamic> json) {
+    return BankTerminalDto(
+      userId: json['userId'] ?? '',
+      totalBankShares: json['totalBankShares'] ?? 0,
       bankShares: json['bankShares'] != null
           ? json['bankShares']
               .map<BankShareResponseDTO>(
-                  (json) => BankShareResponseDTO.fromJson(json))
+                  (data) => BankShareResponseDTO.fromJson(data))
               .toList()
           : [],
     );
@@ -137,6 +148,7 @@ class BankShareResponseDTO {
   });
 
   factory BankShareResponseDTO.fromJson(Map<String, dynamic> json) {
+    print('-----------------------$json');
     return BankShareResponseDTO(
         bankId: json['bankId'] ?? '',
         bankAccount: json['bankAccount'] ?? '',

@@ -131,6 +131,10 @@ class ErrorUtils {
       case ErrorType.C03:
         result = 'Tài khoản này đã được thêm trước đó';
         break;
+      case ErrorType.E110:
+        result = 'Mã nhóm đã tồn tại trong hệ thống';
+        break;
+
       default:
         result = message;
     }

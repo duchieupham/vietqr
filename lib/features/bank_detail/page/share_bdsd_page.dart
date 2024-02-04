@@ -19,12 +19,12 @@ import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 import '../../../models/member_branch_model.dart';
 
-class ShareBDSDScreen extends StatelessWidget {
+class ShareBDSDPage extends StatelessWidget {
   final String bankId;
   final AccountBankDetailDTO dto;
   final BankCardBloc bloc;
 
-  const ShareBDSDScreen(
+  const ShareBDSDPage(
       {super.key, required this.bankId, required this.dto, required this.bloc});
 
   @override
@@ -74,7 +74,10 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
     _bloc.add(GetInfoTelegramEvent(bankId: widget.bankId, isLoading: true));
     _bloc.add(GetInfoLarkEvent(bankId: widget.bankId));
     _bloc.add(GetListGroupBDSDEvent(
-        userID: UserHelper.instance.getUserId(), type: 0, offset: 0));
+        userID: UserHelper.instance.getUserId(),
+        type: 0,
+        offset: 0,
+        loadingPage: true));
   }
 
   Future<void> onRefresh() async {
@@ -274,7 +277,7 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                                   style: TextStyle(color: AppColor.BLUE_TEXT),
                                 ),
                                 Image.asset(
-                                  'assets/images/ic-member-bdsd-blue.png',
+                                  'assets/images/ic-group-member-blue.png',
                                   height: 26,
                                 ),
                               ],
@@ -326,28 +329,14 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                     right: 0,
                     child: GestureDetector(
                       onTap: () async {
-                        // await DialogWidget.instance.showModelBottomSheet(
-                        //   isDismissible: true,
-                        //   height: MediaQuery.of(context).size.height * 0.8,
-                        //   margin: EdgeInsets.only(
-                        //       left: 10, right: 10, bottom: 10, top: 200),
-                        //   borderRadius: BorderRadius.circular(16),
-                        //   widget: BottomSheetAddUserBDSD(
-                        //     bankId: widget.bankId,
-                        //     // onSelect: (MemberSearchDto) {},
-                        //   ),
-                        // );
-                        // _bloc.add(GetMemberEvent(bankId: widget.bankId));
                         await NavigatorUtils.navigatePage(
-                            context,
-                            ShareBDSDInviteScreen(
-                              bankId: widget.bankId,
-                            ),
+                            context, ShareBDSDInviteScreen(),
                             routeName: _ShareBDSDScreenState.routeName);
                         _bloc.add(GetListGroupBDSDEvent(
                             userID: UserHelper.instance.getUserId(),
                             type: 0,
-                            offset: 0));
+                            offset: 0,
+                            loadingPage: true));
                       },
                       child: Container(
                         height: 40,
@@ -439,14 +428,14 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                   await NavigatorUtils.navigatePage(
                       context,
                       DetailGroupScreen(
-                        bankId: widget.bankId,
                         groupId: dto.id,
                       ),
                       routeName: _ShareBDSDScreenState.routeName);
                   _bloc.add(GetListGroupBDSDEvent(
                       userID: UserHelper.instance.getUserId(),
                       type: 0,
-                      offset: 0));
+                      offset: 0,
+                      loadingPage: true));
                 },
                 child: Icon(
                   Icons.arrow_forward,
@@ -484,8 +473,7 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                 border:
                     Border.all(color: AppColor.BLACK_BUTTON.withOpacity(0.2)),
                 image: DecorationImage(
-                    image:
-                        ImageUtils.instance.getImageNetWork(widget.dto.imgId))),
+                    image: ImageUtils.instance.getImageNetWork(dto.imgId))),
           ),
           const SizedBox(
             width: 8,

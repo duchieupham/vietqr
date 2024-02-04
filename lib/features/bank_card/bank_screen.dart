@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:isolate';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:http/http.dart' as http;
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
@@ -23,6 +25,7 @@ import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/dashboard_screen.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
+import 'package:vierqr/features/share_bdsd/share_bdsd_screen.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
@@ -32,7 +35,6 @@ import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 import 'widgets/card_widget.dart';
-import 'package:http/http.dart' as http;
 
 class BankScreen extends StatelessWidget {
   const BankScreen({super.key});
@@ -342,8 +344,8 @@ class _BankScreenState extends State<_BankScreen>
                 pathIcon: 'assets/images/ic-share-bdsd.png',
                 radiusLeft: 0,
                 onTap: () async {
-                  // await Navigator.pushNamed(context, Routes.ADD_BANK_CARD);
-                  // getListBank(context);
+                  NavigatorUtils.navigatePage(context, ShareBDSDScreen(),
+                      routeName: 'share_bdsd_screen');
                 },
                 title: 'Chia sẻ BĐSD',
               ),

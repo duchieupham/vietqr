@@ -21,6 +21,7 @@ class ShareBDSDState extends Equatable {
   final bool isLark;
   final bool isLoading;
   final TerminalDto? listGroup;
+  final BankTerminalDto? bankShareTerminal;
   final String userIdSelect;
 
   ShareBDSDState({
@@ -39,6 +40,7 @@ class ShareBDSDState extends Equatable {
     this.isLoading = false,
     this.userIdSelect = '',
     this.listGroup,
+    this.bankShareTerminal,
   });
 
   ShareBDSDState copyWith({
@@ -57,6 +59,7 @@ class ShareBDSDState extends Equatable {
     bool? isLoading,
     TerminalDto? listGroup,
     String? userIdSelect,
+    BankTerminalDto? bankShareTerminal,
   }) {
     return ShareBDSDState(
       status: status ?? this.status,
@@ -74,6 +77,7 @@ class ShareBDSDState extends Equatable {
       isLoading: isLoading ?? this.isLoading,
       userIdSelect: userIdSelect ?? this.userIdSelect,
       listGroup: listGroup ?? this.listGroup,
+      bankShareTerminal: bankShareTerminal ?? this.bankShareTerminal,
     );
   }
 
@@ -86,5 +90,6 @@ class ShareBDSDState extends Equatable {
         listMember,
         listMemberSearch,
         listGroup,
+        bankShareTerminal
       ];
 }
