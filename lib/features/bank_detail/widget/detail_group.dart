@@ -477,6 +477,7 @@ class _ShareBDSDInviteState extends State<DetailGroupScreen> {
               )
             ],
           )),
+          const SizedBox(width: 16,),
           GestureDetector(
             onTap: () async {
               await DialogWidget.instance.showModelBottomSheet(
@@ -505,7 +506,7 @@ class _ShareBDSDInviteState extends State<DetailGroupScreen> {
                   border: Border.all(color: AppColor.BLUE_TEXT)),
               child: Icon(
                 Icons.more_horiz,
-                size: 14,
+                size: 18,
                 color: AppColor.BLUE_TEXT,
               ),
             ),

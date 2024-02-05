@@ -381,7 +381,7 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           SizedBox(
-                            width: 96,
+                            width: 60,
                             child: Text(
                               'Họ tên:',
                               style: TextStyle(color: AppColor.GREY_TEXT),
@@ -390,6 +390,8 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
                           Expanded(
                             child: Text(
                               dto.fullName,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.start,
                               style: TextStyle(fontWeight: FontWeight.w600),
                             ),
@@ -403,9 +405,9 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           SizedBox(
-                            width: 96,
+                            width: 60,
                             child: Text(
-                              'Số điện thoại:',
+                              'SĐT:',
                               style: TextStyle(color: AppColor.GREY_TEXT),
                             ),
                           ),
@@ -457,49 +459,49 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
                 //     ),
                 //   )
                 else
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 20),
-                      child: dto.existed == 0
-                          ? ButtonWidget(
-                              height: 32,
-                              width: 80,
-                              text: 'Chia sẻ',
-                              textColor: AppColor.WHITE,
-                              bgColor: AppColor.BLUE_TEXT,
-                              function: () {
-                                widget.onSelect(dto);
-                                Navigator.pop(context);
-                                // Map<String, dynamic> param = {};
-                                // param['userId'] = dto.id;
-                                // param['bankId'] = widget.bankId;
-                                // bloc.add(ShareUserBDSDEvent(param));
-                              },
-                              fontSize: 12,
-                              borderRadius: 5,
-                            )
-                          : SizedBox(
-                              width: 80,
-                              child: Padding(
-                                padding: const EdgeInsets.only(top: 10),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      'Đã thêm',
-                                      textAlign: TextAlign.end,
-                                      style:
-                                          TextStyle(color: AppColor.BLUE_TEXT),
-                                    ),
-                                    Icon(
-                                      Icons.check,
-                                      color: AppColor.BLUE_TEXT,
-                                      size: 18,
-                                    )
-                                  ],
-                                ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20),
+                    child: dto.existed == 0
+                        ? ButtonWidget(
+                            height: 32,
+                            width: 80,
+                            text: 'Chia sẻ',
+                            textColor: AppColor.WHITE,
+                            bgColor: AppColor.BLUE_TEXT,
+                            function: () {
+                              widget.onSelect(dto);
+                              Navigator.pop(context);
+                              // Map<String, dynamic> param = {};
+                              // param['userId'] = dto.id;
+                              // param['bankId'] = widget.bankId;
+                              // bloc.add(ShareUserBDSDEvent(param));
+                            },
+                            fontSize: 12,
+                            borderRadius: 5,
+                          )
+                        : SizedBox(
+                            width: 80,
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 10),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    'Đã thêm',
+                                    textAlign: TextAlign.end,
+                                    style: TextStyle(color: AppColor.BLUE_TEXT),
+                                  ),
+                                  const SizedBox(
+                                    width: 4,
+                                  ),
+                                  Icon(
+                                    Icons.check,
+                                    color: AppColor.BLUE_TEXT,
+                                    size: 18,
+                                  )
+                                ],
                               ),
                             ),
-                    ),
+                          ),
                   )
               ],
             ),
