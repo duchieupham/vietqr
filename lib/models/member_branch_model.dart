@@ -5,8 +5,9 @@ class MemberBranchModel {
   final String? lastName;
   final String? middleName;
   final String? firstName;
-  final String? imgId;
-  final String? id;
+  final String imgId;
+  final String id;
+  final bool isOwner;
   int? existed;
 
   MemberBranchModel({
@@ -14,9 +15,10 @@ class MemberBranchModel {
     this.lastName,
     this.middleName,
     this.firstName,
-    this.imgId,
-    this.id,
+    this.imgId = '',
+    this.id = '',
     this.existed,
+    this.isOwner = false,
   });
 
   setExisted(value) {
@@ -44,6 +46,7 @@ class MemberBranchModel {
       firstName: json['firstName'] ?? '',
       imgId: json['imgId'] ?? '',
       existed: json['existed'] ?? 0,
+      isOwner: json['isOwner'] ?? false,
     );
   }
 }

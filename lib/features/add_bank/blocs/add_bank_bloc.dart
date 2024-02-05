@@ -8,7 +8,6 @@ import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/add_bank/events/add_bank_event.dart';
 import 'package:vierqr/features/add_bank/states/add_bank_state.dart';
 import 'package:vierqr/features/bank_detail/repositories/bank_card_repository.dart';
-import 'package:vierqr/features/bank_type/repositories/bank_type_repository.dart';
 import 'package:vierqr/features/home/blocs/home_bloc.dart';
 import 'package:vierqr/models/bank_name_information_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
@@ -30,45 +29,39 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
     on<BankCardEventRegisterLinkBank>(_registerLinkBank);
     on<ScanQrEventGetBankType>(_getDataScan);
     on<UpdateAddBankEvent>(_updateEvent);
+    on<RequestRegisterBankAccount>(_requestRegisterBankAccount);
   }
 
   final bankCardRepository = const BankCardRepository();
-  final bankTypeRepository = const BankTypeRepository();
 
   void _getBankTypes(AddBankEvent event, Emitter emit) async {
-    if (banks.isEmpty) {
-      try {
-        if (event is LoadDataBankEvent) {
-          if (event.isLoading) {
-            emit(state.copyWith(status: BlocStatus.LOADING));
-          }
-          List<BankTypeDTO> list = await bankTypeRepository.getBankTypes();
-          if (list.isNotEmpty) {
-            int index = list.indexWhere(
-                (element) => element.bankCode.toUpperCase().trim() == 'MB');
-            if (index != -1) {
-              BankTypeDTO dto = list[index];
-              list.removeAt(index);
-              list.insert(0, dto);
-            }
-          }
-          banks = list;
-          emit(
-            state.copyWith(
-                listBanks: list,
-                status:
-                    event.isLoading ? BlocStatus.UNLOADING : BlocStatus.NONE,
-                request: AddBankType.LOAD_BANK),
-          );
+    if (banks.isNotEmpty) {
+      banks.sort((a, b) => a.linkType == LinkBankType.LINK ? -1 : 0);
+      emit(state.copyWith(
+          listBanks: banks, request: AddBankType.GET_BANK_LOCAL));
+      return;
+    }
+
+    try {
+      if (event is LoadDataBankEvent) {
+        if (event.isLoading) {
+          emit(state.copyWith(status: BlocStatus.LOADING));
         }
-      } catch (e) {
-        LOG.error(e.toString());
-        emit(state.copyWith(status: BlocStatus.ERROR));
+        List<BankTypeDTO> list = await bankCardRepository.getBankTypes();
+        if (list.isNotEmpty) {
+          list.sort((a, b) => a.linkType == LinkBankType.LINK ? -1 : 0);
+        }
+        banks = list;
+        emit(
+          state.copyWith(
+              listBanks: list,
+              status: event.isLoading ? BlocStatus.UNLOADING : BlocStatus.NONE,
+              request: AddBankType.LOAD_BANK),
+        );
       }
-    } else {
-      emit(
-        state.copyWith(listBanks: banks, request: AddBankType.LOAD_BANK),
-      );
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(status: BlocStatus.ERROR));
     }
   }
 
@@ -382,5 +375,29 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
 
   void _updateEvent(AddBankEvent event, Emitter emit) {
     emit(state.copyWith(status: BlocStatus.NONE, request: AddBankType.NONE));
+  }
+
+  void _requestRegisterBankAccount(AddBankEvent event, Emitter emit) async {
+    if (event is RequestRegisterBankAccount) {
+      emit(state.copyWith(
+          request: AddBankType.REQUEST_REGISTER, status: BlocStatus.LOADING));
+      ResponseMessageDTO messageDTO =
+          await bankCardRepository.requestRegisterBankAccount(event.dto);
+
+      if (messageDTO.status == Stringify.RESPONSE_STATUS_SUCCESS) {
+        emit(state.copyWith(
+          status: BlocStatus.SUCCESS,
+          request: AddBankType.REQUEST_REGISTER,
+        ));
+      } else {
+        emit(
+          state.copyWith(
+            msg: ErrorUtils.instance.getErrorMessage(messageDTO.message),
+            request: AddBankType.REQUEST_REGISTER,
+            status: BlocStatus.ERROR,
+          ),
+        );
+      }
+    }
   }
 }

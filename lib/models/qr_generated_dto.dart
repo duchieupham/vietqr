@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class QRGeneratedDTO {
   String? bankId;
   final String bankCode;
@@ -8,10 +6,15 @@ class QRGeneratedDTO {
   final String userBankName;
   final String amount;
   final String content;
-  final String qrCode;
-  final String imgId;
-  final String? transactionId;
+  String qrCode;
+  String imgId;
   final int? existing;
+  final String? transactionId;
+  final String? transactionRefId;
+  final String qrLink;
+  final String terminalCode;
+
+  //
   final String? bankTypeId;
   final bool isNaviAddBank;
   final String email;
@@ -24,10 +27,10 @@ class QRGeneratedDTO {
     required this.bankName,
     required this.bankAccount,
     required this.userBankName,
-    required this.amount,
-    required this.content,
-    required this.qrCode,
-    required this.imgId,
+    this.amount = '',
+    this.content = '',
+    this.qrCode = '',
+    this.imgId = '',
     this.transactionId,
     this.existing,
     this.bankTypeId,
@@ -35,6 +38,9 @@ class QRGeneratedDTO {
     this.type,
     this.phone = '',
     this.isNaviAddBank = false,
+    this.qrLink = '',
+    this.terminalCode = '',
+    this.transactionRefId = '',
   });
 
   setBankId(value) {
@@ -52,7 +58,10 @@ class QRGeneratedDTO {
       qrCode: json['qrCode'],
       imgId: json['imgId'],
       transactionId: json['transactionId'],
+      transactionRefId: json['transactionRefId'],
       existing: json['existing'],
+      qrLink: json['qrLink'],
+      terminalCode: json['terminalCode'],
     );
   }
 

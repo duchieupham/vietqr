@@ -84,15 +84,16 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> with BaseManager {
 }
 
 void _updateVoiceSetting(AccountEvent event, Emitter emit) async {
-  String userId = UserInformationHelper.instance.getUserId();
+  String userId = UserHelper.instance.getUserId();
   try {
     if (event is UpdateVoiceSetting) {
       bool updateStatus = await accRepository.updateVoiceSetting(event.param);
       if (updateStatus) {
         final settingAccount = await accRepository.getSettingAccount(userId);
-        if (settingAccount.userId.isNotEmpty) {
-          await UserInformationHelper.instance
-              .setAccountSetting(settingAccount);
+        if (settingAccount != null) {
+          if (settingAccount.userId.isNotEmpty) {
+            await UserHelper.instance.setAccountSetting(settingAccount);
+          }
         }
       }
     }

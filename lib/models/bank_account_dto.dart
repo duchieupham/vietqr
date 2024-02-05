@@ -5,42 +5,54 @@ class BankAccountDTO {
   final String bankAccount;
   final String userBankName;
   final String bankCode;
+  final String bankShortName;
   final String bankName;
   final String imgId;
   final int type;
-  final String branchId;
-  final String businessId;
-  final String branchName;
-  final String businessName;
-  final bool isAuthenticated;
-  final String? userId;
-  final String? unlinkedType;
+  final String userId;
+  bool isAuthenticated;
+  bool isOwner;
+  int bankTypeStatus;
+  final String qrCode;
+  final String caiValue;
+  final String bankTypeId;
+  final String phoneAuthenticated;
+  final String nationalId;
+  final String ewalletToken;
+  final int unlinkedType;
 
+  //thêm
   Color? bankColor;
-  bool isFirst;
+  double position;
 
-  // final String branchCode;
-  // final String businessCode;
+  setPosition(double value) {
+    position = position - value;
+  }
+
+  bool get isLinked => (!isAuthenticated && bankTypeStatus == 1 && isOwner);
 
   BankAccountDTO({
-    required this.id,
-    required this.bankAccount,
-    required this.userBankName,
-    required this.bankCode,
-    required this.bankName,
-    required this.imgId,
-    required this.type,
-    required this.branchId,
-    required this.businessId,
-    required this.branchName,
-    required this.businessName,
-    required this.isAuthenticated,
-    this.userId,
+    this.id = '',
+    this.bankAccount = '',
+    this.userBankName = '',
+    this.bankCode = '',
+    this.bankName = '',
+    this.imgId = '',
+    this.type = 0,
+    this.isAuthenticated = false,
+    this.bankShortName = '',
+    this.isOwner = false,
+    this.userId = '',
     this.bankColor,
-    this.isFirst = false,
-    this.unlinkedType,
-    // required this.branchCode,
-    // required this.businessCode,
+    this.position = 0.0,
+    this.qrCode = '',
+    this.caiValue = '',
+    this.bankTypeId = '',
+    this.phoneAuthenticated = '',
+    this.nationalId = '',
+    this.ewalletToken = '',
+    this.unlinkedType = -1,
+    this.bankTypeStatus = -1,
   });
 
   setColor(value) {
@@ -52,20 +64,22 @@ class BankAccountDTO {
       id: json['id'] ?? '',
       bankAccount: json['bankAccount'] ?? '',
       userBankName: json['userBankName'] ?? '',
+      bankShortName: json['bankShortName'] ?? '',
       bankCode: json['bankCode'] ?? '',
       bankName: json['bankName'] ?? '',
       imgId: json['imgId'] ?? '',
       type: json['type'] ?? 0,
-      branchId: json['branchId'] ?? '',
-      businessId: json['businessId'] ?? '',
-      branchName: json['branchName'] ?? '',
-      businessName: json['businessName'] ?? '',
       isAuthenticated: json['authenticated'] ?? false,
+      isOwner: json['isOwner'] ?? false,
       userId: json['userId'] ?? '',
-      unlinkedType: json['unlinkedType'] ?? '',
-      isFirst: false,
-      // branchCode: json['branchCode'],
-      // businessCode: json['businessCode'],
+      qrCode: json['qrCode'] ?? '',
+      bankTypeStatus: json['bankTypeStatus'] ?? -1,
+      caiValue: json['caiValue'] ?? '',
+      bankTypeId: json['bankTypeId'] ?? '',
+      phoneAuthenticated: json['phoneAuthenticated'] ?? '',
+      nationalId: json['nationalId'] ?? '',
+      ewalletToken: json['ewalletToken'] ?? '',
+      unlinkedType: json['unlinkedType'] ?? -1,
     );
   }
 
@@ -78,10 +92,8 @@ class BankAccountDTO {
     data['bankName'] = bankName;
     data['imgId'] = imgId;
     data['type'] = type;
-    data['branchId'] = branchId;
-    data['businessId'] = businessId;
-    data['branchName'] = branchName;
-    data['businessName'] = businessName;
+    data['isOwner'] = isOwner;
+    data['bankShortName'] = bankShortName;
     data['authenticated'] = isAuthenticated;
     data['userId'] = userId;
     data['unlinkedType'] = unlinkedType;

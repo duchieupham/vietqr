@@ -3,7 +3,7 @@ import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:qr_flutter/qr_flutter.dart';
+
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
@@ -196,6 +196,11 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
       offset = widget.pageNumber;
       isScrollCard = AccountHelper.instance.getScrollCard();
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -441,7 +446,8 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
                       builder: (key) {
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                          child: VietQr(qrGeneratedDTO: qrGeneratedDTO),
+                          child: VietQr(
+                              qrGeneratedDTO: qrGeneratedDTO, isVietQR: true),
                         );
                       },
                     ),
@@ -497,10 +503,11 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
                           decoration: BoxDecoration(color: AppColor.WHITE),
                           child: Stack(
                             children: [
-                              QrImage(
-                                data: dto.value,
-                                version: QrVersions.auto,
+                              VietQr(
+                                qrGeneratedDTO: null,
+                                qrCode: dto.value,
                                 size: height < 750 ? height / 3 : null,
+                                isEmbeddedImage: true,
                               ),
                               if (dto.imgId.isNotEmpty)
                                 Positioned.fill(
@@ -607,7 +614,7 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
                     function: () async {
                       BluetoothPrinterDTO bluetoothPrinterDTO =
                           await LocalDatabase.instance.getBluetoothPrinter(
-                              UserInformationHelper.instance.getUserId());
+                              UserHelper.instance.getUserId());
                       if (bluetoothPrinterDTO.id.isNotEmpty) {
                         bool isPrinting = false;
                         if (!isPrinting) {

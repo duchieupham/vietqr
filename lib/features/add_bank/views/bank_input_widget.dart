@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/widgets/textfield_custom.dart';
+import 'package:vierqr/models/bank_type_dto.dart';
 
 class ModelBottomSheetView extends StatefulWidget {
   const ModelBottomSheetView({
@@ -24,7 +25,7 @@ class ModelBottomSheetView extends StatefulWidget {
   final String? noData;
   final String? searchType;
   final bool isSearch;
-  final List list;
+  final List<BankTypeDTO> list;
   final BuildContext ctx;
 
   @override
@@ -34,22 +35,13 @@ class ModelBottomSheetView extends StatefulWidget {
 class _BodyWidget extends State<ModelBottomSheetView> {
   final TextEditingController controller = TextEditingController();
 
-  List data = [];
+  List<BankTypeDTO> data = [];
 
   @override
   void initState() {
-    List values = [];
-    for (int i = 0; i < widget.list.length; i++) {
-      final element = widget.list[i];
-      final map = {
-        'data': element,
-        'index': i,
-      };
-      values.add(map);
-    }
-    setState(() {
-      data = values;
-    });
+    data = widget.list;
+
+    setState(() {});
 
     super.initState();
   }
@@ -67,10 +59,9 @@ class _BodyWidget extends State<ModelBottomSheetView> {
         children: [
           Column(
             children: List.generate(data.length, (index) {
+              BankTypeDTO dto = data[index];
               return GestureDetector(
-                onTap: () {
-                  Navigator.of(context).pop(data[index]['index']);
-                },
+                onTap: () => Navigator.of(context).pop(index),
                 child: Container(
                   width: double.infinity,
                   color: Colors.transparent,
@@ -84,15 +75,19 @@ class _BodyWidget extends State<ModelBottomSheetView> {
                               width: 60,
                               height: 40,
                               decoration: BoxDecoration(
-                                image: DecorationImage(
-                                    image: ImageUtils.instance.getImageNetWork(
-                                        data[index]['data'].imageId)),
+                                image: dto.file == null
+                                    ? DecorationImage(
+                                        image: ImageUtils.instance
+                                            .getImageNetWork(
+                                                data[index].imageId))
+                                    : DecorationImage(
+                                        image: FileImage(dto.file!)),
                               ),
                             ),
                             const SizedBox(width: 4),
                             Expanded(
                               child: Text(
-                                '${data[index]['data'].bankShortName} - ${data[index]['data'].bankName}',
+                                '${dto.bankShortName} - ${dto.bankName}',
                                 style: const TextStyle(
                                   fontSize: 12,
                                 ),
@@ -103,7 +98,7 @@ class _BodyWidget extends State<ModelBottomSheetView> {
                           ],
                         ),
                       ),
-                      if (widget.data == data[index]['data'])
+                      if (widget.data == dto)
                         const Icon(
                           Icons.check,
                           color: AppColor.GREEN,
@@ -181,7 +176,7 @@ class _BodyWidget extends State<ModelBottomSheetView> {
                 autoFocus: true,
                 isObscureText: false,
                 controller: controller,
-                onChange: (value) => onSearch(value),
+                onChange: onSearch,
                 hintText: 'Ngân hàng',
                 fillColor: AppColor.GREY_EBEBEB,
                 prefixIcon: const IconButton(
@@ -220,32 +215,15 @@ class _BodyWidget extends State<ModelBottomSheetView> {
   }
 
   void onSearch(String value) {
-    List values = [];
-    List listMaps = [];
     data = widget.list;
-    for (int i = 0; i < widget.list.length; i++) {
-      final element = widget.list[i];
-      final map = {
-        'data': element,
-        'index': i,
-      };
-      listMaps.add(map);
-    }
+    List<BankTypeDTO> values = [];
+    List<BankTypeDTO> listMaps = [...data];
     if (value.trim().isNotEmpty) {
       values.addAll(listMaps
           .where((dto) =>
-              dto['data']
-                  .bankCode
-                  .toUpperCase()
-                  .contains(value.toUpperCase()) ||
-              dto['data']
-                  .bankName
-                  .toUpperCase()
-                  .contains(value.toUpperCase()) ||
-              dto['data']
-                  .bankShortName!
-                  .toUpperCase()
-                  .contains(value.toUpperCase()))
+              dto.bankCode.toUpperCase().contains(value.toUpperCase()) ||
+              dto.bankName.toUpperCase().contains(value.toUpperCase()) ||
+              dto.bankShortName!.toUpperCase().contains(value.toUpperCase()))
           .toList());
     } else {
       values = listMaps;

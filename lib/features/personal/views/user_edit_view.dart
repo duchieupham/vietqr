@@ -22,6 +22,7 @@ import 'package:vierqr/commons/widgets/checkbox_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_widget.dart';
+import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/dashboard_screen.dart';
 import 'package:vierqr/features/home/home.dart';
@@ -34,7 +35,6 @@ import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/account_information_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
-import 'package:vierqr/services/providers/auth_provider.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
 import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
@@ -62,7 +62,7 @@ class _UserEditViewState extends State<UserEditView> {
 
   void initialServices(BuildContext context) {
     final AccountInformationDTO accountInformationDTO =
-        UserInformationHelper.instance.getAccountInformation();
+        UserHelper.instance.getAccountInformation();
     if (accountInformationDTO.lastName.isNotEmpty &&
         _lastNameController.text.isEmpty) {
       _lastNameController.value = _lastNameController.value
@@ -243,8 +243,8 @@ class _UserEditViewState extends State<UserEditView> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          UserInformationHelper.instance
-                                              .getUserFullname(),
+                                          UserHelper.instance
+                                              .getUserFullName(),
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                           style: const TextStyle(
@@ -253,7 +253,7 @@ class _UserEditViewState extends State<UserEditView> {
                                           ),
                                         ),
                                         Text(
-                                          UserInformationHelper.instance
+                                          UserHelper.instance
                                               .getPhoneNo(),
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
@@ -285,16 +285,14 @@ class _UserEditViewState extends State<UserEditView> {
                                       File? file = File(pickedFile.path);
                                       File? compressedFile = FileUtils.instance
                                           .compressImage(file);
-                                      Provider.of<AuthProvider>(context,
-                                              listen: false)
-                                          .setImage(compressedFile);
+
                                       await Future.delayed(
                                           const Duration(milliseconds: 200),
                                           () {
-                                        String userId = UserInformationHelper
+                                        String userId = UserHelper
                                             .instance
                                             .getUserId();
-                                        String imgId = UserInformationHelper
+                                        String imgId = UserHelper
                                             .instance
                                             .getAccountInformation()
                                             .imgId;
@@ -665,7 +663,7 @@ class _UserEditViewState extends State<UserEditView> {
                                       'Tài khoản của bạn sẽ bị vô hiệu hoá và không thể đăng nhập lại vào hệ thống',
                                   confirmFunction: () async {
                                     Navigator.pop(context);
-                                    String userId = UserInformationHelper
+                                    String userId = UserHelper
                                         .instance
                                         .getUserId();
                                     _userEditBloc
@@ -715,7 +713,7 @@ class _UserEditViewState extends State<UserEditView> {
                               if (provider.isValidUpdate()) {
                                 AccountInformationDTO accountInformationDTO =
                                     AccountInformationDTO(
-                                  userId: UserInformationHelper.instance
+                                  userId: UserHelper.instance
                                       .getUserId(),
                                   firstName: _firstNameController.text,
                                   middleName: _middleNameController.text,
@@ -727,7 +725,7 @@ class _UserEditViewState extends State<UserEditView> {
                                   nationalDate: _nationalDate,
                                   nationalId: _nationalIdController.text,
                                   oldNationalId: _oldNationalIdController.text,
-                                  imgId: UserInformationHelper.instance
+                                  imgId: UserHelper.instance
                                       .getAccountInformation()
                                       .imgId,
                                 );
@@ -752,14 +750,14 @@ class _UserEditViewState extends State<UserEditView> {
 
   Widget _buildAvatarWidget(BuildContext context) {
     double size = 60;
-    String imgId = UserInformationHelper.instance.getAccountInformation().imgId;
-    return Consumer<UserEditProvider>(
+    String imgId = UserHelper.instance.getAccountInformation().imgId;
+    return Consumer<AuthProvider>(
       builder: (context, provider, child) {
-        return (provider.imageFile != null)
+        return (provider.avatar.path.isNotEmpty)
             ? AmbientAvatarWidget(
                 imgId: imgId,
                 size: size,
-                imageFile: provider.imageFile,
+                imageFile: provider.avatar,
               )
             : (imgId.isEmpty)
                 ? ClipOval(

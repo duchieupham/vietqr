@@ -198,6 +198,12 @@ class _ScanQrScreenState extends State<_BodyWidget> {
               'typeQR': TypeQR.QR_SALE,
               'data': state.codeQR ?? '',
             });
+          } else if (state.typeQR == TypeQR.TOKEN_PLUGIN) {
+            Navigator.of(context).pop({
+              'type': state.typeContact,
+              'typeQR': TypeQR.TOKEN_PLUGIN,
+              'data': state.codeQR ?? '',
+            });
           }
         }
       },

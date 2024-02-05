@@ -9,14 +9,20 @@ import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
 import 'package:vierqr/commons/widgets/viet_qr.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
-import 'package:vierqr/services/providers/auth_provider.dart';
+import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/services/providers/water_mark_provider.dart';
 
-class QRShareView extends StatelessWidget {
-  final GlobalKey globalKey = GlobalKey();
-  final WaterMarkProvider _waterMarkProvider = WaterMarkProvider(false);
-
+class QRShareView extends StatefulWidget {
   QRShareView({super.key});
+
+  @override
+  State<QRShareView> createState() => _QRShareViewState();
+}
+
+class _QRShareViewState extends State<QRShareView> {
+  final GlobalKey globalKey = GlobalKey();
+
+  final WaterMarkProvider _waterMarkProvider = WaterMarkProvider(false);
 
   void initialServices(
       BuildContext context, String action, QRGeneratedDTO dto) async {
@@ -211,6 +217,7 @@ class QRShareView extends StatelessWidget {
               VietQr(
                 qrGeneratedDTO: dto,
                 content: dto.content,
+                isVietQR: true,
               ),
               ValueListenableBuilder(
                 valueListenable: _waterMarkProvider,

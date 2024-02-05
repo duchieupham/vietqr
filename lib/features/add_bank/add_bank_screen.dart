@@ -8,6 +8,7 @@ import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
+import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
@@ -34,7 +35,11 @@ import 'package:vierqr/services/shared_references/user_information_helper.dart';
 import 'views/bank_input_widget.dart';
 
 class AddBankScreen extends StatelessWidget {
-  const AddBankScreen({super.key});
+  final BankTypeDTO? bankTypeDTO;
+
+  const AddBankScreen({super.key, this.bankTypeDTO});
+
+  static String routeName = '/add_bank_screen';
 
   @override
   Widget build(BuildContext context) {
@@ -42,13 +47,17 @@ class AddBankScreen extends StatelessWidget {
       create: (BuildContext context) => AddBankBloc(context),
       child: ChangeNotifierProvider(
         create: (_) => AddBankProvider(),
-        child: _AddBankScreenState(),
+        child: _AddBankScreenState(bankTypeDTO: bankTypeDTO),
       ),
     );
   }
 }
 
 class _AddBankScreenState extends StatefulWidget {
+  final BankTypeDTO? bankTypeDTO;
+
+  const _AddBankScreenState({this.bankTypeDTO});
+
   @override
   State<_AddBankScreenState> createState() => _AddBankScreenStateState();
 }
@@ -80,20 +89,22 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
   }
 
   void initData(BuildContext context) {
-    if (ModalRoute.of(context)!.settings.arguments != null) {
+    BankTypeDTO? bankTypeDTO = widget.bankTypeDTO;
+
+    if (bankTypeDTO == null) {
+      _bloc.add(const LoadDataBankEvent());
+    } else {
       _bloc.add(const LoadDataBankEvent(isLoading: false));
-      final args = ModalRoute.of(context)!.settings.arguments as Map;
-      int step = args['step'] ?? 0;
-      String bankAccount = args['bankAccount'] ?? '';
-      String userName = args['name'] ?? '';
-      BankTypeDTO? bankTypeDTO = args['bankDTO'];
-      String? bankId = args['bankId'];
+      String bankAccount = bankTypeDTO.bankAccount;
+      String userName = bankTypeDTO.userBankName;
+      String bankId = bankTypeDTO.bankId;
 
       if (userName.isNotEmpty) {
         Provider.of<AddBankProvider>(context, listen: false).updateEdit(false);
+        nameController.value = nameController.value.copyWith(text: userName);
       }
 
-      if (bankId != null) {
+      if (bankId.isNotEmpty) {
         Provider.of<AddBankProvider>(context, listen: false)
             .updateBankId(bankId);
       }
@@ -102,22 +113,15 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
         bankAccountController.value =
             bankAccountController.value.copyWith(text: bankAccount);
       }
-      if (userName.isNotEmpty) {
-        nameController.value = nameController.value.copyWith(text: userName);
+
+      if (bankAccount.isNotEmpty && bankId.isNotEmpty && userName.isNotEmpty) {
+        Provider.of<AddBankProvider>(context, listen: false).updateStep(1);
       }
 
-      if (step != 0) {
-        Provider.of<AddBankProvider>(context, listen: false).updateStep(step);
-      }
-
-      if (bankTypeDTO != null) {
-        Provider.of<AddBankProvider>(context, listen: false)
-            .updateSelectBankType(bankTypeDTO, update: true);
-        Provider.of<AddBankProvider>(context, listen: false)
-            .updateEnableName(true);
-      }
-    } else {
-      _bloc.add(const LoadDataBankEvent());
+      Provider.of<AddBankProvider>(context, listen: false)
+          .updateSelectBankType(bankTypeDTO, update: true);
+      Provider.of<AddBankProvider>(context, listen: false)
+          .updateEnableName(true);
     }
   }
 
@@ -196,7 +200,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                     Provider.of<AddBankProvider>(context, listen: false)
                         .bankTypeDTO!
                         .id;
-                String userId = UserInformationHelper.instance.getUserId();
+                String userId = UserHelper.instance.getUserId();
                 String formattedName = StringUtils.instance.removeDiacritic(
                     StringUtils.instance
                         .capitalFirstCharacter(nameController.text));
@@ -213,6 +217,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
 
             if (state.request == AddBankType.INSERT_BANK) {
               if (!mounted) return;
+              eventBus.fire(GetListBankScreen());
               Navigator.of(context).pop(true);
             }
 
@@ -266,7 +271,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                     Provider.of<AddBankProvider>(context, listen: false)
                         .bankTypeDTO!
                         .id;
-                String userId = UserInformationHelper.instance.getUserId();
+                String userId = UserHelper.instance.getUserId();
                 String formattedName = StringUtils.instance.removeDiacritic(
                     StringUtils.instance
                         .capitalFirstCharacter(nameController.text));

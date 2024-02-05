@@ -5,92 +5,66 @@ import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/base_manager.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
-import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/features/bank_card/events/bank_event.dart';
-import 'package:vierqr/features/bank_detail/repositories/bank_card_repository.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
-import 'package:vierqr/features/home/blocs/home_bloc.dart';
+import 'package:vierqr/features/bank_detail/repositories/bank_card_repository.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
+import 'package:vierqr/models/bank_account_terminal.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
-import 'package:vierqr/models/viet_qr_scanned_dto.dart';
 
 class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
   @override
   final BuildContext context;
 
   BankBloc(this.context)
-      : super(const BankState(listBanks: [], colors: [], listBankTypeDTO: [])) {
+      : super(const BankState(
+            listBanks: [],
+            colors: [],
+            listBankTypeDTO: [],
+            listBankAccountTerminal: [])) {
     on<BankCardEventGetList>(_getBankAccounts);
     on<UpdateEvent>(_updateEvent);
-    on<ScanQrEventGetBankType>(_getBankTypeQR);
     on<LoadDataBankEvent>(_getListBankTypes);
+    on<UpdateListBank>(_updateListBank);
+    on<GetListBankAccountTerminal>(_getBankAccountTerminal);
   }
 
   final bankCardRepository = const BankCardRepository();
 
-  void _getBankTypeQR(BankEvent event, Emitter emit) async {
-    try {
-      if (event is ScanQrEventGetBankType) {
-        emit(state.copyWith(request: BankType.NONE));
-        VietQRScannedDTO vietQRScannedDTO =
-            QRScannerUtils.instance.getBankAccountFromQR(event.code);
-
-        if (vietQRScannedDTO.caiValue.isNotEmpty &&
-            vietQRScannedDTO.bankAccount.isNotEmpty) {
-          BankTypeDTO dto = await homeRepository
-              .getBankTypeByCaiValue(vietQRScannedDTO.caiValue);
-          if (dto.id.isNotEmpty) {
-            emit(
-              state.copyWith(
-                request: BankType.SCAN,
-                typeQR: TypeQR.QR_BANK,
-                bankTypeDTO: dto,
-                bankAccount: vietQRScannedDTO.bankAccount,
-              ),
-            );
-          } else {
-            emit(state.copyWith(request: BankType.SCAN_ERROR));
-          }
-        } else {
-          emit(state.copyWith(request: BankType.SCAN_NOT_FOUND));
+  void _updateListBank(BankEvent event, Emitter emit) {
+    if (event is UpdateListBank) {
+      List<BankAccountDTO> list = [...state.listBanks];
+      final index = list.indexWhere((element) => element.id == event.dto.id);
+      if (index != -1) {
+        if (event.type == UpdateBankType.UPDATE) {
+          list[index] = event.dto;
+        } else if (event.type == UpdateBankType.DELETE) {
+          list.removeAt(index);
         }
       }
-    } catch (e) {
-      LOG.error(e.toString());
-      emit(state.copyWith(request: BankType.SCAN_NOT_FOUND));
+      emit(state.copyWith(listBanks: list));
     }
   }
 
   Future _getListBankTypes(BankEvent event, Emitter emit) async {
-    if (banks.isEmpty) {
-      try {
-        if (event is LoadDataBankEvent) {
-          List<BankTypeDTO> list = await bankCardRepository.getBankTypes();
-          if (list.isNotEmpty) {
-            List<BankTypeDTO> listLinks = list
-                .where((element) => element.status == LinkBankType.LINK.type)
-                .toList();
-            List<BankTypeDTO> listUnLinks = list
-                .where(
-                    (element) => element.status == LinkBankType.NOT_LINK.type)
-                .toList();
-
-            list = [...listLinks, ...listUnLinks];
-          }
-
-          banks = list;
-          emit(state.copyWith(
-              listBankTypeDTO: list, request: BankType.GET_BANK));
+    if (banks.isNotEmpty) {
+      emit(state.copyWith(
+          listBankTypeDTO: banks, request: BankType.GET_BANK_LOCAL));
+      return;
+    }
+    try {
+      if (event is LoadDataBankEvent) {
+        List<BankTypeDTO> list = await bankCardRepository.getBankTypes();
+        if (list.isNotEmpty) {
+          list.sort((a, b) => a.linkType == LinkBankType.LINK ? -1 : 0);
         }
-      } catch (e) {
-        LOG.error(e.toString());
-        emit(state.copyWith(status: BlocStatus.ERROR));
+        banks = list;
+        emit(state.copyWith(listBankTypeDTO: list, request: BankType.GET_BANK));
       }
-    } else if (state.listBankTypeDTO.isEmpty) {
-      emit(
-        state.copyWith(listBankTypeDTO: banks, request: BankType.GET_BANK),
-      );
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(status: BlocStatus.ERROR));
     }
   }
 
@@ -121,6 +95,8 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
           list = [...listLinked, ...listNotLinked];
 
           for (BankAccountDTO dto in list) {
+            int index = list.indexOf(dto);
+            dto.position = index * 100;
             NetworkImage image = ImageUtils.instance.getImageNetWork(dto.imgId);
             paletteGenerator = await PaletteGenerator.fromImageProvider(image);
             if (paletteGenerator.dominantColor != null) {
@@ -130,11 +106,6 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
               dto.setColor(Theme.of(context).cardColor);
             }
           }
-        }
-        if (list.isNotEmpty) {
-          list = [otd, ...list, otd2];
-        } else {
-          list = [otd2];
         }
 
         emit(state.copyWith(
@@ -152,40 +123,36 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
     }
   }
 
+  void _getBankAccountTerminal(BankEvent event, Emitter emit) async {
+    try {
+      if (event is GetListBankAccountTerminal) {
+        bool isEmpty = false;
+
+        if (state.status == BlocStatus.NONE) {
+          emit(state.copyWith(status: BlocStatus.LOADING));
+        }
+        List<BankAccountTerminal> list = await bankCardRepository
+            .getListBankAccountTerminal(userId, event.terminalId);
+
+        if (list.isEmpty) {
+          isEmpty = true;
+        }
+
+        emit(state.copyWith(
+            request: BankType.BANK,
+            listBankTerminal: list,
+            status: BlocStatus.UNLOADING,
+            isEmpty: isEmpty));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+          status: BlocStatus.ERROR,
+          msg: 'Không thể tải danh sách. Vui lòng kiểm tra lại kết nối'));
+    }
+  }
+
   void _updateEvent(BankEvent event, Emitter emit) {
     emit(state.copyWith(status: BlocStatus.DONE));
   }
-
-  final otd = BankAccountDTO(
-    id: '',
-    bankAccount: '',
-    userBankName: '',
-    bankCode: '',
-    bankName: '',
-    imgId: '',
-    type: 0,
-    branchId: '',
-    businessId: '',
-    branchName: '',
-    isAuthenticated: false,
-    businessName: '',
-    bankColor: Colors.white,
-    isFirst: true,
-  );
-  final otd2 = BankAccountDTO(
-    id: '',
-    bankAccount: 'MB',
-    userBankName: '',
-    bankCode: '',
-    bankName: '',
-    imgId: '',
-    type: 0,
-    branchId: '',
-    businessId: '',
-    branchName: '',
-    isAuthenticated: false,
-    businessName: '',
-    bankColor: Colors.black26,
-    isFirst: false,
-  );
 }

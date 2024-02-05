@@ -42,3 +42,21 @@ class RemoveTeleConnect extends ConnectTelegramEvent {
   @override
   List<Object?> get props => [teleConnectId];
 }
+
+class RemoveBankTelegramEvent extends ConnectTelegramEvent {
+  final Map<String, dynamic> body;
+
+  RemoveBankTelegramEvent(this.body);
+
+  @override
+  List<Object?> get props => [body];
+}
+
+class AddBankTelegramEvent extends ConnectTelegramEvent {
+  final Map<String, dynamic> body;
+
+  AddBankTelegramEvent(this.body);
+
+  @override
+  List<Object?> get props => [body];
+}

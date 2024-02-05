@@ -15,6 +15,8 @@ import 'package:vierqr/services/providers/countdown_provider.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class PrinterSettingScreen extends StatelessWidget {
+  static String routeName = '/print_setting_screen';
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider<PrinterBloc>(
@@ -39,7 +41,7 @@ class _PrinterSettingViewState extends State<PrinterSettingView> {
   List<PrinterBluetooth> printers = [];
 
   void initialServices(BuildContext context) {
-    String userId = UserInformationHelper.instance.getUserId();
+    String userId = UserHelper.instance.getUserId();
     printers.clear();
     _printerBloc = BlocProvider.of(context);
     _printerBloc.add(PrinterInitialEvent());
@@ -60,7 +62,7 @@ class _PrinterSettingViewState extends State<PrinterSettingView> {
               listener: (context, state) {
                 if (state is PrinterRemoveSuccessState ||
                     state is PrinterSavedSuccessState) {
-                  String userId = UserInformationHelper.instance.getUserId();
+                  String userId = UserHelper.instance.getUserId();
                   _printerBloc.add(PrinterEventCheck(userId: userId));
                 }
               },
@@ -109,7 +111,7 @@ class _PrinterSettingViewState extends State<PrinterSettingView> {
                             title: 'Huỷ kết nối',
                             function: () {
                               String userId =
-                                  UserInformationHelper.instance.getUserId();
+                                  UserHelper.instance.getUserId();
                               _printerBloc
                                   .add(PrinterEventRemove(userId: userId));
                             },
@@ -210,7 +212,7 @@ class _PrinterSettingViewState extends State<PrinterSettingView> {
                                           'Xác nhận kết nối với máy in ${printers[index].name}? Hệ thống sẽ tự động kết nối với thiết bị này cho việc in mã VietQR.',
                                       confirmFunction: () {
                                         Navigator.pop(context);
-                                        String userId = UserInformationHelper
+                                        String userId = UserHelper
                                             .instance
                                             .getUserId();
                                         const Uuid uuid = Uuid();

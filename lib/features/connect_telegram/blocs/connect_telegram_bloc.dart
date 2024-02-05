@@ -14,6 +14,8 @@ class ConnectTelegramBloc
     on<SendFirstMessage>(_sendFirstMessage);
     on<GetInformationTeleConnect>(_getInfoTeleConnected);
     on<RemoveTeleConnect>(_removeTele);
+    on<RemoveBankTelegramEvent>(_removeBankTele);
+    on<AddBankTelegramEvent>(_addBankTele);
   }
 }
 
@@ -80,5 +82,43 @@ void _removeTele(ConnectTelegramEvent event, Emitter emit) async {
   } catch (e) {
     LOG.error(e.toString());
     emit(RemoveTeleFailedState(dto: result));
+  }
+}
+
+void _removeBankTele(ConnectTelegramEvent event, Emitter emit) async {
+  ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
+  try {
+    if (event is RemoveBankTelegramEvent) {
+      emit(RemoveTelegramLoadingState());
+
+      result = await repository.removeBankTelegram(event.body);
+      if (result.status == 'SUCCESS') {
+        emit(RemoveBankTeleSuccessState(dto: result));
+      } else {
+        emit(RemoveTeleFailedState(dto: result));
+      }
+    }
+  } catch (e) {
+    LOG.error(e.toString());
+    emit(RemoveTeleFailedState(dto: result));
+  }
+}
+
+void _addBankTele(ConnectTelegramEvent event, Emitter emit) async {
+  ResponseMessageDTO result = const ResponseMessageDTO(status: '', message: '');
+  try {
+    if (event is AddBankTelegramEvent) {
+      emit(RemoveTelegramLoadingState());
+
+      result = await repository.addBankTelegram(event.body);
+      if (result.status == 'SUCCESS') {
+        emit(AddBankTeleSuccessState(dto: result));
+      } else {
+        emit(AddBankTeleFailedState(dto: result));
+      }
+    }
+  } catch (e) {
+    LOG.error(e.toString());
+    emit(AddBankTeleFailedState(dto: result));
   }
 }

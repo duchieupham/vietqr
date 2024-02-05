@@ -63,14 +63,7 @@ class DashboardRepository {
   }
 
   Future<BankTypeDTO> getBankTypeByCaiValue(String caiValue) async {
-    BankTypeDTO result = const BankTypeDTO(
-      id: '',
-      bankCode: '',
-      bankName: '',
-      imageId: '',
-      status: 0,
-      caiValue: '',
-    );
+    BankTypeDTO result = BankTypeDTO();
     try {
       final String url = '${EnvConfig.getBaseUrl()}bank-type/cai/$caiValue';
       final response = await BaseAPIClient.getAPI(
@@ -161,7 +154,7 @@ class DashboardRepository {
       );
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
-        UserInformationHelper.instance.setWalletInfo(response.body);
+        UserHelper.instance.setWalletInfo(response.body);
         return IntroduceDTO.fromJson(data);
       }
     } catch (e) {
@@ -221,7 +214,7 @@ class DashboardRepository {
   Future<bool> updateFcmToken() async {
     bool result = false;
     try {
-      String userId = UserInformationHelper.instance.getUserId();
+      String userId = UserHelper.instance.getUserId();
       String oldToken = AccountHelper.instance.getFcmToken();
       String newToken = await FirebaseMessaging.instance.getToken() ?? '';
       if (oldToken.trim() != newToken.trim()) {

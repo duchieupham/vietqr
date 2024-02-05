@@ -1,91 +1,77 @@
+import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:camera/camera.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:rxdart/rxdart.dart';
+import 'models/qr_generated_dto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
-import 'package:rxdart/rxdart.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:vierqr/commons/constants/configurations/route.dart';
-import 'package:vierqr/commons/constants/configurations/stringify.dart';
-import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/commons/constants/env/env_config.dart';
-import 'package:vierqr/commons/helper/media_helper.dart';
 import 'package:vierqr/commons/utils/log.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vierqr/models/app_info_dto.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:vierqr/commons/utils/pref_utils.dart';
+import 'package:vierqr/features/top_up/qr_top_up.dart';
+import 'package:vierqr/models/respone_top_up_dto.dart';
+import 'package:vierqr/models/top_up_sucsess_dto.dart';
+import 'package:vierqr/commons/helper/media_helper.dart';
+import 'package:vierqr/features/login/login_screen.dart';
+import 'features/connect_lark/widget/connect_screen.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
+import 'package:vierqr/features/report/report_screen.dart';
+import 'package:vierqr/features/top_up/top_up_screen.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vierqr/features/add_bank/add_bank_screen.dart';
 import 'package:vierqr/features/bank_card/views/search_bank_view.dart';
-import 'package:vierqr/features/bank_type/select_bank_type_screen.dart';
-import 'package:vierqr/features/branch/views/branch_detail_view.dart';
-import 'package:vierqr/features/business/blocs/business_information_bloc.dart';
-import 'package:vierqr/features/business/views/add_business_view.dart';
-import 'package:vierqr/features/business/views/business_information_view.dart';
-import 'package:vierqr/features/business/views/business_screen.dart';
-import 'package:vierqr/features/business/views/business_transaction_view.dart';
 import 'package:vierqr/features/connect_lark/connect_lark_screen.dart';
 import 'package:vierqr/features/connect_telegram/connect_telegram_screen.dart';
 import 'package:vierqr/features/connect_telegram/widget/connect_screen.dart';
 import 'package:vierqr/features/contact/contact_screen.dart';
-import 'package:vierqr/features/contact_us/contact_us_screen.dart';
-import 'package:vierqr/features/create_qr_un_authen/create_qr_un_quthen.dart';
-import 'package:vierqr/features/create_qr_un_authen/show_qr.dart';
-import 'package:vierqr/features/dashboard/blocs/dashboard_provider.dart';
-import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
+import 'package:vierqr/features/scan_qr/scan_qr_screen.dart';
+import 'package:vierqr/services/providers/pin_provider.dart';
+import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'features/transaction_wallet/trans_wallet_screen.dart';
 import 'package:vierqr/features/dashboard/dashboard_screen.dart';
-import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
-import 'package:vierqr/features/dashboard/theme_setting.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:vierqr/features/create_qr_un_authen/show_qr.dart';
+import 'package:vierqr/services/providers/user_edit_provider.dart';
+import 'package:vierqr/commons/constants/configurations/route.dart';
+import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
+import 'package:vierqr/features/personal/blocs/user_edit_bloc.dart';
+import 'package:vierqr/features/personal/views/user_edit_view.dart';
+import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
+import 'package:vierqr/services/shared_references/theme_helper.dart';
 import 'package:vierqr/features/generate_qr/views/qr_share_view.dart';
-import 'package:vierqr/features/home/widget/dialog_update.dart';
 import 'package:vierqr/features/introduce/views/introduce_screen.dart';
-import 'package:vierqr/features/login/login_screen.dart';
-import 'package:vierqr/features/mobile_recharge/mobile_recharge_screen.dart';
+import 'package:vierqr/services/shared_references/account_helper.dart';
+import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/features/mobile_recharge/qr_mobile_recharge.dart';
 import 'package:vierqr/features/mobile_recharge/widget/recharege_success.dart';
-import 'package:vierqr/features/notification/blocs/notification_bloc.dart';
-import 'package:vierqr/features/notification/views/notification_view.dart';
-import 'package:vierqr/features/personal/blocs/user_edit_bloc.dart';
+import 'package:vierqr/features/network/network_bloc.dart';
+import 'package:vierqr/features/network/network_event.dart';
 import 'package:vierqr/features/personal/views/national_information_view.dart';
-import 'package:vierqr/features/personal/views/user_edit_view.dart';
 import 'package:vierqr/features/personal/views/user_update_password_view.dart';
-import 'package:vierqr/features/printer/views/printer_setting_screen.dart';
-import 'package:vierqr/features/report/report_screen.dart';
-import 'package:vierqr/features/scan_qr/scan_qr_screen.dart';
-import 'package:vierqr/features/setting_bdsd/setting_bdsd_screen.dart';
-
-// import 'package:vierqr/features/scan_qr/scan_qr_screen.dart';
-import 'package:vierqr/features/top_up/qr_top_up.dart';
-import 'package:vierqr/features/top_up/top_up_screen.dart';
+import 'package:vierqr/features/register_new_bank/register_mb_bank.dart';
 import 'package:vierqr/features/top_up/widget/pop_up_top_up_sucsess.dart';
 import 'package:vierqr/features/transaction/transaction_detail_screen.dart';
 import 'package:vierqr/features/transaction/widgets/transaction_sucess_widget.dart';
-import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/notification_transaction_success_dto.dart';
-import 'package:vierqr/models/respone_top_up_dto.dart';
-import 'package:vierqr/models/top_up_sucsess_dto.dart';
+import 'package:vierqr/models/user_repository.dart';
 import 'package:vierqr/services/local_notification/notification_service.dart';
-import 'package:vierqr/services/providers/auth_provider.dart';
-import 'package:vierqr/services/providers/business_inforamtion_provider.dart';
-import 'package:vierqr/services/providers/pin_provider.dart';
-import 'package:vierqr/services/providers/user_edit_provider.dart';
-import 'package:vierqr/services/shared_references/account_helper.dart';
 import 'package:vierqr/services/shared_references/bank_arrangement_helper.dart';
 import 'package:vierqr/services/shared_references/create_qr_helper.dart';
 import 'package:vierqr/services/shared_references/event_bloc_helper.dart';
 import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
-import 'package:vierqr/services/shared_references/theme_helper.dart';
+import 'package:vierqr/features/mobile_recharge/mobile_recharge_screen.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
-
-import 'features/connect_lark/widget/connect_screen.dart';
-import 'features/transaction_wallet/trans_wallet_screen.dart';
-import 'models/qr_generated_dto.dart';
+import 'package:vierqr/splash_screen.dart';
 
 //Share Preferences
 late SharedPreferences sharedPrefs;
@@ -103,6 +89,35 @@ extension Uint8ListExtension on Uint8List {
   }
 }
 
+Future<String> downloadAndSaveImage(String imageUrl, String path) async {
+  final response = await http.get(Uri.parse(imageUrl));
+  final bytes = response.bodyBytes;
+
+  final directory = await getApplicationDocumentsDirectory();
+  final localImagePath = '${directory.path}/$path';
+
+  final file = File(localImagePath);
+  file.writeAsBytesSync(bytes);
+
+  print('Image saved to: $localImagePath');
+  return localImagePath;
+}
+
+Future<String> saveImageToLocal(Uint8List uint8list, String path) async {
+  final directory = await getApplicationDocumentsDirectory();
+  final localImagePath = '${directory.path}/$path';
+
+  final file = File(localImagePath);
+  file.writeAsBytesSync(uint8list);
+
+  print('Image saved to: $localImagePath');
+  return localImagePath;
+}
+
+Future<File> getImageFile(String file) async {
+  return File(file);
+}
+
 //go into EnvConfig to change env
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -117,6 +132,8 @@ void main() async {
     await Firebase.initializeApp();
   }
   cameras = await availableCameras();
+  await UserRepository.instance.getBanks();
+  await UserRepository.instance.getIntroContact();
   LOG.verbose('Config Environment: ${EnvConfig.getEnv()}');
   runApp(VietQRApp());
 }
@@ -138,7 +155,7 @@ Future<void> _initialServiceHelper() async {
   }
   if (!sharedPrefs.containsKey('USER_ID') ||
       sharedPrefs.getString('USER_ID') == null) {
-    await UserInformationHelper.instance.initialUserInformationHelper();
+    await UserHelper.instance.initialUserInformationHelper();
   }
   if (!sharedPrefs.containsKey('BANK_ARRANGEMENT') ||
       sharedPrefs.getInt('BANK_ARRANGEMENT') == null) {
@@ -174,9 +191,12 @@ class VietQRApp extends StatefulWidget {
 class _VietQRApp extends State<VietQRApp> {
   static Widget _mainScreen = const Login();
 
+  String get userId => UserHelper.instance.getUserId().trim();
+
   @override
   void initState() {
     super.initState();
+    _mainScreen = (userId.isNotEmpty) ? const SplashScreen() : const Login();
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -193,7 +213,6 @@ class _VietQRApp extends State<VietQRApp> {
     onFcmMessage();
     // Đăng ký callback onMessageOpenedApp
     onFcmMessageOpenedApp();
-    //
     requestNotificationPermission();
     handleMessageOnBackground();
   }
@@ -246,7 +265,7 @@ class _VietQRApp extends State<VietQRApp> {
             message.data['notificationType'] ==
                 Stringify.NOTI_TYPE_UPDATE_TRANSACTION) {
           Map<String, dynamic> param = {};
-          param['userId'] = UserInformationHelper.instance.getUserId();
+          param['userId'] = UserHelper.instance.getUserId();
           param['amount'] = message.data['amount'];
           param['type'] = 0;
           param['transactionId'] = message.data['transactionReceiveId'];
@@ -271,7 +290,6 @@ class _VietQRApp extends State<VietQRApp> {
           Routes.TRANSACTION_DETAIL,
           arguments: {
             'transactionId': message.data['transactionReceiveId'],
-            // 'bankId': bankId,
           },
         );
       }
@@ -292,7 +310,6 @@ class _VietQRApp extends State<VietQRApp> {
               Routes.TRANSACTION_DETAIL,
               arguments: {
                 'transactionId': remoteMessage.data['transactionReceiveId'],
-                // 'bankId': bankId,
               },
             );
           }
@@ -303,9 +320,6 @@ class _VietQRApp extends State<VietQRApp> {
 
   @override
   Widget build(BuildContext context) {
-    _mainScreen = (UserInformationHelper.instance.getUserId().trim().isNotEmpty)
-        ? const DashBoardScreen()
-        : const Login();
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).requestFocus(FocusNode());
@@ -315,41 +329,25 @@ class _VietQRApp extends State<VietQRApp> {
           BlocProvider<UserEditBloc>(
             create: (BuildContext context) => UserEditBloc(),
           ),
-          BlocProvider<NotificationBloc>(
-            create: (BuildContext context) => NotificationBloc(context),
-          ),
           BlocProvider<DashBoardBloc>(
-            create: (BuildContext context) =>
-                DashBoardBloc(context)..add(GetVersionAppEvent()),
+            create: (BuildContext context) => DashBoardBloc(context),
           ),
-          BlocProvider<BusinessInformationBloc>(
-            create: (BuildContext context) => BusinessInformationBloc(),
+          BlocProvider(
+            create: (context) => NetworkBloc()..add(NetworkObserve()),
           ),
         ],
         child: MultiProvider(
           providers: [
             ChangeNotifierProvider(create: (context) => AuthProvider()),
-            ChangeNotifierProvider(create: (context) => DashBoardProvider()),
             ChangeNotifierProvider(create: (context) => PinProvider()),
             ChangeNotifierProvider(create: (context) => UserEditProvider()),
-            ChangeNotifierProvider(
-                create: (context) => BusinessInformationProvider()),
           ],
           child: Consumer<AuthProvider>(
             builder: (context, authProvider, child) {
-              if (authProvider.typeBankArr != 0) {
-                authProvider.updateBankArr(0);
-              }
-
-              if (authProvider.getThemeIndex() != 0) {
-                authProvider.updateThemeByIndex(0);
-              }
-
               return MaterialApp(
                 navigatorKey: NavigationService.navigatorKey,
                 debugShowCheckedModeBanner: false,
                 builder: (context, child) {
-                  //ignore system scale factor
                   return MediaQuery(
                     data: MediaQuery.of(context).copyWith(
                       textScaleFactor: 1.0,
@@ -365,61 +363,40 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.USER_EDIT: (context) => const UserEditView(),
                   Routes.UPDATE_PASSWORD: (context) =>
                       const UserUpdatePassword(),
-                  Routes.UI_SETTING: (context) => const ThemeSettingView(),
                   Routes.ADD_BANK_CARD: (context) => const AddBankScreen(),
-                  Routes.SELECT_BANK_TYPE: (context) =>
-                      const SelectBankTypeScreen(),
                   Routes.QR_SHARE_VIEW: (context) => QRShareView(),
-                  Routes.BUSINESS_INFORMATION_VIEW: (context) =>
-                      const BusinessInformationView(),
-                  Routes.ADD_BUSINESS_VIEW: (context) => AddBusinessView(),
                   Routes.SCAN_QR_VIEW: (context) => const ScanQrScreen(),
-                  Routes.PRINTER_SETTING: (context) => PrinterSettingScreen(),
                   Routes.SEARCH_BANK: (context) => SearchBankView(),
-                  Routes.NOTIFICATION_VIEW: (context) =>
-                      const NotificationView(),
                   Routes.TRANSACTION_DETAIL: (context) =>
                       const TransactionDetailScreen(),
                   Routes.NATIONAL_INFORMATION: (context) =>
                       const NationalInformationView(),
-                  Routes.BUSINESS_TRANSACTION: (context) =>
-                      const BusinessTransactionView(),
-                  Routes.BRANCH_DETAIL: (context) => BranchDetailScreen(),
                   Routes.INTRODUCE_SCREEN: (context) => const IntroduceScreen(),
                   Routes.PHONE_BOOK: (context) => const ContactScreen(),
                   Routes.TOP_UP: (context) => const TopUpScreen(),
                   Routes.MOBILE_RECHARGE: (context) => MobileRechargeScreen(),
+                  Routes.REGISTER_NEW_BANK: (context) => RegisterNewBank(),
                   Routes.CONNECT_TELEGRAM: (context) => ConnectTelegramScreen(),
                   Routes.CONNECT_STEP_TELE_SCREEN: (context) =>
                       ConnectTeleStepScreen(),
                   Routes.CONNECT_STEP_LARK_SCREEN: (context) =>
                       ConnectLarkStepScreen(),
                   Routes.CONNECT_LARK: (context) => ConnectLarkScreen(),
-                  Routes.CONTACT_US_SCREEN: (context) =>
-                      const ContactUSScreen(),
-                  Routes.CREATE_UN_AUTHEN: (context) =>
-                      const CreateQrUnQuthen(),
                   Routes.REPORT_SCREEN: (context) => const ReportScreen(),
-                  Routes.SETTING_BDSD: (context) => const SettingBDSD(),
                   Routes.TRANSACTION_WALLET: (context) =>
                       const TransWalletScreen(),
-                  Routes.BUSINESS: (context) => const BusinessScreen(),
                 },
                 onGenerateRoute: (settings) {
-                  if (settings.name == Routes.BUSINESS_INFORMATION_VIEW) {
-                    return PageRouteBuilder(
-                      pageBuilder: (context, animation1, animation2) =>
-                          const BusinessInformationView(),
-                      transitionDuration: const Duration(milliseconds: 300),
-                    );
-                  }
-
                   if (settings.name == Routes.SHOW_QR) {
-                    QRGeneratedDTO dto = settings.arguments as QRGeneratedDTO;
+                    Map map = settings.arguments as Map;
+
+                    QRGeneratedDTO dto = map['dto'];
+                    AppInfoDTO appInfoDTO = map['appInfo'];
                     return MaterialPageRoute(
                       builder: (context) {
                         return ShowQr(
                           dto: dto,
+                          appInfo: appInfoDTO,
                         );
                       },
                     );
@@ -469,18 +446,6 @@ class _VietQRApp extends State<VietQRApp> {
                       },
                     );
                   }
-                  // if (settings.name == Routes.UPDATE_PHONE_BOOK) {
-                  //   PhoneBookDetailDTO _dto =
-                  //       settings.arguments as PhoneBookDetailDTO;
-                  //
-                  //   return MaterialPageRoute(
-                  //     builder: (context) {
-                  //       return EditPhoneBookScreen(
-                  //         dto: _dto,
-                  //       );
-                  //     },
-                  //   );
-                  // }
                   return null;
                 },
                 themeMode: ThemeMode.light,
@@ -492,7 +457,6 @@ class _VietQRApp extends State<VietQRApp> {
                   GlobalCupertinoLocalizations.delegate,
                 ],
                 supportedLocales: const [
-                  //  Locale('en'), // English
                   Locale('vi'), // Vietnamese
                 ],
                 home: Builder(

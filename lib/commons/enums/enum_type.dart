@@ -4,6 +4,7 @@ enum BlocStatus {
   LOADING_PAGE,
   NONE,
   LOADING,
+  LOADING_SHARE,
   UNLOADING,
   ERROR,
   AWAIT,
@@ -12,6 +13,44 @@ enum BlocStatus {
   INSERT,
   DONE,
   DELETED_ERROR,
+}
+
+enum TypeImage { SAVE, SHARE }
+
+enum PageType { ACCOUNT, HOME, SCAN_QR, CARD_QR, PERSON }
+
+extension PageTypeExt on int {
+  PageType get pageType {
+    switch (this) {
+      case 1:
+        return PageType.HOME;
+      case -1:
+        return PageType.SCAN_QR;
+      case 2:
+        return PageType.CARD_QR;
+      case 3:
+        return PageType.PERSON;
+      default:
+        return PageType.ACCOUNT;
+    }
+  }
+}
+
+extension PageTypeExt2 on PageType {
+  int get pageIndex {
+    switch (this) {
+      case PageType.HOME:
+        return 1;
+      case PageType.SCAN_QR:
+        return -1;
+      case PageType.CARD_QR:
+        return 2;
+      case PageType.PERSON:
+        return 3;
+      default:
+        return 0;
+    }
+  }
 }
 
 enum ExitsType { ADD, LINKED }
@@ -34,7 +73,7 @@ enum TypeOTP {
   NONE,
 }
 
-enum TypeMoveEvent { LEFT, RIGHT, NONE }
+enum TypeMoveEvent { LEFT_TO_RIGHT, RIGHT_TO_LEFT, NONE }
 
 enum TypeAddMember { MORE, ADDED, AWAIT }
 
@@ -81,6 +120,7 @@ enum TypeQR {
   QR_VCARD,
   QR_SALE,
   LOGIN_WEB,
+  TOKEN_PLUGIN,
   NEGATIVE_TWO,
   NEGATIVE_ONE,
 }
@@ -107,6 +147,7 @@ enum TypeContact {
   VCard,
   Login_Web,
   Sale,
+  token_plugin,
   NONE,
   UPDATE,
   ERROR,
@@ -184,7 +225,16 @@ extension TypeContactExt2 on TypeContact {
   }
 }
 
-enum BankDetailType { NONE, SUCCESS, DELETED, ERROR, REQUEST_OTP, OTP, UN_LINK }
+enum BankDetailType {
+  NONE,
+  SUCCESS,
+  DELETED,
+  ERROR,
+  UN_LINK,
+  OTP,
+  CREATE_QR,
+  REQUEST_OTP
+}
 
 enum AccountType { NONE, LOG_OUT, POINT, AVATAR, ERROR }
 
@@ -201,10 +251,18 @@ enum AddBankType {
   OTP_BANK,
   INSERT_OTP_BANK,
   SCAN_QR,
+  REQUEST_REGISTER,
+  GET_BANK_LOCAL,
   SCAN_NOT_FOUND
 }
 
-enum BankType { QR, NONE, SCAN, BANK, GET_BANK, SCAN_ERROR, SCAN_NOT_FOUND }
+enum BankType {
+  QR,
+  NONE,
+  BANK,
+  GET_BANK,
+  GET_BANK_LOCAL,
+}
 
 enum TransType { NONE, GET_TRANDS, GET_FILTER }
 
@@ -243,19 +301,19 @@ enum CreateQRType {
 
 enum DashBoardType {
   GET_BANK,
+  GET_BANK_LOCAL,
   NONE,
-  SCAN_ERROR,
-  SCAN_NOT_FOUND,
-  SCAN,
-  SEARCH_BANK_NAME,
-  ADD_BOOK_CONTACT,
-  ADD_BOOK_CONTACT_EXIST,
   ERROR,
-  EXIST_BANK,
-  INSERT_BANK,
   POINT,
   TOKEN,
   APP_VERSION,
+  THEMES,
+  UPDATE_THEME,
+  UPDATE_THEME_ERROR,
+  GET_USER_SETTING,
+  KEEP_BRIGHT,
+  COUNT_NOTIFY,
+  UPDATE_STATUS_NOTIFY,
 }
 
 enum DashBoardTypePermission {
@@ -319,19 +377,6 @@ enum ScanType {
   NICK_NAME,
 }
 
-enum TokenType {
-  NONE,
-  InValid,
-  Valid,
-  MainSystem,
-  Internet,
-  Expired,
-  Logout,
-  Logout_failed,
-  Fcm_success,
-  Fcm_failed,
-}
-
 enum TypeInternet {
   NONE,
   CONNECT,
@@ -344,12 +389,15 @@ enum ShareBDSDType {
   ERROR,
   CONNECT,
   MEMBER,
+  SEARCH_MEMBER,
   DELETE_MEMBER,
   TELEGRAM,
   LARK,
   ADD_LARK,
   ADD_TELEGRAM,
   REMOVE_TELEGRAM,
+  SHARE_BDSD,
+  GET_LIST_GROUP,
   REMOVE_LARK,
 }
 
@@ -452,14 +500,14 @@ extension TypeFilterExt on int {
 
 enum LinkBankType { LINK, NOT_LINK }
 
-extension LinkBankTypeExt on LinkBankType {
-  int get type {
+extension LinkBankTypeExt on int {
+  LinkBankType get linkType {
     switch (this) {
-      case LinkBankType.LINK:
-        return 1;
-      case LinkBankType.NOT_LINK:
+      case 1:
+        return LinkBankType.LINK;
+      case 0:
       default:
-        return 0;
+        return LinkBankType.NOT_LINK;
     }
   }
 }

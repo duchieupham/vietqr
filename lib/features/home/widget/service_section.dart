@@ -101,6 +101,12 @@ class _ServiceSectionState extends State<ServiceSection> {
         }),
         _buildItemService(
             context,
+            'assets/images/ic-3D-request-register-bank.png',
+            'Mở TK ngân hàng', () {
+          Navigator.pushNamed(context, Routes.REGISTER_NEW_BANK);
+        }),
+        _buildItemService(
+            context,
             'assets/images/logo-vietqr-kiot-dashboard.png',
             'VietQR Kiot\n', () async {
           if (PlatformUtils.instance.isAndroidApp()) {
@@ -121,14 +127,14 @@ class _ServiceSectionState extends State<ServiceSection> {
             );
           }
         }),
-        _buildItemService(
-          context,
-          'assets/images/ic-business-3D.png',
-          'Doanh nghiệp',
-          () async {
-            Navigator.pushNamed(context, Routes.BUSINESS);
-          },
-        ),
+        // _buildItemService(
+        //   context,
+        //   'assets/images/ic-business-3D.png',
+        //   'Doanh nghiệp',
+        //   () async {
+        //     Navigator.pushNamed(context, Routes.BUSINESS);
+        //   },
+        // ),
         _buildItemService(
           context,
           'assets/images/logo-check-app-version.png',
@@ -154,7 +160,8 @@ class _ServiceSectionState extends State<ServiceSection> {
           'assets/images/shortcut-nfc.png',
           'VQR-ID Card',
           () async {
-            NavigatorUtils.navigatePage(context, VietQRIDCardView());
+            NavigatorUtils.navigatePage(context, VietQRIDCardView(),
+                routeName: VietQRIDCardView.routeName);
           },
         ),
         _buildItemService(
@@ -163,12 +170,12 @@ class _ServiceSectionState extends State<ServiceSection> {
           'Kích hoạt máy bán hàng',
           () async {
             NavigatorUtils.navigatePage(
-              context,
-              CustomInAppWebView(
-                url: 'https://vietqr.vn/service/may-ban-hang/active?mid=0',
-                userId: UserInformationHelper.instance.getUserId(),
-              ),
-            );
+                context,
+                CustomInAppWebView(
+                  url: 'https://vietqr.vn/service/may-ban-hang/active?mid=0',
+                  userId: UserHelper.instance.getUserId(),
+                ),
+                routeName: CustomInAppWebView.routeName);
           },
         ),
       ],

@@ -10,6 +10,7 @@ import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
 import 'package:vierqr/features/bank_detail/repositories/bank_card_repository.dart';
 import 'package:vierqr/features/bank_detail/states/bank_card_state.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
+import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 
 class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
@@ -22,6 +23,7 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
     on<BankCardEventUnConfirmOTP>(_unConfirmOTP);
     on<BankCardEventUnLink>(_unLinked);
     on<UpdateEvent>(_updateEvent);
+    on<BankCardGenerateDetailQR>(_createQRUnAuthen);
   }
 
   void _getDetail(BankCardEvent event, Emitter emit) async {
@@ -40,6 +42,35 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
             bankDetailDTO: dto,
             status: BlocStatus.NONE,
             request: BankDetailType.SUCCESS,
+            bankId: bankId,
+          ),
+        );
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+        status: BlocStatus.NONE,
+        request: BankDetailType.ERROR,
+      ));
+    }
+  }
+
+  void _createQRUnAuthen(BankCardEvent event, Emitter emit) async {
+    try {
+      if (event is BankCardGenerateDetailQR) {
+        emit(
+          state.copyWith(
+            status: BlocStatus.LOADING,
+            request: BankDetailType.NONE,
+          ),
+        );
+        final QRGeneratedDTO dto =
+            await bankCardRepository.generateQR(event.dto);
+        emit(
+          state.copyWith(
+            qrGeneratedDTO: dto,
+            status: BlocStatus.NONE,
+            request: BankDetailType.CREATE_QR,
             bankId: bankId,
           ),
         );

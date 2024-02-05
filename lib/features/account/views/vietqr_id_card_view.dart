@@ -19,6 +19,8 @@ import 'package:vierqr/services/shared_references/user_information_helper.dart';
 class VietQRIDCardView extends StatefulWidget {
   @override
   State<VietQRIDCardView> createState() => _VietQRIDCardViewState();
+
+  static String routeName = '/vietqrid_card';
 }
 
 class _VietQRIDCardViewState extends State<VietQRIDCardView> {
@@ -28,7 +30,7 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
   NfcTag? tag;
   Map<String, dynamic>? additionalData;
 
-  String get userId => UserInformationHelper.instance.getUserId();
+  String get userId => UserHelper.instance.getUserId();
 
   //CARD: RFID
   //NFC_CARD: NFC

@@ -1,13 +1,24 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:vierqr/commons/mixin/base_manager.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
+import 'package:vierqr/models/bank_type_dto.dart';
 
-class CreateQRProvider with ChangeNotifier {
-  final moneyController = TextEditingController();
-  final contentController = TextEditingController();
+class CreateQRProvider with ChangeNotifier, BaseManager {
+  @override
+  final BuildContext context;
 
-  String money = StringUtils.formatNumber(0);
+  CreateQRProvider(this.context);
+
+  String money = '';
+  String content = '';
+  String orderCode = '';
+  String branchCode = '';
+
+  bool isExtra = false;
+
+  List<BankTypeDTO> listBank = [];
 
   //page = 1 : Tạo QR
   //page = 2 : chi tiết QR
@@ -32,6 +43,11 @@ class CreateQRProvider with ChangeNotifier {
 
   double progressBar = 0.7;
 
+  void updateExtra() {
+    isExtra = !isExtra;
+    notifyListeners();
+  }
+
   void updateProgressBar(value) {
     progressBar = value;
     notifyListeners();
@@ -39,6 +55,9 @@ class CreateQRProvider with ChangeNotifier {
 
   void updatePage(value) {
     page = value;
+    if (listBank.isEmpty) {
+      listBank = banks;
+    }
     notifyListeners();
   }
 
@@ -46,6 +65,11 @@ class CreateQRProvider with ChangeNotifier {
     _isAmountErr = false;
     _isContentErr = false;
     money = StringUtils.formatNumber(0);
+    content = '';
+    branchCode = '';
+    orderCode = '';
+    isExtra = false;
+    notifyListeners();
   }
 
   void updateMoney(String value) {
@@ -67,7 +91,17 @@ class CreateQRProvider with ChangeNotifier {
   }
 
   void updateSuggest(String text) {
-    contentController.value = contentController.value.copyWith(text: text);
+    content = text;
+    notifyListeners();
+  }
+
+  void updateBranchCode(String text) {
+    branchCode = text;
+    notifyListeners();
+  }
+
+  void updateOrderCode(String text) {
+    orderCode = text;
     notifyListeners();
   }
 

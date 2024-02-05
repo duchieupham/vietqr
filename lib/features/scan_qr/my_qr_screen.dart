@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:qr_flutter/qr_flutter.dart';
+
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
+import 'package:vierqr/commons/widgets/viet_qr.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
@@ -53,18 +54,13 @@ class _MyQrScreenState extends State<MyQrScreen> {
                         ),
                       ],
                     ),
-                    child: QrImage(
-                      data: UserInformationHelper.instance.getWalletId(),
-                      version: QrVersions.auto,
-                      embeddedImage: const AssetImage(
-                          'assets/images/ic-viet-qr-small.png'),
-                      embeddedImageStyle: QrEmbeddedImageStyle(
-                        size: const Size(30, 30),
-                      ),
+                    child: VietQr(
+                      qrCode: UserHelper.instance.getWalletId(),
+                      qrGeneratedDTO: null,
                     ),
                   ),
                   Text(
-                    UserInformationHelper.instance.getUserFullname(),
+                    UserHelper.instance.getUserFullName(),
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.w400),
                   ),
@@ -86,7 +82,7 @@ class _MyQrScreenState extends State<MyQrScreen> {
               borderRadius: 8,
               enableShadow: true,
               function: () {
-                share(name: UserInformationHelper.instance.getUserFullname());
+                share(name: UserHelper.instance.getUserFullName());
               },
             ),
           ),

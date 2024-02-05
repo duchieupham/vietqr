@@ -1,10 +1,11 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
-import 'package:qr_flutter/qr_flutter.dart';
+
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
+import 'package:vierqr/commons/widgets/viet_qr.dart';
 import 'package:vierqr/features/scan_qr/views/dialog_feature_scan.dart';
 
 class DialogScanURL extends StatelessWidget {
@@ -44,9 +45,10 @@ class DialogScanURL extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: QrImage(
-                  data: code,
-                  version: QrVersions.auto,
+                child: VietQr(
+                  qrGeneratedDTO: null,
+                  qrCode: code,
+                  isEmbeddedImage: true,
                 ),
               );
             }),

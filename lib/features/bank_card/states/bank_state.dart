@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
+import 'package:vierqr/models/bank_account_terminal.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 
@@ -17,6 +18,7 @@ class BankState extends Equatable {
   final TypeQR typeQR;
   final String? barCode;
   final bool isEmpty;
+  final List<BankAccountTerminal> listBankAccountTerminal;
 
   const BankState({
     this.msg,
@@ -30,6 +32,7 @@ class BankState extends Equatable {
     required this.colors,
     required this.listBankTypeDTO,
     this.isEmpty = false,
+    required this.listBankAccountTerminal,
   });
 
   BankState copyWith({
@@ -37,6 +40,7 @@ class BankState extends Equatable {
     BankType? request,
     String? msg,
     List<BankAccountDTO>? listBanks,
+    List<BankAccountTerminal>? listBankTerminal,
     List<Color>? colors,
     NationalScannerDTO? nationalScannerDTO,
     String? bankAccount,
@@ -51,6 +55,7 @@ class BankState extends Equatable {
       request: request ?? this.request,
       typeQR: typeQR ?? this.typeQR,
       msg: msg ?? this.msg,
+      listBankAccountTerminal: listBankTerminal ?? this.listBankAccountTerminal,
       barCode: barCode ?? this.barCode,
       bankAccount: bankAccount ?? this.bankAccount,
       bankTypeDTO: bankTypeDTO ?? this.bankTypeDTO,

@@ -6,7 +6,7 @@ import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_card_request_otp.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
-
+import 'package:vierqr/models/qr_generated_dto.dart';
 
 class BankCardState extends Equatable {
   final String? msg;
@@ -20,6 +20,7 @@ class BankCardState extends Equatable {
   final NationalScannerDTO? nationalScannerDTO;
   final String? bankAccount;
   final BankTypeDTO? bankTypeDTO;
+  final QRGeneratedDTO? qrGeneratedDTO;
 
   const BankCardState({
     this.msg,
@@ -33,6 +34,7 @@ class BankCardState extends Equatable {
     this.nationalScannerDTO,
     this.bankAccount,
     this.bankTypeDTO,
+    this.qrGeneratedDTO,
   });
 
   BankCardState copyWith({
@@ -49,6 +51,7 @@ class BankCardState extends Equatable {
     NationalScannerDTO? nationalScannerDTO,
     String? bankAccount,
     BankTypeDTO? bankTypeDTO,
+    QRGeneratedDTO? qrGeneratedDTO,
   }) {
     return BankCardState(
       status: status ?? this.status,
@@ -62,6 +65,7 @@ class BankCardState extends Equatable {
       nationalScannerDTO: nationalScannerDTO ?? this.nationalScannerDTO,
       bankAccount: bankAccount ?? this.bankAccount,
       bankTypeDTO: bankTypeDTO ?? this.bankTypeDTO,
+      qrGeneratedDTO: qrGeneratedDTO ?? this.qrGeneratedDTO,
     );
   }
 
@@ -77,5 +81,6 @@ class BankCardState extends Equatable {
         nationalScannerDTO,
         bankAccount,
         bankTypeDTO,
+        qrGeneratedDTO,
       ];
 }

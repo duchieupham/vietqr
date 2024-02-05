@@ -12,7 +12,6 @@ import 'package:vierqr/features/create_qr/states/create_qr_state.dart';
 import 'package:vierqr/features/generate_qr/repositories/qr_repository.dart';
 import 'package:vierqr/features/home/blocs/home_bloc.dart';
 import 'package:vierqr/main.dart';
-import 'package:vierqr/models/account_bank_detail_dto.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/models/notification_transaction_success_dto.dart';
@@ -59,10 +58,6 @@ class CreateQRBloc extends Bloc<CreateQREvent, CreateQRState> with BaseManager {
             bankName: qrDTO!.bankName,
             imgId: qrDTO!.imgId,
             type: 0,
-            branchId: '',
-            businessId: '',
-            branchName: '',
-            businessName: '',
             isAuthenticated: false,
           );
 

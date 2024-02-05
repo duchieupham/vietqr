@@ -10,7 +10,7 @@ class TextFieldCustom extends StatefulWidget {
   final TextEditingController? controller;
   final ValueChanged<String>? onChange;
   final VoidCallback? onEditingComplete;
-  final ValueChanged<Object>? onSubmitted;
+  final ValueChanged<String>? onSubmitted;
   final TextInputAction? keyboardAction;
   final TextInputType inputType;
   final bool isObscureText;
@@ -20,11 +20,12 @@ class TextFieldCustom extends StatefulWidget {
   final String? unTitle;
   final String? subTitle;
   final bool? autoFocus;
+  final Color? colorBG;
   final bool? enable;
   final FocusNode? focusNode;
   final int? maxLines;
   final int? maxLength;
-
+  final double? height;
   final TextAlign? textAlign;
   final Function(PointerDownEvent)? onTapOutside;
   final bool isShowToast;
@@ -41,6 +42,7 @@ class TextFieldCustom extends StatefulWidget {
   //Border textfield
   final bool isRequired;
   final Color? fillColor;
+  final InputBorder? inputBorder;
 
   const TextFieldCustom(
       {Key? key,
@@ -54,6 +56,7 @@ class TextFieldCustom extends StatefulWidget {
       required this.isObscureText,
       this.fontSize,
       this.textFieldType,
+      this.height,
       this.title,
       this.unTitle,
       this.autoFocus,
@@ -71,11 +74,13 @@ class TextFieldCustom extends StatefulWidget {
       this.validator,
       this.inputFormatter,
       this.prefixIcon,
+      this.colorBG,
       this.subTitle,
       this.suffixIcon,
       this.isRequired = false,
       this.onTap,
       this.contentPadding,
+      this.inputBorder,
       this.readOnly = false,
       this.titleSize})
       : super(key: key);
@@ -100,6 +105,7 @@ class _TextFieldWidgetState extends State<TextFieldCustom> {
       inputFormatters: widget.inputFormatter,
       onTapOutside: widget.onTapOutside,
       maxLength: widget.maxLength,
+      onFieldSubmitted: widget.onSubmitted,
       enabled: widget.enable,
       readOnly: widget.readOnly,
       autofocus: widget.autoFocus ?? false,
@@ -109,7 +115,7 @@ class _TextFieldWidgetState extends State<TextFieldCustom> {
       textInputAction: widget.keyboardAction,
       decoration: InputDecoration(
         hintText: widget.hintText,
-        border: InputBorder.none,
+        border: widget.inputBorder ?? InputBorder.none,
         hintStyle: TextStyle(
           fontSize: (widget.fontSize != null) ? widget.fontSize : 14,
           color: (widget.title != null)
@@ -184,11 +190,14 @@ class _TextFieldWidgetState extends State<TextFieldCustom> {
             const SizedBox(height: 8),
           ],
           Container(
+            height: widget.height,
             alignment: Alignment.centerLeft,
+            decoration: BoxDecoration(
+                color: widget.colorBG, borderRadius: BorderRadius.circular(5)),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                textFiledTypeLabel,
+                SizedBox(height: 40, child: textFiledTypeLabel),
                 if (_msgError != null && !widget.isShowToast)
                   Container(
                     width: double.infinity,

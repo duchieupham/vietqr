@@ -30,12 +30,14 @@ import 'events/mobile_recharge_event.dart';
 class MobileRechargeScreen extends StatelessWidget {
   MobileRechargeScreen({super.key});
 
+  static String routeName = '/mobile_recharge';
+
   late FocusNode myFocusNode = FocusNode();
 
   String getIdImage(List<NetworkProviders> list) {
     String imgId = '';
     AccountInformationDTO accountInformationDTO =
-        UserInformationHelper.instance.getAccountInformation();
+        UserHelper.instance.getAccountInformation();
     for (var element in list) {
       if (accountInformationDTO.carrierTypeId == element.id) {
         imgId = element.imgId;
@@ -48,7 +50,7 @@ class MobileRechargeScreen extends StatelessWidget {
   updateMobileCarrierType(BuildContext context) {
     Map<String, dynamic> param = {};
 
-    param['userId'] = UserInformationHelper.instance.getUserId();
+    param['userId'] = UserHelper.instance.getUserId();
     param['carrierTypeId'] =
         Provider.of<TopUpProvider>(context, listen: false).networkProviders.id;
     BlocProvider.of<MobileRechargeBloc>(context)
@@ -57,7 +59,7 @@ class MobileRechargeScreen extends StatelessWidget {
 
   updateInformationUser(BuildContext context) {
     AccountInformationDTO accountInformationDTO =
-        UserInformationHelper.instance.getAccountInformation();
+        UserHelper.instance.getAccountInformation();
     AccountInformationDTO accountInformationDTONew = AccountInformationDTO(
         userId: accountInformationDTO.userId,
         firstName: accountInformationDTO.firstName,
@@ -74,7 +76,7 @@ class MobileRechargeScreen extends StatelessWidget {
         carrierTypeId: Provider.of<TopUpProvider>(context, listen: false)
             .networkProviders
             .id);
-    UserInformationHelper.instance
+    UserHelper.instance
         .setAccountInformation(accountInformationDTONew);
   }
 
@@ -98,7 +100,12 @@ class MobileRechargeScreen extends StatelessWidget {
                     .openLoadingDialog(msg: 'Đang thực hiện thanh toán');
               }
               if (state is MobileRechargeMobileMoneySuccessState) {
-                updateMobileCarrierType(context);
+                if (UserHelper.instance.getPhoneNo() ==
+                    Provider.of<TopUpProvider>(context, listen: false)
+                        .phoneNo) {
+                  // updateMobileCarrierType(context);
+                }
+
                 eventBus.fire(ReloadWallet());
                 Navigator.pop(context);
                 Navigator.pop(context);
@@ -159,12 +166,12 @@ class MobileRechargeScreen extends StatelessWidget {
                         ),
                         _buildTemplateSection(
                           'Số điện thoại',
-                          child: _buildPhoneNumber(context,
-                              accountInformationDTO: UserInformationHelper
+                          child: _buildPhoneNumber(context, state,
+                              accountInformationDTO: UserHelper
                                   .instance
                                   .getAccountInformation(),
                               phoneNumber:
-                                  UserInformationHelper.instance.getPhoneNo()),
+                                  UserHelper.instance.getPhoneNo()),
                         ),
                         const SizedBox(
                           height: 28,
@@ -198,7 +205,7 @@ class MobileRechargeScreen extends StatelessWidget {
                                     style: TextStyle(fontSize: 10),
                                   ),
                                   Text(
-                                    '${CurrencyUtils.instance.getCurrencyFormatted(UserInformationHelper.instance.getWalletInfo().amount ?? '0')} VQR',
+                                    '${CurrencyUtils.instance.getCurrencyFormatted(UserHelper.instance.getWalletInfo().amount ?? '0')} VQR',
                                     style: const TextStyle(
                                         fontWeight: FontWeight.bold),
                                   ),
@@ -260,7 +267,7 @@ class MobileRechargeScreen extends StatelessWidget {
                                     onTap: () {
                                       FocusManager.instance.primaryFocus
                                           ?.unfocus();
-                                      if (int.parse(UserInformationHelper
+                                      if (int.parse(UserHelper
                                                       .instance
                                                       .getWalletInfo()
                                                       .amount ??
@@ -281,11 +288,11 @@ class MobileRechargeScreen extends StatelessWidget {
                                               data['phoneNo'] =
                                                   provider.phoneNo.isNotEmpty
                                                       ? provider.phoneNo
-                                                      : UserInformationHelper
+                                                      : UserHelper
                                                           .instance
                                                           .getPhoneNo();
                                               data['userId'] =
-                                                  UserInformationHelper.instance
+                                                  UserHelper.instance
                                                       .getUserId();
                                               data['rechargeType'] =
                                                   provider.rechargeType;
@@ -311,7 +318,7 @@ class MobileRechargeScreen extends StatelessWidget {
                                       decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(5),
-                                          color: int.parse(UserInformationHelper
+                                          color: int.parse(UserHelper
                                                               .instance
                                                               .getWalletInfo()
                                                               .amount ??
@@ -326,7 +333,7 @@ class MobileRechargeScreen extends StatelessWidget {
                                       child: Text(
                                         'Thanh toán',
                                         style: TextStyle(
-                                            color: int.parse(UserInformationHelper
+                                            color: int.parse(UserHelper
                                                                 .instance
                                                                 .getWalletInfo()
                                                                 .amount ??
@@ -358,7 +365,7 @@ class MobileRechargeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPhoneNumber(BuildContext context,
+  Widget _buildPhoneNumber(BuildContext context, MobileRechargeState state,
       {required AccountInformationDTO accountInformationDTO,
       required String phoneNumber}) {
     double height = MediaQuery.of(context).size.height;
@@ -373,7 +380,20 @@ class MobileRechargeScreen extends StatelessWidget {
             String imgId = provider.networkProviders.imgId;
             return Row(
               children: [
-                if (imgId.isNotEmpty)
+                if (state is MobileRechargeLoadingState)
+                  Container(
+                    width: 45,
+                    height: 45,
+                    padding: EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(
+                          width: 0.5,
+                          color: AppColor.GREY_TEXT.withOpacity(0.3)),
+                    ),
+                    child: CircularProgressIndicator(),
+                  )
+                else if (imgId.isNotEmpty)
                   GestureDetector(
                     onTap: () {
                       DialogWidget.instance.showModalBottomContent(

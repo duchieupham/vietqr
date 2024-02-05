@@ -1,16 +1,17 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:ui' as ui;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'dart:ui' as ui;
-
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:vierqr/models/terminal_response_dto.dart';
 
 class ShareUtils {
   const ShareUtils._privateConsrtructor();
@@ -80,10 +81,10 @@ class ShareUtils {
         email = '\nEmail: ${dto.email}';
       }
 
-      result = '$name $sdt $email\nĐược tạo từ VietQR VN';
+      result = '$name $sdt $email\nBy VietQR VN';
     } else {
       String prefix =
-          '${dto.bankAccount}\n${dto.userBankName}\n${dto.bankCode}${dto.bankName.isNotEmpty ? '-${dto.bankName}' : ''}';
+          '${dto.bankAccount}\n${dto.userBankName}\n${dto.bankCode}${dto.bankName.isNotEmpty ? ' - ${dto.bankName}' : ''}';
       String suffix = '';
       if (dto.amount.isNotEmpty && dto.amount != '0') {
         suffix =
@@ -92,8 +93,19 @@ class ShareUtils {
           suffix += dto.content;
         }
       }
-      result = '$prefix$suffix\nĐược tạo bởi vietqr.vn - Hotline 1900.6234';
+      result = '$prefix$suffix\nBy VietQR VN';
     }
+
+    return result;
+  }
+
+  String getTextSharingBankTerminal(TerminalBankResponseDTO dto) {
+    String result = '';
+    String prefix =
+        '${dto.bankAccount}\n${dto.userBankName}\n${dto.bankCode}${dto.bankName.isNotEmpty ? ' - ${dto.bankName}' : ''}';
+    String suffix = '';
+
+    result = '$prefix$suffix\nBy VietQR VN';
 
     return result;
   }

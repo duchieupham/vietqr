@@ -1,6 +1,5 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/encrypt_utils.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
@@ -8,7 +7,10 @@ import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/pin_code_input.dart';
 import 'package:vierqr/models/account_login_dto.dart';
+import 'package:vierqr/models/app_info_dto.dart';
+import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 
+import 'bgr_app_bar_login.dart';
 import 'forgot_password_screen.dart';
 
 class QuickLoginScreen extends StatefulWidget {
@@ -18,6 +20,7 @@ class QuickLoginScreen extends StatefulWidget {
   final GestureTapCallback? onQuickLogin;
   final TextEditingController pinController;
   final FocusNode passFocus;
+  final AppInfoDTO appInfoDTO;
 
   QuickLoginScreen({
     super.key,
@@ -27,6 +30,7 @@ class QuickLoginScreen extends StatefulWidget {
     required this.onQuickLogin,
     required this.pinController,
     required this.passFocus,
+    required this.appInfoDTO,
   });
 
   @override
@@ -42,7 +46,14 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
     } else {
       isButtonLogin = false;
     }
+    if (!mounted) return;
     setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<AuthProvider>(context, listen: false).initThemeDTO();
   }
 
   @override
@@ -58,32 +69,16 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
                 children: [
                   Stack(
                     children: [
-                      Container(
-                        height: 300,
-                        padding:
-                            const EdgeInsets.only(top: 70, left: 40, right: 40),
-                        width: MediaQuery.of(context).size.width,
-                        decoration: const BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage('assets/images/bgr-header.png'),
-                            fit: BoxFit.fill,
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        child: ClipRect(
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 0, sigmaY: 30),
-                            child: Container(
-                              color: Colors.white.withOpacity(0.0),
-                              height: 40,
-                            ),
-                          ),
-                        ),
-                      ),
+                      Consumer<AuthProvider>(builder: (context, page, child) {
+                        return BackgroundAppBarLogin(
+                          file: page.isEventTheme
+                              ? page.fileThemeLogin
+                              : page.file,
+                          url: widget.appInfoDTO.themeImgUrl,
+                          isEventTheme: widget.appInfoDTO.isEventTheme,
+                          child: const SizedBox(),
+                        );
+                      }),
                       Container(
                         height: 300,
                         padding:
@@ -118,13 +113,19 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
                                     ],
                                   ),
                                 ),
-                                SizedBox(
-                                  width: 80,
-                                  height: 40,
-                                  child: Image.asset(
-                                    'assets/images/ic-viet-qr.png',
-                                    height: 40,
-                                  ),
+                                Consumer<AuthProvider>(
+                                  builder: (context, page, child) {
+                                    return SizedBox(
+                                      width: 80,
+                                      height: 40,
+                                      child: page.fileLogo.path.isNotEmpty
+                                          ? Image.file(page.fileLogo)
+                                          : Image.asset(
+                                              'assets/images/ic-viet-qr.png',
+                                              height: 40,
+                                            ),
+                                    );
+                                  },
                                 ),
                               ],
                             ),
@@ -186,7 +187,9 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
                                       ForgotPasswordScreen(
                                         userName: widget.userName,
                                         phone: widget.phone,
+                                        appInfoDTO: widget.appInfoDTO,
                                       ),
+                                      routeName: ForgotPasswordScreen.routeName,
                                     );
                                   },
                                   child: const Text(

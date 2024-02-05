@@ -252,7 +252,7 @@ class _SaveContactScreenState extends State<_BodyWidget> {
                                     companyName: companyController.text,
                                     website: webController.text,
                                     address: addressController.text,
-                                    userId: UserInformationHelper.instance
+                                    userId: UserHelper.instance
                                         .getUserId(),
                                     additionalData: suggestController.text,
                                   );
@@ -264,7 +264,7 @@ class _SaveContactScreenState extends State<_BodyWidget> {
                                     nickName: nameController.text,
                                     type: state.typeQR.value.toString(),
                                     value: state.qrCode,
-                                    userId: UserInformationHelper.instance
+                                    userId: UserHelper.instance
                                         .getUserId(),
                                     bankTypeId: state.bankTypeDTO?.id ?? '',
                                     bankAccount: state.bankAccount ?? '',

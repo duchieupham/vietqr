@@ -122,15 +122,6 @@ class SaveContactEvent extends ContactEvent {
   List<Object?> get props => [dto, file];
 }
 
-class ScanQrContactEvent extends ContactEvent {
-  final String code;
-
-  ScanQrContactEvent(this.code);
-
-  @override
-  List<Object?> get props => [code];
-}
-
 class UpdateStatusContactEvent extends ContactEvent {
   final Map<String, dynamic> query;
 

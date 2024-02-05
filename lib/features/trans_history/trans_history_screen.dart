@@ -6,6 +6,7 @@ import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/commons/utils/transaction_utils.dart';
 import 'package:vierqr/commons/widgets/textfield_custom.dart';
@@ -13,10 +14,10 @@ import 'package:vierqr/features/trans_history/blocs/trans_history_bloc.dart';
 import 'package:vierqr/features/trans_history/blocs/trans_history_provider.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/related_transaction_receive_dto.dart';
-import 'package:vierqr/models/transaction_input_dto.dart';
 
 import 'events/trans_history_event.dart';
 import 'states/trans_history_state.dart';
+import 'views/dialog_edit_view.dart';
 
 class TransHistoryScreen extends StatelessWidget {
   final String bankId;
@@ -74,126 +75,129 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocConsumer<TransHistoryBloc, TransHistoryState>(
-        listener: (context, state) {
-          if (state.status == BlocStatus.LOADING) {
-            // DialogWidget.instance.openLoadingDialog();
-          }
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: BlocConsumer<TransHistoryBloc, TransHistoryState>(
+          listener: (context, state) {
+            if (state.status == BlocStatus.LOADING) {
+              // DialogWidget.instance.openLoadingDialog();
+            }
 
-          if (state.status == BlocStatus.UNLOADING) {
-            // Navigator.pop(context);
-          }
-          if (state.type == TransHistoryType.LOAD_DATA) {
-            Provider.of<TransProvider>(context, listen: false)
-                .updateCallLoadMore(true);
-          }
-        },
-        builder: (context, state) {
-          return Stack(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _buildDropDown(),
-                  const SizedBox(height: 16),
-                  ...[
-                    _buildFormStatus(),
-                    _buildDropTime(),
-                    _buildFormSearch(),
+            if (state.status == BlocStatus.UNLOADING) {
+              // Navigator.pop(context);
+            }
+            if (state.type == TransHistoryType.LOAD_DATA) {
+              Provider.of<TransProvider>(context, listen: false)
+                  .updateCallLoadMore(true);
+            }
+          },
+          builder: (context, state) {
+            return Stack(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _buildDropDown(),
                     const SizedBox(height: 16),
-                  ],
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Danh sách giao dịch',
-                      style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  if (state.status == BlocStatus.LOADING)
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 100),
-                        child: const Center(
-                          child: CircularProgressIndicator(
-                            color: AppColor.BLUE_TEXT,
-                          ),
-                        ),
+                    ...[
+                      _buildFormStatus(),
+                      _buildDropTime(),
+                      _buildFormSearch(),
+                      const SizedBox(height: 16),
+                    ],
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Danh sách giao dịch',
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.bold),
                       ),
-                    )
-                  else ...[
-                    if (state.list.isEmpty)
+                    ),
+                    const SizedBox(height: 10),
+                    if (state.status == BlocStatus.LOADING)
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.only(bottom: 100),
                           child: const Center(
-                            child: Text('Không có giao dịch nào'),
+                            child: CircularProgressIndicator(
+                              color: AppColor.BLUE_TEXT,
+                            ),
                           ),
                         ),
                       )
-                    else
-                      Consumer<TransProvider>(
-                          builder: (context, provider, child) {
-                        return Expanded(
-                          child: RefreshIndicator(
-                            onRefresh: onRefresh,
-                            child: SingleChildScrollView(
-                              controller: provider.scrollControllerList,
-                              child: Column(
-                                children: [
-                                  ...List.generate(
-                                    state.list.length,
-                                    (index) {
-                                      return _buildElement(
-                                        context: context,
-                                        dto: state.list[index],
-                                      );
-                                    },
-                                  ).toList(),
-                                  if (!state.isLoadMore)
-                                    const UnconstrainedBox(
-                                      child: SizedBox(
-                                        width: 30,
-                                        height: 30,
-                                        child: CircularProgressIndicator(
-                                          color: AppColor.BLUE_TEXT,
-                                        ),
-                                      ),
-                                    )
-                                ],
-                              ),
+                    else ...[
+                      if (state.list.isEmpty)
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 100),
+                            child: const Center(
+                              child: Text('Không có giao dịch nào'),
                             ),
                           ),
-                        );
-                      }),
+                        )
+                      else
+                        Consumer<TransProvider>(
+                            builder: (context, provider, child) {
+                          return Expanded(
+                            child: RefreshIndicator(
+                              onRefresh: onRefresh,
+                              child: SingleChildScrollView(
+                                controller: provider.scrollControllerList,
+                                child: Column(
+                                  children: [
+                                    ...List.generate(
+                                      state.list.length,
+                                      (index) {
+                                        return _buildElement(
+                                          context: context,
+                                          dto: state.list[index],
+                                        );
+                                      },
+                                    ).toList(),
+                                    if (!state.isLoadMore)
+                                      const UnconstrainedBox(
+                                        child: SizedBox(
+                                          width: 30,
+                                          height: 30,
+                                          child: CircularProgressIndicator(
+                                            color: AppColor.BLUE_TEXT,
+                                          ),
+                                        ),
+                                      )
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        }),
+                    ],
                   ],
-                ],
-              ),
-              Consumer<TransProvider>(builder: (context, provider, child) {
-                if (provider.enableDropList) {
-                  return Container(
-                    padding: EdgeInsets.only(left: 20, top: 62),
-                    child: Row(
-                      children: [
-                        Text(
-                          'Trạng thái giao dịch',
-                          style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              color: AppColor.TRANSPARENT),
-                        ),
-                        const SizedBox(width: 30),
-                        Expanded(child: _buildSearchList()),
-                      ],
-                    ),
-                  );
-                }
-                return Container();
-              }),
-            ],
-          );
-        },
+                ),
+                Consumer<TransProvider>(builder: (context, provider, child) {
+                  if (provider.enableDropList) {
+                    return Container(
+                      padding: EdgeInsets.only(left: 20, top: 62),
+                      child: Row(
+                        children: [
+                          Text(
+                            'Trạng thái giao dịch',
+                            style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                color: AppColor.TRANSPARENT),
+                          ),
+                          const SizedBox(width: 30),
+                          Expanded(child: _buildSearchList()),
+                        ],
+                      ),
+                    );
+                  }
+                  return Container();
+                }),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -237,33 +241,52 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
               ),
             ),
             const SizedBox(height: 8),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            Row(
               children: [
-                _buildItem('Thời gian tạo:',
-                    TimeUtils.instance.formatDateFromInt(dto.time, false)),
-                if (dto.type != 0)
-                  _buildItem(
-                      'Thời gian thanh toán:',
-                      TimeUtils.instance
-                          .formatDateFromInt(dto.timePaid, false)),
-                _buildItem(
-                  'Trạng thái:',
-                  TransactionUtils.instance.getStatusString(dto.status),
-                  style: TextStyle(
-                    color: TransactionUtils.instance.getColorStatus(
-                      dto.status,
-                      dto.type,
-                      dto.transType,
-                    ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildItem(
+                          'Thời gian tạo:',
+                          TimeUtils.instance
+                              .formatDateFromInt(dto.time, false)),
+                      if (dto.type != 0)
+                        _buildItem(
+                            'Thời gian thanh toán:',
+                            TimeUtils.instance
+                                .formatDateFromInt(dto.timePaid, false)),
+                      _buildItem(
+                        'Trạng thái:',
+                        TransactionUtils.instance.getStatusString(dto.status),
+                        style: TextStyle(
+                          color: TransactionUtils.instance.getColorStatus(
+                            dto.status,
+                            dto.type,
+                            dto.transType,
+                          ),
+                        ),
+                      ),
+                      _buildItem(
+                        'Nội dung:',
+                        dto.content,
+                        style: const TextStyle(color: AppColor.GREY_TEXT),
+                        maxLines: 2,
+                      ),
+                    ],
                   ),
                 ),
-                _buildItem(
-                  'Nội dung:',
-                  dto.content,
-                  style: const TextStyle(color: AppColor.GREY_TEXT),
-                  maxLines: 2,
-                ),
+                IconButton(
+                  onPressed: () async {
+                    await NavigatorUtils.showGeneralDialog(
+                      context: context,
+                      child: DialogEditView(id: dto.transactionId),
+                    );
+                  },
+                  constraints: BoxConstraints(),
+                  padding: EdgeInsets.zero,
+                  icon: Icon(Icons.edit, size: 20),
+                )
               ],
             ),
             const SizedBox(height: 8),
@@ -273,154 +296,158 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
     );
   }
 
+  bool isEdit = false;
+
   Widget _buildDropTime() {
     return Consumer<TransProvider>(builder: (context, provider, child) {
-      if (provider.valueFilter.id.typeTrans == TypeFilter.CODE_SALE) {
-        return Container(
-          width: MediaQuery.of(context).size.width,
-          alignment: Alignment.center,
-          child: Column(
-            children: [
-              Container(
-                width: MediaQuery.of(context).size.width,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                height: 50,
-                margin: const EdgeInsets.only(bottom: 16),
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: AppColor.WHITE,
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: const Text(
-                        'Thời gian',
-                        style:
-                            TextStyle(fontSize: 14, color: AppColor.GREY_TEXT),
-                      ),
+      return Container(
+        width: MediaQuery.of(context).size.width,
+        alignment: Alignment.center,
+        child: Column(
+          children: [
+            Container(
+              width: MediaQuery.of(context).size.width,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              height: 50,
+              margin: const EdgeInsets.only(bottom: 16),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: AppColor.WHITE,
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: const Text(
+                      'Thời gian',
+                      style: TextStyle(fontSize: 14, color: AppColor.GREY_TEXT),
                     ),
-                    const SizedBox(width: 20),
-                    if (!provider.enableDropTime)
-                      DropdownButtonHideUnderline(
-                        child: DropdownButton2<FilterTimeTransaction>(
-                          isExpanded: true,
-                          onMenuStateChange: provider.onMenuStateChange,
-                          hint: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  provider.valueTimeFilter.title,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(width: 20),
+                  if (!provider.enableDropTime)
+                    DropdownButtonHideUnderline(
+                      child: DropdownButton2<FilterTimeTransaction>(
+                        isExpanded: true,
+                        onMenuStateChange: provider.onMenuStateChange,
+                        hint: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                provider.valueTimeFilter.title,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
                                 ),
+                                overflow: TextOverflow.ellipsis,
                               ),
-                            ],
-                          ),
-                          items: provider.listTimeFilter
-                              .map(
-                                (FilterTimeTransaction item) =>
-                                    DropdownMenuItem<FilterTimeTransaction>(
-                                  value: item,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    children: [
-                                      Expanded(
-                                        child: Container(
-                                          alignment: Alignment.bottomLeft,
-                                          child: Text(
-                                            item.title,
-                                            style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500),
-                                          ),
+                            ),
+                          ],
+                        ),
+                        items: provider.listTimeFilter
+                            .map(
+                              (FilterTimeTransaction item) =>
+                                  DropdownMenuItem<FilterTimeTransaction>(
+                                value: item,
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    Expanded(
+                                      child: Container(
+                                        alignment: Alignment.bottomLeft,
+                                        child: Text(
+                                          item.title,
+                                          style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500),
                                         ),
                                       ),
-                                      const Divider()
-                                    ],
-                                  ),
+                                    ),
+                                    const Divider()
+                                  ],
                                 ),
-                              )
-                              .toList(),
-                          value: provider.valueTimeFilter,
-                          onChanged: (value) =>
-                              provider.changeTimeFilter(value, context),
-                          buttonStyleData: ButtonStyleData(
-                            height: 50,
-                            width: 200,
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              color: Colors.white,
-                            ),
-                          ),
-                          iconStyleData: const IconStyleData(
-                            icon: Icon(Icons.expand_more),
-                            iconSize: 16,
-                            iconEnabledColor: AppColor.BLACK,
-                            iconDisabledColor: Colors.grey,
-                          ),
-                          dropdownStyleData: DropdownStyleData(
-                            width: 200,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5)),
-                          ),
-                          menuItemStyleData: const MenuItemStyleData(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                              ),
+                            )
+                            .toList(),
+                        value: provider.valueTimeFilter,
+                        onChanged: (value) =>
+                            provider.changeTimeFilter(value, context, (dto) {
+                          _bloc.add(TransactionEventGetList(dto));
+                        }),
+                        buttonStyleData: ButtonStyleData(
+                          height: 50,
+                          width: 200,
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            color: Colors.white,
                           ),
                         ),
-                      )
-                    else
-                      Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () => provider.openBottomTime(context),
-                            child: Container(
-                              color: Colors.transparent,
-                              child: Row(
-                                children: [
-                                  Text(
-                                    'Từ ${TimeUtils.instance.formatDateToString(provider.fromDate, isExport: true)}',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: AppColor.BLACK,
-                                    ),
+                        iconStyleData: const IconStyleData(
+                          icon: Icon(Icons.expand_more),
+                          iconSize: 16,
+                          iconEnabledColor: AppColor.BLACK,
+                          iconDisabledColor: Colors.grey,
+                        ),
+                        dropdownStyleData: DropdownStyleData(
+                          width: 200,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5)),
+                        ),
+                        menuItemStyleData: const MenuItemStyleData(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                        ),
+                      ),
+                    )
+                  else
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () => provider.openBottomTime(context, (dto) {
+                            _bloc.add(TransactionEventGetList(dto));
+                          }),
+                          child: Container(
+                            color: Colors.transparent,
+                            child: Row(
+                              children: [
+                                Text(
+                                  'Từ ${TimeUtils.instance.formatDateToString(provider.fromDate, isExport: true)}',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: AppColor.BLACK,
                                   ),
-                                  const SizedBox(width: 16),
-                                  Text(
-                                    'Đến ${TimeUtils.instance.formatDateToString(provider.toDate, isExport: true)}',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: AppColor.BLACK,
-                                    ),
+                                ),
+                                const SizedBox(width: 16),
+                                Text(
+                                  'Đến ${TimeUtils.instance.formatDateToString(provider.toDate, isExport: true)}',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: AppColor.BLACK,
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
-                          const SizedBox(width: 16),
-                          GestureDetector(
-                            onTap: () => provider.onChangeDropTime(false),
-                            child: const Icon(
-                              Icons.clear,
-                              size: 20,
-                            ),
-                          )
-                        ],
-                      ),
-                  ],
-                ),
+                        ),
+                        const SizedBox(width: 16),
+                        GestureDetector(
+                          onTap: () => provider.resetFilterTime((dto) {
+                            _bloc.add(TransactionEventGetList(dto));
+                          }),
+                          child: const Icon(
+                            Icons.clear,
+                            size: 20,
+                          ),
+                        )
+                      ],
+                    ),
+                ],
               ),
-            ],
-          ),
-        );
-      }
-      return const SizedBox();
+            ),
+          ],
+        ),
+      );
     });
   }
 
@@ -470,6 +497,7 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
       if (provider.valueFilter.id.typeTrans == TypeFilter.STATUS_TRANS) {
         return Container(
           padding: EdgeInsets.symmetric(horizontal: 20),
+          margin: EdgeInsets.only(bottom: 12),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
             color: AppColor.WHITE,

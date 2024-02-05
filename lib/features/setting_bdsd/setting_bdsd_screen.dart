@@ -10,20 +10,23 @@ import 'package:vierqr/services/shared_references/user_information_helper.dart';
 class SettingBDSD extends StatefulWidget {
   const SettingBDSD({Key? key}) : super(key: key);
 
+  static String routeName = '/setting_bdsd';
+
   @override
   State<SettingBDSD> createState() => _SettingBDSDState();
 }
 
 class _SettingBDSDState extends State<SettingBDSD> {
   void _updateVoiceSetting(param) async {
-    String userId = UserInformationHelper.instance.getUserId();
+    String userId = UserHelper.instance.getUserId();
     try {
       bool updateStatus = await accRepository.updateVoiceSetting(param);
       if (updateStatus) {
         final settingAccount = await accRepository.getSettingAccount(userId);
-        if (settingAccount.userId.isNotEmpty) {
-          await UserInformationHelper.instance
-              .setAccountSetting(settingAccount);
+        if (settingAccount != null) {
+          if (settingAccount.userId.isNotEmpty) {
+            await UserHelper.instance.setAccountSetting(settingAccount);
+          }
         }
       }
     } catch (e) {
@@ -71,8 +74,7 @@ class _SettingBDSDState extends State<SettingBDSD> {
                         onChanged: (bool value) {
                           provider.updateOpenVoice(value);
                           Map<String, dynamic> param = {};
-                          param['userId'] =
-                              UserInformationHelper.instance.getUserId();
+                          param['userId'] = UserHelper.instance.getUserId();
                           param['value'] = value ? 1 : 0;
                           param['type'] = 0;
                           _updateVoiceSetting(param);

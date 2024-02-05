@@ -23,29 +23,52 @@ class ConnectBranchEvent extends ShareBDSDEvent {
 }
 
 class GetMemberEvent extends ShareBDSDEvent {
-  final String? branchId;
-  final String? businessId;
+  final String bankId;
 
   GetMemberEvent({
-    this.branchId,
-    this.businessId,
+    this.bankId = '',
   });
 
   @override
-  List<Object?> get props => [branchId, businessId];
+  List<Object?> get props => [bankId];
 }
 
-class DeleteMemberEvent extends ShareBDSDEvent {
-  final String businessId;
+class SearchMemberEvent extends ShareBDSDEvent {
+  final String terminalId;
+  final String value;
+  final int type;
+  SearchMemberEvent({
+    this.terminalId = '',
+    this.value = '',
+    this.type = 0,
+  });
+
+  @override
+  List<Object?> get props => [terminalId, value, type];
+}
+
+class RemoveMemberEvent extends ShareBDSDEvent {
+  final String bankId;
   final String userId;
 
-  DeleteMemberEvent({
-    required this.businessId,
+  RemoveMemberEvent({
+    required this.bankId,
     required this.userId,
   });
 
   @override
-  List<Object?> get props => [businessId, userId];
+  List<Object?> get props => [bankId, userId];
+}
+
+class RemoveAllMemberEvent extends ShareBDSDEvent {
+  final String bankId;
+
+  RemoveAllMemberEvent({
+    required this.bankId,
+  });
+
+  @override
+  List<Object?> get props => [bankId];
 }
 
 class GetInfoTelegramEvent extends ShareBDSDEvent {
@@ -102,4 +125,44 @@ class RemoveBankLarkEvent extends ShareBDSDEvent {
 
   @override
   List<Object?> get props => [body];
+}
+
+class ShareUserBDSDEvent extends ShareBDSDEvent {
+  final Map<String, dynamic> body;
+
+  ShareUserBDSDEvent(this.body);
+
+  @override
+  List<Object?> get props => [body];
+}
+
+class GetListGroupBDSDEvent extends ShareBDSDEvent {
+  final String userID;
+  final int type;
+  final int offset;
+  final bool loadingPage;
+
+  GetListGroupBDSDEvent(
+      {this.userID = '',
+      this.type = 0,
+      this.offset = 0,
+      this.loadingPage = false});
+
+  @override
+  List<Object?> get props => [userID, type, offset];
+}
+
+class GetMyListGroupBDSDEvent extends ShareBDSDEvent {
+  final String userID;
+  final String bankId;
+  final int offset;
+
+  GetMyListGroupBDSDEvent({
+    this.userID = '',
+    this.bankId = '',
+    this.offset = 0,
+  });
+
+  @override
+  List<Object?> get props => [userID, bankId, offset];
 }

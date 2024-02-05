@@ -154,6 +154,17 @@ class StringUtils {
     }
   }
 
+  static bool isValidUrl(String url) {
+    // Sử dụng regex để kiểm tra định dạng URL
+    RegExp urlRegExp = RegExp(
+      r"^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$",
+      caseSensitive: false,
+      multiLine: false,
+    );
+
+    return urlRegExp.hasMatch(url);
+  }
+
   String authBase64() {
     final username = "system-mobile-app";
     final password = "c3lzdGVtLW1vYmlsZS1hcHA=";

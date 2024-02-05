@@ -63,10 +63,43 @@ class RemoveTeleSuccessState extends ConnectTelegramState {
   List<Object?> get props => [dto];
 }
 
+class RemoveBankTeleSuccessState extends ConnectTelegramState {
+  final ResponseMessageDTO dto;
+
+  const RemoveBankTeleSuccessState({
+    required this.dto,
+  });
+
+  @override
+  List<Object?> get props => [dto];
+}
+
 class RemoveTeleFailedState extends ConnectTelegramState {
   final ResponseMessageDTO dto;
 
   const RemoveTeleFailedState({
+    required this.dto,
+  });
+
+  @override
+  List<Object?> get props => [dto];
+}
+
+class AddBankTeleSuccessState extends ConnectTelegramState {
+  final ResponseMessageDTO dto;
+
+  const AddBankTeleSuccessState({
+    required this.dto,
+  });
+
+  @override
+  List<Object?> get props => [dto];
+}
+
+class AddBankTeleFailedState extends ConnectTelegramState {
+  final ResponseMessageDTO dto;
+
+  const AddBankTeleFailedState({
     required this.dto,
   });
 

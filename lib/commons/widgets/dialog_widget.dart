@@ -428,7 +428,7 @@ class DialogWidget {
     return showModalBottomSheet(
       isScrollControlled: true,
       enableDrag: false,
-      isDismissible: isDismissible,
+      isDismissible: true,
       useRootNavigator: true,
       context: context,
       backgroundColor: AppColor.TRANSPARENT,
@@ -662,6 +662,153 @@ class DialogWidget {
                             child: ButtonWidget(
                               height: 40,
                               text: buttonExit ?? 'Đóng',
+                              textColor:
+                                  isSecondBT ? AppColor.BLACK : AppColor.WHITE,
+                              bgColor: isSecondBT
+                                  ? AppColor.GREY_EBEBEB
+                                  : AppColor.BLUE_TEXT,
+                              borderRadius: 5,
+                              function: (function != null)
+                                  ? function
+                                  : () {
+                                      Navigator.pop(context);
+                                    },
+                            ),
+                          ),
+                          if (isSecondBT) ...[
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: ButtonWidget(
+                                height: 40,
+                                text: buttonConfirm ?? 'Xác nhận',
+                                textColor: AppColor.WHITE,
+                                bgColor: AppColor.BLUE_TEXT,
+                                borderRadius: 5,
+                                function: functionConfirm!,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                    // const Padding(padding: EdgeInsets.only(top: 10)),
+                  ],
+                ),
+              ),
+              // : Container(
+              //     width: 300,
+              //     height: 250,
+              //     alignment: Alignment.center,
+              //     padding: const EdgeInsets.symmetric(horizontal: 40),
+              //     decoration: BoxDecoration(
+              //       color: Theme.of(context).cardColor,
+              //       borderRadius: BorderRadius.circular(20),
+              //     ),
+              //     child: Column(
+              //       mainAxisAlignment: MainAxisAlignment.center,
+              //       crossAxisAlignment: CrossAxisAlignment.center,
+              //       children: [
+              //         const Spacer(),
+              //         Text(
+              //           msg,
+              //           textAlign: TextAlign.center,
+              //           style: const TextStyle(
+              //             fontSize: 16,
+              //           ),
+              //         ),
+              //         const Spacer(),
+              //         ButtonWidget(
+              //           width: 230,
+              //           text: 'OK',
+              //           textColor: DefaultTheme.WHITE,
+              //           bgColor: DefaultTheme.GREEN,
+              //           function: (function != null)
+              //               ? function
+              //               : () {
+              //                   Navigator.pop(context);
+              //                 },
+              //         ),
+              //         const Padding(padding: EdgeInsets.only(bottom: 20)),
+              //       ],
+              //     ),
+              //   ),
+            ),
+          );
+        });
+  }
+
+  openMsgSuccessDialog({
+    required String title,
+    String? buttonExit,
+    String? buttonConfirm,
+    required String msg,
+    VoidCallback? function,
+    VoidCallback? functionConfirm,
+    bool isSecondBT = false,
+    bool showImageWarning = true,
+    double width = 300,
+    double height = 340,
+  }) {
+    return showDialog(
+        barrierDismissible: false,
+        context: NavigationService.navigatorKey.currentContext!,
+        builder: (BuildContext context) {
+          return Material(
+            color: AppColor.TRANSPARENT,
+            child: Center(
+              child: Container(
+                width: width,
+                height: height,
+                alignment: Alignment.center,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).cardColor,
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    if (showImageWarning)
+                      Image.asset(
+                        'assets/images/ic-success.png',
+                        width: 120,
+                        height: 120,
+                      ),
+                    const Padding(padding: EdgeInsets.only(top: 10)),
+                    Text(
+                      title,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Padding(padding: EdgeInsets.only(top: 10)),
+                    SizedBox(
+                      width: 250,
+                      height: 60,
+                      child: Text(
+                        msg,
+                        textAlign: TextAlign.center,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                    const Padding(padding: EdgeInsets.only(top: 30)),
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: ButtonWidget(
+                              height: 40,
+                              text: buttonExit ?? 'OK',
                               textColor:
                                   isSecondBT ? AppColor.BLACK : AppColor.WHITE,
                               bgColor: isSecondBT

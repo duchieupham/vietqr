@@ -12,7 +12,9 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
 import 'package:vierqr/commons/widgets/viet_qr.dart';
 import 'package:vierqr/features/printer/views/printing_view.dart';
+import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/bluetooth_printer_dto.dart';
+import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/services/sqflite/local_database.dart';
 
 import '../../models/qr_generated_dto.dart';
@@ -21,8 +23,10 @@ import '../../services/providers/water_mark_provider.dart';
 
 class ShowQr extends StatefulWidget {
   final QRGeneratedDTO dto;
+  final AppInfoDTO appInfo;
 
-  const ShowQr({Key? key, required this.dto}) : super(key: key);
+  const ShowQr({Key? key, required this.dto, required this.appInfo})
+      : super(key: key);
 
   @override
   State<ShowQr> createState() => _ShowQrState();
@@ -98,7 +102,7 @@ class _ShowQrState extends State<ShowQr> {
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           backgroundColor: Theme.of(context).cardColor,
-          textColor: Theme.of(context).cardColor,
+          textColor: Theme.of(context).hintColor,
           fontSize: 15,
         );
       });
@@ -117,6 +121,12 @@ class _ShowQrState extends State<ShowQr> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    Provider.of<AuthProvider>(context, listen: false).initThemeDTO();
+  }
+
+  @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     return ChangeNotifierProvider(
@@ -125,9 +135,24 @@ class _ShowQrState extends State<ShowQr> {
         return Scaffold(
           body: Container(
             decoration: BoxDecoration(
-                image: DecorationImage(
-                    image: AssetImage('assets/images/bgr-header.png'),
-                    fit: BoxFit.cover)),
+              image: widget.appInfo.isEventTheme
+                  ? DecorationImage(
+                      image: NetworkImage(widget.appInfo.themeImgUrl),
+                      fit: BoxFit.cover)
+                  : Provider.of<AuthProvider>(context, listen: false)
+                          .file
+                          .path
+                          .isNotEmpty
+                      ? DecorationImage(
+                          image: FileImage(Provider.of<AuthProvider>(
+                                  context,
+                                  listen: false)
+                              .file),
+                          fit: BoxFit.cover)
+                      : DecorationImage(
+                          image: AssetImage('assets/images/bgr-header.png'),
+                          fit: BoxFit.cover),
+            ),
             child: SafeArea(
               child: Column(
                 children: [
@@ -141,7 +166,8 @@ class _ShowQrState extends State<ShowQr> {
                             Padding(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 20, vertical: 16),
-                              child: VietQr(qrGeneratedDTO: widget.dto),
+                              child: VietQr(
+                                  qrGeneratedDTO: widget.dto, isVietQR: true),
                             ),
                             ValueListenableBuilder(
                               valueListenable: _waterMarkProvider,

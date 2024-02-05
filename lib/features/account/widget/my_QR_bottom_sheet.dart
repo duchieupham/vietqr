@@ -2,13 +2,14 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:qr_flutter/qr_flutter.dart';
+
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
+import 'package:vierqr/commons/widgets/viet_qr.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class MyQRBottomSheet extends StatefulWidget {
@@ -57,7 +58,7 @@ class _MyQRBottomSheetState extends State<MyQRBottomSheet> {
                       _buildTypeQr(
                           typeQR: TypeContact.VietQR_ID,
                           name:
-                              UserInformationHelper.instance.getUserFullname()),
+                              UserHelper.instance.getUserFullName()),
                       Container(
                         width: double.infinity,
                         height: 1,
@@ -74,10 +75,10 @@ class _MyQRBottomSheetState extends State<MyQRBottomSheet> {
                             decoration: BoxDecoration(
                               color: AppColor.WHITE,
                             ),
-                            child: QrImage(
-                              data:
-                                  UserInformationHelper.instance.getWalletId(),
-                              version: QrVersions.auto,
+                            child: VietQr(
+                              qrGeneratedDTO: null,
+                              qrCode:
+                                  UserHelper.instance.getWalletId(),
                               size: isSmall ? width / 2 : null,
                             ),
                           ),
@@ -91,7 +92,7 @@ class _MyQRBottomSheetState extends State<MyQRBottomSheet> {
                                   image: DecorationImage(
                                       fit: BoxFit.cover,
                                       image: ImageUtils.instance
-                                          .getImageNetWork(UserInformationHelper
+                                          .getImageNetWork(UserHelper
                                               .instance
                                               .getAccountInformation()
                                               .imgId)),
@@ -104,7 +105,7 @@ class _MyQRBottomSheetState extends State<MyQRBottomSheet> {
                         ],
                       ),
                       Text(
-                        UserInformationHelper.instance.getUserFullname(),
+                        UserHelper.instance.getUserFullName(),
                         style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -187,7 +188,7 @@ class _MyQRBottomSheetState extends State<MyQRBottomSheet> {
         onSaveImage();
         return;
       case 1:
-        share(name: UserInformationHelper.instance.getUserFullname());
+        share(name: UserHelper.instance.getUserFullName());
         return;
       case 2:
       default:
@@ -220,7 +221,7 @@ class _MyQRBottomSheetState extends State<MyQRBottomSheet> {
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           backgroundColor: Theme.of(context).cardColor,
-          textColor: Theme.of(context).cardColor,
+          textColor: Theme.of(context).hintColor,
           fontSize: 15,
         );
       });

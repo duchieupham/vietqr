@@ -1,10 +1,11 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:qr_flutter/qr_flutter.dart';
+
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
+import 'package:vierqr/commons/widgets/viet_qr.dart';
 import 'package:vierqr/features/scan_qr/views/dialog_feature_scan.dart';
 import 'package:vierqr/models/contact_dto.dart';
 
@@ -59,9 +60,10 @@ class DialogScanTypeVCard extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: AppColor.WHITE,
                       ),
-                      child: QrImage(
-                        data: dto.code,
-                        version: QrVersions.auto,
+                      child: VietQr(
+                        qrGeneratedDTO: null,
+                        qrCode: dto.code,
+                        isEmbeddedImage: true,
                         size: isSmall ? width / 2 : null,
                       ),
                     ),
@@ -90,49 +92,6 @@ class DialogScanTypeVCard extends StatelessWidget {
             globalKey: globalKey,
             isSmall: isSmall,
             isShowIconFirst: isShowIconFirst,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTypeQr(
-      {TypeContact typeQR = TypeContact.NONE, required String name}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
-        children: [
-          Container(
-            width: 35,
-            height: 35,
-            decoration: BoxDecoration(
-              color: AppColor.WHITE,
-              borderRadius: BorderRadius.circular(40),
-              image: const DecorationImage(
-                  image: AssetImage('assets/images/ic-viet-qr-small.png'),
-                  fit: BoxFit.contain),
-            ),
-          ),
-          SizedBox(
-            width: 8,
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                Text(
-                  typeQR.typeName,
-                  style: TextStyle(fontSize: 12),
-                ),
-              ],
-            ),
           ),
         ],
       ),

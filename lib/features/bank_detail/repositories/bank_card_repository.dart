@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:http/http.dart' as http;
 import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
@@ -9,6 +10,7 @@ import 'package:vierqr/models/account_bank_detail_dto.dart';
 import 'package:vierqr/models/add_contact_dto.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_account_remove_dto.dart';
+import 'package:vierqr/models/bank_account_terminal.dart';
 import 'package:vierqr/models/bank_card_insert_dto.dart';
 import 'package:vierqr/models/bank_card_insert_unauthenticated.dart';
 import 'package:vierqr/models/bank_card_request_otp.dart';
@@ -21,7 +23,6 @@ import 'package:vierqr/models/qr_create_list_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/register_authentication_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
-import 'package:http/http.dart' as http;
 
 class BankCardRepository {
   const BankCardRepository();
@@ -173,6 +174,31 @@ class BankCardRepository {
     return result;
   }
 
+  Future<List<BankAccountTerminal>> getListBankAccountTerminal(
+      String userId, String terminalId) async {
+    List<BankAccountTerminal> result = [];
+
+    try {
+      final String url =
+          '${EnvConfig.getBaseUrl()}terminal/bank-account?terminalId=$terminalId&userId=$userId';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        if (data != null) {
+          result = data.map<BankAccountTerminal>((json) {
+            return BankAccountTerminal.fromJson(json);
+          }).toList();
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return result;
+  }
+
   Future<ResponseMessageDTO> removeBankAccount(BankAccountRemoveDTO dto) async {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
@@ -181,6 +207,30 @@ class BankCardRepository {
       final response = await BaseAPIClient.deleteAPI(
         url: url,
         body: dto.toJson(),
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200 || response.statusCode == 400) {
+        var data = jsonDecode(response.body);
+        result = ResponseMessageDTO.fromJson(data);
+      } else {
+        result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return result;
+  }
+
+  Future<ResponseMessageDTO> unRegisterBDSD(
+      {required String userId, required String bankId}) async {
+    ResponseMessageDTO result =
+        const ResponseMessageDTO(status: '', message: '');
+    try {
+      final body = {'userId': userId, 'bankId': bankId};
+      final String url = '${EnvConfig.getBaseUrl()}member/remove';
+      final response = await BaseAPIClient.deleteAPI(
+        url: url,
+        body: body,
         type: AuthenticationType.SYSTEM,
       );
       if (response.statusCode == 200 || response.statusCode == 400) {
@@ -272,25 +322,7 @@ class BankCardRepository {
 
   //get detail
   Future<AccountBankDetailDTO> getAccountBankDetail(String bankId) async {
-    AccountBankDetailDTO result = AccountBankDetailDTO(
-      id: '',
-      bankAccount: '',
-      userBankName: '',
-      bankCode: '',
-      bankName: '',
-      imgId: '',
-      type: 0,
-      userId: '',
-      bankTypeId: '',
-      bankTypeStatus: 0,
-      nationalId: '',
-      qrCode: '',
-      phoneAuthenticated: '',
-      businessDetails: [],
-      transactions: [],
-      authenticated: false,
-      caiValue: '',
-    );
+    AccountBankDetailDTO result = AccountBankDetailDTO();
     try {
       final String url =
           '${EnvConfig.getBaseUrl()}account-bank/detail/web/$bankId';
@@ -450,6 +482,79 @@ class BankCardRepository {
         result = ResponseMessageDTO.fromJson(data);
       } else {
         result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return result;
+  }
+
+  Future<ResponseMessageDTO> requestRegisterBankAccount(
+      Map<String, dynamic> param) async {
+    ResponseMessageDTO dto = ResponseMessageDTO(status: '', message: '');
+
+    try {
+      String url = '${EnvConfig.getBaseUrl()}account-bank-request';
+      final response = await BaseAPIClient.postAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+        body: param,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        if (data != null) {
+          dto = ResponseMessageDTO.fromJson(data);
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return dto;
+  }
+
+  Future<List<BankTypeDTO>> getBankTypesAuthen() async {
+    List<BankTypeDTO> listBanks = [];
+
+    try {
+      String url = '${EnvConfig.getBaseUrl()}bank-type/unauthenticated';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        if (data != null) {
+          listBanks = data
+              .map<BankTypeDTO>((json) => BankTypeDTO.fromJson(json))
+              .toList();
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return listBanks;
+  }
+
+  Future<QRGeneratedDTO> generateQR(Map<String, dynamic> data) async {
+    QRGeneratedDTO result = QRGeneratedDTO(
+      bankCode: '',
+      bankName: '',
+      bankAccount: '',
+      userBankName: '',
+      amount: '',
+      content: '',
+      qrCode: '',
+      imgId: '',
+    );
+    try {
+      final String url = '${EnvConfig.getBaseUrl()}qr/generate/unauthenticated';
+      final response = await BaseAPIClient.postAPI(
+        url: url,
+        body: data,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        result = QRGeneratedDTO.fromJson(data);
       }
     } catch (e) {
       LOG.error(e.toString());

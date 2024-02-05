@@ -1,5 +1,9 @@
 import 'dart:async';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:vierqr/models/bank_type_dto.dart';
+import 'package:vierqr/models/theme_dto.dart';
+import 'package:vierqr/services/local_storage/hive_local/local_storage.dart';
 
 /// Tuyệt đối không được dùng box.clear()
 /// vì nó sẽ xoá toàn bộ dữ liệu local app
@@ -10,6 +14,7 @@ class HivePrefs {
 
   SharedPrefsKey get keys => SharedPrefsKey.instance;
   Box? prefs;
+  Box? bankPrefs;
 
   HivePrefs._internal();
 
@@ -22,8 +27,12 @@ class HivePrefs {
     if (_initEd) {
       completer.complete(_instance);
     } else {
-      await Hive.initFlutter();
-      prefs = await Hive.openBox(keys.vCardKey);
+      final document = await getApplicationDocumentsDirectory();
+      await Hive.initFlutter(document.path);
+      Hive.registerAdapter(ThemeDTOAdapter());
+      Hive.registerAdapter(BankTypeDTOAdapter());
+      prefs = await Hive.openBox(keys.prefKey);
+      bankPrefs = await LocalRepository<BankTypeDTO>().openBox(keys.bankKey);
       _initEd = true;
       completer.complete(_instance);
     }
@@ -38,7 +47,7 @@ class SharedPrefsKey {
 
   static SharedPrefsKey get instance => _instance;
 
-  String get bankKey => 'bankKey';
+  String get bankKey => 'bank_key';
 
   String get prefKey => "pref_key";
 

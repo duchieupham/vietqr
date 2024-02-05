@@ -6,7 +6,6 @@ import 'package:share_plus/share_plus.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
-import 'package:vierqr/features/business/repositories/business_information_repository.dart';
 import 'package:vierqr/models/introduce_dto.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
@@ -20,8 +19,7 @@ class IntroduceBottomSheet extends StatefulWidget {
 }
 
 class _IntroduceBottomSheetState extends State<IntroduceBottomSheet> {
-  late BusinessInformationRepository repository;
-  String userId = UserInformationHelper.instance.getUserId();
+  String userId = UserHelper.instance.getUserId();
 
   @override
   void initState() {

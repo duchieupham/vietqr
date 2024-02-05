@@ -1,20 +1,19 @@
-import 'dart:io';
-
-import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/printer_utils.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
-import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
-import 'package:vierqr/commons/widgets/viet_qr.dart';
+import 'package:vierqr/commons/widgets/widget_qr.dart';
 import 'package:vierqr/features/create_qr/widgets/dialog_exits_view.dart';
 import 'package:vierqr/features/printer/views/printing_view.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/main.dart';
+import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/bluetooth_printer_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/services/providers/create_qr_provider.dart';
@@ -25,8 +24,10 @@ import 'package:vierqr/services/sqflite/local_database.dart';
 class CreateQRSuccess extends StatefulWidget {
   final QRGeneratedDTO dto;
   final GestureTapCallback? onPaid;
+  final List<BankTypeDTO> listBanks;
 
-  CreateQRSuccess({super.key, required this.dto, this.onPaid});
+  CreateQRSuccess(
+      {super.key, required this.dto, this.onPaid, required this.listBanks});
 
   @override
   State<CreateQRSuccess> createState() => _CreateQRSuccessState();
@@ -45,18 +46,130 @@ class _CreateQRSuccessState extends State<CreateQRSuccess> {
       body: SafeArea(
         child: Container(
           color: AppColor.GREY_BG,
+          height: MediaQuery.of(context).size.height,
           child: ListView(
-            padding: EdgeInsets.zero,
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             children: [
+              const SizedBox(height: 24),
+              Align(
+                alignment: Alignment.center,
+                child: Text(
+                  'Nhận tiền từ mọi ngân hàng và ví điện thử có hỗ trợ VietQR',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+                ),
+              ),
+              const SizedBox(height: 20),
               RepaintBoundaryWidget(
-                  globalKey: globalKey,
-                  builder: (key) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 16),
-                      child: VietQr(qrGeneratedDTO: widget.dto),
-                    );
-                  }),
+                globalKey: globalKey,
+                builder: (key) {
+                  return WidgetQr(
+                    qrGeneratedDTO: widget.dto,
+                    isVietQR: true,
+                    updateQRGeneratedDTO: (data) {},
+                    isCreateQr: true,
+                  );
+                },
+              ),
+              if (widget.dto.qrLink.isNotEmpty) ...[
+                const SizedBox(height: 24),
+                Text(
+                  'QR Link:',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  'Đường dẫn thanh toán qua mã VietQR',
+                  style: TextStyle(
+                      fontSize: 12, color: AppColor.GREY_TEXT, height: 1.4),
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: AppColor.WHITE,
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          widget.dto.qrLink,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              color: AppColor.BLUE_TEXT,
+                              fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: onCopy,
+                        child: Image.asset(
+                          'assets/images/ic-copy-blue.png',
+                          width: 32,
+                          height: 32,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+              ...[
+                const SizedBox(height: 24),
+                Text(
+                  'Thanh toán qua app ngân hàng:',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  'Chọn ngân hàng để thanh toán',
+                  style: TextStyle(
+                      fontSize: 12, color: AppColor.GREY_TEXT, height: 1.4),
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  height: MediaQuery.of(context).size.height,
+                  child: GridView.builder(
+                    padding: EdgeInsets.zero,
+                    physics: NeverScrollableScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 4,
+                      crossAxisSpacing: 4,
+                      mainAxisSpacing: 4,
+                      childAspectRatio: 2,
+                    ),
+                    itemCount: widget.listBanks.length,
+                    itemBuilder: (context, index) {
+                      var data = widget.listBanks[index];
+                      return GestureDetector(
+                        onTap: () async {},
+                        child: Stack(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: AppColor.WHITE,
+                                image: data.file != null
+                                    ? DecorationImage(
+                                        image: FileImage(data.file!))
+                                    : DecorationImage(
+                                        image: ImageUtils.instance
+                                            .getImageNetWork(data.imageId)),
+                              ),
+                              margin: EdgeInsets.all(4),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
               ValueListenableBuilder(
                 valueListenable: _waterMarkProvider,
                 builder: (_, provider, child) {
@@ -107,180 +220,73 @@ class _CreateQRSuccessState extends State<CreateQRSuccess> {
       bottomSheet: Consumer<CreateQRProvider>(
         builder: (context, bt, child) {
           return _buildButton(
-              context: context,
-              fileImage: bt.imageFile,
-              progressBar: bt.progressBar,
-              onClick: (index) {
-                onClick(index, widget.dto);
-              },
-              onCreate: () {
-                bt.reset();
-                bt.updatePage(0);
-              },
-              onPaid: widget.onPaid);
+            context: context,
+            onGoHome: () {
+              if (bt.imageFile != null) {
+                dialogExits();
+              } else {
+                Navigator.of(context).popUntil((route) => route.isFirst);
+              }
+            },
+            onCreate: () {
+              bt.reset();
+              bt.updatePage(0);
+            },
+          );
         },
       ),
     );
   }
 
   Widget _buildButton({
-    File? fileImage,
-    double progressBar = 0,
     required BuildContext context,
-    GestureTapCallback? onPaid,
-    required Function(int) onClick,
+    required Function() onGoHome,
     required Function() onCreate,
   }) {
-    double width = MediaQuery.of(context).size.width;
-    return IntrinsicHeight(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ButtonIconWidget(
-                      width: width * 0.2,
-                      height: 40,
-                      pathIcon: 'assets/images/ic-print-blue.png',
-                      title: '',
-                      function: () async {
-                        onClick(0);
-                      },
-                      bgColor: Theme.of(context).cardColor,
-                      textColor: AppColor.ORANGE,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.only(left: 10),
-                    ),
-                    ButtonIconWidget(
-                      width: width * 0.2,
-                      height: 40,
-                      pathIcon: 'assets/images/ic-img-blue.png',
-                      title: '',
-                      function: () {
-                        onClick(1);
-                      },
-                      bgColor: Theme.of(context).cardColor,
-                      textColor: AppColor.RED_CALENDAR,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.only(left: 10),
-                    ),
-                    ButtonIconWidget(
-                      width: width * 0.2,
-                      height: 40,
-                      pathIcon: 'assets/images/ic-copy-blue.png',
-                      title: '',
-                      function: () async {
-                        onClick(2);
-                      },
-                      bgColor: Theme.of(context).cardColor,
-                      textColor: AppColor.BLUE_TEXT,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.only(left: 10),
-                    ),
-                    ButtonIconWidget(
-                      width: width * 0.2,
-                      height: 40,
-                      pathIcon: 'assets/images/ic-share-blue.png',
-                      title: '',
-                      function: () {
-                        onClick(3);
-                      },
-                      bgColor: Theme.of(context).cardColor,
-                      textColor: AppColor.BLUE_TEXT,
-                    ),
-                  ],
-                )),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+    return Container(
+      decoration: BoxDecoration(color: AppColor.WHITE),
+      padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: onGoHome,
+            child: Container(
+              height: 40,
+              padding: const EdgeInsets.only(left: 8, right: 20),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: AppColor.WHITE,
+                border: Border.all(color: AppColor.BLUE_TEXT),
+              ),
               child: Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  MButtonWidget(
-                    width: 80,
-                    isEnable: true,
-                    colorEnableBgr: AppColor.BLUE_TEXT.withOpacity(0.3),
-                    margin: const EdgeInsets.only(right: 12),
-                    onTap: () {
-                      if (fileImage != null) {
-                        dialogExits();
-                      } else {
-                        Navigator.of(context)
-                            .popUntil((route) => route.isFirst);
-                      }
-                    },
-                    title: '',
-                    child: Image.asset(
-                      'assets/images/ic-home-blue.png',
-                      width: 30,
-                      height: 30,
-                      fit: BoxFit.cover,
+                  Image.asset(
+                    'assets/images/ic-tb-dashboard-selected.png',
+                    color: AppColor.BLUE_TEXT,
+                  ),
+                  Text(
+                    'Trang chủ',
+                    style: TextStyle(
                       color: AppColor.BLUE_TEXT,
+                      fontSize: 14,
                     ),
-                  ),
-                  Expanded(
-                    child: ButtonIconWidget(
-                      height: 40,
-                      icon: Icons.add_rounded,
-                      textSize: 12,
-                      title: 'QR giao dịch mới',
-                      function: onCreate,
-                      textColor: AppColor.WHITE,
-                      bgColor: AppColor.BLUE_TEXT,
-                    ),
-                  ),
+                  )
                 ],
               ),
             ),
-            if (fileImage != null)
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: MediaQuery.of(context).size.width * progressBar,
-                    alignment: Alignment.centerLeft,
-                    padding:
-                        const EdgeInsets.only(top: 10, left: 20, right: 20),
-                    decoration: const BoxDecoration(
-                      border: Border(
-                        top: BorderSide(color: AppColor.BLUE_TEXT, width: 4),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(top: 10, left: 20, right: 20),
-                    child: Row(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(5),
-                          child: Image.file(
-                            fileImage,
-                            height: 60,
-                            fit: BoxFit.fill,
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        const Text(
-                          'Đang lưu tệp đính kèm.',
-                          style: TextStyle(
-                            fontSize: 16,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              )
-          ],
-        ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: MButtonWidget(
+              title: '+ Tạo QR giao dịch mới',
+              isEnable: true,
+              margin: EdgeInsets.zero,
+              colorEnableText: AppColor.WHITE,
+              onTap: onCreate,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -295,28 +301,8 @@ class _CreateQRSuccessState extends State<CreateQRSuccess> {
     );
   }
 
-  onClick(
-    int index,
-    QRGeneratedDTO qrGeneratedDTO,
-  ) {
-    switch (index) {
-      case 0:
-        onPrint(qrGeneratedDTO);
-        return;
-      case 1:
-        saveImage(context);
-        return;
-      case 2:
-        onCopy(dto: qrGeneratedDTO);
-        return;
-      case 3:
-        share(dto: qrGeneratedDTO);
-        return;
-    }
-  }
-
   onPrint(QRGeneratedDTO qrGeneratedDTO) async {
-    String userId = UserInformationHelper.instance.getUserId();
+    String userId = UserHelper.instance.getUserId();
     BluetoothPrinterDTO bluetoothPrinterDTO =
         await LocalDatabase.instance.getBluetoothPrinter(userId);
     if (bluetoothPrinterDTO.id.isNotEmpty) {
@@ -349,7 +335,7 @@ class _CreateQRSuccessState extends State<CreateQRSuccess> {
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           backgroundColor: Theme.of(context).cardColor,
-          textColor: Theme.of(context).cardColor,
+          textColor: Theme.of(context).hintColor,
           fontSize: 15,
         );
       });
@@ -367,19 +353,15 @@ class _CreateQRSuccessState extends State<CreateQRSuccess> {
     });
   }
 
-  void onCopy({required QRGeneratedDTO dto}) async {
-    await FlutterClipboard.copy(ShareUtils.instance.getTextSharing(dto)).then(
-      (value) => Fluttertoast.showToast(
-        msg: 'Đã sao chép',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Theme.of(context).cardColor,
-        textColor: Colors.black,
-        fontSize: 15,
-        webBgColor: 'rgba(255, 255, 255)',
-        webPosition: 'center',
-      ),
+  void onCopy() async {
+    Clipboard.setData(ClipboardData(text: widget.dto.qrLink));
+    Fluttertoast.showToast(
+      msg: 'Đã sao chép',
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+      backgroundColor: Theme.of(context).cardColor,
+      textColor: Theme.of(context).hintColor,
+      fontSize: 15,
     );
   }
 }

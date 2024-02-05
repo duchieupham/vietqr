@@ -1,6 +1,10 @@
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/pref_utils.dart';
+import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
+import 'package:vierqr/models/theme_dto.dart';
+import 'package:vierqr/services/local_storage/hive_local/local_storage.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class UserRepository {
@@ -12,11 +16,22 @@ class UserRepository {
 
   Box get _box => HivePrefs.instance.prefs!;
 
-  String get userId => UserInformationHelper.instance.getUserId();
+  Box get _boxBank => HivePrefs.instance.bankPrefs!;
+
+  String get userId => UserHelper.instance.getUserId();
 
   String get intro_key => '${userId}_card';
 
-  List<BankTypeDTO> banks = [];
+  String get list_theme_key => 'list_theme_key';
+
+  String get theme_dto_key => 'theme_dto_key';
+
+  LocalRepository<BankTypeDTO> bankLocal = LocalRepository<BankTypeDTO>();
+  LocalRepository<ThemeDTO> themeLocal = LocalRepository<ThemeDTO>();
+
+  List<BankTypeDTO> _banks = [];
+
+  List<BankTypeDTO> get banks => _banks;
 
   bool isIntroContact = false;
 
@@ -29,7 +44,46 @@ class UserRepository {
     await _box.put(intro_key, value);
   }
 
-  void updateBanks(value) {
-    banks = value;
+  ///bank-local
+  Future<List<BankTypeDTO>> getBanks() async {
+    _banks = bankLocal.getWishlist(_boxBank);
+    for (int i = 0; i < _banks.length; i++) {
+      _banks[i].file = await getImageFile(_banks[i].fileImage);
+    }
+    _banks.sort((a, b) => a.linkType == LinkBankType.LINK ? -1 : 0);
+    return _banks;
+  }
+
+  Future<void> updateBanks(BankTypeDTO value) async {
+    var dto = value.copy;
+    await bankLocal.addProductToWishlist(_boxBank, dto);
+  }
+
+  setBanks(value) {
+    _banks = value;
+  }
+
+  ///Theme
+  Future<ThemeDTO?> getThemeDTO() async {
+    Box box = await themeLocal.openBox(theme_dto_key);
+    return themeLocal.getSingleWish(box, userId);
+  }
+
+  Future<void> updateThemeDTO(ThemeDTO value) async {
+    Box box = await themeLocal.openBox(theme_dto_key);
+    var dto = value.copy;
+    await themeLocal.removeSingleFromBox(box, userId);
+    await themeLocal.addSingleToWishBox(box, dto, userId);
+  }
+
+  Future<List<ThemeDTO>> getThemes() async {
+    Box box = await themeLocal.openBox(list_theme_key);
+    return themeLocal.getWishlist(box);
+  }
+
+  Future<void> updateThemes(ThemeDTO value) async {
+    Box box = await themeLocal.openBox(list_theme_key);
+    var dto = value.copy;
+    await themeLocal.addProductToWishlist(box, dto);
   }
 }

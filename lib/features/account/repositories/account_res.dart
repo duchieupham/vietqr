@@ -15,7 +15,8 @@ import 'package:vierqr/models/card_dto.dart';
 import 'package:vierqr/models/introduce_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/models/setting_account_sto.dart';
-import 'package:vierqr/services/providers/auth_provider.dart';
+import 'package:vierqr/models/theme_dto.dart';
+import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
 import 'package:vierqr/services/shared_references/account_helper.dart';
 import 'package:vierqr/services/shared_references/event_bloc_helper.dart';
@@ -33,13 +34,39 @@ class AccountRepository {
       );
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
-        UserInformationHelper.instance.setWalletInfo(response.body);
+        UserHelper.instance.setWalletInfo(response.body);
         return IntroduceDTO.fromJson(data);
       }
     } catch (e) {
       LOG.error(e.toString());
     }
     return IntroduceDTO();
+  }
+
+  Future<ResponseMessageDTO> updateKeepBright(String userId, bool value) async {
+    ResponseMessageDTO result =
+        const ResponseMessageDTO(status: '', message: '');
+    try {
+      final String url = '${EnvConfig.getBaseUrl()}accounts/setting/screen';
+      final response = await BaseAPIClient.postAPI(
+        url: url,
+        body: {
+          'value': value,
+          'userId': userId,
+        },
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        result = ResponseMessageDTO.fromJson(data);
+      } else {
+        result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+    }
+    return result;
   }
 
   Future<ResponseMessageDTO> updateAvatar(
@@ -65,7 +92,7 @@ class AccountRepository {
           var data = jsonDecode(response.body);
           result = ResponseMessageDTO.fromJson(data);
           if (result.message.trim().isNotEmpty) {
-            await UserInformationHelper.instance.setImageId(result.message);
+            await UserHelper.instance.setImageId(result.message);
           }
         } else {
           result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
@@ -78,7 +105,7 @@ class AccountRepository {
     return result;
   }
 
-  Future<AccountInformationDTO> getUserInformation(String userId) async {
+  Future<AccountInformationDTO?> getUserInformation(String userId) async {
     AccountInformationDTO result = AccountInformationDTO(
         userId: '',
         firstName: '',
@@ -98,6 +125,8 @@ class AccountRepository {
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         result = AccountInformationDTO.fromJson(data);
+      } else if (response.statusCode == 403) {
+        return null;
       }
     } catch (e) {
       LOG.error(e.toString());
@@ -106,7 +135,7 @@ class AccountRepository {
     return result;
   }
 
-  Future<SettingAccountDTO> getSettingAccount(String userId) async {
+  Future<SettingAccountDTO?> getSettingAccount(String userId) async {
     SettingAccountDTO result = SettingAccountDTO();
     try {
       final String url = '${EnvConfig.getBaseUrl()}accounts/setting/$userId';
@@ -117,6 +146,8 @@ class AccountRepository {
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         result = SettingAccountDTO.fromJson(data);
+      } else if (response.statusCode == 403) {
+        return null;
       }
     } catch (e) {
       LOG.error(e.toString());
@@ -190,6 +221,30 @@ class AccountRepository {
     return result;
   }
 
+  Future<ResponseMessageDTO> updateTheme(String userId, int value) async {
+    ResponseMessageDTO result =
+        const ResponseMessageDTO(status: '', message: '');
+
+    try {
+      final String url = '${EnvConfig.getBaseUrl()}accounts/setting/theme';
+      final response = await BaseAPIClient.postAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+        body: {'value': value, 'userId': userId},
+      );
+      if (response.statusCode == 200 || response.statusCode == 400) {
+        var data = jsonDecode(response.body);
+        result = ResponseMessageDTO.fromJson(data);
+      } else {
+        result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+    }
+    return result;
+  }
+
   Future<bool> logout() async {
     bool result = false;
     try {
@@ -209,12 +264,33 @@ class AccountRepository {
     return result;
   }
 
+  Future<List<ThemeDTO>> getListTheme() async {
+    try {
+      final String url = '${EnvConfig.getBaseUrl()}theme/list';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        if (data != null) {
+          return data.map<ThemeDTO>((json) {
+            return ThemeDTO.fromJson(json);
+          }).toList();
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return [];
+  }
+
   Future<void> _resetServices() async {
     BuildContext context = NavigationService.navigatorKey.currentContext!;
     Provider.of<UserEditProvider>(context, listen: false).reset();
     Provider.of<AuthProvider>(context, listen: false).reset();
     await EventBlocHelper.instance.updateLogoutBefore(true);
-    await UserInformationHelper.instance.initialUserInformationHelper();
+    await UserHelper.instance.initialUserInformationHelper();
     await AccountHelper.instance.setBankToken('');
     await AccountHelper.instance.setToken('');
   }

@@ -179,17 +179,17 @@ class NationalInformationView extends StatelessWidget {
                               StringUtils.instance.splitFullName(dto.fullname);
                           AccountInformationDTO accountInformationDTO =
                               AccountInformationDTO(
-                            userId: UserInformationHelper.instance.getUserId(),
+                            userId: UserHelper.instance.getUserId(),
                             firstName: namePaths[0].trim(),
                             middleName: namePaths[1].trim(),
                             lastName: namePaths[2].trim(),
                             birthDate: dto.birthdate,
                             gender: gender,
                             address: dto.address,
-                            email: UserInformationHelper.instance
+                            email: UserHelper.instance
                                 .getAccountInformation()
                                 .email,
-                            imgId: UserInformationHelper.instance
+                            imgId: UserHelper.instance
                                 .getAccountInformation()
                                 .imgId,
                           );
@@ -281,7 +281,7 @@ class NationalInformationView extends StatelessWidget {
 
   Widget _buildAvatarWidget(BuildContext context) {
     double size = 100;
-    String imgId = UserInformationHelper.instance.getAccountInformation().imgId;
+    String imgId = UserHelper.instance.getAccountInformation().imgId;
     return (imgId.isEmpty)
         ? ClipOval(
             child: SizedBox(

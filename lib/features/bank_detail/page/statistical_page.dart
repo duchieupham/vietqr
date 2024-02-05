@@ -11,6 +11,7 @@ import 'package:vierqr/models/statistical_dto.dart';
 import 'package:vierqr/services/providers/statistical_provider.dart';
 
 import '../views/line_chart.dart';
+import '../views/line_chart_static.dart';
 
 // ignore: must_be_immutable
 class Statistical extends StatelessWidget {
@@ -21,67 +22,70 @@ class Statistical extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => StatisticProvider(),
-      child: BlocProvider<StatisticBloc>(
-        create: (context) =>
-            StatisticBloc()..add(StatisticEventGetOverview(bankId: bankId)),
-        child: BlocConsumer<StatisticBloc, StatisticState>(
-            listener: (context, state) {
-          if (state is StatisticGetAllDataSuccessState) {
-            if (state.listData.isNotEmpty) {
-              Provider.of<StatisticProvider>(context, listen: false)
-                  .updateStatisticDTO(state.listData.first);
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: ChangeNotifierProvider(
+        create: (context) => StatisticProvider(),
+        child: BlocProvider<StatisticBloc>(
+          create: (context) =>
+              StatisticBloc()..add(StatisticEventGetOverview(bankId: bankId)),
+          child: BlocConsumer<StatisticBloc, StatisticState>(
+              listener: (context, state) {
+            if (state is StatisticGetAllDataSuccessState) {
+              if (state.listData.isNotEmpty) {
+                Provider.of<StatisticProvider>(context, listen: false)
+                    .updateStatisticDTO(state.listData.first);
+              }
             }
-          }
-        }, builder: (context, state) {
-          if (state is StatisticGetAllDataSuccessState) {
-            return ListView(
-              children: [
-                // Container(
-                //   padding: const EdgeInsets.fromLTRB(0, 40, 4, 12),
-                //   width: MediaQuery.of(context).size.width,
-                //   height: 400,
-                //   decoration: BoxDecoration(
-                //       borderRadius: BorderRadius.circular(16),
-                //       color: AppColor.WHITE),
-                //   child: Row(
-                //     crossAxisAlignment: CrossAxisAlignment.end,
-                //     children: [
-                //       Expanded(
-                //           child: StatisticalLineChart(
-                //         listData: state.listData,
-                //       )),
-                //       const Padding(
-                //         padding: EdgeInsets.only(bottom: 20, left: 4),
-                //         child: Text(
-                //           'Thời gian\n(Tháng)',
-                //           textAlign: TextAlign.center,
-                //           style: TextStyle(fontSize: 10),
-                //         ),
-                //       )
-                //     ],
-                //   ),
-                // ),
-                _buildOverView(state.dto, state.listData),
-                const SizedBox(
-                  height: 24,
-                ),
-                if (state.listData.isNotEmpty)
-                  LineChart(
-                    listData: state.listData,
+          }, builder: (context, state) {
+            if (state is StatisticGetAllDataSuccessState) {
+              return ListView(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(0, 40, 4, 12),
+                    width: MediaQuery.of(context).size.width,
+                    height: 400,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        color: AppColor.WHITE),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Expanded(
+                            child: StatisticalLineChart(
+                          listData: state.listData,
+                        )),
+                        const Padding(
+                          padding: EdgeInsets.only(bottom: 20, left: 4),
+                          child: Text(
+                            'Thời gian\n(Tháng)',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 10),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
-                const SizedBox(
-                  height: 60,
-                ),
-              ],
+                  _buildOverView(state.dto, state.listData),
+                  const SizedBox(
+                    height: 24,
+                  ),
+                  if (state.listData.isNotEmpty)
+                    LineChart(
+                      listData: state.listData,
+                    ),
+                  const SizedBox(
+                    height: 60,
+                  ),
+                ],
+              );
+            }
+            return ListView(
+              padding: const EdgeInsets.only(top: 12),
+              children: [_buildOverView(dto, [])],
             );
-          }
-          return ListView(
-            padding: const EdgeInsets.only(top: 12),
-            children: [_buildOverView(dto, [])],
-          );
-        }),
+          }),
+        ),
       ),
     );
   }

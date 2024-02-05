@@ -1,4 +1,5 @@
 import 'package:event_bus/event_bus.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/models/contact_dto.dart';
 
 EventBus eventBus = EventBus();

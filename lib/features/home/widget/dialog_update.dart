@@ -1,12 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
-import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
-import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
-import 'package:vierqr/services/providers/auth_provider.dart';
+import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 
 class DialogUpdateView extends StatefulWidget {
   final bool isHideClose;
@@ -41,17 +40,31 @@ class _DialogUpdateViewState extends State<DialogUpdateView> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Expanded(
-                child: Image.asset(
-                  'assets/images/logo_vietgr_payment.png',
-                  width: 130,
-                  height: 130,
-                ),
-              ),
+              Consumer<AuthProvider>(builder: (context, provider, child) {
+                return Expanded(
+                  child: provider.userId.isNotEmpty
+                      ? CachedNetworkImage(
+                          imageUrl: provider.settingDTO.logoUrl,
+                          width: 130,
+                          height: 130,
+                        )
+                      : provider.fileLogo.path.isNotEmpty
+                          ? Image.file(
+                              provider.fileLogo,
+                              width: 130,
+                              height: 130,
+                            )
+                          : Image.asset(
+                              'assets/images/logo_vietgr_payment.png',
+                              width: 130,
+                              height: 130,
+                            ),
+                );
+              }),
               const Padding(padding: EdgeInsets.only(top: 10)),
               Consumer<AuthProvider>(
                 builder: (context, provider, child) {
-                  if (provider.isCheckApp) {
+                  if (provider.appInfoDTO.isCheckApp) {
                     return Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 6, vertical: 10),
@@ -90,7 +103,7 @@ class _DialogUpdateViewState extends State<DialogUpdateView> {
                         SizedBox(
                           width: 250,
                           child: Text(
-                            'Phiên bản hiện tại: ${provider.packageInfo?.version ?? ''}',
+                            'Phiên bản hiện tại: ${provider.packageInfo.version}',
                             textAlign: TextAlign.center,
                             maxLines: 3,
                             overflow: TextOverflow.ellipsis,

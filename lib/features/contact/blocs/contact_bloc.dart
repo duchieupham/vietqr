@@ -54,7 +54,6 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
     on<UpdateContactEvent>(_updateContact);
     on<UpdateContactRelationEvent>(_updateRelation);
     on<SaveContactEvent>(_saveContact);
-    on<ScanQrContactEvent>(_scanQrGetType);
     on<UpdateStatusContactEvent>(_updateStatusContact);
     on<GetNickNameContactEvent>(_getNickNameWalletId);
     on<UpdateEventContact>(_updateState);
@@ -620,54 +619,6 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
     } catch (e) {
       LOG.error(e.toString());
       emit(state.copyWith(type: ContactType.ERROR));
-    }
-  }
-
-  void _scanQrGetType(ContactEvent event, Emitter emit) async {
-    try {
-      if (event is ScanQrContactEvent) {
-        state.copyWith(type: ContactType.NONE, status: BlocStatus.NONE);
-        TypeQR typeQR = await QRScannerUtils.instance.checkScan(event.code);
-        if (typeQR == TypeQR.QR_BANK) {
-          VietQRScannedDTO vietQRScannedDTO =
-              QRScannerUtils.instance.getBankAccountFromQR(event.code);
-          if (vietQRScannedDTO.caiValue.isNotEmpty &&
-              vietQRScannedDTO.bankAccount.isNotEmpty) {
-            BankTypeDTO dto = await dashBoardRepository
-                .getBankTypeByCaiValue(vietQRScannedDTO.caiValue);
-            if (dto.id.isNotEmpty) {
-              emit(state.copyWith(
-                bankTypeDTO: dto,
-                bankAccount: vietQRScannedDTO.bankAccount,
-                type: ContactType.SCAN,
-                qrCode: event.code,
-                typeQR: TypeContact.Bank,
-              ));
-            } else {
-              emit(state.copyWith(type: ContactType.SCAN_ERROR));
-            }
-          }
-        } else if (typeQR == TypeQR.QR_ID) {
-          emit(
-            state.copyWith(
-              qrCode: event.code,
-              type: ContactType.SCAN,
-              typeQR: TypeContact.VietQR_ID,
-            ),
-          );
-        } else if (typeQR == TypeQR.QR_LINK) {
-          emit(
-            state.copyWith(
-              qrCode: event.code,
-              type: ContactType.SCAN,
-              typeQR: TypeContact.Other,
-            ),
-          );
-        } else {}
-      }
-    } catch (e) {
-      LOG.error(e.toString());
-      emit(state.copyWith(type: ContactType.SCAN_ERROR));
     }
   }
 
