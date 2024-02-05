@@ -516,83 +516,85 @@ class _ShareBDSDInviteState extends State<DetailGroupScreen> {
   }
 
   Widget _buildItemMember(AccountMemberDTO dto) {
-    return Container(
-      height: 54,
-      margin: EdgeInsets.only(top: 12),
-      decoration: BoxDecoration(
-          color: AppColor.WHITE, borderRadius: BorderRadius.circular(8)),
-      child: Row(
-        children: [
-          const SizedBox(
-            width: 12,
-          ),
-          dto.imgId.isNotEmpty
-              ? Container(
-                  width: 30,
-                  height: 30,
-                  margin: EdgeInsets.only(top: 2),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    image: DecorationImage(
-                        image: ImageUtils.instance.getImageNetWork(dto.imgId),
-                        fit: BoxFit.cover),
-                  ),
-                )
-              : Container(
-                  width: 30,
-                  height: 30,
-                  margin: EdgeInsets.only(top: 2),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    image: DecorationImage(
-                        image: AssetImage('assets/images/ic-avatar.png')),
-                  ),
-                ),
-          const SizedBox(
-            width: 16,
-          ),
-          Expanded(
-              child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                dto.fullName(),
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              Text(
-                dto.phoneNo ?? '',
-                style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
-              )
-            ],
-          )),
-          dto.isOwner
-              ? Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  margin: EdgeInsets.only(right: 12),
-                  decoration: BoxDecoration(
-                      color: AppColor.BLUE_TEXT.withOpacity(0.3),
-                      borderRadius: BorderRadius.circular(30)),
-                  child: Text(
-                    'Admin',
-                    style: TextStyle(fontSize: 12, color: AppColor.BLUE_TEXT),
-                  ),
-                )
-              : GestureDetector(
-                  onTap: () {
-                    _bloc.add(RemoveMemberGroup(
-                        userId: dto.id, terminalId: widget.groupId));
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 12),
-                    child: Icon(
-                      Icons.remove_circle_outline,
-                      size: 18,
-                      color: AppColor.RED_TEXT,
+    return GestureDetector(
+      child: Container(
+        height: 54,
+        margin: EdgeInsets.only(top: 12),
+        decoration: BoxDecoration(
+            color: AppColor.WHITE, borderRadius: BorderRadius.circular(8)),
+        child: Row(
+          children: [
+            const SizedBox(
+              width: 12,
+            ),
+            dto.imgId.isNotEmpty
+                ? Container(
+                    width: 30,
+                    height: 30,
+                    margin: EdgeInsets.only(top: 2),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      image: DecorationImage(
+                          image: ImageUtils.instance.getImageNetWork(dto.imgId),
+                          fit: BoxFit.cover),
+                    ),
+                  )
+                : Container(
+                    width: 30,
+                    height: 30,
+                    margin: EdgeInsets.only(top: 2),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      image: DecorationImage(
+                          image: AssetImage('assets/images/ic-avatar.png')),
                     ),
                   ),
+            const SizedBox(
+              width: 16,
+            ),
+            Expanded(
+                child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  dto.fullName(),
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-        ],
+                Text(
+                  dto.phoneNo ?? '',
+                  style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
+                )
+              ],
+            )),
+            dto.isOwner
+                ? Container(
+                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    margin: EdgeInsets.only(right: 12),
+                    decoration: BoxDecoration(
+                        color: AppColor.BLUE_TEXT.withOpacity(0.3),
+                        borderRadius: BorderRadius.circular(30)),
+                    child: Text(
+                      'Admin',
+                      style: TextStyle(fontSize: 12, color: AppColor.BLUE_TEXT),
+                    ),
+                  )
+                : GestureDetector(
+                    onTap: () {
+                      _bloc.add(RemoveMemberGroup(
+                          userId: dto.id, terminalId: widget.groupId));
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 12),
+                      child: Icon(
+                        Icons.remove_circle_outline,
+                        size: 18,
+                        color: AppColor.RED_TEXT,
+                      ),
+                    ),
+                  ),
+          ],
+        ),
       ),
     );
   }

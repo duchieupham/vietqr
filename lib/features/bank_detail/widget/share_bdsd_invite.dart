@@ -452,9 +452,9 @@ class _ShareBDSDInviteState extends State<ShareBDSDInviteScreen> {
                   FocusScope.of(context).unfocus();
                   await DialogWidget.instance.showModelBottomSheet(
                     isDismissible: true,
-                    height: MediaQuery.of(context).size.height * 0.7,
+                    height: MediaQuery.of(context).size.height * 0.6,
                     margin: EdgeInsets.only(
-                        left: 10, right: 10, bottom: 10, top: 200),
+                        left: 10, right: 10, bottom: 10, top: 40),
                     borderRadius: BorderRadius.circular(16),
                     widget: BottomSheetAddUserBDSD(
                       terminalId: '',

@@ -45,6 +45,7 @@ class ShareBDSDBloc extends Bloc<ShareBDSDEvent, ShareBDSDState>
     on<SearchMemberEvent>(_searchMember);
     on<ShareUserBDSDEvent>(_shareBDSD);
     on<GetListGroupBDSDEvent>(_getListGroup);
+    on<GetMyListGroupBDSDEvent>(_getMyListGroup);
   }
 
   ShareBDSDRepository repository = ShareBDSDRepository();
@@ -216,6 +217,28 @@ class ShareBDSDBloc extends Bloc<ShareBDSDEvent, ShareBDSDState>
             isLoading: false,
           ));
         }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(status: BlocStatus.NONE));
+    }
+  }
+
+  void _getMyListGroup(ShareBDSDEvent event, Emitter emit) async {
+    try {
+      if (event is GetMyListGroupBDSDEvent) {
+        emit(
+          state.copyWith(
+              status: BlocStatus.LOADING_PAGE, request: ShareBDSDType.NONE),
+        );
+        final TerminalDto terminalDto = await repository.getMyListGroup(
+            event.userID, event.bankId, event.offset);
+        emit(state.copyWith(
+          status: BlocStatus.NONE,
+          listGroup: terminalDto,
+          request: ShareBDSDType.GET_LIST_GROUP,
+          isLoading: false,
+        ));
       }
     } catch (e) {
       LOG.error(e.toString());

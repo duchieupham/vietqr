@@ -198,7 +198,8 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                                 dto = state.bankDetailDTO!;
                               }
                               if (dto.userId !=
-                                  UserHelper.instance.getUserId()) {
+                                      UserHelper.instance.getUserId() ||
+                                  !dto.authenticated) {
                                 listTitle.removeLast();
                               }
                               if (AppDataHelper.instance

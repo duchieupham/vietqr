@@ -67,33 +67,36 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Row(
-              children: [
-                const Spacer(),
-                const SizedBox(
-                  width: 32,
-                ),
-                Text(
-                  'Chia sẻ BĐSD',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+            Padding(
+              padding: const EdgeInsets.only(top: 16),
+              child: Row(
+                children: [
+                  const Spacer(),
+                  const SizedBox(
+                    width: 32,
                   ),
-                ),
-                const Spacer(),
-                IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: const Icon(
-                    Icons.clear,
-                    size: 18,
+                  Text(
+                    'Chia sẻ BĐSD',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-              ],
+                  const Spacer(),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Icon(
+                      Icons.clear,
+                      size: 18,
+                    ),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(
-              height: 20,
+              height: 28,
             ),
             Consumer<AddUserBDSDProvider>(builder: (context, provider, child) {
               return Row(

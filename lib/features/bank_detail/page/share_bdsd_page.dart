@@ -73,11 +73,11 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
   initData() {
     _bloc.add(GetInfoTelegramEvent(bankId: widget.bankId, isLoading: true));
     _bloc.add(GetInfoLarkEvent(bankId: widget.bankId));
-    _bloc.add(GetListGroupBDSDEvent(
-        userID: UserHelper.instance.getUserId(),
-        type: 0,
-        offset: 0,
-        loadingPage: true));
+    _bloc.add(GetMyListGroupBDSDEvent(
+      userID: UserHelper.instance.getUserId(),
+      bankId: widget.bankId,
+      offset: 0,
+    ));
   }
 
   Future<void> onRefresh() async {
@@ -178,21 +178,25 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                           const SizedBox(
                             width: 16,
                           ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '${widget.dto.bankCode} Bank - ${widget.dto.bankAccount}',
-                                style: TextStyle(fontWeight: FontWeight.w600),
-                              ),
-                              const SizedBox(
-                                height: 2,
-                              ),
-                              Text(
-                                '${widget.dto.userBankName}',
-                                style: TextStyle(fontSize: 12),
-                              )
-                            ],
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '${widget.dto.bankCode} Bank - ${widget.dto.bankAccount}',
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(fontWeight: FontWeight.w600),
+                                ),
+                                const SizedBox(
+                                  height: 2,
+                                ),
+                                Text(
+                                  '${widget.dto.userBankName}',
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(fontSize: 12),
+                                )
+                              ],
+                            ),
                           )
                         ],
                       ),
@@ -332,11 +336,11 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                         await NavigatorUtils.navigatePage(
                             context, ShareBDSDInviteScreen(),
                             routeName: _ShareBDSDScreenState.routeName);
-                        _bloc.add(GetListGroupBDSDEvent(
-                            userID: UserHelper.instance.getUserId(),
-                            type: 0,
-                            offset: 0,
-                            loadingPage: true));
+                        _bloc.add(GetMyListGroupBDSDEvent(
+                          userID: UserHelper.instance.getUserId(),
+                          bankId: widget.bankId,
+                          offset: 0,
+                        ));
                       },
                       child: Container(
                         height: 40,
@@ -369,93 +373,94 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
   }
 
   Widget _buildItemGroup(TerminalResponseDTO dto) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      margin: EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-          color: AppColor.WHITE, borderRadius: BorderRadius.circular(5)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(
-            height: 4,
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
+    return GestureDetector(
+      onTap: () async {
+        await NavigatorUtils.navigatePage(
+            context,
+            DetailGroupScreen(
+              groupId: dto.id,
+            ),
+            routeName: _ShareBDSDScreenState.routeName);
+        _bloc.add(GetListGroupBDSDEvent(
+            userID: UserHelper.instance.getUserId(),
+            type: 0,
+            offset: 0,
+            loadingPage: true));
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        margin: EdgeInsets.only(bottom: 12),
+        decoration: BoxDecoration(
+            color: AppColor.WHITE, borderRadius: BorderRadius.circular(5)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(
+              height: 4,
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Nhóm:',
+                        style:
+                            TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
+                      ),
+                      Text(
+                        dto.name,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: 15),
+                      )
+                    ],
+                  ),
+                ),
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Nhóm:',
+                      'Thành viên:',
                       style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
                     ),
-                    Text(
-                      dto.name,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 15),
+                    Row(
+                      children: [
+                        Text(
+                          dto.totalMembers.toString(),
+                          style: TextStyle(fontSize: 15),
+                        ),
+                        Image.asset(
+                          'assets/images/ic-member-black.png',
+                          width: 24,
+                        )
+                      ],
                     )
                   ],
                 ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Thành viên:',
-                    style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        dto.totalMembers.toString(),
-                        style: TextStyle(fontSize: 15),
-                      ),
-                      Image.asset(
-                        'assets/images/ic-member-black.png',
-                        width: 24,
-                      )
-                    ],
-                  )
-                ],
-              ),
-              SizedBox(
-                width: 60,
-              ),
-              GestureDetector(
-                onTap: () async {
-                  await NavigatorUtils.navigatePage(
-                      context,
-                      DetailGroupScreen(
-                        groupId: dto.id,
-                      ),
-                      routeName: _ShareBDSDScreenState.routeName);
-                  _bloc.add(GetListGroupBDSDEvent(
-                      userID: UserHelper.instance.getUserId(),
-                      type: 0,
-                      offset: 0,
-                      loadingPage: true));
-                },
-                child: Icon(
+                SizedBox(
+                  width: 60,
+                ),
+                Icon(
                   Icons.arrow_forward,
                   color: AppColor.BLUE_TEXT,
                   size: 18,
-                ),
-              )
-            ],
-          ),
-          Text(
-            'Tài khoản chia sẻ:',
-            style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
-          ),
-          const SizedBox(
-            height: 2,
-          ),
-          ...dto.banks.map((e) {
-            return _buildShareBankItem(e);
-          }).toList(),
-        ],
+                )
+              ],
+            ),
+            Text(
+              'Tài khoản chia sẻ:',
+              style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
+            ),
+            const SizedBox(
+              height: 12,
+            ),
+            ...dto.banks.map((e) {
+              return _buildShareBankItem(e);
+            }).toList(),
+          ],
+        ),
       ),
     );
   }

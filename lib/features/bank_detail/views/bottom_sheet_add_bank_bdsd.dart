@@ -109,32 +109,34 @@ class BottomSheetAddBankBDSD extends StatelessWidget {
                                   ),
                                   const Padding(
                                       padding: EdgeInsets.only(left: 10)),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        '${listBank[index].bankCode} - ${listBank[index].bankAccount}',
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                            color: AppColor.BLACK,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                      Text(
-                                        listBank[index]
-                                            .userBankName
-                                            .toUpperCase(),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                          color: AppColor.BLACK,
-                                          fontSize: 10,
+                                  Expanded(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          '${listBank[index].bankCode} - ${listBank[index].bankAccount}',
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                              color: AppColor.BLACK,
+                                              fontWeight: FontWeight.w600),
                                         ),
-                                      ),
-                                    ],
+                                        Text(
+                                          listBank[index]
+                                              .userBankName
+                                              .toUpperCase(),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            color: AppColor.BLACK,
+                                            fontSize: 10,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  const Spacer(),
                                   ButtonWidget(
                                     borderRadius: 5,
                                     text: 'Thêm',

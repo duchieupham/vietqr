@@ -199,33 +199,31 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
                                               const SizedBox(
                                                 width: 8,
                                               ),
-                                              if (terminalDto.totalTerminals >
-                                                  0)
-                                                Container(
-                                                  padding: EdgeInsets.only(
-                                                      right: 8, left: 12),
-                                                  decoration: BoxDecoration(
-                                                      color: AppColor.BLUE_TEXT
-                                                          .withOpacity(0.3),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20)),
-                                                  child: Row(
-                                                    children: [
-                                                      Text(
-                                                        '${terminalDto.totalTerminals}',
-                                                        style: TextStyle(
-                                                            color: AppColor
-                                                                .BLUE_TEXT,
-                                                            fontSize: 12),
-                                                      ),
-                                                      Image.asset(
-                                                        'assets/images/ic-group-member-blue.png',
-                                                        height: 28,
-                                                      ),
-                                                    ],
-                                                  ),
+                                              Container(
+                                                padding: EdgeInsets.only(
+                                                    right: 8, left: 12),
+                                                decoration: BoxDecoration(
+                                                    color: AppColor.BLUE_TEXT
+                                                        .withOpacity(0.3),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20)),
+                                                child: Row(
+                                                  children: [
+                                                    Text(
+                                                      '${terminalDto.totalTerminals}',
+                                                      style: TextStyle(
+                                                          color: AppColor
+                                                              .BLUE_TEXT,
+                                                          fontSize: 12),
+                                                    ),
+                                                    Image.asset(
+                                                      'assets/images/ic-group-member-blue.png',
+                                                      height: 28,
+                                                    ),
+                                                  ],
                                                 ),
+                                              ),
                                             ],
                                           )
                                         else
@@ -244,33 +242,31 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
                                               const SizedBox(
                                                 width: 8,
                                               ),
-                                              if (terminalDto.totalTerminals >
-                                                  0)
-                                                Container(
-                                                  padding: EdgeInsets.only(
-                                                      right: 8, left: 12),
-                                                  decoration: BoxDecoration(
-                                                      color: AppColor.BLUE_TEXT
-                                                          .withOpacity(0.3),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20)),
-                                                  child: Row(
-                                                    children: [
-                                                      Text(
-                                                        '${bankTerminalDto.totalBankShares}',
-                                                        style: TextStyle(
-                                                            color: AppColor
-                                                                .BLUE_TEXT,
-                                                            fontSize: 12),
-                                                      ),
-                                                      Image.asset(
-                                                        'assets/images/ic-card-counting-blue.png',
-                                                        height: 28,
-                                                      ),
-                                                    ],
-                                                  ),
+                                              Container(
+                                                padding: EdgeInsets.only(
+                                                    right: 8, left: 12),
+                                                decoration: BoxDecoration(
+                                                    color: AppColor.BLUE_TEXT
+                                                        .withOpacity(0.3),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20)),
+                                                child: Row(
+                                                  children: [
+                                                    Text(
+                                                      '${bankTerminalDto.totalBankShares}',
+                                                      style: TextStyle(
+                                                          color: AppColor
+                                                              .BLUE_TEXT,
+                                                          fontSize: 12),
+                                                    ),
+                                                    Image.asset(
+                                                      'assets/images/ic-card-counting-blue.png',
+                                                      height: 28,
+                                                    ),
+                                                  ],
                                                 ),
+                                              ),
                                             ],
                                           ),
                                         _buildList(provider),
@@ -442,93 +438,109 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
   }
 
   Widget _buildItemGroup(TerminalResponseDTO dto) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      margin: EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-          color: AppColor.WHITE, borderRadius: BorderRadius.circular(5)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(
-            height: 4,
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
+    return GestureDetector(
+      onTap: () async {
+        await NavigatorUtils.navigatePage(
+            context,
+            DetailGroupScreen(
+              groupId: dto.id,
+            ),
+            routeName: '/share_bdsd_invite');
+        _bloc.add(GetListGroupBDSDEvent(
+            userID: UserHelper.instance.getUserId(),
+            type: 0,
+            offset: 0,
+            loadingPage: true));
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        margin: EdgeInsets.only(bottom: 12),
+        decoration: BoxDecoration(
+            color: AppColor.WHITE, borderRadius: BorderRadius.circular(5)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(
+              height: 4,
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Nhóm:',
+                        style:
+                            TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
+                      ),
+                      Text(
+                        dto.name,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: 15),
+                      )
+                    ],
+                  ),
+                ),
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Nhóm:',
+                      'Thành viên:',
                       style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
                     ),
-                    Text(
-                      dto.name,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 15),
+                    Row(
+                      children: [
+                        Text(
+                          dto.totalMembers.toString(),
+                          style: TextStyle(fontSize: 15),
+                        ),
+                        Image.asset(
+                          'assets/images/ic-member-black.png',
+                          width: 24,
+                        )
+                      ],
                     )
                   ],
                 ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Thành viên:',
-                    style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        dto.totalMembers.toString(),
-                        style: TextStyle(fontSize: 15),
-                      ),
-                      Image.asset(
-                        'assets/images/ic-member-black.png',
-                        width: 24,
-                      )
-                    ],
-                  )
-                ],
-              ),
-              SizedBox(
-                width: 60,
-              ),
-              GestureDetector(
-                onTap: () async {
-                  await NavigatorUtils.navigatePage(
-                      context,
-                      DetailGroupScreen(
-                        groupId: dto.id,
-                      ),
-                      routeName: '/share_bdsd_invite');
-                  _bloc.add(GetListGroupBDSDEvent(
-                      userID: UserHelper.instance.getUserId(),
-                      type: 0,
-                      offset: 0,
-                      loadingPage: true));
-                },
-                child: Icon(
-                  Icons.arrow_forward,
-                  color: AppColor.BLUE_TEXT,
-                  size: 18,
+                SizedBox(
+                  width: 60,
                 ),
-              )
-            ],
-          ),
-          Text(
-            'Tài khoản chia sẻ:',
-            style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
-          ),
-          const SizedBox(
-            height: 2,
-          ),
-          ...dto.banks.map((e) {
-            return _buildShareBankItem(e);
-          }).toList(),
-        ],
+                GestureDetector(
+                  onTap: () async {
+                    await NavigatorUtils.navigatePage(
+                        context,
+                        DetailGroupScreen(
+                          groupId: dto.id,
+                        ),
+                        routeName: '/share_bdsd_invite');
+                    _bloc.add(GetListGroupBDSDEvent(
+                        userID: UserHelper.instance.getUserId(),
+                        type: 0,
+                        offset: 0,
+                        loadingPage: true));
+                  },
+                  child: Icon(
+                    Icons.arrow_forward,
+                    color: AppColor.BLUE_TEXT,
+                    size: 18,
+                  ),
+                )
+              ],
+            ),
+            Text(
+              'Tài khoản chia sẻ:',
+              style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
+            ),
+            const SizedBox(
+              height: 2,
+            ),
+            ...dto.banks.map((e) {
+              return _buildShareBankItem(e);
+            }).toList(),
+          ],
+        ),
       ),
     );
   }
@@ -596,61 +608,76 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
   }
 
   Widget _buildTerminalBank(TerminalShareDTO dto, bool showBorder) {
-    return Container(
-      padding: EdgeInsets.only(bottom: 12, top: 12),
-      decoration: BoxDecoration(
-          border: Border(
-              bottom: BorderSide(
-                  color: showBorder
-                      ? AppColor.GREY_TEXT.withOpacity(0.4)
-                      : AppColor.WHITE,
-                  width: 0.5))),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(
-            child: Text(
-              dto.terminalName,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: 15),
+    return GestureDetector(
+      onTap: () async {
+        await NavigatorUtils.navigatePage(
+            context,
+            DetailGroupScreen(
+              groupId: dto.id,
             ),
-          ),
-          Row(
-            children: [
-              Text(
-                dto.totalMembers.toString(),
+            routeName: '/share_bdsd_invite');
+        _bloc.add(GetListGroupBDSDEvent(
+            userID: UserHelper.instance.getUserId(),
+            type: 0,
+            offset: 0,
+            loadingPage: true));
+      },
+      child: Container(
+        padding: EdgeInsets.only(bottom: 12, top: 12),
+        decoration: BoxDecoration(
+            border: Border(
+                bottom: BorderSide(
+                    color: showBorder
+                        ? AppColor.GREY_TEXT.withOpacity(0.4)
+                        : AppColor.WHITE,
+                    width: 0.5))),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Text(
+                dto.terminalName,
+                overflow: TextOverflow.ellipsis,
                 style: TextStyle(fontSize: 15),
               ),
-              Image.asset(
-                'assets/images/ic-member-black.png',
-                width: 24,
-              )
-            ],
-          ),
-          SizedBox(
-            width: 12,
-          ),
-          GestureDetector(
-            onTap: () async {
-              await NavigatorUtils.navigatePage(
-                  context,
-                  DetailGroupScreen(
-                    groupId: dto.id,
-                  ),
-                  routeName: '/share_bdsd_invite');
-              _bloc.add(GetListGroupBDSDEvent(
-                  userID: UserHelper.instance.getUserId(),
-                  type: 0,
-                  offset: 0,
-                  loadingPage: true));
-            },
-            child: Icon(
-              Icons.arrow_forward,
-              color: AppColor.BLUE_TEXT,
-              size: 18,
             ),
-          )
-        ],
+            Row(
+              children: [
+                Text(
+                  dto.totalMembers.toString(),
+                  style: TextStyle(fontSize: 15),
+                ),
+                Image.asset(
+                  'assets/images/ic-member-black.png',
+                  width: 24,
+                )
+              ],
+            ),
+            SizedBox(
+              width: 12,
+            ),
+            GestureDetector(
+              onTap: () async {
+                await NavigatorUtils.navigatePage(
+                    context,
+                    DetailGroupScreen(
+                      groupId: dto.id,
+                    ),
+                    routeName: '/share_bdsd_invite');
+                _bloc.add(GetListGroupBDSDEvent(
+                    userID: UserHelper.instance.getUserId(),
+                    type: 0,
+                    offset: 0,
+                    loadingPage: true));
+              },
+              child: Icon(
+                Icons.arrow_forward,
+                color: AppColor.BLUE_TEXT,
+                size: 18,
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
