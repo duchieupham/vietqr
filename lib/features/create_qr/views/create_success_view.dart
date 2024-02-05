@@ -23,11 +23,14 @@ import 'package:vierqr/services/sqflite/local_database.dart';
 
 class CreateQRSuccess extends StatefulWidget {
   final QRGeneratedDTO dto;
-  final GestureTapCallback? onPaid;
+  final GestureTapCallback onCreate;
   final List<BankTypeDTO> listBanks;
 
   CreateQRSuccess(
-      {super.key, required this.dto, this.onPaid, required this.listBanks});
+      {super.key,
+      required this.dto,
+      required this.onCreate,
+      required this.listBanks});
 
   @override
   State<CreateQRSuccess> createState() => _CreateQRSuccessState();
@@ -220,19 +223,15 @@ class _CreateQRSuccessState extends State<CreateQRSuccess> {
       bottomSheet: Consumer<CreateQRProvider>(
         builder: (context, bt, child) {
           return _buildButton(
-            context: context,
-            onGoHome: () {
-              if (bt.imageFile != null) {
-                dialogExits();
-              } else {
-                Navigator.of(context).popUntil((route) => route.isFirst);
-              }
-            },
-            onCreate: () {
-              bt.reset();
-              bt.updatePage(0);
-            },
-          );
+              context: context,
+              onGoHome: () {
+                if (bt.imageFile != null) {
+                  dialogExits();
+                } else {
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                }
+              },
+              onCreate: widget.onCreate);
         },
       ),
     );

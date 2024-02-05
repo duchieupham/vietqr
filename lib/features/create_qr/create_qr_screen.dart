@@ -1,4 +1,7 @@
 import 'dart:io';
+import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:vierqr/models/terminal_qr_dto.dart';
+
 import 'widgets/calculator_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -94,7 +97,6 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
 
   initData(BuildContext context) {
     _bloc.add(QrEventGetBankDetail());
-    _bloc.add(QREventGetList());
   }
 
   _onHandleTap() {
@@ -137,10 +139,17 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
         }
 
         if (state.type == CreateQRType.LOAD_DATA) {
+          _bloc.add(QREventGetList());
+          _bloc.add(QREventGetTerminals());
           _provider.updatePage(state.page);
           if (state.page == 0) {
             _focusMoney.requestFocus();
           }
+        }
+
+        if (state.type == CreateQRType.LIST_TERMINAL) {
+          _provider.updateTerminalQRDTO(state.listTerminal.first,
+              isFirst: true);
         }
 
         if (state.type == CreateQRType.UPLOAD_IMAGE) {
@@ -194,8 +203,12 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
               return CreateQRSuccess(
                 dto: state.dto ?? dto,
                 listBanks: provider.listBank,
-                onPaid: () {
-                  _bloc.add(QREventPaid(state.dto?.transactionId ?? ''));
+                onCreate: () {
+                  provider.reset();
+                  provider.updatePage(0);
+                  provider.updateTerminalQRDTO(state.listTerminal.first,
+                      isFirst: true);
+                  // _bloc.add(QREventPaid(state.dto?.transactionId ?? ''));
                 },
               );
             }
@@ -386,7 +399,10 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                           inputType: TextInputType.text,
                                           keyboardAction: TextInputAction.next,
                                           onChange: provider.updateBranchCode,
-                                        ),
+                                          child: _buildDropListTerminal(
+                                              state.listTerminal,
+                                              provider.terminalQRDTO),
+                                        )
                                       ],
                                     ),
                                 ]
@@ -465,7 +481,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                       ],
                     ),
                     Positioned.fill(
-                      bottom: 160,
+                      bottom: 85,
                       child: FloatBubble(
                         show: true,
                         initialAlignment: Alignment.bottomRight,
@@ -631,6 +647,97 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                 ),
               ),
             ],
+          ),
+        ),
+      );
+
+  Widget _buildDropListTerminal(List<TerminalQRDTO> list, TerminalQRDTO? dto) =>
+      DropdownButtonHideUnderline(
+        child: DropdownButton2<TerminalQRDTO>(
+          isExpanded: true,
+          selectedItemBuilder: (context) {
+            return list
+                .map(
+                  (item) => DropdownMenuItem<TerminalQRDTO>(
+                    value: item,
+                    child: MTextFieldCustom(
+                      isObscureText: false,
+                      maxLines: 1,
+                      fillColor: AppColor.WHITE,
+                      value: _provider.branchName,
+                      textFieldType: TextfieldType.DEFAULT,
+                      maxLength: 10,
+                      contentPadding: EdgeInsets.zero,
+                      title:
+                          'Mã chi nhánh (${_provider.branchCode.length}/10 ký tự)',
+                      hintText: 'Nhập hoặc chọn mã chi nhánh/nhóm',
+                      inputType: TextInputType.text,
+                      keyboardAction: TextInputAction.next,
+                      onChange: _provider.updateBranchCode,
+                    ),
+                  ),
+                )
+                .toList();
+          },
+          onMenuStateChange: _provider.onMenuStateChange,
+          items: list.map((item) {
+            return DropdownMenuItem<TerminalQRDTO>(
+              value: item,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      child: Row(
+                        children: [
+                          Text(
+                            item.terminalName,
+                            style: const TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.w500),
+                          ),
+                          const Spacer(),
+                          if (item.terminalCode.isEmpty)
+                            Icon(Icons.expand_more),
+                        ],
+                      ),
+                    ),
+                  ),
+                  if (item.terminalCode.isNotEmpty)
+                    Text(
+                      item.terminalCode,
+                      style: const TextStyle(
+                          fontSize: 11, color: AppColor.grey979797),
+                    ),
+                  const Divider()
+                ],
+              ),
+            );
+          }).toList(),
+          value: _provider.terminalQRDTO,
+          onChanged: _provider.updateTerminalQRDTO,
+          buttonStyleData: ButtonStyleData(
+            height: 50,
+            width: MediaQuery.of(context).size.width,
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: AppColor.WHITE,
+            ),
+          ),
+          iconStyleData: const IconStyleData(
+            icon: Icon(Icons.expand_more),
+            iconSize: 24,
+            iconEnabledColor: AppColor.BLACK,
+            iconDisabledColor: Colors.grey,
+          ),
+          dropdownStyleData: DropdownStyleData(
+            width: MediaQuery.of(context).size.width - 40,
+            offset: Offset(0, 50),
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(5)),
+          ),
+          menuItemStyleData: MenuItemStyleData(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
           ),
         ),
       );

@@ -23,6 +23,7 @@ import 'package:vierqr/models/qr_create_list_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/register_authentication_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
+import 'package:vierqr/models/terminal_qr_dto.dart';
 
 class BankCardRepository {
   const BankCardRepository();
@@ -48,6 +49,28 @@ class BankCardRepository {
       LOG.error(e.toString());
     }
     return listBanks;
+  }
+
+  Future<List<TerminalQRDTO>> getTerminals(String userId, String bankId) async {
+    List<TerminalQRDTO> listTerminals = [];
+
+    try {
+      String url =
+          '${EnvConfig.getBaseUrl()}account-bank/terminal?userId=$userId&bankId=$bankId';
+      final response =
+          await BaseAPIClient.getAPI(url: url, type: AuthenticationType.SYSTEM);
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        if (data != null) {
+          listTerminals = data
+              .map<TerminalQRDTO>((json) => TerminalQRDTO.fromJson(json))
+              .toList();
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return listTerminals;
   }
 
   Future<List<QRGeneratedDTO>> generateQRList(List<QRCreateDTO> list) async {

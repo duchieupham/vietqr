@@ -245,17 +245,15 @@ class _SplashScreenState extends State<SplashScreen> {
                 _saveImageTaskStreamReceiver(state.listBanks);
               }
 
-              if (isBanks && isThemes) {
-                print('heheheh - splash');
-                isBanks = false;
-                await Future.delayed(const Duration(milliseconds: 1000), () {
-                  _openStartScreen();
-                });
-              }
-
               if (state.request == DashBoardType.GET_BANK_LOCAL) {
                 isBanks = true;
-                updateState();
+                if (isBanks && isThemes) {
+                  print('heheheh - splash');
+                  isBanks = false;
+                  await Future.delayed(const Duration(milliseconds: 1000), () {
+                    _openStartScreen();
+                  });
+                }
               }
 
               if (state.request == DashBoardType.APP_VERSION) {
@@ -279,10 +277,18 @@ class _SplashScreenState extends State<SplashScreen> {
                     await UserRepository.instance.getThemes();
 
                 if (themeVerLocal != themeVerSetting || listLocal.isEmpty) {
+                  await UserRepository.instance.clearThemes();
                   _saveThemeTaskStreamReceiver(list);
                 } else {
                   isThemes = true;
-                  updateState();
+                  if (isBanks && isThemes) {
+                    print('heheheh - splash');
+                    isThemes = false;
+                    await Future.delayed(const Duration(milliseconds: 1000),
+                        () {
+                      _openStartScreen();
+                    });
+                  }
                 }
               }
             },

@@ -220,12 +220,13 @@ class AuthProvider with ChangeNotifier {
 
         String localPath =
             await downloadAndSaveImage(settingDTO.themeImgUrl, path);
+        if (localPath.isNotEmpty) {
+          themeDTO.setFile(localPath);
+          themeDTO.setType(settingDTO.themeType);
 
-        themeDTO.setFile(localPath);
-        themeDTO.setType(settingDTO.themeType);
-
-        userRes.updateThemeDTO(themeDTO);
-        file = await getImageFile(themeDTO.file);
+          userRes.updateThemeDTO(themeDTO);
+          file = await getImageFile(themeDTO.file);
+        }
       }
     }
 

@@ -33,6 +33,7 @@ class MTextFieldCustom extends StatefulWidget {
   final List<TextInputFormatter>? inputFormatter;
   final Widget? prefixIcon;
   final Widget? suffixIcon;
+  final Widget? child;
   final String? value;
   final bool showBorder;
 
@@ -40,6 +41,7 @@ class MTextFieldCustom extends StatefulWidget {
   final bool isRequired;
   final Color? fillColor;
   final Color? hintColor;
+  final EdgeInsetsGeometry? contentPadding;
 
   const MTextFieldCustom({
     Key? key,
@@ -73,6 +75,8 @@ class MTextFieldCustom extends StatefulWidget {
     this.isRequired = false,
     this.value,
     this.hintColor,
+    this.child,
+    this.contentPadding,
     this.showBorder = false,
   }) : super(key: key);
 
@@ -141,7 +145,8 @@ class _TextFieldWidgetState extends State<MTextFieldCustom> {
         ),
         prefixIcon: widget.prefixIcon,
         suffixIcon: widget.suffixIcon,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+        contentPadding:
+            widget.contentPadding ?? const EdgeInsets.symmetric(horizontal: 16),
         fillColor: widget.fillColor ?? AppColor.WHITE,
         filled: true,
       ),
@@ -200,7 +205,7 @@ class _TextFieldWidgetState extends State<MTextFieldCustom> {
                           ? Border.all(
                               color: AppColor.GREY_LIGHT.withOpacity(0.5))
                           : null),
-                  child: textFiledTypeLabel),
+                  child: widget.child ?? textFiledTypeLabel),
               if (_msgError != null && !widget.isShowToast)
                 Container(
                   width: double.infinity,

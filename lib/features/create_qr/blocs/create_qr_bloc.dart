@@ -17,6 +17,7 @@ import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/models/notification_transaction_success_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
+import 'package:vierqr/models/terminal_qr_dto.dart';
 
 class CreateQRBloc extends Bloc<CreateQREvent, CreateQRState> with BaseManager {
   @override
@@ -25,9 +26,10 @@ class CreateQRBloc extends Bloc<CreateQREvent, CreateQRState> with BaseManager {
   final QRGeneratedDTO? qrDTO;
 
   CreateQRBloc(this.context, this.bankAccountDTO, this.qrDTO)
-      : super(const CreateQRState(listBanks: [])) {
+      : super(const CreateQRState(listBanks: [], listTerminal: [])) {
     on<QrEventGetBankDetail>(_initData);
     on<QREventGetList>(_getBankAccounts);
+    on<QREventGetTerminals>(_getTerminals);
     on<QREventGenerate>(_generateQR);
     on<QREventUploadImage>(_uploadImage);
     on<QREventPaid>(_onPaid);
@@ -80,6 +82,30 @@ class CreateQRBloc extends Bloc<CreateQREvent, CreateQRState> with BaseManager {
           type: CreateQRType.ERROR,
         ),
       );
+    }
+  }
+
+  void _getTerminals(CreateQREvent event, Emitter emit) async {
+    try {
+      if (event is QREventGetTerminals) {
+        emit(state.copyWith(status: BlocStatus.NONE));
+        List<TerminalQRDTO> list = await bankCardRepository.getTerminals(
+            userId, state.bankAccountDTO?.id ?? '');
+
+        TerminalQRDTO terminalQRDTO =
+            TerminalQRDTO(terminalName: 'Nhập hoặc chọn mã chi nhánh/nhóm');
+        list = [terminalQRDTO, ...list];
+
+        emit(state.copyWith(
+            type: CreateQRType.LIST_TERMINAL,
+            listTerminal: list,
+            status: BlocStatus.NONE));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+          status: BlocStatus.ERROR,
+          msg: 'Không thể tải danh sách. Vui lòng kiểm tra lại kết nối'));
     }
   }
 

@@ -63,6 +63,10 @@ class UserRepository {
     _banks = value;
   }
 
+  clearBanks() {
+    bankLocal.clearWishlist(_boxBank);
+  }
+
   ///Theme
   Future<ThemeDTO?> getThemeDTO() async {
     Box box = await themeLocal.openBox(theme_dto_key);
@@ -85,5 +89,10 @@ class UserRepository {
     Box box = await themeLocal.openBox(list_theme_key);
     var dto = value.copy;
     await themeLocal.addProductToWishlist(box, dto);
+  }
+
+  Future<void> clearThemes() async {
+    Box box = await themeLocal.openBox(list_theme_key);
+    await themeLocal.clearWishlist(box);
   }
 }

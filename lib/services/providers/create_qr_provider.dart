@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:vierqr/commons/mixin/base_manager.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
+import 'package:vierqr/models/terminal_qr_dto.dart';
 
 class CreateQRProvider with ChangeNotifier, BaseManager {
   @override
@@ -15,6 +16,7 @@ class CreateQRProvider with ChangeNotifier, BaseManager {
   String content = '';
   String orderCode = '';
   String branchCode = '';
+  String branchName = '';
 
   bool isExtra = false;
 
@@ -43,6 +45,27 @@ class CreateQRProvider with ChangeNotifier, BaseManager {
 
   double progressBar = 0.7;
 
+  bool enableDropList = false;
+  TerminalQRDTO terminalQRDTO = TerminalQRDTO();
+
+  void onMenuStateChange(bool isOpen) {
+    if (enableDropList) {
+      enableDropList = false;
+    }
+    notifyListeners();
+  }
+
+  void updateTerminalQRDTO(TerminalQRDTO? value, {bool isFirst = false}) {
+    if (value == null) return;
+    if (value.terminalCode.isEmpty && !isFirst) return;
+    terminalQRDTO = value;
+    if (!isFirst) {
+      branchName = terminalQRDTO.terminalName;
+      branchCode = terminalQRDTO.terminalCode;
+    }
+    notifyListeners();
+  }
+
   void updateExtra() {
     isExtra = !isExtra;
     notifyListeners();
@@ -67,6 +90,7 @@ class CreateQRProvider with ChangeNotifier, BaseManager {
     money = StringUtils.formatNumber(0);
     content = '';
     branchCode = '';
+    branchName = '';
     orderCode = '';
     isExtra = false;
     notifyListeners();
@@ -97,6 +121,7 @@ class CreateQRProvider with ChangeNotifier, BaseManager {
 
   void updateBranchCode(String text) {
     branchCode = text;
+    branchName = text;
     notifyListeners();
   }
 

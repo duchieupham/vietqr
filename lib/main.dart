@@ -90,17 +90,21 @@ extension Uint8ListExtension on Uint8List {
 }
 
 Future<String> downloadAndSaveImage(String imageUrl, String path) async {
-  final response = await http.get(Uri.parse(imageUrl));
-  final bytes = response.bodyBytes;
+  try {
+    final response = await http.get(Uri.parse(imageUrl));
+    final bytes = response.bodyBytes;
 
-  final directory = await getApplicationDocumentsDirectory();
-  final localImagePath = '${directory.path}/$path';
+    final directory = await getApplicationDocumentsDirectory();
+    final localImagePath = '${directory.path}/$path';
 
-  final file = File(localImagePath);
-  file.writeAsBytesSync(bytes);
+    final file = File(localImagePath);
+    file.writeAsBytesSync(bytes);
 
-  print('Image saved to: $localImagePath');
-  return localImagePath;
+    print('Image saved to: $localImagePath');
+    return localImagePath;
+  } catch (e) {
+    return '';
+  }
 }
 
 Future<String> saveImageToLocal(Uint8List uint8list, String path) async {

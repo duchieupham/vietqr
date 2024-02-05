@@ -15,6 +15,8 @@ class QrEventGetBankDetail extends CreateQREvent {}
 
 class QREventGetList extends CreateQREvent {}
 
+class QREventGetTerminals extends CreateQREvent {}
+
 class QREventSetBankAccountDTO extends CreateQREvent {
   final BankAccountDTO dto;
 
