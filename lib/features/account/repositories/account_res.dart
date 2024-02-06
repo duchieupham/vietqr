@@ -106,16 +106,7 @@ class AccountRepository {
   }
 
   Future<AccountInformationDTO?> getUserInformation(String userId) async {
-    AccountInformationDTO result = AccountInformationDTO(
-        userId: '',
-        firstName: '',
-        middleName: '',
-        lastName: '',
-        birthDate: '',
-        gender: 0,
-        address: '',
-        email: '',
-        imgId: '');
+    AccountInformationDTO result = AccountInformationDTO();
     try {
       final String url = '${EnvConfig.getBaseUrl()}user/information/$userId';
       final response = await BaseAPIClient.getAPI(

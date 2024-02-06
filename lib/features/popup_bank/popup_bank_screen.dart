@@ -15,7 +15,6 @@ import 'package:vierqr/commons/widgets/viet_qr_new.dart';
 import 'package:vierqr/features/add_bank/add_bank_screen.dart';
 import 'package:vierqr/features/bank_detail/bank_card_detail_screen.dart';
 import 'package:vierqr/features/bank_detail/repositories/bank_card_repository.dart';
-import 'package:vierqr/features/bank_detail/views/bottom_sheet_add_user_bdsd.dart';
 import 'package:vierqr/features/bank_detail/views/dialog_otp.dart';
 import 'package:vierqr/features/create_qr/create_qr_screen.dart';
 import 'package:vierqr/features/popup_bank/blocs/popup_bank_bloc.dart';

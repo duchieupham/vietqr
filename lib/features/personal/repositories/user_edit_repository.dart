@@ -49,17 +49,7 @@ class UserEditRepository {
   }
 
   Future<AccountInformationDTO> getUserInformation(String userId) async {
-    AccountInformationDTO accountInformationDTO = const AccountInformationDTO(
-      userId: '',
-      firstName: '',
-      middleName: '',
-      lastName: '',
-      birthDate: '',
-      gender: 0,
-      address: '',
-      email: '',
-      imgId: '',
-    );
+    AccountInformationDTO accountInformationDTO = const AccountInformationDTO();
     try {
       final String url = '${EnvConfig.getBaseUrl()}user/information/$userId';
       final response = await BaseAPIClient.getAPI(
@@ -69,8 +59,7 @@ class UserEditRepository {
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         accountInformationDTO = AccountInformationDTO.fromJson(data);
-        UserHelper.instance
-            .setAccountInformation(accountInformationDTO);
+        UserHelper.instance.setAccountInformation(accountInformationDTO);
       }
     } catch (e) {
       LOG.error(e.toString());
@@ -165,8 +154,7 @@ class UserEditRepository {
         result = ResponseMessageDTO.fromJson(data);
         final String phone = UserHelper.instance.getPhoneNo();
 
-        List<InfoUserDTO> list =
-            UserHelper.instance.getLoginAccount();
+        List<InfoUserDTO> list = UserHelper.instance.getLoginAccount();
 
         List<String> listString = [];
 

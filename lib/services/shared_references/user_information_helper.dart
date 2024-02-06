@@ -21,19 +21,10 @@ class UserHelper {
   static String account_info_key = 'ACCOUNT_INFORMATION';
 
   Future<void> initialUserInformationHelper() async {
-    const AccountInformationDTO accountInformationDTO = AccountInformationDTO(
-      userId: '',
-      firstName: '',
-      middleName: '',
-      lastName: '',
-      birthDate: '',
-      gender: 0,
-      address: '',
-      email: '',
-      imgId: '',
-    );
+    await sharedPrefs.setString('USER_ID', '');
+    await sharedPrefs.setString('PHONE_NO', '');
     await sharedPrefs.setString(
-        'ACCOUNT_INFORMATION', accountInformationDTO.toSPJson().toString());
+        'ACCOUNT_INFORMATION', AccountInformationDTO().toSPJson().toString());
   }
 
   reset() {
