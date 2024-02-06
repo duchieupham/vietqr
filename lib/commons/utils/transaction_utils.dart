@@ -5,7 +5,7 @@ class TransactionUtils {
   const TransactionUtils._privateConsrtructor();
 
   static const TransactionUtils _instance =
-  TransactionUtils._privateConsrtructor();
+      TransactionUtils._privateConsrtructor();
 
   static TransactionUtils get instance => _instance;
 
@@ -44,7 +44,7 @@ class TransactionUtils {
       result = AppColor.RED_CALENDAR;
     } else {
       if (status == 0) {
-        result = AppColor.ORANGE;
+        result = AppColor.ORANGE_DARK;
       } else if (status == 1) {
         if (type == 2) {
           result = AppColor.BLUE_TEXT;

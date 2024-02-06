@@ -12,14 +12,15 @@ class ShareBDSDProvider with ChangeNotifier {
   List<String> filterTitles = ['Nhóm chia sẻ', 'Tài khoản ngân hàng'];
 
   String titleFilter = 'Nhóm chia sẻ';
-  void updateTypeList(int value) {
-    _typeList = value;
-    notifyListeners();
-  }
 
   void updateTypeFilter(String value) {
     titleFilter = value;
     _typeFilter = filterTitles.indexOf(value);
+    notifyListeners();
+  }
+
+  void updateTypeList(int value) {
+    _typeList = value;
     notifyListeners();
   }
 

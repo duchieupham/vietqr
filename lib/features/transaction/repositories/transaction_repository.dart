@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
@@ -9,9 +10,11 @@ import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/qr_recreate_dto.dart';
 import 'package:vierqr/models/related_transaction_receive_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
+import 'package:vierqr/models/terminal_response_dto.dart';
 import 'package:vierqr/models/transaction_branch_input_dto.dart';
 import 'package:vierqr/models/transaction_input_dto.dart';
 import 'package:vierqr/models/transaction_receive_dto.dart';
+import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class TransactionRepository {
   const TransactionRepository();
@@ -51,7 +54,7 @@ class TransactionRepository {
     List<RelatedTransactionReceiveDTO> result = [];
     try {
       final String url =
-          '${EnvConfig.getBaseUrl()}transactions/list?bankId=${dto.bankId}&type=${dto.type}&offset=${dto.offset}&value=${dto.value}&from=${dto.from}&to=${dto.to}';
+          '${EnvConfig.getBaseUrl()}terminal/transactions?terminalCode=${dto.terminalCode}&userId=${UserHelper.instance.getUserId()}&bankId=${dto.bankId}&type=${dto.type}&offset=${dto.offset}&value=${dto.value}&from=${dto.from}&to=${dto.to}';
 
       final response = await BaseAPIClient.getAPI(
         url: url,
@@ -200,5 +203,28 @@ class TransactionRepository {
       result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
     }
     return result;
+  }
+
+  Future<TerminalDto> getMyListGroup(
+      String userId, String type, int offset) async {
+    TerminalDto result = TerminalDto(terminals: []);
+    try {
+      final String url =
+          '${EnvConfig.getBaseUrl()}terminal/bank?userId=$userId&bankId=$type&offset=$offset';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        if (data != null) {
+          result = TerminalDto.fromJson(data);
+        }
+      }
+      return result;
+    } catch (e) {
+      LOG.error(e.toString());
+      return result;
+    }
   }
 }
