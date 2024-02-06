@@ -477,7 +477,9 @@ class _ShareBDSDInviteState extends State<DetailGroupScreen> {
               )
             ],
           )),
-          const SizedBox(width: 16,),
+          const SizedBox(
+            width: 16,
+          ),
           GestureDetector(
             onTap: () async {
               await DialogWidget.instance.showModelBottomSheet(
@@ -488,6 +490,7 @@ class _ShareBDSDInviteState extends State<DetailGroupScreen> {
                 borderRadius: BorderRadius.circular(16),
                 widget: BottomSheetDetailBankBDSD(
                   dto: dto,
+                  hideRemove: detailDTO.banks.length == 1,
                   onDelete: (bankId) {
                     Map<String, dynamic> param = {};
                     param['userId'] = UserHelper.instance.getUserId();

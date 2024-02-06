@@ -16,11 +16,13 @@ import 'package:vierqr/models/terminal_response_dto.dart';
 class BottomSheetDetailBankBDSD extends StatelessWidget {
   final Function(String) onDelete;
   final TerminalBankResponseDTO dto;
+  final bool hideRemove;
 
   const BottomSheetDetailBankBDSD({
     Key? key,
     required this.dto,
     required this.onDelete,
+    this.hideRemove = false,
   }) : super(key: key);
 
   @override
@@ -234,14 +236,15 @@ class BottomSheetDetailBankBDSD extends StatelessWidget {
                   context, BankCardDetailScreen(bankId: dto.bankId),
                   routeName: BankCardDetailScreen.routeName);
             }),
-        _buildBottomBar(
-            title: 'Gỡ tài khoản liên kết',
-            url: 'assets/images/ic-popup-bank-remove.png',
-            color: AppColor.RED_TEXT,
-            onTap: () {
-              Navigator.pop(context);
-              onDelete(dto.bankId);
-            }),
+        if (!hideRemove)
+          _buildBottomBar(
+              title: 'Gỡ tài khoản liên kết',
+              url: 'assets/images/ic-popup-bank-remove.png',
+              color: AppColor.RED_TEXT,
+              onTap: () {
+                Navigator.pop(context);
+                onDelete(dto.bankId);
+              }),
       ],
     );
   }
