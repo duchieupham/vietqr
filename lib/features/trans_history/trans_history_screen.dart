@@ -6,23 +6,27 @@ import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
-import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/commons/utils/transaction_utils.dart';
+import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_custom.dart';
 import 'package:vierqr/features/trans_history/blocs/trans_history_bloc.dart';
 import 'package:vierqr/features/trans_history/blocs/trans_history_provider.dart';
+import 'package:vierqr/features/trans_history/views/bottom_sheet_filter.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/related_transaction_receive_dto.dart';
+import 'package:vierqr/models/terminal_response_dto.dart';
+import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 import 'events/trans_history_event.dart';
 import 'states/trans_history_state.dart';
-import 'views/dialog_edit_view.dart';
 
 class TransHistoryScreen extends StatelessWidget {
   final String bankId;
+  final String bankUserId;
 
-  const TransHistoryScreen({super.key, required this.bankId});
+  const TransHistoryScreen(
+      {super.key, required this.bankId, required this.bankUserId});
 
   @override
   Widget build(BuildContext context) {
@@ -30,14 +34,16 @@ class TransHistoryScreen extends StatelessWidget {
       create: (context) => TransHistoryBloc(context, bankId),
       child: ChangeNotifierProvider<TransProvider>(
         create: (context) => TransProvider()..setBankId(bankId),
-        child: const _BodyWidget(),
+        child: _BodyWidget(bankId: bankId, bankUserId: bankUserId),
       ),
     );
   }
 }
 
 class _BodyWidget extends StatefulWidget {
-  const _BodyWidget();
+  final String bankId;
+  final String bankUserId;
+  const _BodyWidget({required this.bankId, required this.bankUserId});
 
   @override
   State<_BodyWidget> createState() => _TransHistoryScreenState();
@@ -45,7 +51,9 @@ class _BodyWidget extends StatefulWidget {
 
 class _TransHistoryScreenState extends State<_BodyWidget> {
   late TransHistoryBloc _bloc;
-
+  List<RelatedTransactionReceiveDTO> listTransaction = [];
+  List<RelatedTransactionReceiveDTO> listFilterTransaction = [];
+  TerminalDto terminalDto = TerminalDto(terminals: []);
   @override
   void initState() {
     super.initState();
@@ -53,6 +61,11 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       initData(context);
     });
+    _bloc.add(GetMyListGroupEvent(
+      userID: UserHelper.instance.getUserId(),
+      bankId: widget.bankId,
+      offset: 0,
+    ));
   }
 
   void initData(BuildContext context) {
@@ -82,13 +95,20 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
             if (state.status == BlocStatus.LOADING) {
               // DialogWidget.instance.openLoadingDialog();
             }
-
+            if (state.type == TransactionType.LOAD_DATA) {}
             if (state.status == BlocStatus.UNLOADING) {
+              listTransaction = state.list;
+              listFilterTransaction = state.list;
               // Navigator.pop(context);
             }
             if (state.type == TransHistoryType.LOAD_DATA) {
+              listTransaction = state.list;
+              listFilterTransaction = state.list;
               Provider.of<TransProvider>(context, listen: false)
                   .updateCallLoadMore(true);
+            }
+            if (state.type == TransHistoryType.GET_LIST_GROUP) {
+              terminalDto = state.terminalDto ?? TerminalDto(terminals: []);
             }
           },
           builder: (context, state) {
@@ -97,23 +117,118 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    _buildDropDown(),
-                    const SizedBox(height: 16),
-                    ...[
-                      _buildFormStatus(),
-                      _buildDropTime(),
-                      _buildFormSearch(),
-                      const SizedBox(height: 16),
-                    ],
-                    Container(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Danh sách giao dịch',
-                        style: TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.bold),
-                      ),
+                    // _buildDropDown(),
+                    // const SizedBox(height: 16),
+                    // ...[
+                    //   _buildFormStatus(),
+                    //   _buildDropTime(),
+                    //   _buildFormSearch(),
+                    //   const SizedBox(height: 16),
+                    // ],
+                    const SizedBox(
+                      height: 12,
                     ),
-                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Expanded(
+                            child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Danh sách giao dịch',
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              'Hiển thị các giao dịch thuộc nhóm/chi nhánh của bạn.',
+                              style: TextStyle(
+                                  fontSize: 12, color: AppColor.GREY_TEXT),
+                            ),
+                          ],
+                        )),
+                        Consumer<TransProvider>(
+                            builder: (context, provider, child) {
+                          return GestureDetector(
+                            onTap: () async {
+                              await DialogWidget.instance.showModelBottomSheet(
+                                isDismissible: true,
+                                padding: EdgeInsets.only(
+                                    left: 12, right: 12, bottom: 32),
+                                height:
+                                    MediaQuery.of(context).size.height * 0.8,
+                                margin: EdgeInsets.only(
+                                    left: 10, right: 10, bottom: 10, top: 60),
+                                borderRadius: BorderRadius.circular(16),
+                                widget: BottomSheetFilter(
+                                  terminals: terminalDto.terminals,
+                                  bankId: widget.bankId,
+                                  isOwner: widget.bankUserId ==
+                                      UserHelper.instance.getUserId(),
+                                  fromDate: provider.fromDate,
+                                  toDate: provider.toDate!,
+                                  filterTransaction: provider.valueFilter,
+                                  keyword: provider.keywordSearch,
+                                  filterStatusTransaction: provider.statusValue,
+                                  filterTerminal: provider.valueFilterTerminal,
+                                  filterTimeTransaction:
+                                      provider.valueTimeFilter,
+                                  onApply: (dto,
+                                      timeFilter,
+                                      valueFilter,
+                                      keyword,
+                                      stateValue,
+                                      valueFilerTerminal) async {
+                                    if (valueFilter.id == 5) {
+                                      if (dto.status == 9) {
+                                        listTransaction = listFilterTransaction;
+                                      } else {
+                                        listTransaction = listFilterTransaction
+                                            .where((element) =>
+                                                element.status == dto.status)
+                                            .toList();
+                                      }
+
+                                      // _bloc.add(
+                                      //     TransactionStatusEventGetList(dto));
+                                    } else {
+                                      _bloc.add(TransactionEventGetList(dto));
+                                    }
+                                    provider.updateFilterTerminal(
+                                        valueFilerTerminal);
+
+                                    provider.changeFilter(
+                                        valueFilter, (dto) {});
+                                    provider.changeStatusFilter(stateValue,
+                                        (dto) {
+                                      // _bloc.add(TransactionEventGetList(dto));
+                                    });
+                                    provider.updateKeyword(keyword);
+                                    provider.changeTimeFilter(
+                                        timeFilter, context, (dto) {});
+                                  },
+                                  reset: () {
+                                    provider.resetFilter((dto) {
+                                      _bloc.add(TransactionEventGetList(dto));
+                                    }, widget.bankUserId == UserHelper.instance.getUserId());
+                                  },
+
+                                ),
+                              );
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(30),
+                                  color: AppColor.BLUE_TEXT.withOpacity(0.3)),
+                              child: Image.asset(
+                                'assets/images/ic-filter-blue.png',
+                                height: 36,
+                              ),
+                            ),
+                          );
+                        })
+                      ],
+                    ),
+                    const SizedBox(height: 20),
                     if (state.status == BlocStatus.LOADING)
                       Expanded(
                         child: Padding(
@@ -126,7 +241,7 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
                         ),
                       )
                     else ...[
-                      if (state.list.isEmpty)
+                      if (listTransaction.isEmpty)
                         Expanded(
                           child: Padding(
                             padding: const EdgeInsets.only(bottom: 100),
@@ -146,11 +261,11 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
                                 child: Column(
                                   children: [
                                     ...List.generate(
-                                      state.list.length,
+                                      listTransaction.length,
                                       (index) {
                                         return _buildElement(
                                           context: context,
-                                          dto: state.list[index],
+                                          dto: listTransaction[index],
                                         );
                                       },
                                     ).toList(),
@@ -173,27 +288,27 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
                     ],
                   ],
                 ),
-                Consumer<TransProvider>(builder: (context, provider, child) {
-                  if (provider.enableDropList) {
-                    return Container(
-                      padding: EdgeInsets.only(left: 20, top: 62),
-                      child: Row(
-                        children: [
-                          Text(
-                            'Trạng thái giao dịch',
-                            style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                color: AppColor.TRANSPARENT),
-                          ),
-                          const SizedBox(width: 30),
-                          Expanded(child: _buildSearchList()),
-                        ],
-                      ),
-                    );
-                  }
-                  return Container();
-                }),
+                // Consumer<TransProvider>(builder: (context, provider, child) {
+                //   if (provider.enableDropList) {
+                //     return Container(
+                //       padding: EdgeInsets.only(left: 20, top: 62),
+                //       child: Row(
+                //         children: [
+                //           Text(
+                //             'Trạng thái giao dịch',
+                //             style: TextStyle(
+                //                 fontSize: 12,
+                //                 fontWeight: FontWeight.w500,
+                //                 color: AppColor.TRANSPARENT),
+                //           ),
+                //           const SizedBox(width: 30),
+                //           Expanded(child: _buildSearchList()),
+                //         ],
+                //       ),
+                //     );
+                //   }
+                //   return Container();
+                // }),
               ],
             );
           },
@@ -276,17 +391,17 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
                     ],
                   ),
                 ),
-                IconButton(
-                  onPressed: () async {
-                    await NavigatorUtils.showGeneralDialog(
-                      context: context,
-                      child: DialogEditView(id: dto.transactionId),
-                    );
-                  },
-                  constraints: BoxConstraints(),
-                  padding: EdgeInsets.zero,
-                  icon: Icon(Icons.edit, size: 20),
-                )
+                // IconButton(
+                //   onPressed: () async {
+                //     await NavigatorUtils.showGeneralDialog(
+                //       context: context,
+                //       child: DialogEditView(id: dto.transactionId),
+                //     );
+                //   },
+                //   constraints: BoxConstraints(),
+                //   padding: EdgeInsets.zero,
+                //   icon: Icon(Icons.edit, size: 20),
+                // )
               ],
             ),
             const SizedBox(height: 8),
@@ -627,20 +742,20 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
               ),
             ),
           ),
-          if (provider.valueFilter.id.typeTrans != TypeFilter.ALL)
-            MButtonWidget(
-              title: 'Xoá bộ lọc',
-              onTap: () => provider.resetFilter((dto) {
-                _bloc.add(TransactionEventGetList(dto));
-              }),
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              margin: EdgeInsets.zero,
-              height: 40,
-              radius: 40,
-              colorEnableBgr: AppColor.BLUE_TEXT.withOpacity(0.3),
-              isEnable: true,
-              colorEnableText: AppColor.BLUE_TEXT,
-            )
+          // if (provider.valueFilter.id.typeTrans != TypeFilter.ALL)
+            // MButtonWidget(
+            //   title: 'Xoá bộ lọc',
+            //   onTap: () => provider.resetFilter((dto) {
+            //     _bloc.add(TransactionEventGetList(dto));
+            //   }),
+            //   padding: EdgeInsets.symmetric(horizontal: 16),
+            //   margin: EdgeInsets.zero,
+            //   height: 40,
+            //   radius: 40,
+            //   colorEnableBgr: AppColor.BLUE_TEXT.withOpacity(0.3),
+            //   isEnable: true,
+            //   colorEnableText: AppColor.BLUE_TEXT,
+            // )
         ],
       );
     });
@@ -662,7 +777,7 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
           ),
           const SizedBox(width: 16),
           Expanded(
-            flex: 3,
+            flex: 4,
             child: Text(value, style: style, maxLines: maxLines),
           ),
         ],

@@ -352,12 +352,7 @@ enum TransactionType {
   UPDATE_NOTE,
 }
 
-enum TransHistoryType {
-  NONE,
-  ERROR,
-  LOAD_DATA,
-  UPDATE_NOTE,
-}
+enum TransHistoryType { NONE, ERROR, LOAD_DATA, UPDATE_NOTE, GET_LIST_GROUP }
 
 enum ScanType {
   NONE,

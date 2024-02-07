@@ -7,6 +7,7 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/trans_history/views/terminal_time_view.dart';
 import 'package:vierqr/features/transaction/repositories/transaction_repository.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
+import 'package:vierqr/models/terminal_response_dto.dart';
 import 'package:vierqr/models/transaction_input_dto.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
@@ -17,29 +18,35 @@ class TransProvider with ChangeNotifier {
     const FilterTransaction(id: 9, title: 'Tất cả'),
     const FilterTransaction(id: 5, title: 'Trạng thái giao dịch'),
     const FilterTransaction(id: 1, title: 'Mã giao dịch'),
-    const FilterTransaction(id: 2, title: 'Order ID'),
+    const FilterTransaction(id: 2, title: 'Mã đơn hàng (Order ID)'),
     const FilterTransaction(id: 4, title: 'Mã điểm bán'),
     const FilterTransaction(id: 3, title: 'Nội dung'),
   ];
 
-  final List<FilterTransaction> listStatus = [
-    FilterTransaction(title: 'Tất cả', id: 9),
-    FilterTransaction(title: 'Chờ thanh toán', id: 0),
-    FilterTransaction(title: 'Thành công', id: 1),
-    FilterTransaction(title: 'Đã huỷ', id: 2),
+  List<FilterTransaction> listFilterTerminal = [
+    const FilterTransaction(id: 0, title: 'Tất cả'),
+    const FilterTransaction(id: 1, title: 'Nhóm/Chi nhánh'),
+  ];
+  FilterTransaction _valueFilterTerminal =
+      const FilterTransaction(id: 0, title: 'Tất cả');
+  FilterTransaction get valueFilterTerminal => _valueFilterTerminal;
+
+  final List<FilterStatusTransaction> listStatus = [
+    const FilterStatusTransaction(title: 'Tất cả', id: 9),
+    const FilterStatusTransaction(title: 'Chờ thanh toán', id: 0),
+    const FilterStatusTransaction(title: 'Thành công', id: 1),
+    const FilterStatusTransaction(title: 'Đã huỷ', id: 2),
   ];
 
   List<FilterTimeTransaction> listTimeFilter = [
-    const FilterTimeTransaction(id: 0, title: 'Tất cả'),
-    const FilterTimeTransaction(id: 1, title: 'Hôm nay'),
-    const FilterTimeTransaction(id: 2, title: '7 ngày gần nhất'),
-    const FilterTimeTransaction(id: 3, title: '30 ngày gần nhất'),
-    const FilterTimeTransaction(id: 4, title: '3 tháng gần nhất'),
     const FilterTimeTransaction(id: 5, title: 'Khoảng thời gian'),
+    const FilterTimeTransaction(id: 4, title: '3 tháng gần đây'),
+    const FilterTimeTransaction(id: 3, title: '1 tháng gần đây'),
+    const FilterTimeTransaction(id: 2, title: '7 ngày gần đây (mặc định)'),
   ];
 
-  FilterTransaction statusValue =
-      const FilterTransaction(id: 9, title: 'Tất cả');
+  FilterStatusTransaction statusValue =
+      const FilterStatusTransaction(title: 'Tất cả', id: 9);
 
   FilterTransaction _valueFilter =
       const FilterTransaction(id: 9, title: 'Tất cả');
@@ -47,7 +54,7 @@ class TransProvider with ChangeNotifier {
   FilterTransaction get valueFilter => _valueFilter;
 
   FilterTimeTransaction _valueTimeFilter =
-      const FilterTimeTransaction(id: 2, title: '7 ngày gần nhất');
+      const FilterTimeTransaction(id: 2, title: '7 ngày gần đây (mặc định)');
 
   FilterTimeTransaction get valueTimeFilter => _valueTimeFilter;
   DateTime? _toDate;
@@ -72,15 +79,68 @@ class TransProvider with ChangeNotifier {
   int get currentPage => _currentPage;
   List<BankAccountDTO> bankAccounts = [];
 
+  TerminalResponseDTO _terminalResponseDTO = TerminalResponseDTO(banks: []);
+  TerminalResponseDTO get terminalResponseDTO => _terminalResponseDTO;
+
+  List<TerminalResponseDTO> terminals = [];
+
+  void updateTerminals(
+    List<TerminalResponseDTO> value,
+    String bankID,
+    DateTime formDate,
+    DateTime toDate,
+    FilterTimeTransaction timeFilter,
+    String keyword,
+    FilterTransaction filterTransaction,
+    FilterStatusTransaction valueStatus,
+    FilterTransaction filterTerminal,
+    bool isOwner,
+  ) {
+    terminals = value;
+    bankId = bankID;
+    _formDate = formDate;
+    _toDate = toDate;
+    _valueTimeFilter = timeFilter;
+    _terminalResponseDTO = terminals.first;
+    _keywordSearch = keyword;
+    controller.text = keyword;
+    _valueFilter = filterTransaction;
+    statusValue = valueStatus;
+    _valueFilterTerminal = filterTerminal;
+
+    if (isOwner) {
+      _valueFilterTerminal = filterTerminal;
+    } else {
+      _valueFilterTerminal =
+          const FilterTransaction(id: 1, title: 'Nhóm/Chi nhánh');
+    }
+  }
+
+  void updateTerminalResponseDTO(TerminalResponseDTO value) {
+    _terminalResponseDTO = value;
+    notifyListeners();
+  }
+
+  void updateFilterTerminal(FilterTransaction value) {
+    _valueFilterTerminal = value;
+    if (value.id == 0) {
+      _terminalResponseDTO = TerminalResponseDTO(banks: []);
+    } else {
+      _terminalResponseDTO = terminals.first;
+    }
+
+    notifyListeners();
+  }
+
   String get hintText {
     if (valueFilter.id == 4) {
-      return 'Nhập mã điểm bán tại đây';
+      return 'Nhập mã điểm bán';
     } else if (valueFilter.id == 1) {
-      return 'Nhập mã giao dịch tại đây';
+      return 'Nhập mã giao dịch';
     } else if (valueFilter.id == 2) {
-      return 'Nhập OrderID tại đây';
+      return 'Nhập OrderID';
     } else if (valueFilter.id == 3) {
-      return 'Nhập nội dung tại đây';
+      return 'Nhập nội dung';
     }
     return '';
   }
@@ -104,6 +164,7 @@ class TransProvider with ChangeNotifier {
       bankId: bankId,
       offset: 0,
       value: '',
+      terminalCode: _terminalResponseDTO.id,
       userId: UserHelper.instance.getUserId(),
       status: 0,
       from: TimeUtils.instance.getCurrentDate(endDate),
@@ -121,6 +182,7 @@ class TransProvider with ChangeNotifier {
             bankId: bankId,
             offset: offset,
             value: keywordSearch,
+            terminalCode: _terminalResponseDTO.id,
             userId: UserHelper.instance.getUserId(),
             status: statusValue.id,
           );
@@ -165,7 +227,7 @@ class TransProvider with ChangeNotifier {
   resetFilterTime(Function(TransactionInputDTO) callBack) {
     enableDropTime = false;
     _valueTimeFilter =
-        const FilterTimeTransaction(id: 2, title: '7 ngày gần nhất');
+        const FilterTimeTransaction(id: 2, title: '7 ngày gần đây (mặc định)');
     onSearch(callBack);
     notifyListeners();
   }
@@ -179,10 +241,21 @@ class TransProvider with ChangeNotifier {
     isCalling = value;
   }
 
-  resetFilter(Function(TransactionInputDTO) callBack) {
+  resetFilter(Function(TransactionInputDTO) callBack, bool isOwner) {
     _valueFilter = const FilterTransaction(id: 9, title: 'Tất cả');
     _valueTimeFilter =
-        const FilterTimeTransaction(id: 2, title: '7 ngày gần nhất');
+        const FilterTimeTransaction(id: 2, title: '7 ngày gần đây (mặc định)');
+    statusValue = const FilterStatusTransaction(title: 'Tất cả', id: 9);
+
+    if (isOwner) {
+      _valueFilterTerminal = const FilterTransaction(id: 0, title: 'Tất cả');
+    } else {
+      _valueFilterTerminal =
+          const FilterTransaction(id: 1, title: 'Nhóm/Chi nhánh');
+    }
+
+    _keywordSearch = '';
+    controller.clear();
     onSearch(callBack);
     notifyListeners();
   }
@@ -194,11 +267,23 @@ class TransProvider with ChangeNotifier {
       updateKeyword('');
       _valueFilter = value;
       if (_valueFilter.id.typeTrans == TypeFilter.ALL) {
-        _valueTimeFilter = const FilterTimeTransaction(id: 0, title: 'Tất cả');
+        // _valueTimeFilter = const FilterTimeTransaction(
+        //     id: 2, title: '7 ngày gần đây (mặc định)');
         onSearch(callBack);
       } else if (_valueFilter.id.typeTrans == TypeFilter.STATUS_TRANS) {
         onSearch(callBack);
       }
+    }
+
+    notifyListeners();
+  }
+
+  void changeStatusFilter(
+      FilterStatusTransaction? value, Function(TransactionInputDTO) callBack) {
+    if (value != null) {
+      controller.clear();
+      updateKeyword('');
+      statusValue = value;
     }
 
     notifyListeners();
@@ -317,6 +402,7 @@ class TransProvider with ChangeNotifier {
         bankId: bankId,
         offset: offset,
         value: keywordSearch,
+        terminalCode: _terminalResponseDTO.id,
         userId: UserHelper.instance.getUserId(),
         status: statusValue.id,
       );
@@ -371,6 +457,13 @@ class FilterTransaction {
   final int id;
 
   const FilterTransaction({required this.id, required this.title});
+}
+
+class FilterStatusTransaction {
+  final String title;
+  final int id;
+
+  const FilterStatusTransaction({required this.id, required this.title});
 }
 
 class FilterTimeTransaction {

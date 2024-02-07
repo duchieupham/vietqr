@@ -394,23 +394,24 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
 
   Widget _buildTitlePage(ShareBDSDProvider provider) {
     return Center(
-      child: Container(
-        width: 226,
-        padding: EdgeInsets.all(4),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: AppColor.BLUE_TEXT)),
-        child: Row(
-          children: [
-            _buildItemTab('Đã chia sẻ', provider.typeList == 0, () {
-              provider.updateTypeList(0);
-              onRefresh(provider);
-            }),
-            _buildItemTab('Chia sẻ với tôi', provider.typeList == 1, () {
-              provider.updateTypeList(1);
-              onRefresh(provider);
-            }),
-          ],
+      child: UnconstrainedBox(
+        child: Container(
+          padding: EdgeInsets.all(4),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: AppColor.BLUE_TEXT)),
+          child: Row(
+            children: [
+              _buildItemTab('Đã chia sẻ', provider.typeList == 0, () {
+                provider.updateTypeList(0);
+                onRefresh(provider);
+              }),
+              _buildItemTab('Chia sẻ với tôi', provider.typeList == 1, () {
+                provider.updateTypeList(1);
+                onRefresh(provider);
+              }),
+            ],
+          ),
         ),
       ),
     );

@@ -7,6 +7,7 @@ class TransactionInputDTO {
   String? to;
   String? value;
   String? userId;
+  final String terminalCode;
 
   TransactionInputDTO({
     required this.bankId,
@@ -17,12 +18,14 @@ class TransactionInputDTO {
     this.to,
     this.value,
     this.userId,
+    this.terminalCode = '',
   });
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> data = {};
     data['bankId'] = bankId;
     data['offset'] = offset;
+    data['terminalCode'] = terminalCode;
     if (status != null) data['status'] = status;
     if (type != null) data['type'] = type;
     if (from != null) data['from'] = from;

@@ -105,11 +105,11 @@ class _BankCardDetailState extends State<BankCardDetailState> {
         PageController(initialPage: _provider.currentPage, keepPage: true);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       pageController.jumpToPage(_provider.currentPage);
-      controllerTabBar.animateTo(
-        controllerTabBar.position.maxScrollExtent,
-        curve: Curves.easeOut,
-        duration: const Duration(milliseconds: 300),
-      );
+      // controllerTabBar.animateTo(
+      //   controllerTabBar.position.maxScrollExtent,
+      //   curve: Curves.easeOut,
+      //   duration: const Duration(milliseconds: 300),
+      // );
 
       initData(context);
     });
@@ -212,7 +212,9 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                             }
                             if (dto.userId != UserHelper.instance.getUserId() ||
                                 !dto.authenticated) {
-                              listTitle.removeLast();
+                              if (listTitle.length == 4) {
+                                listTitle.removeLast();
+                              }
                             }
                             if (AppDataHelper.instance
                                 .checkExitsBankAccount(dto.bankAccount)) {
@@ -288,75 +290,69 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                             children: [
                               Column(
                                 children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20),
-                                    child: SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      controller: controllerTabBar,
-                                      child: Row(
-                                        children: listTitle.map((title) {
-                                          int index = listTitle.indexOf(title);
-                                          return GestureDetector(
-                                            onTap: () {
-                                              pageController.jumpToPage(index);
-                                              provider.changeCurrentPage(index);
-                                            },
-                                            child: Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 16,
-                                                      vertical: 6),
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(5),
-                                                color: index ==
-                                                        provider.currentPage
-                                                    ? AppColor.BLUE_TEXT
-                                                        .withOpacity(0.3)
-                                                    : AppColor.TRANSPARENT,
-                                              ),
-                                              child: Text(
-                                                title,
-                                                style: TextStyle(
-                                                    fontSize: 16,
-                                                    color: index ==
-                                                            provider.currentPage
-                                                        ? AppColor.BLUE_TEXT
-                                                        : AppColor.BLACK),
-                                              ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      if (listTitle.length == 3) const Spacer(),
+                                      ...listTitle.map((title) {
+                                        int index = listTitle.indexOf(title);
+                                        return GestureDetector(
+                                          onTap: () {
+                                            pageController.jumpToPage(index);
+                                            provider.changeCurrentPage(index);
+                                          },
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 6, horizontal: 16),
+                                            alignment: Alignment.center,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                              color:
+                                                  index == provider.currentPage
+                                                      ? AppColor.BLUE_TEXT
+                                                          .withOpacity(0.3)
+                                                      : AppColor.TRANSPARENT,
                                             ),
-                                          );
-                                        }).toList(),
-                                      ),
-                                    ),
+                                            child: Text(
+                                              title,
+                                              maxLines: 1,
+                                              style: TextStyle(
+                                                  color: index ==
+                                                          provider.currentPage
+                                                      ? AppColor.BLUE_TEXT
+                                                      : AppColor.BLACK),
+                                            ),
+                                          ),
+                                        );
+                                      }).toList(),
+                                      if (listTitle.length == 3) const Spacer(),
+                                    ],
                                   ),
-                                  const SizedBox(
-                                    height: 12,
-                                  ),
+                                  const SizedBox(height: 12),
                                   Expanded(
                                     child: PageView(
                                       controller: pageController,
-                                      physics:
-                                          const AlwaysScrollableScrollPhysics(),
+                                      physics: AlwaysScrollableScrollPhysics(),
                                       onPageChanged: (index) {
-                                        if (index == 3) {
-                                          controllerTabBar.animateTo(
-                                            controllerTabBar
-                                                .position.maxScrollExtent,
-                                            curve: Curves.easeOut,
-                                            duration: const Duration(
-                                                milliseconds: 300),
-                                          );
-                                        } else if (index == 0) {
-                                          controllerTabBar.animateTo(
-                                            controllerTabBar
-                                                .position.minScrollExtent,
-                                            curve: Curves.easeOut,
-                                            duration: const Duration(
-                                                milliseconds: 300),
-                                          );
-                                        }
+                                        // if (index == 3) {
+                                        //   controllerTabar.animateTo(
+                                        //     controllerTabar
+                                        //         .position.maxScrollExtent,
+                                        //     curve: Curves.easeOut,
+                                        //     duration:
+                                        //         const Duration(milliseconds: 300),
+                                        //   );
+                                        // } else if (index == 0) {
+                                        //   controllerTabar.animateTo(
+                                        //     controllerTabar
+                                        //         .position.minScrollExtent,
+                                        //     curve: Curves.easeOut,
+                                        //     duration:
+                                        //         const Duration(milliseconds: 300),
+                                        //   );
+                                        // }
                                         provider.changeCurrentPage(index);
                                       },
                                       children: [
@@ -394,6 +390,7 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                                         ),
                                         Statistical(bankId: state.bankId ?? ''),
                                         TransHistoryScreen(
+                                            bankUserId: dto.userId,
                                             bankId: state.bankId ?? ''),
                                         if (dto.userId ==
                                             UserHelper.instance.getUserId())
@@ -403,7 +400,7 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                                             bloc: bankCardBloc,
                                           )
                                         else
-                                          const SizedBox(),
+                                          const SizedBox()
                                       ],
                                     ),
                                   ),

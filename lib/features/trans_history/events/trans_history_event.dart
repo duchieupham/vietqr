@@ -52,3 +52,17 @@ class TransactionStatusEventFetch extends TransHistoryEvent {
   List<Object?> get props => [dto];
 }
 
+class GetMyListGroupEvent extends TransHistoryEvent {
+  final String userID;
+  final String bankId;
+  final int offset;
+
+  GetMyListGroupEvent({
+    this.userID = '',
+    this.bankId = '',
+    this.offset = 0,
+  });
+
+  @override
+  List<Object?> get props => [userID, bankId, offset];
+}

@@ -7,6 +7,7 @@ import 'package:vierqr/features/trans_history/events/trans_history_event.dart';
 import 'package:vierqr/features/trans_history/states/trans_history_state.dart';
 import 'package:vierqr/features/transaction/blocs/transaction_bloc.dart';
 import 'package:vierqr/models/related_transaction_receive_dto.dart';
+import 'package:vierqr/models/terminal_response_dto.dart';
 
 class TransHistoryBloc extends Bloc<TransHistoryEvent, TransHistoryState>
     with BaseManager {
@@ -24,6 +25,7 @@ class TransHistoryBloc extends Bloc<TransHistoryEvent, TransHistoryState>
     on<TransactionStatusEventFetch>(_fetchTransactionsStatus);
     on<TransactionEventGetList>(_getTransactions);
     on<TransactionEventFetch>(_fetchTransactions);
+    on<GetMyListGroupEvent>(_getMyListGroup);
   }
 
   void _getTransactionsStatus(TransHistoryEvent event, Emitter emit) async {
@@ -127,6 +129,26 @@ class TransHistoryBloc extends Bloc<TransHistoryEvent, TransHistoryState>
     } catch (e) {
       LOG.error(e.toString());
       emit(state.copyWith(type: TransHistoryType.ERROR));
+    }
+  }
+
+  void _getMyListGroup(TransHistoryEvent event, Emitter emit) async {
+    try {
+      if (event is GetMyListGroupEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.NONE, type: TransHistoryType.NONE));
+
+        final TerminalDto terminalDto = await transactionRepository
+            .getMyListGroup(event.userID, event.bankId, event.offset);
+        emit(state.copyWith(
+          status: BlocStatus.NONE,
+          terminalDto: terminalDto,
+          type: TransHistoryType.GET_LIST_GROUP,
+        ));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(status: BlocStatus.NONE));
     }
   }
 }

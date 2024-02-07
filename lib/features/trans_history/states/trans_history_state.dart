@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/models/related_transaction_receive_dto.dart';
+import 'package:vierqr/models/terminal_response_dto.dart';
 
 class TransHistoryState extends Equatable {
   final BlocStatus status;
@@ -8,6 +9,7 @@ class TransHistoryState extends Equatable {
   final String? msg;
   final List<RelatedTransactionReceiveDTO> list;
   final int offset;
+  final TerminalDto? terminalDto;
   final bool isLoadMore;
 
   const TransHistoryState({
@@ -17,6 +19,7 @@ class TransHistoryState extends Equatable {
     required this.list,
     this.offset = 0,
     this.isLoadMore = false,
+    this.terminalDto,
   });
 
   TransHistoryState copyWith({
@@ -25,6 +28,7 @@ class TransHistoryState extends Equatable {
     String? msg,
     List<RelatedTransactionReceiveDTO>? list,
     int? offset,
+    TerminalDto? terminalDto,
     bool? isLoadMore,
   }) {
     return TransHistoryState(
@@ -32,6 +36,7 @@ class TransHistoryState extends Equatable {
       type: type ?? this.type,
       msg: msg ?? this.msg,
       list: list ?? this.list,
+      terminalDto: terminalDto ?? this.terminalDto,
       isLoadMore: isLoadMore ?? this.isLoadMore,
       offset: offset ?? this.offset,
     );
