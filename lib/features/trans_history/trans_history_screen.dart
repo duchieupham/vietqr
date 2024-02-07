@@ -71,14 +71,18 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
   void initData(BuildContext context) {
     Provider.of<TransProvider>(context, listen: false).init(
       (dto) {
-        _bloc.add(TransactionEventGetList(dto));
+        if (widget.bankUserId == UserHelper.instance.getUserId()) {
+          _bloc.add(TransactionEventIsOwnerGetList(dto));
+        } else {
+          _bloc.add(TransactionEventGetList(dto));
+        }
       },
       (dto) {
-        if (dto.type == 5) {
-          _bloc.add(TransactionStatusEventFetch(dto));
-        } else {
-          _bloc.add(TransactionEventFetch(dto));
-        }
+        // if (dto.type == 5) {
+        //   _bloc.add(TransactionStatusEventFetch(dto));
+        // } else {
+        //   _bloc.add(TransactionEventFetch(dto));
+        // }
       },
     );
   }
@@ -179,39 +183,62 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
                                       stateValue,
                                       valueFilerTerminal) async {
                                     if (valueFilter.id == 5) {
-                                      if (dto.status == 9) {
-                                        listTransaction = listFilterTransaction;
-                                      } else {
+                                      setState(() {
                                         listTransaction = listFilterTransaction
                                             .where((element) =>
                                                 element.status == dto.status)
                                             .toList();
-                                      }
+                                      });
 
                                       // _bloc.add(
                                       //     TransactionStatusEventGetList(dto));
                                     } else {
-                                      _bloc.add(TransactionEventGetList(dto));
+                                      if (widget.bankUserId ==
+                                          UserHelper.instance.getUserId()) {
+                                        _bloc.add(
+                                            TransactionEventIsOwnerGetList(
+                                                dto));
+                                      } else {
+                                        _bloc.add(TransactionEventGetList(dto));
+                                      }
                                     }
-                                    provider.updateFilterTerminal(
-                                        valueFilerTerminal);
 
-                                    provider.changeFilter(
-                                        valueFilter, (dto) {});
-                                    provider.changeStatusFilter(stateValue,
-                                        (dto) {
-                                      // _bloc.add(TransactionEventGetList(dto));
-                                    });
-                                    provider.updateKeyword(keyword);
-                                    provider.changeTimeFilter(
-                                        timeFilter, context, (dto) {});
+                                    print(
+                                        '--------------------đ--------------$keyword ');
+                                    // provider.updateFilterTerminal(
+                                    //     valueFilerTerminal);
+                                    //
+                                    // provider.changeFilter(
+                                    //     valueFilter, (dto) {});
+                                    // provider.changeStatusFilter(stateValue,
+                                    //     (dto) {
+                                    //   // _bloc.add(TransactionEventGetList(dto));
+                                    // });
+                                    // provider.updateKeyword(keyword);
+                                    // provider.changeTimeFilter(
+                                    //     timeFilter, context, (dto) {});
+
+                                    provider.updateDataFilter(
+                                        valueFilerTerminal,
+                                        valueFilter,
+                                        stateValue,
+                                        keyword,
+                                        timeFilter);
                                   },
                                   reset: () {
                                     provider.resetFilter((dto) {
-                                      _bloc.add(TransactionEventGetList(dto));
-                                    }, widget.bankUserId == UserHelper.instance.getUserId());
+                                      if (widget.bankUserId ==
+                                          UserHelper.instance.getUserId()) {
+                                        _bloc.add(
+                                            TransactionEventIsOwnerGetList(
+                                                dto));
+                                      } else {
+                                        _bloc.add(TransactionEventGetList(dto));
+                                      }
+                                    },
+                                        widget.bankUserId ==
+                                            UserHelper.instance.getUserId());
                                   },
-
                                 ),
                               );
                             },
@@ -362,13 +389,27 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildItem(
-                          'Thời gian tạo:',
-                          TimeUtils.instance
-                              .formatDateFromInt(dto.time, false)),
-                      if (dto.type != 0)
+                      if (dto.status == 0 || dto.status == 2)
                         _buildItem(
-                            'Thời gian thanh toán:',
+                            'Thời gian tạo:',
+                            TimeUtils.instance
+                                .formatDateFromInt(dto.time, false)),
+                      if (dto.status == 1 &&
+                          (dto.type == 0 ||
+                              dto.type == 4 ||
+                              dto.type == 5)) ...[
+                        _buildItem(
+                            'Thời gian tạo:',
+                            TimeUtils.instance
+                                .formatDateFromInt(dto.time, false)),
+                        _buildItem(
+                            'Thời gian TT:',
+                            TimeUtils.instance
+                                .formatDateFromInt(dto.timePaid, false)),
+                      ],
+                      if (dto.status == 1 && (dto.type == 2))
+                        _buildItem(
+                            'Thời gian TT:',
                             TimeUtils.instance
                                 .formatDateFromInt(dto.timePaid, false)),
                       _buildItem(
@@ -743,19 +784,19 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
             ),
           ),
           // if (provider.valueFilter.id.typeTrans != TypeFilter.ALL)
-            // MButtonWidget(
-            //   title: 'Xoá bộ lọc',
-            //   onTap: () => provider.resetFilter((dto) {
-            //     _bloc.add(TransactionEventGetList(dto));
-            //   }),
-            //   padding: EdgeInsets.symmetric(horizontal: 16),
-            //   margin: EdgeInsets.zero,
-            //   height: 40,
-            //   radius: 40,
-            //   colorEnableBgr: AppColor.BLUE_TEXT.withOpacity(0.3),
-            //   isEnable: true,
-            //   colorEnableText: AppColor.BLUE_TEXT,
-            // )
+          // MButtonWidget(
+          //   title: 'Xoá bộ lọc',
+          //   onTap: () => provider.resetFilter((dto) {
+          //     _bloc.add(TransactionEventGetList(dto));
+          //   }),
+          //   padding: EdgeInsets.symmetric(horizontal: 16),
+          //   margin: EdgeInsets.zero,
+          //   height: 40,
+          //   radius: 40,
+          //   colorEnableBgr: AppColor.BLUE_TEXT.withOpacity(0.3),
+          //   isEnable: true,
+          //   colorEnableText: AppColor.BLUE_TEXT,
+          // )
         ],
       );
     });

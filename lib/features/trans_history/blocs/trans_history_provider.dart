@@ -23,6 +23,14 @@ class TransProvider with ChangeNotifier {
     const FilterTransaction(id: 3, title: 'Nội dung'),
   ];
 
+  List<FilterTransaction> listFilterNotOwner = [
+    const FilterTransaction(id: 9, title: 'Tất cả'),
+    const FilterTransaction(id: 5, title: 'Trạng thái giao dịch'),
+    const FilterTransaction(id: 1, title: 'Mã giao dịch'),
+    const FilterTransaction(id: 2, title: 'Mã đơn hàng (Order ID)'),
+    const FilterTransaction(id: 3, title: 'Nội dung'),
+  ];
+
   List<FilterTransaction> listFilterTerminal = [
     const FilterTransaction(id: 0, title: 'Tất cả'),
     const FilterTransaction(id: 1, title: 'Nhóm/Chi nhánh'),
@@ -32,7 +40,6 @@ class TransProvider with ChangeNotifier {
   FilterTransaction get valueFilterTerminal => _valueFilterTerminal;
 
   final List<FilterStatusTransaction> listStatus = [
-    const FilterStatusTransaction(title: 'Tất cả', id: 9),
     const FilterStatusTransaction(title: 'Chờ thanh toán', id: 0),
     const FilterStatusTransaction(title: 'Thành công', id: 1),
     const FilterStatusTransaction(title: 'Đã huỷ', id: 2),
@@ -46,7 +53,7 @@ class TransProvider with ChangeNotifier {
   ];
 
   FilterStatusTransaction statusValue =
-      const FilterStatusTransaction(title: 'Tất cả', id: 9);
+      const FilterStatusTransaction(title: 'Chờ thanh toán', id: 0);
 
   FilterTransaction _valueFilter =
       const FilterTransaction(id: 9, title: 'Tất cả');
@@ -96,6 +103,7 @@ class TransProvider with ChangeNotifier {
     FilterTransaction filterTerminal,
     bool isOwner,
   ) {
+    print('------------_keywordSearch--------------- $_keywordSearch');
     terminals = value;
     bankId = bankID;
     _formDate = formDate;
@@ -130,6 +138,45 @@ class TransProvider with ChangeNotifier {
     }
 
     notifyListeners();
+  }
+
+  void updateDataFilter(
+      FilterTransaction filterTerminal,
+      FilterTransaction? filterTransaction,
+      FilterStatusTransaction? statusFilter,
+      String keyword,
+      FilterTimeTransaction? filterTime) {
+    _valueFilterTerminal = filterTerminal;
+    // if (_valueFilterTerminal.id == 0) {
+    //   _terminalResponseDTO = TerminalResponseDTO(banks: []);
+    // } else {
+    //   _terminalResponseDTO = terminals.first;
+    // }
+    if (filterTransaction != null) {
+      controller.clear();
+      updateKeyword('');
+      _valueFilter = filterTransaction;
+      if (_valueFilter.id.typeTrans == TypeFilter.ALL) {
+        // _valueTimeFilter = const FilterTimeTransaction(
+        //     id: 2, title: '7 ngày gần đây (mặc định)');
+      } else if (_valueFilter.id.typeTrans == TypeFilter.STATUS_TRANS) {}
+    }
+    changeTimeDataFilter(filterTime);
+
+    if (statusFilter != null) {
+      controller.clear();
+      updateKeyword('');
+      statusValue = statusFilter;
+    }
+
+    String text = keyword.trim();
+    if (text.isNotEmpty) {
+      if (text.contains('')) {
+        _keywordSearch = text.replaceAll(' ', '-');
+      } else {
+        _keywordSearch = text;
+      }
+    }
   }
 
   String get hintText {
@@ -245,7 +292,7 @@ class TransProvider with ChangeNotifier {
     _valueFilter = const FilterTransaction(id: 9, title: 'Tất cả');
     _valueTimeFilter =
         const FilterTimeTransaction(id: 2, title: '7 ngày gần đây (mặc định)');
-    statusValue = const FilterStatusTransaction(title: 'Tất cả', id: 9);
+    statusValue = const FilterStatusTransaction(title: 'Chờ thanh toán', id: 0);
 
     if (isOwner) {
       _valueFilterTerminal = const FilterTransaction(id: 0, title: 'Tất cả');
@@ -266,6 +313,12 @@ class TransProvider with ChangeNotifier {
       controller.clear();
       updateKeyword('');
       _valueFilter = value;
+      if (value.id == 4) {
+        _keywordSearch = _terminalResponseDTO.id;
+      } else {
+        updateKeyword('');
+      }
+
       if (_valueFilter.id.typeTrans == TypeFilter.ALL) {
         // _valueTimeFilter = const FilterTimeTransaction(
         //     id: 2, title: '7 ngày gần đây (mặc định)');
@@ -356,6 +409,47 @@ class TransProvider with ChangeNotifier {
     }
 
     notifyListeners();
+  }
+
+  void changeTimeDataFilter(FilterTimeTransaction? value) async {
+    if (value != null) {
+      DateTime now = DateTime.now();
+      DateTime fromDate = DateTime(now.year, now.month, now.day);
+      if (value.id == TypeTimeFilter.TODAY.id) {
+        DateTime endDate = fromDate
+            .add(const Duration(days: 1))
+            .subtract(const Duration(seconds: 1));
+        updateFromDate(fromDate);
+        updateToDate(endDate);
+        _valueTimeFilter = value;
+      } else if (value.id == TypeTimeFilter.SEVEN_LAST_DAY.id) {
+        DateTime endDate = fromDate.subtract(const Duration(days: 7));
+
+        fromDate = fromDate
+            .add(const Duration(days: 1))
+            .subtract(const Duration(seconds: 1));
+        updateFromDate(endDate);
+        updateToDate(fromDate);
+        _valueTimeFilter = value;
+      } else if (value.id == TypeTimeFilter.THIRTY_LAST_DAY.id) {
+        DateTime endDate = fromDate.subtract(const Duration(days: 30));
+
+        fromDate = fromDate
+            .add(const Duration(days: 1))
+            .subtract(const Duration(seconds: 1));
+        updateFromDate(endDate);
+        updateToDate(fromDate);
+        _valueTimeFilter = value;
+      } else if (value.id == TypeTimeFilter.THREE_MONTH_LAST_DAY.id) {
+        DateTime endDate = Jiffy(fromDate).subtract(months: 3).dateTime;
+        fromDate = fromDate
+            .add(const Duration(days: 1))
+            .subtract(const Duration(seconds: 1));
+        updateFromDate(endDate);
+        updateToDate(fromDate);
+        _valueTimeFilter = value;
+      }
+    }
   }
 
   updateKeyword(String value) {

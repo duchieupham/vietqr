@@ -22,6 +22,7 @@ class TransHistoryBloc extends Bloc<TransHistoryEvent, TransHistoryState>
     // on<TransactionEventGetImage>(_loadImage);
     // on<TransEventQRRegenerate>(_regenerateQR);
     on<TransactionStatusEventGetList>(_getTransactionsStatus);
+    on<TransactionEventIsOwnerGetList>(_getTransactionsIsOwner);
     on<TransactionStatusEventFetch>(_fetchTransactionsStatus);
     on<TransactionEventGetList>(_getTransactions);
     on<TransactionEventFetch>(_fetchTransactions);
@@ -61,6 +62,32 @@ class TransHistoryBloc extends Bloc<TransHistoryEvent, TransHistoryState>
         emit(state.copyWith(status: BlocStatus.LOADING));
         final List<RelatedTransactionReceiveDTO> result =
             await transactionRepository.getTrans(event.dto);
+        if (result.isEmpty || result.length < 20) {
+          isLoadMore = true;
+        }
+        emit(
+          state.copyWith(
+            list: result,
+            type: TransHistoryType.LOAD_DATA,
+            status: BlocStatus.UNLOADING,
+            isLoadMore: isLoadMore,
+            offset: 0,
+          ),
+        );
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(type: TransHistoryType.ERROR));
+    }
+  }
+
+  void _getTransactionsIsOwner(TransHistoryEvent event, Emitter emit) async {
+    try {
+      if (event is TransactionEventIsOwnerGetList) {
+        bool isLoadMore = false;
+        emit(state.copyWith(status: BlocStatus.LOADING));
+        final List<RelatedTransactionReceiveDTO> result =
+            await transactionRepository.getTransIsOwner(event.dto);
         if (result.isEmpty || result.length < 20) {
           isLoadMore = true;
         }

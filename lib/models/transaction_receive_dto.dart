@@ -58,6 +58,16 @@ class TransactionReceiveDTO {
   String get getAmount =>
       CurrencyUtils.instance.getCurrencyFormatted(amount.toString());
 
+  String getTitleType() {
+    if (type == 0) {
+      return 'VietQR động';
+    } else if (type == 1) {
+      return 'VietQR tĩnh';
+    } else {
+      return 'Khác';
+    }
+  }
+
   factory TransactionReceiveDTO.fromJson(Map<String, dynamic> json) {
     return TransactionReceiveDTO(
       time: json['time'] ?? 0,

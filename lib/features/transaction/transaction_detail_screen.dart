@@ -14,8 +14,8 @@ import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_custom.dart';
 import 'package:vierqr/features/create_qr/create_qr_screen.dart';
 import 'package:vierqr/layouts/box_layout.dart';
-import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
+import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/transaction_receive_dto.dart';
 import 'package:vierqr/services/providers/water_mark_provider.dart';
 
@@ -210,7 +210,7 @@ class _BodyWidgetState extends State<_BodyWidget> {
                                     ),
                                     _buildItem(
                                       'Loại giao dịch:',
-                                      state.dto?.type == 0 ? 'VietQR' : 'Khác',
+                                      state.dto?.getTitleType() ?? 'Khác',
                                     ),
                                     _buildItem(
                                       'Nội dung:',

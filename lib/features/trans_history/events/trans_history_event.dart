@@ -25,6 +25,15 @@ class TransactionEventGetList extends TransHistoryEvent {
   List<Object?> get props => [dto];
 }
 
+class TransactionEventIsOwnerGetList extends TransHistoryEvent {
+  final TransactionInputDTO dto;
+
+  TransactionEventIsOwnerGetList(this.dto);
+
+  @override
+  List<Object?> get props => [dto];
+}
+
 class TransactionStatusEventGetList extends TransHistoryEvent {
   final TransactionInputDTO dto;
 

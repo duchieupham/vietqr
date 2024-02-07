@@ -96,76 +96,11 @@ class BottomSheetFilter extends StatelessWidget {
               const SizedBox(
                 height: 20,
               ),
-              Text(
-                'Nhóm/Chi nhánh',
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-              ),
-              if (isOwner)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Container(
-                        margin: EdgeInsets.only(top: 12),
-                        padding: EdgeInsets.only(left: 16, right: 12),
-                        height: 50,
-                        decoration: BoxDecoration(
-                            color: AppColor.WHITE,
-                            border: Border.all(
-                                color: AppColor.BLACK_BUTTON.withOpacity(0.5),
-                                width: 0.5),
-                            borderRadius: BorderRadius.circular(6)),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: DropdownButton<FilterTransaction>(
-                                value: provider.valueFilterTerminal,
-                                icon: const RotatedBox(
-                                  quarterTurns: 5,
-                                  child: Icon(
-                                    Icons.arrow_forward_ios,
-                                    size: 12,
-                                    color: AppColor.WHITE,
-                                  ),
-                                ),
-                                underline: const SizedBox.shrink(),
-                                onChanged: (FilterTransaction? value) {
-                                  provider.updateFilterTerminal(value!);
-                                  // onRefresh(provider);
-                                },
-                                items: provider.listFilterTerminal
-                                    .map<DropdownMenuItem<FilterTransaction>>(
-                                        (FilterTransaction value) {
-                                  return DropdownMenuItem<FilterTransaction>(
-                                    value: value,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(right: 4),
-                                      child: Text(
-                                        value.title,
-                                        style: const TextStyle(fontSize: 14),
-                                      ),
-                                    ),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                            const RotatedBox(
-                              quarterTurns: 5,
-                              child: Icon(
-                                Icons.arrow_forward_ios,
-                                size: 12,
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 8,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
+              if (!isOwner) ...[
+                Text(
+                  'Nhóm/Chi nhánh',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                 ),
-              if (provider.valueFilterTerminal.id == 1) ...[
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -230,10 +165,10 @@ class BottomSheetFilter extends StatelessWidget {
                     ),
                   ],
                 ),
+                const SizedBox(
+                  height: 16,
+                ),
               ],
-              const SizedBox(
-                height: 16,
-              ),
               Text(
                 'Lọc theo',
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
@@ -266,28 +201,44 @@ class BottomSheetFilter extends StatelessWidget {
                                 ),
                               ),
                               underline: const SizedBox.shrink(),
-                              onChanged: (value) =>
-                                  provider.changeFilter(value, (dto) {
-                                if (dto.type == 5) {
-                                  // _bloc.add(TransactionStatusEventGetList(dto));
-                                } else {
-                                  // _bloc.add(TransactionEventGetList(dto));
-                                }
-                              }),
-                              items: provider.listFilter
-                                  .map<DropdownMenuItem<FilterTransaction>>(
-                                      (FilterTransaction value) {
-                                return DropdownMenuItem<FilterTransaction>(
-                                  value: value,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(right: 4),
-                                    child: Text(
-                                      value.title,
-                                      style: const TextStyle(fontSize: 14),
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
+                              onChanged: (value) {
+                                provider.changeFilter(value, (dto) {});
+                              },
+                              items: isOwner
+                                  ? provider.listFilter
+                                      .map<DropdownMenuItem<FilterTransaction>>(
+                                          (FilterTransaction value) {
+                                      return DropdownMenuItem<
+                                          FilterTransaction>(
+                                        value: value,
+                                        child: Padding(
+                                          padding:
+                                              const EdgeInsets.only(right: 4),
+                                          child: Text(
+                                            value.title,
+                                            style:
+                                                const TextStyle(fontSize: 14),
+                                          ),
+                                        ),
+                                      );
+                                    }).toList()
+                                  : provider.listFilterNotOwner
+                                      .map<DropdownMenuItem<FilterTransaction>>(
+                                          (FilterTransaction value) {
+                                      return DropdownMenuItem<
+                                          FilterTransaction>(
+                                        value: value,
+                                        child: Padding(
+                                          padding:
+                                              const EdgeInsets.only(right: 4),
+                                          child: Text(
+                                            value.title,
+                                            style:
+                                                const TextStyle(fontSize: 14),
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
                             ),
                           ),
                           const RotatedBox(
@@ -309,6 +260,77 @@ class BottomSheetFilter extends StatelessWidget {
               const SizedBox(
                 height: 8,
               ),
+              if (isOwner && provider.valueFilter.id == 4) ...[
+                Text(
+                  'Nhóm/Chi nhánh',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Container(
+                        margin: EdgeInsets.only(top: 12),
+                        padding: EdgeInsets.only(left: 16, right: 12),
+                        height: 50,
+                        decoration: BoxDecoration(
+                            color: AppColor.WHITE,
+                            border: Border.all(
+                                color: AppColor.BLACK_BUTTON.withOpacity(0.5),
+                                width: 0.5),
+                            borderRadius: BorderRadius.circular(6)),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: DropdownButton<TerminalResponseDTO>(
+                                value: provider.terminalResponseDTO,
+                                icon: const RotatedBox(
+                                  quarterTurns: 5,
+                                  child: Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 12,
+                                    color: AppColor.WHITE,
+                                  ),
+                                ),
+                                underline: const SizedBox.shrink(),
+                                onChanged: (TerminalResponseDTO? value) {
+                                  provider.updateKeyword(value?.id ?? '');
+                                  provider.updateTerminalResponseDTO(value!);
+                                  // onRefresh(provider);
+                                },
+                                items: provider.terminals
+                                    .map<DropdownMenuItem<TerminalResponseDTO>>(
+                                        (TerminalResponseDTO value) {
+                                  return DropdownMenuItem<TerminalResponseDTO>(
+                                    value: value,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(right: 4),
+                                      child: Text(
+                                        value.name,
+                                        style: const TextStyle(fontSize: 14),
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                            const RotatedBox(
+                              quarterTurns: 5,
+                              child: Icon(
+                                Icons.arrow_forward_ios,
+                                size: 12,
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 8,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
               _buildFormStatus(),
               _buildFormSearch(),
               const SizedBox(
@@ -505,6 +527,9 @@ class BottomSheetFilter extends StatelessWidget {
     return Consumer<TransProvider>(builder: (context, provider, child) {
       if (provider.valueFilter.id.typeTrans != TypeFilter.ALL &&
           provider.valueFilter.id.typeTrans != TypeFilter.STATUS_TRANS) {
+        if (isOwner && provider.valueFilter.id == 4) {
+          return const SizedBox.shrink();
+        }
         return Container(
           height: 48,
           alignment: Alignment.center,
