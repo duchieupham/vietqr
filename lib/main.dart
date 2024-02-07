@@ -71,7 +71,6 @@ import 'package:vierqr/services/shared_references/event_bloc_helper.dart';
 import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
 import 'package:vierqr/features/mobile_recharge/mobile_recharge_screen.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
-import 'package:vierqr/splash_screen.dart';
 
 //Share Preferences
 late SharedPreferences sharedPrefs;
@@ -200,7 +199,7 @@ class _VietQRApp extends State<VietQRApp> {
   @override
   void initState() {
     super.initState();
-    _mainScreen = (userId.isNotEmpty) ? const SplashScreen() : const Login();
+    _mainScreen = (userId.isNotEmpty) ? const DashBoardScreen() : const Login();
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,

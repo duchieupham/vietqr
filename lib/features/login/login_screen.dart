@@ -22,6 +22,7 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/phone_widget.dart';
 import 'package:vierqr/features/contact_us/contact_us_screen.dart';
 import 'package:vierqr/features/create_qr_un_authen/create_qr_un_quthen.dart';
+import 'package:vierqr/features/dashboard/dashboard_screen.dart';
 import 'package:vierqr/features/home/widget/dialog_update.dart';
 import 'package:vierqr/features/home/widget/nfc_adr_widget.dart';
 import 'package:vierqr/features/login/blocs/login_bloc.dart';
@@ -103,6 +104,7 @@ class _LoginState extends State<_Login> {
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
       _provider.updateEventTheme(null);
       _provider.updateFileThemeLogin('');
       _provider.initThemeDTO();
@@ -204,6 +206,7 @@ class _LoginState extends State<_Login> {
             }
 
             if (state.request == LoginType.TOAST) {
+              _provider.updateRenderUI(isLogout: true);
               AccountInformationDTO accountInformationDTO =
                   UserHelper.instance.getAccountInformation();
 
@@ -230,7 +233,7 @@ class _LoginState extends State<_Login> {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => SplashScreen(
+                  builder: (context) => DashBoardScreen(
                     isFromLogin: true,
                     isLogoutEnterHome: isLogoutEnterHome,
                   ),

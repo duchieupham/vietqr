@@ -201,14 +201,15 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
           if (result.userId.isNotEmpty) {
             await UserHelper.instance.setAccountInformation(result);
           } else {
-            emit(state.copyWith(msg: '', status: BlocStatus.ERROR));
+            emit(state.copyWith(
+                msg: 'Đã có lỗi xảy ra, xin vui lòng thử lại sau',
+                status: BlocStatus.ERROR));
             return;
           }
         } else {
           emit(state.copyWith(
-              status: BlocStatus.NONE,
-              request: DashBoardType.TOKEN,
-              typeToken: TokenType.Expired));
+              msg: 'Đã có lỗi xảy ra, xin vui lòng thử lại sau',
+              status: BlocStatus.ERROR));
           return;
         }
         final settingAccount = await accRepository.getSettingAccount(userId);
@@ -219,20 +220,23 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
                 status: BlocStatus.NONE,
                 request: DashBoardType.GET_USER_SETTING));
           } else {
-            emit(state.copyWith(msg: '', status: BlocStatus.ERROR));
+            emit(state.copyWith(
+                msg: 'Đã có lỗi xảy ra, xin vui lòng thử lại sau',
+                status: BlocStatus.ERROR));
             return;
           }
         } else {
           emit(state.copyWith(
-              status: BlocStatus.NONE,
-              request: DashBoardType.TOKEN,
-              typeToken: TokenType.Expired));
+              msg: 'Đã có lỗi xảy ra, xin vui lòng thử lại sau',
+              status: BlocStatus.ERROR));
           return;
         }
       }
     } catch (e) {
       LOG.error('Error at _getPointAccount: $e');
-      emit(state.copyWith(msg: '', status: BlocStatus.ERROR));
+      emit(state.copyWith(
+          msg: 'Đã có lỗi xảy ra, xin vui lòng thử lại sau',
+          status: BlocStatus.ERROR));
     }
   }
 

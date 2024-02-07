@@ -664,7 +664,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                       isObscureText: false,
                       maxLines: 1,
                       fillColor: AppColor.WHITE,
-                      value: _provider.branchName,
+                      value: _provider.branchCode,
                       textFieldType: TextfieldType.DEFAULT,
                       maxLength: 10,
                       contentPadding: EdgeInsets.zero,
@@ -703,13 +703,14 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                       ),
                     ),
                   ),
-                  if (item.terminalCode.isNotEmpty)
+                  if (item.terminalCode.isNotEmpty) ...[
                     Text(
                       item.terminalCode,
                       style: const TextStyle(
                           fontSize: 11, color: AppColor.grey979797),
                     ),
-                  const Divider()
+                    const Divider()
+                  ]
                 ],
               ),
             );

@@ -16,7 +16,6 @@ class CreateQRProvider with ChangeNotifier, BaseManager {
   String content = '';
   String orderCode = '';
   String branchCode = '';
-  String branchName = '';
 
   bool isExtra = false;
 
@@ -60,7 +59,6 @@ class CreateQRProvider with ChangeNotifier, BaseManager {
     if (value.terminalCode.isEmpty && !isFirst) return;
     terminalQRDTO = value;
     if (!isFirst) {
-      branchName = terminalQRDTO.terminalName;
       branchCode = terminalQRDTO.terminalCode;
     }
     notifyListeners();
@@ -90,7 +88,6 @@ class CreateQRProvider with ChangeNotifier, BaseManager {
     money = StringUtils.formatNumber(0);
     content = '';
     branchCode = '';
-    branchName = '';
     orderCode = '';
     isExtra = false;
     notifyListeners();
@@ -121,7 +118,6 @@ class CreateQRProvider with ChangeNotifier, BaseManager {
 
   void updateBranchCode(String text) {
     branchCode = text;
-    branchName = text;
     notifyListeners();
   }
 

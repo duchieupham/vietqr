@@ -753,11 +753,11 @@ class _UserEditViewState extends State<UserEditView> {
     String imgId = UserHelper.instance.getAccountInformation().imgId;
     return Consumer<AuthProvider>(
       builder: (context, provider, child) {
-        return (provider.avatar.path.isNotEmpty)
+        return (provider.avatarUser.path.isNotEmpty)
             ? AmbientAvatarWidget(
                 imgId: imgId,
                 size: size,
-                imageFile: provider.avatar,
+                imageFile: provider.avatarUser,
               )
             : (imgId.isEmpty)
                 ? ClipOval(

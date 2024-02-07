@@ -3,6 +3,8 @@ import 'package:vierqr/main.dart';
 import 'package:vierqr/main.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:vierqr/services/shared_references/account_helper.dart';
+import 'package:vierqr/services/shared_references/event_bloc_helper.dart';
 import 'views/vietqr_id_card_view.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -35,8 +37,6 @@ import 'package:vierqr/features/account/widget/my_QR_bottom_sheet.dart';
 import 'package:vierqr/features/printer/views/printer_setting_screen.dart';
 import 'package:vierqr/features/personal/views/introduce_bottom_sheet.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
-
-
 
 class IconData {
   final String url;
@@ -96,11 +96,21 @@ class _AccountScreenState extends State<_AccountScreen>
     eventBus.fire(ReloadWallet());
   }
 
+  Future<void> _resetServices() async {
+    BuildContext context = NavigationService.navigatorKey.currentContext!;
+    Provider.of<UserEditProvider>(context, listen: false).reset();
+    Provider.of<AuthProvider>(context, listen: false).reset();
+    await EventBlocHelper.instance.updateLogoutBefore(true);
+    await UserHelper.instance.initialUserInformationHelper();
+    await AccountHelper.instance.setBankToken('');
+    await AccountHelper.instance.setToken('');
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
     return BlocConsumer<AccountBloc, AccountState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state.status == BlocStatus.LOADING) {
           DialogWidget.instance.openLoadingDialog();
         }
@@ -112,9 +122,9 @@ class _AccountScreenState extends State<_AccountScreen>
           if (Navigator.canPop(context)) {
             Navigator.pop(context);
           }
-          // UserHelper.instance.reset();
           AppDataHelper.instance.clearListQRDetailBank();
           Navigator.of(context).pushReplacementNamed(Routes.LOGIN);
+          await _resetServices();
           eventBus.fire(ChangeBottomBarEvent(0));
         }
 
@@ -238,11 +248,11 @@ class _BannerWidget extends StatelessWidget {
     String imgId = UserHelper.instance.getAccountInformation().imgId;
     return Consumer<AuthProvider>(
       builder: (context, provider, child) {
-        return (provider.avatar.path.isNotEmpty)
+        return (provider.avatarUser.path.isNotEmpty)
             ? AmbientAvatarWidget(
                 imgId: imgId,
                 size: size,
-                imageFile: provider.avatar,
+                imageFile: provider.avatarUser,
               )
             : (imgId.isEmpty)
                 ? ClipOval(

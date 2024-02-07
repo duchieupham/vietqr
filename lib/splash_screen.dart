@@ -1,40 +1,15 @@
-import 'dart:async';
-import 'dart:isolate';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
-import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/commons/constants/env/env_config.dart';
-import 'package:vierqr/commons/enums/enum_type.dart';
-import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
-import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
-import 'package:vierqr/features/dashboard/dashboard_screen.dart';
-import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
-import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
-import 'package:vierqr/features/dashboard/widget/maintain_widget.dart';
-import 'package:vierqr/main.dart';
-import 'package:vierqr/models/bank_type_dto.dart';
-import 'package:vierqr/models/theme_dto.dart';
-import 'package:vierqr/models/user_repository.dart';
-import 'package:vierqr/services/shared_references/theme_helper.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
-import 'package:http/http.dart' as http;
 import 'package:rive/rive.dart' as rive;
 
 class SplashScreen extends StatefulWidget {
   final bool isFromLogin;
-  final bool isLogoutEnterHome;
 
   static String routeName = '/splash_screen';
 
   const SplashScreen({
     Key? key,
-    this.isLogoutEnterHome = false,
     this.isFromLogin = false,
   }) : super(key: key);
 
@@ -45,15 +20,10 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   bool _showLogo = false;
 
-  String get userId => UserHelper.instance.getUserId().trim();
-  late DashBoardBloc _bloc;
-
   //animation
   late final rive.StateMachineController _riveController;
   late rive.SMITrigger _action;
   bool _isRiveInit = false;
-
-  late AuthProvider _provider;
 
   bool isBanks = false;
   bool isThemes = false;
@@ -61,19 +31,10 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _bloc = BlocProvider.of(context);
-    _provider = Provider.of<AuthProvider>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _init();
       if (!widget.isFromLogin) _showLogo = true;
       updateState();
     });
-  }
-
-  _init() {
-    _bloc.add(GetBanksEvent());
-    _bloc.add(GetVersionAppEvent());
-    _bloc.add(GetUserInformation());
   }
 
   //initial of animation
@@ -92,111 +53,10 @@ class _SplashScreenState extends State<SplashScreen> {
     _action.fire();
   }
 
-  _openStartScreen() async {
-    if (!mounted) return;
-    Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
-          builder: (context) => DashBoardScreen(
-              isLogoutEnterHome: widget.isLogoutEnterHome,
-              isFromLogin: widget.isFromLogin),
-          settings: RouteSettings(name: DashBoardScreen.routeName),
-        ),
-        (route) => false);
-  }
-
-  static void saveImageTask(List<dynamic> args) async {
-    SendPort sendPort = args[0];
-    List<BankTypeDTO> list = args[1];
-
-    for (var message in list) {
-      String url = '${EnvConfig.getBaseUrl()}images/${message.imageId}';
-      final response = await http.get(Uri.parse(url));
-      final bytes = response.bodyBytes;
-      sendPort
-          .send(SaveImageData(progress: bytes, index: list.indexOf(message)));
-    }
-    sendPort.send(SaveImageData(progress: Uint8List(0), isDone: true));
-  }
-
-  void _saveImageTaskStreamReceiver(List<BankTypeDTO> list) async {
-    final receivePort = ReceivePort();
-    Isolate.spawn(saveImageTask, [receivePort.sendPort, list]);
-    await for (var message in receivePort) {
-      if (message is SaveImageData) {
-        if (message.index != null) {
-          BankTypeDTO dto = list[message.index!];
-
-          String path = dto.imageId;
-          if (!path.contains('.png')) {
-            path = path + '.png';
-          }
-
-          String localPath = await saveImageToLocal(message.progress, path);
-          dto.fileImage = localPath;
-          await UserRepository.instance.updateBanks(dto);
-        }
-
-        if (message.isDone) {
-          receivePort.close();
-          if (!mounted) return;
-          await UserRepository.instance.getBanks();
-          isBanks = true;
-          updateState();
-          if (isBanks && isThemes) _openStartScreen();
-          return;
-        }
-      }
-    }
-  }
-
-  static void saveThemeTask(List<dynamic> args) async {
-    SendPort sendPort = args[0];
-    List<ThemeDTO> list = args[1];
-
-    for (var message in list) {
-      final response = await http.get(Uri.parse(message.imgUrl));
-      final bytes = response.bodyBytes;
-      sendPort
-          .send(SaveImageData(progress: bytes, index: list.indexOf(message)));
-    }
-    sendPort.send(SaveImageData(progress: Uint8List(0), isDone: true));
-  }
-
-  Future<void> _saveThemeTaskStreamReceiver(List<ThemeDTO> list) async {
-    List<ThemeDTO> listThemeLocal = [];
-    final receivePort = ReceivePort();
-    Isolate.spawn(saveThemeTask, [receivePort.sendPort, list]);
-    await for (var message in receivePort) {
-      if (message is SaveImageData) {
-        if (message.index != null) {
-          ThemeDTO dto = list[message.index!];
-
-          String path = dto.imgUrl.split('/').last;
-          if (path.contains('.png')) {
-            path.replaceAll('.png', '');
-          }
-
-          String localPath = await saveImageToLocal(message.progress, path);
-          dto.file = localPath;
-          listThemeLocal.add(dto);
-        }
-
-        if (message.isDone) {
-          receivePort.close();
-          if (!mounted) return;
-          _provider.updateListTheme(listThemeLocal, saveLocal: true);
-          isThemes = true;
-          updateState();
-          if (isBanks && isThemes) _openStartScreen();
-          return;
-        }
-      }
-    }
-  }
-
   @override
   void dispose() {
     if (_isRiveInit) {
+      print('rive');
       _riveController.dispose();
     }
     super.dispose();
@@ -207,130 +67,44 @@ class _SplashScreenState extends State<SplashScreen> {
     return LayoutBuilder(
       builder: (context, BoxConstraints viewport) {
         return Scaffold(
-          body: BlocListener<DashBoardBloc, DashBoardState>(
-            listener: (context, state) async {
-              if (state.status == BlocStatus.ERROR ||
-                  state.request == DashBoardType.UPDATE_THEME_ERROR) {
-                await DialogWidget.instance.showFullModalBottomContent(
-                  isDissmiss: false,
-                  widget: MaintainWidget(
-                    onRetry: () {
-                      _init();
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                );
-              }
-
-              if (state.request == DashBoardType.TOKEN) {
-                if (state.typeToken == TokenType.Expired) {
-                  await DialogWidget.instance.openMsgDialog(
-                      title: 'Phiên đăng nhập hết hạn',
-                      msg: 'Vui lòng đăng nhập lại ứng dụng',
-                      function: () {
-                        Navigator.pop(context);
-                        _bloc.add(TokenEventLogout());
-                      });
-                } else if (state.typeToken == TokenType.Logout) {
-                  Navigator.of(context).pushReplacementNamed(Routes.LOGIN);
-                }
-              }
-
-              if (state.request == DashBoardType.GET_USER_SETTING) {
-                _provider
-                    .updateSettingDTO(UserHelper.instance.getAccountSetting());
-              }
-
-              if (state.request == DashBoardType.GET_BANK) {
-                _saveImageTaskStreamReceiver(state.listBanks);
-              }
-
-              if (state.request == DashBoardType.GET_BANK_LOCAL) {
-                isBanks = true;
-                if (isBanks && isThemes) {
-                  print('heheheh - splash');
-                  isBanks = false;
-                  await Future.delayed(const Duration(milliseconds: 1000), () {
-                    _openStartScreen();
-                  });
-                }
-              }
-
-              if (state.request == DashBoardType.APP_VERSION) {
-                if (state.appInfoDTO != null) {
-                  _provider.updateThemeVer(state.appInfoDTO!.themeVer);
-                  _provider.updateAppInfoDTO(state.appInfoDTO);
-                }
-
-                _bloc.add(GetListThemeEvent());
-              }
-
-              if (state.request == DashBoardType.THEMES) {
-                List<ThemeDTO> list = [...state.themes];
-                list.sort((a, b) => a.type.compareTo(b.type));
-
-                _provider.updateListTheme(list);
-
-                int themeVerLocal = ThemeHelper.instance.getThemeKey();
-                int themeVerSetting = _provider.themeVer;
-                List<ThemeDTO> listLocal =
-                    await UserRepository.instance.getThemes();
-
-                if (themeVerLocal != themeVerSetting || listLocal.isEmpty) {
-                  await UserRepository.instance.clearThemes();
-                  _saveThemeTaskStreamReceiver(list);
-                } else {
-                  isThemes = true;
-                  if (isBanks && isThemes) {
-                    print('heheheh - splash');
-                    isThemes = false;
-                    await Future.delayed(const Duration(milliseconds: 1000),
-                        () {
-                      _openStartScreen();
-                    });
-                  }
-                }
-              }
-            },
-            child: Stack(
-              children: [
-                Positioned.fill(
-                  bottom: 80,
-                  child: Center(
-                    child: AnimatedOpacity(
-                      duration: Duration(milliseconds: 2500),
-                      opacity: widget.isFromLogin
-                          ? 1.0
-                          : _showLogo
-                              ? 1.0
-                              : 0.0,
-                      child: Image.asset(
-                        "assets/images/logo_vietgr_payment.png",
-                        width: 160,
-                        fit: BoxFit.fitWidth,
-                      ),
+          body: Stack(
+            children: [
+              Positioned.fill(
+                bottom: 80,
+                child: Center(
+                  child: AnimatedOpacity(
+                    duration: Duration(milliseconds: 2500),
+                    opacity: widget.isFromLogin
+                        ? 1.0
+                        : _showLogo
+                            ? 1.0
+                            : 0.0,
+                    child: Image.asset(
+                      "assets/images/logo_vietgr_payment.png",
+                      width: 160,
+                      fit: BoxFit.fitWidth,
                     ),
                   ),
                 ),
-                if (widget.isFromLogin)
-                  Positioned(
-                    top: MediaQuery.of(context).size.height / 2,
-                    left: 0,
-                    right: 0,
-                    child: SizedBox(
-                      height: 20,
-                      width: 30,
-                      child: rive.RiveAnimation.asset(
-                        'assets/rives/loading_ani',
-                        fit: BoxFit.contain,
-                        antialiasing: false,
-                        animations: [Stringify.SUCCESS_ANI_INITIAL_STATE],
-                        onInit: _onRiveInit,
-                      ),
+              ),
+              if (widget.isFromLogin)
+                Positioned(
+                  top: MediaQuery.of(context).size.height / 2,
+                  left: 0,
+                  right: 0,
+                  child: SizedBox(
+                    height: 20,
+                    width: 30,
+                    child: rive.RiveAnimation.asset(
+                      'assets/rives/loading_ani',
+                      fit: BoxFit.contain,
+                      antialiasing: false,
+                      animations: [Stringify.SUCCESS_ANI_INITIAL_STATE],
+                      onInit: _onRiveInit,
                     ),
                   ),
-              ],
-            ),
+                ),
+            ],
           ),
         );
       },

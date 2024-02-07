@@ -71,31 +71,31 @@ class AuthProvider with ChangeNotifier {
 
   int themeVer = 0;
 
-  final streamController = StreamController<List<File>>.broadcast();
-  late Stream<List<File>> broadcastStream;
+  final themesController = StreamController<List<File>>.broadcast();
+  late Stream<List<File>> themesStream;
 
-  File avatar = File('');
+  File avatarUser = File('');
 
   void setImage(File? file) {
     if (file == null) return;
-    avatar = file;
+    avatarUser = file;
     notifyListeners();
   }
 
-  Future<void> loadImage() async {
+  Future<void> loadThemes() async {
     List<File> listFile = [];
     for (int i = 0; i < themes.length; i++) {
       File file = await getImageFile(themes[i].file);
       listFile.add(file);
     }
 
-    streamController.sink.add(listFile);
+    themesController.sink.add(listFile);
   }
 
   @override
   void dispose() {
-    if (streamController.hasListener) {
-      streamController.close();
+    if (themesController.hasListener) {
+      themesController.close();
     }
     super.dispose();
   }
@@ -109,8 +109,17 @@ class AuthProvider with ChangeNotifier {
     packageInfo = data;
     versionApp = packageInfo.version;
     initThemeDTO();
+    themesStream = themesController.stream;
+    notifyListeners();
+  }
+
+  void updateRenderUI({bool isLogout = false}) {
+    if (isLogout) {
+      isRenderUI = false;
+      notifyListeners();
+      return;
+    }
     if (!isRenderUI) isRenderUI = true;
-    broadcastStream = streamController.stream;
     notifyListeners();
   }
 
@@ -143,7 +152,7 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void updateThemeVer(value) {
+  void updateThemeVersion(value) {
     themeVer = value;
     ThemeHelper.instance.updateThemeKey(themeVer);
     notifyListeners();
@@ -157,34 +166,17 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void updateListTheme(List<ThemeDTO> value, {bool saveLocal = false}) async {
-    int themeKey = ThemeHelper.instance.getThemeKey();
-    List<ThemeDTO> listLocal = await userRes.getThemes();
-
-    if (themes.isEmpty) {
-      themes = listLocal;
-      if (themes.isEmpty) {
-        themes = value;
-      }
-      themes.sort((a, b) => a.type.compareTo(b.type));
-      notifyListeners();
-      return;
-    }
-
-    if ((themeKey != themeVer || listLocal.isEmpty)) {
-      for (int i = 0; i < value.length; i++) {
-        await userRes.updateThemes(value[i]);
-        print('hehehheeeeeee $i');
-      }
-      themes = value;
-      themes.sort((a, b) => a.type.compareTo(b.type));
-    }
+  void updateThemes(List<ThemeDTO> value) async {
+    themes = value;
+    themes.sort((a, b) => a.type.compareTo(b.type));
+    loadThemes();
     notifyListeners();
   }
 
   void initThemeDTO() async {
-    if ((await userRes.getThemeDTO()) == null) return;
-    themeDTO = (await userRes.getThemeDTO())!;
+    ThemeDTO? theme = await userRes.getThemeDTO();
+    if (theme == null) return;
+    themeDTO = theme;
     file = await getImageFile(themeDTO.file);
     notifyListeners();
   }
@@ -192,44 +184,31 @@ class AuthProvider with ChangeNotifier {
   void updateSettingDTO(value) async {
     if (value != null) {
       settingDTO = value;
+      ThemeDTO? _local = await userRes.getThemeDTO();
 
-      if ((await userRes.getThemeDTO()) != null) {
-        themeDTO = (await userRes.getThemeDTO())!;
-        if (settingDTO.themeType == themeDTO.type) {
-          file = await getImageFile(themeDTO.file);
-        } else {
-          String path = settingDTO.themeImgUrl.split('/').last;
-          if (path.contains('.png')) {
-            path.replaceAll('.png', '');
-          }
-
-          String localPath =
-              await downloadAndSaveImage(settingDTO.themeImgUrl, path);
-
-          themeDTO.setFile(localPath);
-          themeDTO.setType(settingDTO.themeType);
-
-          userRes.updateThemeDTO(themeDTO);
-          file = await getImageFile(themeDTO.file);
-        }
-      } else {
-        String path = settingDTO.themeImgUrl.split('/').last;
-        if (path.contains('.png')) {
-          path.replaceAll('.png', '');
-        }
-
-        String localPath =
-            await downloadAndSaveImage(settingDTO.themeImgUrl, path);
-        if (localPath.isNotEmpty) {
-          themeDTO.setFile(localPath);
-          themeDTO.setType(settingDTO.themeType);
-
-          userRes.updateThemeDTO(themeDTO);
-          file = await getImageFile(themeDTO.file);
-        }
+      if (_local == null || settingDTO.themeType != _local.type) {
+        await onSaveThemToLocal();
+      } else if (settingDTO.themeType == _local.type) {
+        file = await getImageFile(themeDTO.file);
       }
     }
+    notifyListeners();
+  }
 
+  Future onSaveThemToLocal() async {
+    String path = settingDTO.themeImgUrl.split('/').last;
+    if (path.contains('.png')) {
+      path.replaceAll('.png', '');
+    }
+
+    String localPath = await downloadAndSaveImage(settingDTO.themeImgUrl, path);
+    if (localPath.isNotEmpty) {
+      themeDTO.setFile(localPath);
+      themeDTO.setType(settingDTO.themeType);
+
+      userRes.updateThemeDTO(themeDTO);
+      file = await getImageFile(themeDTO.file);
+    }
     notifyListeners();
   }
 
@@ -352,7 +331,7 @@ class AuthProvider with ChangeNotifier {
     _showActionShare = false;
     versionApp = '';
     isShowToastUpdate = -1;
-    avatar = File('');
+    avatarUser = File('');
     notifyListeners();
   }
 }

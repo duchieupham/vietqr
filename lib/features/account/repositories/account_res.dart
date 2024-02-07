@@ -247,7 +247,7 @@ class AccountRepository {
         type: AuthenticationType.NONE,
       );
       if (response.statusCode == 200) {
-        await _resetServices().then((value) => result = true);
+        result = true;
       }
     } catch (e) {
       LOG.error(e.toString());

@@ -99,7 +99,7 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
               ),
               const SizedBox(height: 12),
               Consumer<AuthProvider>(builder: (context, provider, _) {
-                provider.loadImage();
+                provider.loadThemes();
                 return _buildContainer(
                   color: provider.settingDTO.themeType == 0
                       ? AppColor.GREY_BG
@@ -108,7 +108,7 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
                   child: Column(
                     children: [
                       StreamBuilder<List<File>>(
-                        stream: provider.broadcastStream,
+                        stream: provider.themesStream,
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             List<File> imageList = snapshot.data as List<File>;

@@ -24,6 +24,7 @@ import 'package:vierqr/features/account/account_screen.dart';
 import 'package:vierqr/features/bank_card/bank_screen.dart';
 import 'package:vierqr/features/contact/contact_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
+import 'package:vierqr/features/dashboard/blocs/isolate_stream.dart';
 import 'package:vierqr/features/dashboard/curved_navi_bar/curved_nav_bar_model.dart';
 import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
 import 'package:vierqr/features/dashboard/widget/background_app_bar_home.dart';
@@ -38,8 +39,12 @@ import 'package:vierqr/main.dart';
 import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/contact_dto.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
+import 'package:vierqr/models/theme_dto.dart';
+import 'package:vierqr/models/user_repository.dart';
 import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
+import 'package:vierqr/services/shared_references/theme_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/splash_screen.dart';
 
 import 'curved_navi_bar/custom_navigation_bar.dart';
 import 'events/dashboard_event.dart';
@@ -85,23 +90,26 @@ class _DashBoardScreen extends State<DashBoardScreen>
   final _bottomBarController = StreamController<int>.broadcast();
 
   //blocs
-  late DashBoardBloc _dashBoardBloc;
+  late DashBoardBloc _bloc;
   late AuthProvider _provider;
   late Stream<int> bottomBarStream;
+  late IsolateStream _isolateStream;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _dashBoardBloc = BlocProvider.of(context);
+    _bloc = BlocProvider.of(context);
     _provider = Provider.of<AuthProvider>(context, listen: false);
+    _isolateStream = IsolateStream(context);
 
     _pageController =
         PageController(initialPage: _provider.pageSelected, keepPage: true);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      initialServices(context);
+      _bloc.add(const TokenEventCheckValid());
       listenNewNotification();
       onUpdateApp();
+      onRenderUI();
     });
 
     _subscription = eventBus.on<ChangeBottomBarEvent>().listen((data) {
@@ -109,7 +117,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
     });
 
     _subReloadWallet = eventBus.on<ReloadWallet>().listen((_) {
-      _dashBoardBloc.add(GetPointEvent());
+      _bloc.add(GetPointEvent());
     });
     _subSyncContact = eventBus.on<SyncContactEvent>().listen((data) {
       _heavyTaskStreamReceiver(data.list);
@@ -118,10 +126,18 @@ class _DashBoardScreen extends State<DashBoardScreen>
     bottomBarStream = _bottomBarController.stream;
   }
 
-  void initialServices(BuildContext context) {
-    _dashBoardBloc.add(const TokenEventCheckValid());
-    _dashBoardBloc.add(GetPointEvent());
-    _dashBoardBloc.add(GetCountNotifyEvent());
+  void initialServices() {
+    _bloc.add(GetBanksEvent());
+    _bloc.add(GetVersionAppEvent());
+    _bloc.add(GetUserInformation());
+    _bloc.add(GetPointEvent());
+    _bloc.add(GetCountNotifyEvent());
+  }
+
+  void onRenderUI() async {
+    Future.delayed(const Duration(milliseconds: 1500), () {
+      _provider.updateRenderUI();
+    });
   }
 
   void sendDataFromBottomBar(int data) {
@@ -202,7 +218,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
       if (isNotificationPushed) {
         notificationController.sink.add(false);
         Future.delayed(const Duration(milliseconds: 1000), () {
-          _dashBoardBloc.add(GetCountNotifyEvent());
+          _bloc.add(GetCountNotifyEvent());
         });
       }
     });
@@ -221,7 +237,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
           return DialogUpdateView(
             isHideClose: true,
             onCheckUpdate: () {
-              _dashBoardBloc.add(GetVersionAppEvent(isCheckVer: true));
+              _bloc.add(GetVersionAppEvent(isCheckVer: true));
             },
           );
         },
@@ -230,7 +246,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
   }
 
   void _updateFcmToken(bool isFromLogin) {
-    if (!isFromLogin) _dashBoardBloc.add(const TokenFcmUpdateEvent());
+    if (!isFromLogin) _bloc.add(const TokenFcmUpdateEvent());
   }
 
   @override
@@ -268,6 +284,40 @@ class _DashBoardScreen extends State<DashBoardScreen>
           Navigator.pop(context);
         }
 
+        if (state.request == DashBoardType.GET_USER_SETTING) {
+          _provider.updateSettingDTO(UserHelper.instance.getAccountSetting());
+        }
+
+        if (state.request == DashBoardType.GET_BANK) {
+          _isolateStream.saveBankReceiver(state.listBanks);
+        }
+
+        if (state.request == DashBoardType.APP_VERSION) {
+          if (state.appInfoDTO != null) {
+            _provider.updateThemeVersion(state.appInfoDTO!.themeVer);
+            _provider.updateAppInfoDTO(state.appInfoDTO);
+          }
+
+          int themeVerLocal = ThemeHelper.instance.getThemeKey();
+          int themeVerSetting = _provider.themeVer;
+          List<ThemeDTO> listLocal = await UserRepository.instance.getThemes();
+
+          if (themeVerLocal != themeVerSetting || listLocal.isEmpty) {
+            _bloc.add(GetListThemeEvent());
+          } else {
+            _provider.updateThemes(listLocal);
+          }
+        }
+
+        if (state.request == DashBoardType.THEMES) {
+          List<ThemeDTO> list = [...state.themes];
+          list.sort((a, b) => a.type.compareTo(b.type));
+
+          await UserRepository.instance.clearThemes();
+          List<ThemeDTO> datas = await _isolateStream.saveThemeReceiver(list);
+          _provider.updateThemes(datas);
+        }
+
         if (state.request == DashBoardType.KEEP_BRIGHT) {
           _provider.updateKeepBright(state.keepValue);
         }
@@ -276,48 +326,44 @@ class _DashBoardScreen extends State<DashBoardScreen>
           _provider.updateIntroduceDTO(state.introduceDTO);
         }
 
-        if (state.request == DashBoardType.APP_VERSION) {
-          if (state.appInfoDTO != null) {
-            _provider.updateThemeVer(state.appInfoDTO!.themeVer);
-            _provider.updateAppInfoDTO(state.appInfoDTO);
-          }
-
-          _dashBoardBloc.add(GetListThemeEvent());
-        }
-
         //check lỗi hệ thống
         if (state.request == DashBoardType.TOKEN) {
           if (state.typeToken == TokenType.Valid) {
+            initialServices();
             _updateFcmToken(widget.isFromLogin);
-          } else if (state.typeToken == TokenType.MainSystem) {
-            await DialogWidget.instance.showFullModalBottomContent(
-              isDissmiss: false,
-              widget: MaintainWidget(
-                onRetry: () {
-                  _dashBoardBloc.add(TokenEventCheckValid());
-                  Navigator.pop(context);
-                },
-              ),
-            );
-          } else if (state.typeToken == TokenType.Expired) {
-            await DialogWidget.instance.openMsgDialog(
-                title: 'Phiên đăng nhập hết hạn',
-                msg: 'Vui lòng đăng nhập lại ứng dụng',
-                function: () {
-                  Navigator.pop(context);
-                  _dashBoardBloc.add(TokenEventLogout());
-                });
-          } else if (state.typeToken == TokenType.Logout) {
-            Navigator.of(context).pushReplacementNamed(Routes.LOGIN);
-          } else if (state.typeToken == TokenType.Logout_failed) {
-            await DialogWidget.instance.openMsgDialog(
-              title: 'Không thể đăng xuất',
-              msg: 'Vui lòng thử lại sau.',
-            );
+          } else {
+            _provider.updateRenderUI();
+            if (state.typeToken == TokenType.MainSystem) {
+              await DialogWidget.instance.showFullModalBottomContent(
+                isDissmiss: false,
+                widget: MaintainWidget(
+                  onRetry: () {
+                    _bloc.add(TokenEventCheckValid());
+                    Navigator.pop(context);
+                  },
+                ),
+              );
+            } else if (state.typeToken == TokenType.Expired) {
+              await DialogWidget.instance.openMsgDialog(
+                  title: 'Phiên đăng nhập hết hạn',
+                  msg: 'Vui lòng đăng nhập lại ứng dụng',
+                  function: () {
+                    Navigator.pop(context);
+                    _bloc.add(TokenEventLogout());
+                  });
+            } else if (state.typeToken == TokenType.Logout) {
+              Navigator.of(context).pushReplacementNamed(Routes.LOGIN);
+            } else if (state.typeToken == TokenType.Logout_failed) {
+              await DialogWidget.instance.openMsgDialog(
+                title: 'Không thể đăng xuất',
+                msg: 'Vui lòng thử lại sau.',
+              );
+            }
           }
         }
 
         if (state.request == DashBoardType.ERROR) {
+          _provider.updateRenderUI();
           await DialogWidget.instance
               .openMsgDialog(title: 'Thông báo', msg: state.msg ?? '');
         }
@@ -330,13 +376,14 @@ class _DashBoardScreen extends State<DashBoardScreen>
             state.request != DashBoardType.NONE ||
             state.typeQR != TypeQR.NONE ||
             state.typePermission == DashBoardTypePermission.None) {
-          _dashBoardBloc.add(UpdateEvent());
+          _bloc.add(UpdateEvent());
         }
       },
-      child: Scaffold(
-        body: Consumer<AuthProvider>(builder: (context, provider, _) {
-          if (!provider.isRenderUI) return const SizedBox();
-          return Stack(
+      child: Consumer<AuthProvider>(builder: (context, provider, _) {
+        if (!provider.isRenderUI)
+          return SplashScreen(isFromLogin: widget.isFromLogin);
+        return Scaffold(
+          body: Stack(
             children: [
               _buildAppBar(),
               Container(
@@ -345,7 +392,6 @@ class _DashBoardScreen extends State<DashBoardScreen>
                     : const EdgeInsets.only(top: kToolbarHeight * 2),
                 child: Listener(
                   onPointerMove: (moveEvent) {
-                    print(moveEvent.delta.dx);
                     if (moveEvent.delta.dx < 0) {
                       if (provider.moveEvent != TypeMoveEvent.RIGHT_TO_LEFT)
                         provider.updateMoveEvent(TypeMoveEvent.RIGHT_TO_LEFT);
@@ -423,24 +469,24 @@ class _DashBoardScreen extends State<DashBoardScreen>
                 ),
               ),
             ],
-          );
-        }),
-        bottomNavigationBar: Consumer<AuthProvider>(
-          builder: (context, page, _) {
-            return CurvedNavigationBar(
-              backgroundColor: AppColor.TRANSPARENT,
-              buttonBackgroundColor: AppColor.TRANSPARENT,
-              animationDuration: const Duration(milliseconds: 300),
-              indexPage: page.pageSelected,
-              indexPaint: 0,
-              iconPadding: 0.0,
-              onTap: onTapPage,
-              items: _listNavigation,
-              stream: bottomBarStream,
-            );
-          },
-        ),
-      ),
+          ),
+          bottomNavigationBar: Consumer<AuthProvider>(
+            builder: (context, page, _) {
+              return CurvedNavigationBar(
+                backgroundColor: AppColor.TRANSPARENT,
+                buttonBackgroundColor: AppColor.TRANSPARENT,
+                animationDuration: const Duration(milliseconds: 300),
+                indexPage: page.pageSelected,
+                indexPaint: 0,
+                iconPadding: 0.0,
+                onTap: onTapPage,
+                items: _listNavigation,
+                stream: bottomBarStream,
+              );
+            },
+          ),
+        );
+      }),
     );
   }
 
@@ -600,7 +646,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
   }
 
   void _onNotification() async {
-    _dashBoardBloc.add(NotifyUpdateStatusEvent());
+    _bloc.add(NotifyUpdateStatusEvent());
 
     NavigatorUtils.navigatePage(context, NotificationScreen(),
         routeName: NotificationScreen.routeName);
@@ -654,11 +700,11 @@ class _DashBoardScreen extends State<DashBoardScreen>
               shape: BoxShape.circle,
               image: DecorationImage(
                 fit: BoxFit.cover,
-                image: provider.avatar.path.isEmpty
+                image: provider.avatarUser.path.isEmpty
                     ? (imgId.isNotEmpty
                         ? ImageUtils.instance.getImageNetWork(imgId)
                         : Image.asset('assets/images/ic-avatar.png').image)
-                    : Image.file(provider.avatar).image,
+                    : Image.file(provider.avatarUser).image,
               ),
             ),
           ),
