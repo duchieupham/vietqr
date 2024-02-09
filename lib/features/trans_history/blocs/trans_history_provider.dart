@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/features/trans_history/views/terminal_time_view.dart';
 import 'package:vierqr/features/transaction/repositories/transaction_repository.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/terminal_response_dto.dart';
@@ -13,6 +11,11 @@ import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class TransProvider with ChangeNotifier {
   final controller = TextEditingController();
+
+  final bool isOwner;
+  final List<TerminalResponseDTO> terminals;
+
+  TransProvider(this.isOwner, this.terminals);
 
   List<FilterTransaction> listFilter = [
     const FilterTransaction(id: 9, title: 'Tất cả'),
@@ -37,6 +40,7 @@ class TransProvider with ChangeNotifier {
   ];
   FilterTransaction _valueFilterTerminal =
       const FilterTransaction(id: 0, title: 'Tất cả');
+
   FilterTransaction get valueFilterTerminal => _valueFilterTerminal;
 
   final List<FilterStatusTransaction> listStatus = [
@@ -87,9 +91,8 @@ class TransProvider with ChangeNotifier {
   List<BankAccountDTO> bankAccounts = [];
 
   TerminalResponseDTO _terminalResponseDTO = TerminalResponseDTO(banks: []);
-  TerminalResponseDTO get terminalResponseDTO => _terminalResponseDTO;
 
-  List<TerminalResponseDTO> terminals = [];
+  TerminalResponseDTO get terminalResponseDTO => _terminalResponseDTO;
 
   void updateTerminals(
     List<TerminalResponseDTO> value,
@@ -100,16 +103,23 @@ class TransProvider with ChangeNotifier {
     String keyword,
     FilterTransaction filterTransaction,
     FilterStatusTransaction valueStatus,
-    FilterTransaction filterTerminal,
-    bool isOwner,
-  ) {
-    print('------------_keywordSearch--------------- $_keywordSearch');
-    terminals = value;
+    FilterTransaction filterTerminal, {
+    TerminalResponseDTO? terminalRes,
+  }) {
     bankId = bankID;
     _formDate = formDate;
     _toDate = toDate;
     _valueTimeFilter = timeFilter;
-    _terminalResponseDTO = terminals.first;
+    if (timeFilter.id == TypeTimeFilter.PERIOD.id) {
+      onChangeDropTime(true);
+    }
+
+    if (terminalRes != null) {
+      _terminalResponseDTO = terminalRes;
+    } else {
+      _terminalResponseDTO = terminals.first;
+    }
+
     _keywordSearch = keyword;
     controller.text = keyword;
     _valueFilter = filterTransaction;
@@ -124,44 +134,36 @@ class TransProvider with ChangeNotifier {
     }
   }
 
-  void updateTerminalResponseDTO(TerminalResponseDTO value) {
+  void updateTerminalResponseDTO(TerminalResponseDTO? value) {
+    if (value == null) return;
     _terminalResponseDTO = value;
-    notifyListeners();
-  }
-
-  void updateFilterTerminal(FilterTransaction value) {
-    _valueFilterTerminal = value;
-    if (value.id == 0) {
-      _terminalResponseDTO = TerminalResponseDTO(banks: []);
-    } else {
-      _terminalResponseDTO = terminals.first;
-    }
-
+    if (isOwner) _keywordSearch = value.code;
     notifyListeners();
   }
 
   void updateDataFilter(
-      FilterTransaction filterTerminal,
-      FilterTransaction? filterTransaction,
-      FilterStatusTransaction? statusFilter,
-      String keyword,
-      FilterTimeTransaction? filterTime) {
+    FilterTransaction filterTerminal,
+    FilterTransaction? filterTransaction,
+    FilterStatusTransaction? statusFilter,
+    String keyword,
+    FilterTimeTransaction? filterTime,
+    DateTime fromDate,
+    DateTime? toDate,
+    TerminalResponseDTO terminalResponseDTO,
+  ) {
     _valueFilterTerminal = filterTerminal;
-    // if (_valueFilterTerminal.id == 0) {
-    //   _terminalResponseDTO = TerminalResponseDTO(banks: []);
-    // } else {
-    //   _terminalResponseDTO = terminals.first;
-    // }
     if (filterTransaction != null) {
       controller.clear();
       updateKeyword('');
       _valueFilter = filterTransaction;
-      if (_valueFilter.id.typeTrans == TypeFilter.ALL) {
-        // _valueTimeFilter = const FilterTimeTransaction(
-        //     id: 2, title: '7 ngày gần đây (mặc định)');
-      } else if (_valueFilter.id.typeTrans == TypeFilter.STATUS_TRANS) {}
     }
+
     changeTimeDataFilter(filterTime);
+
+    updateFromDate(fromDate);
+    updateToDate(_toDate);
+
+    _terminalResponseDTO = terminalResponseDTO;
 
     if (statusFilter != null) {
       controller.clear();
@@ -171,11 +173,7 @@ class TransProvider with ChangeNotifier {
 
     String text = keyword.trim();
     if (text.isNotEmpty) {
-      if (text.contains('')) {
-        _keywordSearch = text.replaceAll(' ', '-');
-      } else {
-        _keywordSearch = text;
-      }
+      _keywordSearch = text;
     }
   }
 
@@ -185,7 +183,7 @@ class TransProvider with ChangeNotifier {
     } else if (valueFilter.id == 1) {
       return 'Nhập mã giao dịch';
     } else if (valueFilter.id == 2) {
-      return 'Nhập OrderID';
+      return 'OrderID';
     } else if (valueFilter.id == 3) {
       return 'Nhập nội dung';
     }
@@ -200,6 +198,8 @@ class TransProvider with ChangeNotifier {
     DateTime now = DateTime.now();
     DateTime fromDate = DateTime(now.year, now.month, now.day);
     DateTime endDate = fromDate.subtract(const Duration(days: 7));
+
+    _terminalResponseDTO = terminals.first;
 
     fromDate = fromDate
         .add(const Duration(days: 1))
@@ -233,15 +233,10 @@ class TransProvider with ChangeNotifier {
             userId: UserHelper.instance.getUserId(),
             status: statusValue.id,
           );
-          // if (valueTimeFilter.id == TypeTimeFilter.ALL.id ||
-          //     (valueFilter.id.typeTrans != TypeFilter.ALL &&
-          //         valueFilter.id.typeTrans != TypeFilter.CODE_SALE)) {
-          //   param.from = '0';
-          //   param.to = '0';
-          // } else {
-          //   param.from = TimeUtils.instance.getCurrentDate(_formDate);
-          //   param.to = TimeUtils.instance.getCurrentDate(_toDate);
-          // }
+
+          if (valueFilter.id == 5) {
+            param.value = statusValue.id.toString();
+          }
           param.from = TimeUtils.instance.getCurrentDate(_formDate);
           param.to = TimeUtils.instance.getCurrentDate(_toDate);
           onSearchTrans(param);
@@ -262,20 +257,6 @@ class TransProvider with ChangeNotifier {
 
   onChangeDropTime(bool value) {
     enableDropTime = value;
-    // if (!value) {
-    //   updateFromDate(DateTime.now());
-    //   updateToDate(null);
-    //   _valueTimeFilter =
-    //       const FilterTimeTransaction(id: 2, title: '7 ngày gần nhất');
-    // }
-    notifyListeners();
-  }
-
-  resetFilterTime(Function(TransactionInputDTO) callBack) {
-    enableDropTime = false;
-    _valueTimeFilter =
-        const FilterTimeTransaction(id: 2, title: '7 ngày gần đây (mặc định)');
-    onSearch(callBack);
     notifyListeners();
   }
 
@@ -314,14 +295,14 @@ class TransProvider with ChangeNotifier {
       updateKeyword('');
       _valueFilter = value;
       if (value.id == 4) {
-        _keywordSearch = _terminalResponseDTO.id;
+        _keywordSearch = _terminalResponseDTO.code;
       } else {
         updateKeyword('');
       }
 
+      _terminalResponseDTO = terminals.first;
+
       if (_valueFilter.id.typeTrans == TypeFilter.ALL) {
-        // _valueTimeFilter = const FilterTimeTransaction(
-        //     id: 2, title: '7 ngày gần đây (mặc định)');
         onSearch(callBack);
       } else if (_valueFilter.id.typeTrans == TypeFilter.STATUS_TRANS) {
         onSearch(callBack);
@@ -331,14 +312,12 @@ class TransProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void changeStatusFilter(
-      FilterStatusTransaction? value, Function(TransactionInputDTO) callBack) {
+  void changeStatusFilter(FilterStatusTransaction? value) {
     if (value != null) {
       controller.clear();
-      updateKeyword('');
       statusValue = value;
+      updateKeyword('');
     }
-
     notifyListeners();
   }
 
@@ -348,27 +327,12 @@ class TransProvider with ChangeNotifier {
       DateTime now = DateTime.now();
       DateTime fromDate = DateTime(now.year, now.month, now.day);
       if (value.id == TypeTimeFilter.PERIOD.id) {
-        final data = await DialogWidget.instance.showModelBottomSheet(
-          context: context,
-          padding: EdgeInsets.zero,
-          bgrColor: AppColor.TRANSPARENT,
-          widget: TerminalTimeView(
-            toDate: null,
-            fromDate: fromDate,
-          ),
-        );
-        if (data is List) {
-          updateFromDate(data[0]);
-          updateToDate(data[1]);
-          onChangeDropTime(true);
-          _valueTimeFilter = value;
-          onSearch(callBack);
-        } else {
-          updateFromDate(fromDate);
-          // _valueTimeFilter =
-          //     const FilterTimeTransaction(id: 0, title: 'Tất cả');
-        }
+        onChangeDropTime(true);
+        _valueTimeFilter = value;
+        updateFromDate(fromDate);
+        updateToDate(null);
       } else if (value.id == TypeTimeFilter.TODAY.id) {
+        onChangeDropTime(false);
         DateTime endDate = fromDate
             .add(const Duration(days: 1))
             .subtract(const Duration(seconds: 1));
@@ -377,6 +341,7 @@ class TransProvider with ChangeNotifier {
         _valueTimeFilter = value;
         onSearch(callBack);
       } else if (value.id == TypeTimeFilter.SEVEN_LAST_DAY.id) {
+        onChangeDropTime(false);
         DateTime endDate = fromDate.subtract(const Duration(days: 7));
 
         fromDate = fromDate
@@ -387,6 +352,7 @@ class TransProvider with ChangeNotifier {
         _valueTimeFilter = value;
         onSearch(callBack);
       } else if (value.id == TypeTimeFilter.THIRTY_LAST_DAY.id) {
+        onChangeDropTime(false);
         DateTime endDate = fromDate.subtract(const Duration(days: 30));
 
         fromDate = fromDate
@@ -397,6 +363,7 @@ class TransProvider with ChangeNotifier {
         _valueTimeFilter = value;
         onSearch(callBack);
       } else if (value.id == TypeTimeFilter.THREE_MONTH_LAST_DAY.id) {
+        onChangeDropTime(false);
         DateTime endDate = Jiffy(fromDate).subtract(months: 3).dateTime;
         fromDate = fromDate
             .add(const Duration(days: 1))
@@ -415,7 +382,9 @@ class TransProvider with ChangeNotifier {
     if (value != null) {
       DateTime now = DateTime.now();
       DateTime fromDate = DateTime(now.year, now.month, now.day);
-      if (value.id == TypeTimeFilter.TODAY.id) {
+      if (value.id == TypeTimeFilter.PERIOD.id) {
+        _valueTimeFilter = value;
+      } else if (value.id == TypeTimeFilter.TODAY.id) {
         DateTime endDate = fromDate
             .add(const Duration(days: 1))
             .subtract(const Duration(seconds: 1));
@@ -454,32 +423,17 @@ class TransProvider with ChangeNotifier {
 
   updateKeyword(String value) {
     String text = value.trim();
-    if (text.contains('')) {
-      _keywordSearch = text.replaceAll(' ', '-');
-    } else {
-      _keywordSearch = text;
-    }
+    _keywordSearch = text;
+    notifyListeners();
   }
 
-  void updateFromDate(DateTime value) {
-    _formDate = value;
+  void updateFromDate(DateTime? value) {
+    _formDate = value ?? DateTime.now();
     notifyListeners();
   }
 
   void updateToDate(DateTime? value) {
     _toDate = value;
-    notifyListeners();
-  }
-
-  void onMenuStateChange(bool isOpen) {
-    if (enableDropList) {
-      enableDropList = false;
-      notifyListeners();
-    }
-  }
-
-  updateOffset(int value) {
-    offset = value;
     notifyListeners();
   }
 
@@ -496,7 +450,7 @@ class TransProvider with ChangeNotifier {
         bankId: bankId,
         offset: offset,
         value: keywordSearch,
-        terminalCode: _terminalResponseDTO.id,
+        terminalCode: _terminalResponseDTO.code,
         userId: UserHelper.instance.getUserId(),
         status: statusValue.id,
       );
@@ -507,10 +461,20 @@ class TransProvider with ChangeNotifier {
         param.from = TimeUtils.instance.getCurrentDate(_formDate);
         param.to = TimeUtils.instance.getCurrentDate(_toDate);
       }
-      // else {
-      //   param.from = TimeUtils.instance.getCurrentDate(_formDate);
-      //   param.to = TimeUtils.instance.getCurrentDate(_toDate);
-      // }
+
+      if (keywordSearch == _terminalResponseDTO.code &&
+          _terminalResponseDTO.id.isEmpty) {
+        param.terminalCode = '';
+        param.value = '';
+      }
+
+      if (!isOwner && _terminalResponseDTO.id.isEmpty) {
+        param.terminalCode = '';
+      }
+
+      if (valueFilter.id == 5) {
+        param.value = statusValue.id.toString();
+      }
 
       onSearchTrans(param);
     } else {
@@ -525,25 +489,12 @@ class TransProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void openBottomTime(
-      BuildContext context, Function(TransactionInputDTO) callBack) async {
-    final data = await DialogWidget.instance.showModelBottomSheet(
-      context: context,
-      padding: EdgeInsets.zero,
-      bgrColor: AppColor.TRANSPARENT,
-      widget: TerminalTimeView(
-        toDate: _toDate,
-        fromDate: fromDate,
-      ),
-    );
-
-    if (data is List) {
-      updateFromDate(data[0]);
-      updateToDate(data[1]);
-      onChangeDropTime(true);
-      onSearch(callBack);
-    }
+  updateOffset(int value) {
+    offset = value;
+    notifyListeners();
   }
+
+  Future<void> onRefresh(Function(TransactionInputDTO dto) onCall) async {}
 }
 
 class FilterTransaction {

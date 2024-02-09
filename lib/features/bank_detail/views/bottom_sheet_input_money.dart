@@ -101,7 +101,7 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetInputMoney> {
                       padding:
                           const EdgeInsets.only(left: 5, top: 5, right: 30),
                       child: Text(
-                        provider.errorAmount ?? '',
+                        provider.errorAmount,
                         style: const TextStyle(
                             color: AppColor.RED_TEXT, fontSize: 13),
                       ),

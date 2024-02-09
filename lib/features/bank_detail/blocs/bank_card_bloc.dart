@@ -9,20 +9,25 @@ import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
 import 'package:vierqr/features/bank_detail/repositories/bank_card_repository.dart';
 import 'package:vierqr/features/bank_detail/states/bank_card_state.dart';
+import 'package:vierqr/features/transaction/blocs/transaction_bloc.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
+import 'package:vierqr/models/terminal_response_dto.dart';
 
 class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
   final String bankId;
+  final bool isLoading;
 
-  BankCardBloc(this.bankId) : super(BankCardState(bankId: bankId)) {
+  BankCardBloc(this.bankId, {this.isLoading = true})
+      : super(BankCardState(bankId: bankId)) {
     on<BankCardEventRemove>(_removeBankAccount);
     on<BankCardGetDetailEvent>(_getDetail);
     on<BankCardEventUnlink>(_unlinkBankAccount);
     on<BankCardEventUnConfirmOTP>(_unConfirmOTP);
     on<UpdateEvent>(_updateEvent);
     on<BankCardGenerateDetailQR>(_createQRUnAuthen);
+    on<GetMyListGroupEvent>(_getMyListGroup);
   }
 
   void _getDetail(BankCardEvent event, Emitter emit) async {
@@ -30,19 +35,16 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
       if (event is BankCardGetDetailEvent) {
         emit(
           state.copyWith(
-            status: BlocStatus.LOADING_PAGE,
-            request: BankDetailType.NONE,
-          ),
+              status: BlocStatus.LOADING_PAGE, request: BankDetailType.NONE),
         );
         final AccountBankDetailDTO dto =
             await bankCardRepository.getAccountBankDetail(bankId);
         emit(
           state.copyWith(
-            bankDetailDTO: dto,
-            status: BlocStatus.NONE,
-            request: BankDetailType.SUCCESS,
-            bankId: bankId,
-          ),
+              bankDetailDTO: dto,
+              status: BlocStatus.NONE,
+              request: BankDetailType.SUCCESS,
+              bankId: bankId),
         );
       }
     } catch (e) {
@@ -200,6 +202,27 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
         status: BlocStatus.UNLOADING,
         request: BankDetailType.ERROR,
       ));
+    }
+  }
+
+  void _getMyListGroup(BankCardEvent event, Emitter emit) async {
+    try {
+      if (event is GetMyListGroupEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.NONE, request: BankDetailType.NONE));
+
+        final TerminalDto terminalDto = await transactionRepository
+            .getMyListGroup(event.userID, bankId, event.offset);
+
+        emit(state.copyWith(
+          status: BlocStatus.NONE,
+          terminalDto: terminalDto,
+          request: BankDetailType.GET_LIST_GROUP,
+        ));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(status: BlocStatus.NONE));
     }
   }
 

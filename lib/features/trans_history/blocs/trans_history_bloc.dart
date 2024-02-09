@@ -15,15 +15,17 @@ class TransHistoryBloc extends Bloc<TransHistoryEvent, TransHistoryState>
   final BuildContext context;
 
   final String bankId;
+  final TerminalDto terminalDto;
 
-  TransHistoryBloc(this.context, this.bankId)
-      : super(const TransHistoryState(list: [])) {
+  TransHistoryBloc(this.context, this.bankId, this.terminalDto)
+      : super(TransHistoryState(list: [], terminalDto: terminalDto)) {
     // on<TransactionEventGetDetail>(_getDetail);
     // on<TransactionEventGetImage>(_loadImage);
     // on<TransEventQRRegenerate>(_regenerateQR);
     on<TransactionStatusEventGetList>(_getTransactionsStatus);
     on<TransactionEventIsOwnerGetList>(_getTransactionsIsOwner);
     on<TransactionStatusEventFetch>(_fetchTransactionsStatus);
+    on<TransactionEventFetchIsOwner>(_fetchTransactionsIsOwner);
     on<TransactionEventGetList>(_getTransactions);
     on<TransactionEventFetch>(_fetchTransactions);
     on<GetMyListGroupEvent>(_getMyListGroup);
@@ -32,12 +34,12 @@ class TransHistoryBloc extends Bloc<TransHistoryEvent, TransHistoryState>
   void _getTransactionsStatus(TransHistoryEvent event, Emitter emit) async {
     try {
       if (event is TransactionStatusEventGetList) {
-        bool isLoadMore = false;
+        bool isLoadMore = true;
         emit(state.copyWith(status: BlocStatus.LOADING));
         final List<RelatedTransactionReceiveDTO> result =
             await transactionRepository.getTransStatus(event.dto);
         if (result.isEmpty || result.length < 20) {
-          isLoadMore = true;
+          isLoadMore = false;
         }
         emit(
           state.copyWith(
@@ -58,12 +60,13 @@ class TransHistoryBloc extends Bloc<TransHistoryEvent, TransHistoryState>
   void _getTransactions(TransHistoryEvent event, Emitter emit) async {
     try {
       if (event is TransactionEventGetList) {
-        bool isLoadMore = false;
-        emit(state.copyWith(status: BlocStatus.LOADING));
+        bool isLoadMore = true;
+        emit(state.copyWith(
+            status: event.isLoading ? BlocStatus.LOADING : BlocStatus.NONE));
         final List<RelatedTransactionReceiveDTO> result =
             await transactionRepository.getTrans(event.dto);
         if (result.isEmpty || result.length < 20) {
-          isLoadMore = true;
+          isLoadMore = false;
         }
         emit(
           state.copyWith(
@@ -72,6 +75,7 @@ class TransHistoryBloc extends Bloc<TransHistoryEvent, TransHistoryState>
             status: BlocStatus.UNLOADING,
             isLoadMore: isLoadMore,
             offset: 0,
+            isEmpty: result.isEmpty,
           ),
         );
       }
@@ -84,16 +88,47 @@ class TransHistoryBloc extends Bloc<TransHistoryEvent, TransHistoryState>
   void _getTransactionsIsOwner(TransHistoryEvent event, Emitter emit) async {
     try {
       if (event is TransactionEventIsOwnerGetList) {
-        bool isLoadMore = false;
-        emit(state.copyWith(status: BlocStatus.LOADING));
+        bool isLoadMore = true;
+        emit(state.copyWith(
+            status: event.isLoading ? BlocStatus.LOADING : BlocStatus.NONE));
         final List<RelatedTransactionReceiveDTO> result =
             await transactionRepository.getTransIsOwner(event.dto);
         if (result.isEmpty || result.length < 20) {
-          isLoadMore = true;
+          isLoadMore = false;
         }
         emit(
           state.copyWith(
             list: result,
+            type: TransHistoryType.LOAD_DATA,
+            status: BlocStatus.UNLOADING,
+            isLoadMore: isLoadMore,
+            offset: 0,
+            isEmpty: result.isEmpty,
+          ),
+        );
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(type: TransHistoryType.ERROR));
+    }
+  }
+
+  void _fetchTransactionsIsOwner(TransHistoryEvent event, Emitter emit) async {
+    try {
+      if (event is TransactionEventFetchIsOwner) {
+        bool isLoadMore = true;
+        List<RelatedTransactionReceiveDTO> data = state.list;
+        emit(state.copyWith(
+            status: BlocStatus.NONE, type: TransHistoryType.NONE));
+        final List<RelatedTransactionReceiveDTO> result =
+            await transactionRepository.getTransIsOwner(event.dto);
+        if (result.isEmpty || result.length < 20) {
+          isLoadMore = false;
+        }
+        data.addAll(result);
+        emit(
+          state.copyWith(
+            list: data,
             type: TransHistoryType.LOAD_DATA,
             status: BlocStatus.UNLOADING,
             isLoadMore: isLoadMore,
@@ -110,14 +145,14 @@ class TransHistoryBloc extends Bloc<TransHistoryEvent, TransHistoryState>
   void _fetchTransactions(TransHistoryEvent event, Emitter emit) async {
     try {
       if (event is TransactionEventFetch) {
-        bool isLoadMore = false;
+        bool isLoadMore = true;
         List<RelatedTransactionReceiveDTO> data = state.list;
         emit(state.copyWith(
             status: BlocStatus.NONE, type: TransHistoryType.NONE));
         final List<RelatedTransactionReceiveDTO> result =
             await transactionRepository.getTrans(event.dto);
         if (result.isEmpty || result.length < 20) {
-          isLoadMore = true;
+          isLoadMore = false;
         }
         data.addAll(result);
         emit(state.copyWith(
@@ -136,14 +171,14 @@ class TransHistoryBloc extends Bloc<TransHistoryEvent, TransHistoryState>
   void _fetchTransactionsStatus(TransHistoryEvent event, Emitter emit) async {
     try {
       if (event is TransactionStatusEventFetch) {
-        bool isLoadMore = false;
+        bool isLoadMore = true;
         List<RelatedTransactionReceiveDTO> data = state.list;
         emit(state.copyWith(
             status: BlocStatus.NONE, type: TransHistoryType.NONE));
         final List<RelatedTransactionReceiveDTO> result =
             await transactionRepository.getTransStatus(event.dto);
         if (result.isEmpty || result.length < 20) {
-          isLoadMore = true;
+          isLoadMore = false;
         }
         data.addAll(result);
         emit(state.copyWith(

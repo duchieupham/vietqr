@@ -1,27 +1,28 @@
 import 'package:intl/intl.dart';
 
 class ResponseStatisticDTO {
-  final int totalTrans;
-  final int totalTransC;
-  final int totalTransD;
-  final int totalCashIn;
-  final int totalCashOut;
+  int totalTrans;
+  int totalCashIn;
+  int totalCashOut;
+  int totalTransC;
+  int totalTransD;
 
   final String date;
-  final String month;
-  const ResponseStatisticDTO(
-      {this.date = '',
-      this.month = '',
-      this.totalCashIn = 0,
-      this.totalCashOut = 0,
-      this.totalTrans = 0,
-      this.totalTransC = 0,
-      this.totalTransD = 0});
+  int type;
+
+  ResponseStatisticDTO({
+    this.date = '',
+    this.totalCashIn = 0,
+    this.totalCashOut = 0,
+    this.totalTrans = 0,
+    this.totalTransC = 0,
+    this.totalTransD = 0,
+    this.type = 0,
+  });
 
   factory ResponseStatisticDTO.fromJson(Map<String, dynamic> json) {
     return ResponseStatisticDTO(
       date: json['date'] ?? '',
-      month: json['month'] ?? '',
       totalCashIn: json['totalCashIn'] ?? 0,
       totalCashOut: json['totalCashOut'] ?? 0,
       totalTrans: json['totalTrans'] ?? 0,
@@ -31,12 +32,19 @@ class ResponseStatisticDTO {
   }
 
   DateTime formatDateMonth() {
-    DateTime tempDate = DateFormat("yyyy-MM-dd hh:mm:ss").parse(month);
+    DateTime tempDate = DateFormat("yyyy-MM-dd hh:mm:ss").parse(date);
 
     return tempDate;
   }
 
   String getMonth() {
-    return month.substring(5);
+    return date.substring(5);
+  }
+
+  int get getDay => DateTime.parse(date).day;
+
+  String getDayFromMonth() {
+    DateTime dateTime = DateTime.parse(date);
+    return dateTime.day.toString();
   }
 }

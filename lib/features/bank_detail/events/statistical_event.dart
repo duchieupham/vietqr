@@ -8,18 +8,30 @@ class StatisticEvent extends Equatable {
 }
 
 class StatisticEventGetOverview extends StatisticEvent {
-  final String bankId;
-  const StatisticEventGetOverview({required this.bankId});
+  final String terminalCode;
+  final String month;
+
+  const StatisticEventGetOverview({
+    required this.terminalCode,
+    required this.month,
+  });
 
   @override
-  List<Object?> get props => [bankId];
+  List<Object?> get props => [
+        terminalCode,
+        month,
+      ];
 }
 
 class StatisticEventGetData extends StatisticEvent {
-  final String bankId;
-  final int type;
-  const StatisticEventGetData({required this.bankId, required this.type});
+  final String terminalCode;
+  final String month;
+
+  const StatisticEventGetData({
+    required this.terminalCode,
+    required this.month,
+  });
 
   @override
-  List<Object?> get props => [bankId, type];
+  List<Object?> get props => [terminalCode, month];
 }

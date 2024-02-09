@@ -1,4 +1,5 @@
 import 'package:vierqr/models/terminal_response_dto.dart';
+import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class GroupDetailDTO {
   String id;
@@ -10,6 +11,7 @@ class GroupDetailDTO {
   int totalMember;
   List<TerminalBankResponseDTO> banks;
   List<AccountMemberDTO> members;
+
   GroupDetailDTO({
     this.id = '',
     this.name = '',
@@ -21,6 +23,8 @@ class GroupDetailDTO {
     required this.banks,
     required this.members,
   });
+
+  bool get isAdmin => userId == UserHelper.instance.getUserId();
 
   factory GroupDetailDTO.fromJson(Map<String, dynamic> json) {
     List<AccountMemberDTO> listMember = json['members'] != null
@@ -75,8 +79,10 @@ class AccountMemberDTO {
   });
 
   String fullName() {
-    return '${firstName} ${middleName} ${lastName}';
+    return '${lastName} ${middleName} ${firstName}';
   }
+
+  bool get isMe => id == UserHelper.instance.getUserId();
 
   factory AccountMemberDTO.fromJson(Map<String, dynamic> json) =>
       AccountMemberDTO(

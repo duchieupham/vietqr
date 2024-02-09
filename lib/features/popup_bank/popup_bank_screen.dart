@@ -509,7 +509,12 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
 
   void onShareBDSD(BankAccountDTO dto) async {
     NavigatorUtils.navigatePage(
-        context, BankCardDetailScreen(bankId: dto.id, pageIndex: 3),
+        context,
+        BankCardDetailScreen(
+          bankId: dto.id,
+          pageIndex: 3,
+          isLoading: false,
+        ),
         routeName: BankCardDetailScreen.routeName);
   }
 

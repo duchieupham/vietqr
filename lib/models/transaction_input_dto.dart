@@ -7,7 +7,7 @@ class TransactionInputDTO {
   String? to;
   String? value;
   String? userId;
-  final String terminalCode;
+  String terminalCode;
 
   TransactionInputDTO({
     required this.bankId,

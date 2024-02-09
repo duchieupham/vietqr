@@ -138,3 +138,16 @@ class BankCardGenerateDetailQR extends BankCardEvent {
   @override
   List<Object?> get props => [dto];
 }
+
+class GetMyListGroupEvent extends BankCardEvent {
+  final String userID;
+  final int offset;
+
+  GetMyListGroupEvent({
+    this.userID = '',
+    this.offset = 0,
+  });
+
+  @override
+  List<Object?> get props => [userID, offset];
+}

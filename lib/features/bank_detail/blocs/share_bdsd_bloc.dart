@@ -20,8 +20,9 @@ import 'package:vierqr/models/terminal_response_dto.dart';
 class ShareBDSDBloc extends Bloc<ShareBDSDEvent, ShareBDSDState>
     with BaseManager {
   final BuildContext context;
+  final TerminalDto? terminalDto;
 
-  ShareBDSDBloc(this.context)
+  ShareBDSDBloc(this.context, {this.terminalDto})
       : super(
           ShareBDSDState(
             listBusinessAvailDTO: [],
@@ -29,6 +30,7 @@ class ShareBDSDBloc extends Bloc<ShareBDSDEvent, ShareBDSDState>
             listTelegram: [],
             listLark: [],
             listMemberSearch: [],
+            listGroup: terminalDto,
           ),
         ) {
     on<GetBusinessAvailDTOEvent>(_getBusinessAvailDTO);
@@ -88,7 +90,7 @@ class ShareBDSDBloc extends Bloc<ShareBDSDEvent, ShareBDSDState>
           state.copyWith(
             status: BlocStatus.LOADING_PAGE,
             request: ShareBDSDType.NONE,
-            isLoading: event.isLoading,
+            isLoading: false,
           ),
         );
         result = await telegramRepository.getInformation(userId);

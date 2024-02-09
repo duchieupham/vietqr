@@ -48,7 +48,7 @@ class TransactionUtils {
       } else if (status == 1) {
         if (type == 2) {
           result = AppColor.BLUE_TEXT;
-        } else if (type == 0 || type == 4 || type == 5) {
+        } else if (type == 0 || type == 4 || type == 5 || type == 1) {
           result = AppColor.GREEN;
         }
       } else if (status == 2) {

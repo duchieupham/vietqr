@@ -7,6 +7,7 @@ import 'package:vierqr/models/bank_card_request_otp.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
+import 'package:vierqr/models/terminal_response_dto.dart';
 
 class BankCardState extends Equatable {
   final String? msg;
@@ -21,6 +22,7 @@ class BankCardState extends Equatable {
   final String? bankAccount;
   final BankTypeDTO? bankTypeDTO;
   final QRGeneratedDTO? qrGeneratedDTO;
+  final TerminalDto? terminalDto;
 
   const BankCardState({
     this.msg,
@@ -35,24 +37,25 @@ class BankCardState extends Equatable {
     this.bankAccount,
     this.bankTypeDTO,
     this.qrGeneratedDTO,
+    this.terminalDto,
   });
 
-  BankCardState copyWith({
-    BlocStatus? status,
-    BankDetailType? request,
-    String? msg,
-    String? bankId,
-    String? qr,
-    List<BankAccountDTO>? listBanks,
-    List<Color>? colors,
-    BankCardRequestOTP? dto,
-    String? requestId,
-    AccountBankDetailDTO? bankDetailDTO,
-    NationalScannerDTO? nationalScannerDTO,
-    String? bankAccount,
-    BankTypeDTO? bankTypeDTO,
-    QRGeneratedDTO? qrGeneratedDTO,
-  }) {
+  BankCardState copyWith(
+      {BlocStatus? status,
+      BankDetailType? request,
+      String? msg,
+      String? bankId,
+      String? qr,
+      List<BankAccountDTO>? listBanks,
+      List<Color>? colors,
+      BankCardRequestOTP? dto,
+      String? requestId,
+      AccountBankDetailDTO? bankDetailDTO,
+      NationalScannerDTO? nationalScannerDTO,
+      String? bankAccount,
+      BankTypeDTO? bankTypeDTO,
+      QRGeneratedDTO? qrGeneratedDTO,
+      TerminalDto? terminalDto}) {
     return BankCardState(
       status: status ?? this.status,
       request: request ?? this.request,
@@ -66,6 +69,7 @@ class BankCardState extends Equatable {
       bankAccount: bankAccount ?? this.bankAccount,
       bankTypeDTO: bankTypeDTO ?? this.bankTypeDTO,
       qrGeneratedDTO: qrGeneratedDTO ?? this.qrGeneratedDTO,
+      terminalDto: terminalDto ?? this.terminalDto,
     );
   }
 
@@ -82,5 +86,6 @@ class BankCardState extends Equatable {
         bankAccount,
         bankTypeDTO,
         qrGeneratedDTO,
+        terminalDto,
       ];
 }

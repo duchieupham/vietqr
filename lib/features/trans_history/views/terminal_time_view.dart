@@ -3,16 +3,19 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/month_calculator.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/layouts/m_button_widget.dart';
 
 class TerminalTimeView extends StatefulWidget {
   final DateTime? toDate;
   final DateTime fromDate;
+  final Function(DateTime?) updateToDate;
+  final Function(DateTime?) updateFromDate;
 
   const TerminalTimeView({
     super.key,
     required this.toDate,
     required this.fromDate,
+    required this.updateToDate,
+    required this.updateFromDate,
   });
 
   @override
@@ -23,6 +26,7 @@ class _TerminalTimeViewState extends State<TerminalTimeView> {
   DateTime? toDate;
   DateTime? fromDate;
   MonthCalculator monthCalculator = MonthCalculator();
+
   @override
   void initState() {
     super.initState();
@@ -35,108 +39,24 @@ class _TerminalTimeViewState extends State<TerminalTimeView> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
           color: AppColor.WHITE, borderRadius: BorderRadius.circular(16)),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.clear, color: AppColor.TRANSPARENT),
-              Expanded(
-                child: Text(
-                  'Chọn thời gian',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              GestureDetector(
-                onTap: () => Navigator.pop(context),
-                child: Icon(Icons.clear),
-              ),
-            ],
-          ),
-          Container(
-            margin: const EdgeInsets.only(bottom: 24, top: 40),
-            child: Column(
-              children: [
-                InkWell(
-                  onTap: () async {
-                    DateTime? date = await showDateTimePicker(
-                      context: context,
-                      initialDate: fromDate,
-                      firstDate: DateTime(2021, 6),
-                      lastDate: DateTime.now(),
-                    );
-                    if (toDate != null) {
-                      int numberOfMonths = monthCalculator.calculateMonths(
-                          date ?? DateTime.now(), toDate ?? DateTime.now());
-                      if (numberOfMonths > 3) {
-                        DialogWidget.instance.openMsgDialog(
-                            title: 'Không hợp lệ',
-                            msg:
-                                'Vui lòng nhập khoảng thời gian tối đa là 3 tháng.');
-                      } else {
-                        setState(() {
-                          fromDate = date;
-                        });
-                      }
-                    } else {
-                      setState(() {
-                        fromDate = date;
-                      });
-                    }
-                  },
-                  child: Container(
-                    height: 40,
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: AppColor.GREY_EBEBEB,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Expanded(
-                          child: const Text(
-                            'Từ ngày',
-                            style: TextStyle(
-                                fontSize: 14, color: AppColor.GREY_TEXT),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        ...[
-                          Text(
-                            TimeUtils.instance.formatDateToString(fromDate),
-                            style: const TextStyle(
-                                fontSize: 14, fontWeight: FontWeight.w500),
-                          ),
-                          const SizedBox(width: 8),
-                          const Icon(
-                            Icons.calendar_month_outlined,
-                            size: 16,
-                          ),
-                        ]
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                InkWell(
-                  onTap: () async {
-                    DateTime? date = await showDateTimePicker(
-                      context: context,
-                      initialDate: toDate,
-                      firstDate: DateTime(2021, 6),
-                      lastDate: DateTime.now(),
-                    );
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 24),
+        child: Row(
+          children: [
+            Expanded(
+              child: InkWell(
+                onTap: () async {
+                  DateTime? date = await showDateTimePicker(
+                    context: context,
+                    initialDate: fromDate,
+                    firstDate: DateTime(2021, 6),
+                    lastDate: DateTime.now(),
+                  );
+                  if (toDate != null) {
                     int numberOfMonths = monthCalculator.calculateMonths(
-                        fromDate ?? DateTime.now(), date ?? DateTime.now());
+                        date ?? DateTime.now(), toDate ?? DateTime.now());
                     if (numberOfMonths > 3) {
                       DialogWidget.instance.openMsgDialog(
                           title: 'Không hợp lệ',
@@ -144,61 +64,114 @@ class _TerminalTimeViewState extends State<TerminalTimeView> {
                               'Vui lòng nhập khoảng thời gian tối đa là 3 tháng.');
                     } else {
                       setState(() {
-                        toDate = date;
+                        fromDate = date;
                       });
                     }
-                  },
-                  child: Container(
-                    height: 40,
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: AppColor.GREY_EBEBEB,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Expanded(
-                          child: const Text(
-                            'Đến ngày',
-                            style: TextStyle(
-                                fontSize: 14, color: AppColor.GREY_TEXT),
-                          ),
+                  } else {
+                    setState(() {
+                      fromDate = date;
+                    });
+                  }
+                  widget.updateFromDate(fromDate!);
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  height: 50,
+                  decoration: BoxDecoration(
+                      color: AppColor.WHITE,
+                      border: Border.all(
+                          color: AppColor.BLACK_BUTTON.withOpacity(0.5),
+                          width: 0.5),
+                      borderRadius: BorderRadius.circular(6)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      const Text(
+                        'Từ:',
+                        style:
+                            TextStyle(fontSize: 12, color: AppColor.textBlack),
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          TimeUtils.instance.formatDateToString(fromDate),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.w500),
                         ),
-                        const SizedBox(width: 20),
-                        ...[
-                          Text(
-                            toDate == null
-                                ? 'Chọn ngày'
-                                : TimeUtils.instance.formatDateToString(toDate),
-                            style: const TextStyle(
-                                fontSize: 14, fontWeight: FontWeight.w500),
-                          ),
-                          const SizedBox(width: 8),
-                          const Icon(
-                            Icons.calendar_month_outlined,
-                            size: 16,
-                          ),
-                        ],
-                      ],
-                    ),
+                      ),
+                      const SizedBox(width: 4),
+                      const Icon(
+                        Icons.calendar_month_outlined,
+                        size: 16,
+                      ),
+                    ],
                   ),
                 ),
-              ],
+              ),
             ),
-          ),
-          const SizedBox(height: 12),
-          MButtonWidget(
-            title: 'Xong',
-            isEnable: toDate != null,
-            colorDisableBgr: AppColor.GREY_BUTTON,
-            colorDisableText: AppColor.BLACK,
-            margin: EdgeInsets.zero,
-            onTap: () => Navigator.pop(context, [fromDate, toDate]),
-          ),
-          const SizedBox(height: 12),
-        ],
+            const SizedBox(width: 10),
+            Expanded(
+              child: InkWell(
+                onTap: () async {
+                  DateTime? date = await showDateTimePicker(
+                    context: context,
+                    initialDate: toDate,
+                    firstDate: DateTime(2021, 6),
+                    lastDate: DateTime.now(),
+                  );
+                  int numberOfMonths = monthCalculator.calculateMonths(
+                      fromDate ?? DateTime.now(), date ?? DateTime.now());
+                  if (numberOfMonths > 3) {
+                    DialogWidget.instance.openMsgDialog(
+                        title: 'Không hợp lệ',
+                        msg:
+                            'Vui lòng nhập khoảng thời gian tối đa là 3 tháng.');
+                  } else {
+                    setState(() {
+                      toDate = date;
+                    });
+                  }
+                },
+                child: Container(
+                  height: 50,
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  decoration: BoxDecoration(
+                      color: AppColor.WHITE,
+                      border: Border.all(
+                          color: AppColor.BLACK_BUTTON.withOpacity(0.5),
+                          width: 0.5),
+                      borderRadius: BorderRadius.circular(6)),
+                  child: Row(
+                    children: [
+                      const Text(
+                        'Đến:',
+                        style:
+                            TextStyle(fontSize: 12, color: AppColor.textBlack),
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          toDate == null
+                              ? 'Chọn ngày'
+                              : TimeUtils.instance.formatDateToString(toDate),
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      const Icon(
+                        Icons.calendar_month_outlined,
+                        size: 16,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

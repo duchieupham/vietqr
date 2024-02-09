@@ -187,9 +187,11 @@ class _PopupBankShareState extends State<PopupBankShare> {
                                   const SizedBox(height: 8),
                                   Text(
                                     '+ ${CurrencyUtils.instance.getCurrencyFormatted(widget.dto.amount)} VND',
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       color: AppColor.ORANGE_DARK,
-                                      fontSize: 28,
+                                      fontSize: widget.dto.amount.length > 8
+                                          ? 24
+                                          : 28,
                                       fontWeight: FontWeight.bold,
                                     ),
                                     textAlign: TextAlign.center,

@@ -1,7 +1,7 @@
 class TerminalDto {
   final int totalTerminals;
   final String userId;
-  final List<TerminalResponseDTO> terminals;
+  List<TerminalResponseDTO> terminals;
 
   TerminalDto({
     this.totalTerminals = 0,
@@ -24,11 +24,11 @@ class TerminalDto {
 }
 
 class TerminalResponseDTO {
-  final String id;
-  final int totalMembers;
-  final String name;
-  final String address;
-  final String code;
+  String id;
+  int totalMembers;
+  String name;
+  String address;
+  String code;
 
   final bool isDefault;
   final String userId;
@@ -106,11 +106,13 @@ class BankTerminalDto {
   final String userId;
   final int totalBankShares;
   final List<BankShareResponseDTO> bankShares;
+
   BankTerminalDto({
     required this.bankShares,
     this.userId = '',
     this.totalBankShares = 0,
   });
+
   factory BankTerminalDto.fromJson(Map<String, dynamic> json) {
     return BankTerminalDto(
       userId: json['userId'] ?? '',
@@ -175,6 +177,7 @@ class TerminalShareDTO {
 
   final bool isDefault;
   final String bankId;
+
   const TerminalShareDTO(
       {this.id = '',
       this.totalMembers = 0,

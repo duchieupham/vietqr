@@ -9,7 +9,8 @@ class TransHistoryState extends Equatable {
   final String? msg;
   final List<RelatedTransactionReceiveDTO> list;
   final int offset;
-  final TerminalDto? terminalDto;
+  final TerminalDto terminalDto;
+  final bool isEmpty;
   final bool isLoadMore;
 
   const TransHistoryState({
@@ -18,8 +19,9 @@ class TransHistoryState extends Equatable {
     this.msg,
     required this.list,
     this.offset = 0,
+    this.isEmpty = false,
     this.isLoadMore = false,
-    this.terminalDto,
+    required this.terminalDto,
   });
 
   TransHistoryState copyWith({
@@ -30,6 +32,7 @@ class TransHistoryState extends Equatable {
     int? offset,
     TerminalDto? terminalDto,
     bool? isLoadMore,
+    bool? isEmpty,
   }) {
     return TransHistoryState(
       status: status ?? this.status,
@@ -38,10 +41,12 @@ class TransHistoryState extends Equatable {
       list: list ?? this.list,
       terminalDto: terminalDto ?? this.terminalDto,
       isLoadMore: isLoadMore ?? this.isLoadMore,
+      isEmpty: isEmpty ?? this.isEmpty,
       offset: offset ?? this.offset,
     );
   }
 
   @override
-  List<Object?> get props => [status, type, msg, list, offset, isLoadMore];
+  List<Object?> get props =>
+      [status, type, msg, list, offset, isLoadMore, isEmpty];
 }

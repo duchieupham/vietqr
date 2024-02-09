@@ -23,7 +23,7 @@ class TransactionRepository {
     List<RelatedTransactionReceiveDTO> result = [];
     try {
       final String url =
-          '${EnvConfig.getBaseUrl()}transactions?bankId=${dto.bankId}&status=${dto.status}&offset=${dto.offset}';
+          '${EnvConfig.getBaseUrl()}transactions?bankId=${dto.bankId}&status=${dto.status}&offset=${dto.offset}&from=${dto.from}&to=${dto.to}';
 
       final response = await BaseAPIClient.getAPI(
         url: url,

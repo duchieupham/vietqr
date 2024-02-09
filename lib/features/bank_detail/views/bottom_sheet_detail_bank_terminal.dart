@@ -28,7 +28,6 @@ class BottomSheetDetailBankBDSD extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool small = MediaQuery.of(context).size.height < 800;
-    double width = MediaQuery.of(context).size.width;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [

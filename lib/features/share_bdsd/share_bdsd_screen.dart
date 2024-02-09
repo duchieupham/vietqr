@@ -28,6 +28,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
   late ShareBDSDBloc _bloc;
   TerminalDto terminalDto = TerminalDto(terminals: []);
   BankTerminalDto bankTerminalDto = BankTerminalDto(bankShares: []);
+
   @override
   void initState() {
     super.initState();
@@ -333,7 +334,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
               height: 12,
             ),
             ...terminalDto.terminals.map((e) {
-              return _buildItemGroup(e);
+              return _buildItemGroup(e, provider.getTypeFilter());
             }).toList(),
           ],
         );
@@ -438,7 +439,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
     );
   }
 
-  Widget _buildItemGroup(TerminalResponseDTO dto) {
+  Widget _buildItemGroup(TerminalResponseDTO dto, int type) {
     return GestureDetector(
       onTap: () async {
         await NavigatorUtils.navigatePage(
@@ -447,11 +448,13 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
               groupId: dto.id,
             ),
             routeName: '/share_bdsd_invite');
-        _bloc.add(GetListGroupBDSDEvent(
-            userID: UserHelper.instance.getUserId(),
-            type: 0,
-            offset: 0,
-            loadingPage: true));
+        _bloc.add(
+          GetListGroupBDSDEvent(
+              userID: UserHelper.instance.getUserId(),
+              type: type,
+              offset: 0,
+              loadingPage: true),
+        );
       },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),

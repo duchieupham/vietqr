@@ -236,7 +236,7 @@ class StatisticalLineChart extends StatelessWidget {
     for (var element in listData) {
       int index = listData.indexOf(element);
       flSpots.add(
-        FlSpot(getMonth(element.month),
+        FlSpot(getMonth(element.date),
             convertAmount(listData[index].totalCashIn)),
       );
     }

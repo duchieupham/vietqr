@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:vierqr/models/transaction_branch_input_dto.dart';
 import 'package:vierqr/models/transaction_input_dto.dart';
 
 class TransHistoryEvent extends Equatable {
@@ -7,31 +6,24 @@ class TransHistoryEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class TransactionEventGetListBranch extends TransHistoryEvent {
-  final TransactionBranchInputDTO dto;
-
-  TransactionEventGetListBranch({required this.dto});
-
-  @override
-  List<Object?> get props => [dto];
-}
-
 class TransactionEventGetList extends TransHistoryEvent {
   final TransactionInputDTO dto;
+  final bool isLoading;
 
-  TransactionEventGetList(this.dto);
+  TransactionEventGetList(this.dto, {this.isLoading = true});
 
   @override
-  List<Object?> get props => [dto];
+  List<Object?> get props => [dto, isLoading];
 }
 
 class TransactionEventIsOwnerGetList extends TransHistoryEvent {
   final TransactionInputDTO dto;
+  final bool isLoading;
 
-  TransactionEventIsOwnerGetList(this.dto);
+  TransactionEventIsOwnerGetList(this.dto, {this.isLoading = true});
 
   @override
-  List<Object?> get props => [dto];
+  List<Object?> get props => [dto, isLoading];
 }
 
 class TransactionStatusEventGetList extends TransHistoryEvent {
@@ -47,6 +39,15 @@ class TransactionEventFetch extends TransHistoryEvent {
   final TransactionInputDTO dto;
 
   TransactionEventFetch(this.dto);
+
+  @override
+  List<Object?> get props => [dto];
+}
+
+class TransactionEventFetchIsOwner extends TransHistoryEvent {
+  final TransactionInputDTO dto;
+
+  TransactionEventFetchIsOwner(this.dto);
 
   @override
   List<Object?> get props => [dto];

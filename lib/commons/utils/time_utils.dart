@@ -15,7 +15,7 @@ class TimeUtils {
     if (isExport) {
       format = DateFormat('dd/MM/yyyy');
     } else {
-      format = DateFormat('HH:mm:ss dd/MM/yyyy');
+      format = DateFormat('HH:mm dd/MM/yyyy');
     }
 
     String formatted = format.format(now);

@@ -8,11 +8,16 @@ import 'package:vierqr/models/statistical_dto.dart';
 class StatisticRepository {
   const StatisticRepository();
 
-  Future<ResponseStatisticDTO> getDataOverview(String bankId) async {
-    ResponseStatisticDTO result = const ResponseStatisticDTO();
+  Future<ResponseStatisticDTO> getDataOverview({
+    required String terminalCode,
+    required String bankId,
+    required String month,
+    required String userId,
+  }) async {
+    ResponseStatisticDTO result = ResponseStatisticDTO();
     try {
       final String url =
-          '${EnvConfig.getBaseUrl()}transaction/overview/$bankId';
+          '${EnvConfig.getBaseUrl()}transaction/overview/$bankId?terminalCode=$terminalCode&month=$month&userId=$userId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -27,12 +32,16 @@ class StatisticRepository {
     return result;
   }
 
-  Future<List<ResponseStatisticDTO>> getDataTable(
-      {required String bankId, required int type}) async {
+  Future<List<ResponseStatisticDTO>> getDataTable({
+    required String terminalCode,
+    required String bankId,
+    required String month,
+    required String userId,
+  }) async {
     List<ResponseStatisticDTO> list = [];
     try {
       final String url =
-          '${EnvConfig.getBaseUrl()}transaction/statistic?bankId=$bankId&type=$type';
+          '${EnvConfig.getBaseUrl()}transaction/statistic?terminalCode=$terminalCode&bankId=$bankId&month=$month&userId=$userId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,

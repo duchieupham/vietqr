@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:vierqr/main.dart';
-import 'package:vierqr/main.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/services/shared_references/account_helper.dart';
@@ -8,7 +7,6 @@ import 'package:vierqr/services/shared_references/event_bloc_helper.dart';
 import 'views/vietqr_id_card_view.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/file_utils.dart';
