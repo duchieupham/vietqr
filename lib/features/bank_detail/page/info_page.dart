@@ -243,7 +243,7 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
                                 icon: 'assets/images/ic-remove-red.png',
                                 context: context,
                                 width: width,
-                                title: 'Xóa tài khooản ngân hàng',
+                                title: 'Xóa tài khoản ngân hàng',
                                 description:
                                     'Gỡ bỏ tài khoản ngân hàng ra khỏi danh sách tài khoản của bạn',
                               ),
