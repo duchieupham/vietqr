@@ -152,7 +152,7 @@ class _BottomSheetStatisticalState extends State<BottomSheetStatistical> {
                               textFieldType: TextfieldType.DEFAULT,
                               maxLength: 10,
                               contentPadding: EdgeInsets.zero,
-                              hintText: 'Chọn mã cửa hàng',
+                              hintText: 'Chọn cửa hàng',
                               inputType: TextInputType.text,
                               keyboardAction: TextInputAction.next,
                               onChange: provider.updateKeyword,

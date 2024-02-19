@@ -77,7 +77,7 @@ class TransProvider with ChangeNotifier {
 
   DateTime get fromDate => _formDate;
 
-  DateFormat dateFormat = DateFormat('yyyy-MM-dd');
+  DateFormat dateFormat = DateFormat('HH:mm dd-MM-yyyy');
 
   String _keywordSearch = '';
   String codeTerminal = '';

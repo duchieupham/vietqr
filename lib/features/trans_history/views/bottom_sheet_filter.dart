@@ -320,8 +320,8 @@ class BottomSheetFilter extends StatelessWidget {
                           maxLength: 10,
                           contentPadding: EdgeInsets.zero,
                           hintText: isOwner
-                              ? 'Nhập hoặc chọn mã cửa hàng'
-                              : 'Chọn mã cửa hàng',
+                              ? 'Nhập hoặc chọn cửa hàng'
+                              : 'Chọn cửa hàng',
                           inputType: TextInputType.text,
                           keyboardAction: TextInputAction.next,
                           onChange: provider.updateKeyword,
