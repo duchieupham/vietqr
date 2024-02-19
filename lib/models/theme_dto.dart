@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:hive_flutter/hive_flutter.dart';
 
 part 'theme_dto.g.dart';
@@ -14,6 +16,8 @@ class ThemeDTO extends HiveObject {
   String name;
   @HiveField(4)
   String file;
+
+  File? xFile;
 
   ThemeDTO({
     this.id = '',

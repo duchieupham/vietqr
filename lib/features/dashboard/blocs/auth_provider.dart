@@ -84,12 +84,12 @@ class AuthProvider with ChangeNotifier {
 
   Future<void> loadThemes() async {
     List<File> listFile = [];
-    for (int i = 0; i < themes.length; i++) {
-      File file = await getImageFile(themes[i].file);
+
+    for (var element in themes) {
+      File file = await getImageFile(element.file);
       listFile.add(file);
     }
-
-    themesController.sink.add(listFile);
+    themesController.add(listFile);
   }
 
   @override
@@ -110,6 +110,8 @@ class AuthProvider with ChangeNotifier {
     versionApp = packageInfo.version;
     initThemeDTO();
     themesStream = themesController.stream;
+    themes = userRes.themes;
+    updateThemes(themes);
     notifyListeners();
   }
 

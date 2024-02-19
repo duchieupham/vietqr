@@ -20,9 +20,8 @@ import 'package:vierqr/models/terminal_response_dto.dart';
 class ShareBDSDBloc extends Bloc<ShareBDSDEvent, ShareBDSDState>
     with BaseManager {
   final BuildContext context;
-  final TerminalDto? terminalDto;
 
-  ShareBDSDBloc(this.context, {this.terminalDto})
+  ShareBDSDBloc(this.context)
       : super(
           ShareBDSDState(
             listBusinessAvailDTO: [],
@@ -30,7 +29,7 @@ class ShareBDSDBloc extends Bloc<ShareBDSDEvent, ShareBDSDState>
             listTelegram: [],
             listLark: [],
             listMemberSearch: [],
-            listGroup: terminalDto,
+            listGroup: TerminalDto(terminals: []),
           ),
         ) {
     on<GetBusinessAvailDTOEvent>(_getBusinessAvailDTO);
@@ -231,7 +230,9 @@ class ShareBDSDBloc extends Bloc<ShareBDSDEvent, ShareBDSDState>
       if (event is GetMyListGroupBDSDEvent) {
         emit(
           state.copyWith(
-              status: BlocStatus.LOADING_PAGE, request: ShareBDSDType.NONE),
+              status: BlocStatus.LOADING_PAGE,
+              request: ShareBDSDType.NONE,
+              isEmpty: false),
         );
         final TerminalDto terminalDto = await repository.getMyListGroup(
             event.userID, event.bankId, event.offset);
@@ -240,6 +241,7 @@ class ShareBDSDBloc extends Bloc<ShareBDSDEvent, ShareBDSDState>
           listGroup: terminalDto,
           request: ShareBDSDType.GET_LIST_GROUP,
           isLoading: false,
+          isEmpty: terminalDto.totalTerminals <= 0,
         ));
       }
     } catch (e) {

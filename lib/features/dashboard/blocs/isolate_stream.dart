@@ -9,6 +9,7 @@ import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:http/http.dart' as http;
 import 'package:vierqr/models/theme_dto.dart';
 import 'package:vierqr/models/user_repository.dart';
+import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class IsolateStream with BaseManager {
   @override
@@ -30,6 +31,7 @@ class IsolateStream with BaseManager {
   }
 
   void saveBankReceiver(List<BankTypeDTO> list) async {
+    List<BankTypeDTO> listSave = [];
     final receivePort = ReceivePort();
     Isolate.spawn(saveImageTask, [receivePort.sendPort, list]);
     await for (var message in receivePort) {
@@ -44,13 +46,18 @@ class IsolateStream with BaseManager {
 
           String localPath = await saveImageToLocal(message.data, path);
           dto.fileImage = localPath;
-          await UserRepository.instance.updateBanks(dto);
+          listSave.add(dto);
         }
 
         if (message.isDone) {
+          listSave.forEach((element) async {
+            if (!mounted) return;
+            await UserRepository.instance.updateBanks(element);
+          });
           receivePort.close();
           if (!mounted) return;
           await UserRepository.instance.getBanks();
+          await UserHelper.instance.setBankTypeKey(true);
           return;
         }
       }
@@ -70,7 +77,7 @@ class IsolateStream with BaseManager {
   }
 
   Future<List<ThemeDTO>> saveThemeReceiver(List<ThemeDTO> list) async {
-    List<ThemeDTO> listThemeLocal = [];
+    List<ThemeDTO> listSave = [];
     final receivePort = ReceivePort();
     Isolate.spawn(saveThemeTask, [receivePort.sendPort, list]);
     await for (var message in receivePort) {
@@ -85,17 +92,20 @@ class IsolateStream with BaseManager {
 
           String localPath = await saveImageToLocal(message.data, path);
           dto.file = localPath;
-          await userRes.updateThemes(dto);
+          listSave.add(dto);
         }
 
         if (message.isDone) {
+          listSave.forEach((element) async {
+            await userRes.updateThemes(element);
+          });
           receivePort.close();
           if (!mounted) return [];
           return await userRes.getThemes();
         }
       }
     }
-    return listThemeLocal;
+    return listSave;
   }
 }
 

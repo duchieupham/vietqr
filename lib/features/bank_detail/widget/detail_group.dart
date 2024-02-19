@@ -45,7 +45,7 @@ class _ShareBDSDInviteState extends State<DetailGroupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const MAppBar(title: 'Nhóm'),
+      appBar: const MAppBar(title: 'Cửa hàng'),
       body: BlocProvider<DetailGroupBloc>(
         create: (context) => _bloc,
         child: Padding(
@@ -130,7 +130,7 @@ class _ShareBDSDInviteState extends State<DetailGroupScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Nhóm',
+                              'Cửa hàng',
                               style: TextStyle(
                                   fontSize: 12, color: AppColor.GREY_TEXT),
                             ),
@@ -170,7 +170,7 @@ class _ShareBDSDInviteState extends State<DetailGroupScreen> {
                     height: 20,
                   ),
                   Text(
-                    'Thông tin nhóm',
+                    'Thông tin cửa hàng',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(
@@ -190,7 +190,7 @@ class _ShareBDSDInviteState extends State<DetailGroupScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Mã nhóm:',
+                                  'Mã cửa hàng:',
                                   style: TextStyle(
                                       fontSize: 12, color: AppColor.GREY_TEXT),
                                 ),
@@ -340,18 +340,6 @@ class _ShareBDSDInviteState extends State<DetailGroupScreen> {
                           param['bankId'] = bankAccount.bankId;
                           param['userId'] = UserHelper.instance.getUserId();
                           _bloc.add(AddBankToGroup(param: param));
-                          // bool existed = false;
-                          // await Future.forEach(detailDTO.banks,
-                          //     (TerminalBankResponseDTO bank) async {
-                          //   if (bank.bankAccount == bankAccount.bankAccount) {
-                          //     existed = true;
-                          //     DialogWidget.instance.openMsgDialog(
-                          //         title: 'Thêm tài khoản',
-                          //         msg: 'Tài khoản ngân hàng này đã được thêm');
-                          //   }
-                          // });
-                          //
-                          // if (!existed) {}
                         },
                       ),
                     );
@@ -361,7 +349,7 @@ class _ShareBDSDInviteState extends State<DetailGroupScreen> {
           ],
         ),
         ...detailDTO.banks.map((e) {
-          return _buildItemBank(e);
+          return _buildItemBank(e, detailDTO.userId);
         }).toList()
       ],
     );
@@ -438,7 +426,7 @@ class _ShareBDSDInviteState extends State<DetailGroupScreen> {
     );
   }
 
-  Widget _buildItemBank(TerminalBankResponseDTO dto) {
+  Widget _buildItemBank(TerminalBankResponseDTO dto, String idAdminBank) {
     return Container(
       margin: EdgeInsets.only(top: 12),
       decoration: BoxDecoration(
@@ -464,20 +452,21 @@ class _ShareBDSDInviteState extends State<DetailGroupScreen> {
             width: 16,
           ),
           Expanded(
-              child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                dto.bankAccount,
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              Text(
-                dto.userBankName,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 12),
-              )
-            ],
-          )),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  dto.bankAccount,
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  dto.userBankName,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 12),
+                )
+              ],
+            ),
+          ),
           const SizedBox(
             width: 16,
           ),
@@ -491,6 +480,7 @@ class _ShareBDSDInviteState extends State<DetailGroupScreen> {
                 borderRadius: BorderRadius.circular(16),
                 widget: BottomSheetDetailBankBDSD(
                   dto: dto,
+                  idAdminBank: idAdminBank,
                   hideRemove: detailDTO.banks.length == 1,
                   onDelete: (bankId) {
                     Map<String, dynamic> param = {};

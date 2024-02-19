@@ -304,14 +304,13 @@ class _DashBoardScreen extends State<DashBoardScreen>
 
           if (themeVerLocal != themeVerSetting || listLocal.isEmpty) {
             _bloc.add(GetListThemeEvent());
-          } else {
-            _provider.updateThemes(listLocal);
           }
         }
 
         if (state.request == DashBoardType.THEMES) {
           List<ThemeDTO> list = [...state.themes];
           list.sort((a, b) => a.type.compareTo(b.type));
+          _provider.updateThemes(list);
 
           await UserRepository.instance.clearThemes();
           List<ThemeDTO> datas = await _isolateStream.saveThemeReceiver(list);

@@ -19,6 +19,7 @@ class UserHelper {
   static String wallet_key = 'WALLET_ID';
   static String account_setting_key = 'ACCOUNT_SETTING';
   static String account_info_key = 'ACCOUNT_INFORMATION';
+  static String bank_type_key = 'BANK_TYPE_KEY';
 
   Future<void> initialUserInformationHelper() async {
     await sharedPrefs.setString('USER_ID', '');
@@ -38,6 +39,19 @@ class UserHelper {
       return;
     }
     await sharedPrefs.setString('USER_ID', userId);
+  }
+
+  Future<void> setBankTypeKey(bool value) async {
+    if (!sharedPrefs.containsKey(bank_type_key) ||
+        sharedPrefs.getBool(bank_type_key) == null) {
+      await sharedPrefs.setBool(bank_type_key, value);
+      return;
+    }
+    await sharedPrefs.setBool(bank_type_key, value);
+  }
+
+  bool getBankTypeKey() {
+    return sharedPrefs.getBool(bank_type_key) ?? false;
   }
 
   Future<void> setPhoneNo(String phoneNo) async {

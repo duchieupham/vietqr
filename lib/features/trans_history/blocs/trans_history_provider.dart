@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
@@ -18,7 +19,7 @@ class TransProvider with ChangeNotifier {
   TransProvider(this.isOwner, this.terminals);
 
   List<FilterTransaction> listFilter = [
-    const FilterTransaction(id: 9, title: 'Tất cả'),
+    const FilterTransaction(id: 9, title: 'Tất cả (mặc định)'),
     const FilterTransaction(id: 5, title: 'Trạng thái giao dịch'),
     const FilterTransaction(id: 1, title: 'Mã giao dịch'),
     const FilterTransaction(id: 2, title: 'Mã đơn hàng (Order ID)'),
@@ -27,7 +28,7 @@ class TransProvider with ChangeNotifier {
   ];
 
   List<FilterTransaction> listFilterNotOwner = [
-    const FilterTransaction(id: 9, title: 'Tất cả'),
+    const FilterTransaction(id: 9, title: 'Tất cả (mặc định)'),
     const FilterTransaction(id: 5, title: 'Trạng thái giao dịch'),
     const FilterTransaction(id: 1, title: 'Mã giao dịch'),
     const FilterTransaction(id: 2, title: 'Mã đơn hàng (Order ID)'),
@@ -35,11 +36,11 @@ class TransProvider with ChangeNotifier {
   ];
 
   List<FilterTransaction> listFilterTerminal = [
-    const FilterTransaction(id: 0, title: 'Tất cả'),
-    const FilterTransaction(id: 1, title: 'Nhóm/Chi nhánh'),
+    const FilterTransaction(id: 0, title: 'Tất cả (mặc định)'),
+    const FilterTransaction(id: 1, title: 'Cửa hàng'),
   ];
   FilterTransaction _valueFilterTerminal =
-      const FilterTransaction(id: 0, title: 'Tất cả');
+      const FilterTransaction(id: 0, title: 'Tất cả (mặc định)');
 
   FilterTransaction get valueFilterTerminal => _valueFilterTerminal;
 
@@ -60,7 +61,7 @@ class TransProvider with ChangeNotifier {
       const FilterStatusTransaction(title: 'Chờ thanh toán', id: 0);
 
   FilterTransaction _valueFilter =
-      const FilterTransaction(id: 9, title: 'Tất cả');
+      const FilterTransaction(id: 9, title: 'Tất cả (mặc định)');
 
   FilterTransaction get valueFilter => _valueFilter;
 
@@ -76,7 +77,10 @@ class TransProvider with ChangeNotifier {
 
   DateTime get fromDate => _formDate;
 
+  DateFormat dateFormat = DateFormat('yyyy-MM-dd');
+
   String _keywordSearch = '';
+  String codeTerminal = '';
   String bankId = '';
 
   String get keywordSearch => _keywordSearch;
@@ -94,6 +98,10 @@ class TransProvider with ChangeNotifier {
 
   TerminalResponseDTO get terminalResponseDTO => _terminalResponseDTO;
 
+  String get fromDateText => dateFormat.format(fromDate);
+
+  String get toDateText => dateFormat.format(toDate ?? DateTime.now());
+
   void updateTerminals(
     List<TerminalResponseDTO> value,
     String bankID,
@@ -101,6 +109,7 @@ class TransProvider with ChangeNotifier {
     DateTime toDate,
     FilterTimeTransaction timeFilter,
     String keyword,
+    String codeTerminalParent,
     FilterTransaction filterTransaction,
     FilterStatusTransaction valueStatus,
     FilterTransaction filterTerminal, {
@@ -121,6 +130,7 @@ class TransProvider with ChangeNotifier {
     }
 
     _keywordSearch = keyword;
+    codeTerminal = codeTerminalParent;
     controller.text = keyword;
     _valueFilter = filterTransaction;
     statusValue = valueStatus;
@@ -129,15 +139,17 @@ class TransProvider with ChangeNotifier {
     if (isOwner) {
       _valueFilterTerminal = filterTerminal;
     } else {
-      _valueFilterTerminal =
-          const FilterTransaction(id: 1, title: 'Nhóm/Chi nhánh');
+      _valueFilterTerminal = const FilterTransaction(id: 1, title: 'Cửa hàng');
     }
   }
 
   void updateTerminalResponseDTO(TerminalResponseDTO? value) {
     if (value == null) return;
     _terminalResponseDTO = value;
-    if (isOwner) _keywordSearch = value.code;
+    if (isOwner) {
+      _keywordSearch = value.name;
+      codeTerminal = value.code;
+    }
     notifyListeners();
   }
 
@@ -146,6 +158,7 @@ class TransProvider with ChangeNotifier {
     FilterTransaction? filterTransaction,
     FilterStatusTransaction? statusFilter,
     String keyword,
+    String codeParent,
     FilterTimeTransaction? filterTime,
     DateTime fromDate,
     DateTime? toDate,
@@ -175,6 +188,8 @@ class TransProvider with ChangeNotifier {
     if (text.isNotEmpty) {
       _keywordSearch = text;
     }
+
+    codeTerminal = codeParent;
   }
 
   String get hintText {
@@ -270,16 +285,16 @@ class TransProvider with ChangeNotifier {
   }
 
   resetFilter(Function(TransactionInputDTO) callBack, bool isOwner) {
-    _valueFilter = const FilterTransaction(id: 9, title: 'Tất cả');
+    _valueFilter = const FilterTransaction(id: 9, title: 'Tất cả (mặc định)');
     _valueTimeFilter =
         const FilterTimeTransaction(id: 2, title: '7 ngày gần đây (mặc định)');
     statusValue = const FilterStatusTransaction(title: 'Chờ thanh toán', id: 0);
 
     if (isOwner) {
-      _valueFilterTerminal = const FilterTransaction(id: 0, title: 'Tất cả');
-    } else {
       _valueFilterTerminal =
-          const FilterTransaction(id: 1, title: 'Nhóm/Chi nhánh');
+          const FilterTransaction(id: 0, title: 'Tất cả (mặc định)');
+    } else {
+      _valueFilterTerminal = const FilterTransaction(id: 1, title: 'Cửa hàng');
     }
 
     _keywordSearch = '';
@@ -424,6 +439,7 @@ class TransProvider with ChangeNotifier {
   updateKeyword(String value) {
     String text = value.trim();
     _keywordSearch = text;
+    codeTerminal = text;
     notifyListeners();
   }
 
@@ -449,7 +465,7 @@ class TransProvider with ChangeNotifier {
         type: valueFilter.id,
         bankId: bankId,
         offset: offset,
-        value: keywordSearch,
+        value: codeTerminal,
         terminalCode: _terminalResponseDTO.code,
         userId: UserHelper.instance.getUserId(),
         status: statusValue.id,
@@ -462,7 +478,7 @@ class TransProvider with ChangeNotifier {
         param.to = TimeUtils.instance.getCurrentDate(_toDate);
       }
 
-      if (keywordSearch == _terminalResponseDTO.code &&
+      if (codeTerminal == _terminalResponseDTO.code &&
           _terminalResponseDTO.id.isEmpty) {
         param.terminalCode = '';
         param.value = '';

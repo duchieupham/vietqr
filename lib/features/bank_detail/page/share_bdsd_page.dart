@@ -31,11 +31,7 @@ class ShareBDSDPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<ShareBDSDBloc>(
       create: (BuildContext context) => ShareBDSDBloc(context),
-      child: _ShareBDSDScreen(
-        bankId: bankId,
-        dto: dto,
-        bloc: bloc,
-      ),
+      child: _ShareBDSDScreen(bankId: bankId, dto: dto, bloc: bloc),
     );
   }
 }
@@ -59,7 +55,6 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
   String get userId => UserHelper.instance.getUserId();
 
   List<MemberBranchModel> listMemberData = [];
-  TerminalDto terminalDto = TerminalDto(terminals: []);
 
   @override
   void initState() {
@@ -74,7 +69,7 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
     _bloc.add(GetInfoTelegramEvent(bankId: widget.bankId, isLoading: true));
     _bloc.add(GetInfoLarkEvent(bankId: widget.bankId));
     _bloc.add(GetMyListGroupBDSDEvent(
-      userID: UserHelper.instance.getUserId(),
+      userID: userId,
       bankId: widget.bankId,
       offset: 0,
     ));
@@ -105,9 +100,7 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
           //     listMemberData = listMember;
           //   }
           // }
-          if (state.request == ShareBDSDType.GET_LIST_GROUP) {
-            terminalDto = state.listGroup!;
-          }
+          if (state.request == ShareBDSDType.GET_LIST_GROUP) {}
           if (state.request == ShareBDSDType.CONNECT) {
             widget.bloc.add(const BankCardGetDetailEvent());
             _bloc.add(GetBusinessAvailDTOEvent());
@@ -201,9 +194,7 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                         ],
                       ),
                     ),
-
-                    if (widget.dto.userId ==
-                        UserHelper.instance.getUserId()) ...[
+                    if (widget.dto.userId == userId) ...[
                       const SizedBox(
                         height: 24,
                       ),
@@ -215,60 +206,19 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                       const SizedBox(height: 16),
                       _buildSocialNetwork(context)
                     ],
-                    // if (state.listTelegram.isEmpty && state.listLark.isEmpty)
-                    //
-                    // else
-                    // Column(
-                    //   children: [
-                    //     ...[
-                    //       if (state.listTelegram.isNotEmpty)
-                    //         _buildListChatTelegram(
-                    //             state.listTelegram, state.isTelegram)
-                    //       else
-                    //         GestureDetector(
-                    //           onTap: () async {
-                    //             await Navigator.pushNamed(
-                    //                 context, Routes.CONNECT_TELEGRAM);
-                    //             _bloc.add(GetInfoTelegramEvent());
-                    //           },
-                    //           child: _buildItemNetWork('Kết nối Telegram',
-                    //               'assets/images/logo-telegram.png'),
-                    //         )
-                    //     ],
-                    //     const SizedBox(height: 20),
-                    //     ...[
-                    //       if (state.listLark.isNotEmpty)
-                    //         _buildListConnectLark(state.listLark, state.isLark)
-                    //       else
-                    //         GestureDetector(
-                    //           onTap: () async {
-                    //             await Navigator.pushNamed(
-                    //                 context, Routes.CONNECT_LARK);
-                    //             _bloc.add(GetInfoLarkEvent());
-                    //           },
-                    //           child: _buildItemNetWork('Kết nối Lark',
-                    //               'assets/images/logo-lark.png'),
-                    //         )
-                    //     ]
-                    //   ],
-                    // ),
-                    const SizedBox(
-                      height: 24,
-                    ),
+                    const SizedBox(height: 24),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: Text(
-                            'Danh sách nhóm',
+                            'Danh sách cửa hàng',
                             style: TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                         ),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        if (terminalDto.totalTerminals > 0)
+                        const SizedBox(width: 8),
+                        if (state.listGroup.totalTerminals > 0)
                           Container(
                             padding: EdgeInsets.only(right: 8, left: 12),
                             decoration: BoxDecoration(
@@ -277,7 +227,7 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                             child: Row(
                               children: [
                                 Text(
-                                  '${terminalDto.totalTerminals}',
+                                  '${state.listGroup.totalTerminals}',
                                   style: TextStyle(color: AppColor.BLUE_TEXT),
                                 ),
                                 Image.asset(
@@ -289,45 +239,53 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                           ),
                       ],
                     ),
-                    if (terminalDto.totalTerminals > 0)
-                      Column(
-                        children: [
-                          const SizedBox(
-                            height: 12,
-                          ),
-                          ...terminalDto.terminals.map((e) {
-                            return _buildItemGroup(e);
-                          }).toList(),
-                          if (widget.dto.userId ==
-                              UserHelper.instance.getUserId())
-                            const SizedBox(
-                              height: 100,
-                            )
-                        ],
+                    if (state.status == BlocStatus.LOADING_PAGE)
+                      Container(
+                        height: 250,
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
                       )
-                    else
-                      Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                    else ...[
+                      if (state.listGroup.totalTerminals > 0)
+                        Column(
                           children: [
-                            const SizedBox(
-                              height: 60,
-                            ),
-                            Image.asset(
-                              'assets/images/ic-member-empty.png',
-                              height: 100,
-                            ),
                             const SizedBox(
                               height: 12,
                             ),
-                            Text('Chưa có nhóm nào.'),
+                            ...state.listGroup.terminals.map((e) {
+                              return _buildItemGroup(e);
+                            }).toList(),
+                            if (widget.dto.userId == userId)
+                              const SizedBox(
+                                height: 100,
+                              )
                           ],
-                        ),
-                      )
+                        )
+                      else if (state.isEmpty)
+                        Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const SizedBox(
+                                height: 60,
+                              ),
+                              Image.asset(
+                                'assets/images/ic-member-empty.png',
+                                height: 100,
+                              ),
+                              const SizedBox(
+                                height: 12,
+                              ),
+                              Text('Chưa có cửa hàng nào.'),
+                            ],
+                          ),
+                        )
+                    ]
                   ],
                 ),
               ),
-              if (widget.dto.userId == UserHelper.instance.getUserId())
+              if (widget.dto.userId == userId)
                 Positioned(
                     bottom: 40,
                     right: 0,
@@ -337,7 +295,7 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                             context, ShareBDSDInviteScreen(),
                             routeName: _ShareBDSDScreenState.routeName);
                         _bloc.add(GetMyListGroupBDSDEvent(
-                          userID: UserHelper.instance.getUserId(),
+                          userID: userId,
                           bankId: widget.bankId,
                           offset: 0,
                         ));
@@ -352,12 +310,12 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                         child: Row(
                           children: [
                             Image.asset(
-                              'assets/images/ic_share_code.png',
+                              'assets/images/ic-store-white.png',
                               height: 26,
                               color: Colors.white,
                             ),
                             Text(
-                              'Chia sẻ BĐSD',
+                              'Thêm cửa hàng',
                               style: TextStyle(
                                   fontSize: 12, color: AppColor.WHITE),
                             )
@@ -382,10 +340,7 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
             ),
             routeName: _ShareBDSDScreenState.routeName);
         _bloc.add(GetListGroupBDSDEvent(
-            userID: UserHelper.instance.getUserId(),
-            type: 0,
-            offset: 0,
-            loadingPage: true));
+            userID: userId, type: 0, offset: 0, loadingPage: true));
       },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -406,7 +361,7 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Nhóm:',
+                        'Cửa hàng:',
                         style:
                             TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
                       ),

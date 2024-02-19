@@ -93,7 +93,7 @@ class CreateQRBloc extends Bloc<CreateQREvent, CreateQRState> with BaseManager {
             userId, state.bankAccountDTO?.id ?? '');
 
         TerminalQRDTO terminalQRDTO =
-            TerminalQRDTO(terminalName: 'Nhập hoặc chọn mã chi nhánh/nhóm');
+            TerminalQRDTO(terminalName: 'Nhập hoặc chọn mã cửa hàng');
         list = [terminalQRDTO, ...list];
 
         emit(state.copyWith(

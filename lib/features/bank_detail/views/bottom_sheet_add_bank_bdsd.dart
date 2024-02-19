@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
+import 'package:vierqr/commons/widgets/dashed_line.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
@@ -13,9 +14,11 @@ class BottomSheetAddBankBDSD extends StatelessWidget {
   final String terminalId;
 
   final Function(BankAccountTerminal) onSelect;
+
   const BottomSheetAddBankBDSD(
       {Key? key, required this.onSelect, this.terminalId = ''})
       : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider<BankBloc>(
@@ -67,7 +70,8 @@ class BottomSheetAddBankBDSD extends StatelessWidget {
                 ),
                 Text(
                   'Hiển thị các tài khoản đã liên kết để chia sẻ biến động số dư.',
-                  style: TextStyle(color: AppColor.GREY_TEXT, fontSize: 12),
+                  style: TextStyle(
+                      color: AppColor.GREY_TEXT.withOpacity(0.8), fontSize: 12),
                 ),
                 const SizedBox(
                   height: 20,
@@ -78,7 +82,7 @@ class BottomSheetAddBankBDSD extends StatelessWidget {
                           return GestureDetector(
                             onTap: () {},
                             child: Container(
-                              height: 60,
+                              height: 54,
                               padding: EdgeInsets.symmetric(horizontal: 20),
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
@@ -107,8 +111,12 @@ class BottomSheetAddBankBDSD extends StatelessWidget {
                                       ),
                                     ),
                                   ),
-                                  const Padding(
-                                      padding: EdgeInsets.only(left: 10)),
+                                  const SizedBox(width: 10),
+                                  Container(
+                                    height: 53,
+                                    child: VerticalDashedLine(),
+                                  ),
+                                  const SizedBox(width: 10),
                                   Expanded(
                                     child: Column(
                                       mainAxisAlignment:

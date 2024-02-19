@@ -137,6 +137,7 @@ void main() async {
   cameras = await availableCameras();
   await UserRepository.instance.getBanks();
   await UserRepository.instance.getIntroContact();
+  await UserRepository.instance.getThemes();
   LOG.verbose('Config Environment: ${EnvConfig.getEnv()}');
   runApp(VietQRApp());
 }

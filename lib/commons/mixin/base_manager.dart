@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
+import 'package:vierqr/models/theme_dto.dart';
 import 'package:vierqr/models/user_repository.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 
@@ -18,6 +19,8 @@ mixin BaseManager {
   get alwaysDisabledFocusNode => AlwaysDisabledFocusNode();
 
   List<BankTypeDTO> get banks => userRes.banks;
+
+  List<ThemeDTO> get themes => userRes.themes;
 
   set banks(List<BankTypeDTO> value) => userRes.setBanks(value);
 

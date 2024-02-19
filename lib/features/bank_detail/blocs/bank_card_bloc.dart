@@ -39,6 +39,9 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
         );
         final AccountBankDetailDTO dto =
             await bankCardRepository.getAccountBankDetail(bankId);
+
+
+
         emit(
           state.copyWith(
               bankDetailDTO: dto,

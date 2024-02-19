@@ -39,6 +39,7 @@ class StatisticalScreen extends StatelessWidget {
           terminal: TerminalResponseDTO(banks: []),
           isFirst: true,
           keySearchParent: '',
+          codeSearchParent: '',
         ),
       child: BlocProvider<StatisticBloc>(
         create: (context) => StatisticBloc(terminalDto, bankId),
@@ -104,6 +105,10 @@ class _StatisticalState extends State<Statistical> {
                         child: Column(
                           children: [
                             Text('Biểu đồ thống kê giao dịch',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 18)),
+                            Text(_terminalTitleName(provider),
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 18)),
@@ -293,24 +298,9 @@ class _StatisticalState extends State<Statistical> {
                           ],
                         ),
                         const SizedBox(height: 4),
-                        if (provider.isOwner &&
-                            provider.terminalResponseDTO.id.isEmpty &&
-                            provider.keySearch !=
-                                provider.terminalResponseDTO.code)
-                          Text('Chi nhánh ${provider.keySearch}',
-                              style: TextStyle(
-                                  fontSize: 11, color: AppColor.GREY_TEXT))
-                        else if ((provider.isOwner &&
-                                provider.terminalResponseDTO.id.isNotEmpty) ||
-                            (!provider.isOwner &&
-                                provider.terminalResponseDTO.id.isNotEmpty))
-                          Text('Chi nhánh ${provider.terminalResponseDTO.code}',
-                              style: TextStyle(
-                                  fontSize: 11, color: AppColor.GREY_TEXT))
-                        else
-                          const Text('Ghi nhận tất cả giao dịch',
-                              style: TextStyle(
-                                  fontSize: 11, color: AppColor.GREY_TEXT)),
+                        Text('${_terminalName(provider)}',
+                            style: TextStyle(
+                                fontSize: 11, color: AppColor.GREY_TEXT))
                       ],
                     ),
                   ),
@@ -347,6 +337,34 @@ class _StatisticalState extends State<Statistical> {
         );
       },
     );
+  }
+
+  String _terminalName(provider) {
+    if (provider.isOwner &&
+        provider.terminalResponseDTO.id.isEmpty &&
+        provider.codeSearch != provider.terminalResponseDTO.code) {
+      return 'Cửa hàng ${provider.keySearch}';
+    } else if ((provider.isOwner &&
+            provider.terminalResponseDTO.id.isNotEmpty) ||
+        (!provider.isOwner && provider.terminalResponseDTO.id.isNotEmpty)) {
+      return 'Cửa hàng ${provider.terminalResponseDTO.name}';
+    } else {
+      return 'Ghi nhận tất cả giao dịch';
+    }
+  }
+
+  String _terminalTitleName(provider) {
+    if (provider.isOwner &&
+        provider.terminalResponseDTO.id.isEmpty &&
+        provider.codeSearch != provider.terminalResponseDTO.code) {
+      return '${provider.keySearch}';
+    } else if ((provider.isOwner &&
+            provider.terminalResponseDTO.id.isNotEmpty) ||
+        (!provider.isOwner && provider.terminalResponseDTO.id.isNotEmpty)) {
+      return '${provider.terminalResponseDTO.name}';
+    } else {
+      return 'Tất cả';
+    }
   }
 
   Widget _buildItemOverView(
@@ -407,13 +425,14 @@ class _StatisticalState extends State<Statistical> {
   void _onFilter(BuildContext context, StatisticProvider provider) async {
     await DialogWidget.instance.showModelBottomSheet(
       isDismissible: true,
-      margin: EdgeInsets.zero,
+      margin: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
       borderRadius: BorderRadius.circular(16),
       widget: BottomSheetStatistical(
         listTerminal: provider.terminals,
         dateFilter: provider.dateFilter,
         terminalDto: provider.terminalResponseDTO,
         keySearch: provider.keySearch,
+        codeSearch: provider.codeSearch,
         isOwner: provider.isOwner,
         reset: () {
           provider.onReset();
@@ -422,16 +441,17 @@ class _StatisticalState extends State<Statistical> {
           _bloc.add(StatisticEventGetOverview(
               terminalCode: '', month: _dateFormat.format(DateTime.now())));
         },
-        onApply: (dateTime, terminal, keySearch) {
+        onApply: (dateTime, terminal, codeSearch, keySearch) {
           provider.updateDateFilter(dateTime);
-          provider.updateTerminalResponseDTO(terminal);
           provider.updateKeyword(keySearch);
+          provider.updateCodeSearch(codeSearch);
+          provider.updateTerminalResponseDTO(terminal, isUpdate: true);
           String terminalCode = terminal.code;
-          if (terminal.id.isEmpty && keySearch == terminal.code) {
+          if (terminal.id.isEmpty && codeSearch == terminal.code) {
             terminalCode = '';
           }
-          if (keySearch != terminal.code && provider.isOwner) {
-            terminalCode = keySearch;
+          if (codeSearch != terminal.code && provider.isOwner) {
+            terminalCode = codeSearch;
           }
           _bloc.add(StatisticEventGetData(
               terminalCode: terminalCode, month: _dateFormat.format(dateTime)));

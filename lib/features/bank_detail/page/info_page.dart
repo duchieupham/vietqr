@@ -385,11 +385,6 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
               NavigatorUtils.navigatePage(
                   context, CreateQrScreen(bankAccountDTO: bankAccountDTO),
                   routeName: CreateQrScreen.routeName);
-              // Navigator.pushNamed(
-              //   context,
-              //   Routes.CREATE_QR,
-              //   arguments: {'bankInfo': bankAccountDTO},
-              // );
             },
             textColor: AppColor.WHITE,
             bgColor: AppColor.BLUE_TEXT,

@@ -215,7 +215,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
             return GestureDetector(
               onTap: _onEnableList,
               child: Scaffold(
-                appBar: const MAppBar(title: 'Tạo QR'),
+                appBar: const MAppBar(title: 'Tạo QR giao dịch'),
                 body: Stack(
                   children: [
                     Column(
@@ -227,11 +227,20 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                SelectBankView(
-                                  dto: state.bankAccountDTO ?? BankAccountDTO(),
-                                  onTap: _onHandleTap,
-                                  isShowIconDrop: true,
-                                ),
+                                ...[
+                                  Text(
+                                    'Tài khoản ngân hàng',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  SelectBankView(
+                                    dto: state.bankAccountDTO ??
+                                        BankAccountDTO(),
+                                    onTap: _onHandleTap,
+                                    isShowIconDrop: true,
+                                  ),
+                                ],
                                 const SizedBox(height: 30),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -393,9 +402,9 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                           textFieldType: TextfieldType.LABEL,
                                           maxLength: 10,
                                           title:
-                                              'Mã chi nhánh (${provider.branchCode.length}/10 ký tự)',
+                                              'Mã cửa hàng (${provider.branchCode.length}/10 ký tự)',
                                           hintText:
-                                              'Nhập hoặc chọn mã chi nhánh/nhóm',
+                                              'Nhập hoặc chọn mã cửa hàng',
                                           inputType: TextInputType.text,
                                           keyboardAction: TextInputAction.next,
                                           onChange: provider.updateBranchCode,
@@ -670,7 +679,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                       contentPadding: EdgeInsets.zero,
                       title:
                           'Mã chi nhánh (${_provider.branchCode.length}/10 ký tự)',
-                      hintText: 'Nhập hoặc chọn mã chi nhánh/nhóm',
+                      hintText: 'Nhập hoặc chọn mã cửa hàng',
                       inputType: TextInputType.text,
                       keyboardAction: TextInputAction.next,
                       onChange: _provider.updateBranchCode,

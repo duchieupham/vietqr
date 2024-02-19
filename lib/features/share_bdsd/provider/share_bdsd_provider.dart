@@ -9,9 +9,9 @@ class ShareBDSDProvider with ChangeNotifier {
 
   int get typeFilter => _typeFilter;
 
-  List<String> filterTitles = ['Nhóm chia sẻ', 'Tài khoản ngân hàng'];
+  List<String> filterTitles = ['Cửa hàng', 'Tài khoản ngân hàng'];
 
-  String titleFilter = 'Nhóm chia sẻ';
+  String titleFilter = 'Cửa hàng';
 
   void updateTypeFilter(String value) {
     titleFilter = value;

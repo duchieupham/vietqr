@@ -32,6 +32,7 @@ class BankCardDetailScreen extends StatelessWidget {
   final String bankId;
   final int pageIndex;
   final bool isLoading;
+  final String idAdminBank;
 
   static String routeName = '/bank_card_detail_screen';
 
@@ -40,6 +41,7 @@ class BankCardDetailScreen extends StatelessWidget {
     required this.bankId,
     this.pageIndex = 0,
     this.isLoading = true,
+    required this.idAdminBank,
   });
 
   @override
@@ -50,13 +52,15 @@ class BankCardDetailScreen extends StatelessWidget {
       child: ChangeNotifierProvider(
           create: (_) =>
               AccountBankDetailProvider()..changeCurrentPage(pageIndex),
-          child: BankCardDetailState()),
+          child: BankCardDetailState(idAdminBank: idAdminBank)),
     );
   }
 }
 
 class BankCardDetailState extends StatefulWidget {
-  const BankCardDetailState({super.key});
+  final String? idAdminBank;
+
+  const BankCardDetailState({super.key, this.idAdminBank});
 
   @override
   State<BankCardDetailState> createState() => _BankCardDetailState();
@@ -101,6 +105,9 @@ class _BankCardDetailState extends State<BankCardDetailState> {
   @override
   void initState() {
     super.initState();
+    if (widget.idAdminBank != userId) {
+      listTitle.removeLast();
+    }
     bankCardBloc = BlocProvider.of(context);
     _provider = Provider.of<AccountBankDetailProvider>(context, listen: false);
     pageController =
@@ -172,11 +179,6 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                   if (state.request == BankDetailType.SUCCESS) {
                     if (state.bankDetailDTO != null) {
                       dto = state.bankDetailDTO!;
-                    }
-                    if (dto.userId != userId || !dto.authenticated) {
-                      if (listTitle.length == 4) {
-                        listTitle.removeLast();
-                      }
                     }
                     if (AppDataHelper.instance
                         .checkExitsBankAccount(dto.bankAccount)) {
@@ -341,7 +343,7 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                                     terminalDto: state.terminalDto ??
                                         TerminalDto(terminals: []),
                                   ),
-                                  if (dto.userId == userId)
+                                  if (widget.idAdminBank == userId)
                                     ShareBDSDPage(
                                       bankId: state.bankId ?? '',
                                       dto: dto,

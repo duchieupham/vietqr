@@ -20,9 +20,10 @@ class ShareBDSDState extends Equatable {
   final bool isTelegram;
   final bool isLark;
   final bool isLoading;
-  final TerminalDto? listGroup;
+  final TerminalDto listGroup;
   final BankTerminalDto? bankShareTerminal;
   final String userIdSelect;
+  final bool isEmpty;
 
   ShareBDSDState({
     this.status = BlocStatus.NONE,
@@ -38,8 +39,9 @@ class ShareBDSDState extends Equatable {
     this.isLark = false,
     this.isTelegram = false,
     this.isLoading = false,
+    this.isEmpty = false,
     this.userIdSelect = '',
-    this.listGroup,
+    required this.listGroup,
     this.bankShareTerminal,
   });
 
@@ -57,6 +59,7 @@ class ShareBDSDState extends Equatable {
     bool? isTelegram,
     bool? isLark,
     bool? isLoading,
+    bool? isEmpty,
     TerminalDto? listGroup,
     String? userIdSelect,
     BankTerminalDto? bankShareTerminal,
@@ -75,6 +78,7 @@ class ShareBDSDState extends Equatable {
       isLark: isLark ?? this.isLark,
       isTelegram: isTelegram ?? this.isTelegram,
       isLoading: isLoading ?? this.isLoading,
+      isEmpty: isEmpty ?? this.isEmpty,
       userIdSelect: userIdSelect ?? this.userIdSelect,
       listGroup: listGroup ?? this.listGroup,
       bankShareTerminal: bankShareTerminal ?? this.bankShareTerminal,
@@ -90,6 +94,7 @@ class ShareBDSDState extends Equatable {
         listMember,
         listMemberSearch,
         listGroup,
-        bankShareTerminal
+        bankShareTerminal,
+        isEmpty,
       ];
 }

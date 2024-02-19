@@ -36,12 +36,13 @@ class TransHistoryScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => TransHistoryBloc(context, bankId, terminalDto),
       child: ChangeNotifierProvider<TransProvider>(
-        create: (context) => TransProvider(
-            bankUserId == UserHelper.instance.getUserId(), [
-          TerminalResponseDTO(banks: [], code: 'Tất cả'),
+        create: (context) =>
+            TransProvider(bankUserId == UserHelper.instance.getUserId(), [
+          TerminalResponseDTO(
+              banks: [], code: 'Tất cả (mặc định)', name: 'Tất cả (mặc định)'),
           ...terminalDto.terminals
         ])
-          ..setBankId(bankId),
+              ..setBankId(bankId),
         child: _BodyWidget(bankId: bankId, bankUserId: bankUserId),
       ),
     );
@@ -142,9 +143,9 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
                                 style: TextStyle(
                                     fontSize: 18, fontWeight: FontWeight.bold),
                               ),
-                              if (!isOwner)
+                              if (isOwner)
                                 Text(
-                                  'Hiển thị các giao dịch thuộc nhóm/chi nhánh của bạn.',
+                                  'Hiển thị các giao dịch thuộc cửa hàng của bạn.',
                                   style: TextStyle(
                                       fontSize: 12, color: AppColor.GREY_TEXT),
                                 ),
@@ -170,7 +171,70 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
                         )
                       ],
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 8),
+                    Consumer<TransProvider>(builder: (context, provider, _) {
+                      return Row(
+                        children: [
+                          Text(
+                            'Lọc theo:',
+                            style: TextStyle(
+                                fontSize: 12, color: AppColor.GREY_TEXT),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  if (provider.valueFilter.id == 4) ...[
+                                    if (isOwner)
+                                      _buildFilterWith(
+                                          'Cửa hàng: ${provider.keywordSearch}')
+                                    else
+                                      _buildFilterWith(
+                                          'Cửa hàng: ${provider.terminalResponseDTO.name}'),
+                                    const SizedBox(width: 4),
+                                  ] else if (!isOwner) ...[
+                                    _buildFilterWith(
+                                        'Cửa hàng: ${provider.terminalResponseDTO.name}'),
+                                    const SizedBox(width: 4),
+                                  ],
+                                  if (provider.valueFilter.id == 5) ...[
+                                    _buildFilterWith(
+                                        'Trạng thái: ${provider.statusValue.title}'),
+                                    const SizedBox(width: 4),
+                                  ],
+                                  if (provider.valueFilter.id == 3) ...[
+                                    _buildFilterWith(
+                                        'Nội dung: ${provider.keywordSearch}'),
+                                    const SizedBox(width: 4),
+                                  ],
+                                  if (provider.valueFilter.id == 2) ...[
+                                    _buildFilterWith(
+                                        'Mã đơn hàng: ${provider.keywordSearch}'),
+                                    const SizedBox(width: 4),
+                                  ],
+                                  if (provider.valueFilter.id == 1) ...[
+                                    _buildFilterWith(
+                                        'Mã giao dịch: ${provider.keywordSearch}'),
+                                    const SizedBox(width: 4),
+                                  ],
+                                  ...[
+                                    if (provider.valueTimeFilter.id != 5)
+                                      _buildFilterWith(
+                                          'Thời gian: ${provider.valueTimeFilter.title}')
+                                    else
+                                      _buildFilterWith(
+                                          'Thời gian: từ ${provider.fromDateText} đến ${provider.toDateText}'),
+                                  ],
+                                ],
+                              ),
+                            ),
+                          )
+                        ],
+                      );
+                    }),
+                    const SizedBox(height: 12),
                     if (state.status == BlocStatus.LOADING)
                       Expanded(
                         child: Padding(
@@ -322,7 +386,8 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
                             TimeUtils.instance
                                 .formatDateFromInt(dto.timePaid, false)),
                       ],
-                      if (dto.status == 1 && (dto.type == 2))
+                      if (dto.status == 1 && (dto.type == 2) ||
+                          dto.transType == 'D')
                         _buildItem(
                             'Thời gian TT:',
                             TimeUtils.instance
@@ -386,7 +451,7 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
       TransProvider provider, List<TerminalResponseDTO> terminals) async {
     await DialogWidget.instance.showModelBottomSheet(
       isDismissible: true,
-      margin: EdgeInsets.zero,
+      margin: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
       height: MediaQuery.of(context).size.height * 0.8,
       borderRadius: BorderRadius.circular(16),
       widget: BottomSheetFilter(
@@ -397,12 +462,21 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
         toDate: provider.toDate!,
         filterTransaction: provider.valueFilter,
         keyword: provider.keywordSearch,
+        codeTerminal: provider.codeTerminal,
         filterStatusTransaction: provider.statusValue,
         filterTerminal: provider.valueFilterTerminal,
         filterTimeTransaction: provider.valueTimeFilter,
         terminalResponseDTO: provider.terminalResponseDTO,
-        onApply: (dto, fromDate, toDate, timeFilter, valueFilter, keyword,
-            stateValue, valueFilerTerminal, terminalResponseDTO) async {
+        onApply: (dto,
+            fromDate,
+            toDate,
+            timeFilter,
+            valueFilter,
+            keyword,
+            codeTerminal,
+            stateValue,
+            valueFilerTerminal,
+            terminalResponseDTO) async {
           if (isOwner) {
             if (valueFilter.id == 5) {
               _bloc.add(TransactionEventIsOwnerGetList(dto));
@@ -418,6 +492,7 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
             valueFilter,
             stateValue,
             keyword,
+            codeTerminal,
             timeFilter,
             fromDate,
             toDate,
@@ -433,6 +508,20 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
             }
           }, isOwner);
         },
+      ),
+    );
+  }
+
+  Widget _buildFilterWith(String title) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: AppColor.BLUE_TEXT.withOpacity(0.3),
+      ),
+      child: Text(
+        title,
+        style: TextStyle(fontSize: 12, color: AppColor.BLUE_TEXT),
       ),
     );
   }

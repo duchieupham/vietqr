@@ -62,33 +62,32 @@ class StatisticBloc extends Bloc<StatisticEvent, StatisticState> {
           month: event.month,
         );
 
-        DateFormat dateFormat = DateFormat('yyyy-MM');
-        DateTime dateTime = dateFormat.parse(event.month);
-
-        int day = getDaysInMonth(dateTime.year, dateTime.month);
-        Map<int, ResponseStatisticDTO> uniqueMap = {};
-        list.forEach((element) {
-          uniqueMap[element.getDay] = element;
-        });
-
-        if (list.length < day) {
-          for (int i = 1; i <= day; i++) {
-            if (!uniqueMap.containsKey(i)) {
-              String text = '$i';
-              String monthText = '${dateTime.month}';
-
-              if (dateTime.month < 10) monthText = '0${dateTime.month}';
-
-              if (i < 10) text = '0$i';
-
-              uniqueMap[i] = ResponseStatisticDTO(
-                  date: '${dateTime.year}-$monthText-$text');
-            }
-          }
-        }
-
-        list = uniqueMap.values.toList()
-          ..sort((a, b) => a.date.compareTo(b.date));
+        // DateFormat dateFormat = DateFormat('yyyy-MM');
+        // DateTime dateTime = dateFormat.parse(event.month);
+        //
+        // int day = getDaysInMonth(dateTime.year, dateTime.month);
+        // Map<int, ResponseStatisticDTO> uniqueMap = {};
+        // list.forEach((element) {
+        //   uniqueMap[element.getDay] = element;
+        // });
+        //
+        // if (list.length < day) {
+        //   for (int i = 1; i <= day; i++) {
+        //     if (!uniqueMap.containsKey(i)) {
+        //       String text = '$i';
+        //       String monthText = '${dateTime.month}';
+        //
+        //       if (dateTime.month < 10) monthText = '0${dateTime.month}';
+        //
+        //       if (i < 10) text = '0$i';
+        //
+        //       uniqueMap[i] = ResponseStatisticDTO(
+        //           date: '${dateTime.year}-$monthText-$text');
+        //     }
+        //   }
+        // }
+        //
+        list.sort((a, b) => a.date.compareTo(b.date));
 
         emit(state.copyWith(
             listStatistics: list,

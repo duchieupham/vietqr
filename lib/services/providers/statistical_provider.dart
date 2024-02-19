@@ -20,6 +20,7 @@ class StatisticProvider extends ChangeNotifier {
   TerminalResponseDTO terminalResponseDTO = TerminalResponseDTO(banks: []);
 
   String keySearch = '';
+  String codeSearch = '';
 
   DateTime dateFilter = DateTime.now();
 
@@ -45,18 +46,21 @@ class StatisticProvider extends ChangeNotifier {
     required TerminalResponseDTO terminal,
     bool isFirst = false,
     required String keySearchParent,
+    required String codeSearchParent,
   }) {
     if (isFirst) {
       terminals = [
-        TerminalResponseDTO(banks: [], code: 'Tất cả'),
+        TerminalResponseDTO(banks: [], code: 'Tất cả', name: 'Tất cả'),
         ...listTerminal,
       ];
       terminalResponseDTO = terminals.first;
-      keySearch = terminalResponseDTO.code;
+      keySearch = terminalResponseDTO.name;
+      codeSearch = terminalResponseDTO.code;
     } else {
       terminals = [...listTerminal];
       terminalResponseDTO = terminal;
       keySearch = keySearchParent;
+      codeSearch = codeSearchParent;
     }
 
     dateFilter = dateTimeFilter;
@@ -75,14 +79,25 @@ class StatisticProvider extends ChangeNotifier {
 
   void updateKeyword(String value) {
     keySearch = value.trim();
+    codeSearch = value.trim();
     if (isOwner) terminalResponseDTO = terminals.first;
     notifyListeners();
   }
 
-  void updateTerminalResponseDTO(TerminalResponseDTO? value) {
+  void updateCodeSearch(String value) {
+    codeSearch = value.trim();
+    if (isOwner) terminalResponseDTO = terminals.first;
+    notifyListeners();
+  }
+
+  void updateTerminalResponseDTO(TerminalResponseDTO? value,
+      {bool isUpdate = false}) {
     if (value == null) return;
     terminalResponseDTO = value;
-    if (isOwner) keySearch = value.code;
+    if (isOwner && !isUpdate) {
+      keySearch = value.name;
+      codeSearch = value.code;
+    }
     notifyListeners();
   }
 
@@ -93,7 +108,8 @@ class StatisticProvider extends ChangeNotifier {
 
   onReset() {
     terminalResponseDTO = terminals.first;
-    keySearch = terminalResponseDTO.code;
+    codeSearch = terminalResponseDTO.code;
+    keySearch = terminalResponseDTO.name;
     dateFilter = DateTime.now();
     notifyListeners();
   }

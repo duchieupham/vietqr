@@ -221,10 +221,7 @@ class _LoginState extends State<_Login> {
 
                 provider.updateInfoUser(infoUserDTO);
 
-                List<String> list = _saveAccount(provider);
-
-                await UserHelper.instance.setLoginAccount(list);
-                provider.updateListInfoUser();
+                _saveAccount(provider);
               }
 
               _provider.initThemeDTO();
@@ -1008,12 +1005,12 @@ class _LoginState extends State<_Login> {
     onReadRFID();
   }
 
-  List<String> _saveAccount(provider) {
+  void _saveAccount(LoginProvider provider) async {
     List<String> list = [];
     List<InfoUserDTO> listCheck = UserHelper.instance.getLoginAccount();
 
     if (listCheck.isNotEmpty) {
-      if (listCheck.length == 3) {
+      if (listCheck.length >= 3) {
         listCheck.removeWhere((element) =>
             element.phoneNo!.trim() == provider.infoUserDTO!.phoneNo);
 
@@ -1022,7 +1019,8 @@ class _LoginState extends State<_Login> {
         } else {
           listCheck
               .sort((a, b) => a.expiryAsDateTime.compareTo(b.expiryAsDateTime));
-          listCheck.removeAt(2);
+          listCheck.removeLast();
+          listCheck.add(provider.infoUserDTO!);
         }
       } else {
         listCheck.removeWhere((element) =>
@@ -1043,6 +1041,7 @@ class _LoginState extends State<_Login> {
       list.add(element.toSPJson().toString());
     });
 
-    return list;
+    await UserHelper.instance.setLoginAccount(list);
+    provider.updateListInfoUser();
   }
 }

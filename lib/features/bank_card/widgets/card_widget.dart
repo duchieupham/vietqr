@@ -70,7 +70,8 @@ class CardWidget extends StatelessWidget {
         onTap: () async {
           await Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => BankCardDetailScreen(bankId: e.id),
+              builder: (context) =>
+                  BankCardDetailScreen(bankId: e.id, idAdminBank: e.userId),
               settings: const RouteSettings(
                 name: Routes.BANK_CARD_DETAIL_VEW,
               ),

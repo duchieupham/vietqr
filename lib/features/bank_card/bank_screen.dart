@@ -194,18 +194,6 @@ class _BankScreenState extends State<_BankScreen>
         }
       },
       builder: (context, state) {
-        if (state.status == BlocStatus.LOADING) {
-          return const Center(
-            child: SizedBox(
-              width: 30,
-              height: 30,
-              child: CircularProgressIndicator(
-                color: AppColor.BLUE_TEXT,
-              ),
-            ),
-          );
-        }
-
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -249,7 +237,19 @@ class _BankScreenState extends State<_BankScreen>
                         ),
                       ),
                       const SizedBox(height: 24),
-                    ],
+                    ] else if (state.status == BlocStatus.LOADING)
+                      Container(
+                        height: 120,
+                        child: const Center(
+                          child: SizedBox(
+                            width: 30,
+                            height: 30,
+                            child: CircularProgressIndicator(
+                              color: AppColor.BLUE_TEXT,
+                            ),
+                          ),
+                        ),
+                      ),
                     _buildListBankType(
                       isEmpty: state.isEmpty,
                       list: state.listBankTypeDTO,

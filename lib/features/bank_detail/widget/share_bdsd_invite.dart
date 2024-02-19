@@ -27,6 +27,7 @@ class ShareBDSDInviteScreen extends StatefulWidget {
   final bool isUpdate;
   final String terminalId;
   final GroupDetailDTO? groupDetailDTO;
+
   const ShareBDSDInviteScreen(
       {this.terminalId = '', this.isUpdate = false, this.groupDetailDTO});
 
@@ -72,348 +73,358 @@ class _ShareBDSDInviteState extends State<ShareBDSDInviteScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const MAppBar(title: 'Chia sẻ BDSD'),
-      body: ChangeNotifierProvider<ShareBDSDInviteProvider>(
-        create: (context) => ShareBDSDInviteProvider(),
-        child: BlocProvider<InviteBDSDBloc>(
-          create: (context) => _bloc,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: BlocConsumer<InviteBDSDBloc, InviteBDSDState>(
-              listener: (context, state) {
-                if (state is InviteBDSDLoadingState) {
-                  DialogWidget.instance.openLoadingDialog();
-                }
-                if (state is InviteBDSDGetRandomCodeSuccessState) {
-                  Navigator.pop(context);
-                  Provider.of<ShareBDSDInviteProvider>(context, listen: false)
-                      .updateRandomCode(state.data);
-                  setState(() {
-                    ranDomCodeController.text = state.data;
-                  });
-                }
-                if (state is InviteBDSDGetRandomCodeFailedState) {
-                  Navigator.pop(context);
-                  DialogWidget.instance.openMsgDialog(
-                      title: 'Lỗi',
-                      msg: 'Đã có lỗi xảy ra, vui lòng thử lại sau');
-                }
-
-                if (state is RemoveGroupSuccessState) {
-                  Navigator.pop(context);
-                  Fluttertoast.showToast(
-                    msg: 'Đã xóa',
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.CENTER,
-                    backgroundColor: Theme.of(context).cardColor,
-                    textColor: Theme.of(context).hintColor,
-                    fontSize: 15,
-                  );
-                  if (Navigator.canPop(context)) {
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: Scaffold(
+        appBar: MAppBar(
+            title: widget.isUpdate ? 'Cập nhật cửa hàng' : 'Thêm cửa hàng'),
+        body: ChangeNotifierProvider<ShareBDSDInviteProvider>(
+          create: (context) => ShareBDSDInviteProvider(),
+          child: BlocProvider<InviteBDSDBloc>(
+            create: (context) => _bloc,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: BlocConsumer<InviteBDSDBloc, InviteBDSDState>(
+                listener: (context, state) {
+                  if (state is InviteBDSDLoadingState) {
+                    DialogWidget.instance.openLoadingDialog();
+                  }
+                  if (state is InviteBDSDGetRandomCodeSuccessState) {
                     Navigator.pop(context);
+                    Provider.of<ShareBDSDInviteProvider>(context, listen: false)
+                        .updateRandomCode(state.data);
+                    setState(() {
+                      ranDomCodeController.text = state.data;
+                    });
+                  }
+                  if (state is InviteBDSDGetRandomCodeFailedState) {
+                    Navigator.pop(context);
+                    DialogWidget.instance.openMsgDialog(
+                        title: 'Lỗi',
+                        msg: 'Đã có lỗi xảy ra, vui lòng thử lại sau');
+                  }
+
+                  if (state is RemoveGroupSuccessState) {
+                    Navigator.pop(context);
+                    Fluttertoast.showToast(
+                      msg: 'Đã xóa',
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
+                      backgroundColor: Theme.of(context).cardColor,
+                      textColor: Theme.of(context).hintColor,
+                      fontSize: 15,
+                    );
+                    if (Navigator.canPop(context)) {
+                      Navigator.pop(context);
+                      if (Navigator.canPop(context)) {
+                        Navigator.pop(context);
+                      }
+                    }
+                  }
+                  if (state is UpdateGroupSuccessState) {
+                    Navigator.pop(context);
+                    Fluttertoast.showToast(
+                      msg: 'Cập nhật thành công',
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
+                      backgroundColor: Theme.of(context).cardColor,
+                      textColor: Theme.of(context).hintColor,
+                      fontSize: 15,
+                    );
                     if (Navigator.canPop(context)) {
                       Navigator.pop(context);
                     }
                   }
-                }
-                if (state is UpdateGroupSuccessState) {
-                  Navigator.pop(context);
-                  Fluttertoast.showToast(
-                    msg: 'Cập nhật thành công',
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.CENTER,
-                    backgroundColor: Theme.of(context).cardColor,
-                    textColor: Theme.of(context).hintColor,
-                    fontSize: 15,
-                  );
-                  if (Navigator.canPop(context)) {
+                  if (state is CreateNewGroupSuccessState) {
                     Navigator.pop(context);
+                    Fluttertoast.showToast(
+                      msg: 'Tạo group thành công',
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
+                      backgroundColor: Theme.of(context).cardColor,
+                      textColor: Theme.of(context).hintColor,
+                      fontSize: 15,
+                    );
+                    if (Navigator.canPop(context)) {
+                      Navigator.pop(context);
+                    }
                   }
-                }
-                if (state is CreateNewGroupSuccessState) {
-                  Navigator.pop(context);
-                  Fluttertoast.showToast(
-                    msg: 'Tạo group thành công',
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.CENTER,
-                    backgroundColor: Theme.of(context).cardColor,
-                    textColor: Theme.of(context).hintColor,
-                    fontSize: 15,
-                  );
-                  if (Navigator.canPop(context)) {
-                    Navigator.pop(context);
-                  }
-                }
 
-                if (state is RemoveGroupFailedState) {
-                  Navigator.pop(context);
-                  DialogWidget.instance.openMsgDialog(
-                      title: 'Không thể xóa',
-                      msg: 'Đã có lỗi xay ra vui lòng thử lại sau.');
-                }
-                if (state is UpdateGroupFailedState) {
-                  Navigator.pop(context);
-                  DialogWidget.instance.openMsgDialog(
-                      title: 'Không thể cập nhật',
-                      msg: ErrorUtils.instance
-                          .getErrorMessage(state.dto.message));
-                }
-                if (state is CreateNewGroupFailedState) {
-                  Navigator.pop(context);
-                  DialogWidget.instance.openMsgDialog(
-                      title: 'Không thể tạo',
-                      msg: ErrorUtils.instance
-                          .getErrorMessage(state.dto.message));
-                }
-              },
-              builder: (context, state) {
-                return Column(
-                  children: [
-                    Expanded(
-                      child: ListView(
-                        children: [
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Text(
-                            'Thông tin nhóm',
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(
-                            height: 12,
-                          ),
-                          const Text(
-                            'Tên nhóm*',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          const Text('Tên nhóm tối đa 50 ký tự',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: AppColor.GREY_TEXT,
-                              )),
-                          Consumer<ShareBDSDInviteProvider>(
-                              builder: (context, provider, _) {
-                            return Container(
-                              margin: EdgeInsets.only(top: 12),
-                              padding: EdgeInsets.only(left: 8),
-                              decoration: BoxDecoration(
-                                  color: AppColor.WHITE,
-                                  borderRadius: BorderRadius.circular(5)),
-                              child: TextField(
-                                controller: nameGroupController,
-                                onChanged: provider.updateNamGroup,
-                                inputFormatters: [
-                                  LengthLimitingTextInputFormatter(50),
-                                ],
-                                decoration: InputDecoration(
-                                    hintText: 'Nhập tên nhóm',
-                                    contentPadding: EdgeInsets.symmetric(
-                                        vertical: 8, horizontal: 12),
-                                    hintStyle: TextStyle(
-                                        color: AppColor.GREY_TEXT,
-                                        fontSize: 13)),
-                              ),
-                            );
-                          }),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          const Text(
-                            'Mã nhóm',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          const Text(
-                              'Mã nhóm tối đa 10 ký tự. Có thể tự nhập hoặc gắn giá trị ngẫu nhiên.',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: AppColor.GREY_TEXT,
-                              )),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Consumer<ShareBDSDInviteProvider>(
-                                    builder: (context, provider, _) {
-                                  return Container(
-                                    margin: EdgeInsets.only(top: 12),
-                                    padding: EdgeInsets.only(left: 8),
-                                    decoration: BoxDecoration(
-                                        color: AppColor.WHITE,
-                                        borderRadius: BorderRadius.circular(5)),
-                                    child: TextField(
-                                      controller: ranDomCodeController,
-                                      onChanged: provider.updateRandomCode,
-                                      inputFormatters: [
-                                        LengthLimitingTextInputFormatter(10),
-                                      ],
-                                      decoration: InputDecoration(
-                                          hintText: 'Nhập mã nhóm',
-                                          contentPadding: EdgeInsets.symmetric(
-                                              vertical: 8, horizontal: 12),
-                                          hintStyle: TextStyle(
-                                              color: AppColor.GREY_TEXT,
-                                              fontSize: 13)),
-                                    ),
-                                  );
-                                }),
-                              ),
-                              const SizedBox(
-                                width: 12,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 12),
-                                child: ButtonWidget(
-                                    height: 46,
-                                    borderRadius: 5,
-                                    fontSize: 12,
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 12),
-                                    text: 'Tạo ngẫu nhiên',
-                                    textColor: AppColor.BLUE_TEXT,
-                                    bgColor:
-                                        AppColor.BLUE_TEXT.withOpacity(0.3),
-                                    function: () {
-                                      FocusScope.of(context).unfocus();
-                                      _bloc.add(GetRanDomCode());
-                                    }),
-                              )
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          const Text(
-                            'Địa chỉ',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(top: 12),
-                            padding: EdgeInsets.only(left: 8),
-                            decoration: BoxDecoration(
-                                color: AppColor.WHITE,
-                                borderRadius: BorderRadius.circular(5)),
-                            child: TextField(
-                              controller: addressController,
-                              decoration: InputDecoration(
-                                  hintText: 'Nhập địa chỉ',
-                                  contentPadding: EdgeInsets.symmetric(
-                                      vertical: 4, horizontal: 12),
-                                  hintStyle: TextStyle(
-                                      color: AppColor.GREY_TEXT, fontSize: 13)),
+                  if (state is RemoveGroupFailedState) {
+                    Navigator.pop(context);
+                    DialogWidget.instance.openMsgDialog(
+                        title: 'Không thể xóa',
+                        msg: 'Đã có lỗi xay ra vui lòng thử lại sau.');
+                  }
+                  if (state is UpdateGroupFailedState) {
+                    Navigator.pop(context);
+                    DialogWidget.instance.openMsgDialog(
+                        title: 'Không thể cập nhật',
+                        msg: ErrorUtils.instance
+                            .getErrorMessage(state.dto.message));
+                  }
+                  if (state is CreateNewGroupFailedState) {
+                    Navigator.pop(context);
+                    DialogWidget.instance.openMsgDialog(
+                        title: 'Không thể tạo',
+                        msg: ErrorUtils.instance
+                            .getErrorMessage(state.dto.message));
+                  }
+                },
+                builder: (context, state) {
+                  return Column(
+                    children: [
+                      Expanded(
+                        child: ListView(
+                          children: [
+                            const SizedBox(
+                              height: 20,
                             ),
-                          ),
-                          const SizedBox(
-                            height: 30,
-                          ),
-                          if (widget.isUpdate) ...[
                             Text(
-                              'Cài đặt',
+                              'Thông tin nhóm',
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(
                               height: 12,
                             ),
-                            GestureDetector(
-                              onTap: () {
-                                Map<String, dynamic> param = {};
-                                param['userId'] =
-                                    UserHelper.instance.getUserId();
-                                param['terminalId'] =
-                                    widget.groupDetailDTO?.id ?? '';
-                                _bloc.add(RemoveGroup(param: param));
-                              },
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 8),
+                            const Text(
+                              'Tên cửa hàng *',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            const Text('Tên cửa hàng tối đa 50 ký tự',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: AppColor.GREY_TEXT,
+                                )),
+                            Consumer<ShareBDSDInviteProvider>(
+                                builder: (context, provider, _) {
+                              return Container(
+                                margin: EdgeInsets.only(top: 12),
+                                padding: EdgeInsets.only(left: 8),
                                 decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(6),
-                                    color: AppColor.WHITE),
-                                child: Row(
-                                  children: [
-                                    Image.asset(
-                                      'assets/images/ic-trash.png',
-                                      height: 26,
-                                    ),
-                                    const SizedBox(
-                                      width: 8,
-                                    ),
-                                    Expanded(
-                                        child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text('Xóa nhóm'),
-                                        const SizedBox(
-                                          height: 2,
-                                        ),
-                                        Text(
-                                          'Hủy chia sẻ biến động số dư với những thành viên trong nhóm.',
-                                          style: TextStyle(
-                                              fontSize: 11,
-                                              color: AppColor.GREY_TEXT),
-                                        )
-                                      ],
-                                    ))
+                                    color: AppColor.WHITE,
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: TextField(
+                                  controller: nameGroupController,
+                                  onChanged: provider.updateNamGroup,
+                                  inputFormatters: [
+                                    LengthLimitingTextInputFormatter(50),
                                   ],
+                                  decoration: InputDecoration(
+                                      hintText: 'Nhập tên cửa hàng',
+                                      contentPadding: EdgeInsets.symmetric(
+                                          vertical: 8, horizontal: 12),
+                                      hintStyle: TextStyle(
+                                          color: AppColor.GREY_TEXT,
+                                          fontSize: 13)),
                                 ),
+                              );
+                            }),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            const Text(
+                              'Mã cửa hàng *',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            const Text(
+                                'Mã cửa hàng tối đa 10 ký tự. Có thể tự nhập hoặc gắn giá trị ngẫu nhiên.',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: AppColor.GREY_TEXT,
+                                )),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Consumer<ShareBDSDInviteProvider>(
+                                      builder: (context, provider, _) {
+                                    return Container(
+                                      margin: EdgeInsets.only(top: 12),
+                                      padding: EdgeInsets.only(left: 8),
+                                      decoration: BoxDecoration(
+                                          color: AppColor.WHITE,
+                                          borderRadius:
+                                              BorderRadius.circular(5)),
+                                      child: TextField(
+                                        controller: ranDomCodeController,
+                                        onChanged: provider.updateRandomCode,
+                                        inputFormatters: [
+                                          LengthLimitingTextInputFormatter(10),
+                                        ],
+                                        decoration: InputDecoration(
+                                            hintText: 'Nhập mã cửa hàng',
+                                            contentPadding:
+                                                EdgeInsets.symmetric(
+                                                    vertical: 8,
+                                                    horizontal: 12),
+                                            hintStyle: TextStyle(
+                                                color: AppColor.GREY_TEXT,
+                                                fontSize: 13)),
+                                      ),
+                                    );
+                                  }),
+                                ),
+                                const SizedBox(
+                                  width: 12,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 12),
+                                  child: ButtonWidget(
+                                      height: 46,
+                                      borderRadius: 5,
+                                      fontSize: 12,
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 12),
+                                      text: 'Tạo ngẫu nhiên',
+                                      textColor: AppColor.BLUE_TEXT,
+                                      bgColor:
+                                          AppColor.BLUE_TEXT.withOpacity(0.3),
+                                      function: () {
+                                        FocusScope.of(context).unfocus();
+                                        _bloc.add(GetRanDomCode());
+                                      }),
+                                )
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            const Text(
+                              'Địa chỉ',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(top: 12),
+                              padding: EdgeInsets.only(left: 8),
+                              decoration: BoxDecoration(
+                                  color: AppColor.WHITE,
+                                  borderRadius: BorderRadius.circular(5)),
+                              child: TextField(
+                                controller: addressController,
+                                decoration: InputDecoration(
+                                    hintText: 'Nhập địa chỉ cửa hàng',
+                                    contentPadding: EdgeInsets.symmetric(
+                                        vertical: 4, horizontal: 12),
+                                    hintStyle: TextStyle(
+                                        color: AppColor.GREY_TEXT,
+                                        fontSize: 13)),
                               ),
-                            )
-                          ] else ...[
-                            _addBankAccount(),
-                            _addUser(),
-                          ]
-                        ],
+                            ),
+                            const SizedBox(
+                              height: 30,
+                            ),
+                            if (widget.isUpdate) ...[
+                              Text(
+                                'Cài đặt',
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(
+                                height: 12,
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  Map<String, dynamic> param = {};
+                                  param['userId'] =
+                                      UserHelper.instance.getUserId();
+                                  param['terminalId'] =
+                                      widget.groupDetailDTO?.id ?? '';
+                                  _bloc.add(RemoveGroup(param: param));
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 8),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(6),
+                                      color: AppColor.WHITE),
+                                  child: Row(
+                                    children: [
+                                      Image.asset(
+                                        'assets/images/ic-trash.png',
+                                        height: 26,
+                                      ),
+                                      const SizedBox(
+                                        width: 8,
+                                      ),
+                                      Expanded(
+                                          child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text('Xóa nhóm'),
+                                          const SizedBox(
+                                            height: 2,
+                                          ),
+                                          Text(
+                                            'Hủy chia sẻ biến động số dư với những thành viên trong nhóm.',
+                                            style: TextStyle(
+                                                fontSize: 11,
+                                                color: AppColor.GREY_TEXT),
+                                          )
+                                        ],
+                                      ))
+                                    ],
+                                  ),
+                                ),
+                              )
+                            ] else ...[
+                              _addBankAccount(),
+                              _addUser(),
+                            ]
+                          ],
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 12, bottom: 16),
-                      child: Consumer<ShareBDSDInviteProvider>(
-                          builder: (context, provider, _) {
-                        if (widget.isUpdate) {
+                      Padding(
+                        padding: const EdgeInsets.only(top: 12, bottom: 16),
+                        child: Consumer<ShareBDSDInviteProvider>(
+                            builder: (context, provider, _) {
+                          if (widget.isUpdate) {
+                            return ButtonWidget(
+                                borderRadius: 5,
+                                text: 'Cập nhật',
+                                textColor: AppColor.WHITE,
+                                bgColor: AppColor.BLUE_TEXT,
+                                function: () {
+                                  FocusScope.of(context).unfocus();
+                                  Map<String, dynamic> param = {};
+                                  param['address'] = addressController.text;
+                                  param['name'] = nameGroupController.text;
+                                  param['code'] = ranDomCodeController.text;
+
+                                  param['id'] = widget.groupDetailDTO?.id ?? '';
+                                  print('-----------------------------$param ');
+                                  _bloc.add(UpdateGroup(param: param));
+                                });
+                          }
+
                           return ButtonWidget(
                               borderRadius: 5,
-                              text: 'Cập nhật',
-                              textColor: AppColor.WHITE,
-                              bgColor: AppColor.BLUE_TEXT,
+                              text: 'Tạo',
+                              textColor: provider.validateFormIV
+                                  ? AppColor.WHITE
+                                  : AppColor.GREY_TEXT,
+                              bgColor: provider.validateFormIV
+                                  ? AppColor.BLUE_TEXT
+                                  : AppColor.GREY_BUTTON,
                               function: () {
                                 Map<String, dynamic> param = {};
                                 param['address'] = addressController.text;
                                 param['name'] = nameGroupController.text;
                                 param['code'] = ranDomCodeController.text;
-
-                                param['id'] = widget.groupDetailDTO?.id ?? '';
+                                param['bankIds'] = provider.bankIDs;
+                                param['userIds'] = provider.userIDS;
+                                param['userId'] =
+                                    UserHelper.instance.getUserId();
                                 print('-----------------------------$param ');
-                                _bloc.add(UpdateGroup(param: param));
+                                _bloc.add(CreateNewGroup(param: param));
                               });
-                        }
-
-                        return ButtonWidget(
-                            borderRadius: 5,
-                            text: 'Tạo',
-                            textColor: provider.validateFormIV
-                                ? AppColor.WHITE
-                                : AppColor.GREY_TEXT,
-                            bgColor: provider.validateFormIV
-                                ? AppColor.BLUE_TEXT
-                                : AppColor.GREY_BUTTON,
-                            function: () {
-                              Map<String, dynamic> param = {};
-                              param['address'] = addressController.text;
-                              param['name'] = nameGroupController.text;
-                              param['code'] = ranDomCodeController.text;
-                              param['bankIds'] = provider.bankIDs;
-                              param['userIds'] = provider.userIDS;
-                              param['userId'] = UserHelper.instance.getUserId();
-                              print('-----------------------------$param ');
-                              _bloc.add(CreateNewGroup(param: param));
-                            });
-                      }),
-                    )
-                  ],
-                );
-              },
+                        }),
+                      )
+                    ],
+                  );
+                },
+              ),
             ),
           ),
         ),
@@ -554,14 +565,6 @@ class _ShareBDSDInviteState extends State<ShareBDSDInviteScreen> {
                           });
                           if (!existed) {
                             provider.addListBankAccount(bankAccount);
-                            // final Map<String, dynamic> body = {
-                            //   'id': dto.id,
-                            //   'userId': UserInformationHelper.instance.getUserId(),
-                            //   'bankId': bankAccount.id,
-                            // };
-                            //
-                            // BlocProvider.of<ConnectLarkBloc>(context)
-                            //     .add(AddBankLarkEvent(body));
                           }
                         } else {
                           provider.addListBankAccount(bankAccount);

@@ -23,9 +23,7 @@ class LineChartCustom extends StatefulWidget {
 }
 
 class _LineChartCustomState extends State<LineChartCustom> {
-  int conversionRate = 1000;
-  String currencyUnit = 'k';
-  List<ResponseStatisticDTO> listStatistic = [];
+  // List<ResponseStatisticDTO> listStatistic = [];
 
   int getDaysInMonth(int year, int month) {
     DateTime firstDayOfNextMonth = DateTime(year, month + 1, 1);
@@ -37,48 +35,62 @@ class _LineChartCustomState extends State<LineChartCustom> {
   @override
   void initState() {
     super.initState();
-    if (widget.listData.isEmpty) {
-      DateTime _dateTime = widget.dateTime;
-      int day = getDaysInMonth(_dateTime.year, _dateTime.month);
-      Map<int, ResponseStatisticDTO> uniqueMap = {};
 
-      for (int i = 1; i <= day; i++) {
-        String text = '$i';
-        String monthText = '${widget.dateTime.month}';
+    // if (widget.listData.isEmpty) {
+    //   DateTime _dateTime = widget.dateTime;
+    //   int day = getDaysInMonth(_dateTime.year, _dateTime.month);
+    //   Map<int, ResponseStatisticDTO> uniqueMap = {};
+    //
+    //   for (int i = 1; i <= day; i++) {
+    //     String text = '$i';
+    //     String monthText = '${widget.dateTime.month}';
+    //
+    //     if (_dateTime.month < 10) monthText = '0${_dateTime.month}';
+    //
+    //     if (i < 10) text = '0$i';
+    //
+    //     uniqueMap[i] =
+    //         ResponseStatisticDTO(date: '${_dateTime.year}-$monthText-$text');
+    //   }
+    //   listStatistic = uniqueMap.values.toList()
+    //     ..sort((a, b) => a.date.compareTo(b.date));
+    // } else {
+    //   listStatistic = [...widget.listData];
+    // }
 
-        if (_dateTime.month < 10) monthText = '0${_dateTime.month}';
-
-        if (i < 10) text = '0$i';
-
-        uniqueMap[i] =
-            ResponseStatisticDTO(date: '${_dateTime.year}-$monthText-$text');
-      }
-      listStatistic = uniqueMap.values.toList()
-        ..sort((a, b) => a.date.compareTo(b.date));
-    } else {
-      listStatistic = [...widget.listData];
-    }
-
-    if (maxValueAmount > Numeral.MILLION) {
-      currencyUnit = 'tr';
-      conversionRate = Numeral.MILLION;
-    }
-    if (maxValueAmount > Numeral.BILLION) {
-      currencyUnit = 'tỷ';
-      conversionRate = Numeral.BILLION;
-    }
+    // if (maxValueAmount > Numeral.MILLION) {
+    //   currencyUnit = 'tr';
+    //   conversionRate = Numeral.MILLION;
+    // }
+    // if (maxValueAmount > Numeral.BILLION) {
+    //   currencyUnit = 'tỷ';
+    //   conversionRate = Numeral.BILLION;
+    // }
   }
 
   int get maxValueAmount {
-    ResponseStatisticDTO statisticDTOIn = listStatistic.reduce(
+    if (widget.listData.isEmpty) return 0;
+    ResponseStatisticDTO statisticDTOIn = widget.listData.reduce(
         (curr, next) => curr.totalCashIn > next.totalCashIn ? curr : next);
-    ResponseStatisticDTO statisticDTOOut = listStatistic.reduce(
+    ResponseStatisticDTO statisticDTOOut = widget.listData.reduce(
         (curr, next) => curr.totalCashOut > next.totalCashOut ? curr : next);
     if (statisticDTOIn.totalCashIn > statisticDTOOut.totalCashOut) {
       return statisticDTOIn.totalCashIn;
     } else {
       return statisticDTOIn.totalCashOut;
     }
+  }
+
+  int get conversionRate {
+    if (maxValueAmount > Numeral.MILLION) return Numeral.MILLION;
+    if (maxValueAmount > Numeral.BILLION) return Numeral.BILLION;
+    return 1000;
+  }
+
+  String get currencyUnit {
+    if (maxValueAmount > Numeral.MILLION) return 'tr';
+    if (maxValueAmount > Numeral.BILLION) return 'tỷ';
+    return 'k';
   }
 
   @override
@@ -113,10 +125,10 @@ class _LineChartCustomState extends State<LineChartCustom> {
                               xValueMapper: (ResponseStatisticDTO dto, _) {
                                 return dto.getDayFromMonth();
                               },
-                              color: AppColor.GREEN,
                               yValueMapper: (ResponseStatisticDTO dto, _) {
                                 return (dto.totalCashIn / conversionRate);
                               },
+                              color: AppColor.GREEN,
                               markerSettings: MarkerSettings(
                                 isVisible: true,
                                 height: 3,

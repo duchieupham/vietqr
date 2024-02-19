@@ -119,6 +119,7 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
                                 children:
                                     List.generate(imageList.length, (index) {
                                   ThemeDTO e = provider.themes[index];
+                                  File xFile = imageList[index];
                                   return GestureDetector(
                                     onTap: () => onSelect(provider, e),
                                     child: Container(
@@ -130,11 +131,9 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
                                           ClipRRect(
                                               borderRadius:
                                                   BorderRadius.circular(8),
-                                              child: imageList[index]
-                                                      .path
-                                                      .isNotEmpty
+                                              child: xFile.path.isNotEmpty
                                                   ? Image.file(
-                                                      imageList[index],
+                                                      xFile,
                                                       width: 90,
                                                       height: 50,
                                                       fit: BoxFit.cover,

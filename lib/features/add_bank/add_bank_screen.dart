@@ -446,25 +446,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                                           phone: phoneController.text,
                                           otpController: otpController,
                                           onChangeOTP: (value) {},
-                                          onResend: () {
-                                            String formattedName = StringUtils
-                                                .instance
-                                                .removeDiacritic(StringUtils
-                                                    .instance
-                                                    .capitalFirstCharacter(
-                                                        nameController.text));
-                                            BankCardRequestOTP dto =
-                                                BankCardRequestOTP(
-                                              nationalId: cmtController.text,
-                                              accountNumber:
-                                                  bankAccountController.text,
-                                              accountName: formattedName,
-                                              applicationType: 'MOBILE',
-                                              phoneNumber: phoneController.text,
-                                            );
-                                            _bloc.add(BankCardEventRequestOTP(
-                                                dto: dto));
-                                          },
+                                          onResend: _onResend,
                                         );
                                       }
 
@@ -473,103 +455,8 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.stretch,
                                           children: [
-                                            const Text(
-                                              'Ngân hàng',
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            const SizedBox(height: 10),
-                                            GestureDetector(
-                                              onTap: () async {
-                                                final data = await DialogWidget
-                                                    .instance
-                                                    .showModelBottomSheet(
-                                                  context: context,
-                                                  padding: EdgeInsets.zero,
-                                                  widget: ModelBottomSheetView(
-                                                    tvTitle: 'Chọn ngân hàng',
-                                                    ctx: context,
-                                                    list: state.listBanks ?? [],
-                                                    isSearch: true,
-                                                    data: provider.bankTypeDTO,
-                                                  ),
-                                                  height: height * 0.6,
-                                                );
-                                                if (data is int) {
-                                                  bankAccountController.clear();
-                                                  nameController.clear();
-                                                  provider.resetValidate();
-                                                  provider.updateSelectBankType(
-                                                      state.listBanks![data]);
-                                                  Provider.of<AddBankProvider>(
-                                                          context,
-                                                          listen: false)
-                                                      .updateEnableName(true);
-                                                }
-                                              },
-                                              child: Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 12),
-                                                decoration: const BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(5)),
-                                                  color: AppColor.WHITE,
-                                                ),
-                                                child: Row(
-                                                  children: [
-                                                    if (provider.bankTypeDTO !=
-                                                        null)
-                                                      Container(
-                                                        width: 60,
-                                                        height: 30,
-                                                        margin: const EdgeInsets
-                                                            .only(left: 4),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          image: DecorationImage(
-                                                              image: ImageUtils
-                                                                  .instance
-                                                                  .getImageNetWork(provider
-                                                                          .bankTypeDTO
-                                                                          ?.imageId ??
-                                                                      '')),
-                                                        ),
-                                                      )
-                                                    else
-                                                      const SizedBox(width: 16),
-                                                    const SizedBox(width: 4),
-                                                    Expanded(
-                                                      child: Text(
-                                                        provider.bankTypeDTO
-                                                                ?.name ??
-                                                            'Chọn ngân hàng',
-                                                        maxLines: 1,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        style: TextStyle(
-                                                            fontSize: 14,
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                            color: provider
-                                                                        .bankTypeDTO !=
-                                                                    null
-                                                                ? AppColor.BLACK
-                                                                : AppColor
-                                                                    .GREY_TEXT),
-                                                      ),
-                                                    ),
-                                                    const Icon(
-                                                      Icons.keyboard_arrow_down,
-                                                      color: AppColor.GREY_TEXT,
-                                                    ),
-                                                    const SizedBox(width: 20),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
+                                            _buildSelectBankWidget(
+                                                state, provider, height),
                                             const SizedBox(height: 30),
                                             TextFieldCustom(
                                               isObscureText: false,
@@ -853,6 +740,104 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  void onSelectBankType(AddBankState state, provider, height) async {
+    final data = await DialogWidget.instance.showModelBottomSheet(
+      context: context,
+      padding: EdgeInsets.zero,
+      widget: ModelBottomSheetView(
+        tvTitle: 'Chọn ngân hàng',
+        ctx: context,
+        list: state.listBanks ?? [],
+        isSearch: true,
+        data: provider.bankTypeDTO,
+      ),
+      height: height * 0.6,
+    );
+    if (data is int) {
+      bankAccountController.clear();
+      nameController.clear();
+      provider.resetValidate();
+      provider.updateSelectBankType(state.listBanks![data]);
+      Provider.of<AddBankProvider>(context, listen: false)
+          .updateEnableName(true);
+    }
+  }
+
+  _onResend() {
+    String formattedName = StringUtils.instance.removeDiacritic(
+        StringUtils.instance.capitalFirstCharacter(nameController.text));
+    BankCardRequestOTP dto = BankCardRequestOTP(
+      nationalId: cmtController.text,
+      accountNumber: bankAccountController.text,
+      accountName: formattedName,
+      applicationType: 'MOBILE',
+      phoneNumber: phoneController.text,
+    );
+    _bloc.add(BankCardEventRequestOTP(dto: dto));
+  }
+
+  _buildSelectBankWidget(AddBankState state, provider, height) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const Text(
+          'Ngân hàng',
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 10),
+        GestureDetector(
+          onTap: () => onSelectBankType(state, provider, height),
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(5)),
+              color: AppColor.WHITE,
+            ),
+            child: Row(
+              children: [
+                if (provider.bankTypeDTO != null)
+                  Container(
+                    width: 60,
+                    height: 30,
+                    margin: const EdgeInsets.only(left: 4),
+                    decoration: BoxDecoration(
+                      image: provider.bankTypeDTO!.file != null
+                          ? DecorationImage(
+                              image: FileImage(provider.bankTypeDTO!.file!))
+                          : DecorationImage(
+                              image: ImageUtils.instance.getImageNetWork(
+                                  provider.bankTypeDTO?.imageId ?? '')),
+                    ),
+                  )
+                else
+                  const SizedBox(width: 16),
+                const SizedBox(width: 4),
+                Expanded(
+                  child: Text(
+                    provider.bankTypeDTO?.name ?? 'Chọn ngân hàng',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: provider.bankTypeDTO != null
+                            ? AppColor.BLACK
+                            : AppColor.GREY_TEXT),
+                  ),
+                ),
+                const Icon(
+                  Icons.keyboard_arrow_down,
+                  color: AppColor.GREY_TEXT,
+                ),
+                const SizedBox(width: 20),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
 

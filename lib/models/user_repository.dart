@@ -30,8 +30,11 @@ class UserRepository {
   LocalRepository<ThemeDTO> themeLocal = LocalRepository<ThemeDTO>();
 
   List<BankTypeDTO> _banks = [];
+  List<ThemeDTO> _themes = [];
 
   List<BankTypeDTO> get banks => _banks;
+
+  List<ThemeDTO> get themes => _themes;
 
   bool isIntroContact = false;
 
@@ -46,6 +49,10 @@ class UserRepository {
 
   ///bank-local
   Future<List<BankTypeDTO>> getBanks() async {
+    if (!UserHelper.instance.getBankTypeKey()) {
+      clearBanks();
+      return _banks = [];
+    }
     _banks = bankLocal.getWishlist(_boxBank);
     for (int i = 0; i < _banks.length; i++) {
       _banks[i].file = await getImageFile(_banks[i].fileImage);
@@ -82,7 +89,11 @@ class UserRepository {
 
   Future<List<ThemeDTO>> getThemes() async {
     Box box = await themeLocal.openBox(list_theme_key);
-    return themeLocal.getWishlist(box);
+    _themes = themeLocal.getWishlist(box);
+    for (int i = 0; i < _themes.length; i++) {
+      _themes[i].xFile = await getImageFile(_themes[i].file);
+    }
+    return _themes;
   }
 
   Future<void> updateThemes(ThemeDTO value) async {

@@ -13,11 +13,12 @@ import 'package:vierqr/services/providers/statistical_provider.dart';
 
 class BottomSheetStatistical extends StatefulWidget {
   final List<TerminalResponseDTO> listTerminal;
-  final Function(DateTime date, TerminalResponseDTO terminal, String keySearch)
-      onApply;
+  final Function(DateTime date, TerminalResponseDTO terminal, String codeSearch,
+      String keySearch) onApply;
   final DateTime dateFilter;
   final TerminalResponseDTO terminalDto;
   final String keySearch;
+  final String codeSearch;
   final bool isOwner;
   final Function() reset;
 
@@ -28,6 +29,7 @@ class BottomSheetStatistical extends StatefulWidget {
     required this.dateFilter,
     required this.terminalDto,
     required this.keySearch,
+    required this.codeSearch,
     required this.isOwner,
     required this.reset,
   });
@@ -54,6 +56,7 @@ class _BottomSheetStatisticalState extends State<BottomSheetStatistical> {
               dateTimeFilter: widget.dateFilter,
               terminal: widget.terminalDto,
               keySearchParent: widget.keySearch,
+              codeSearchParent: widget.codeSearch,
             ),
           child: Consumer<StatisticProvider>(
             builder: (context, provider, _) {
@@ -94,6 +97,7 @@ class _BottomSheetStatisticalState extends State<BottomSheetStatistical> {
                               widget.onApply(
                                 provider.dateFilter,
                                 provider.terminalResponseDTO,
+                                provider.codeSearch,
                                 provider.keySearch,
                               );
                               Navigator.pop(context);
@@ -113,127 +117,149 @@ class _BottomSheetStatisticalState extends State<BottomSheetStatistical> {
 
   Widget _buildDropListTerminal() =>
       Consumer<StatisticProvider>(builder: (context, provider, child) {
-        return Container(
-          margin: EdgeInsets.only(top: 12),
-          height: 50,
-          decoration: BoxDecoration(
-              color: AppColor.WHITE,
-              border: Border.all(
-                  color: AppColor.BLACK_BUTTON.withOpacity(0.5), width: 0.5),
-              borderRadius: BorderRadius.circular(6)),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton2<TerminalResponseDTO>(
-              isExpanded: true,
-              selectedItemBuilder: (context) {
-                return provider.terminals
-                    .map(
-                      (item) => DropdownMenuItem<TerminalResponseDTO>(
-                        value: item,
-                        child: MTextFieldCustom(
-                          isObscureText: false,
-                          maxLines: 1,
-                          enable: widget.isOwner,
-                          fillColor: AppColor.WHITE,
-                          value: widget.isOwner
-                              ? provider.keySearch
-                              : provider.terminalResponseDTO.code,
-                          textFieldType: TextfieldType.DEFAULT,
-                          maxLength: 10,
-                          contentPadding: EdgeInsets.zero,
-                          hintText: 'Chọn mã chi nhánh/nhóm',
-                          inputType: TextInputType.text,
-                          keyboardAction: TextInputAction.next,
-                          onChange: provider.updateKeyword,
-                        ),
-                      ),
-                    )
-                    .toList();
-              },
-              items: provider.terminals.map((item) {
-                return DropdownMenuItem<TerminalResponseDTO>(
-                  value: item,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Expanded(
-                        child: Container(
-                          alignment: Alignment.centerLeft,
-                          child: Row(
-                            children: [
-                              Text(
-                                item.code,
-                                style: const TextStyle(
-                                    fontSize: 14, fontWeight: FontWeight.w500),
-                              ),
-                              const Spacer(),
-                            ],
-                          ),
-                        ),
-                      ),
-                      if (provider.terminals.length > 1) ...[
-                        const Divider(),
-                      ]
-                    ],
-                  ),
-                );
-              }).toList(),
-              value: provider.terminalResponseDTO,
-              onChanged: provider.updateTerminalResponseDTO,
-              buttonStyleData: ButtonStyleData(
-                width: MediaQuery.of(context).size.width,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              'Cửa hàng',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Container(
+              height: 50,
+              decoration: BoxDecoration(
                   color: AppColor.WHITE,
+                  border: Border.all(
+                      color: AppColor.BLACK_BUTTON.withOpacity(0.5),
+                      width: 0.5),
+                  borderRadius: BorderRadius.circular(6)),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton2<TerminalResponseDTO>(
+                  isExpanded: true,
+                  selectedItemBuilder: (context) {
+                    return provider.terminals
+                        .map(
+                          (item) => DropdownMenuItem<TerminalResponseDTO>(
+                            value: item,
+                            child: MTextFieldCustom(
+                              isObscureText: false,
+                              maxLines: 1,
+                              enable: widget.isOwner,
+                              fillColor: AppColor.WHITE,
+                              value: widget.isOwner
+                                  ? provider.keySearch
+                                  : provider.terminalResponseDTO.name,
+                              textFieldType: TextfieldType.DEFAULT,
+                              maxLength: 10,
+                              contentPadding: EdgeInsets.zero,
+                              hintText: 'Chọn mã cửa hàng',
+                              inputType: TextInputType.text,
+                              keyboardAction: TextInputAction.next,
+                              onChange: provider.updateKeyword,
+                            ),
+                          ),
+                        )
+                        .toList();
+                  },
+                  items: provider.terminals.map((item) {
+                    return DropdownMenuItem<TerminalResponseDTO>(
+                      value: item,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded(
+                            child: Container(
+                              alignment: Alignment.centerLeft,
+                              child: Row(
+                                children: [
+                                  Text(
+                                    item.name,
+                                    style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                  const Spacer(),
+                                ],
+                              ),
+                            ),
+                          ),
+                          if (provider.terminals.length > 1) ...[
+                            const Divider(),
+                          ]
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                  value: provider.terminalResponseDTO,
+                  onChanged: provider.updateTerminalResponseDTO,
+                  buttonStyleData: ButtonStyleData(
+                    width: MediaQuery.of(context).size.width,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: AppColor.WHITE,
+                    ),
+                  ),
+                  iconStyleData: const IconStyleData(
+                    icon: Icon(Icons.expand_more),
+                    iconSize: 18,
+                    iconEnabledColor: AppColor.BLACK,
+                    iconDisabledColor: Colors.grey,
+                  ),
+                  dropdownStyleData: DropdownStyleData(
+                    decoration:
+                        BoxDecoration(borderRadius: BorderRadius.circular(5)),
+                  ),
+                  menuItemStyleData: MenuItemStyleData(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                  ),
                 ),
               ),
-              iconStyleData: const IconStyleData(
-                icon: Icon(Icons.expand_more),
-                iconSize: 18,
-                iconEnabledColor: AppColor.BLACK,
-                iconDisabledColor: Colors.grey,
-              ),
-              dropdownStyleData: DropdownStyleData(
-                decoration:
-                    BoxDecoration(borderRadius: BorderRadius.circular(5)),
-              ),
-              menuItemStyleData: MenuItemStyleData(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-              ),
             ),
-          ),
+          ],
         );
       });
 
   Widget _buildDropTime() {
     return Consumer<StatisticProvider>(builder: (context, provider, child) {
-      return InkWell(
-        onTap: () => _onPickMonth(provider),
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 8),
-          height: 50,
-          decoration: BoxDecoration(
-              color: AppColor.WHITE,
-              border: Border.all(
-                  color: AppColor.BLACK_BUTTON.withOpacity(0.5), width: 0.5),
-              borderRadius: BorderRadius.circular(6)),
-          child: Row(
-            children: [
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  provider.getDateTime,
-                  style: const TextStyle(fontSize: 15),
-                ),
-              ),
-              const SizedBox(width: 4),
-              const Icon(
-                Icons.calendar_month_outlined,
-                size: 18,
-              ),
-            ],
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            'Thời gian (tháng)',
+            style: TextStyle(fontWeight: FontWeight.bold),
           ),
-        ),
+          const SizedBox(height: 8),
+          InkWell(
+            onTap: () => _onPickMonth(provider),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 8),
+              height: 50,
+              decoration: BoxDecoration(
+                  color: AppColor.WHITE,
+                  border: Border.all(
+                      color: AppColor.BLACK_BUTTON.withOpacity(0.5),
+                      width: 0.5),
+                  borderRadius: BorderRadius.circular(6)),
+              child: Row(
+                children: [
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      provider.getDateTime,
+                      style: const TextStyle(fontSize: 15),
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  const Icon(
+                    Icons.calendar_month_outlined,
+                    size: 18,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       );
     });
   }

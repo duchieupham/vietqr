@@ -98,9 +98,11 @@ class _FormAccountState extends State<FormAccount> {
                   obscureText: true,
                   onChanged: (value) {
                     provider.updatePassword(value);
-                    if (value.length == 6) {
-                      repassFocus.requestFocus();
-                    }
+                    Future.delayed(const Duration(seconds: 1), () {
+                      if (value.length == 6) {
+                        repassFocus.requestFocus();
+                      }
+                    });
                   },
                 ),
               ),

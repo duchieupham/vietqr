@@ -61,7 +61,7 @@ class _BodyWidget extends State<ModelBottomSheetView> {
             children: List.generate(data.length, (index) {
               BankTypeDTO dto = data[index];
               return GestureDetector(
-                onTap: () => Navigator.of(context).pop(index),
+                onTap: () => _onSelect(dto),
                 child: Container(
                   width: double.infinity,
                   color: Colors.transparent,
@@ -231,5 +231,10 @@ class _BodyWidget extends State<ModelBottomSheetView> {
     setState(() {
       data = values;
     });
+  }
+
+  _onSelect(BankTypeDTO dto) {
+    final index = widget.list.indexOf(dto);
+    Navigator.of(context).pop(index);
   }
 }

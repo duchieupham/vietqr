@@ -259,7 +259,8 @@ class _SearchBankViewState extends State<SearchBankView> {
               FocusManager.instance.primaryFocus?.unfocus();
               final data = await Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => BankCardDetailScreen(bankId: dto.id),
+                  builder: (context) => BankCardDetailScreen(
+                      bankId: dto.id, idAdminBank: dto.userId),
                   settings: const RouteSettings(
                     name: Routes.BANK_CARD_DETAIL_VEW,
                   ),

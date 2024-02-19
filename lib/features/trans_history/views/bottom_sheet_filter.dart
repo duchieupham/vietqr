@@ -23,6 +23,7 @@ class BottomSheetFilter extends StatelessWidget {
   final FilterTransaction filterTransaction;
   final FilterStatusTransaction filterStatusTransaction;
   final String keyword;
+  final String codeTerminal;
   final FilterTransaction filterTerminal;
   final TerminalResponseDTO? terminalResponseDTO;
   final Function(
@@ -32,6 +33,7 @@ class BottomSheetFilter extends StatelessWidget {
     FilterTimeTransaction,
     FilterTransaction,
     String valueSearch,
+    String codeTerminal,
     FilterStatusTransaction filterStatusTransaction,
     FilterTransaction filterTerminal,
     TerminalResponseDTO terminalResponseDTO,
@@ -48,6 +50,7 @@ class BottomSheetFilter extends StatelessWidget {
     required this.reset,
     required this.filterTransaction,
     required this.keyword,
+    required this.codeTerminal,
     required this.bankId,
     required this.filterStatusTransaction,
     required this.filterTerminal,
@@ -62,7 +65,6 @@ class BottomSheetFilter extends StatelessWidget {
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
         color: Colors.transparent,
         child: ChangeNotifierProvider<TransProvider>(
           create: (context) => TransProvider(isOwner, terminals)
@@ -73,6 +75,7 @@ class BottomSheetFilter extends StatelessWidget {
               toDate,
               filterTimeTransaction,
               keyword,
+              codeTerminal,
               filterTransaction,
               filterStatusTransaction,
               filterTerminal,
@@ -114,7 +117,7 @@ class BottomSheetFilter extends StatelessWidget {
                 const SizedBox(height: 20),
                 if (!isOwner) ...[
                   Text(
-                    'Nhóm/Chi nhánh',
+                    'Cửa hàng',
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                   ),
                   _buildDropListTerminal(),
@@ -201,30 +204,24 @@ class BottomSheetFilter extends StatelessWidget {
                                 size: 12,
                               ),
                             ),
-                            const SizedBox(
-                              width: 8,
-                            ),
+                            const SizedBox(width: 8),
                           ],
                         ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(
-                  height: 8,
-                ),
+                const SizedBox(height: 16),
                 if (isOwner && provider.valueFilter.id == 4) ...[
                   Text(
-                    'Nhóm/Chi nhánh',
+                    'Cửa hàng',
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                   ),
                   _buildDropListTerminal(),
                 ],
                 _buildFormStatus(),
                 _buildFormSearch(),
-                const SizedBox(
-                  height: 16,
-                ),
+                const SizedBox(height: 16),
                 _buildDropTime(),
                 const Spacer(),
                 Row(
@@ -273,6 +270,7 @@ class BottomSheetFilter extends StatelessWidget {
                                 provider.valueTimeFilter,
                                 provider.valueFilter,
                                 provider.keywordSearch,
+                                provider.codeTerminal,
                                 provider.statusValue,
                                 provider.valueFilterTerminal,
                                 provider.terminalResponseDTO,
@@ -317,13 +315,13 @@ class BottomSheetFilter extends StatelessWidget {
                           fillColor: AppColor.WHITE,
                           value: isOwner
                               ? provider.keywordSearch
-                              : provider.terminalResponseDTO.code,
+                              : provider.terminalResponseDTO.name,
                           textFieldType: TextfieldType.DEFAULT,
                           maxLength: 10,
                           contentPadding: EdgeInsets.zero,
                           hintText: isOwner
-                              ? 'Nhập hoặc chọn mã chi nhánh/nhóm'
-                              : 'Chọn mã chi nhánh/nhóm',
+                              ? 'Nhập hoặc chọn mã cửa hàng'
+                              : 'Chọn mã cửa hàng',
                           inputType: TextInputType.text,
                           keyboardAction: TextInputAction.next,
                           onChange: provider.updateKeyword,
@@ -344,7 +342,7 @@ class BottomSheetFilter extends StatelessWidget {
                           child: Row(
                             children: [
                               Text(
-                                item.code,
+                                item.name,
                                 style: const TextStyle(
                                     fontSize: 14, fontWeight: FontWeight.w500),
                               ),
