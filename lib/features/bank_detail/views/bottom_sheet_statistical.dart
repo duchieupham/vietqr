@@ -149,6 +149,7 @@ class _BottomSheetStatisticalState extends State<BottomSheetStatistical> {
                               value: widget.isOwner
                                   ? provider.keySearch
                                   : provider.terminalResponseDTO.name,
+                              styles: TextStyle(fontSize: 14),
                               textFieldType: TextfieldType.DEFAULT,
                               maxLength: 10,
                               contentPadding: EdgeInsets.zero,

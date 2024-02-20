@@ -352,14 +352,7 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
             const SizedBox(height: 16),
             Text(
               '${TransactionUtils.instance.getTransType(dto.transType)} ${CurrencyUtils.instance.getCurrencyFormatted(dto.amount)} VND',
-              style: TextStyle(
-                fontSize: 18,
-                color: TransactionUtils.instance.getColorStatus(
-                  dto.status,
-                  dto.type,
-                  dto.transType,
-                ),
-              ),
+              style: TextStyle(fontSize: 18, color: dto.getColorStatus),
             ),
             const SizedBox(height: 8),
             Row(
@@ -368,30 +361,18 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (dto.status == 0 || dto.status == 2)
+                      if (dto.isTimeCreate)
                         _buildItem(
                             'Thời gian tạo:',
-                            TimeUtils.instance
-                                .formatDateFromInt(dto.time, false)),
-                      if (dto.status == 1 &&
-                          (dto.type == 0 ||
-                              dto.type == 4 ||
-                              dto.type == 5)) ...[
-                        _buildItem(
-                            'Thời gian tạo:',
-                            TimeUtils.instance
-                                .formatDateFromInt(dto.time, false)),
+                            TimeUtils.instance.formatDateFromInt(
+                                dto.time, false,
+                                isShowHHmmFirst: true)),
+                      if (dto.isTimeTT)
                         _buildItem(
                             'Thời gian TT:',
-                            TimeUtils.instance
-                                .formatDateFromInt(dto.timePaid, false)),
-                      ],
-                      if (dto.status == 1 && (dto.type == 2) ||
-                          dto.transType == 'D')
-                        _buildItem(
-                            'Thời gian TT:',
-                            TimeUtils.instance
-                                .formatDateFromInt(dto.timePaid, false)),
+                            TimeUtils.instance.formatDateFromInt(
+                                dto.timePaid, false,
+                                isShowHHmmFirst: true)),
                       _buildItem(
                         'Trạng thái:',
                         TransactionUtils.instance.getStatusString(dto.status),

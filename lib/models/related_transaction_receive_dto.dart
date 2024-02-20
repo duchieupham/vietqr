@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:vierqr/commons/constants/configurations/theme.dart';
+
 class RelatedTransactionReceiveDTO {
   final String bankAccount;
   final String amount;
@@ -20,6 +23,43 @@ class RelatedTransactionReceiveDTO {
     required this.type,
     required this.transType,
   });
+
+  bool get isTimeTT {
+    if (transType.trim() == 'D' ||
+        (transType.trim() == 'C' &&
+            (status == 1 &&
+                (type == 0 ||
+                    type == 1 ||
+                    type == 2 ||
+                    type == 4 ||
+                    type == 5)))) {
+      return true;
+    }
+    return false;
+  }
+
+  bool get isTimeCreate {
+    if (transType.trim() == 'C' && (status == 2 || status == 0 || type == 0)) {
+      return true;
+    }
+    return false;
+  }
+
+  Color get getColorStatus {
+    if (transType.trim() == 'D') return AppColor.RED_CALENDAR;
+
+    if (status == 0) return AppColor.ORANGE_DARK;
+
+    if (status == 1 && type == 2) return AppColor.BLUE_TEXT;
+
+    if (status == 1 && (type == 0 || type == 1 || type == 4 || type == 5)) {
+      return AppColor.GREEN;
+    }
+
+    if (status == 2) return AppColor.GREY_TEXT;
+
+    return AppColor.TRANSPARENT;
+  }
 
   factory RelatedTransactionReceiveDTO.fromJson(Map<String, dynamic> json) {
     return RelatedTransactionReceiveDTO(

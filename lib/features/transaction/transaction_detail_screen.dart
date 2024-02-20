@@ -134,11 +134,7 @@ class _BodyWidgetState extends State<_BodyWidget> {
                               '${state.dto?.getTransType} ${state.dto?.getAmount} VND',
                               style: TextStyle(
                                 fontSize: 30,
-                                color: TransactionUtils.instance.getColorStatus(
-                                  state.dto?.status ?? 0,
-                                  state.dto?.type ?? 0,
-                                  state.dto?.transType ?? '',
-                                ),
+                                color: state.dto?.getColorStatus,
                               ),
                             ),
                           ),
@@ -150,11 +146,7 @@ class _BodyWidgetState extends State<_BodyWidget> {
                             child: Text(
                               state.dto?.getStatus ?? '',
                               style: TextStyle(
-                                color: TransactionUtils.instance.getColorStatus(
-                                  state.dto?.status ?? 0,
-                                  state.dto?.type ?? 0,
-                                  state.dto?.transType ?? '',
-                                ),
+                                color: state.dto?.getColorStatus,
                                 fontSize: 18,
                               ),
                             ),
@@ -180,12 +172,14 @@ class _BodyWidgetState extends State<_BodyWidget> {
                                     _buildItem(
                                         'Thời gian tạo:',
                                         TimeUtils.instance.formatDateFromInt(
-                                            state.dto?.time ?? 0, false)),
+                                            state.dto?.time ?? 0, false,
+                                            isShowHHmmFirst: true)),
                                     if (state.dto?.type != 0)
                                       _buildItem(
                                           'Thời gian thanh toán:',
                                           TimeUtils.instance.formatDateFromInt(
-                                              state.dto?.timePaid ?? 0, false)),
+                                              state.dto?.timePaid ?? 0, false,
+                                              isShowHHmmFirst: true)),
                                     if (state.dto!.referenceNumber.isNotEmpty)
                                       _buildItem('Mã giao dịch:',
                                           state.dto?.referenceNumber ?? ''),

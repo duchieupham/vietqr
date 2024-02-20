@@ -257,7 +257,8 @@ class TimeUtils {
     return result;
   }
 
-  String formatDateFromInt(int time, bool isMultipleRow) {
+  String formatDateFromInt(int time, bool isMultipleRow,
+      {bool isShowHHmmFirst = false}) {
     String result = '';
     try {
       if (time != 0) {
@@ -266,6 +267,9 @@ class TimeUtils {
         DateFormat format = (isMultipleRow)
             ? DateFormat('dd/MM/yyyy\nHH:mm')
             : DateFormat('dd/MM/yyyy HH:mm');
+
+        if (isShowHHmmFirst) format = DateFormat('HH:mm dd/MM/yyyy');
+
         result = format.format(timeConverted).toString();
       }
     } catch (e) {

@@ -316,6 +316,7 @@ class BottomSheetFilter extends StatelessWidget {
                           value: isOwner
                               ? provider.keywordSearch
                               : provider.terminalResponseDTO.name,
+                          styles: TextStyle(fontSize: 14),
                           textFieldType: TextfieldType.DEFAULT,
                           maxLength: 10,
                           contentPadding: EdgeInsets.zero,

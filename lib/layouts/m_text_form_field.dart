@@ -27,6 +27,7 @@ class MTextFieldCustom extends StatefulWidget {
   final TextAlign? textAlign;
   final Function(PointerDownEvent)? onTapOutside;
   final bool isShowToast;
+  final TextStyle? styles;
   final TextStyle? errorStyle;
   final Function(String? error)? showToast;
   final FormFieldValidator<String>? validator;
@@ -56,6 +57,7 @@ class MTextFieldCustom extends StatefulWidget {
     this.textFieldType,
     this.title,
     this.unTitle,
+    this.styles,
     this.autoFocus,
     this.focusNode,
     this.maxLines,
@@ -133,6 +135,7 @@ class _TextFieldWidgetState extends State<MTextFieldCustom> {
       autofocus: widget.autoFocus ?? false,
       focusNode: widget.focusNode,
       keyboardType: widget.inputType,
+      style: widget.styles,
       maxLines: (widget.maxLines == null) ? 1 : widget.maxLines,
       textInputAction: widget.keyboardAction,
       decoration: InputDecoration(

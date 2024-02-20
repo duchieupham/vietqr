@@ -32,8 +32,30 @@ class TransactionUtils {
     return result;
   }
 
+  // type = 0: Giao dịch có đối soát, tạo bằng mã VietQR giao dịch.
+  // type = 1: Giao dịch có đối soát, tạo bằng mã VietQR cửa hàng.
+  // type = 2: Giao dịch không có đối soát.
+  //
+  //
+  // Màu giao dịch:
+  // - type = 0, transType = C: màu xanh lá
+  // - type = 1, transType = C: màu xanh lá
+  // - type = 4, transType = C: màu xanh lá
+  // - type = 5, transType = C: màu xanh lá
+  //
+  // - transType = D: màu đỏ
+  //
+  // - type = 2, transType = C: xanh xanh dương
+  //
+  //
+  // Loại giao dịch (hiển thị ngoài UI):
+  // - type = 0: VietQR động
+  // - type = 1: VietQR tĩnh
+  // - type = 2: Khác.
+
   // status = 0 : chờ thanh toán
   // status = 1 : thành công
+
   // type: 2 : chuyển tiền từ ngân hàng khác
   // type: 0 : chuyển tiền từ viet qr
   ///

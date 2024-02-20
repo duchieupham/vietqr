@@ -181,7 +181,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDInviteScreen> {
                               height: 20,
                             ),
                             Text(
-                              'Thông tin nhóm',
+                              'Thông tin cửa hàng',
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold),
                             ),
@@ -192,7 +192,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDInviteScreen> {
                               'Tên cửa hàng *',
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
-                            const Text('Tên cửa hàng tối đa 50 ký tự',
+                            const Text('Tên cửa hàng tối đa 50 ký tự.',
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: AppColor.GREY_TEXT,
@@ -352,12 +352,12 @@ class _ShareBDSDInviteState extends State<ShareBDSDInviteScreen> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Text('Xóa nhóm'),
+                                          Text('Xóa cửa hàng'),
                                           const SizedBox(
                                             height: 2,
                                           ),
                                           Text(
-                                            'Hủy chia sẻ biến động số dư với những thành viên trong nhóm.',
+                                            'Hủy chia sẻ biến động số dư với những thành viên trong cửa hàng.',
                                             style: TextStyle(
                                                 fontSize: 11,
                                                 color: AppColor.GREY_TEXT),
