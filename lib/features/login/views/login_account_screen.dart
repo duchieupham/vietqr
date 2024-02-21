@@ -58,35 +58,7 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
             width: width,
             child: Stack(
               children: [
-                Consumer<AuthProvider>(
-                  builder: (context, page, child) {
-                    return BackgroundAppBarLogin(
-                      file: page.isEventTheme ? page.fileThemeLogin : page.file,
-                      url: widget.appInfoDTO.themeImgUrl,
-                      isEventTheme: widget.appInfoDTO.isEventTheme,
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Container(
-                          height: 100,
-                          width: MediaQuery.of(context).size.width / 2,
-                          margin: const EdgeInsets.only(top: 50),
-                          decoration: BoxDecoration(
-                            image: page.fileLogo.path.isNotEmpty
-                                ? DecorationImage(
-                                    image: FileImage(page.fileLogo),
-                                    fit: BoxFit.contain,
-                                  )
-                                : DecorationImage(
-                                    image: AssetImage(
-                                        'assets/images/logo_vietgr_payment.png'),
-                                    fit: BoxFit.contain,
-                                  ),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
+                BackgroundAppBarLogin(),
               ],
             ),
           ),

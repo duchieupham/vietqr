@@ -7,11 +7,12 @@ import 'package:vierqr/features/login/events/login_event.dart';
 import 'package:vierqr/features/login/repositories/login_repository.dart';
 import 'package:vierqr/features/login/states/login_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/info_user_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
-  LoginBloc() : super(const LoginState()) {
+  LoginBloc() : super(LoginState(appInfoDTO: AppInfoDTO())) {
     on<LoginEventByPhone>(_login);
     on<LoginEventByNFC>(_loginNFC);
     on<CheckExitsPhoneEvent>(_checkExitsPhone);

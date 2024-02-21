@@ -77,7 +77,7 @@ class _LoginState extends State<_Login> {
   Uuid uuid = const Uuid();
 
   late LoginBloc _bloc;
-  late AuthProvider _provider;
+  late AuthProvider _authProvider;
 
   var controller = StreamController<AccountLoginDTO?>.broadcast();
 
@@ -85,7 +85,7 @@ class _LoginState extends State<_Login> {
   void initState() {
     super.initState();
     _bloc = BlocProvider.of(context);
-    _provider = Provider.of<AuthProvider>(context, listen: false);
+    _authProvider = Provider.of<AuthProvider>(context, listen: false);
     code = uuid.v1();
     controller.stream.listen((value) async {
       if (value != null) {
@@ -105,10 +105,6 @@ class _LoginState extends State<_Login> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      _provider.updateEventTheme(null);
-      _provider.updateFileThemeLogin('');
-      _provider.initThemeDTO();
-      _provider.updateFileLogo('');
     });
 
     _bloc.add(GetFreeToken());
@@ -129,7 +125,6 @@ class _LoginState extends State<_Login> {
       isLogoutEnterHome = arg['isLogout'] ?? false;
     }
     final height = MediaQuery.of(context).size.height;
-    final width = MediaQuery.of(context).size.width;
     return Consumer<LoginProvider>(
       builder: (context, provider, child) {
         return BlocConsumer<LoginBloc, LoginState>(
@@ -145,51 +140,10 @@ class _LoginState extends State<_Login> {
               _bloc.add(GetVersionAppEvent(isCheckVer: state.isCheckApp));
             }
             if (state.request == LoginType.APP_VERSION) {
-              if (state.appInfoDTO != null) {
-                provider.updateAppInfo(state.appInfoDTO);
-
-                int logoVersion = ThemeHelper.instance.getLogoVer();
-                int themeVersion = ThemeHelper.instance.getThemeVerLogin();
-                bool isEventTheme = ThemeHelper.instance.getEventTheme();
-
-                if (logoVersion != state.appInfoDTO!.logoVer) {
-                  ThemeHelper.instance.updateLogoVer(state.appInfoDTO!.logoVer);
-                  String path = state.appInfoDTO!.logoUrl.split('/').last;
-                  if (path.contains('.png')) {
-                    path.replaceAll('.png', '');
-                  }
-                  String localPath = await downloadAndSaveImage(
-                      state.appInfoDTO!.logoUrl, path);
-
-                  ThemeHelper.instance.updateLogoTheme(localPath);
-                  _provider.updateFileLogo(localPath);
-                }
-
-                if (themeVersion != state.appInfoDTO!.themeVer) {
-                  if (state.appInfoDTO!.isEventTheme) {
-                    String path = state.appInfoDTO!.themeImgUrl.split('/').last;
-                    if (path.contains('.png')) {
-                      path.replaceAll('.png', '');
-                    }
-                    String localPath = await downloadAndSaveImage(
-                        state.appInfoDTO!.themeImgUrl, path);
-
-                    ThemeHelper.instance.updateThemeLogin(localPath);
-                    ThemeHelper.instance
-                        .updateThemeVerLogin(state.appInfoDTO!.themeVer);
-                    _provider.updateFileThemeLogin(localPath);
-                  }
-                }
-
-                if (isEventTheme != state.appInfoDTO!.isEventTheme) {
-                  ThemeHelper.instance
-                      .updateEventTheme(state.appInfoDTO!.isEventTheme);
-                  _provider.updateEventTheme(state.appInfoDTO!.isEventTheme);
-                }
-              }
-              _provider.updateAppInfoDTO(state.appInfoDTO);
-              if (_provider.isUpdateVersion) {
-                if (!state.appInfoDTO!.isCheckApp)
+              _onHandleAppSystem(state, provider);
+              _authProvider.updateAppInfoDTO(state.appInfoDTO);
+              if (_authProvider.isUpdateVersion) {
+                if (!state.appInfoDTO.isCheckApp)
                   showDialog(
                     barrierDismissible: false,
                     context: NavigationService.navigatorKey.currentContext!,
@@ -206,7 +160,7 @@ class _LoginState extends State<_Login> {
             }
 
             if (state.request == LoginType.TOAST) {
-              _provider.updateRenderUI(isLogout: true);
+              _authProvider.updateRenderUI(isLogout: true);
               AccountInformationDTO accountInformationDTO =
                   UserHelper.instance.getAccountInformation();
 
@@ -224,7 +178,7 @@ class _LoginState extends State<_Login> {
                 _saveAccount(provider);
               }
 
-              _provider.initThemeDTO();
+              // _authProvider.initThemeDTO();
 
               Navigator.of(context).popUntil((route) => route.isFirst);
               Navigator.pushReplacement(
@@ -331,41 +285,7 @@ class _LoginState extends State<_Login> {
                               child: SingleChildScrollView(
                                 child: Column(
                                   children: [
-                                    Consumer<AuthProvider>(
-                                      builder: (context, page, child) {
-                                        return BackgroundAppBarLogin(
-                                          file: page.isEventTheme
-                                              ? page.fileThemeLogin
-                                              : page.file,
-                                          url: provider.appInfoDTO.themeImgUrl,
-                                          isEventTheme:
-                                              provider.appInfoDTO.isEventTheme,
-                                          child: Align(
-                                            alignment: Alignment.center,
-                                            child: Container(
-                                              height: 100,
-                                              width: width / 2,
-                                              margin: const EdgeInsets.only(
-                                                  top: 50),
-                                              decoration: BoxDecoration(
-                                                image: page.fileLogo.path
-                                                        .isNotEmpty
-                                                    ? DecorationImage(
-                                                        image: FileImage(
-                                                            page.fileLogo),
-                                                        fit: BoxFit.contain,
-                                                      )
-                                                    : DecorationImage(
-                                                        image: AssetImage(
-                                                            'assets/images/logo_vietgr_payment.png'),
-                                                        fit: BoxFit.contain,
-                                                      ),
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ),
+                                    BackgroundAppBarLogin(),
                                     Padding(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 20, vertical: 20),
@@ -1043,5 +963,39 @@ class _LoginState extends State<_Login> {
 
     await UserHelper.instance.setLoginAccount(list);
     provider.updateListInfoUser();
+  }
+
+  void _onHandleAppSystem(LoginState state, LoginProvider provider) async {
+    provider.updateAppInfo(state.appInfoDTO);
+    String logoTheme = ThemeHelper.instance.getLogoTheme();
+    String themeSystem = ThemeHelper.instance.getThemeSystem();
+    bool isEventTheme = ThemeHelper.instance.getEventTheme();
+
+    if (logoTheme.isEmpty) {
+      String path = state.appInfoDTO.logoUrl.split('/').last;
+      path = path.replaceAll('.', '');
+
+      String localPath =
+          await downloadAndSaveImage(state.appInfoDTO.logoUrl, path);
+
+      ThemeHelper.instance.updateLogoTheme(localPath);
+      _authProvider.updateFileLogo(localPath);
+    }
+
+    if (themeSystem.isEmpty || isEventTheme != state.appInfoDTO.isEventTheme) {
+      String path = state.appInfoDTO.themeImgUrl.split('/').last;
+      path = path.replaceAll('.', '');
+
+      String localPath =
+          await downloadAndSaveImage(state.appInfoDTO.themeImgUrl, path);
+
+      ThemeHelper.instance.updateThemeSystem(localPath);
+      _authProvider.updateFileTheme(localPath);
+    }
+
+    if (isEventTheme != state.appInfoDTO.isEventTheme) {
+      ThemeHelper.instance.updateEventTheme(state.appInfoDTO.isEventTheme);
+      _authProvider.updateEventTheme(state.appInfoDTO.isEventTheme);
+    }
   }
 }

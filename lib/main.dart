@@ -145,10 +145,6 @@ void main() async {
 Future<void> _initialServiceHelper() async {
   await sharedPrefs.setString('TOKEN_FREE', '');
 
-  if (!sharedPrefs.containsKey('THEME_SYSTEM') ||
-      sharedPrefs.getString('THEME_SYSTEM') == null) {
-    await ThemeHelper.instance.initialTheme();
-  }
   if (!sharedPrefs.containsKey('BANK_TOKEN') ||
       sharedPrefs.getString('BANK_TOKEN') == null) {
     await AccountHelper.instance.initialAccountHelper();
@@ -215,14 +211,9 @@ class _VietQRApp extends State<VietQRApp> {
     notificationController.sink.add(false);
     // Đăng ký callback onMessage
     onFcmMessage();
-    // Đăng ký callback onMessageOpenedApp
+    // // Đăng ký callback onMessageOpenedApp
     onFcmMessageOpenedApp();
-    requestNotificationPermission();
     handleMessageOnBackground();
-  }
-
-  void requestNotificationPermission() async {
-    await Permission.notification.request();
   }
 
   void onFcmMessage() async {
@@ -325,9 +316,7 @@ class _VietQRApp extends State<VietQRApp> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).requestFocus(FocusNode());
-      },
+      onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
       child: MultiBlocProvider(
         providers: [
           BlocProvider<UserEditBloc>(
@@ -466,7 +455,6 @@ class _VietQRApp extends State<VietQRApp> {
                 home: Builder(
                   builder: (context) {
                     authProvider.setContext(context);
-
                     return Title(
                       title: 'VietQR',
                       color: AppColor.BLACK,

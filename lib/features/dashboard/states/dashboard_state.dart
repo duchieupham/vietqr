@@ -20,7 +20,7 @@ class DashBoardState extends Equatable {
   final List<BankTypeDTO> listBanks;
   final TypeContact typeContact;
   final IntroduceDTO? introduceDTO;
-  final AppInfoDTO? appInfoDTO;
+  final AppInfoDTO appInfoDTO;
   final TokenType typeToken;
   final QRGeneratedDTO? qrDto;
   final List<ThemeDTO> themes;
@@ -40,7 +40,7 @@ class DashBoardState extends Equatable {
     required this.listBanks,
     this.typeContact = TypeContact.NONE,
     this.introduceDTO,
-    this.appInfoDTO,
+    required this.appInfoDTO,
     this.typeToken = TokenType.NONE,
     this.keepValue = false,
     this.qrDto,

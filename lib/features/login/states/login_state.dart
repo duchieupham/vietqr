@@ -10,7 +10,7 @@ class LoginState extends Equatable {
   final bool isToast;
   final String? msg;
   final String? phone;
-  final AppInfoDTO? appInfoDTO;
+  final AppInfoDTO appInfoDTO;
   final bool isCheckApp;
 
   const LoginState({
@@ -20,7 +20,7 @@ class LoginState extends Equatable {
     this.status = BlocStatus.NONE,
     this.request = LoginType.NONE,
     this.isToast = false,
-    this.appInfoDTO,
+    required this.appInfoDTO,
     this.isCheckApp = false,
   });
 

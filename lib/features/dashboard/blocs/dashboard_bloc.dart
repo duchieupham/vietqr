@@ -13,6 +13,7 @@ import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/dashboard/repostiroties/dashboard_repository.dart';
 import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
 import 'package:vierqr/features/notification/blocs/notification_bloc.dart';
+import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/models/theme_dto.dart';
@@ -24,7 +25,8 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
   final BuildContext context;
 
   DashBoardBloc(this.context)
-      : super(const DashBoardState(themes: [], listBanks: [])) {
+      : super(DashBoardState(
+            themes: [], listBanks: [], appInfoDTO: AppInfoDTO())) {
     on<TokenEventCheckValid>(_checkValidToken);
     on<TokenFcmUpdateEvent>(_updateFcmToken);
     on<GetUserInformation>(_getUserInformation);

@@ -5,10 +5,9 @@ import 'package:flutter/material.dart';
 class BackgroundAppBarHome extends StatelessWidget {
   final Widget child;
   final File file;
-  final String url;
 
   const BackgroundAppBarHome(
-      {super.key, required this.child, required this.file, required this.url});
+      {super.key, required this.child, required this.file});
 
   @override
   Widget build(BuildContext context) {

@@ -60,19 +60,20 @@ class AuthProvider with ChangeNotifier {
   NfcTag? tag;
 
   SettingAccountDTO settingDTO = SettingAccountDTO();
-  ThemeDTO themeDTO = ThemeDTO();
-  List<ThemeDTO> themes = [];
 
-  File file = File('');
-  File fileLogo = File('');
-  File fileThemeLogin = File('');
-
-  bool isEventTheme = false;
-
-  int themeVer = 0;
-
+  /// Theme
   final themesController = StreamController<List<File>>.broadcast();
   late Stream<List<File>> themesStream;
+  ThemeDTO themeNotEvent = ThemeDTO();
+  List<ThemeDTO> themes = [];
+
+  /// Dùng khi không set Event cho
+  File fileTheme = File('');
+
+  /// Dùng cho màn chưa Login
+  File fileLogo = File('');
+
+  bool isEventTheme = false;
 
   File avatarUser = File('');
 
@@ -92,14 +93,6 @@ class AuthProvider with ChangeNotifier {
     themesController.add(listFile);
   }
 
-  @override
-  void dispose() {
-    if (themesController.hasListener) {
-      themesController.close();
-    }
-    super.dispose();
-  }
-
   void setContext(BuildContext ctx) async {
     if (context != null) {
       return;
@@ -108,11 +101,17 @@ class AuthProvider with ChangeNotifier {
     PackageInfo data = await PackageInfo.fromPlatform();
     packageInfo = data;
     versionApp = packageInfo.version;
-    initThemeDTO();
+    _loadThemeSystem();
     themesStream = themesController.stream;
     themes = userRes.themes;
     updateThemes(themes);
     notifyListeners();
+  }
+
+  _loadThemeSystem() {
+    updateEventTheme(null);
+    updateFileLogo('');
+    initThemeDTO();
   }
 
   void updateRenderUI({bool isLogout = false}) {
@@ -144,27 +143,21 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void updateFileThemeLogin(String url) async {
-    if (url.isNotEmpty) {
-      fileThemeLogin = await getImageFile(url);
+  void updateFileTheme(String file) async {
+    if (file.isNotEmpty) {
+      fileTheme = await getImageFile(file);
     } else {
-      String _url = ThemeHelper.instance.getThemeLogin();
-      fileThemeLogin = await getImageFile(_url);
+      String url = ThemeHelper.instance.getThemeSystem();
+      fileTheme = await getImageFile(url);
     }
-    notifyListeners();
-  }
-
-  void updateThemeVersion(value) {
-    themeVer = value;
-    ThemeHelper.instance.updateThemeKey(themeVer);
     notifyListeners();
   }
 
   void updateThemeDTO(value) async {
     if (value == null) return;
-    themeDTO = value;
-    file = await getImageFile(themeDTO.file);
-    await userRes.updateThemeDTO(themeDTO);
+    themeNotEvent = value;
+    fileTheme = await getImageFile(themeNotEvent.file);
+    await userRes.updateThemeDTO(themeNotEvent);
     notifyListeners();
   }
 
@@ -178,8 +171,8 @@ class AuthProvider with ChangeNotifier {
   void initThemeDTO() async {
     ThemeDTO? theme = await userRes.getThemeDTO();
     if (theme == null) return;
-    themeDTO = theme;
-    file = await getImageFile(themeDTO.file);
+    themeNotEvent = theme;
+    fileTheme = await getImageFile(themeNotEvent.file);
     notifyListeners();
   }
 
@@ -191,7 +184,7 @@ class AuthProvider with ChangeNotifier {
       if (_local == null || settingDTO.themeType != _local.type) {
         await onSaveThemToLocal();
       } else if (settingDTO.themeType == _local.type) {
-        file = await getImageFile(themeDTO.file);
+        fileTheme = await getImageFile(themeNotEvent.file);
       }
     }
     notifyListeners();
@@ -205,11 +198,11 @@ class AuthProvider with ChangeNotifier {
 
     String localPath = await downloadAndSaveImage(settingDTO.themeImgUrl, path);
     if (localPath.isNotEmpty) {
-      themeDTO.setFile(localPath);
-      themeDTO.setType(settingDTO.themeType);
+      themeNotEvent.setFile(localPath);
+      themeNotEvent.setType(settingDTO.themeType);
 
-      userRes.updateThemeDTO(themeDTO);
-      file = await getImageFile(themeDTO.file);
+      userRes.updateThemeDTO(themeNotEvent);
+      fileTheme = await getImageFile(themeNotEvent.file);
     }
     notifyListeners();
   }
@@ -335,5 +328,13 @@ class AuthProvider with ChangeNotifier {
     isShowToastUpdate = -1;
     avatarUser = File('');
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    if (themesController.hasListener) {
+      themesController.close();
+    }
+    super.dispose();
   }
 }

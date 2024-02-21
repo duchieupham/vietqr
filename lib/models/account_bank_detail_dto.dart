@@ -40,6 +40,8 @@ class AccountBankDetailDTO {
       this.transactions,
       this.bankShortName = ''});
 
+  bool get isHideBDSD => (!authenticated || bankTypeStatus == 0);
+
   factory AccountBankDetailDTO.fromJson(Map<String, dynamic> json) {
     final List<BusinessDetails> businessDetails = [];
     final List<Transactions> transactions = [];

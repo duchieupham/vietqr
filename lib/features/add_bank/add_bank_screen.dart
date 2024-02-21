@@ -803,9 +803,9 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                     height: 30,
                     margin: const EdgeInsets.only(left: 4),
                     decoration: BoxDecoration(
-                      image: provider.bankTypeDTO!.file != null
+                      image: provider.bankTypeDTO!.fileTheme != null
                           ? DecorationImage(
-                              image: FileImage(provider.bankTypeDTO!.file!))
+                              image: FileImage(provider.bankTypeDTO!.fileTheme!))
                           : DecorationImage(
                               image: ImageUtils.instance.getImageNetWork(
                                   provider.bankTypeDTO?.imageId ?? '')),

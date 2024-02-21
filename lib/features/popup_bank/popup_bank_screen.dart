@@ -273,9 +273,7 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
                                 NavigatorUtils.navigatePage(
                                     context,
                                     BankCardDetailScreen(
-                                        bankId: state.bankAccountDTO.id,
-                                        idAdminBank:
-                                            state.bankAccountDTO.userId),
+                                        bankId: state.bankAccountDTO.id),
                                     routeName: BankCardDetailScreen.routeName);
                               }),
                           _buildBottomBar(
@@ -513,10 +511,10 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
     NavigatorUtils.navigatePage(
         context,
         BankCardDetailScreen(
-            bankId: dto.id,
-            pageIndex: 3,
-            isLoading: false,
-            idAdminBank: dto.userId),
+          bankId: dto.id,
+          pageIndex: 3,
+          isLoading: false,
+        ),
         routeName: BankCardDetailScreen.routeName);
   }
 

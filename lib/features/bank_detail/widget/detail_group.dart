@@ -23,8 +23,9 @@ import '../events/detail_group_event.dart';
 
 class DetailGroupScreen extends StatefulWidget {
   final String groupId;
+  final bool isHideBDSD;
 
-  const DetailGroupScreen({required this.groupId});
+  const DetailGroupScreen({required this.groupId, this.isHideBDSD = false});
 
   @override
   State<DetailGroupScreen> createState() => _ShareBDSDInviteState();
@@ -349,7 +350,7 @@ class _ShareBDSDInviteState extends State<DetailGroupScreen> {
           ],
         ),
         ...detailDTO.banks.map((e) {
-          return _buildItemBank(e, detailDTO.userId);
+          return _buildItemBank(e, widget.isHideBDSD);
         }).toList()
       ],
     );
@@ -426,7 +427,7 @@ class _ShareBDSDInviteState extends State<DetailGroupScreen> {
     );
   }
 
-  Widget _buildItemBank(TerminalBankResponseDTO dto, String idAdminBank) {
+  Widget _buildItemBank(TerminalBankResponseDTO dto, bool isHideBDSD) {
     return Container(
       margin: EdgeInsets.only(top: 12),
       decoration: BoxDecoration(
@@ -480,7 +481,6 @@ class _ShareBDSDInviteState extends State<DetailGroupScreen> {
                 borderRadius: BorderRadius.circular(16),
                 widget: BottomSheetDetailBankBDSD(
                   dto: dto,
-                  idAdminBank: idAdminBank,
                   hideRemove: detailDTO.banks.length == 1,
                   onDelete: (bankId) {
                     Map<String, dynamic> param = {};

@@ -48,15 +48,15 @@ class WidgetQr extends StatefulWidget {
 }
 
 class _VietQrState extends State<WidgetQr> {
-  bool get small => MediaQuery.of(context).size.height < 800;
+  bool get small => MediaQuery.of(context).size.width < 400;
+  late AuthProvider _provider;
 
   @override
   void initState() {
     super.initState();
+    _provider = Provider.of<AuthProvider>(context, listen: false);
     // Bật chế độ giữ màn hình sáng
-    if (Provider.of<AuthProvider>(context, listen: false)
-        .settingDTO
-        .keepScreenOn) {
+    if (_provider.settingDTO.keepScreenOn) {
       Wakelock.enable();
     }
 
@@ -123,7 +123,7 @@ class _VietQrState extends State<WidgetQr> {
                     children: [
                       Container(
                         alignment: Alignment.center,
-                        width: small ? 50 : 70,
+                        width: small ? 70 : 70,
                         padding: const EdgeInsets.symmetric(horizontal: 24),
                         decoration: BoxDecoration(
                           image: DecorationImage(
@@ -177,7 +177,7 @@ class _VietQrState extends State<WidgetQr> {
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child: Image.asset(
                             'assets/images/ic-copy-blue.png',
-                            width: small ? 24 : 32,
+                            width: small ? 32 : 32,
                             height: 32,
                           ),
                         ),

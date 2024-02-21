@@ -69,10 +69,7 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
     _bloc.add(GetInfoTelegramEvent(bankId: widget.bankId, isLoading: true));
     _bloc.add(GetInfoLarkEvent(bankId: widget.bankId));
     _bloc.add(GetMyListGroupBDSDEvent(
-      userID: userId,
-      bankId: widget.bankId,
-      offset: 0,
-    ));
+        userID: userId, bankId: widget.bankId, offset: 0));
   }
 
   Future<void> onRefresh() async {
@@ -295,10 +292,7 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                             context, ShareBDSDInviteScreen(),
                             routeName: _ShareBDSDScreenState.routeName);
                         _bloc.add(GetMyListGroupBDSDEvent(
-                          userID: userId,
-                          bankId: widget.bankId,
-                          offset: 0,
-                        ));
+                            userID: userId, bankId: widget.bankId, offset: 0));
                       },
                       child: Container(
                         height: 40,
@@ -334,13 +328,10 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
     return GestureDetector(
       onTap: () async {
         await NavigatorUtils.navigatePage(
-            context,
-            DetailGroupScreen(
-              groupId: dto.id,
-            ),
+            context, DetailGroupScreen(groupId: dto.id),
             routeName: _ShareBDSDScreenState.routeName);
-        _bloc.add(GetListGroupBDSDEvent(
-            userID: userId, type: 0, offset: 0, loadingPage: true));
+        _bloc.add(GetMyListGroupBDSDEvent(
+            userID: userId, bankId: widget.bankId, offset: 0));
       },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -350,9 +341,7 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(
-              height: 4,
-            ),
+            const SizedBox(height: 4),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -394,9 +383,7 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                     )
                   ],
                 ),
-                SizedBox(
-                  width: 60,
-                ),
+                SizedBox(width: 60),
                 Icon(
                   Icons.arrow_forward,
                   color: AppColor.BLUE_TEXT,

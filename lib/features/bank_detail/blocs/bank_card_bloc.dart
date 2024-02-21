@@ -33,14 +33,10 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
   void _getDetail(BankCardEvent event, Emitter emit) async {
     try {
       if (event is BankCardGetDetailEvent) {
-        emit(
-          state.copyWith(
-              status: BlocStatus.LOADING_PAGE, request: BankDetailType.NONE),
-        );
+        emit(state.copyWith(
+            status: BlocStatus.LOADING_PAGE, request: BankDetailType.NONE));
         final AccountBankDetailDTO dto =
             await bankCardRepository.getAccountBankDetail(bankId);
-
-
 
         emit(
           state.copyWith(
@@ -211,14 +207,12 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
   void _getMyListGroup(BankCardEvent event, Emitter emit) async {
     try {
       if (event is GetMyListGroupEvent) {
-        emit(state.copyWith(
-            status: BlocStatus.NONE, request: BankDetailType.NONE));
+        emit(state.copyWith(request: BankDetailType.NONE));
 
         final TerminalDto terminalDto = await transactionRepository
             .getMyListGroup(event.userID, bankId, event.offset);
 
         emit(state.copyWith(
-          status: BlocStatus.NONE,
           terminalDto: terminalDto,
           request: BankDetailType.GET_LIST_GROUP,
         ));

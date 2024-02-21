@@ -1,4 +1,3 @@
-import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/main.dart';
 
 class ThemeHelper {
@@ -8,94 +7,79 @@ class ThemeHelper {
 
   static ThemeHelper get instance => _instance;
 
-  //
-  Future<void> initialTheme() async {
-    await sharedPrefs.setString('THEME_SYSTEM', AppColor.THEME_SYSTEM);
-  }
-
-  Future<void> updateTheme(String theme) async {
-    await sharedPrefs.setString('THEME_SYSTEM', theme);
-  }
-
-  String getTheme() {
-    return sharedPrefs.getString('THEME_SYSTEM')!;
-  }
+  //Dùng để update list themes
+  static String theme_version = 'THEME_VERSION';
+  static String logo_version = 'LOGO_VERSION';
+  static String logo_theme = 'LOGO_THEME_v2';
+  static String theme_system = 'THEME_v2';
+  static String event_theme = 'EVENT_THEME';
 
   Future<void> updateLogoTheme(String theme) async {
-    if (!sharedPrefs.containsKey('LOGO_THEME') ||
-        sharedPrefs.getString('LOGO_THEME') == null) {
-      await sharedPrefs.setString('LOGO_THEME', theme);
+    if (!sharedPrefs.containsKey(logo_theme) ||
+        sharedPrefs.getString(logo_theme) == null) {
+      await sharedPrefs.setString(logo_theme, theme);
       return;
     }
-    await sharedPrefs.setString('LOGO_THEME', theme);
+    await sharedPrefs.setString(logo_theme, theme);
   }
 
   String getLogoTheme() {
-    return sharedPrefs.getString('LOGO_THEME') ?? '';
+    return sharedPrefs.getString(logo_theme) ?? '';
   }
 
-  Future<void> updateThemeKey(int theme) async {
-    if (!sharedPrefs.containsKey('THEME_KEY') ||
-        sharedPrefs.getInt('THEME_KEY') == null) {
-      await sharedPrefs.setInt('THEME_KEY', theme);
+  /// Theme version màn Dashboard
+  Future<void> updateThemeVer(String theme) async {
+    if (!sharedPrefs.containsKey(theme_version) ||
+        sharedPrefs.getString(theme_version) == null) {
+      await sharedPrefs.setString(theme_version, theme);
       return;
     }
-    await sharedPrefs.setInt('THEME_KEY', theme);
+    await sharedPrefs.setString(theme_version, theme);
   }
 
-  int getThemeKey() {
-    return sharedPrefs.getInt('THEME_KEY') ?? -1;
+  String getThemeVer() {
+    return sharedPrefs.getString(theme_version) ?? '';
   }
 
-  Future<void> updateLogoVer(int theme) async {
-    if (!sharedPrefs.containsKey('LOGO_VER') ||
-        sharedPrefs.getInt('LOGO_VER') == null) {
-      await sharedPrefs.setInt('LOGO_VER', theme);
+  /// Logo version màn login
+  Future<void> updateLogoVer(String version) async {
+    if (!sharedPrefs.containsKey(logo_version) ||
+        sharedPrefs.getString(logo_version) == null) {
+      await sharedPrefs.setString(logo_version, version);
       return;
     }
-    await sharedPrefs.setInt('LOGO_VER', theme);
+    await sharedPrefs.setString(logo_version, version);
   }
 
-  int getLogoVer() {
-    return sharedPrefs.getInt('LOGO_VER') ?? -1;
+  String getLogoVer() {
+    return sharedPrefs.getString(logo_version) ?? '';
   }
 
-  Future<void> updateThemeVerLogin(int theme) async {
-    if (!sharedPrefs.containsKey('THEME_VER') ||
-        sharedPrefs.getInt('THEME_VER') == null) {
-      await sharedPrefs.setInt('THEME_VER', theme);
+  /// Theme màn login
+  Future<void> updateThemeSystem(String theme) async {
+    if (!sharedPrefs.containsKey(theme_system) ||
+        sharedPrefs.getString(theme_system) == null) {
+      await sharedPrefs.setString(theme_system, theme);
       return;
     }
-    await sharedPrefs.setInt('THEME_VER', theme);
+    await sharedPrefs.setString(theme_system, theme);
   }
 
-  int getThemeVerLogin() {
-    return sharedPrefs.getInt('THEME_VER') ?? -1;
+  String getThemeSystem() {
+    return sharedPrefs.getString(theme_system) ?? '';
   }
 
-  Future<void> updateThemeLogin(String theme) async {
-    if (!sharedPrefs.containsKey('THEME_LOGIN') ||
-        sharedPrefs.getString('THEME_LOGIN') == null) {
-      await sharedPrefs.setString('THEME_LOGIN', theme);
-      return;
-    }
-    await sharedPrefs.setString('THEME_LOGIN', theme);
-  }
-
-  String getThemeLogin() {
-    return sharedPrefs.getString('THEME_LOGIN') ?? '';
-  }
-
+  /// Theme khi set sự kiện
   Future<void> updateEventTheme(bool theme) async {
-    if (!sharedPrefs.containsKey('EVENT_THEME') ||
-        sharedPrefs.getBool('EVENT_THEME') == null) {
-      await sharedPrefs.setBool('EVENT_THEME', theme);
+    if (!sharedPrefs.containsKey(event_theme) ||
+        sharedPrefs.getBool(event_theme) == null) {
+      await sharedPrefs.setBool(event_theme, theme);
       return;
     }
-    await sharedPrefs.setBool('EVENT_THEME', theme);
+    await sharedPrefs.setBool(event_theme, theme);
   }
 
   bool getEventTheme() {
-    return sharedPrefs.getBool('EVENT_THEME') ?? false;
+    return sharedPrefs.getBool(event_theme) ?? false;
   }
 }

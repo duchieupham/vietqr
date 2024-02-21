@@ -28,7 +28,7 @@ class VietQrNew extends StatefulWidget {
 }
 
 class _VietQrState extends State<VietQrNew> {
-  bool get small => MediaQuery.of(context).size.height < 800;
+  bool get small => MediaQuery.of(context).size.width < 400;
 
   @override
   void initState() {
@@ -80,7 +80,7 @@ class _VietQrState extends State<VietQrNew> {
           Container(
             child: QrImage(
               data: widget.qrGeneratedDTO?.qrCode ?? widget.qrCode ?? '',
-              size: widget.width ?? (small ? 200 : 250),
+              size: widget.width ?? 250,
               version: QrVersions.auto,
               embeddedImage:
                   const AssetImage('assets/images/ic-viet-qr-small.png'),
@@ -90,7 +90,7 @@ class _VietQrState extends State<VietQrNew> {
             ),
           ),
           Container(
-            width: widget.width ?? (small ? 200 : 250),
+            width: widget.width ?? 250,
             height: 30,
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Row(

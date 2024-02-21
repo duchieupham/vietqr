@@ -11,14 +11,14 @@ class NotificationService {
       FlutterLocalNotificationsPlugin();
 
   Future<void> initialNotification() async {
-    if (notificationsPlugin.resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>() !=
-        null) {
-      notificationsPlugin
-          .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()!
-          .requestPermission();
-    }
+    // if (notificationsPlugin.resolvePlatformSpecificImplementation<
+    //         AndroidFlutterLocalNotificationsPlugin>() !=
+    //     null) {
+    //   notificationsPlugin
+    //       .resolvePlatformSpecificImplementation<
+    //           AndroidFlutterLocalNotificationsPlugin>()!
+    //       .requestPermission();
+    // }
 
     AndroidInitializationSettings androidInitializationSettingsAndroid =
         const AndroidInitializationSettings('icon');

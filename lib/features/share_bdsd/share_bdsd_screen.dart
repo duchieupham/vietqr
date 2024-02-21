@@ -660,6 +660,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
                     context,
                     DetailGroupScreen(
                       groupId: dto.id,
+                      isHideBDSD: false,
                     ),
                     routeName: '/share_bdsd_invite');
                 _bloc.add(GetListGroupBDSDEvent(

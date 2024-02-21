@@ -140,14 +140,14 @@ class _ShowQrState extends State<ShowQr> {
                       image: NetworkImage(widget.appInfo.themeImgUrl),
                       fit: BoxFit.cover)
                   : Provider.of<AuthProvider>(context, listen: false)
-                          .file
+                          .fileTheme
                           .path
                           .isNotEmpty
                       ? DecorationImage(
                           image: FileImage(Provider.of<AuthProvider>(
                                   context,
                                   listen: false)
-                              .file),
+                              .fileTheme),
                           fit: BoxFit.cover)
                       : DecorationImage(
                           image: AssetImage('assets/images/bgr-header.png'),

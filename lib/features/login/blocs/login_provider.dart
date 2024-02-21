@@ -17,14 +17,12 @@ class LoginProvider with ChangeNotifier {
 
   //0: trang login ban đầu
   // 1: trang login gần nhất
-  //2 : quickLogin
+  // 2 : quickLogin
   int isQuickLogin = 0;
 
   init() async {
     listInfoUsers = UserHelper.instance.getLoginAccount();
-    if (listInfoUsers.isNotEmpty) {
-      isQuickLogin = 1;
-    }
+    if (listInfoUsers.isNotEmpty) isQuickLogin = 1;
     notifyListeners();
   }
 

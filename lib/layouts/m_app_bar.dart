@@ -33,11 +33,11 @@ class MAppBar extends StatelessWidget implements PreferredSizeWidget {
       return Container(
         decoration: showBG
             ? BoxDecoration(
-                image: page.file.path.isEmpty
+                image: page.fileTheme.path.isEmpty
                     ? DecorationImage(
                         image: NetworkImage(url), fit: BoxFit.cover)
                     : DecorationImage(
-                        image: FileImage(page.file), fit: BoxFit.cover))
+                        image: FileImage(page.fileTheme), fit: BoxFit.cover))
             : BoxDecoration(),
         child: AppBar(
           systemOverlayStyle: const SystemUiOverlayStyle(

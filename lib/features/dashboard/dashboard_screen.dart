@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
@@ -102,9 +103,11 @@ class _DashBoardScreen extends State<DashBoardScreen>
     _bloc = BlocProvider.of(context);
     _provider = Provider.of<AuthProvider>(context, listen: false);
     _isolateStream = IsolateStream(context);
-
     _pageController =
         PageController(initialPage: _provider.pageSelected, keepPage: true);
+
+    Future.delayed(const Duration(seconds: 1), requestNotificationPermission);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _bloc.add(const TokenEventCheckValid());
       listenNewNotification();
@@ -132,6 +135,10 @@ class _DashBoardScreen extends State<DashBoardScreen>
     _bloc.add(GetUserInformation());
     _bloc.add(GetPointEvent());
     _bloc.add(GetCountNotifyEvent());
+  }
+
+  void requestNotificationPermission() async {
+    await Permission.notification.request();
   }
 
   void onRenderUI() async {
@@ -285,7 +292,8 @@ class _DashBoardScreen extends State<DashBoardScreen>
         }
 
         if (state.request == DashBoardType.GET_USER_SETTING) {
-          _provider.updateSettingDTO(UserHelper.instance.getAccountSetting());
+          final settingAccountDTO = UserHelper.instance.getAccountSetting();
+          _provider.updateSettingDTO(settingAccountDTO);
         }
 
         if (state.request == DashBoardType.GET_BANK) {
@@ -293,16 +301,13 @@ class _DashBoardScreen extends State<DashBoardScreen>
         }
 
         if (state.request == DashBoardType.APP_VERSION) {
-          if (state.appInfoDTO != null) {
-            _provider.updateThemeVersion(state.appInfoDTO!.themeVer);
-            _provider.updateAppInfoDTO(state.appInfoDTO);
-          }
+          _provider.updateAppInfoDTO(state.appInfoDTO);
 
-          int themeVerLocal = ThemeHelper.instance.getThemeKey();
-          int themeVerSetting = _provider.themeVer;
+          String themeVerLocal = ThemeHelper.instance.getThemeVer();
+          String themeSystem = state.appInfoDTO.themeVersion;
           List<ThemeDTO> listLocal = await UserRepository.instance.getThemes();
 
-          if (themeVerLocal != themeVerSetting || listLocal.isEmpty) {
+          if (themeVerLocal != themeSystem || listLocal.isEmpty) {
             _bloc.add(GetListThemeEvent());
           }
         }
@@ -315,6 +320,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
           await UserRepository.instance.clearThemes();
           List<ThemeDTO> datas = await _isolateStream.saveThemeReceiver(list);
           _provider.updateThemes(datas);
+          ThemeHelper.instance.updateThemeVer(state.appInfoDTO.themeVersion);
         }
 
         if (state.request == DashBoardType.KEEP_BRIGHT) {
@@ -559,8 +565,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
     return Consumer<AuthProvider>(
       builder: (context, page, child) {
         return BackgroundAppBarHome(
-          file: page.file,
-          url: page.settingDTO.themeImgUrl,
+          file: page.fileTheme,
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 25),
             height: 56,
@@ -569,7 +574,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      if (page.settingDTO.logoUrl.isNotEmpty)
+                      if (page.fileLogo.path.isEmpty)
                         Container(
                           width: 60,
                           height: 30,
@@ -580,7 +585,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
                               imageUrl: page.settingDTO.logoUrl, width: 50),
                         )
                       else
-                        const SizedBox(width: 60, height: 30),
+                        Image.file(page.fileLogo, width: 60, height: 30),
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 12),

@@ -54,7 +54,7 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
 
   final globalKey = GlobalKey();
 
-  bool get small => MediaQuery.of(context).size.height < 800;
+  bool get small => MediaQuery.of(context).size.width < 400;
 
   void onSaveImage(BuildContext context) async {
     DialogWidget.instance.openLoadingDialog();
@@ -489,8 +489,8 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
 
       return Center(
         child: Container(
-          width: 180,
           margin: EdgeInsets.only(top: 20),
+          alignment: Alignment.center,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

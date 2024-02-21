@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 
 class BankAccountDTO {
   final String id;

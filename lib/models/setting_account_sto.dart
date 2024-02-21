@@ -33,6 +33,8 @@ class SettingAccountDTO {
     this.qrShowType = -1,
   });
 
+  bool get isEvent => themeType == 0;
+
   factory SettingAccountDTO.fromJson(Map<String, dynamic> json) {
     return SettingAccountDTO(
       status: json['status'] ?? false,

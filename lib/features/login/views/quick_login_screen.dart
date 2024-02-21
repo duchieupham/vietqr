@@ -72,16 +72,7 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
                 children: [
                   Stack(
                     children: [
-                      Consumer<AuthProvider>(builder: (context, page, child) {
-                        return BackgroundAppBarLogin(
-                          file: page.isEventTheme
-                              ? page.fileThemeLogin
-                              : page.file,
-                          url: widget.appInfoDTO.themeImgUrl,
-                          isEventTheme: widget.appInfoDTO.isEventTheme,
-                          child: const SizedBox(),
-                        );
-                      }),
+                      BackgroundAppBarLogin(child: const SizedBox()),
                       Container(
                         height: 300,
                         padding:

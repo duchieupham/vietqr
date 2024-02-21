@@ -38,36 +38,7 @@ class _ContactUSScreenState extends State<ContactUSScreen> {
               width: MediaQuery.of(context).size.width,
               child: Stack(
                 children: [
-                  Consumer<AuthProvider>(
-                    builder: (context, page, child) {
-                      return BackgroundAppBarLogin(
-                        file: widget.appInfoDTO.isEventTheme
-                            ? page.fileThemeLogin
-                            : page.file,
-                        url: widget.appInfoDTO.themeImgUrl,
-                        isEventTheme: widget.appInfoDTO.isEventTheme,
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Container(
-                            height: 100,
-                            width: MediaQuery.of(context).size.width / 2,
-                            decoration: BoxDecoration(
-                              image: page.fileLogo.path.isNotEmpty
-                                  ? DecorationImage(
-                                      image: FileImage(page.fileLogo),
-                                      fit: BoxFit.contain,
-                                    )
-                                  : DecorationImage(
-                                      image: AssetImage(
-                                          'assets/images/logo_vietgr_payment.png'),
-                                      fit: BoxFit.contain,
-                                    ),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+                  BackgroundAppBarLogin(),
                   Positioned(
                     top: 40,
                     child: Align(

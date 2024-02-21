@@ -101,7 +101,7 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
               Consumer<AuthProvider>(builder: (context, provider, _) {
                 provider.loadThemes();
                 return _buildContainer(
-                  color: provider.settingDTO.themeType == 0
+                  color: provider.settingDTO.isEvent
                       ? AppColor.GREY_BG
                       : AppColor.WHITE,
                   padding: EdgeInsets.zero,
@@ -148,11 +148,10 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
                                           Text(e.name),
                                           const Spacer(),
                                           CustomRadio(
-                                            value: provider.themeDTO.type,
+                                            value: provider.themeNotEvent.type,
                                             groupValue: e.type,
                                             isDisable:
-                                                provider.settingDTO.themeType ==
-                                                    0,
+                                                provider.settingDTO.isEvent,
                                             onChanged: (value) {
                                               onSelect(provider, e);
                                             },
@@ -172,7 +171,7 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
                           }
                         },
                       ),
-                      if (provider.settingDTO.themeType == 0)
+                      if (provider.settingDTO.isEvent)
                         GestureDetector(
                           onTap: () {},
                           child: Container(
@@ -186,9 +185,9 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
                               children: [
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(8),
-                                  child: provider.file.path.isNotEmpty
+                                  child: provider.fileTheme.path.isNotEmpty
                                       ? Image.file(
-                                          provider.file,
+                                          provider.fileTheme,
                                           width: 90,
                                           height: 50,
                                           fit: BoxFit.cover,
@@ -217,7 +216,7 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
                                 ),
                                 const Spacer(),
                                 CustomRadio(
-                                  value: provider.themeDTO.type,
+                                  value: provider.themeNotEvent.type,
                                   groupValue: provider.settingDTO.themeType,
                                   onChanged: (value) {},
                                 ),
