@@ -21,9 +21,10 @@ void _getInviteCode(InviteBDSDEvent event, Emitter emit) async {
   String code = '';
   try {
     if (event is GetRanDomCode) {
-      emit(InviteBDSDLoadingState());
+      emit(InviteBDSDLoadingState(isLoading: event.isLoading));
       code = await _inviteBDSDRepository.getRandomCode();
-      emit(InviteBDSDGetRandomCodeSuccessState(data: code));
+      emit(InviteBDSDGetRandomCodeSuccessState(
+          data: code, isLoading: event.isLoading));
     }
   } catch (e) {
     LOG.error(e.toString());

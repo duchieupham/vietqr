@@ -7,10 +7,18 @@ class InviteBDSDEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class GetRanDomCode extends InviteBDSDEvent {}
+class GetRanDomCode extends InviteBDSDEvent {
+  final bool isLoading;
+
+  GetRanDomCode({this.isLoading = false});
+
+  @override
+  List<Object?> get props => [isLoading];
+}
 
 class CreateNewGroup extends InviteBDSDEvent {
   final Map<String, dynamic> param;
+
   const CreateNewGroup({
     required this.param,
   });
@@ -21,6 +29,7 @@ class CreateNewGroup extends InviteBDSDEvent {
 
 class UpdateGroup extends InviteBDSDEvent {
   final Map<String, dynamic> param;
+
   const UpdateGroup({
     required this.param,
   });
@@ -31,6 +40,7 @@ class UpdateGroup extends InviteBDSDEvent {
 
 class RemoveGroup extends InviteBDSDEvent {
   final Map<String, dynamic> param;
+
   const RemoveGroup({
     required this.param,
   });

@@ -62,6 +62,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDInviteScreen> {
   }
 
   initData() {
+    _bloc.add(GetRanDomCode());
     // _bloc.add(GetInfoTelegramEvent(bankId: widget.bankId, isLoading: true));
     // _bloc.add(GetInfoLarkEvent(bankId: widget.bankId));
     // _bloc.add(GetMemberEvent(bankId: widget.bankId));
@@ -87,10 +88,11 @@ class _ShareBDSDInviteState extends State<ShareBDSDInviteScreen> {
               child: BlocConsumer<InviteBDSDBloc, InviteBDSDState>(
                 listener: (context, state) {
                   if (state is InviteBDSDLoadingState) {
-                    DialogWidget.instance.openLoadingDialog();
+                    if (state.isLoading)
+                      DialogWidget.instance.openLoadingDialog();
                   }
                   if (state is InviteBDSDGetRandomCodeSuccessState) {
-                    Navigator.pop(context);
+                    if (state.isLoading) Navigator.pop(context);
                     Provider.of<ShareBDSDInviteProvider>(context, listen: false)
                         .updateRandomCode(state.data);
                     setState(() {
@@ -282,7 +284,8 @@ class _ShareBDSDInviteState extends State<ShareBDSDInviteScreen> {
                                           AppColor.BLUE_TEXT.withOpacity(0.3),
                                       function: () {
                                         FocusScope.of(context).unfocus();
-                                        _bloc.add(GetRanDomCode());
+                                        _bloc.add(
+                                            GetRanDomCode(isLoading: true));
                                       }),
                                 )
                               ],
@@ -492,7 +495,6 @@ class _ShareBDSDInviteState extends State<ShareBDSDInviteScreen> {
                       },
                     ),
                   );
-                  // _bloc.add(GetMemberEvent(bankId: widget.bankId));
                 },
                 textSize: 11,
                 contentPadding: EdgeInsets.only(left: 4, right: 12),
@@ -502,11 +504,9 @@ class _ShareBDSDInviteState extends State<ShareBDSDInviteScreen> {
               )
             ],
           ),
+          _buildItemAdmin(),
           if (provider.member.isNotEmpty) ...[
-            const SizedBox(
-              height: 4,
-            ),
-            _buildItemAdmin(),
+            const SizedBox(height: 4),
             ...provider.member.map((e) {
               return _buildItemMember(e, (userId) {
                 provider.removeByUserId(userId);

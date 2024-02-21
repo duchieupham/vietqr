@@ -10,22 +10,33 @@ class InviteBDSDState extends Equatable {
 
 class InviteBDSDInitialState extends InviteBDSDState {}
 
-class InviteBDSDLoadingState extends InviteBDSDState {}
+class InviteBDSDLoadingState extends InviteBDSDState {
+  final bool isLoading;
+
+  InviteBDSDLoadingState({this.isLoading = false});
+
+  @override
+  List<Object?> get props => [isLoading];
+}
 
 class InviteBDSDGetRandomCodeSuccessState extends InviteBDSDState {
   final String data;
+  final bool isLoading;
+
   const InviteBDSDGetRandomCodeSuccessState({
     required this.data,
+    this.isLoading = false,
   });
 
   @override
-  List<Object?> get props => [data];
+  List<Object?> get props => [data, isLoading];
 }
 
 class InviteBDSDGetRandomCodeFailedState extends InviteBDSDState {}
 
 class CreateNewGroupSuccessState extends InviteBDSDState {
   final ResponseMessageDTO dto;
+
   const CreateNewGroupSuccessState({
     required this.dto,
   });
@@ -36,6 +47,7 @@ class CreateNewGroupSuccessState extends InviteBDSDState {
 
 class CreateNewGroupFailedState extends InviteBDSDState {
   final ResponseMessageDTO dto;
+
   const CreateNewGroupFailedState({
     required this.dto,
   });
@@ -46,6 +58,7 @@ class CreateNewGroupFailedState extends InviteBDSDState {
 
 class RemoveGroupSuccessState extends InviteBDSDState {
   final ResponseMessageDTO dto;
+
   const RemoveGroupSuccessState({
     required this.dto,
   });
@@ -58,6 +71,7 @@ class RemoveGroupFailedState extends InviteBDSDState {}
 
 class UpdateGroupSuccessState extends InviteBDSDState {
   final ResponseMessageDTO dto;
+
   const UpdateGroupSuccessState({
     required this.dto,
   });
@@ -68,6 +82,7 @@ class UpdateGroupSuccessState extends InviteBDSDState {
 
 class UpdateGroupFailedState extends InviteBDSDState {
   final ResponseMessageDTO dto;
+
   const UpdateGroupFailedState({
     required this.dto,
   });
