@@ -74,6 +74,8 @@ class TerminalBankResponseDTO {
   final String bankName;
   final String imgId;
   final String terminalId;
+  String? name;
+  String? code;
 
   TerminalBankResponseDTO({
     this.bankId = '',
@@ -85,6 +87,8 @@ class TerminalBankResponseDTO {
     this.imgId = '',
     this.qrCode = '',
     this.terminalId = '',
+    this.name = '',
+    this.code = '',
   });
 
   factory TerminalBankResponseDTO.fromJson(Map<String, dynamic> json) {

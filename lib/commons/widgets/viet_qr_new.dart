@@ -63,7 +63,7 @@ class _VietQrState extends State<VietQrNew> {
       height: 300,
       decoration: BoxDecoration(
         color: AppColor.WHITE,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
             color: Theme.of(context).shadowColor.withOpacity(0.1),

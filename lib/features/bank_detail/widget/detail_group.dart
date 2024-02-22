@@ -350,6 +350,8 @@ class _ShareBDSDInviteState extends State<DetailGroupScreen> {
           ],
         ),
         ...detailDTO.banks.map((e) {
+          e.code = detailDTO.code;
+          e.name = detailDTO.name;
           return _buildItemBank(e, widget.isHideBDSD);
         }).toList()
       ],

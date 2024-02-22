@@ -15,9 +15,17 @@ class PopupBankShare extends StatefulWidget {
   static String routeName = '/popup_bank_share';
 
   final QRGeneratedDTO dto;
+  final String? terminalName;
+  final String? terminalCode;
   final TypeImage type;
 
-  PopupBankShare({super.key, required this.dto, required this.type});
+  PopupBankShare({
+    super.key,
+    required this.dto,
+    required this.type,
+    this.terminalName,
+    this.terminalCode,
+  });
 
   @override
   State<PopupBankShare> createState() => _PopupBankShareState();
@@ -98,15 +106,17 @@ class _PopupBankShareState extends State<PopupBankShare> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
+                          Padding(padding: EdgeInsets.only(top: 20)),
                           Container(
                             width: 300,
+                            height: 60,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(6),
-                              color: AppColor.GREY_BG,
+                              color: AppColor.WHITE,
                             ),
                             child: IntrinsicHeight(
                               child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Container(
                                     alignment: Alignment.center,
@@ -131,6 +141,8 @@ class _PopupBankShareState extends State<PopupBankShare> {
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 10, horizontal: 8),
                                       child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
@@ -150,7 +162,7 @@ class _PopupBankShareState extends State<PopupBankShare> {
                                             overflow: TextOverflow.ellipsis,
                                             style: TextStyle(
                                               color: AppColor.textBlack,
-                                              fontSize: small ? 11 : 13,
+                                              fontSize: 10,
                                             ),
                                           ),
                                         ],
@@ -161,9 +173,76 @@ class _PopupBankShareState extends State<PopupBankShare> {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 20),
                           VietQrNew(qrCode: widget.dto.qrCode),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 20),
+                          if (widget.terminalName != null)
+                            Container(
+                              width: 300,
+                              height: 100,
+                              padding: EdgeInsets.symmetric(horizontal: 20),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(6),
+                                color: AppColor.WHITE,
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 70,
+                                        child: Text(
+                                          'Cửa hàng: ',
+                                          style: TextStyle(
+                                            color: AppColor.GREY_TEXT,
+                                            fontSize: 13,
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                          padding: EdgeInsets.only(left: 10)),
+                                      Text(
+                                        widget.terminalName ?? '',
+                                        style: TextStyle(
+                                          // fontWeight: FontWeight.bold,
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 10),
+                                    child: Divider(
+                                      color: AppColor.GREY_TOP_TAB_BAR,
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 70,
+                                        child: Text(
+                                          'Nội dung: ',
+                                          style: TextStyle(
+                                            color: AppColor.GREY_TEXT,
+                                            fontSize: 13,
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                          padding: EdgeInsets.only(left: 10)),
+                                      Text(
+                                        widget.terminalCode ?? '',
+                                        style: TextStyle(
+                                          // fontWeight: FontWeight.bold,
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
                           if (widget.dto.amount.isNotEmpty ||
                               widget.dto.content.isNotEmpty)
                             Container(
@@ -226,7 +305,7 @@ class _PopupBankShareState extends State<PopupBankShare> {
                     Center(
                       child: Text('BY VIETQR VN',
                           style:
-                              TextStyle(color: AppColor.WHITE, fontSize: 16)),
+                              TextStyle(color: AppColor.WHITE, fontSize: 13)),
                     ),
                     const SizedBox(height: 24),
                   ],

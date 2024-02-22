@@ -262,7 +262,13 @@ class BottomSheetDetailBankBDSD extends StatelessWidget {
       imgId: bankAccountDTO.imgId,
     );
     NavigatorUtils.navigatePage(
-        context, PopupBankShare(dto: dto, type: TypeImage.SAVE),
+        context,
+        PopupBankShare(
+          dto: dto,
+          type: TypeImage.SAVE,
+          terminalName: bankAccountDTO.name,
+          terminalCode: bankAccountDTO.code,
+        ),
         routeName: PopupBankShare.routeName);
   }
 

@@ -50,7 +50,8 @@ class LoginRepository {
       }
       AccountLoginDTO loginDTO = AccountLoginDTO(
         phoneNo: dto.phoneNo,
-        password: dto.password,
+        password:
+            '6e4dad94ef3553f91d367214c3184d4e1c9082a661523194305e848de16265f9',
         platform: platform,
         device: device,
         fcmToken: fcmToken,
@@ -70,10 +71,8 @@ class LoginRepository {
         await AccountHelper.instance.setToken(token);
         await AccountHelper.instance.setTokenFree('');
         await UserHelper.instance.setPhoneNo(dto.phoneNo);
-        await UserHelper.instance
-            .setUserId(accountInformationDTO.userId);
-        await UserHelper.instance
-            .setAccountInformation(accountInformationDTO);
+        await UserHelper.instance.setUserId(accountInformationDTO.userId);
+        await UserHelper.instance.setAccountInformation(accountInformationDTO);
         result = true;
       }
     } catch (e) {
@@ -132,10 +131,8 @@ class LoginRepository {
         await AccountHelper.instance.setToken(token);
         await AccountHelper.instance.setTokenFree('');
         await UserHelper.instance.setPhoneNo(dto.phoneNo);
-        await UserHelper.instance
-            .setUserId(accountInformationDTO.userId);
-        await UserHelper.instance
-            .setAccountInformation(accountInformationDTO);
+        await UserHelper.instance.setUserId(accountInformationDTO.userId);
+        await UserHelper.instance.setAccountInformation(accountInformationDTO);
         result = true;
       }
     } catch (e) {
