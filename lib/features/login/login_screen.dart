@@ -39,6 +39,7 @@ import 'package:vierqr/models/account_login_dto.dart';
 import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/info_user_dto.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
+import 'package:vierqr/models/user_repository.dart';
 import 'package:vierqr/services/shared_references/account_helper.dart';
 import 'package:vierqr/services/shared_references/theme_helper.dart';
 import 'package:vierqr/services/shared_references/user_information_helper.dart';
@@ -140,8 +141,19 @@ class _LoginState extends State<_Login> {
               _bloc.add(GetVersionAppEvent(isCheckVer: state.isCheckApp));
             }
             if (state.request == LoginType.APP_VERSION) {
-              _onHandleAppSystem(state, provider);
               _authProvider.updateAppInfoDTO(state.appInfoDTO);
+              bool isClearCache = await _authProvider.clearCache();
+
+              if (isClearCache) {
+                ThemeHelper.instance.clearTheme();
+                UserHelper.instance.setBankTypeKey(false);
+                await UserRepository.instance.clearThemes();
+                await UserRepository.instance.clearBanks();
+                await UserRepository.instance.clearThemeDTO();
+              }
+
+              _onHandleAppSystem(state, provider);
+
               if (_authProvider.isUpdateVersion) {
                 if (!state.appInfoDTO.isCheckApp)
                   showDialog(
@@ -973,7 +985,9 @@ class _LoginState extends State<_Login> {
 
     if (logoTheme.isEmpty) {
       String path = state.appInfoDTO.logoUrl.split('/').last;
-      path = path.replaceAll('.', '');
+      if (path.contains('.png')) {
+        path.replaceAll('.png', '');
+      }
 
       String localPath =
           await downloadAndSaveImage(state.appInfoDTO.logoUrl, path);
@@ -984,7 +998,9 @@ class _LoginState extends State<_Login> {
 
     if (themeSystem.isEmpty || isEventTheme != state.appInfoDTO.isEventTheme) {
       String path = state.appInfoDTO.themeImgUrl.split('/').last;
-      path = path.replaceAll('.', '');
+      if (path.contains('.png')) {
+        path.replaceAll('.png', '');
+      }
 
       String localPath =
           await downloadAndSaveImage(state.appInfoDTO.themeImgUrl, path);

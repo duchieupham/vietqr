@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
@@ -27,10 +28,9 @@ class HivePrefs {
     if (_initEd) {
       completer.complete(_instance);
     } else {
-      final document = await getApplicationDocumentsDirectory();
-      await Hive.initFlutter(document.path);
       Hive.registerAdapter(ThemeDTOAdapter());
       Hive.registerAdapter(BankTypeDTOAdapter());
+      await Hive.initFlutter();
       prefs = await Hive.openBox(keys.prefKey);
       bankPrefs = await LocalRepository<BankTypeDTO>().openBox(keys.bankKey);
       _initEd = true;

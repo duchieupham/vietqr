@@ -87,6 +87,11 @@ class UserRepository {
     await themeLocal.addSingleToWishBox(box, dto, userId);
   }
 
+  clearThemeDTO() async {
+    Box box = await themeLocal.openBox(theme_dto_key);
+    themeLocal.clearWishlist(box);
+  }
+
   Future<List<ThemeDTO>> getThemes() async {
     Box box = await themeLocal.openBox(list_theme_key);
     _themes = themeLocal.getWishlist(box);

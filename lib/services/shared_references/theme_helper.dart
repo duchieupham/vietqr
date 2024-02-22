@@ -14,6 +14,13 @@ class ThemeHelper {
   static String theme_system = 'THEME_v2';
   static String event_theme = 'EVENT_THEME';
 
+  void clearTheme() async {
+    await updateThemeVer('');
+    await updateLogoVer('');
+    await updateLogoTheme('');
+    await updateThemeSystem('');
+  }
+
   Future<void> updateLogoTheme(String theme) async {
     if (!sharedPrefs.containsKey(logo_theme) ||
         sharedPrefs.getString(logo_theme) == null) {

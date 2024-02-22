@@ -778,7 +778,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
     _bloc.add(BankCardEventRequestOTP(dto: dto));
   }
 
-  _buildSelectBankWidget(AddBankState state, provider, height) {
+  _buildSelectBankWidget(AddBankState state,AddBankProvider provider, height) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -803,9 +803,9 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                     height: 30,
                     margin: const EdgeInsets.only(left: 4),
                     decoration: BoxDecoration(
-                      image: provider.bankTypeDTO!.fileTheme != null
+                      image: provider.bankTypeDTO!.file != null
                           ? DecorationImage(
-                              image: FileImage(provider.bankTypeDTO!.fileTheme!))
+                              image: FileImage(provider.bankTypeDTO!.file!))
                           : DecorationImage(
                               image: ImageUtils.instance.getImageNetWork(
                                   provider.bankTypeDTO?.imageId ?? '')),

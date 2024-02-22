@@ -131,7 +131,6 @@ class _DashBoardScreen extends State<DashBoardScreen>
 
   void initialServices() {
     _bloc.add(GetBanksEvent());
-    _bloc.add(GetVersionAppEvent());
     _bloc.add(GetUserInformation());
     _bloc.add(GetPointEvent());
     _bloc.add(GetCountNotifyEvent());
@@ -263,6 +262,41 @@ class _DashBoardScreen extends State<DashBoardScreen>
     }
   }
 
+  void _onHandleAppSystem(AppInfoDTO dto, AuthProvider authProvider) async {
+    String logoTheme = ThemeHelper.instance.getLogoTheme();
+    String themeSystem = ThemeHelper.instance.getThemeSystem();
+    bool isEventTheme = ThemeHelper.instance.getEventTheme();
+
+    if (logoTheme.isEmpty) {
+      String path = dto.logoUrl.split('/').last;
+      if (path.contains('.png')) {
+        path.replaceAll('.png', '');
+      }
+
+      String localPath = await downloadAndSaveImage(dto.logoUrl, path);
+
+      ThemeHelper.instance.updateLogoTheme(localPath);
+      authProvider.updateFileLogo(localPath);
+    }
+
+    if (themeSystem.isEmpty || isEventTheme != dto.isEventTheme) {
+      String path = dto.themeImgUrl.split('/').last;
+      if (path.contains('.png')) {
+        path.replaceAll('.png', '');
+      }
+
+      String localPath = await downloadAndSaveImage(dto.themeImgUrl, path);
+
+      ThemeHelper.instance.updateThemeSystem(localPath);
+      authProvider.updateFileTheme(localPath);
+    }
+
+    if (isEventTheme != dto.isEventTheme) {
+      ThemeHelper.instance.updateEventTheme(dto.isEventTheme);
+      authProvider.updateEventTheme(dto.isEventTheme);
+    }
+  }
+
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
@@ -294,6 +328,15 @@ class _DashBoardScreen extends State<DashBoardScreen>
         if (state.request == DashBoardType.GET_USER_SETTING) {
           final settingAccountDTO = UserHelper.instance.getAccountSetting();
           _provider.updateSettingDTO(settingAccountDTO);
+          String themeVerLocal = ThemeHelper.instance.getThemeVer();
+          String themeSystem = state.appInfoDTO.themeVersion;
+          List<ThemeDTO> listLocal = await UserRepository.instance.getThemes();
+
+          if (themeVerLocal != themeSystem || listLocal.isEmpty) {
+            _bloc.add(GetListThemeEvent());
+          }
+
+          _onHandleAppSystem(state.appInfoDTO, _provider);
         }
 
         if (state.request == DashBoardType.GET_BANK) {
@@ -303,13 +346,16 @@ class _DashBoardScreen extends State<DashBoardScreen>
         if (state.request == DashBoardType.APP_VERSION) {
           _provider.updateAppInfoDTO(state.appInfoDTO);
 
-          String themeVerLocal = ThemeHelper.instance.getThemeVer();
-          String themeSystem = state.appInfoDTO.themeVersion;
-          List<ThemeDTO> listLocal = await UserRepository.instance.getThemes();
+          bool isClearCache = await _provider.clearCache();
 
-          if (themeVerLocal != themeSystem || listLocal.isEmpty) {
-            _bloc.add(GetListThemeEvent());
+          if (isClearCache) {
+            ThemeHelper.instance.clearTheme();
+            UserHelper.instance.setBankTypeKey(false);
+            await UserRepository.instance.clearThemes();
+            await UserRepository.instance.clearBanks();
+            await UserRepository.instance.clearThemeDTO();
           }
+          initialServices();
         }
 
         if (state.request == DashBoardType.THEMES) {
@@ -334,7 +380,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
         //check lỗi hệ thống
         if (state.request == DashBoardType.TOKEN) {
           if (state.typeToken == TokenType.Valid) {
-            initialServices();
+            _bloc.add(GetVersionAppEvent());
             _updateFcmToken(widget.isFromLogin);
           } else {
             _provider.updateRenderUI();

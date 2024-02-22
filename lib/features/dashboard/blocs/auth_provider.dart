@@ -260,6 +260,23 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<bool> clearCache() async {
+    int packageVer = int.parse(packageInfo.version.replaceAll('.', ''));
+    int packageBuild = int.parse(packageInfo.buildNumber);
+
+    if (PlatformUtils.instance.isIOsApp()) {
+      if (appInfoDTO.iosVer > packageVer) {
+        return true;
+      }
+    } else if (PlatformUtils.instance.isAndroidApp()) {
+      if (appInfoDTO.adrVer > packageVer) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   void updateVersion() {
     int packageVer = int.parse(packageInfo.version.replaceAll('.', ''));
     int packageBuild = int.parse(packageInfo.buildNumber);
@@ -286,6 +303,10 @@ class AuthProvider with ChangeNotifier {
           versionApp = appInfoDTO.iosVersion.split('+').first;
           isShowToastUpdate = 1;
         }
+      } else {
+        isUpdateVersion = false;
+        appInfoDTO.isCheckApp = false;
+        isShowToastUpdate = 0;
       }
     } else if (PlatformUtils.instance.isAndroidApp()) {
       if (packageVer == appInfoDTO.adrVer) {
@@ -310,6 +331,10 @@ class AuthProvider with ChangeNotifier {
           versionApp = appInfoDTO.androidVersion.split('+').first;
           isShowToastUpdate = 1;
         }
+      } else {
+        isUpdateVersion = false;
+        appInfoDTO.isCheckApp = false;
+        isShowToastUpdate = 0;
       }
     }
     notifyListeners();
