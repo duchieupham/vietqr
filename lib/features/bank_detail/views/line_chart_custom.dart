@@ -9,13 +9,13 @@ import '../../../commons/constants/configurations/theme.dart';
 class LineChartCustom extends StatefulWidget {
   final List<ResponseStatisticDTO> listData;
   final List<List<ResponseStatisticDTO>> listSeparate;
-  final DateTime dateTime;
+  final int type;
 
   const LineChartCustom(
       {Key? key,
       required this.listData,
       required this.listSeparate,
-      required this.dateTime})
+      required this.type})
       : super(key: key);
 
   @override
@@ -35,37 +35,6 @@ class _LineChartCustomState extends State<LineChartCustom> {
   @override
   void initState() {
     super.initState();
-
-    // if (widget.listData.isEmpty) {
-    //   DateTime _dateTime = widget.dateTime;
-    //   int day = getDaysInMonth(_dateTime.year, _dateTime.month);
-    //   Map<int, ResponseStatisticDTO> uniqueMap = {};
-    //
-    //   for (int i = 1; i <= day; i++) {
-    //     String text = '$i';
-    //     String monthText = '${widget.dateTime.month}';
-    //
-    //     if (_dateTime.month < 10) monthText = '0${_dateTime.month}';
-    //
-    //     if (i < 10) text = '0$i';
-    //
-    //     uniqueMap[i] =
-    //         ResponseStatisticDTO(date: '${_dateTime.year}-$monthText-$text');
-    //   }
-    //   listStatistic = uniqueMap.values.toList()
-    //     ..sort((a, b) => a.date.compareTo(b.date));
-    // } else {
-    //   listStatistic = [...widget.listData];
-    // }
-
-    // if (maxValueAmount > Numeral.MILLION) {
-    //   currencyUnit = 'tr';
-    //   conversionRate = Numeral.MILLION;
-    // }
-    // if (maxValueAmount > Numeral.BILLION) {
-    //   currencyUnit = 'tỷ';
-    //   conversionRate = Numeral.BILLION;
-    // }
   }
 
   int get maxValueAmount {
@@ -153,10 +122,10 @@ class _LineChartCustomState extends State<LineChartCustom> {
                         ),
                       ),
                       Positioned(
-                        bottom: 0,
+                        bottom: 25,
                         right: 0,
                         child: Text(
-                          'Thời gian\n(Ngày)',
+                          'Thời gian\n(${widget.type == 0 ? 'Giờ' : 'Ngày'})',
                           textAlign: TextAlign.center,
                           style: TextStyle(fontSize: 8),
                         ),

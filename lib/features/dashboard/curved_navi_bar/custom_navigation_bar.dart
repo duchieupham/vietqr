@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 
 import 'curved_nav_bar_model.dart';
 import 'nav_bar_item.dart';
@@ -265,7 +266,7 @@ class CurvedNavigationBarState extends State<CurvedNavigationBar>
       return;
     }
     widget.onTap(index);
-    if (index < 0) return;
+    if (index < 0 || index == PageType.STORE.pageIndex) return;
     final newPosition = index / _length;
     setState(() {
       _startingPos = _pos;

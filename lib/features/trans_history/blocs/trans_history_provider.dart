@@ -54,7 +54,8 @@ class TransProvider with ChangeNotifier {
     const FilterTimeTransaction(id: 5, title: 'Khoảng thời gian'),
     const FilterTimeTransaction(id: 4, title: '3 tháng gần đây'),
     const FilterTimeTransaction(id: 3, title: '1 tháng gần đây'),
-    const FilterTimeTransaction(id: 2, title: '7 ngày gần nhất (mặc định)'),
+    const FilterTimeTransaction(id: 2, title: '7 ngày gần nhất'),
+    const FilterTimeTransaction(id: 1, title: 'Hôm nay (mặc định)'),
   ];
 
   FilterStatusTransaction statusValue =
@@ -66,7 +67,7 @@ class TransProvider with ChangeNotifier {
   FilterTransaction get valueFilter => _valueFilter;
 
   FilterTimeTransaction _valueTimeFilter =
-      const FilterTimeTransaction(id: 2, title: '7 ngày gần nhất (mặc định)');
+      const FilterTimeTransaction(id: 1, title: 'Hôm nay (mặc định)');
 
   FilterTimeTransaction get valueTimeFilter => _valueTimeFilter;
   DateTime? _toDate;
@@ -212,7 +213,7 @@ class TransProvider with ChangeNotifier {
       Function(TransactionInputDTO) onSearchTrans) {
     DateTime now = DateTime.now();
     DateTime fromDate = DateTime(now.year, now.month, now.day);
-    DateTime endDate = fromDate.subtract(const Duration(days: 7));
+    DateTime endDate = fromDate.subtract(const Duration(days: 0));
 
     _terminalResponseDTO = terminals.first;
 
@@ -287,7 +288,7 @@ class TransProvider with ChangeNotifier {
   resetFilter(Function(TransactionInputDTO) callBack, bool isOwner) {
     _valueFilter = const FilterTransaction(id: 9, title: 'Tất cả (mặc định)');
     _valueTimeFilter =
-        const FilterTimeTransaction(id: 2, title: '7 ngày gần nhất (mặc định)');
+        const FilterTimeTransaction(id: 1, title: 'Hôm nay (mặc định)');
     statusValue = const FilterStatusTransaction(title: 'Chờ thanh toán', id: 0);
 
     if (isOwner) {

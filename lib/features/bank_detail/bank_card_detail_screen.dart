@@ -68,8 +68,8 @@ class _BankCardDetailState extends State<BankCardDetailState> {
   final ScrollController controllerTabBar = ScrollController();
   List<String> listTitle = [
     'Thông tin',
-    'Thống kê',
     'Giao dịch',
+    'Thống kê',
     'Chia sẻ BĐSD'
   ];
 
@@ -332,16 +332,16 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                                           BankCardGenerateDetailQR(dto: data));
                                     },
                                   ),
-                                  StatisticalScreen(
-                                    bankId: state.bankId ?? '',
-                                    terminalDto: state.terminalDto,
-                                    bankDetailDTO: state.bankDetailDTO,
-                                  ),
                                   TransHistoryScreen(
                                     bankUserId: dto.userId,
                                     bankId: state.bankId ?? '',
                                     terminalDto: state.terminalDto ??
                                         TerminalDto(terminals: []),
+                                  ),
+                                  StatisticalScreen(
+                                    bankId: state.bankId ?? '',
+                                    terminalDto: state.terminalDto,
+                                    bankDetailDTO: state.bankDetailDTO,
                                   ),
                                   if (!dto.isHideBDSD)
                                     ShareBDSDPage(

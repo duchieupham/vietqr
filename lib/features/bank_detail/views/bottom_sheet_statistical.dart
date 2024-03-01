@@ -13,10 +13,19 @@ import 'package:vierqr/services/providers/statistical_provider.dart';
 
 class BottomSheetStatistical extends StatefulWidget {
   final List<TerminalResponseDTO> listTerminal;
-  final Function(DateTime date, TerminalResponseDTO terminal, String codeSearch,
-      String keySearch) onApply;
+  final Function(
+      DateTime date,
+      DateTime timeDay,
+      TerminalResponseDTO terminal,
+      String codeSearch,
+      String keySearch,
+      StatisticStatusData statusData) onApply;
   final DateTime dateFilter;
+  final DateTime timeDay;
   final TerminalResponseDTO terminalDto;
+  final StatisticStatusData statusData;
+  final List<StatisticStatusData> listStatusData;
+
   final String keySearch;
   final String codeSearch;
   final bool isOwner;
@@ -27,11 +36,14 @@ class BottomSheetStatistical extends StatefulWidget {
     required this.listTerminal,
     required this.onApply,
     required this.dateFilter,
+    required this.timeDay,
     required this.terminalDto,
     required this.keySearch,
     required this.codeSearch,
     required this.isOwner,
     required this.reset,
+    required this.statusData,
+    required this.listStatusData,
   });
 
   @override
@@ -54,9 +66,12 @@ class _BottomSheetStatisticalState extends State<BottomSheetStatistical> {
             ..updateData(
               listTerminal: widget.listTerminal,
               dateTimeFilter: widget.dateFilter,
+              statusData: widget.statusData,
               terminal: widget.terminalDto,
               keySearchParent: widget.keySearch,
               codeSearchParent: widget.codeSearch,
+              listStatusData: widget.listStatusData,
+              timeDayParent: widget.timeDay,
             ),
           child: Consumer<StatisticProvider>(
             builder: (context, provider, _) {
@@ -66,6 +81,8 @@ class _BottomSheetStatisticalState extends State<BottomSheetStatistical> {
                   _buildAppbar(context),
                   const SizedBox(height: 24),
                   _buildDropListTerminal(),
+                  const SizedBox(height: 24),
+                  _buildDropStatus(),
                   const SizedBox(height: 24),
                   _buildDropTime(),
                   const SizedBox(height: 80),
@@ -95,11 +112,12 @@ class _BottomSheetStatisticalState extends State<BottomSheetStatistical> {
                             bgColor: AppColor.BLUE_TEXT,
                             function: () {
                               widget.onApply(
-                                provider.dateFilter,
-                                provider.terminalResponseDTO,
-                                provider.codeSearch,
-                                provider.keySearch,
-                              );
+                                  provider.dateFilter,
+                                  provider.timeDay,
+                                  provider.terminalResponseDTO,
+                                  provider.codeSearch,
+                                  provider.keySearch,
+                                  provider.statisticStatusData);
                               Navigator.pop(context);
                             }),
                       ),
@@ -221,18 +239,122 @@ class _BottomSheetStatisticalState extends State<BottomSheetStatistical> {
         );
       });
 
+  Widget _buildDropStatus() =>
+      Consumer<StatisticProvider>(builder: (context, provider, child) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              'Lọc theo',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Container(
+              height: 50,
+              decoration: BoxDecoration(
+                  color: AppColor.WHITE,
+                  border: Border.all(
+                      color: AppColor.BLACK_BUTTON.withOpacity(0.5),
+                      width: 0.5),
+                  borderRadius: BorderRadius.circular(6)),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton2<StatisticStatusData>(
+                  isExpanded: true,
+                  selectedItemBuilder: (context) {
+                    return provider.listStatisticStatus
+                        .map(
+                          (item) => DropdownMenuItem<StatisticStatusData>(
+                            value: item,
+                            child: MTextFieldCustom(
+                              isObscureText: false,
+                              maxLines: 1,
+                              enable: false,
+                              fillColor: AppColor.WHITE,
+                              value: provider.statisticStatusData.name,
+                              styles: TextStyle(fontSize: 14),
+                              textFieldType: TextfieldType.DEFAULT,
+                              maxLength: 10,
+                              contentPadding: EdgeInsets.zero,
+                              hintText: 'Chọn cửa hàng',
+                              inputType: TextInputType.text,
+                              keyboardAction: TextInputAction.next,
+                              onChange: provider.updateKeyword,
+                            ),
+                          ),
+                        )
+                        .toList();
+                  },
+                  items: provider.listStatisticStatus.map((item) {
+                    return DropdownMenuItem<StatisticStatusData>(
+                      value: item,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded(
+                            child: Container(
+                              alignment: Alignment.centerLeft,
+                              child: Row(
+                                children: [
+                                  Text(
+                                    item.name,
+                                    style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                  const Spacer(),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const Divider(),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                  value: provider.statisticStatusData,
+                  onChanged: provider.updateStatusData,
+                  buttonStyleData: ButtonStyleData(
+                    width: MediaQuery.of(context).size.width,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: AppColor.WHITE,
+                    ),
+                  ),
+                  iconStyleData: const IconStyleData(
+                    icon: Icon(Icons.expand_more),
+                    iconSize: 18,
+                    iconEnabledColor: AppColor.BLACK,
+                    iconDisabledColor: Colors.grey,
+                  ),
+                  dropdownStyleData: DropdownStyleData(
+                    decoration:
+                        BoxDecoration(borderRadius: BorderRadius.circular(5)),
+                  ),
+                  menuItemStyleData: MenuItemStyleData(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      });
+
   Widget _buildDropTime() {
     return Consumer<StatisticProvider>(builder: (context, provider, child) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'Thời gian (tháng)',
+            'Thời gian (${provider.statisticStatusData.type == 0 ? 'ngày' : 'tháng'})',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           InkWell(
-            onTap: () => _onPickMonth(provider),
+            onTap: () => provider.statisticStatusData.type == 1
+                ? _onPickMonth(provider)
+                : _onPickDay(provider),
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 8),
               height: 50,
@@ -247,7 +369,9 @@ class _BottomSheetStatisticalState extends State<BottomSheetStatistical> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      provider.getDateTime,
+                      provider.statisticStatusData.type == 0
+                          ? provider.getTimeDay
+                          : provider.getDateTime,
                       style: const TextStyle(fontSize: 15),
                     ),
                   ),
@@ -315,5 +439,40 @@ class _BottomSheetStatisticalState extends State<BottomSheetStatistical> {
     if (result != null && result is DateTime) {
       provider.updateDateFilter(result);
     }
+  }
+
+  void _onPickDay(StatisticProvider provider) async {
+    DateTime? date = await showDateTimePicker(
+      context: context,
+      initialDate: provider.timeDay,
+      firstDate: DateTime(2021, 6),
+      lastDate: DateTime.now(),
+    );
+
+    provider.updateTimeDay(date);
+  }
+
+  Future<DateTime?> showDateTimePicker({
+    required BuildContext context,
+    DateTime? initialDate,
+    DateTime? firstDate,
+    DateTime? lastDate,
+  }) async {
+    initialDate ??= DateTime.now();
+    firstDate ??= initialDate.subtract(const Duration(days: 365 * 100));
+    lastDate ??= firstDate.add(const Duration(days: 365 * 200));
+
+    final DateTime? selectedDate = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: firstDate,
+      lastDate: lastDate,
+    );
+
+    if (selectedDate == null) return null;
+
+    if (!context.mounted) return selectedDate;
+
+    return selectedDate;
   }
 }

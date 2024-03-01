@@ -37,10 +37,15 @@ class StatisticalScreen extends StatelessWidget {
         ..updateData(
           listTerminal: terminalDto?.terminals ?? [],
           dateTimeFilter: DateTime.now(),
+          timeDayParent: DateTime.now(),
           terminal: TerminalResponseDTO(banks: []),
           isFirst: true,
           keySearchParent: '',
           codeSearchParent: '',
+          listStatusData: [
+            StatisticStatusData(type: 0, name: 'Ngày'),
+            StatisticStatusData(type: 1, name: 'Tháng'),
+          ],
         ),
       child: BlocProvider<StatisticBloc>(
         create: (context) => StatisticBloc(terminalDto, bankId),
@@ -67,6 +72,19 @@ class _StatisticalState extends State<Statistical> {
   late StatisticProvider _provider;
 
   DateFormat _dateFormat = DateFormat('yyyy-MM');
+  DateFormat _dateFormatDay = DateFormat('yyyy-MM-dd HH:mm:ss');
+
+  DateTime _fromDate(DateTime now) {
+    DateTime fromDate = DateTime(now.year, now.month, now.day);
+    return fromDate;
+  }
+
+  DateTime _endDate(DateTime now) {
+    DateTime fromDate = _fromDate(now);
+    return fromDate
+        .add(const Duration(days: 1))
+        .subtract(const Duration(seconds: 1));
+  }
 
   @override
   void initState() {
@@ -75,9 +93,17 @@ class _StatisticalState extends State<Statistical> {
     _provider = Provider.of<StatisticProvider>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _bloc.add(StatisticEventGetData(
-          terminalCode: '', month: _dateFormat.format(DateTime.now())));
+        terminalCode: '',
+        toDate: _dateFormatDay.format(_endDate(DateTime.now())),
+        fromDate: _dateFormatDay.format(_fromDate(DateTime.now())),
+        type: 0,
+      ));
       _bloc.add(StatisticEventGetOverview(
-          terminalCode: '', month: _dateFormat.format(DateTime.now())));
+        terminalCode: '',
+        toDate: _dateFormatDay.format(_endDate(DateTime.now())),
+        fromDate: _dateFormatDay.format(_fromDate(DateTime.now())),
+        type: 0,
+      ));
     });
   }
 
@@ -120,7 +146,9 @@ class _StatisticalState extends State<Statistical> {
                                           fontWeight: FontWeight.bold,
                                           fontSize: 18)),
                                   Text(
-                                    provider.getDateParent,
+                                    provider.typeTimeDay
+                                        ? provider.getParentTimeDay
+                                        : provider.getDateParent,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(fontSize: 12),
                                   ),
@@ -152,7 +180,7 @@ class _StatisticalState extends State<Statistical> {
                           LineChartCustom(
                             listData: state.listStatistics,
                             listSeparate: state.listSeparate,
-                            dateTime: _provider.dateFilter,
+                            type: _provider.statisticStatusData.type,
                           ),
                           Visibility(
                             visible: state.status == BlocStatus.LOADING_PAGE,
@@ -259,7 +287,9 @@ class _StatisticalState extends State<Statistical> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            provider.getDateParent,
+                            provider.typeTimeDay
+                                ? provider.getParentTimeDay
+                                : provider.getDateParent,
                             style: TextStyle(
                                 fontWeight: FontWeight.w600, fontSize: 16),
                           ),
@@ -463,19 +493,43 @@ class _StatisticalState extends State<Statistical> {
         dateFilter: provider.dateFilter,
         terminalDto: provider.terminalResponseDTO,
         keySearch: provider.keySearch,
+        statusData: provider.statisticStatusData,
+        timeDay: provider.timeDay,
         codeSearch: provider.codeSearch,
         isOwner: provider.isOwner,
+        listStatusData: provider.listStatisticStatus,
         reset: () {
           provider.onReset();
-          _bloc.add(StatisticEventGetData(
-              terminalCode: '', month: _dateFormat.format(DateTime.now())));
+          int type = provider.statisticStatusData.type;
+
+          String fromDate = type == 0
+              ? _dateFormatDay.format(_fromDate(DateTime.now()))
+              : _dateFormat.format(DateTime.now());
+          String endDate = type == 0
+              ? _dateFormatDay.format(_endDate(DateTime.now()))
+              : _dateFormat.format(DateTime.now());
+
+          _bloc.add(
+            StatisticEventGetData(
+              terminalCode: '',
+              toDate: endDate,
+              fromDate: fromDate,
+              type: type,
+            ),
+          );
           _bloc.add(StatisticEventGetOverview(
-              terminalCode: '', month: _dateFormat.format(DateTime.now())));
+              terminalCode: '',
+              toDate: endDate,
+              fromDate: fromDate,
+              type: type));
         },
-        onApply: (dateTime, terminal, codeSearch, keySearch) {
+        onApply:
+            (dateTime, timeDay, terminal, codeSearch, keySearch, statusData) {
           provider.updateDateFilter(dateTime);
+          provider.updateTimeDay(timeDay);
           provider.updateKeyword(keySearch);
           provider.updateCodeSearch(codeSearch);
+          provider.updateStatusData(statusData);
           provider.updateTerminalResponseDTO(terminal, isUpdate: true);
           String terminalCode = terminal.code;
           if (terminal.id.isEmpty && codeSearch == terminal.code) {
@@ -484,10 +538,28 @@ class _StatisticalState extends State<Statistical> {
           if (codeSearch != terminal.code && provider.isOwner) {
             terminalCode = codeSearch;
           }
+          int type = provider.statisticStatusData.type;
+          DateTime _date = type == 0 ? timeDay : dateTime;
+
+          String fromDate = type == 0
+              ? _dateFormatDay.format(_fromDate(_date))
+              : _dateFormat.format(_date);
+          String endDate = type == 0
+              ? _dateFormatDay.format(_endDate(_date))
+              : _dateFormat.format(_date);
+
           _bloc.add(StatisticEventGetData(
-              terminalCode: terminalCode, month: _dateFormat.format(dateTime)));
+            terminalCode: terminalCode,
+            toDate: endDate,
+            fromDate: fromDate,
+            type: type,
+          ));
           _bloc.add(StatisticEventGetOverview(
-              terminalCode: terminalCode, month: _dateFormat.format(dateTime)));
+            terminalCode: terminalCode,
+            toDate: endDate,
+            fromDate: fromDate,
+            type: type,
+          ));
         },
       ),
     );
@@ -495,8 +567,9 @@ class _StatisticalState extends State<Statistical> {
 
   Future<void> _onRefresh() async {
     final provider = Provider.of<StatisticProvider>(context, listen: false);
+    int type = provider.statisticStatusData.type;
 
-    DateTime dateTime = provider.dateFilter;
+    DateTime dateTime = type == 0 ? provider.timeDay : provider.dateFilter;
     TerminalResponseDTO terminal = provider.terminalResponseDTO;
     String codeSearch = provider.codeSearch;
     String terminalCode = terminal.code;
@@ -507,9 +580,27 @@ class _StatisticalState extends State<Statistical> {
     if (codeSearch != terminal.code && provider.isOwner) {
       terminalCode = codeSearch;
     }
-    _bloc.add(StatisticEventGetData(
-        terminalCode: terminalCode, month: _dateFormat.format(dateTime)));
+
+    String fromDate = type == 0
+        ? _dateFormatDay.format(_fromDate(dateTime))
+        : _dateFormat.format(dateTime);
+    String endDate = type == 0
+        ? _dateFormatDay.format(_endDate(dateTime))
+        : _dateFormat.format(dateTime);
+
+    _bloc.add(
+      StatisticEventGetData(
+        terminalCode: terminalCode,
+        toDate: endDate,
+        fromDate: fromDate,
+        type: type,
+      ),
+    );
     _bloc.add(StatisticEventGetOverview(
-        terminalCode: terminalCode, month: _dateFormat.format(dateTime)));
+      terminalCode: terminalCode,
+      toDate: endDate,
+      fromDate: fromDate,
+      type: type,
+    ));
   }
 }

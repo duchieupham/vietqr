@@ -9,29 +9,34 @@ class StatisticEvent extends Equatable {
 
 class StatisticEventGetOverview extends StatisticEvent {
   final String terminalCode;
-  final String month;
+  final String toDate;
+  final String fromDate;
+  final int type;
 
   const StatisticEventGetOverview({
     required this.terminalCode,
-    required this.month,
+    required this.toDate,
+    required this.fromDate,
+    required this.type,
   });
 
   @override
-  List<Object?> get props => [
-        terminalCode,
-        month,
-      ];
+  List<Object?> get props => [terminalCode, toDate, fromDate, type];
 }
 
 class StatisticEventGetData extends StatisticEvent {
   final String terminalCode;
-  final String month;
+  final String fromDate;
+  final String toDate;
+  final int type;
 
   const StatisticEventGetData({
     required this.terminalCode,
-    required this.month,
+    required this.fromDate,
+    required this.toDate,
+    required this.type,
   });
 
   @override
-  List<Object?> get props => [terminalCode, month];
+  List<Object?> get props => [terminalCode, toDate, fromDate, type];
 }

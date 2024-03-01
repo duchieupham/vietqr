@@ -27,12 +27,24 @@ class StatisticBloc extends Bloc<StatisticEvent, StatisticState> {
     try {
       if (event is StatisticEventGetOverview) {
         emit(state.copyWith(request: StatisticType.NONE));
-        dto = await _statisticRepository.getDataOverview(
-          bankId: bankId,
-          userId: SharePrefUtils.getProfile().userId,
-          terminalCode: event.terminalCode,
-          month: event.month,
-        );
+        if (event.type == 0) {
+          dto = await _statisticRepository.getDataOverviewByDay(
+            bankId: bankId,
+            userId: SharePrefUtils.getProfile().userId,
+            terminalCode: event.terminalCode,
+            toDate: event.toDate,
+            fromDate: event.fromDate,
+          );
+        } else {
+          dto = await _statisticRepository.getDataOverview(
+            bankId: bankId,
+            userId: SharePrefUtils.getProfile().userId,
+            terminalCode: event.terminalCode,
+            month: event.toDate,
+          );
+        }
+        dto.type = event.type;
+
         emit(state.copyWith(
             statisticDTO: dto, request: StatisticType.GET_SINGLE_DTO));
       }
@@ -55,14 +67,25 @@ class StatisticBloc extends Bloc<StatisticEvent, StatisticState> {
       if (event is StatisticEventGetData) {
         emit(state.copyWith(
             request: StatisticType.NONE, status: BlocStatus.LOADING_PAGE));
-        list = await _statisticRepository.getDataTable(
-          bankId: bankId,
-          userId: SharePrefUtils.getProfile().userId,
-          terminalCode: event.terminalCode,
-          month: event.month,
-        );
-
-        list.sort((a, b) => a.date.compareTo(b.date));
+        //type = 0 : call api theo ngày
+        //type = 1 : call api theo tháng
+        if (event.type == 1) {
+          list = await _statisticRepository.getDataTable(
+            bankId: bankId,
+            userId: SharePrefUtils.getProfile().userId,
+            terminalCode: event.terminalCode,
+            month: event.toDate,
+          );
+          list.sort((a, b) => a.date.compareTo(b.date));
+        } else {
+          list = await _statisticRepository.getDataTableByDay(
+              bankId: bankId,
+              userId: SharePrefUtils.getProfile().userId,
+              terminalCode: event.terminalCode,
+              toDate: event.toDate,
+              fromDate: event.fromDate);
+          list.sort((a, b) => a.timeDate.compareTo(b.timeDate));
+        }
 
         emit(state.copyWith(
             listStatistics: list,
