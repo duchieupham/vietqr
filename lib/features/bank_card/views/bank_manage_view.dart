@@ -13,8 +13,7 @@
 // import 'package:vierqr/layouts/box_layout.dart';
 // import 'package:vierqr/models/bank_account_dto.dart';
 // import 'package:vierqr/services/providers/bank_account_provider.dart';
-// import 'package:vierqr/services/shared_references/user_information_helper.dart';
-// import 'package:flutter/material.dart';
+// // import 'package:flutter/material.dart';
 // import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'package:provider/provider.dart';
 

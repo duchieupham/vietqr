@@ -6,8 +6,8 @@ import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/wallet_provider.dart';
-import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
 
 import '../../scan_qr/widgets/qr_scan_widget.dart';
 
@@ -118,16 +118,10 @@ class CardWallet extends StatelessWidget {
             Navigator.pushNamed(context, Routes.SEARCH_BANK);
           }),
         ),
-        // Expanded(
-        //   child: _buildItemAction(
-        //       'assets/images/ic-money-add.png', 'Nạp tiền dịch vụ VietQR', () {
-        //     Navigator.pushNamed(context, Routes.TOP_UP);
-        //   }),
-        // ),
         Expanded(
           child: _buildItemAction('assets/images/ic-tb-qr.png', 'Quét QR',
               () async {
-            if (QRScannerHelper.instance.getQrIntro()) {
+            if (SharePrefUtils.getQrIntro()) {
               startBarcodeScanStream();
             } else {
               await DialogWidget.instance.showFullModalBottomContent(

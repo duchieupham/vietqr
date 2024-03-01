@@ -9,13 +9,12 @@ import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
-import 'package:vierqr/models/account_information_dto.dart';
+import 'package:vierqr/models/user_profile.dart';
 import 'package:vierqr/models/account_login_dto.dart';
 import 'package:vierqr/models/code_login_dto.dart';
 import 'package:vierqr/models/info_user_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
-import 'package:vierqr/services/shared_references/account_helper.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 
 class LoginRepository {
@@ -64,16 +63,13 @@ class LoginRepository {
       if (response.statusCode == 200) {
         String token = response.body;
         Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
-        AccountInformationDTO accountInformationDTO =
-            AccountInformationDTO.fromJson(decodedToken);
-        await AccountHelper.instance.setFcmToken(fcmToken);
-        await AccountHelper.instance.setToken(token);
-        await AccountHelper.instance.setTokenFree('');
-        await UserHelper.instance.setPhoneNo(dto.phoneNo);
-        await UserHelper.instance
-            .setUserId(accountInformationDTO.userId);
-        await UserHelper.instance
-            .setAccountInformation(accountInformationDTO);
+        UserProfile userProfile = UserProfile.fromJson(decodedToken);
+
+        await SharePrefUtils.setTokenInfo(token);
+        await SharePrefUtils.saveProfileToCache(userProfile);
+        await SharePrefUtils.saveTokenFree('');
+        await SharePrefUtils.saveTokenFCM(fcmToken);
+        await SharePrefUtils.savePhone(dto.phoneNo);
         result = true;
       }
     } catch (e) {
@@ -126,16 +122,14 @@ class LoginRepository {
       if (response.statusCode == 200) {
         String token = response.body;
         Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
-        AccountInformationDTO accountInformationDTO =
-            AccountInformationDTO.fromJson(decodedToken);
-        await AccountHelper.instance.setFcmToken(fcmToken);
-        await AccountHelper.instance.setToken(token);
-        await AccountHelper.instance.setTokenFree('');
-        await UserHelper.instance.setPhoneNo(dto.phoneNo);
-        await UserHelper.instance
-            .setUserId(accountInformationDTO.userId);
-        await UserHelper.instance
-            .setAccountInformation(accountInformationDTO);
+        UserProfile userProfile = UserProfile.fromJson(decodedToken);
+
+        await SharePrefUtils.setTokenInfo(token);
+        await SharePrefUtils.saveProfileToCache(userProfile);
+        await SharePrefUtils.saveTokenFree('');
+        await SharePrefUtils.saveTokenFCM(fcmToken);
+        await SharePrefUtils.savePhone(dto.phoneNo);
+
         result = true;
       }
     } catch (e) {
@@ -181,7 +175,7 @@ class LoginRepository {
           url: url, type: AuthenticationType.CUSTOM, body: {}, header: result);
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
-        await AccountHelper.instance.setTokenFree(data['access_token']);
+        await SharePrefUtils.saveTokenFree(data['access_token']);
         return true;
       } else {
         return false;

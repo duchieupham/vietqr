@@ -13,7 +13,7 @@ import 'package:vierqr/models/terminal_response_dto.dart';
 import 'package:vierqr/models/transaction_branch_input_dto.dart';
 import 'package:vierqr/models/transaction_input_dto.dart';
 import 'package:vierqr/models/transaction_receive_dto.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class TransactionRepository {
   const TransactionRepository();
@@ -52,8 +52,10 @@ class TransactionRepository {
       TransactionInputDTO dto) async {
     List<RelatedTransactionReceiveDTO> result = [];
     try {
+      String userId = SharePrefUtils.getProfile().userId;
+
       final String url =
-          '${EnvConfig.getBaseUrl()}terminal/transactions?terminalCode=${dto.terminalCode}&userId=${UserHelper.instance.getUserId()}&bankId=${dto.bankId}&type=${dto.type}&offset=${dto.offset}&value=${dto.value}&from=${dto.from}&to=${dto.to}';
+          '${EnvConfig.getBaseUrl()}terminal/transactions?terminalCode=${dto.terminalCode}&userId=$userId&bankId=${dto.bankId}&type=${dto.type}&offset=${dto.offset}&value=${dto.value}&from=${dto.from}&to=${dto.to}';
 
       final response = await BaseAPIClient.getAPI(
         url: url,

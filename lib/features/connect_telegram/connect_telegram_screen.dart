@@ -13,11 +13,11 @@ import 'package:vierqr/features/connect_telegram/blocs/connect_telegram_bloc.dar
 import 'package:vierqr/features/connect_telegram/states/conect_telegram_state.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/connect_telegram_provider.dart';
 
 import '../../commons/utils/error_utils.dart';
 import '../../models/info_tele_dto.dart';
-import '../../services/shared_references/user_information_helper.dart';
 import 'events/connect_telegram_event.dart';
 
 class ConnectTelegramScreen extends StatelessWidget {
@@ -33,7 +33,7 @@ class ConnectTelegramScreen extends StatelessWidget {
         child: BlocProvider<ConnectTelegramBloc>(
           create: (context) => ConnectTelegramBloc()
             ..add(GetInformationTeleConnect(
-                userId: UserHelper.instance.getUserId())),
+                userId: SharePrefUtils.getProfile().userId)),
           child: BlocConsumer<ConnectTelegramBloc, ConnectTelegramState>(
             listener: (context, state) {
               if (state is RemoveTelegramLoadingState) {
@@ -45,7 +45,7 @@ class ConnectTelegramScreen extends StatelessWidget {
                 Navigator.pop(context);
                 BlocProvider.of<ConnectTelegramBloc>(context).add(
                     GetInformationTeleConnect(
-                        userId: UserHelper.instance.getUserId()));
+                        userId: SharePrefUtils.getProfile().userId));
               }
               if (state is RemoveTeleFailedState) {
                 Navigator.pop(context);
@@ -321,7 +321,7 @@ class ConnectTelegramScreen extends StatelessWidget {
                     if (!existed) {
                       final Map<String, dynamic> body = {
                         'id': dto.id,
-                        'userId': UserHelper.instance.getUserId(),
+                        'userId': SharePrefUtils.getProfile().userId,
                         'bankId': bankAccount.id,
                       };
 
@@ -391,7 +391,7 @@ class ConnectTelegramScreen extends StatelessWidget {
                           final Map<String, dynamic> body = {
                             'id': dto.id,
                             'userId':
-                                UserHelper.instance.getUserId(),
+                                SharePrefUtils.getProfile().userId,
                             'bankId': bank.bankId,
                           };
                           BlocProvider.of<ConnectTelegramBloc>(context)

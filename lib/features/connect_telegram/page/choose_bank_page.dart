@@ -5,8 +5,8 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/connect_telegram_provider.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 import '../../../models/bank_account_dto.dart';
 import '../../bank_card/events/bank_event.dart';
@@ -21,7 +21,7 @@ class ChooseBankPage extends StatelessWidget {
       child: BlocConsumer<BankBloc, BankState>(
           listener: (context, state) async {},
           builder: (context, state) {
-            String userId = UserHelper.instance.getUserId();
+            String userId = SharePrefUtils.getProfile().userId;
             List<BankAccountDTO> listBank = state.listBanks
                 .where((dto) => dto.userId == userId && dto.isAuthenticated)
                 .toList();

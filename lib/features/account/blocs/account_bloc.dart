@@ -9,7 +9,7 @@ import 'package:vierqr/features/account/events/account_event.dart';
 import 'package:vierqr/features/account/repositories/account_res.dart';
 import 'package:vierqr/features/account/states/account_state.dart';
 import 'package:vierqr/models/response_message_dto.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class AccountBloc extends Bloc<AccountEvent, AccountState> with BaseManager {
   @override
@@ -84,7 +84,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> with BaseManager {
 }
 
 void _updateVoiceSetting(AccountEvent event, Emitter emit) async {
-  String userId = UserHelper.instance.getUserId();
+  String userId = SharePrefUtils.getProfile().userId;
   try {
     if (event is UpdateVoiceSetting) {
       bool updateStatus = await accRepository.updateVoiceSetting(event.param);
@@ -92,7 +92,7 @@ void _updateVoiceSetting(AccountEvent event, Emitter emit) async {
         final settingAccount = await accRepository.getSettingAccount(userId);
         if (settingAccount != null) {
           if (settingAccount.userId.isNotEmpty) {
-            await UserHelper.instance.setAccountSetting(settingAccount);
+            await SharePrefUtils.saveAccountSetting(settingAccount);
           }
         }
       }

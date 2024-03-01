@@ -189,33 +189,74 @@ class ShareBDSDBloc extends Bloc<ShareBDSDEvent, ShareBDSDState>
     }
   }
 
+  int limit = 20;
+
   void _getListGroup(ShareBDSDEvent event, Emitter emit) async {
     try {
       if (event is GetListGroupBDSDEvent) {
         emit(
           state.copyWith(
-              status: event.loadingPage
-                  ? BlocStatus.LOADING_PAGE
-                  : BlocStatus.LOADING,
+              status:
+                  event.loadingPage ? BlocStatus.LOADING_PAGE : BlocStatus.NONE,
               request: ShareBDSDType.NONE),
         );
+        bool isLoadMore = true;
+
         if (event.type == 0 || event.type == 2) {
+          List<TerminalResponseDTO> terminals = [...state.listGroup.terminals];
+
           final TerminalDto terminalDto = await repository.getListGroup(
-              event.userID, event.type, event.offset);
+              event.userID, event.type, event.offset * limit);
+
+          if (event.loadMore && terminalDto.terminals.isNotEmpty) {
+            terminals = [...terminals, ...terminalDto.terminals];
+          } else {
+            terminals = [...terminalDto.terminals];
+          }
+
+          if (terminalDto.terminals.length < limit ||
+              terminalDto.terminals.isEmpty) {
+            isLoadMore = false;
+          }
+
+          terminalDto.terminals = terminals;
+
           emit(state.copyWith(
             status: BlocStatus.NONE,
             listGroup: terminalDto,
             request: ShareBDSDType.GET_LIST_GROUP,
             isLoading: false,
+            offset: event.offset,
+            isLoadMore: isLoadMore,
           ));
         } else {
+          List<BankShareResponseDTO> banks = [
+            ...state.bankShareTerminal?.bankShares ?? []
+          ];
+
           final BankTerminalDto bankTerminalDto = await repository
-              .getListBankShare(event.userID, event.type, event.offset);
+              .getListBankShare(event.userID, event.type, event.offset * limit);
+
+          if (event.loadMore && bankTerminalDto.bankShares.isNotEmpty) {
+            banks = [...banks, ...bankTerminalDto.bankShares];
+          } else {
+            banks = [...bankTerminalDto.bankShares];
+          }
+
+          if (bankTerminalDto.bankShares.length < limit ||
+              bankTerminalDto.bankShares.isEmpty) {
+            isLoadMore = false;
+          }
+
+          bankTerminalDto.bankShares = banks;
+
           emit(state.copyWith(
             status: BlocStatus.NONE,
             bankShareTerminal: bankTerminalDto,
             request: ShareBDSDType.GET_LIST_GROUP,
             isLoading: false,
+            isLoadMore: isLoadMore,
+            offset: event.offset,
           ));
         }
       }
@@ -230,7 +271,8 @@ class ShareBDSDBloc extends Bloc<ShareBDSDEvent, ShareBDSDState>
       if (event is GetMyListGroupBDSDEvent) {
         emit(
           state.copyWith(
-              status: BlocStatus.LOADING_PAGE,
+              status:
+                  event.isLoading ? BlocStatus.LOADING_PAGE : BlocStatus.NONE,
               request: ShareBDSDType.NONE,
               isEmpty: false),
         );

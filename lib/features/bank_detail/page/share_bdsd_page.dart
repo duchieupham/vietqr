@@ -15,7 +15,7 @@ import 'package:vierqr/features/bank_detail/widget/detail_group.dart';
 import 'package:vierqr/features/bank_detail/widget/share_bdsd_invite.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
 import 'package:vierqr/models/terminal_response_dto.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 import '../../../models/member_branch_model.dart';
 
@@ -52,14 +52,18 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
   static String routeName = '/share_bdsd_invite';
   late ShareBDSDBloc _bloc;
 
-  String get userId => UserHelper.instance.getUserId();
+  String get userId => SharePrefUtils.getProfile().userId;
 
   List<MemberBranchModel> listMemberData = [];
+  final ScrollController controller = ScrollController();
+
+  int offset = 0;
 
   @override
   void initState() {
     super.initState();
     _bloc = BlocProvider.of(context);
+    controller.addListener(_loadMore);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       initData();
     });
@@ -76,6 +80,14 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
     initData();
   }
 
+  void _loadMore() {
+    final maxScroll = controller.position.maxScrollExtent;
+    if (controller.offset >= maxScroll && !controller.position.outOfRange) {
+      _bloc.add(GetListGroupBDSDEvent(
+          userID: userId, offset: offset + 1, loadMore: true));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -90,14 +102,12 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
             Navigator.pop(context);
           }
 
-          // if (state.request == ShareBDSDType.MEMBER) {
-          //   if (state.listMember.length >= 1) {
-          //     listMember = state.listMember;
-          //     listMember.removeWhere((member) => member.isOwner);
-          //     listMemberData = listMember;
-          //   }
-          // }
-          if (state.request == ShareBDSDType.GET_LIST_GROUP) {}
+          if (state.request == ShareBDSDType.GET_LIST_GROUP) {
+            setState(() {
+              offset = state.offset;
+            });
+          }
+
           if (state.request == ShareBDSDType.CONNECT) {
             widget.bloc.add(const BankCardGetDetailEvent());
             _bloc.add(GetBusinessAvailDTOEvent());
@@ -135,15 +145,12 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
               RefreshIndicator(
                 onRefresh: onRefresh,
                 child: ListView(
+                  controller: controller,
                   children: [
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    const Text(
-                      'Tài khoản chia sẻ',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
+                    const SizedBox(height: 16),
+                    const Text('Tài khoản chia sẻ',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 16),
                     Container(
                       padding:
@@ -247,16 +254,18 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                       if (state.listGroup.totalTerminals > 0)
                         Column(
                           children: [
-                            const SizedBox(
-                              height: 12,
-                            ),
+                            const SizedBox(height: 12),
                             ...state.listGroup.terminals.map((e) {
                               return _buildItemGroup(e);
                             }).toList(),
-                            if (widget.dto.userId == userId)
-                              const SizedBox(
-                                height: 100,
-                              )
+                            if (state.isLoadMore)
+                              Center(
+                                child: SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(),
+                                ),
+                              ),
                           ],
                         )
                       else if (state.isEmpty)
@@ -292,7 +301,10 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                             context, ShareBDSDInviteScreen(),
                             routeName: _ShareBDSDScreenState.routeName);
                         _bloc.add(GetMyListGroupBDSDEvent(
-                            userID: userId, bankId: widget.bankId, offset: 0));
+                            userID: userId,
+                            bankId: widget.bankId,
+                            offset: 0,
+                            isLoading: false));
                       },
                       child: Container(
                         height: 40,

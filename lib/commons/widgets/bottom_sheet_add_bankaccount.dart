@@ -6,12 +6,14 @@ import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class BottomSheetAddBankAccount extends StatelessWidget {
   final Function(BankAccountDTO) onSelect;
+
   const BottomSheetAddBankAccount({Key? key, required this.onSelect})
       : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider<BankBloc>(
@@ -19,7 +21,7 @@ class BottomSheetAddBankAccount extends StatelessWidget {
       child: BlocConsumer<BankBloc, BankState>(
           listener: (context, state) async {},
           builder: (context, state) {
-            String userId = UserHelper.instance.getUserId();
+            String userId = SharePrefUtils.getProfile().userId;
             List<BankAccountDTO> listBank = state.listBanks
                 .where((dto) => dto.userId == userId && dto.isAuthenticated)
                 .toList();
@@ -61,10 +63,10 @@ class BottomSheetAddBankAccount extends StatelessWidget {
                           return GestureDetector(
                             onTap: () {
                               Navigator.pop(context);
-                              Future.delayed(const Duration(milliseconds: 500), (){
+                              Future.delayed(const Duration(milliseconds: 500),
+                                  () {
                                 onSelect(listBank[index]);
                               });
-
                             },
                             child: Container(
                               height: 60,

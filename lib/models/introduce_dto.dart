@@ -1,16 +1,16 @@
 class IntroduceDTO {
-  final String? amount;
-  final String? point;
-  final String? sharingCode;
-  final String? walletId;
-  final bool? enableService;
+  String amount;
+  String point;
+  String sharingCode;
+  String walletId;
+  bool enableService;
 
   IntroduceDTO({
-    this.amount,
-    this.point,
-    this.sharingCode,
-    this.walletId,
-    this.enableService,
+    this.amount = '',
+    this.point = '',
+    this.sharingCode = '',
+    this.walletId = '',
+    this.enableService = false,
   });
 
   String get sharingCodeLink =>
@@ -24,5 +24,15 @@ class IntroduceDTO {
       walletId: json['walletId'] ?? '',
       enableService: json['enableService'] ?? false,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['amount'] = amount;
+    data['point'] = point;
+    data['sharingCode'] = sharingCode;
+    data['walletId'] = walletId;
+    data['enableService'] = enableService;
+    return data;
   }
 }

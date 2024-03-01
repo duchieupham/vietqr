@@ -7,13 +7,12 @@ abstract class IStorageService<T> {
     required T data,
   });
 
-  Future<T?> get({
-    required T Function(Map<String, dynamic>) fromJson,
-  });
+  T? get({required T Function(Map<String, dynamic>) fromJson});
 
-  Future<List<T>?> getList({
-    required T Function(Map<String, dynamic>) fromJson,
-  });
+  Future<T?> getStorage({required T Function(Map<String, dynamic>) fromJson});
+
+  Future<List<T>?> getList(
+      {required T Function(Map<String, dynamic>) fromJson});
 
   Future<bool> remove();
 }

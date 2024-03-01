@@ -16,10 +16,13 @@ class ShareBDSDInviteProvider with ChangeNotifier {
 
   String _nameGroup = '';
   String _codeRandom = '';
+  String _address = '';
 
   String get nameGroup => _nameGroup;
 
   String get codeRandom => _codeRandom;
+
+  String get address => _address;
 
   bool validateFormIV = false;
 
@@ -60,12 +63,18 @@ class ShareBDSDInviteProvider with ChangeNotifier {
   validateForm() {
     if (_nameGroup.isNotEmpty &&
         _codeRandom.isNotEmpty &&
-        _bankAccounts.isNotEmpty) {
+        _bankAccounts.isNotEmpty &&
+        _address.isNotEmpty) {
       validateFormIV = true;
       notifyListeners();
     } else {
       validateFormIV = false;
       notifyListeners();
     }
+  }
+
+  void onChangedAddress(String value) {
+    _address = value;
+    validateForm();
   }
 }

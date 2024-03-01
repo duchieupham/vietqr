@@ -5,7 +5,7 @@ import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/models/bluetooth_printer_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/sqflite/local_database.dart';
 
 class PrinterUtils {
@@ -19,7 +19,7 @@ class PrinterUtils {
 
   Future<void> print(QRGeneratedDTO dto) async {
     try {
-      String userId = UserHelper.instance.getUserId();
+      String userId = SharePrefUtils.getProfile().userId;
       BluetoothPrinterDTO bluetoothPrinterDTO =
           await LocalDatabase.instance.getBluetoothPrinter(userId);
       late PrinterBluetooth? myPrinter;
@@ -88,7 +88,7 @@ class PrinterUtils {
 
   Future<void> printQRCode(String qr) async {
     try {
-      String userId = UserHelper.instance.getUserId();
+      String userId = SharePrefUtils.getProfile().userId;
       BluetoothPrinterDTO bluetoothPrinterDTO =
           await LocalDatabase.instance.getBluetoothPrinter(userId);
       late PrinterBluetooth? myPrinter;

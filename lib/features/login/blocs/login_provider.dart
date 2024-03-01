@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/info_user_dto.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class LoginProvider with ChangeNotifier {
   bool isEnableButton = false;
@@ -21,7 +21,7 @@ class LoginProvider with ChangeNotifier {
   int isQuickLogin = 0;
 
   init() async {
-    listInfoUsers = UserHelper.instance.getLoginAccount();
+    listInfoUsers = await SharePrefUtils.getLoginAccount() ?? [];
     if (listInfoUsers.isNotEmpty) isQuickLogin = 1;
     notifyListeners();
   }
@@ -32,7 +32,7 @@ class LoginProvider with ChangeNotifier {
   }
 
   void updateListInfoUser() async {
-    listInfoUsers = UserHelper.instance.getLoginAccount();
+    listInfoUsers = await SharePrefUtils.getLoginAccount() ?? [];
     notifyListeners();
   }
 

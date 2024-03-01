@@ -23,6 +23,7 @@ class BankCardState extends Equatable {
   final BankTypeDTO? bankTypeDTO;
   final QRGeneratedDTO? qrGeneratedDTO;
   final TerminalDto? terminalDto;
+  final bool isInit;
 
   const BankCardState({
     this.msg,
@@ -38,24 +39,27 @@ class BankCardState extends Equatable {
     this.bankTypeDTO,
     this.qrGeneratedDTO,
     this.terminalDto,
+    this.isInit = false,
   });
 
-  BankCardState copyWith(
-      {BlocStatus? status,
-      BankDetailType? request,
-      String? msg,
-      String? bankId,
-      String? qr,
-      List<BankAccountDTO>? listBanks,
-      List<Color>? colors,
-      BankCardRequestOTP? dto,
-      String? requestId,
-      AccountBankDetailDTO? bankDetailDTO,
-      NationalScannerDTO? nationalScannerDTO,
-      String? bankAccount,
-      BankTypeDTO? bankTypeDTO,
-      QRGeneratedDTO? qrGeneratedDTO,
-      TerminalDto? terminalDto}) {
+  BankCardState copyWith({
+    BlocStatus? status,
+    BankDetailType? request,
+    String? msg,
+    String? bankId,
+    String? qr,
+    List<BankAccountDTO>? listBanks,
+    List<Color>? colors,
+    BankCardRequestOTP? dto,
+    String? requestId,
+    AccountBankDetailDTO? bankDetailDTO,
+    NationalScannerDTO? nationalScannerDTO,
+    String? bankAccount,
+    BankTypeDTO? bankTypeDTO,
+    QRGeneratedDTO? qrGeneratedDTO,
+    TerminalDto? terminalDto,
+    bool? isInit,
+  }) {
     return BankCardState(
       status: status ?? this.status,
       request: request ?? this.request,
@@ -70,6 +74,7 @@ class BankCardState extends Equatable {
       bankTypeDTO: bankTypeDTO ?? this.bankTypeDTO,
       qrGeneratedDTO: qrGeneratedDTO ?? this.qrGeneratedDTO,
       terminalDto: terminalDto ?? this.terminalDto,
+      isInit: isInit ?? this.isInit,
     );
   }
 
@@ -87,5 +92,6 @@ class BankCardState extends Equatable {
         bankTypeDTO,
         qrGeneratedDTO,
         terminalDto,
+        isInit,
       ];
 }

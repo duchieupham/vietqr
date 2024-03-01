@@ -153,7 +153,10 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
                                             isDisable:
                                                 provider.settingDTO.isEvent,
                                             onChanged: (value) {
-                                              onSelect(provider, e);
+                                              if (e.xFile != null &&
+                                                  e.xFile!.path.isNotEmpty) {
+                                                onSelect(provider, e);
+                                              }
                                             },
                                           ),
                                         ],
@@ -185,9 +188,9 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
                               children: [
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(8),
-                                  child: provider.fileTheme.path.isNotEmpty
+                                  child: provider.bannerApp.path.isNotEmpty
                                       ? Image.file(
-                                          provider.fileTheme,
+                                          provider.bannerApp,
                                           width: 90,
                                           height: 50,
                                           fit: BoxFit.cover,
@@ -251,9 +254,11 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
     );
   }
 
-  onSelect(provider, ThemeDTO e) {
+  onSelect(AuthProvider provider, ThemeDTO e) {
     if (provider.settingDTO.themeType == 0) return;
     provider.updateThemeDTO(e);
-    context.read<DashBoardBloc>().add(UpdateThemeEvent(e.type));
+    context
+        .read<DashBoardBloc>()
+        .add(UpdateThemeEvent(e.type, provider.themes));
   }
 }

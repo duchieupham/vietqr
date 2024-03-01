@@ -12,7 +12,7 @@ import 'package:vierqr/features/connect_lark/page/setting_lark_page.dart';
 import 'package:vierqr/features/connect_lark/widget/success_screen.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 import '../../../services/providers/connect_lark_provider.dart';
 import '../events/connect_lark_event.dart';
@@ -182,8 +182,7 @@ class _ConnectLarkStepScreenState extends State<_ConnectLarkStepScreen> {
 
                     if (provider.webHook.isNotEmpty) {
                       data['webhook'] = provider.webHook;
-                      data['userId'] =
-                          UserHelper.instance.getUserId();
+                      data['userId'] = SharePrefUtils.getProfile().userId;
                       data['bankIds'] = provider.bankIds;
                       BlocProvider.of<ConnectLarkBloc>(context)
                           .add(InsertLark(data: data));

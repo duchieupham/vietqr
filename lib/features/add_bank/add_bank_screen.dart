@@ -30,7 +30,7 @@ import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/confirm_otp_bank_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/register_authentication_dto.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 import 'views/bank_input_widget.dart';
 
@@ -200,7 +200,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                     Provider.of<AddBankProvider>(context, listen: false)
                         .bankTypeDTO!
                         .id;
-                String userId = UserHelper.instance.getUserId();
+                String userId = SharePrefUtils.getProfile().userId;
                 String formattedName = StringUtils.instance.removeDiacritic(
                     StringUtils.instance
                         .capitalFirstCharacter(nameController.text));
@@ -270,7 +270,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                     Provider.of<AddBankProvider>(context, listen: false)
                         .bankTypeDTO!
                         .id;
-                String userId = UserHelper.instance.getUserId();
+                String userId = SharePrefUtils.getProfile().userId;
                 String formattedName = StringUtils.instance.removeDiacritic(
                     StringUtils.instance
                         .capitalFirstCharacter(nameController.text));
@@ -778,7 +778,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
     _bloc.add(BankCardEventRequestOTP(dto: dto));
   }
 
-  _buildSelectBankWidget(AddBankState state,AddBankProvider provider, height) {
+  _buildSelectBankWidget(AddBankState state, AddBankProvider provider, height) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -803,9 +803,9 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                     height: 30,
                     margin: const EdgeInsets.only(left: 4),
                     decoration: BoxDecoration(
-                      image: provider.bankTypeDTO!.file != null
+                      image: provider.bankTypeDTO!.fileBank != null
                           ? DecorationImage(
-                              image: FileImage(provider.bankTypeDTO!.file!))
+                              image: FileImage(provider.bankTypeDTO!.fileBank!))
                           : DecorationImage(
                               image: ImageUtils.instance.getImageNetWork(
                                   provider.bankTypeDTO?.imageId ?? '')),

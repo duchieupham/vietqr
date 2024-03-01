@@ -4,8 +4,8 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/account/blocs/account_bloc.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/setting_bdsd_provider.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class SettingBDSD extends StatefulWidget {
   const SettingBDSD({Key? key}) : super(key: key);
@@ -18,14 +18,14 @@ class SettingBDSD extends StatefulWidget {
 
 class _SettingBDSDState extends State<SettingBDSD> {
   void _updateVoiceSetting(param) async {
-    String userId = UserHelper.instance.getUserId();
+    String userId = SharePrefUtils.getProfile().userId;
     try {
       bool updateStatus = await accRepository.updateVoiceSetting(param);
       if (updateStatus) {
         final settingAccount = await accRepository.getSettingAccount(userId);
         if (settingAccount != null) {
           if (settingAccount.userId.isNotEmpty) {
-            await UserHelper.instance.setAccountSetting(settingAccount);
+            await SharePrefUtils.saveAccountSetting(settingAccount);
           }
         }
       }
@@ -39,7 +39,7 @@ class _SettingBDSDState extends State<SettingBDSD> {
     return Scaffold(
       appBar: const MAppBar(title: 'Nhận BĐSD'),
       body: ChangeNotifierProvider(
-        create: (context) => SettingBDSDProvider(),
+        create: (context) => SettingBDSDProvider()..initData(),
         child: Consumer<SettingBDSDProvider>(
           builder: (context, provider, child) {
             return ListView(
@@ -74,7 +74,7 @@ class _SettingBDSDState extends State<SettingBDSD> {
                         onChanged: (bool value) {
                           provider.updateOpenVoice(value);
                           Map<String, dynamic> param = {};
-                          param['userId'] = UserHelper.instance.getUserId();
+                          param['userId'] = SharePrefUtils.getProfile().userId;
                           param['value'] = value ? 1 : 0;
                           param['type'] = 0;
                           _updateVoiceSetting(param);

@@ -15,8 +15,7 @@ import 'package:vierqr/models/introduce_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:http/http.dart' as http;
 import 'package:vierqr/models/response_message_dto.dart';
-import 'package:vierqr/services/shared_references/account_helper.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class DashboardRepository {
   const DashboardRepository();
@@ -25,11 +24,7 @@ class DashboardRepository {
   Future<bool> requestPermissions() async {
     bool result = false;
     try {
-      // PermissionStatus smsPermission = await Permission.sms.status;
       PermissionStatus cameraPermission = await Permission.camera.status;
-      // if (!smsPermission.isGranted) {
-      //   await Permission.sms.request();
-      // }
 
       LOG.info('CAMERA PERMISSION: $cameraPermission');
       if (!cameraPermission.isGranted) {
@@ -38,10 +33,6 @@ class DashboardRepository {
           LOG.error('CAMERA PERMISSION after access: $cameraPermission');
         });
       }
-
-      // if (smsPermission.isGranted && cameraPermission.isGranted) {
-      //   result = true;
-      // }
     } catch (e) {
       LOG.error('Error at requestPermissions - PermissionRepository: $e');
     }
@@ -52,9 +43,7 @@ class DashboardRepository {
   Future<Map<String, PermissionStatus>> checkPermissions() async {
     Map<String, PermissionStatus> result = {};
     try {
-      // PermissionStatus smsPermission = await Permission.sms.status;
       PermissionStatus cameraPermission = await Permission.camera.status;
-      // result['sms'] = smsPermission;
       result['camera'] = cameraPermission;
     } catch (e) {
       LOG.error('');
@@ -154,8 +143,9 @@ class DashboardRepository {
       );
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
-        UserHelper.instance.setWalletInfo(response.body);
-        return IntroduceDTO.fromJson(data);
+        IntroduceDTO introduceDTO = IntroduceDTO.fromJson(data);
+        await SharePrefUtils.saveWalletInfo(introduceDTO);
+        return introduceDTO;
       }
     } catch (e) {
       LOG.error(e.toString());
@@ -214,8 +204,8 @@ class DashboardRepository {
   Future<bool> updateFcmToken() async {
     bool result = false;
     try {
-      String userId = UserHelper.instance.getUserId();
-      String oldToken = AccountHelper.instance.getFcmToken();
+      String userId = SharePrefUtils.getProfile().userId;
+      String oldToken = SharePrefUtils.getTokenFCM();
       String newToken = await FirebaseMessaging.instance.getToken() ?? '';
       if (oldToken.trim() != newToken.trim()) {
         FcmTokenUpdateDTO dto = FcmTokenUpdateDTO(
@@ -228,7 +218,7 @@ class DashboardRepository {
         );
         if (response.statusCode == 200) {
           result = true;
-          await AccountHelper.instance.setFcmToken(newToken);
+          await SharePrefUtils.saveTokenFCM(newToken);
         }
       } else {
         result = true;

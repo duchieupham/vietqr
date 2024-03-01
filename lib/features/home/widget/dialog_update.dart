@@ -6,7 +6,6 @@ import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
-import 'package:vierqr/services/shared_references/theme_helper.dart';
 
 class DialogUpdateView extends StatefulWidget {
   final bool isHideClose;
@@ -49,9 +48,9 @@ class _DialogUpdateViewState extends State<DialogUpdateView> {
                           width: 130,
                           height: 130,
                         )
-                      : provider.fileLogo.path.isNotEmpty
+                      : provider.logoApp.path.isNotEmpty
                           ? Image.file(
-                              provider.fileLogo,
+                              provider.logoApp,
                               width: 130,
                               height: 130,
                             )
@@ -121,7 +120,6 @@ class _DialogUpdateViewState extends State<DialogUpdateView> {
                                 bgColor: AppColor.BLUE_TEXT,
                                 borderRadius: 5,
                                 function: () async {
-                                  ThemeHelper.instance.updateApp(false);
                                   Uri uri = Uri.parse(Stringify.urlStore);
                                   if (!await launchUrl(uri,
                                       mode: LaunchMode.externalApplication)) {}

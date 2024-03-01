@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:vierqr/commons/constants/configurations/stringify.dart'
+    as Constants;
 
 import 'package:float_bubble/float_bubble.dart';
 import 'package:flutter/material.dart';
@@ -34,15 +36,13 @@ import 'package:vierqr/features/login/views/quick_login_screen.dart';
 import 'package:vierqr/features/register/register_screen.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/main.dart';
-import 'package:vierqr/models/account_information_dto.dart';
+import 'package:vierqr/models/theme_dto.dart';
+import 'package:vierqr/models/user_profile.dart';
 import 'package:vierqr/models/account_login_dto.dart';
 import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/info_user_dto.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
-import 'package:vierqr/models/user_repository.dart';
-import 'package:vierqr/services/shared_references/account_helper.dart';
-import 'package:vierqr/services/shared_references/theme_helper.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/splash_screen.dart';
 
 import 'views/bgr_app_bar_login.dart';
@@ -141,18 +141,10 @@ class _LoginState extends State<_Login> {
               _bloc.add(GetVersionAppEvent(isCheckVer: state.isCheckApp));
             }
             if (state.request == LoginType.APP_VERSION) {
+              provider.updateAppInfo(state.appInfoDTO);
               _authProvider.updateAppInfoDTO(state.appInfoDTO);
-              bool isClearCache = await _authProvider.clearCache();
 
-              if (isClearCache) {
-                ThemeHelper.instance.clearTheme();
-                UserHelper.instance.setBankTypeKey(false);
-                await UserRepository.instance.clearThemes();
-                await UserRepository.instance.clearBanks();
-                await UserRepository.instance.clearThemeDTO();
-              }
-
-              _onHandleAppSystem(state, provider);
+              _onHandleAppSystem(state.appInfoDTO, _authProvider);
 
               if (_authProvider.isUpdateVersion) {
                 if (!state.appInfoDTO.isCheckApp)
@@ -173,24 +165,21 @@ class _LoginState extends State<_Login> {
 
             if (state.request == LoginType.TOAST) {
               _authProvider.updateRenderUI(isLogout: true);
-              AccountInformationDTO accountInformationDTO =
-                  UserHelper.instance.getAccountInformation();
+              UserProfile userProfile = SharePrefUtils.getProfile();
 
               if (provider.infoUserDTO != null) {
                 InfoUserDTO infoUserDTO = provider.infoUserDTO!;
 
-                infoUserDTO.imgId = accountInformationDTO.imgId;
-                infoUserDTO.firstName = accountInformationDTO.firstName;
-                infoUserDTO.middleName = accountInformationDTO.middleName;
-                infoUserDTO.lastName = accountInformationDTO.lastName;
-                infoUserDTO.middleName = accountInformationDTO.middleName;
+                infoUserDTO.imgId = userProfile.imgId;
+                infoUserDTO.firstName = userProfile.firstName;
+                infoUserDTO.middleName = userProfile.middleName;
+                infoUserDTO.lastName = userProfile.lastName;
+                infoUserDTO.middleName = userProfile.middleName;
 
                 provider.updateInfoUser(infoUserDTO);
 
                 _saveAccount(provider);
               }
-
-              // _authProvider.initThemeDTO();
 
               Navigator.of(context).popUntil((route) => route.isFirst);
               Navigator.pushReplacement(
@@ -418,7 +407,6 @@ class _LoginState extends State<_Login> {
                         list: provider.listInfoUsers,
                         appInfoDTO: provider.appInfoDTO,
                         onRemoveAccount: (dto) async {
-                          List<String> listString = [];
                           List<InfoUserDTO> list = provider.listInfoUsers;
                           list.removeAt(dto);
                           if (list.length >= 2) {
@@ -426,11 +414,7 @@ class _LoginState extends State<_Login> {
                                 .compareTo(b.expiryAsDateTime));
                           }
 
-                          list.forEach((element) {
-                            listString.add(element.toSPJson().toString());
-                          });
-
-                          await UserHelper.instance.setLoginAccount(listString);
+                          await SharePrefUtils.saveLoginAccount(list);
 
                           provider.updateListInfoUser();
 
@@ -637,7 +621,7 @@ class _LoginState extends State<_Login> {
                     context,
                     isShowIconFirst: false,
                   );
-                  await AccountHelper.instance.setTokenFree('');
+                  await SharePrefUtils.saveTokenFree('');
                 }
               }
             },
@@ -938,8 +922,7 @@ class _LoginState extends State<_Login> {
   }
 
   void _saveAccount(LoginProvider provider) async {
-    List<String> list = [];
-    List<InfoUserDTO> listCheck = UserHelper.instance.getLoginAccount();
+    List<InfoUserDTO> listCheck = await SharePrefUtils.getLoginAccount() ?? [];
 
     if (listCheck.isNotEmpty) {
       if (listCheck.length >= 3) {
@@ -969,49 +952,54 @@ class _LoginState extends State<_Login> {
           .sort((a, b) => a.expiryAsDateTime.compareTo(b.expiryAsDateTime));
     }
 
-    listCheck.forEach((element) {
-      list.add(element.toSPJson().toString());
-    });
-
-    await UserHelper.instance.setLoginAccount(list);
+    await SharePrefUtils.saveLoginAccount(listCheck);
     provider.updateListInfoUser();
   }
 
-  void _onHandleAppSystem(LoginState state, LoginProvider provider) async {
-    provider.updateAppInfo(state.appInfoDTO);
-    String logoTheme = ThemeHelper.instance.getLogoTheme();
-    String themeSystem = ThemeHelper.instance.getThemeSystem();
-    bool isEventTheme = ThemeHelper.instance.getEventTheme();
+  void _onHandleAppSystem(AppInfoDTO dto, AuthProvider authProvider) async {
+    String logoApp = SharePrefUtils.getLogoApp();
+    String bannerApp = SharePrefUtils.getBannerApp();
+    bool isEvent = SharePrefUtils.getBannerEvent();
+    ThemeDTO themeDTO = await SharePrefUtils.getSingleTheme() ?? ThemeDTO();
 
-    if (logoTheme.isEmpty) {
-      String path = state.appInfoDTO.logoUrl.split('/').last;
-      if (path.contains('.png')) {
-        path.replaceAll('.png', '');
+    if (logoApp.isEmpty) {
+      String path = dto.logoUrl.split('/').last;
+
+      for (var type in Constants.PictureType.values) {
+        if (path.contains(type.pictureValue)) {
+          path.replaceAll(type.pictureValue, '');
+          break;
+        }
       }
 
-      String localPath =
-          await downloadAndSaveImage(state.appInfoDTO.logoUrl, path);
+      String localPath = await downloadAndSaveImage(dto.logoUrl, path);
 
-      ThemeHelper.instance.updateLogoTheme(localPath);
-      _authProvider.updateFileLogo(localPath);
+      await SharePrefUtils.saveLogoApp(localPath);
+      authProvider.updateLogoApp(localPath);
     }
 
-    if (themeSystem.isEmpty || isEventTheme != state.appInfoDTO.isEventTheme) {
-      String path = state.appInfoDTO.themeImgUrl.split('/').last;
-      if (path.contains('.png')) {
-        path.replaceAll('.png', '');
+    if (dto.isEventTheme && !isEvent) {
+      String path = dto.themeImgUrl.split('/').last;
+      for (var type in Constants.PictureType.values) {
+        if (path.contains(type.pictureValue)) {
+          path.replaceAll(type.pictureValue, '');
+          break;
+        }
       }
 
-      String localPath =
-          await downloadAndSaveImage(state.appInfoDTO.themeImgUrl, path);
+      String localPath = await downloadAndSaveImage(dto.themeImgUrl, path);
 
-      ThemeHelper.instance.updateThemeSystem(localPath);
-      _authProvider.updateFileTheme(localPath);
+      await SharePrefUtils.saveBannerApp(localPath);
+      authProvider.updateBannerApp(localPath);
+    } else if (!dto.isEventTheme && themeDTO.type == 0) {
+      SharePrefUtils.removeSingleTheme();
+      SharePrefUtils.saveBannerApp('');
+      authProvider.updateBannerApp('');
     }
 
-    if (isEventTheme != state.appInfoDTO.isEventTheme) {
-      ThemeHelper.instance.updateEventTheme(state.appInfoDTO.isEventTheme);
-      _authProvider.updateEventTheme(state.appInfoDTO.isEventTheme);
+    if (isEvent != dto.isEventTheme) {
+      await SharePrefUtils.saveBannerEvent(dto.isEventTheme);
+      authProvider.updateEventTheme(dto.isEventTheme);
     }
   }
 }

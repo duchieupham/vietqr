@@ -5,8 +5,7 @@
 // import 'package:vierqr/models/user_phone_dto.dart';
 // import 'package:vierqr/services/firestore/bank_member_db.dart';
 // import 'package:vierqr/services/firestore/user_information_db.dart';
-// import 'package:vierqr/services/shared_references/user_information_helper.dart';
-
+// 
 // class MemberManageRepository {
 //   const MemberManageRepository();
 

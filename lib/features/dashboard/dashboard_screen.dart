@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'dart:isolate';
 
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:vierqr/commons/constants/configurations/stringify.dart'
+    as Constants;
 import 'package:float_bubble/float_bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,11 +16,8 @@ import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/events.dart';
-import 'package:vierqr/commons/utils/image_utils.dart';
-import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
-import 'package:vierqr/commons/widgets/button_icon_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/account/account_screen.dart';
 import 'package:vierqr/features/bank_card/bank_screen.dart';
@@ -34,17 +32,15 @@ import 'package:vierqr/features/home/home.dart';
 import 'package:vierqr/features/home/widget/dialog_update.dart';
 import 'package:vierqr/features/network/network_bloc.dart';
 import 'package:vierqr/features/network/network_state.dart';
-import 'package:vierqr/features/notification/views/notification_screen.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
+import 'package:vierqr/features/store/store_screen.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/contact_dto.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/models/theme_dto.dart';
 import 'package:vierqr/models/user_repository.dart';
-import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
-import 'package:vierqr/services/shared_references/theme_helper.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/splash_screen.dart';
 
 import 'curved_navi_bar/custom_navigation_bar.dart';
@@ -80,7 +76,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
     const BankScreen(key: PageStorageKey('QR_GENERATOR_PAGE')),
     const HomeScreen(key: PageStorageKey('HOME_PAGE')),
     const ContactScreen(key: PageStorageKey('CONTACT_PAGE')),
-    const AccountScreen(key: const PageStorageKey('USER_SETTING_PAGE')),
+    const StoreScreen(key: const PageStorageKey('STORE_PAGE')),
   ];
 
   StreamSubscription? _subscription;
@@ -132,6 +128,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
   void initialServices() {
     _bloc.add(GetBanksEvent());
     _bloc.add(GetUserInformation());
+    _bloc.add(GetUserSettingEvent());
     _bloc.add(GetPointEvent());
     _bloc.add(GetCountNotifyEvent());
   }
@@ -193,7 +190,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
                   : '',
               website: e.websites.isNotEmpty ? e.websites.first.url : '',
               address: e.addresses.isNotEmpty ? e.addresses.first.address : '',
-              userId: UserHelper.instance.getUserId(),
+              userId: SharePrefUtils.getProfile().userId,
               additionalData: e.notes.isNotEmpty ? e.notes.first.note : '',
             );
 
@@ -263,36 +260,47 @@ class _DashBoardScreen extends State<DashBoardScreen>
   }
 
   void _onHandleAppSystem(AppInfoDTO dto, AuthProvider authProvider) async {
-    String logoTheme = ThemeHelper.instance.getLogoTheme();
-    String themeSystem = ThemeHelper.instance.getThemeSystem();
-    bool isEventTheme = ThemeHelper.instance.getEventTheme();
+    String logoApp = SharePrefUtils.getLogoApp();
+    bool isEvent = SharePrefUtils.getBannerEvent();
+    ThemeDTO themeDTO = await SharePrefUtils.getSingleTheme() ?? ThemeDTO();
 
-    if (logoTheme.isEmpty) {
+    if (logoApp.isEmpty) {
       String path = dto.logoUrl.split('/').last;
-      if (path.contains('.png')) {
-        path.replaceAll('.png', '');
+
+      for (var type in Constants.PictureType.values) {
+        if (path.contains(type.pictureValue)) {
+          path.replaceAll(type.pictureValue, '');
+          return;
+        }
       }
 
       String localPath = await downloadAndSaveImage(dto.logoUrl, path);
 
-      ThemeHelper.instance.updateLogoTheme(localPath);
-      authProvider.updateFileLogo(localPath);
+      await SharePrefUtils.saveLogoApp(localPath);
+      authProvider.updateLogoApp(localPath);
     }
 
-    if (themeSystem.isEmpty || isEventTheme != dto.isEventTheme) {
+    if (dto.isEventTheme && !isEvent) {
       String path = dto.themeImgUrl.split('/').last;
-      if (path.contains('.png')) {
-        path.replaceAll('.png', '');
+      for (var type in Constants.PictureType.values) {
+        if (path.contains(type.pictureValue)) {
+          path.replaceAll(type.pictureValue, '');
+          return;
+        }
       }
 
       String localPath = await downloadAndSaveImage(dto.themeImgUrl, path);
 
-      ThemeHelper.instance.updateThemeSystem(localPath);
-      authProvider.updateFileTheme(localPath);
+      await SharePrefUtils.saveBannerApp(localPath);
+      authProvider.updateBannerApp(localPath);
+    } else if (!dto.isEventTheme && themeDTO.type == 0) {
+      await SharePrefUtils.removeSingleTheme();
+      await SharePrefUtils.saveBannerApp('');
+      authProvider.updateBannerApp('');
     }
 
-    if (isEventTheme != dto.isEventTheme) {
-      ThemeHelper.instance.updateEventTheme(dto.isEventTheme);
+    if (isEvent != dto.isEventTheme) {
+      await SharePrefUtils.saveBannerEvent(dto.isEventTheme);
       authProvider.updateEventTheme(dto.isEventTheme);
     }
   }
@@ -326,17 +334,15 @@ class _DashBoardScreen extends State<DashBoardScreen>
         }
 
         if (state.request == DashBoardType.GET_USER_SETTING) {
-          final settingAccountDTO = UserHelper.instance.getAccountSetting();
+          final settingAccountDTO = SharePrefUtils.getAccountSetting();
           _provider.updateSettingDTO(settingAccountDTO);
-          String themeVerLocal = ThemeHelper.instance.getThemeVer();
+          String themeVerLocal = SharePrefUtils.getThemeVersion();
           String themeSystem = state.appInfoDTO.themeVersion;
           List<ThemeDTO> listLocal = await UserRepository.instance.getThemes();
 
           if (themeVerLocal != themeSystem || listLocal.isEmpty) {
             _bloc.add(GetListThemeEvent());
-          }
-
-          _onHandleAppSystem(state.appInfoDTO, _provider);
+          } else {}
         }
 
         if (state.request == DashBoardType.GET_BANK) {
@@ -344,18 +350,9 @@ class _DashBoardScreen extends State<DashBoardScreen>
         }
 
         if (state.request == DashBoardType.APP_VERSION) {
-          _provider.updateAppInfoDTO(state.appInfoDTO);
-
-          bool isClearCache = await _provider.clearCache();
-
-          if (isClearCache) {
-            ThemeHelper.instance.clearTheme();
-            UserHelper.instance.setBankTypeKey(false);
-            await UserRepository.instance.clearThemes();
-            await UserRepository.instance.clearBanks();
-            await UserRepository.instance.clearThemeDTO();
-          }
           initialServices();
+          _provider.updateAppInfoDTO(state.appInfoDTO);
+          _onHandleAppSystem(state.appInfoDTO, _provider);
         }
 
         if (state.request == DashBoardType.THEMES) {
@@ -366,7 +363,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
           await UserRepository.instance.clearThemes();
           List<ThemeDTO> datas = await _isolateStream.saveThemeReceiver(list);
           _provider.updateThemes(datas);
-          ThemeHelper.instance.updateThemeVer(state.appInfoDTO.themeVersion);
+          await SharePrefUtils.saveThemeVersion(state.appInfoDTO.themeVersion);
         }
 
         if (state.request == DashBoardType.KEEP_BRIGHT) {
@@ -436,11 +433,9 @@ class _DashBoardScreen extends State<DashBoardScreen>
         return Scaffold(
           body: Stack(
             children: [
-              _buildAppBar(),
+              BackgroundAppBarHome(),
               Container(
-                padding: (provider.pageSelected.pageType == PageType.PERSON)
-                    ? EdgeInsets.zero
-                    : const EdgeInsets.only(top: kToolbarHeight * 2),
+                padding: const EdgeInsets.only(top: kToolbarHeight * 2),
                 child: Listener(
                   onPointerMove: (moveEvent) {
                     if (moveEvent.delta.dx < 0) {
@@ -545,7 +540,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
     if (index.pageType != PageType.SCAN_QR) {
       _animatedToPage(index);
     } else {
-      if (QRScannerHelper.instance.getQrIntro()) {
+      if (SharePrefUtils.getQrIntro()) {
         startBarcodeScanStream();
       } else {
         await DialogWidget.instance.showFullModalBottomContent(
@@ -576,132 +571,6 @@ class _DashBoardScreen extends State<DashBoardScreen>
     }
   }
 
-//get title page
-  Widget _getTitlePage(BuildContext context, int indexSelected) {
-    Widget titleWidget = const SizedBox();
-    if (indexSelected != PageType.PERSON.pageIndex ||
-        indexSelected == PageType.SCAN_QR.pageIndex) {
-      titleWidget = ButtonIconWidget(
-        width: double.infinity,
-        height: 40,
-        borderRadius: 40,
-        icon: Icons.search_rounded,
-        iconSize: 18,
-        contentPadding: const EdgeInsets.only(left: 16),
-        alignment: Alignment.centerLeft,
-        title: 'Tìm kiếm',
-        textSize: 11,
-        function: () {
-          Navigator.pushNamed(context, Routes.SEARCH_BANK);
-        },
-        bgColor: Theme.of(context).cardColor,
-        textColor: Theme.of(context).hintColor,
-      );
-    }
-
-    if (indexSelected == PageType.PERSON.pageIndex) {
-      titleWidget = const SizedBox.shrink();
-    }
-
-    return titleWidget;
-  }
-
-//header
-  Widget _buildAppBar() {
-    return Consumer<AuthProvider>(
-      builder: (context, page, child) {
-        return BackgroundAppBarHome(
-          file: page.fileTheme,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 25),
-            height: 56,
-            child: page.pageSelected.pageType == PageType.PERSON
-                ? const SizedBox.shrink()
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      if (page.fileLogo.path.isEmpty)
-                        Container(
-                          width: 60,
-                          height: 30,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: CachedNetworkImage(
-                              imageUrl: page.settingDTO.logoUrl, width: 50),
-                        )
-                      else
-                        Image.file(page.fileLogo, width: 60, height: 30),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: _getTitlePage(context, page.pageSelected),
-                        ),
-                      ),
-                      BlocConsumer<DashBoardBloc, DashBoardState>(
-                          listener: (context, state) {},
-                          builder: (context, state) {
-                            int lengthNotify =
-                                state.countNotify.toString().length;
-                            return SizedBox(
-                              width: 50,
-                              height: 60,
-                              child: Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  ButtonIconWidget(
-                                    width: 40,
-                                    height: 40,
-                                    borderRadius: 40,
-                                    icon: Icons.notifications_outlined,
-                                    title: '',
-                                    function: _onNotification,
-                                    bgColor: Theme.of(context).cardColor,
-                                    textColor: Theme.of(context).hintColor,
-                                  ),
-                                  if (state.countNotify != 0)
-                                    Positioned(
-                                      top: 4,
-                                      right: 0,
-                                      child: Container(
-                                        width: 20,
-                                        height: 20,
-                                        alignment: Alignment.center,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(30),
-                                          color: AppColor.RED_CALENDAR,
-                                        ),
-                                        child: Text(
-                                          state.countNotify.toString(),
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize:
-                                                (lengthNotify >= 3) ? 8 : 10,
-                                            color: AppColor.WHITE,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                ],
-                              ),
-                            );
-                          }),
-                    ],
-                  ),
-          ),
-        );
-      },
-    );
-  }
-
-  void _onNotification() async {
-    _bloc.add(NotifyUpdateStatusEvent());
-
-    NavigatorUtils.navigatePage(context, NotificationScreen(),
-        routeName: NotificationScreen.routeName);
-  }
-
   List<CurvedNavigationBarItem> _listNavigation = [
     CurvedNavigationBarItem(
       label: 'Tài khoản',
@@ -728,39 +597,45 @@ class _DashBoardScreen extends State<DashBoardScreen>
       index: PageType.CARD_QR.pageIndex,
     ),
     CurvedNavigationBarItem(
-      label: 'Cá nhân',
-      urlSelect: '',
-      urlUnselect: '',
-      index: PageType.PERSON.pageIndex,
-      child: Consumer<AuthProvider>(builder: (context, provider, _) {
-        String imgId = UserHelper.instance.getAccountInformation().imgId;
-        return Container(
-          width: 28,
-          height: 28,
-          padding: EdgeInsets.all(1),
-          decoration: provider.pageSelected == PageType.PERSON.pageIndex
-              ? BoxDecoration(
-                  border: Border.all(color: AppColor.BLUE_TEXT, width: 1),
-                  borderRadius: BorderRadius.circular(28),
-                  color: Colors.white,
-                )
-              : BoxDecoration(),
-          child: Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: provider.avatarUser.path.isEmpty
-                    ? (imgId.isNotEmpty
-                        ? ImageUtils.instance.getImageNetWork(imgId)
-                        : Image.asset('assets/images/ic-avatar.png').image)
-                    : Image.file(provider.avatarUser).image,
-              ),
-            ),
-          ),
-        );
-      }),
+      label: 'Cửa hàng',
+      urlSelect: 'assets/images/ic-store-bottom-bar-blue.png',
+      urlUnselect: 'assets/images/ic-store-bottom-bar-grey.png',
+      index: PageType.STORE.pageIndex,
     ),
+    // CurvedNavigationBarItem(
+    //   label: 'Cửa hàng',
+    //   urlSelect: '',
+    //   urlUnselect: '',
+    //   index: PageType.PERSON.pageIndex,
+    //   child: Consumer<AuthProvider>(builder: (context, provider, _) {
+    //     String imgId = SharePrefUtils.getProfile().imgId;
+    //     return Container(
+    //       width: 28,
+    //       height: 28,
+    //       padding: EdgeInsets.all(1),
+    //       decoration: provider.pageSelected == PageType.PERSON.pageIndex
+    //           ? BoxDecoration(
+    //               border: Border.all(color: AppColor.BLUE_TEXT, width: 1),
+    //               borderRadius: BorderRadius.circular(28),
+    //               color: Colors.white,
+    //             )
+    //           : BoxDecoration(),
+    //       child: Container(
+    //         decoration: BoxDecoration(
+    //           shape: BoxShape.circle,
+    //           image: DecorationImage(
+    //             fit: BoxFit.cover,
+    //             image: provider.avatarUser.path.isEmpty
+    //                 ? (imgId.isNotEmpty
+    //                     ? ImageUtils.instance.getImageNetWork(imgId)
+    //                     : Image.asset('assets/images/ic-avatar.png').image)
+    //                 : Image.file(provider.avatarUser).image,
+    //           ),
+    //         ),
+    //       ),
+    //     );
+    //   }),
+    // ),
   ];
 
   @override

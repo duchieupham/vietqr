@@ -8,7 +8,7 @@ import 'package:vierqr/features/transaction/repositories/transaction_repository.
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/terminal_response_dto.dart';
 import 'package:vierqr/models/transaction_input_dto.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class TransProvider with ChangeNotifier {
   final controller = TextEditingController();
@@ -227,7 +227,7 @@ class TransProvider with ChangeNotifier {
       offset: 0,
       value: '',
       terminalCode: _terminalResponseDTO.id,
-      userId: UserHelper.instance.getUserId(),
+      userId: SharePrefUtils.getProfile().userId,
       status: 0,
       from: TimeUtils.instance.getCurrentDate(endDate),
       to: TimeUtils.instance.getCurrentDate(fromDate),
@@ -245,7 +245,7 @@ class TransProvider with ChangeNotifier {
             offset: offset,
             value: keywordSearch,
             terminalCode: _terminalResponseDTO.id,
-            userId: UserHelper.instance.getUserId(),
+            userId: SharePrefUtils.getProfile().userId,
             status: statusValue.id,
           );
 
@@ -467,7 +467,7 @@ class TransProvider with ChangeNotifier {
         offset: offset,
         value: codeTerminal,
         terminalCode: _terminalResponseDTO.code,
-        userId: UserHelper.instance.getUserId(),
+        userId: SharePrefUtils.getProfile().userId,
         status: statusValue.id,
       );
       if (valueTimeFilter.id == TypeTimeFilter.ALL.id) {

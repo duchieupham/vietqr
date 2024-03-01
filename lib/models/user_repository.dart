@@ -5,7 +5,7 @@ import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/theme_dto.dart';
 import 'package:vierqr/services/local_storage/hive_local/local_storage.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class UserRepository {
   static final UserRepository _instance = UserRepository._internal();
@@ -18,7 +18,7 @@ class UserRepository {
 
   Box get _boxBank => HivePrefs.instance.bankPrefs!;
 
-  String get userId => UserHelper.instance.getUserId();
+  String get userId => SharePrefUtils.getProfile().userId;
 
   String get intro_key => '${userId}_card';
 
@@ -49,14 +49,13 @@ class UserRepository {
 
   ///bank-local
   Future<List<BankTypeDTO>> getBanks() async {
-    if (!UserHelper.instance.getBankTypeKey()) {
+    if (!SharePrefUtils.getBankType()) {
       clearBanks();
       return _banks = [];
     }
-    _banks = bankLocal.getWishlist(_boxBank);
-    for (int i = 0; i < _banks.length; i++) {
-      _banks[i].file = await getImageFile(_banks[i].fileImage);
-    }
+    _banks = await SharePrefUtils.getBanks() ?? [];
+    for (var bank in banks) bank.fileBank = await getImageFile(bank.photoPath);
+
     _banks.sort((a, b) => a.linkType == LinkBankType.LINK ? -1 : 0);
     return _banks;
   }
@@ -75,16 +74,12 @@ class UserRepository {
   }
 
   ///Theme
-  Future<ThemeDTO?> getThemeDTO() async {
-    Box box = await themeLocal.openBox(theme_dto_key);
-    return themeLocal.getSingleWish(box, userId);
+  Future<ThemeDTO?> getSingleTheme() async {
+    return SharePrefUtils.getSingleTheme();
   }
 
-  Future<void> updateThemeDTO(ThemeDTO value) async {
-    Box box = await themeLocal.openBox(theme_dto_key);
-    var dto = value.copy;
-    await themeLocal.removeSingleFromBox(box, userId);
-    await themeLocal.addSingleToWishBox(box, dto, userId);
+  Future<void> saveSingleTheme(ThemeDTO value) async {
+    await SharePrefUtils.saveSingleTheme(value);
   }
 
   clearThemeDTO() async {
@@ -93,22 +88,14 @@ class UserRepository {
   }
 
   Future<List<ThemeDTO>> getThemes() async {
-    Box box = await themeLocal.openBox(list_theme_key);
-    _themes = themeLocal.getWishlist(box);
-    for (int i = 0; i < _themes.length; i++) {
-      _themes[i].xFile = await getImageFile(_themes[i].file);
-    }
+    _themes = await SharePrefUtils.getThemes() ?? [];
+    if (themes.isEmpty) return [];
+
+    for (var theme in themes) theme.xFile = await getImageFile(theme.photoPath);
     return _themes;
   }
 
-  Future<void> updateThemes(ThemeDTO value) async {
-    Box box = await themeLocal.openBox(list_theme_key);
-    var dto = value.copy;
-    await themeLocal.addProductToWishlist(box, dto);
-  }
-
   Future<void> clearThemes() async {
-    Box box = await themeLocal.openBox(list_theme_key);
-    await themeLocal.clearWishlist(box);
+    await SharePrefUtils.removeThemes();
   }
 }

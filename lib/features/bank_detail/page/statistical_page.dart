@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/enums/statistical_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
@@ -14,8 +15,8 @@ import 'package:vierqr/features/bank_detail/views/bottom_sheet_statistical.dart'
 import 'package:vierqr/models/account_bank_detail_dto.dart';
 import 'package:vierqr/models/statistical_dto.dart';
 import 'package:vierqr/models/terminal_response_dto.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/statistical_provider.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 import '../views/line_chart_custom.dart';
 
@@ -32,7 +33,7 @@ class StatisticalScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => StatisticProvider(
-          bankDetailDTO?.userId == UserHelper.instance.getUserId())
+          bankDetailDTO?.userId == SharePrefUtils.getProfile().userId)
         ..updateData(
           listTerminal: terminalDto?.terminals ?? [],
           dateTimeFilter: DateTime.now(),
@@ -89,67 +90,91 @@ class _StatisticalState extends State<Statistical> {
         }
       },
       builder: (context, state) {
-        return Container(
-          color: Colors.white,
-          child: ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            children: [
-              ...[
-                const SizedBox(height: 16),
-                Consumer<StatisticProvider>(
-                    builder: (context, provider, child) {
-                  return Stack(
-                    children: [
-                      Align(
-                        alignment: Alignment.center,
-                        child: Column(
+        return Stack(
+          children: [
+            Container(
+              color: Colors.white,
+              child: RefreshIndicator(
+                onRefresh: _onRefresh,
+                child: ListView(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  children: [
+                    ...[
+                      const SizedBox(height: 16),
+                      Consumer<StatisticProvider>(
+                          builder: (context, provider, child) {
+                        return Stack(
                           children: [
-                            Text('Biểu đồ thống kê giao dịch',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 18)),
-                            Text(_terminalTitleName(provider),
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 18)),
-                            Text(
-                              provider.getDateParent,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 12),
+                            Align(
+                              alignment: Alignment.center,
+                              child: Column(
+                                children: [
+                                  Text('Biểu đồ thống kê giao dịch',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18)),
+                                  Text(_terminalTitleName(provider),
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18)),
+                                  Text(
+                                    provider.getDateParent,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 12),
+                                  ),
+                                ],
+                              ),
                             ),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: GestureDetector(
+                                onTap: () => _onFilter(context, provider),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(30),
+                                      color:
+                                          AppColor.BLUE_TEXT.withOpacity(0.3)),
+                                  child: Image.asset(
+                                    'assets/images/ic-filter-blue.png',
+                                    height: 28,
+                                  ),
+                                ),
+                              ),
+                            )
                           ],
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: GestureDetector(
-                          onTap: () => _onFilter(context, provider),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(30),
-                                color: AppColor.BLUE_TEXT.withOpacity(0.3)),
-                            child: Image.asset(
-                              'assets/images/ic-filter-blue.png',
-                              height: 28,
-                            ),
+                        );
+                      }),
+                      const SizedBox(height: 16),
+                      Stack(
+                        children: [
+                          LineChartCustom(
+                            listData: state.listStatistics,
+                            listSeparate: state.listSeparate,
+                            dateTime: _provider.dateFilter,
                           ),
-                        ),
+                          Visibility(
+                            visible: state.status == BlocStatus.LOADING_PAGE,
+                            child: Container(
+                              height: 340,
+                              color: Colors.grey.withOpacity(0.3),
+                              margin: EdgeInsets.only(left: 40),
+                              alignment: Alignment.center,
+                              child: CircularProgressIndicator(),
+                            ),
+                          )
+                        ],
                       )
                     ],
-                  );
-                }),
-                const SizedBox(height: 16),
-                LineChartCustom(
-                  listData: state.listStatistics,
-                  listSeparate: state.listSeparate,
-                  dateTime: _provider.dateFilter,
-                )
-              ],
-              _buildOverView(state.statisticDTO, state.listStatistics),
-              const SizedBox(height: 24),
-              const SizedBox(height: 60),
-            ],
-          ),
+                    _buildOverView(state.statisticDTO, state.listStatistics),
+                    const SizedBox(height: 24),
+                    const SizedBox(height: 60),
+                  ],
+                ),
+              ),
+            ),
+          ],
         );
       },
     );
@@ -282,18 +307,24 @@ class _StatisticalState extends State<Statistical> {
                                                   ''))),
                             ),
                             const SizedBox(width: 6),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(widget.bankDetailDTO?.bankAccount ?? '',
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600)),
-                                Text(
-                                    '${widget.bankDetailDTO?.userBankName ?? ''}'
-                                        .toUpperCase(),
-                                    style: TextStyle(fontSize: 11)),
-                              ],
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(widget.bankDetailDTO?.bankAccount ?? '',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600)),
+                                  Text(
+                                      '${widget.bankDetailDTO?.userBankName ?? ''}'
+                                          .toUpperCase(),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(fontSize: 11)),
+                                ],
+                              ),
                             ),
                           ],
                         ),
@@ -460,5 +491,25 @@ class _StatisticalState extends State<Statistical> {
         },
       ),
     );
+  }
+
+  Future<void> _onRefresh() async {
+    final provider = Provider.of<StatisticProvider>(context, listen: false);
+
+    DateTime dateTime = provider.dateFilter;
+    TerminalResponseDTO terminal = provider.terminalResponseDTO;
+    String codeSearch = provider.codeSearch;
+    String terminalCode = terminal.code;
+
+    if (terminal.id.isEmpty && codeSearch == terminal.code) {
+      terminalCode = '';
+    }
+    if (codeSearch != terminal.code && provider.isOwner) {
+      terminalCode = codeSearch;
+    }
+    _bloc.add(StatisticEventGetData(
+        terminalCode: terminalCode, month: _dateFormat.format(dateTime)));
+    _bloc.add(StatisticEventGetOverview(
+        terminalCode: terminalCode, month: _dateFormat.format(dateTime)));
   }
 }

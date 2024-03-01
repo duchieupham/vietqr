@@ -16,9 +16,9 @@ import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/bluetooth_printer_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/create_qr_provider.dart';
 import 'package:vierqr/services/providers/water_mark_provider.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
 import 'package:vierqr/services/sqflite/local_database.dart';
 
 class CreateQRSuccess extends StatefulWidget {
@@ -157,9 +157,9 @@ class _CreateQRSuccessState extends State<CreateQRSuccess> {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(5),
                                 color: AppColor.WHITE,
-                                image: data.file != null
+                                image: data.fileBank != null
                                     ? DecorationImage(
-                                        image: FileImage(data.file!))
+                                        image: FileImage(data.fileBank!))
                                     : DecorationImage(
                                         image: ImageUtils.instance
                                             .getImageNetWork(data.imageId)),
@@ -301,7 +301,7 @@ class _CreateQRSuccessState extends State<CreateQRSuccess> {
   }
 
   onPrint(QRGeneratedDTO qrGeneratedDTO) async {
-    String userId = UserHelper.instance.getUserId();
+    String userId = SharePrefUtils.getProfile().userId;
     BluetoothPrinterDTO bluetoothPrinterDTO =
         await LocalDatabase.instance.getBluetoothPrinter(userId);
     if (bluetoothPrinterDTO.id.isNotEmpty) {

@@ -9,7 +9,7 @@ import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/introduce_dto.dart';
 import 'package:vierqr/models/theme_dto.dart';
 import 'package:vierqr/models/user_repository.dart';
-import 'package:vierqr/services/shared_references/theme_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:flutter/material.dart';
 
 import 'package:nfc_manager/nfc_manager.dart';
@@ -68,10 +68,10 @@ class AuthProvider with ChangeNotifier {
   List<ThemeDTO> themes = [];
 
   /// Dùng khi không set Event cho
-  File fileTheme = File('');
+  File bannerApp = File('');
 
   /// Dùng cho màn chưa Login
-  File fileLogo = File('');
+  File logoApp = File('');
 
   bool isEventTheme = false;
 
@@ -87,7 +87,7 @@ class AuthProvider with ChangeNotifier {
     List<File> listFile = [];
 
     for (var element in themes) {
-      File file = await getImageFile(element.file);
+      File file = await getImageFile(element.photoPath);
       listFile.add(file);
     }
     themesController.add(listFile);
@@ -110,7 +110,7 @@ class AuthProvider with ChangeNotifier {
 
   _loadThemeSystem() {
     updateEventTheme(null);
-    updateFileLogo('');
+    updateLogoApp('');
     initThemeDTO();
   }
 
@@ -126,29 +126,29 @@ class AuthProvider with ChangeNotifier {
 
   void updateEventTheme(value) {
     if (value == null) {
-      isEventTheme = ThemeHelper.instance.getEventTheme();
+      isEventTheme = SharePrefUtils.getBannerEvent();
     } else {
       isEventTheme = value;
     }
     notifyListeners();
   }
 
-  void updateFileLogo(String file) async {
+  void updateLogoApp(String file) async {
     if (file.isNotEmpty) {
-      fileLogo = await getImageFile(file);
+      logoApp = await getImageFile(file);
     } else {
-      String url = ThemeHelper.instance.getLogoTheme();
-      fileLogo = await getImageFile(url);
+      String url = SharePrefUtils.getLogoApp();
+      logoApp = await getImageFile(url);
     }
     notifyListeners();
   }
 
-  void updateFileTheme(String file) async {
+  void updateBannerApp(String file) async {
     if (file.isNotEmpty) {
-      fileTheme = await getImageFile(file);
+      bannerApp = await getImageFile(file);
     } else {
-      String url = ThemeHelper.instance.getThemeSystem();
-      fileTheme = await getImageFile(url);
+      String url = SharePrefUtils.getBannerApp();
+      bannerApp = await getImageFile(url);
     }
     notifyListeners();
   }
@@ -156,8 +156,8 @@ class AuthProvider with ChangeNotifier {
   void updateThemeDTO(value) async {
     if (value == null) return;
     themeNotEvent = value;
-    fileTheme = await getImageFile(themeNotEvent.file);
-    await userRes.updateThemeDTO(themeNotEvent);
+    bannerApp = await getImageFile(themeNotEvent.photoPath);
+    await userRes.saveSingleTheme(themeNotEvent);
     notifyListeners();
   }
 
@@ -169,23 +169,21 @@ class AuthProvider with ChangeNotifier {
   }
 
   void initThemeDTO() async {
-    ThemeDTO? theme = await userRes.getThemeDTO();
+    ThemeDTO? theme = await userRes.getSingleTheme();
     if (theme == null) return;
     themeNotEvent = theme;
-    fileTheme = await getImageFile(themeNotEvent.file);
+    bannerApp = await getImageFile(themeNotEvent.photoPath);
     notifyListeners();
   }
 
-  void updateSettingDTO(value) async {
-    if (value != null) {
-      settingDTO = value;
-      ThemeDTO? _local = await userRes.getThemeDTO();
+  void updateSettingDTO(SettingAccountDTO value) async {
+    settingDTO = value;
+    ThemeDTO? _local = await userRes.getSingleTheme();
 
-      if (_local == null || settingDTO.themeType != _local.type) {
-        await onSaveThemToLocal();
-      } else if (settingDTO.themeType == _local.type) {
-        fileTheme = await getImageFile(themeNotEvent.file);
-      }
+    if (_local == null || settingDTO.themeType != _local.type) {
+      await onSaveThemToLocal();
+    } else {
+      bannerApp = await getImageFile(themeNotEvent.photoPath);
     }
     notifyListeners();
   }
@@ -201,8 +199,8 @@ class AuthProvider with ChangeNotifier {
       themeNotEvent.setFile(localPath);
       themeNotEvent.setType(settingDTO.themeType);
 
-      userRes.updateThemeDTO(themeNotEvent);
-      fileTheme = await getImageFile(themeNotEvent.file);
+      userRes.saveSingleTheme(themeNotEvent);
+      bannerApp = await getImageFile(themeNotEvent.photoPath);
     }
     notifyListeners();
   }
@@ -258,27 +256,6 @@ class AuthProvider with ChangeNotifier {
   void updateIsCheckApp(value) {
     appInfoDTO.isCheckApp = value;
     notifyListeners();
-  }
-
-  Future<bool> clearCache() async {
-    bool updateApp = ThemeHelper.instance.getUpdateApp();
-    int packageVer = int.parse(packageInfo.version.replaceAll('.', ''));
-
-    if (PlatformUtils.instance.isIOsApp()) {
-      if ((appInfoDTO.iosVer == packageVer || appInfoDTO.iosVer > packageVer) &&
-          !updateApp) {
-        ThemeHelper.instance.updateApp(true);
-        return true;
-      }
-    } else if (PlatformUtils.instance.isAndroidApp()) {
-      if ((appInfoDTO.iosVer == packageVer || appInfoDTO.iosVer > packageVer) &&
-          !updateApp) {
-        ThemeHelper.instance.updateApp(true);
-        return true;
-      }
-    }
-
-    return false;
   }
 
   void updateVersion() {

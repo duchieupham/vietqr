@@ -17,7 +17,7 @@ import 'package:vierqr/features/add_bank/views/bank_input_widget.dart';
 import 'package:vierqr/features/register_new_bank/provider/register_new_bank_provider.dart';
 import 'package:vierqr/features/register_new_bank/widget/bottom_sheet_type_account.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class RegisterNewBank extends StatefulWidget {
   const RegisterNewBank({super.key});
@@ -44,6 +44,7 @@ class _RegisterMbBankState extends State<RegisterNewBank> {
   final otpController = TextEditingController();
 
   final ScrollController scrollController = ScrollController();
+
   @override
   void initState() {
     _bloc = AddBankBloc(context)
@@ -441,7 +442,7 @@ class _RegisterMbBankState extends State<RegisterNewBank> {
                             param['requestType'] = provider.typeAccount.type;
                             param['address'] = addressController.text.trim();
                             param['userId'] =
-                                UserHelper.instance.getUserId();
+                                SharePrefUtils.getProfile().userId;
                             print('--------------------------$param');
                             _bloc.add(RequestRegisterBankAccount(dto: param));
                           } else {

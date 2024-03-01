@@ -17,7 +17,7 @@ import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/models/theme_dto.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
     with BaseManager {
@@ -30,6 +30,7 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
     on<TokenEventCheckValid>(_checkValidToken);
     on<TokenFcmUpdateEvent>(_updateFcmToken);
     on<GetUserInformation>(_getUserInformation);
+    on<GetUserSettingEvent>(_getUserSetting);
     on<TokenEventLogout>(_logout);
     on<GetPointEvent>(_getPointAccount);
     on<GetVersionAppEvent>(_getVersionApp);
@@ -158,7 +159,7 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
           state.copyWith(status: BlocStatus.NONE, request: DashBoardType.NONE));
       if (event is GetPointEvent) {
         final result = await dashBoardRepository.getPointAccount(userId);
-        await UserHelper.instance.setWalletId(result.walletId!);
+        await SharePrefUtils.saveWalletID(result.walletId);
         emit(state.copyWith(
             introduceDTO: result,
             status: BlocStatus.NONE,
@@ -201,7 +202,7 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
         final result = await accRepository.getUserInformation(userId);
         if (result != null) {
           if (result.userId.isNotEmpty) {
-            await UserHelper.instance.setAccountInformation(result);
+            await SharePrefUtils.saveProfileToCache(result);
           } else {
             emit(state.copyWith(
                 msg: 'Đã có lỗi xảy ra, xin vui lòng thử lại sau',
@@ -214,10 +215,24 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
               status: BlocStatus.ERROR));
           return;
         }
+      }
+    } catch (e) {
+      LOG.error('Error at _getPointAccount: $e');
+      emit(state.copyWith(
+          msg: 'Đã có lỗi xảy ra, xin vui lòng thử lại sau',
+          status: BlocStatus.ERROR));
+    }
+  }
+
+  void _getUserSetting(DashBoardEvent event, Emitter emit) async {
+    try {
+      if (event is GetUserSettingEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.NONE, request: DashBoardType.NONE));
         final settingAccount = await accRepository.getSettingAccount(userId);
         if (settingAccount != null) {
           if (settingAccount.userId.isNotEmpty) {
-            await UserHelper.instance.setAccountSetting(settingAccount);
+            await SharePrefUtils.saveAccountSetting(settingAccount);
             emit(state.copyWith(
                 status: BlocStatus.NONE,
                 request: DashBoardType.GET_USER_SETTING));
@@ -264,12 +279,12 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
         emit(state.copyWith(
             status: BlocStatus.NONE, request: DashBoardType.NONE));
         final result = await accRepository.updateTheme(
-          UserHelper.instance.getUserId(),
+          SharePrefUtils.getProfile().userId,
           event.type,
         );
         if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
           ThemeDTO dto =
-              state.themes.where((element) => element.type == event.type).first;
+              event.themes.firstWhere((element) => element.type == event.type);
 
           emit(state.copyWith(
               status: BlocStatus.NONE,
@@ -299,7 +314,7 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
         emit(state.copyWith(
             status: BlocStatus.NONE, request: DashBoardType.NONE));
         final result = await accRepository.updateKeepBright(
-          UserHelper.instance.getUserId(),
+          SharePrefUtils.getProfile().userId,
           event.keepValue,
         );
         if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {

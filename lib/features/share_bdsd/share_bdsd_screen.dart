@@ -12,9 +12,9 @@ import 'package:vierqr/features/bank_detail/widget/detail_group.dart';
 import 'package:vierqr/features/bank_detail/widget/share_bdsd_invite.dart';
 import 'package:vierqr/features/share_bdsd/provider/share_bdsd_provider.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 import '../../../models/terminal_response_dto.dart';
-import '../../../services/shared_references/user_information_helper.dart';
 import '../bank_detail/events/share_bdsd_event.dart';
 
 class ShareBDSDScreen extends StatefulWidget {
@@ -26,26 +26,39 @@ class ShareBDSDScreen extends StatefulWidget {
 
 class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
   late ShareBDSDBloc _bloc;
+  late ShareBDSDProvider provider;
   TerminalDto terminalDto = TerminalDto(terminals: []);
   BankTerminalDto bankTerminalDto = BankTerminalDto(bankShares: []);
+  final ScrollController controller = ScrollController();
+
+  String get userId => SharePrefUtils.getProfile().userId;
 
   @override
   void initState() {
     super.initState();
     _bloc = ShareBDSDBloc(context);
+    provider = ShareBDSDProvider();
     _bloc.add(GetListGroupBDSDEvent(
-        userID: UserHelper.instance.getUserId(),
-        type: 0,
-        offset: 0,
-        loadingPage: true));
+        userID: userId, type: 0, offset: 0, loadingPage: true));
+    controller.addListener(_loadMore);
   }
 
   Future<void> onRefresh(ShareBDSDProvider provider) async {
+    int type = provider.getTypeFilter();
+    provider.updateOffset(0);
     _bloc.add(GetListGroupBDSDEvent(
-        userID: UserHelper.instance.getUserId(),
-        type: provider.getTypeFilter(),
-        offset: 0,
-        loadingPage: true));
+        userID: userId, type: type, offset: 0, loadingPage: true));
+  }
+
+  _loadMore() async {
+    int type = provider.getTypeFilter();
+    int offset = provider.offset + 1;
+
+    final maxScroll = controller.position.maxScrollExtent;
+    if (controller.offset >= maxScroll && !controller.position.outOfRange) {
+      _bloc.add(GetListGroupBDSDEvent(
+          userID: userId, type: type, offset: offset, loadMore: true));
+    }
   }
 
   @override
@@ -55,7 +68,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
       body: BlocProvider<ShareBDSDBloc>(
         create: (context) => _bloc,
         child: ChangeNotifierProvider<ShareBDSDProvider>(
-          create: (context) => ShareBDSDProvider(),
+          create: (context) => provider,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: BlocConsumer<ShareBDSDBloc, ShareBDSDState>(
@@ -69,6 +82,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
                 }
 
                 if (state.request == ShareBDSDType.GET_LIST_GROUP) {
+                  provider.updateOffset(state.offset);
                   terminalDto = state.listGroup;
 
                   if (state.bankShareTerminal != null) {
@@ -181,6 +195,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
                                       ),
                                     )
                                   : ListView(
+                                      controller: controller,
                                       children: [
                                         if (provider.typeFilter == 0)
                                           Row(
@@ -269,6 +284,14 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
                                             ],
                                           ),
                                         _buildList(provider),
+                                        if (state.isLoadMore)
+                                          Center(
+                                            child: SizedBox(
+                                                width: 20,
+                                                height: 20,
+                                                child:
+                                                    CircularProgressIndicator()),
+                                          )
                                       ],
                                     ),
                             ),
@@ -284,10 +307,10 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
                                   context, ShareBDSDInviteScreen(),
                                   routeName: '/share_bdsd_invite');
                               _bloc.add(GetListGroupBDSDEvent(
-                                  userID: UserHelper.instance.getUserId(),
+                                  userID: SharePrefUtils.getProfile().userId,
                                   type: provider.getTypeFilter(),
                                   offset: 0,
-                                  loadingPage: true));
+                                  loadingPage: false));
                             },
                             child: Container(
                               height: 40,
@@ -448,7 +471,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
             routeName: '/share_bdsd_invite');
         _bloc.add(
           GetListGroupBDSDEvent(
-              userID: UserHelper.instance.getUserId(),
+              userID: SharePrefUtils.getProfile().userId,
               type: type,
               offset: 0,
               loadingPage: true),
@@ -516,7 +539,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
                         ),
                         routeName: '/share_bdsd_invite');
                     _bloc.add(GetListGroupBDSDEvent(
-                        userID: UserHelper.instance.getUserId(),
+                        userID: SharePrefUtils.getProfile().userId,
                         type: 0,
                         offset: 0,
                         loadingPage: true));
@@ -615,7 +638,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
             ),
             routeName: '/share_bdsd_invite');
         _bloc.add(GetListGroupBDSDEvent(
-            userID: UserHelper.instance.getUserId(),
+            userID: SharePrefUtils.getProfile().userId,
             type: 0,
             offset: 0,
             loadingPage: true));
@@ -664,7 +687,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
                     ),
                     routeName: '/share_bdsd_invite');
                 _bloc.add(GetListGroupBDSDEvent(
-                    userID: UserHelper.instance.getUserId(),
+                    userID: SharePrefUtils.getProfile().userId,
                     type: 0,
                     offset: 0,
                     loadingPage: true));

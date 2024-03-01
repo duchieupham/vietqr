@@ -18,7 +18,7 @@ import 'package:vierqr/features/scan_qr/views/dialog_scan_wordpress.dart';
 import 'package:vierqr/features/web_view/views/custom_inapp_webview.dart';
 import 'package:vierqr/models/viet_qr_scanned_dto.dart';
 import 'package:vierqr/services/aes_convert.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class QRScannerUtils {
   const QRScannerUtils._privateConstructor();
@@ -104,12 +104,12 @@ class QRScannerUtils {
       if (code.trim().endsWith('=')) {
         String dec = AESConvert.decrypt(code);
         if (dec.contains(AESConvert.accessKeyLoginWeb)) {
-          if (UserHelper.instance.getUserId().isEmpty) {
+          if (SharePrefUtils.getProfile().userId.isEmpty) {
             return TypeQR.NEGATIVE_TWO;
           }
           return TypeQR.LOGIN_WEB;
         } else if (dec.contains(AESConvert.accessKeyTokenPlugin)) {
-          if (UserHelper.instance.getUserId().isEmpty) {
+          if (SharePrefUtils.getProfile().userId.isEmpty) {
             return TypeQR.NEGATIVE_TWO;
           }
           return TypeQR.TOKEN_PLUGIN;
@@ -197,7 +197,7 @@ class QRScannerUtils {
             context,
             CustomInAppWebView(
               url: 'https://vietqr.vn/service/may-ban-hang/active?mid=$value',
-              userId: UserHelper.instance.getUserId(),
+              userId: SharePrefUtils.getProfile().userId,
             ),
             routeName: CustomInAppWebView.routeName,
           );

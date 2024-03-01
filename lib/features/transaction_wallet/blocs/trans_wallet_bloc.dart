@@ -4,7 +4,7 @@ import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/base_manager.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/transaction_wallet/repo/transaction_wallet_repo.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 import '../../../models/trans_wallet_dto.dart';
 import '../events/trans_wallet_event.dart';
@@ -27,7 +27,7 @@ class TransWalletBloc extends Bloc<TransWalletEvent, TransWalletState>
       if (event is TransactionWalletEventGetList) {
         bool isLoadMore = false;
         Map<String, dynamic> param = {};
-        param['userId'] = UserHelper.instance.getUserId();
+        param['userId'] = SharePrefUtils.getProfile().userId;
         param['status'] = event.status;
         param['offset'] = 0;
         emit(state.copyWith(status: BlocStatus.LOADING));
@@ -60,7 +60,7 @@ class TransWalletBloc extends Bloc<TransWalletEvent, TransWalletState>
         int offset = state.offset;
         offset += 1;
         Map<String, dynamic> param = {};
-        param['userId'] = UserHelper.instance.getUserId();
+        param['userId'] = SharePrefUtils.getProfile().userId;
         param['status'] = event.status;
         param['offset'] = offset * 20;
         List<TransWalletDto> data = state.list;

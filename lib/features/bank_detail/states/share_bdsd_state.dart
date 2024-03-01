@@ -20,10 +20,12 @@ class ShareBDSDState extends Equatable {
   final bool isTelegram;
   final bool isLark;
   final bool isLoading;
+  final bool isLoadMore;
   final TerminalDto listGroup;
   final BankTerminalDto? bankShareTerminal;
   final String userIdSelect;
   final bool isEmpty;
+  final int offset;
 
   ShareBDSDState({
     this.status = BlocStatus.NONE,
@@ -39,10 +41,12 @@ class ShareBDSDState extends Equatable {
     this.isLark = false,
     this.isTelegram = false,
     this.isLoading = false,
+    this.isLoadMore = false,
     this.isEmpty = false,
     this.userIdSelect = '',
     required this.listGroup,
     this.bankShareTerminal,
+    this.offset = 0,
   });
 
   ShareBDSDState copyWith({
@@ -59,10 +63,12 @@ class ShareBDSDState extends Equatable {
     bool? isTelegram,
     bool? isLark,
     bool? isLoading,
+    bool? isLoadMore,
     bool? isEmpty,
     TerminalDto? listGroup,
     String? userIdSelect,
     BankTerminalDto? bankShareTerminal,
+    int? offset,
   }) {
     return ShareBDSDState(
       status: status ?? this.status,
@@ -82,6 +88,8 @@ class ShareBDSDState extends Equatable {
       userIdSelect: userIdSelect ?? this.userIdSelect,
       listGroup: listGroup ?? this.listGroup,
       bankShareTerminal: bankShareTerminal ?? this.bankShareTerminal,
+      offset: offset ?? this.offset,
+      isLoadMore: isLoadMore ?? this.isLoadMore,
     );
   }
 
@@ -96,5 +104,6 @@ class ShareBDSDState extends Equatable {
         listGroup,
         bankShareTerminal,
         isEmpty,
+        offset,
       ];
 }

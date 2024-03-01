@@ -12,8 +12,7 @@
 // import 'package:vierqr/features/personal/states/member_manage_state.dart';
 // import 'package:vierqr/layouts/border_layout.dart';
 // import 'package:vierqr/services/providers/memeber_manage_provider.dart';
-// import 'package:vierqr/services/shared_references/user_information_helper.dart';
-
+// 
 // class AddMembersCardWidget extends StatelessWidget {
 //   final double width;
 //   final String bankId;

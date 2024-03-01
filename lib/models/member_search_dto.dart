@@ -1,3 +1,5 @@
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
+
 class MemberSearchDto {
   final String? phoneNo;
   final String? lastName;
@@ -19,6 +21,8 @@ class MemberSearchDto {
 
   String get fullName =>
       '${lastName ?? ''}' + ' ${middleName ?? ''} ' + '${firstName ?? ''}';
+
+  bool get isMe => id == SharePrefUtils.getProfile().userId;
 
   factory MemberSearchDto.fromJson(Map<String, dynamic> json) {
     return MemberSearchDto(

@@ -19,6 +19,7 @@ class MButtonWidget extends StatelessWidget {
   final TextDecoration? decoration;
   final FontWeight? fontWeight;
   final BoxBorder? border;
+  final Widget? icon;
 
   const MButtonWidget({
     super.key,
@@ -39,6 +40,7 @@ class MButtonWidget extends StatelessWidget {
     this.decoration,
     this.fontWeight,
     this.border,
+    this.icon,
   });
 
   @override
@@ -63,16 +65,22 @@ class MButtonWidget extends StatelessWidget {
               border: border,
             ),
             child: child ??
-                Text(
-                  title,
-                  style: TextStyle(
-                    color: isEnable
-                        ? colorEnableText ?? AppColor.WHITE
-                        : colorDisableText,
-                    fontSize: fontSize,
-                    decoration: decoration,
-                    fontWeight: fontWeight ?? FontWeight.w400,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    icon ?? const SizedBox(),
+                    Text(
+                      title,
+                      style: TextStyle(
+                        color: isEnable
+                            ? colorEnableText ?? AppColor.WHITE
+                            : colorDisableText,
+                        fontSize: fontSize,
+                        decoration: decoration,
+                        fontWeight: fontWeight ?? FontWeight.w400,
+                      ),
+                    ),
+                  ],
                 ),
           ),
         ],

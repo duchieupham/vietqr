@@ -15,10 +15,10 @@ import 'package:vierqr/features/bank_detail/views/bottom_sheet_detail_bank_termi
 import 'package:vierqr/features/bank_detail/widget/share_bdsd_invite.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/detail_group_dto.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 import '../../../commons/widgets/button_icon_widget.dart';
 import '../../../models/terminal_response_dto.dart';
-import '../../../services/shared_references/user_information_helper.dart';
 import '../events/detail_group_event.dart';
 
 class DetailGroupScreen extends StatefulWidget {
@@ -35,6 +35,8 @@ class _ShareBDSDInviteState extends State<DetailGroupScreen> {
   late DetailGroupBloc _bloc;
   GroupDetailDTO detailDTO = GroupDetailDTO(banks: [], members: []);
   List<AccountMemberDTO> listMember = [];
+
+  String get userId => SharePrefUtils.getProfile().userId;
 
   @override
   void initState() {
@@ -142,7 +144,7 @@ class _ShareBDSDInviteState extends State<DetailGroupScreen> {
                           ],
                         ),
                       ),
-                      if (detailDTO.userId == UserHelper.instance.getUserId())
+                      if (detailDTO.userId == userId)
                         ButtonIconWidget(
                             height: 36,
                             borderRadius: 5,
@@ -183,6 +185,7 @@ class _ShareBDSDInviteState extends State<DetailGroupScreen> {
                         borderRadius: BorderRadius.circular(6),
                         color: AppColor.WHITE),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -237,27 +240,27 @@ class _ShareBDSDInviteState extends State<DetailGroupScreen> {
                             ),
                           ),
                           Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Địa chỉ:',
-                                    style: TextStyle(
-                                        fontSize: 12,
-                                        color: AppColor.GREY_TEXT),
-                                  ),
-                                  const SizedBox(
-                                    height: 2,
-                                  ),
-                                  Text(
-                                    detailDTO.address,
-                                    style: TextStyle(fontSize: 15),
-                                  ),
-                                ],
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Địa chỉ:',
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          color: AppColor.GREY_TEXT),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      detailDTO.address,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                      style: TextStyle(fontSize: 15),
+                                    ),
+                                  ],
+                                ),
                               ),
-                              const Spacer(),
                               GestureDetector(
                                 onTap: () {
                                   FlutterClipboard.copy(detailDTO.address).then(
@@ -316,7 +319,7 @@ class _ShareBDSDInviteState extends State<DetailGroupScreen> {
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             const Spacer(),
-            if (detailDTO.userId == UserHelper.instance.getUserId())
+            if (detailDTO.userId == userId)
               ButtonIconWidget(
                   height: 36,
                   borderRadius: 5,
@@ -339,7 +342,7 @@ class _ShareBDSDInviteState extends State<DetailGroupScreen> {
                           Map<String, dynamic> param = {};
                           param['terminalId'] = detailDTO.id;
                           param['bankId'] = bankAccount.bankId;
-                          param['userId'] = UserHelper.instance.getUserId();
+                          param['userId'] = userId;
                           _bloc.add(AddBankToGroup(param: param));
                         },
                       ),
@@ -388,7 +391,7 @@ class _ShareBDSDInviteState extends State<DetailGroupScreen> {
               ),
             ),
             const Spacer(),
-            if (detailDTO.userId == UserHelper.instance.getUserId())
+            if (detailDTO.userId == userId)
               ButtonIconWidget(
                   height: 36,
                   borderRadius: 5,
@@ -484,7 +487,7 @@ class _ShareBDSDInviteState extends State<DetailGroupScreen> {
                   hideRemove: detailDTO.banks.length == 1,
                   onDelete: (bankId) {
                     Map<String, dynamic> param = {};
-                    param['userId'] = UserHelper.instance.getUserId();
+                    param['userId'] = userId;
                     param['terminalId'] = detailDTO.id;
                     param['bankId'] = bankId;
                     _bloc.add(RemoveBankToGroup(param: param));
@@ -553,7 +556,7 @@ class _ShareBDSDInviteState extends State<DetailGroupScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    dto.fullName(),
+                    dto.fullName,
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Text(

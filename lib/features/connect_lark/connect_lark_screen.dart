@@ -12,11 +12,11 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/connect_lark/states/conect_lark_state.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/connect_lark_provider.dart';
 
 import '../../commons/utils/error_utils.dart';
 import '../../models/info_tele_dto.dart';
-import '../../services/shared_references/user_information_helper.dart';
 import 'blocs/connect_lark_bloc.dart';
 import 'events/connect_lark_event.dart';
 
@@ -33,7 +33,7 @@ class ConnectLarkScreen extends StatelessWidget {
         child: BlocProvider<ConnectLarkBloc>(
           create: (context) => ConnectLarkBloc()
             ..add(GetInformationLarkConnect(
-                userId: UserHelper.instance.getUserId())),
+                userId: SharePrefUtils.getProfile().userId)),
           child: BlocConsumer<ConnectLarkBloc, ConnectLarkState>(
             listener: (context, state) {
               if (state is RemoveLarkConnectLoadingState) {
@@ -43,19 +43,19 @@ class ConnectLarkScreen extends StatelessWidget {
                 Navigator.pop(context);
                 BlocProvider.of<ConnectLarkBloc>(context).add(
                     GetInformationLarkConnect(
-                        userId: UserHelper.instance.getUserId()));
+                        userId: SharePrefUtils.getProfile().userId));
               }
               if (state is RemoveBankLarkSuccessState) {
                 Navigator.pop(context);
                 BlocProvider.of<ConnectLarkBloc>(context).add(
                     GetInformationLarkConnect(
-                        userId: UserHelper.instance.getUserId()));
+                        userId: SharePrefUtils.getProfile().userId));
               }
               if (state is AddBankLarkSuccessState) {
                 Navigator.pop(context);
                 BlocProvider.of<ConnectLarkBloc>(context).add(
                     GetInformationLarkConnect(
-                        userId: UserHelper.instance.getUserId()));
+                        userId: SharePrefUtils.getProfile().userId));
               }
               if (state is RemoveLarkFailedState) {
                 Navigator.pop(context);
@@ -333,7 +333,7 @@ class ConnectLarkScreen extends StatelessWidget {
                     if (!existed) {
                       final Map<String, dynamic> body = {
                         'id': dto.id,
-                        'userId': UserHelper.instance.getUserId(),
+                        'userId': SharePrefUtils.getProfile().userId,
                         'bankId': bankAccount.id,
                       };
 
@@ -402,8 +402,7 @@ class ConnectLarkScreen extends StatelessWidget {
                           Navigator.of(context).pop();
                           final Map<String, dynamic> body = {
                             'id': dto.id,
-                            'userId':
-                                UserHelper.instance.getUserId(),
+                            'userId': SharePrefUtils.getProfile().userId,
                             'bankId': bank.bankId,
                           };
 
@@ -461,7 +460,7 @@ class ConnectLarkScreen extends StatelessWidget {
                   context, Routes.CONNECT_STEP_LARK_SCREEN);
               BlocProvider.of<ConnectLarkBloc>(context).add(
                   GetInformationLarkConnect(
-                      userId: UserHelper.instance.getUserId()));
+                      userId: SharePrefUtils.getProfile().userId));
             },
           ),
           const SizedBox(

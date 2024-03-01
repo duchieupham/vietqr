@@ -89,7 +89,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                                   fit: BoxFit.cover)
                               : Provider.of<AuthProvider>(context,
                                           listen: false)
-                                      .fileTheme
+                                      .bannerApp
                                       .path
                                       .isNotEmpty
                                   ? DecorationImage(
@@ -97,7 +97,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                                           Provider.of<AuthProvider>(
                                                   context,
                                                   listen: false)
-                                              .fileTheme),
+                                              .bannerApp),
                                       fit: BoxFit.cover)
                                   : DecorationImage(
                                       image: AssetImage(

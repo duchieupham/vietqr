@@ -1,20 +1,20 @@
-class AccountInformationDTO {
-  final String userId;
-  final String firstName;
-  final String middleName;
-  final String lastName;
-  final String birthDate;
-  final String nationalId;
-  final String oldNationalId;
-  final String nationalDate;
+class UserProfile {
+  String userId;
+  String firstName;
+  String middleName;
+  String lastName;
+  String birthDate;
+  String nationalId;
+  String oldNationalId;
+  String nationalDate;
 
-  final int gender;
-  final String address;
-  final String email;
-  final String imgId;
-  final String carrierTypeId;
+  int gender;
+  String address;
+  String email;
+  String imgId;
+  String carrierTypeId;
 
-  const AccountInformationDTO({
+  UserProfile({
     this.userId = '',
     this.firstName = '',
     this.middleName = '',
@@ -30,8 +30,10 @@ class AccountInformationDTO {
     this.carrierTypeId = '',
   });
 
-  factory AccountInformationDTO.fromJson(Map<String, dynamic> json) {
-    return AccountInformationDTO(
+  String get fullName => ('$lastName $middleName $firstName').trim();
+
+  factory UserProfile.fromJson(Map<String, dynamic> json) {
+    return UserProfile(
       userId: json['userId'] ?? '',
       firstName: json['firstName'] ?? '',
       middleName: json['middleName'] ?? '',

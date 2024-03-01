@@ -1,6 +1,4 @@
 import 'dart:convert';
-
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vierqr/main.dart';
 
 import 'i_shared_local.dart';
@@ -8,6 +6,7 @@ import 'i_shared_local.dart';
 class SharedPrefLocal<T> extends IStorageService<T> {
   SharedPrefLocal(key) : super(key);
 
+  /// Nếu là obj thì trong obj phải có hàm toJson()
   Future<void> set({required T data}) async {
     if (T == bool) {
       sharedPrefs.setBool(key, data as bool);
@@ -28,10 +27,29 @@ class SharedPrefLocal<T> extends IStorageService<T> {
     sharedPrefs.setString(key, json.encode(data));
   }
 
-  Future<T?> get({
-    T Function(Map<String, dynamic>)? fromJson,
+  @override
+  Future<List<T>?> getList({
+    required T Function(Map<String, dynamic>) fromJson,
   }) async {
-    SharedPreferences sharedPrefs = await SharedPreferences.getInstance();
+    final dataStr = sharedPrefs.getString(key);
+    if (dataStr == null) {
+      return null;
+    }
+    try {
+      return (json.decode(dataStr) as List<dynamic>)
+          .map((item) => fromJson(item))
+          .toList();
+    } catch (err) {
+      return null;
+    }
+  }
+
+  Future<bool> remove() async {
+    return sharedPrefs.remove(key);
+  }
+
+  @override
+  T? get({T Function(Map<String, dynamic> p1)? fromJson}) {
     if (T == bool) {
       final dataBool = sharedPrefs.getBool(key);
       return dataBool as T?;
@@ -60,23 +78,9 @@ class SharedPrefLocal<T> extends IStorageService<T> {
   }
 
   @override
-  Future<List<T>?> getList({
-    required T Function(Map<String, dynamic>) fromJson,
-  }) async {
-    final dataStr = sharedPrefs.getString(key);
-    if (dataStr == null) {
-      return null;
-    }
-    try {
-      return (json.decode(dataStr) as List<dynamic>)
-          .map((item) => fromJson(item))
-          .toList();
-    } catch (err) {
-      return null;
-    }
-  }
-
-  Future<bool> remove() async {
-    return sharedPrefs.remove(key);
+  Future<T?> getStorage(
+      {required T Function(Map<String, dynamic> p1) fromJson}) {
+    // TODO: implement getStorage
+    throw UnimplementedError();
   }
 }

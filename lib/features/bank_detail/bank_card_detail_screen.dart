@@ -23,7 +23,7 @@ import 'package:vierqr/models/confirm_otp_bank_dto.dart';
 import 'package:vierqr/models/qr_bank_detail.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/terminal_response_dto.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 import '../../services/providers/account_bank_detail_provider.dart';
 import 'states/bank_card_state.dart';
@@ -75,7 +75,7 @@ class _BankCardDetailState extends State<BankCardDetailState> {
 
   late PageController pageController;
 
-  String get userId => UserHelper.instance.getUserId();
+  String get userId => SharePrefUtils.getProfile().userId;
   late QRGeneratedDTO qrGeneratedDTO = QRGeneratedDTO(
       bankCode: '',
       bankName: '',
@@ -92,10 +92,12 @@ class _BankCardDetailState extends State<BankCardDetailState> {
 
   Future<void> _refresh() async {
     bankCardBloc.add(const BankCardGetDetailEvent());
+    bankCardBloc.add(GetMyListGroupEvent(userID: userId, offset: 0));
   }
 
   void initData(BuildContext context) {
-    bankCardBloc.add(const BankCardGetDetailEvent(isLoading: true));
+    bankCardBloc
+        .add(const BankCardGetDetailEvent(isLoading: true, isInit: true));
     bankCardBloc.add(GetMyListGroupEvent(userID: userId, offset: 0));
   }
 
@@ -171,7 +173,7 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                   dto = state.bankDetailDTO!;
                 }
 
-                if (dto.isHideBDSD) listTitle.removeLast();
+                if (dto.isHideBDSD && state.isInit) listTitle.removeLast();
                 if (widget.pageIndex != 0) {
                   _provider.changeCurrentPage(widget.pageIndex);
                   pageController.jumpToPage(widget.pageIndex);

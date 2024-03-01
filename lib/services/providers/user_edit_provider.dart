@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class UserEditProvider with ChangeNotifier {
   bool _isAvailableUpdate = false;
-  int _gender = UserHelper.instance.getAccountInformation().gender;
+  int _gender = SharePrefUtils.getProfile().gender;
   bool _isFirstNameErr = false;
   bool _isOldPassErr = false;
   bool _isNewPassErr = false;
@@ -62,7 +62,7 @@ class UserEditProvider with ChangeNotifier {
   void reset() {
     _isAvailableUpdate = false;
     _isFirstNameErr = false;
-    _gender = UserHelper.instance.getAccountInformation().gender;
+    _gender = SharePrefUtils.getProfile().gender;
     notifyListeners();
   }
 }

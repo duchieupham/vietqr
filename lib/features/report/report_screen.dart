@@ -13,7 +13,7 @@ import 'package:vierqr/features/report/views/report_feedback_view.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/response_message_dto.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class ReportScreen extends StatefulWidget {
   const ReportScreen({super.key});
@@ -81,7 +81,7 @@ class _ReportScreenState extends State<ReportScreen> {
     DialogWidget.instance.openLoadingDialog();
     final ResponseMessageDTO dto =
         await dashBoardRepository.sendReport(list: imageFileList, data: {
-      'userId': UserHelper.instance.getUserId(),
+      'userId': SharePrefUtils.getProfile().userId,
       'type': '${model.type}',
       'description': desController.text,
     });

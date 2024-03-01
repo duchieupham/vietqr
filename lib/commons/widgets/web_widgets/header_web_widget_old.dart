@@ -12,8 +12,7 @@
 // import 'package:vierqr/features/notification/events/notification_event.dart';
 // import 'package:vierqr/features/notification/states/notification_state.dart';
 // import 'package:vierqr/models/notification_dto.dart';
-// import 'package:vierqr/services/shared_references/user_information_helper.dart';
-
+// 
 // class HeaderWebWidgetOld extends StatelessWidget {
 //   final String title;
 //   final bool? isSubHeader;

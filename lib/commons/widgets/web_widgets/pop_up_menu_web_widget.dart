@@ -15,8 +15,7 @@
 // import 'package:vierqr/services/providers/register_provider.dart';
 // import 'package:vierqr/services/providers/user_edit_provider.dart';
 // import 'package:vierqr/services/shared_references/event_bloc_helper.dart';
-// import 'package:vierqr/services/shared_references/user_information_helper.dart';
-
+// 
 // class PopupMenuWebWidget {
 //   const PopupMenuWebWidget._privateConsrtructor();
 

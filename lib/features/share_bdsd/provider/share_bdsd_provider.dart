@@ -13,6 +13,13 @@ class ShareBDSDProvider with ChangeNotifier {
 
   String titleFilter = 'Cửa hàng';
 
+  int offset = 0;
+
+  void updateOffset(int value) {
+    offset = value;
+    notifyListeners();
+  }
+
   void updateTypeFilter(String value) {
     titleFilter = value;
     _typeFilter = filterTitles.indexOf(value);

@@ -1,5 +1,7 @@
 import 'dart:isolate';
 
+import 'package:vierqr/commons/constants/configurations/stringify.dart'
+    as Constants;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
@@ -9,7 +11,7 @@ import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:http/http.dart' as http;
 import 'package:vierqr/models/theme_dto.dart';
 import 'package:vierqr/models/user_repository.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class IsolateStream with BaseManager {
   @override
@@ -40,24 +42,24 @@ class IsolateStream with BaseManager {
           BankTypeDTO dto = list[message.index!];
 
           String path = dto.imageId;
-          if (!path.contains('.png')) {
-            path = path + '.png';
+          for (var type in Constants.PictureType.values) {
+            if (!path.contains(type.pictureValue)) {
+              path += type.pictureValue;
+              break;
+            }
           }
 
           String localPath = await saveImageToLocal(message.data, path);
-          dto.fileImage = localPath;
+          dto.photoPath = localPath;
           listSave.add(dto);
         }
 
         if (message.isDone) {
-          listSave.forEach((element) async {
-            if (!mounted) return;
-            await UserRepository.instance.updateBanks(element);
-          });
-          receivePort.close();
           if (!mounted) return;
+          await SharePrefUtils.saveBanks(listSave);
+          receivePort.close();
           await UserRepository.instance.getBanks();
-          await UserHelper.instance.setBankTypeKey(true);
+          await SharePrefUtils.saveBankType(true);
           return;
         }
       }
@@ -91,14 +93,12 @@ class IsolateStream with BaseManager {
           }
 
           String localPath = await saveImageToLocal(message.data, path);
-          dto.file = localPath;
+          dto.photoPath = localPath;
           listSave.add(dto);
         }
 
         if (message.isDone) {
-          listSave.forEach((element) async {
-            await userRes.updateThemes(element);
-          });
+          await SharePrefUtils.saveThemes(listSave);
           receivePort.close();
           if (!mounted) return [];
           return await userRes.getThemes();

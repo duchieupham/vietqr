@@ -11,7 +11,7 @@ import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/notification_dto.dart';
 import 'package:vierqr/models/notification_input_dto.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class NotificationScreen extends StatelessWidget {
   static String routeName = '/notification_screen';
@@ -52,7 +52,7 @@ class _NotificationViewState extends State<NotificationView> {
     isEnded = false;
     offset = 0;
     notifications.clear();
-    String userId = UserHelper.instance.getUserId();
+    String userId = SharePrefUtils.getProfile().userId;
     scrollController.addListener(() {
       if (scrollController.position.pixels ==
           scrollController.position.maxScrollExtent) {
@@ -71,7 +71,7 @@ class _NotificationViewState extends State<NotificationView> {
   }
 
   Future<void> _refresh() async {
-    String userId = UserHelper.instance.getUserId();
+    String userId = SharePrefUtils.getProfile().userId;
     NotificationInputDTO dto = NotificationInputDTO(userId: userId, offset: 0);
     notificationBloc.add(NotificationGetListEvent(dto: dto));
   }

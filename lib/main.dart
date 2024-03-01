@@ -2,7 +2,9 @@ import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
 import 'package:camera/camera.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'models/qr_generated_dto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -25,7 +27,6 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/report/report_screen.dart';
 import 'package:vierqr/features/top_up/top_up_screen.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vierqr/features/add_bank/add_bank_screen.dart';
 import 'package:vierqr/features/bank_card/views/search_bank_view.dart';
@@ -47,10 +48,8 @@ import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/personal/blocs/user_edit_bloc.dart';
 import 'package:vierqr/features/personal/views/user_edit_view.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
-import 'package:vierqr/services/shared_references/theme_helper.dart';
 import 'package:vierqr/features/generate_qr/views/qr_share_view.dart';
 import 'package:vierqr/features/introduce/views/introduce_screen.dart';
-import 'package:vierqr/services/shared_references/account_helper.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/features/mobile_recharge/qr_mobile_recharge.dart';
 import 'package:vierqr/features/mobile_recharge/widget/recharege_success.dart';
@@ -65,12 +64,9 @@ import 'package:vierqr/features/transaction/widgets/transaction_sucess_widget.da
 import 'package:vierqr/models/notification_transaction_success_dto.dart';
 import 'package:vierqr/models/user_repository.dart';
 import 'package:vierqr/services/local_notification/notification_service.dart';
-import 'package:vierqr/services/shared_references/bank_arrangement_helper.dart';
-import 'package:vierqr/services/shared_references/create_qr_helper.dart';
-import 'package:vierqr/services/shared_references/event_bloc_helper.dart';
-import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
 import 'package:vierqr/features/mobile_recharge/mobile_recharge_screen.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/commons/constants/configurations/stringify.dart'
+    as Constants;
 
 //Share Preferences
 late SharedPreferences sharedPrefs;
@@ -121,16 +117,36 @@ Future<File> getImageFile(String file) async {
   return File(file);
 }
 
+Future<PackageInfo> onClearCache() async {
+  PackageInfo data = await PackageInfo.fromPlatform();
+  if (SharePrefUtils.getVersionApp() != data.version) {
+    await sharedPrefs
+        .remove(Constants.SharedPreferenceKey.ThemeVersion.sharedValue);
+    await sharedPrefs
+        .remove(Constants.SharedPreferenceKey.LogoVersion.sharedValue);
+    await sharedPrefs.remove(Constants.SharedPreferenceKey.LogoApp.sharedValue);
+    await sharedPrefs
+        .remove(Constants.SharedPreferenceKey.BannerApp.sharedValue);
+    await sharedPrefs
+        .remove(Constants.SharedPreferenceKey.BannerEvent.sharedValue);
+    await sharedPrefs.remove(Constants.SharedPreferenceKey.Banks.sharedValue);
+    await sharedPrefs.remove(Constants.SharedPreferenceKey.Themes.sharedValue);
+    await sharedPrefs
+        .remove(Constants.SharedPreferenceKey.SingleTheme.sharedValue);
+    SharePrefUtils.saveVersionApp(data.version);
+  }
+
+  return data;
+}
+
 //go into EnvConfig to change env
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   sharedPrefs = await SharedPreferences.getInstance();
+  await onClearCache();
   await HivePrefs.instance.init();
-  await _initialServiceHelper();
   if (kIsWeb) {
-    await Firebase.initializeApp(
-      options: EnvConfig.getFirebaseConfig(),
-    );
+    await Firebase.initializeApp(options: EnvConfig.getFirebaseConfig());
   } else {
     await Firebase.initializeApp();
   }
@@ -140,37 +156,6 @@ void main() async {
   await UserRepository.instance.getThemes();
   LOG.verbose('Config Environment: ${EnvConfig.getEnv()}');
   runApp(VietQRApp());
-}
-
-Future<void> _initialServiceHelper() async {
-  await sharedPrefs.setString('TOKEN_FREE', '');
-
-  if (!sharedPrefs.containsKey('BANK_TOKEN') ||
-      sharedPrefs.getString('BANK_TOKEN') == null) {
-    await AccountHelper.instance.initialAccountHelper();
-  }
-  if (!sharedPrefs.containsKey('TRANSACTION_AMOUNT') ||
-      sharedPrefs.getString('TRANSACTION_AMOUNT') == null) {
-    await CreateQRHelper.instance.initialCreateQRHelper();
-  }
-  if (!sharedPrefs.containsKey('USER_ID') ||
-      sharedPrefs.getString('USER_ID') == null) {
-    await UserHelper.instance.initialUserInformationHelper();
-  }
-  if (!sharedPrefs.containsKey('BANK_ARRANGEMENT') ||
-      sharedPrefs.getInt('BANK_ARRANGEMENT') == null) {
-    await BankArrangementHelper.instance.initialBankArr();
-  }
-  if (!sharedPrefs.containsKey('QR_INTRO') ||
-      sharedPrefs.getBool('QR_INTRO') == null) {
-    await QRScannerHelper.instance.initialQrScanner();
-  }
-
-  if (!sharedPrefs.containsKey('SCROLL_CARD') ||
-      sharedPrefs.getBool('SCROLL_CARD') == null) {
-    await AccountHelper.instance.setScrollCard(false);
-  }
-  await EventBlocHelper.instance.initialEventBlocHelper();
 }
 
 //true => new transaction
@@ -191,7 +176,7 @@ class VietQRApp extends StatefulWidget {
 class _VietQRApp extends State<VietQRApp> {
   static Widget _mainScreen = const Login();
 
-  String get userId => UserHelper.instance.getUserId().trim();
+  String get userId => SharePrefUtils.getProfile().userId.trim();
 
   @override
   void initState() {
@@ -260,7 +245,7 @@ class _VietQRApp extends State<VietQRApp> {
             message.data['notificationType'] ==
                 Stringify.NOTI_TYPE_UPDATE_TRANSACTION) {
           Map<String, dynamic> param = {};
-          param['userId'] = UserHelper.instance.getUserId();
+          param['userId'] = SharePrefUtils.getProfile().userId;
           param['amount'] = message.data['amount'];
           param['type'] = 0;
           param['transactionId'] = message.data['transactionReceiveId'];

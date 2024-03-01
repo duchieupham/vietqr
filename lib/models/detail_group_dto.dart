@@ -1,5 +1,5 @@
 import 'package:vierqr/models/terminal_response_dto.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class GroupDetailDTO {
   String id;
@@ -24,7 +24,7 @@ class GroupDetailDTO {
     required this.members,
   });
 
-  bool get isAdmin => userId == UserHelper.instance.getUserId();
+  bool get isAdmin => userId == SharePrefUtils.getProfile().userId;
 
   factory GroupDetailDTO.fromJson(Map<String, dynamic> json) {
     List<AccountMemberDTO> listMember = json['members'] != null
@@ -66,6 +66,7 @@ class AccountMemberDTO {
   final String imgId;
   final bool isOwner;
   final int bankTypeStatus;
+  late int existed;
 
   AccountMemberDTO({
     this.id = '',
@@ -76,13 +77,12 @@ class AccountMemberDTO {
     this.imgId = '',
     this.isOwner = false,
     this.bankTypeStatus = 0,
+    this.existed = 0,
   });
 
-  String fullName() {
-    return '${lastName} ${middleName} ${firstName}';
-  }
+  String get fullName => '${lastName} ${middleName} ${firstName}'.trim();
 
-  bool get isMe => id == UserHelper.instance.getUserId();
+  bool get isMe => id == SharePrefUtils.getProfile().userId;
 
   factory AccountMemberDTO.fromJson(Map<String, dynamic> json) =>
       AccountMemberDTO(
@@ -94,5 +94,6 @@ class AccountMemberDTO {
         imgId: json["imgId"] ?? '',
         isOwner: json["isOwner"] ?? false,
         bankTypeStatus: json["bankTypeStatus"] ?? 0,
+        existed: json['existed'] ?? 0,
       );
 }

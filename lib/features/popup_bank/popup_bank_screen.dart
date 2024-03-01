@@ -27,7 +27,7 @@ import 'package:vierqr/models/bank_account_remove_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/confirm_otp_bank_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class PopupBankScreen extends StatelessWidget {
   final String tag;
@@ -193,7 +193,9 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
                                         alignment: Alignment.center,
                                         child: Column(
                                           crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                              CrossAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
                                             Text(
                                               state.bankAccountDTO.bankAccount,
@@ -308,7 +310,7 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
                                 color: AppColor.RED_EC1010,
                                 onTap: () {
                                   String userId =
-                                      UserHelper.instance.getUserId();
+                                      SharePrefUtils.getProfile().userId;
                                   String bankId = state.bankAccountDTO.id;
                                   bloc.add(PopupBankEventUnRegisterBDSD(
                                       userId, bankId));

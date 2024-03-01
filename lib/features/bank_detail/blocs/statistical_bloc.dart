@@ -7,7 +7,7 @@ import 'package:vierqr/features/bank_detail/repositories/statistical_repository.
 import 'package:vierqr/features/bank_detail/states/statistical_state.dart';
 import 'package:vierqr/models/statistical_dto.dart';
 import 'package:vierqr/models/terminal_response_dto.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class StatisticBloc extends Bloc<StatisticEvent, StatisticState> {
   final TerminalDto? terminalDto;
@@ -29,7 +29,7 @@ class StatisticBloc extends Bloc<StatisticEvent, StatisticState> {
         emit(state.copyWith(request: StatisticType.NONE));
         dto = await _statisticRepository.getDataOverview(
           bankId: bankId,
-          userId: UserHelper.instance.getUserId(),
+          userId: SharePrefUtils.getProfile().userId,
           terminalCode: event.terminalCode,
           month: event.month,
         );
@@ -57,36 +57,11 @@ class StatisticBloc extends Bloc<StatisticEvent, StatisticState> {
             request: StatisticType.NONE, status: BlocStatus.LOADING_PAGE));
         list = await _statisticRepository.getDataTable(
           bankId: bankId,
-          userId: UserHelper.instance.getUserId(),
+          userId: SharePrefUtils.getProfile().userId,
           terminalCode: event.terminalCode,
           month: event.month,
         );
 
-        // DateFormat dateFormat = DateFormat('yyyy-MM');
-        // DateTime dateTime = dateFormat.parse(event.month);
-        //
-        // int day = getDaysInMonth(dateTime.year, dateTime.month);
-        // Map<int, ResponseStatisticDTO> uniqueMap = {};
-        // list.forEach((element) {
-        //   uniqueMap[element.getDay] = element;
-        // });
-        //
-        // if (list.length < day) {
-        //   for (int i = 1; i <= day; i++) {
-        //     if (!uniqueMap.containsKey(i)) {
-        //       String text = '$i';
-        //       String monthText = '${dateTime.month}';
-        //
-        //       if (dateTime.month < 10) monthText = '0${dateTime.month}';
-        //
-        //       if (i < 10) text = '0$i';
-        //
-        //       uniqueMap[i] = ResponseStatisticDTO(
-        //           date: '${dateTime.year}-$monthText-$text');
-        //     }
-        //   }
-        // }
-        //
         list.sort((a, b) => a.date.compareTo(b.date));
 
         emit(state.copyWith(

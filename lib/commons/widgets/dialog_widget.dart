@@ -420,7 +420,7 @@ class DialogWidget {
     EdgeInsetsGeometry? margin,
     BorderRadiusGeometry? borderRadius,
     Color? bgrColor,
-    bool isDismissible = false,
+    bool isDismissible = true,
     double sigmaX = 5.0,
     double sigmaY = 5.0,
   }) async {
@@ -428,7 +428,7 @@ class DialogWidget {
     return showModalBottomSheet(
       isScrollControlled: true,
       enableDrag: false,
-      isDismissible: true,
+      isDismissible: isDismissible,
       useRootNavigator: true,
       context: context,
       backgroundColor: AppColor.TRANSPARENT,

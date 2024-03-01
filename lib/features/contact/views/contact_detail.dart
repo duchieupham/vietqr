@@ -17,14 +17,13 @@ import 'package:vierqr/features/contact/states/contact_state.dart';
 import 'package:vierqr/models/bluetooth_printer_dto.dart';
 import 'package:vierqr/models/contact_detail_dto.dart';
 import 'package:vierqr/models/contact_dto.dart';
-import 'package:vierqr/services/shared_references/account_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/sqflite/local_database.dart';
 
 import '../../../commons/utils/printer_utils.dart';
 import '../../../commons/widgets/button_icon_widget.dart';
 import '../../../commons/widgets/viet_qr.dart';
 import '../../../models/qr_generated_dto.dart';
-import '../../../services/shared_references/user_information_helper.dart';
 import '../../printer/views/printing_view.dart';
 import 'contact_edit_view.dart';
 
@@ -192,10 +191,9 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
   void initState() {
     super.initState();
     _bloc = BlocProvider.of(context);
-    setState(() {
-      offset = widget.pageNumber;
-      isScrollCard = AccountHelper.instance.getScrollCard();
-    });
+    offset = widget.pageNumber;
+    isScrollCard = SharePrefUtils.getScrollCard();
+    setState(() {});
   }
 
   @override
@@ -294,7 +292,7 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
                         setState(() {
                           isScrollCard = true;
                         });
-                        await AccountHelper.instance.setScrollCard(true);
+                        await SharePrefUtils.saveScrollCard(true);
                       }
                     },
                     onPageChanged: ((index, reason) {
@@ -614,7 +612,7 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
                     function: () async {
                       BluetoothPrinterDTO bluetoothPrinterDTO =
                           await LocalDatabase.instance.getBluetoothPrinter(
-                              UserHelper.instance.getUserId());
+                              SharePrefUtils.getProfile().userId);
                       if (bluetoothPrinterDTO.id.isNotEmpty) {
                         bool isPrinting = false;
                         if (!isPrinting) {
@@ -701,14 +699,14 @@ class _ContactDetailScreenState extends State<_ContactDetailScreen> {
             ),
           ),
         ),
-        if (!AccountHelper.instance.getScrollCard())
+        if (!isScrollCard)
           Positioned.fill(
             child: GestureDetector(
               onTap: () async {
                 setState(() {
                   isScrollCard = true;
                 });
-                await AccountHelper.instance.setScrollCard(true);
+                await SharePrefUtils.saveScrollCard(true);
               },
               child: Container(
                 color: AppColor.BLACK.withOpacity(0.8),

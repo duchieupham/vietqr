@@ -11,10 +11,10 @@ import 'package:vierqr/commons/widgets/textfield_widget.dart';
 import 'package:vierqr/features/create_qr/create_qr_screen.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/search_clear_provider.dart';
 import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_detail/bank_card_detail_screen.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class SearchBankView extends StatefulWidget {
   SearchBankView({super.key});
@@ -38,7 +38,7 @@ class _SearchBankViewState extends State<SearchBankView> {
   }
 
   void _getBankAccounts() async {
-    String userId = UserHelper.instance.getUserId();
+    String userId = SharePrefUtils.getProfile().userId;
 
     try {
       List<BankAccountDTO> list =

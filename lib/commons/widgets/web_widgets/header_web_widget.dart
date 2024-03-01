@@ -11,8 +11,7 @@
 // import 'package:vierqr/layouts/box_layout.dart';
 // import 'package:vierqr/models/notification_dto.dart';
 // import 'package:vierqr/services/providers/clock_provider.dart';
-// import 'package:vierqr/services/shared_references/user_information_helper.dart';
-
+// 
 // class HeaderWebWidget extends StatelessWidget {
 //   final double width;
 //   final double height;

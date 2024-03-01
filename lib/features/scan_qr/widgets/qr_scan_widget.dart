@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/checker_provider.dart';
-import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
 
 class QRScanWidget extends StatelessWidget {
   static final CheckerProvider checkerProvider = CheckerProvider(false);
@@ -90,7 +90,7 @@ class QRScanWidget extends StatelessWidget {
                       side: const BorderSide(color: AppColor.WHITE),
                       onChanged: (bool? value) async {
                         checkerProvider.updateValue(value!);
-                        await QRScannerHelper.instance.updateQrIntro(value);
+                        await SharePrefUtils.saveQrIntro(value);
                       },
                     ),
                   ),

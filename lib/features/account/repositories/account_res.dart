@@ -7,13 +7,13 @@ import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
-import 'package:vierqr/models/account_information_dto.dart';
+import 'package:vierqr/models/user_profile.dart';
 import 'package:vierqr/models/card_dto.dart';
 import 'package:vierqr/models/introduce_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/models/setting_account_sto.dart';
 import 'package:vierqr/models/theme_dto.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class AccountRepository {
   const AccountRepository();
@@ -27,8 +27,9 @@ class AccountRepository {
       );
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
-        UserHelper.instance.setWalletInfo(response.body);
-        return IntroduceDTO.fromJson(data);
+        IntroduceDTO introduceDTO = IntroduceDTO.fromJson(data);
+        await SharePrefUtils.saveWalletInfo(introduceDTO);
+        return introduceDTO;
       }
     } catch (e) {
       LOG.error(e.toString());
@@ -85,7 +86,9 @@ class AccountRepository {
           var data = jsonDecode(response.body);
           result = ResponseMessageDTO.fromJson(data);
           if (result.message.trim().isNotEmpty) {
-            await UserHelper.instance.setImageId(result.message);
+            UserProfile profile = SharePrefUtils.getProfile();
+            profile.imgId = result.message;
+            await SharePrefUtils.saveProfileToCache(profile);
           }
         } else {
           result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
@@ -98,8 +101,8 @@ class AccountRepository {
     return result;
   }
 
-  Future<AccountInformationDTO?> getUserInformation(String userId) async {
-    AccountInformationDTO result = AccountInformationDTO();
+  Future<UserProfile?> getUserInformation(String userId) async {
+    UserProfile result = UserProfile();
     try {
       final String url = '${EnvConfig.getBaseUrl()}user/information/$userId';
       final response = await BaseAPIClient.getAPI(
@@ -108,7 +111,7 @@ class AccountRepository {
       );
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
-        result = AccountInformationDTO.fromJson(data);
+        result = UserProfile.fromJson(data);
       } else if (response.statusCode == 403) {
         return null;
       }

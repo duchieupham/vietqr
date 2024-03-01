@@ -105,7 +105,7 @@ class TerminalBankResponseDTO {
 class BankTerminalDto {
   final String userId;
   final int totalBankShares;
-  final List<BankShareResponseDTO> bankShares;
+  List<BankShareResponseDTO> bankShares;
 
   BankTerminalDto({
     required this.bankShares,

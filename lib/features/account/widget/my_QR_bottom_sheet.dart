@@ -10,7 +10,7 @@ import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
 import 'package:vierqr/commons/widgets/viet_qr.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class MyQRBottomSheet extends StatefulWidget {
   MyQRBottomSheet({Key? key}) : super(key: key);
@@ -57,8 +57,7 @@ class _MyQRBottomSheetState extends State<MyQRBottomSheet> {
                     children: [
                       _buildTypeQr(
                           typeQR: TypeContact.VietQR_ID,
-                          name:
-                              UserHelper.instance.getUserFullName()),
+                          name: SharePrefUtils.getProfile().fullName),
                       Container(
                         width: double.infinity,
                         height: 1,
@@ -77,8 +76,7 @@ class _MyQRBottomSheetState extends State<MyQRBottomSheet> {
                             ),
                             child: VietQr(
                               qrGeneratedDTO: null,
-                              qrCode:
-                                  UserHelper.instance.getWalletId(),
+                              qrCode: SharePrefUtils.getWalletID(),
                               size: isSmall ? width / 2 : null,
                             ),
                           ),
@@ -92,10 +90,9 @@ class _MyQRBottomSheetState extends State<MyQRBottomSheet> {
                                   image: DecorationImage(
                                       fit: BoxFit.cover,
                                       image: ImageUtils.instance
-                                          .getImageNetWork(UserHelper
-                                              .instance
-                                              .getAccountInformation()
-                                              .imgId)),
+                                          .getImageNetWork(
+                                              SharePrefUtils.getProfile()
+                                                  .imgId)),
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(100)),
                                 ),
@@ -105,7 +102,7 @@ class _MyQRBottomSheetState extends State<MyQRBottomSheet> {
                         ],
                       ),
                       Text(
-                        UserHelper.instance.getUserFullName(),
+                        SharePrefUtils.getProfile().fullName,
                         style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -188,7 +185,7 @@ class _MyQRBottomSheetState extends State<MyQRBottomSheet> {
         onSaveImage();
         return;
       case 1:
-        share(name: UserHelper.instance.getUserFullName());
+        share(name: SharePrefUtils.getProfile().fullName);
         return;
       case 2:
       default:

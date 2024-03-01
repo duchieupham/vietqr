@@ -112,8 +112,8 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
                                     return SizedBox(
                                       width: 80,
                                       height: 40,
-                                      child: page.fileLogo.path.isNotEmpty
-                                          ? Image.file(page.fileLogo)
+                                      child: page.logoApp.path.isNotEmpty
+                                          ? Image.file(page.logoApp)
                                           : Image.asset(
                                               'assets/images/ic-viet-qr.png',
                                               height: 40,

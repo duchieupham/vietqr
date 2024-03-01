@@ -55,6 +55,26 @@ class SettingAccountDTO {
     );
   }
 
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data["userId"] = userId;
+    data["id"] = id;
+    data["status"] = status;
+    data["guideMobile"] = guideMobile;
+    data["guideWeb"] = guideWeb;
+    data["voiceMobile"] = voiceMobile;
+    data["voiceMobileKiot"] = voiceMobileKiot;
+    data["voiceWeb"] = voiceWeb;
+    data["edgeImgId"] = edgeImgId;
+    data["footerImgId"] = footerImgId;
+    data["themeType"] = themeType;
+    data["themeImgUrl"] = themeImgUrl;
+    data["logoUrl"] = logoUrl;
+    data["keepScreenOn"] = keepScreenOn;
+    data["qrShowType"] = qrShowType;
+    return data;
+  }
+
   Map<String, dynamic> toSPJson() {
     final Map<String, dynamic> data = {};
     data['"userId"'] = (userId == '') ? '""' : '"$userId"';

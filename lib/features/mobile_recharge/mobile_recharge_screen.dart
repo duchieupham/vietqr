@@ -17,11 +17,12 @@ import 'package:vierqr/features/mobile_recharge/widget/bottom_sheet_search_user.
 import 'package:vierqr/features/mobile_recharge/widget/list_network_providers.dart';
 import 'package:vierqr/features/mobile_recharge/widget/pop_up_confirm_pass.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
-import 'package:vierqr/models/account_information_dto.dart';
+import 'package:vierqr/models/introduce_dto.dart';
+import 'package:vierqr/models/user_profile.dart';
 import 'package:vierqr/models/network_providers_dto.dart';
 import 'package:vierqr/models/respone_top_up_dto.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/top_up_provider.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 import '../contact/blocs/contact_provider.dart';
 import 'events/mobile_recharge_event.dart';
@@ -34,10 +35,11 @@ class MobileRechargeScreen extends StatelessWidget {
 
   late FocusNode myFocusNode = FocusNode();
 
+  IntroduceDTO get introDTO => SharePrefUtils.getWalletInfo();
+
   String getIdImage(List<NetworkProviders> list) {
     String imgId = '';
-    AccountInformationDTO accountInformationDTO =
-        UserHelper.instance.getAccountInformation();
+    UserProfile accountInformationDTO = SharePrefUtils.getProfile();
     for (var element in list) {
       if (accountInformationDTO.carrierTypeId == element.id) {
         imgId = element.imgId;
@@ -50,34 +52,20 @@ class MobileRechargeScreen extends StatelessWidget {
   updateMobileCarrierType(BuildContext context) {
     Map<String, dynamic> param = {};
 
-    param['userId'] = UserHelper.instance.getUserId();
+    param['userId'] = SharePrefUtils.getProfile().userId;
     param['carrierTypeId'] =
         Provider.of<TopUpProvider>(context, listen: false).networkProviders.id;
     BlocProvider.of<MobileRechargeBloc>(context)
         .add(MobileRechargeUpdateType(data: param));
   }
 
-  updateInformationUser(BuildContext context) {
-    AccountInformationDTO accountInformationDTO =
-        UserHelper.instance.getAccountInformation();
-    AccountInformationDTO accountInformationDTONew = AccountInformationDTO(
-        userId: accountInformationDTO.userId,
-        firstName: accountInformationDTO.firstName,
-        middleName: accountInformationDTO.middleName,
-        lastName: accountInformationDTO.lastName,
-        birthDate: accountInformationDTO.birthDate,
-        gender: accountInformationDTO.gender,
-        address: accountInformationDTO.address,
-        email: accountInformationDTO.email,
-        imgId: accountInformationDTO.imgId,
-        nationalDate: accountInformationDTO.nationalDate,
-        nationalId: accountInformationDTO.nationalId,
-        oldNationalId: accountInformationDTO.oldNationalId,
-        carrierTypeId: Provider.of<TopUpProvider>(context, listen: false)
-            .networkProviders
-            .id);
-    UserHelper.instance
-        .setAccountInformation(accountInformationDTONew);
+  updateInformationUser(BuildContext context) async {
+    UserProfile result = SharePrefUtils.getProfile();
+
+    result.carrierTypeId =
+        Provider.of<TopUpProvider>(context, listen: false).networkProviders.id;
+
+    await SharePrefUtils.saveProfileToCache(result);
   }
 
   @override
@@ -100,7 +88,7 @@ class MobileRechargeScreen extends StatelessWidget {
                     .openLoadingDialog(msg: 'Đang thực hiện thanh toán');
               }
               if (state is MobileRechargeMobileMoneySuccessState) {
-                if (UserHelper.instance.getPhoneNo() ==
+                if (SharePrefUtils.getPhone() ==
                     Provider.of<TopUpProvider>(context, listen: false)
                         .phoneNo) {
                   // updateMobileCarrierType(context);
@@ -167,11 +155,9 @@ class MobileRechargeScreen extends StatelessWidget {
                         _buildTemplateSection(
                           'Số điện thoại',
                           child: _buildPhoneNumber(context, state,
-                              accountInformationDTO: UserHelper
-                                  .instance
-                                  .getAccountInformation(),
-                              phoneNumber:
-                                  UserHelper.instance.getPhoneNo()),
+                              accountInformationDTO:
+                                  SharePrefUtils.getProfile(),
+                              phoneNumber: SharePrefUtils.getPhone()),
                         ),
                         const SizedBox(
                           height: 28,
@@ -205,32 +191,11 @@ class MobileRechargeScreen extends StatelessWidget {
                                     style: TextStyle(fontSize: 10),
                                   ),
                                   Text(
-                                    '${CurrencyUtils.instance.getCurrencyFormatted(UserHelper.instance.getWalletInfo().amount ?? '0')} VQR',
+                                    '${CurrencyUtils.instance.getCurrencyFormatted(introDTO.amount ?? '0')} VQR',
                                     style: const TextStyle(
                                         fontWeight: FontWeight.bold),
                                   ),
                                   const Spacer(),
-                                  // GestureDetector(
-                                  //   onTap: () {
-                                  //     Navigator.pushNamed(
-                                  //         context, Routes.TOP_UP);
-                                  //   },
-                                  //   child: Text(
-                                  //     int.parse(UserInformationHelper.instance
-                                  //                         .getWalletInfo()
-                                  //                         .amount ??
-                                  //                     '0') <
-                                  //                 int.parse(provider.money
-                                  //                     .replaceAll(',', '')) &&
-                                  //             provider.paymentTypeMethod == 0
-                                  //         ? 'Không đủ thanh toán.\n Nạp ngay'
-                                  //         : 'Nạp thêm',
-                                  //     textAlign: TextAlign.center,
-                                  //     style: const TextStyle(
-                                  //         fontSize: 11,
-                                  //         color: AppColor.BLUE_TEXT),
-                                  //   ),
-                                  // )
                                 ],
                               ),
                             ),
@@ -267,11 +232,7 @@ class MobileRechargeScreen extends StatelessWidget {
                                     onTap: () {
                                       FocusManager.instance.primaryFocus
                                           ?.unfocus();
-                                      if (int.parse(UserHelper
-                                                      .instance
-                                                      .getWalletInfo()
-                                                      .amount ??
-                                                  '0') >=
+                                      if (int.parse(introDTO.amount ?? '0') >=
                                               int.parse(provider.money
                                                   .replaceAll(',', '')) ||
                                           provider.paymentTypeMethod == 1) {
@@ -285,15 +246,13 @@ class MobileRechargeScreen extends StatelessWidget {
                                             onConfirmSuccess: (otp) {
                                               Navigator.of(context).pop();
                                               Map<String, dynamic> data = {};
-                                              data['phoneNo'] =
-                                                  provider.phoneNo.isNotEmpty
-                                                      ? provider.phoneNo
-                                                      : UserHelper
-                                                          .instance
-                                                          .getPhoneNo();
+                                              data['phoneNo'] = provider
+                                                      .phoneNo.isNotEmpty
+                                                  ? provider.phoneNo
+                                                  : SharePrefUtils.getPhone();
                                               data['userId'] =
-                                                  UserHelper.instance
-                                                      .getUserId();
+                                                  SharePrefUtils.getProfile()
+                                                      .userId;
                                               data['rechargeType'] =
                                                   provider.rechargeType;
                                               data['otp'] = otp;
@@ -318,10 +277,7 @@ class MobileRechargeScreen extends StatelessWidget {
                                       decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(5),
-                                          color: int.parse(UserHelper
-                                                              .instance
-                                                              .getWalletInfo()
-                                                              .amount ??
+                                          color: int.parse(introDTO.amount ??
                                                           '0') <
                                                       int.parse(provider.money
                                                           .replaceAll(
@@ -333,9 +289,8 @@ class MobileRechargeScreen extends StatelessWidget {
                                       child: Text(
                                         'Thanh toán',
                                         style: TextStyle(
-                                            color: int.parse(UserHelper
-                                                                .instance
-                                                                .getWalletInfo()
+                                            color: int.parse(SharePrefUtils
+                                                                    .getWalletInfo()
                                                                 .amount ??
                                                             '0') <
                                                         int.parse(provider.money
@@ -366,7 +321,7 @@ class MobileRechargeScreen extends StatelessWidget {
   }
 
   Widget _buildPhoneNumber(BuildContext context, MobileRechargeState state,
-      {required AccountInformationDTO accountInformationDTO,
+      {required UserProfile accountInformationDTO,
       required String phoneNumber}) {
     double height = MediaQuery.of(context).size.height;
     return Container(

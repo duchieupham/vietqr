@@ -37,6 +37,18 @@ class InfoUserDTO {
     return data;
   }
 
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data['id'] = id;
+    data['firstName'] = firstName;
+    data['middleName'] = middleName;
+    data['lastName'] = lastName;
+    data['phoneNo'] = phoneNo;
+    data['imgId'] = imgId;
+    data['createdTime'] = createdTime;
+    return data;
+  }
+
   InfoUserDTO(
       {this.phoneNo,
       this.firstName,

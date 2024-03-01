@@ -6,7 +6,7 @@ import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/textfield_custom.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class AccountLinkView extends StatelessWidget {
   final BankTypeDTO bankTypeDTO;
@@ -57,11 +57,11 @@ class AccountLinkView extends StatelessWidget {
           keyboardAction: TextInputAction.next,
           onChange: onChangePhone,
         ),
-        if (UserHelper.instance.getPhoneNo().isNotEmpty)
+        if (SharePrefUtils.getPhone().isNotEmpty)
           GestureDetector(
             onTap: () {
-              phone.text = UserHelper.instance.getPhoneNo();
-              onChangePhone!(UserHelper.instance.getPhoneNo());
+              phone.text = SharePrefUtils.getPhone();
+              onChangePhone!(SharePrefUtils.getPhone());
             },
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
@@ -72,8 +72,8 @@ class AccountLinkView extends StatelessWidget {
                 color: AppColor.BLUE_TEXT.withOpacity(0.3),
               ),
               child: Text(
-                StringUtils.instance.formatPhoneNumberVN(
-                    UserHelper.instance.getPhoneNo()),
+                StringUtils.instance
+                    .formatPhoneNumberVN(SharePrefUtils.getPhone()),
                 style: const TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w400,
@@ -121,18 +121,12 @@ class AccountLinkView extends StatelessWidget {
           ),
           onChange: onChangeCMT,
         ),
-        if (UserHelper.instance
-            .getAccountInformation()
-            .nationalId
-            .isNotEmpty)
+        if (SharePrefUtils.getProfile().nationalId.isNotEmpty)
           GestureDetector(
             onTap: () {
-              cmt.text = UserHelper.instance
-                  .getAccountInformation()
-                  .nationalId;
-              onChangeCMT!(UserHelper.instance
-                  .getAccountInformation()
-                  .nationalId);
+              cmt.text = SharePrefUtils.getProfile().nationalId;
+              onChangeCMT!(
+                  SharePrefUtils.getProfile().nationalId);
             },
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
@@ -143,9 +137,7 @@ class AccountLinkView extends StatelessWidget {
                 color: AppColor.BLUE_TEXT.withOpacity(0.3),
               ),
               child: Text(
-                UserHelper.instance
-                    .getAccountInformation()
-                    .nationalId,
+                SharePrefUtils.getProfile().nationalId,
                 style: const TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w400,

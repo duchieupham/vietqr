@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/models/setting_account_sto.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class SettingBDSDProvider extends ChangeNotifier {
-  bool _enableVoice =
-      UserHelper.instance.getAccountSetting().voiceMobile;
+  bool _enableVoice = false;
+
   bool get enableVoice => _enableVoice;
 
   List<String> _bankIds = [];
+
   List<String> get bankIds => _bankIds;
+
+  initData() async {
+    SettingAccountDTO settingAccountDTO =
+        await SharePrefUtils.getAccountSetting();
+    _enableVoice = settingAccountDTO.voiceMobile;
+    notifyListeners();
+  }
+
   void updateOpenVoice(bool check) {
     _enableVoice = check;
     notifyListeners();

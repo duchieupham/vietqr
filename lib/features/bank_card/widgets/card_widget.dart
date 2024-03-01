@@ -5,7 +5,7 @@ import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/features/popup_bank/popup_bank_screen.dart';
 import 'package:vierqr/features/bank_detail/bank_card_detail_screen.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class CardWidget extends StatelessWidget {
   final List<BankAccountDTO> listBanks;
@@ -19,7 +19,7 @@ class CardWidget extends StatelessWidget {
     this.onLinked,
   });
 
-  String get userId => UserHelper.instance.getUserId();
+  String get userId => SharePrefUtils.getProfile().userId;
 
   double get heightCard => 126;
 

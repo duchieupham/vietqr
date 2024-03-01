@@ -5,18 +5,21 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/mobile_recharge/repositories/mobile_recharge_repository.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/response_message_dto.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class ConfirmPassProvider extends ChangeNotifier {
   MobileRechargeRepository mobileRechargeRepository =
       const MobileRechargeRepository();
   bool _errorPass = false;
+
   bool get errorPass => _errorPass;
 
   String _pass = '';
+
   String get pass => _pass;
 
   bool _completedInput = false;
+
   bool get completedInput => _completedInput;
 
   updateErrorPass(bool value) {
@@ -44,11 +47,11 @@ class ConfirmPassProvider extends ChangeNotifier {
     DialogWidget.instance.openLoadingDialog(msg: 'Đang xác thực mật khẩu');
     Map<String, dynamic> data = {};
     String passWord = EncryptUtils.instance.encrypted(
-      UserHelper.instance.getPhoneNo(),
+      SharePrefUtils.getPhone(),
       pass,
     );
     data['password'] = passWord;
-    data['userId'] = UserHelper.instance.getUserId();
+    data['userId'] = SharePrefUtils.getProfile().userId;
     data['paymentType'] = 1;
 
     ResponseMessageDTO responseMessageDTO =

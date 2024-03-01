@@ -6,7 +6,7 @@ import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
 import 'package:vierqr/commons/widgets/viet_qr.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class MyQrScreen extends StatefulWidget {
   @override
@@ -55,12 +55,12 @@ class _MyQrScreenState extends State<MyQrScreen> {
                       ],
                     ),
                     child: VietQr(
-                      qrCode: UserHelper.instance.getWalletId(),
+                      qrCode: SharePrefUtils.getWalletID(),
                       qrGeneratedDTO: null,
                     ),
                   ),
                   Text(
-                    UserHelper.instance.getUserFullName(),
+                    SharePrefUtils.getProfile().fullName,
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.w400),
                   ),
@@ -82,7 +82,7 @@ class _MyQrScreenState extends State<MyQrScreen> {
               borderRadius: 8,
               enableShadow: true,
               function: () {
-                share(name: UserHelper.instance.getUserFullName());
+                share(name: SharePrefUtils.getProfile().fullName);
               },
             ),
           ),

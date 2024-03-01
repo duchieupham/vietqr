@@ -31,8 +31,7 @@ import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/qr_create_dto.dart';
 import 'package:vierqr/models/user_repository.dart';
-import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 import 'widgets/card_widget.dart';
 
@@ -63,7 +62,7 @@ class _BankScreenState extends State<_BankScreen>
 
   late BankBloc _bloc;
 
-  String userId = UserHelper.instance.getUserId();
+  String userId = SharePrefUtils.getProfile().userId;
 
   StreamSubscription? _subscription;
 
@@ -152,7 +151,7 @@ class _BankScreenState extends State<_BankScreen>
           }
 
           String localPath = await saveImageToLocal(message.progress, path);
-          dto.fileImage = localPath;
+          dto.photoPath = localPath;
           listLocal.add(dto);
         }
 
@@ -305,7 +304,7 @@ class _BankScreenState extends State<_BankScreen>
                 pathIcon: 'assets/images/ic-copy-qr.png',
                 radiusRight: 0,
                 onTap: () async {
-                  if (QRScannerHelper.instance.getQrIntro()) {
+                  if (SharePrefUtils.getQrIntro()) {
                     startBarcodeScanStream();
                   } else {
                     await DialogWidget.instance.showFullModalBottomContent(
@@ -398,8 +397,9 @@ class _BankScreenState extends State<_BankScreen>
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5),
                             color: AppColor.WHITE,
-                            image: data.file != null
-                                ? DecorationImage(image: FileImage(data.file!))
+                            image: data.fileBank != null
+                                ? DecorationImage(
+                                    image: FileImage(data.fileBank!))
                                 : DecorationImage(
                                     image: ImageUtils.instance
                                         .getImageNetWork(data.imageId)),

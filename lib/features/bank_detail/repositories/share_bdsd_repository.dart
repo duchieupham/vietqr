@@ -5,6 +5,7 @@ import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/models/business_branch_dto.dart';
+import 'package:vierqr/models/detail_group_dto.dart';
 import 'package:vierqr/models/member_branch_model.dart';
 import 'package:vierqr/models/member_search_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
@@ -233,6 +234,35 @@ class ShareBDSDRepository {
         if (data != null) {
           listMembers = data
               .map<MemberSearchDto>((json) => MemberSearchDto.fromJson(json))
+              .toList();
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      return listMembers;
+    }
+    return listMembers;
+  }
+
+  Future<List<AccountMemberDTO>> searchMemberNew(
+    String terminalId,
+    String value,
+    int type,
+  ) async {
+    List<AccountMemberDTO> listMembers = [];
+
+    try {
+      String url =
+          '${EnvConfig.getBaseUrl()}terminal-member/search?type=$type&value=$value&terminalId=$terminalId';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        if (data != null) {
+          listMembers = data
+              .map<AccountMemberDTO>((json) => AccountMemberDTO.fromJson(json))
               .toList();
         }
       }

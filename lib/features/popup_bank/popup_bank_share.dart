@@ -133,6 +133,8 @@ class _PopupBankShareState extends State<PopupBankShare> {
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
                                           Text(
                                             widget.dto.bankAccount,

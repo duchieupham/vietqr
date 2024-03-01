@@ -34,16 +34,21 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
     try {
       if (event is BankCardGetDetailEvent) {
         emit(state.copyWith(
-            status: BlocStatus.LOADING_PAGE, request: BankDetailType.NONE));
+            status: (event.isLoading || event.isInit)
+                ? BlocStatus.LOADING_PAGE
+                : BlocStatus.NONE,
+            request: BankDetailType.NONE));
         final AccountBankDetailDTO dto =
             await bankCardRepository.getAccountBankDetail(bankId);
 
         emit(
           state.copyWith(
-              bankDetailDTO: dto,
-              status: BlocStatus.NONE,
-              request: BankDetailType.SUCCESS,
-              bankId: bankId),
+            bankDetailDTO: dto,
+            status: BlocStatus.NONE,
+            request: BankDetailType.SUCCESS,
+            bankId: bankId,
+            isInit: event.isInit,
+          ),
         );
       }
     } catch (e) {

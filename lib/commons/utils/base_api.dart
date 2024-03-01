@@ -3,12 +3,14 @@ import 'dart:convert';
 import 'package:vierqr/commons/constants/configurations/numeral.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/log.dart';
-import 'package:vierqr/services/shared_references/account_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:http/http.dart' as http;
 
 class BaseAPIClient {
   static const Duration _timeout =
       Duration(seconds: Numeral.DEFAULT_TIMEOUT_API);
+
+  String get token => SharePrefUtils.tokenInfo;
 
   const BaseAPIClient();
 
@@ -20,7 +22,7 @@ class BaseAPIClient {
     final http.Response result = await http
         .get(
       Uri.parse(url),
-      headers: _getHeader(type: type, header: header),
+      headers: await _getHeader(type: type, header: header),
     )
         .timeout(_timeout, onTimeout: () {
       final http.Response response = http.Response('Request Timeout', 408);
@@ -43,7 +45,7 @@ class BaseAPIClient {
     final http.Response result = await http
         .post(
       Uri.parse(url),
-      headers: _getHeader(
+      headers: await _getHeader(
           type: type, header: header, token: token, tokenFree: tokenFree),
       encoding: Encoding.getByName('utf-8'),
       body: jsonEncode(body),
@@ -67,7 +69,7 @@ class BaseAPIClient {
     final http.Response result = await http
         .put(
       Uri.parse(url),
-      headers: _getHeader(type: type, header: header),
+      headers: await _getHeader(type: type, header: header),
       body: jsonEncode(body),
     )
         .timeout(_timeout, onTimeout: () {
@@ -89,7 +91,7 @@ class BaseAPIClient {
     final http.Response result = await http
         .delete(
       Uri.parse(url),
-      headers: _getHeader(type: type, header: header),
+      headers: await _getHeader(type: type, header: header),
       body: jsonEncode(body),
     )
         .timeout(_timeout, onTimeout: () {
@@ -107,7 +109,7 @@ class BaseAPIClient {
     required List<http.MultipartFile> files,
   }) async {
     final Uri uri = Uri.parse(url);
-    final String token = AccountHelper.instance.getToken();
+    final String token = await SharePrefUtils.getTokenInfo();
     final request = http.MultipartRequest('POST', uri);
     request.headers['Authorization'] = 'Bearer $token';
     if (fields.isNotEmpty) {
@@ -126,19 +128,17 @@ class BaseAPIClient {
     return result;
   }
 
-  static Map<String, String>? _getHeader({
+  static Future<Map<String, String>?> _getHeader({
     AuthenticationType? type,
     Map<String, String>? header,
     String? token,
     String? tokenFree,
-  }) {
+  }) async {
     Map<String, String>? result = {};
     type ??= AuthenticationType.NONE;
 
-    token ??= AccountHelper.instance.getToken();
-
-    print('------------------------------$token');
-    tokenFree ??= AccountHelper.instance.getTokenFree();
+    token ??= await SharePrefUtils.getTokenInfo();
+    tokenFree ??=  SharePrefUtils.getTokenFree();
 
     switch (type) {
       case AuthenticationType.SYSTEM:

@@ -85,7 +85,7 @@ class BottomSheetDetailBankBDSD extends StatelessWidget {
                 SizedBox(height: 20),
                 Container(
                   height: 60,
-                  margin: EdgeInsets.symmetric(horizontal: 30),
+                  margin: EdgeInsets.symmetric(horizontal: 20),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(6),
                     color: AppColor.GREY_BG,
@@ -105,9 +105,7 @@ class BottomSheetDetailBankBDSD extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(
-                        width: 8,
-                      ),
+                      const SizedBox(width: 8),
                       Container(
                         height: 40,
                         child: VerticalDashedLine(),
@@ -118,7 +116,7 @@ class BottomSheetDetailBankBDSD extends StatelessWidget {
                               vertical: 10, horizontal: 8),
                           alignment: Alignment.center,
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
@@ -146,9 +144,7 @@ class BottomSheetDetailBankBDSD extends StatelessWidget {
                         height: 40,
                         child: VerticalDashedLine(),
                       ),
-                      const SizedBox(
-                        width: 8,
-                      ),
+                      const SizedBox(width: 8),
                       GestureDetector(
                         onTap: () {
                           onCopy(dto, context);
@@ -167,15 +163,13 @@ class BottomSheetDetailBankBDSD extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 Container(
-                  margin: EdgeInsets.symmetric(horizontal: 30),
+                  margin: EdgeInsets.symmetric(horizontal: 20),
                   decoration: BoxDecoration(
                       color: AppColor.WHITE,
                       borderRadius: BorderRadius.circular(16)),
                   child: Column(
                     children: [
-                      SizedBox(
-                        height: 20,
-                      ),
+                      SizedBox(height: 20),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [

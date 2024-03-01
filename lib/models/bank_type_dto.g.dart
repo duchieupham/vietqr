@@ -24,7 +24,7 @@ class BankTypeDTOAdapter extends TypeAdapter<BankTypeDTO> {
       imageId: fields[5] as String,
       status: fields[6] as int,
       caiValue: fields[7] as String,
-      fileImage: fields[8] as String,
+      photoPath: fields[8] as String,
     );
   }
 
@@ -47,7 +47,7 @@ class BankTypeDTOAdapter extends TypeAdapter<BankTypeDTO> {
       ..writeByte(7)
       ..write(obj.caiValue)
       ..writeByte(8)
-      ..write(obj.fileImage);
+      ..write(obj.photoPath);
   }
 
   @override

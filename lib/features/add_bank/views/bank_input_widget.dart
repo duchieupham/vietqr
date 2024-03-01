@@ -75,13 +75,13 @@ class _BodyWidget extends State<ModelBottomSheetView> {
                               width: 60,
                               height: 40,
                               decoration: BoxDecoration(
-                                image: dto.file == null
+                                image: dto.fileBank == null
                                     ? DecorationImage(
                                         image: ImageUtils.instance
                                             .getImageNetWork(
                                                 data[index].imageId))
                                     : DecorationImage(
-                                        image: FileImage(dto.file!)),
+                                        image: FileImage(dto.fileBank!)),
                               ),
                             ),
                             const SizedBox(width: 4),

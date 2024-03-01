@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:equatable/equatable.dart';
-import 'package:vierqr/models/account_information_dto.dart';
+import 'package:vierqr/models/user_profile.dart';
 
 class UserEditEvent extends Equatable {
   const UserEditEvent();
@@ -10,7 +10,7 @@ class UserEditEvent extends Equatable {
 }
 
 class UserEditInformationEvent extends UserEditEvent {
-  final AccountInformationDTO dto;
+  final UserProfile dto;
 
   const UserEditInformationEvent({required this.dto});
 

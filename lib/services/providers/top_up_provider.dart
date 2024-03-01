@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
-import 'package:vierqr/models/account_information_dto.dart';
+import 'package:vierqr/models/user_profile.dart';
 import 'package:vierqr/models/contact_dto.dart';
 import 'package:vierqr/models/network_providers_dto.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class TopUpProvider extends ChangeNotifier {
   String _money = StringUtils.formatNumber(50000);
@@ -13,7 +13,7 @@ class TopUpProvider extends ChangeNotifier {
 
   String get errorMoney => _errorMoney;
 
-  String _phoneNo = UserHelper.instance.getPhoneNo();
+  String _phoneNo = SharePrefUtils.getPhone();
   String get phoneNo => _phoneNo;
 
   String _carrierTypeId = '';
@@ -35,8 +35,8 @@ class TopUpProvider extends ChangeNotifier {
   int get paymentTypeMethod => _paymentTypeMethod;
   init(List<NetworkProviders> list) {
     _listNetworkProviders = list;
-    AccountInformationDTO accountInformationDTO =
-        UserHelper.instance.getAccountInformation();
+    UserProfile accountInformationDTO =
+        SharePrefUtils.getProfile();
 
     for (var element in list) {
       if (accountInformationDTO.carrierTypeId == element.id) {

@@ -17,7 +17,7 @@ enum BlocStatus {
 
 enum TypeImage { SAVE, SHARE }
 
-enum PageType { ACCOUNT, HOME, SCAN_QR, CARD_QR, PERSON }
+enum PageType { ACCOUNT, HOME, SCAN_QR, CARD_QR, STORE }
 
 extension PageTypeExt on int {
   PageType get pageType {
@@ -29,7 +29,7 @@ extension PageTypeExt on int {
       case 2:
         return PageType.CARD_QR;
       case 3:
-        return PageType.PERSON;
+        return PageType.STORE;
       default:
         return PageType.ACCOUNT;
     }
@@ -45,7 +45,7 @@ extension PageTypeExt2 on PageType {
         return -1;
       case PageType.CARD_QR:
         return 2;
-      case PageType.PERSON:
+      case PageType.STORE:
         return 3;
       default:
         return 0;

@@ -11,8 +11,8 @@ import 'package:vierqr/features/printer/events/printer_event.dart';
 import 'package:vierqr/features/printer/states/printer_state.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/models/bluetooth_printer_dto.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/countdown_provider.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class PrinterSettingScreen extends StatelessWidget {
   static String routeName = '/print_setting_screen';
@@ -41,7 +41,7 @@ class _PrinterSettingViewState extends State<PrinterSettingView> {
   List<PrinterBluetooth> printers = [];
 
   void initialServices(BuildContext context) {
-    String userId = UserHelper.instance.getUserId();
+    String userId = SharePrefUtils.getProfile().userId;
     printers.clear();
     _printerBloc = BlocProvider.of(context);
     _printerBloc.add(PrinterInitialEvent());
@@ -62,7 +62,7 @@ class _PrinterSettingViewState extends State<PrinterSettingView> {
               listener: (context, state) {
                 if (state is PrinterRemoveSuccessState ||
                     state is PrinterSavedSuccessState) {
-                  String userId = UserHelper.instance.getUserId();
+                  String userId = SharePrefUtils.getProfile().userId;
                   _printerBloc.add(PrinterEventCheck(userId: userId));
                 }
               },
@@ -111,7 +111,7 @@ class _PrinterSettingViewState extends State<PrinterSettingView> {
                             title: 'Huỷ kết nối',
                             function: () {
                               String userId =
-                                  UserHelper.instance.getUserId();
+                                  SharePrefUtils.getProfile().userId;
                               _printerBloc
                                   .add(PrinterEventRemove(userId: userId));
                             },
@@ -212,9 +212,8 @@ class _PrinterSettingViewState extends State<PrinterSettingView> {
                                           'Xác nhận kết nối với máy in ${printers[index].name}? Hệ thống sẽ tự động kết nối với thiết bị này cho việc in mã VietQR.',
                                       confirmFunction: () {
                                         Navigator.pop(context);
-                                        String userId = UserHelper
-                                            .instance
-                                            .getUserId();
+                                        String userId =
+                                            SharePrefUtils.getProfile().userId;
                                         const Uuid uuid = Uuid();
                                         BluetoothPrinterDTO printer =
                                             BluetoothPrinterDTO(

@@ -14,7 +14,7 @@ import 'package:vierqr/features/trans_history/views/bottom_sheet_filter.dart';
 import 'package:vierqr/models/related_transaction_receive_dto.dart';
 import 'package:vierqr/models/terminal_response_dto.dart';
 import 'package:vierqr/models/transaction_input_dto.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 import 'events/trans_history_event.dart';
 import 'states/trans_history_state.dart';
@@ -37,7 +37,7 @@ class TransHistoryScreen extends StatelessWidget {
       create: (context) => TransHistoryBloc(context, bankId, terminalDto),
       child: ChangeNotifierProvider<TransProvider>(
         create: (context) =>
-            TransProvider(bankUserId == UserHelper.instance.getUserId(), [
+            TransProvider(bankUserId == SharePrefUtils.getProfile().userId, [
           TerminalResponseDTO(
               banks: [], code: 'Tất cả (mặc định)', name: 'Tất cả (mặc định)'),
           ...terminalDto.terminals
@@ -64,7 +64,7 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
   List<RelatedTransactionReceiveDTO> listTransaction = [];
   List<RelatedTransactionReceiveDTO> listFilterTransaction = [];
 
-  bool get isOwner => widget.bankUserId == UserHelper.instance.getUserId();
+  bool get isOwner => widget.bankUserId == SharePrefUtils.getProfile().userId;
 
   @override
   void initState() {

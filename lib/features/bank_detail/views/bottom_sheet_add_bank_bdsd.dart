@@ -8,7 +8,7 @@ import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
 import 'package:vierqr/models/bank_account_terminal.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class BottomSheetAddBankBDSD extends StatelessWidget {
   final String terminalId;
@@ -24,11 +24,11 @@ class BottomSheetAddBankBDSD extends StatelessWidget {
     return BlocProvider<BankBloc>(
       create: (context) => BankBloc(context)
         ..add(GetListBankAccountTerminal(
-            userId: UserHelper.instance.getUserId(), terminalId: terminalId)),
+            userId: SharePrefUtils.getProfile().userId, terminalId: terminalId)),
       child: BlocConsumer<BankBloc, BankState>(
           listener: (context, state) async {},
           builder: (context, state) {
-            String userId = UserHelper.instance.getUserId();
+            String userId = SharePrefUtils.getProfile().userId;
             List<BankAccountTerminal> listBank = state.listBankAccountTerminal
                 .where((dto) => dto.userId == userId)
                 .toList();

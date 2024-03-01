@@ -10,21 +10,18 @@ import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/encrypt_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/main.dart';
-import 'package:vierqr/models/account_information_dto.dart';
+import 'package:vierqr/models/user_profile.dart';
 import 'package:vierqr/models/info_user_dto.dart';
 import 'package:vierqr/models/password_update_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
-import 'package:vierqr/services/shared_references/account_helper.dart';
-import 'package:vierqr/services/shared_references/event_bloc_helper.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
 import 'package:http/http.dart' as http;
 
 class UserEditRepository {
   const UserEditRepository();
 
-  Future<ResponseMessageDTO> updateUserInformation(
-      AccountInformationDTO dto) async {
+  Future<ResponseMessageDTO> updateUserInformation(UserProfile dto) async {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
@@ -36,7 +33,7 @@ class UserEditRepository {
       );
       if (response.statusCode != 403) {
         var data = jsonDecode(response.body);
-        UserHelper.instance.setAccountInformation(dto);
+        await SharePrefUtils.saveProfileToCache(dto);
         result = ResponseMessageDTO.fromJson(data);
       } else {
         result = const ResponseMessageDTO(
@@ -48,8 +45,8 @@ class UserEditRepository {
     return result;
   }
 
-  Future<AccountInformationDTO> getUserInformation(String userId) async {
-    AccountInformationDTO accountInformationDTO = const AccountInformationDTO();
+  Future<UserProfile> getUserInformation(String userId) async {
+    UserProfile dto = UserProfile();
     try {
       final String url = '${EnvConfig.getBaseUrl()}user/information/$userId';
       final response = await BaseAPIClient.getAPI(
@@ -58,13 +55,13 @@ class UserEditRepository {
       );
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
-        accountInformationDTO = AccountInformationDTO.fromJson(data);
-        UserHelper.instance.setAccountInformation(accountInformationDTO);
+        dto = UserProfile.fromJson(data);
+        await SharePrefUtils.saveProfileToCache(dto);
       }
     } catch (e) {
       LOG.error(e.toString());
     }
-    return accountInformationDTO;
+    return dto;
   }
 
   Future<Map<String, dynamic>> updatePassword(PasswordUpdateDTO dto) async {
@@ -126,7 +123,9 @@ class UserEditRepository {
           var data = jsonDecode(response.body);
           result = ResponseMessageDTO.fromJson(data);
           if (result.message.trim().isNotEmpty) {
-            await UserHelper.instance.setImageId(result.message);
+            UserProfile profile = SharePrefUtils.getProfile();
+            profile.imgId = result.message;
+            await SharePrefUtils.saveProfileToCache(profile);
           }
         } else {
           result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
@@ -152,19 +151,14 @@ class UserEditRepository {
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         result = ResponseMessageDTO.fromJson(data);
-        final String phone = UserHelper.instance.getPhoneNo();
+        final String phone = SharePrefUtils.getPhone();
 
-        List<InfoUserDTO> list = UserHelper.instance.getLoginAccount();
-
-        List<String> listString = [];
+        List<InfoUserDTO> list = await SharePrefUtils.getLoginAccount() ?? [];
 
         if (list.isNotEmpty) {
           list.removeWhere((element) => element.phoneNo == phone.trim());
 
-          list.forEach((element) {
-            listString.add(element.toSPJson().toString());
-          });
-          await UserHelper.instance.setLoginAccount(listString);
+          await SharePrefUtils.saveLoginAccount(list);
         }
 
         await _resetServices();
@@ -181,9 +175,8 @@ class UserEditRepository {
   Future<void> _resetServices() async {
     BuildContext context = NavigationService.navigatorKey.currentContext!;
     Provider.of<UserEditProvider>(context, listen: false).reset();
-    await EventBlocHelper.instance.updateLogoutBefore(true);
-    await UserHelper.instance.initialUserInformationHelper();
-    await AccountHelper.instance.setBankToken('');
-    await AccountHelper.instance.setToken('');
+    await SharePrefUtils.saveProfileToCache(UserProfile());
+    await SharePrefUtils.setTokenInfo('');
+    await SharePrefUtils.setTokenInfo('');
   }
 }

@@ -20,7 +20,7 @@ import 'package:vierqr/models/bluetooth_printer_dto.dart';
 import 'package:vierqr/models/contact_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/vietqr_dto.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/sqflite/local_database.dart';
 
 class DialogFeatureWidget extends StatefulWidget {
@@ -347,7 +347,7 @@ class _DialogFeatureWidgetState extends State<DialogFeatureWidget> {
   }
 
   onPrint(String qr) async {
-    String userId = UserHelper.instance.getUserId();
+    String userId = SharePrefUtils.getProfile().userId;
     BluetoothPrinterDTO bluetoothPrinterDTO =
         await LocalDatabase.instance.getBluetoothPrinter(userId);
     if (bluetoothPrinterDTO.id.isNotEmpty) {

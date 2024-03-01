@@ -22,9 +22,9 @@ class BankTypeDTO extends HiveObject {
   @HiveField(7)
   String caiValue;
   @HiveField(8)
-  String fileImage;
+  String photoPath;
 
-  File? file;
+  File? fileBank;
   String bankId;
   String bankAccount;
   String userBankName;
@@ -39,7 +39,7 @@ class BankTypeDTO extends HiveObject {
     this.imageId = '',
     this.status = 0,
     this.caiValue = '',
-    this.fileImage = '', // dùng lưu local
+    this.photoPath = '', // dùng lưu local
     this.bankId = '', //dùng cho màn create qr
     this.bankAccount = '', //dùng cho màn create qr
     this.userBankName = '', //dùng cho màn create qr
@@ -57,7 +57,7 @@ class BankTypeDTO extends HiveObject {
       ..bankId = bankId
       ..bankAccount = bankAccount
       ..userBankName = userBankName
-      ..fileImage = fileImage;
+      ..photoPath = photoPath;
     return objectInstance;
   }
 
@@ -75,7 +75,7 @@ class BankTypeDTO extends HiveObject {
       bankId: json['bankId'] ?? '',
       bankAccount: json['bankAccount'] ?? '',
       userBankName: json['userBankName'] ?? '',
-      fileImage: json['fileImage'] ?? '',
+      photoPath: json['photoPath'] ?? '',
     );
   }
 
@@ -84,9 +84,14 @@ class BankTypeDTO extends HiveObject {
     data['id'] = id;
     data['bankCode'] = bankCode;
     data['bankName'] = bankName;
+    data['bankShortName'] = bankShortName;
     data['imageId'] = imageId;
     data['status'] = status;
     data['caiValue'] = caiValue;
+    data['photoPath'] = photoPath;
+    data['bankId'] = bankId;
+    data['bankAccount'] = bankAccount;
+    data['userBankName'] = userBankName;
     return data;
   }
 

@@ -33,11 +33,10 @@ import 'package:vierqr/features/personal/states/user_edit_state.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
-import 'package:vierqr/models/account_information_dto.dart';
+import 'package:vierqr/models/user_profile.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
-import 'package:vierqr/services/shared_references/qr_scanner_helper.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class UserEditView extends StatefulWidget {
   const UserEditView({super.key});
@@ -61,8 +60,7 @@ class _UserEditViewState extends State<UserEditView> {
   final imagePicker = ImagePicker();
 
   void initialServices(BuildContext context) {
-    final AccountInformationDTO accountInformationDTO =
-        UserHelper.instance.getAccountInformation();
+    final UserProfile accountInformationDTO = SharePrefUtils.getProfile();
     if (accountInformationDTO.lastName.isNotEmpty &&
         _lastNameController.text.isEmpty) {
       _lastNameController.value = _lastNameController.value
@@ -243,8 +241,7 @@ class _UserEditViewState extends State<UserEditView> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          UserHelper.instance
-                                              .getUserFullName(),
+                                          SharePrefUtils.getProfile().fullName,
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                           style: const TextStyle(
@@ -253,8 +250,7 @@ class _UserEditViewState extends State<UserEditView> {
                                           ),
                                         ),
                                         Text(
-                                          UserHelper.instance
-                                              .getPhoneNo(),
+                                          SharePrefUtils.getPhone(),
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                           style: const TextStyle(
@@ -289,13 +285,10 @@ class _UserEditViewState extends State<UserEditView> {
                                       await Future.delayed(
                                           const Duration(milliseconds: 200),
                                           () {
-                                        String userId = UserHelper
-                                            .instance
-                                            .getUserId();
-                                        String imgId = UserHelper
-                                            .instance
-                                            .getAccountInformation()
-                                            .imgId;
+                                        String userId =
+                                            SharePrefUtils.getProfile().userId;
+                                        String imgId =
+                                            SharePrefUtils.getProfile().imgId;
                                         _userEditBloc.add(
                                           UserEditAvatarEvent(
                                               userId: userId,
@@ -326,10 +319,7 @@ class _UserEditViewState extends State<UserEditView> {
                               textColor: AppColor.BLUE_TEXT,
                               bgColor: Theme.of(context).cardColor,
                               function: () async {
-                                // Navigator.pop(context);
-                                if (QRScannerHelper.instance.getQrIntro()) {
-                                  // Navigator.pushNamed(
-                                  //     context, Routes.SCAN_QR_VIEW);
+                                if (SharePrefUtils.getQrIntro()) {
                                   startBarcodeScanStream(context);
                                 } else {
                                   await DialogWidget.instance
@@ -663,9 +653,8 @@ class _UserEditViewState extends State<UserEditView> {
                                       'Tài khoản của bạn sẽ bị vô hiệu hoá và không thể đăng nhập lại vào hệ thống',
                                   confirmFunction: () async {
                                     Navigator.pop(context);
-                                    String userId = UserHelper
-                                        .instance
-                                        .getUserId();
+                                    String userId =
+                                        SharePrefUtils.getProfile().userId;
                                     _userEditBloc
                                         .add(UserDeactiveEvent(userId: userId));
                                   },
@@ -711,10 +700,8 @@ class _UserEditViewState extends State<UserEditView> {
                               provider.updateErrors(
                                   _firstNameController.text.isEmpty);
                               if (provider.isValidUpdate()) {
-                                AccountInformationDTO accountInformationDTO =
-                                    AccountInformationDTO(
-                                  userId: UserHelper.instance
-                                      .getUserId(),
+                                UserProfile accountInformationDTO = UserProfile(
+                                  userId: SharePrefUtils.getProfile().userId,
                                   firstName: _firstNameController.text,
                                   middleName: _middleNameController.text,
                                   lastName: _lastNameController.text,
@@ -725,9 +712,7 @@ class _UserEditViewState extends State<UserEditView> {
                                   nationalDate: _nationalDate,
                                   nationalId: _nationalIdController.text,
                                   oldNationalId: _oldNationalIdController.text,
-                                  imgId: UserHelper.instance
-                                      .getAccountInformation()
-                                      .imgId,
+                                  imgId: SharePrefUtils.getProfile().imgId,
                                 );
 
                                 _userEditBloc.add(
@@ -750,7 +735,7 @@ class _UserEditViewState extends State<UserEditView> {
 
   Widget _buildAvatarWidget(BuildContext context) {
     double size = 60;
-    String imgId = UserHelper.instance.getAccountInformation().imgId;
+    String imgId = SharePrefUtils.getProfile().imgId;
     return Consumer<AuthProvider>(
       builder: (context, provider, child) {
         return (provider.avatarUser.path.isNotEmpty)

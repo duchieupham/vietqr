@@ -14,8 +14,8 @@ import 'package:vierqr/features/connect_telegram/states/conect_telegram_state.da
 import 'package:vierqr/features/connect_telegram/widget/success_screen.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/connect_telegram_provider.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class ConnectTeleStepScreen extends StatelessWidget {
   @override
@@ -181,8 +181,7 @@ class _ConnectTeleStepScreenState extends State<_ConnectTeleStepScreen> {
                     } else {
                       Map<String, dynamic> data = {};
                       data['chatId'] = provider.chatId;
-                      data['userId'] =
-                          UserHelper.instance.getUserId();
+                      data['userId'] = SharePrefUtils.getProfile().userId;
                       data['bankIds'] = provider.bankIds;
                       BlocProvider.of<ConnectTelegramBloc>(context)
                           .add(InsertTelegram(data: data));

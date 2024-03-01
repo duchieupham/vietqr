@@ -265,6 +265,7 @@ class CurvedNavigationBarState extends State<CurvedNavigationBar>
       return;
     }
     widget.onTap(index);
+    if (index < 0) return;
     final newPosition = index / _length;
     setState(() {
       _startingPos = _pos;

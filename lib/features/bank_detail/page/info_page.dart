@@ -21,7 +21,7 @@ import 'package:vierqr/models/bank_account_remove_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/qr_bank_detail.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class InfoDetailBankAccount extends StatefulWidget {
   final BankCardBloc bloc;
@@ -50,7 +50,7 @@ class InfoDetailBankAccount extends StatefulWidget {
 }
 
 class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
-  String get userId => UserHelper.instance.getUserId();
+  String get userId => SharePrefUtils.getProfile().userId;
 
   final globalKey = GlobalKey();
 

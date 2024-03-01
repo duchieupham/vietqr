@@ -11,8 +11,8 @@ import 'package:vierqr/features/personal/blocs/user_edit_bloc.dart';
 import 'package:vierqr/features/personal/events/user_edit_event.dart';
 import 'package:vierqr/features/personal/states/user_edit_state.dart';
 import 'package:vierqr/layouts/box_layout.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class UserUpdatePassword extends StatelessWidget {
   static final TextEditingController _oldPasswordController =
@@ -187,8 +187,8 @@ class UserUpdatePassword extends StatelessWidget {
                     .isValidUpdatePassword()) {
                   _userEditBloc.add(
                     UserEditPasswordEvent(
-                      userId: UserHelper.instance.getUserId(),
-                      phoneNo: UserHelper.instance.getPhoneNo(),
+                      userId: SharePrefUtils.getProfile().userId,
+                      phoneNo: SharePrefUtils.getPhone(),
                       oldPassword: _oldPasswordController.text,
                       newPassword: _newPasswordController.text,
                     ),

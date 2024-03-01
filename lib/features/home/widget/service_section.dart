@@ -16,7 +16,7 @@ import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/home/widget/dialog_update.dart';
 import 'package:vierqr/features/web_view/views/custom_inapp_webview.dart';
 import 'package:vierqr/main.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class ServiceSection extends StatefulWidget {
   const ServiceSection({Key? key}) : super(key: key);
@@ -173,7 +173,7 @@ class _ServiceSectionState extends State<ServiceSection> {
                 context,
                 CustomInAppWebView(
                   url: 'https://vietqr.vn/service/may-ban-hang/active?mid=0',
-                  userId: UserHelper.instance.getUserId(),
+                  userId: SharePrefUtils.getProfile().userId,
                 ),
                 routeName: CustomInAppWebView.routeName);
           },

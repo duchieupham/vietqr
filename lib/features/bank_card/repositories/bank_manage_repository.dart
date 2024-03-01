@@ -5,9 +5,8 @@ import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
-import 'package:vierqr/models/account_balance_dto.dart';
 import 'package:vierqr/models/transaction_bank_dto.dart';
-import 'package:vierqr/services/shared_references/account_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class BankManageRepository {
   const BankManageRepository();
@@ -29,56 +28,24 @@ class BankManageRepository {
           });
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
-        await AccountHelper.instance.setBankToken(data['access_token']);
+        await SharePrefUtils.saveBankToken(data['access_token']);
       }
     } catch (e) {
       LOG.error(e.toString());
     }
-  }
-
-  Future<AccountBalanceDTO> getAccountBalace(
-      String customerId, String accountNumber) async {
-    AccountBalanceDTO result = const AccountBalanceDTO(
-      accountNumber: '',
-      accountName: '',
-      productName: '',
-      acctCurrency: '',
-      workingBalance: '',
-    );
-    try {
-      const Uuid uuid = Uuid();
-      final response = await BaseAPIClient.getAPI(
-        url:
-            '${EnvConfig.getBankUrl()}ms/bank-info/v1.0/get-all-account-list?customerId=$customerId&accountNumber=$accountNumber',
-        header: {
-          'Authorization': 'Bearer ${AccountHelper.instance.getBankToken()}',
-          'ClientMessageId': uuid.v1(),
-        },
-        type: AuthenticationType.CUSTOM,
-      );
-      if (response.statusCode == 200) {
-        var data = jsonDecode(response.body);
-        List<AccountBalanceDTO> list = data['data']
-            .map<AccountBalanceDTO>((json) => AccountBalanceDTO.fromJson(json))
-            .toList();
-        result = list[0];
-      }
-    } catch (e) {
-      LOG.error(e.toString());
-    }
-    return result;
   }
 
   Future<List<TransactionBankDTO>> getBankTransactions(String accountNumber,
       String accountType, String fromDate, String toDate) async {
     List<TransactionBankDTO> result = [];
     try {
+      String bankToken = SharePrefUtils.getBankToken();
       const Uuid uuid = Uuid();
       final response = await BaseAPIClient.getAPI(
         url:
             '${EnvConfig.getBankUrl()}ms/ewallet/v1.0/get-transaction-history?accountNumber=$accountNumber&accountType=$accountType&fromDate=$fromDate&toDate=$toDate',
         header: {
-          'Authorization': 'Bearer ${AccountHelper.instance.getBankToken()}',
+          'Authorization': 'Bearer $bankToken',
           'ClientMessageId': uuid.v1(),
           'Content-Type': 'application/json',
         },

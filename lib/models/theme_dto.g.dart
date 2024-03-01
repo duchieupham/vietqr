@@ -21,7 +21,7 @@ class ThemeDTOAdapter extends TypeAdapter<ThemeDTO> {
       type: fields[1] as int,
       imgUrl: fields[2] as String,
       name: fields[3] as String,
-      file: fields[4] as String,
+      photoPath: fields[4] as String,
     );
   }
 
@@ -38,7 +38,7 @@ class ThemeDTOAdapter extends TypeAdapter<ThemeDTO> {
       ..writeByte(3)
       ..write(obj.name)
       ..writeByte(4)
-      ..write(obj.file);
+      ..write(obj.photoPath);
   }
 
   @override

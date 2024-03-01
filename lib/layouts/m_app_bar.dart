@@ -14,6 +14,7 @@ class MAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onPressed;
   final VoidCallback? callBackHome;
   final bool showBG;
+  final bool centerTitle;
 
   const MAppBar({
     Key? key,
@@ -23,6 +24,7 @@ class MAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.onPressed,
     this.callBackHome,
     this.showBG = true,
+    this.centerTitle = true,
   })  : preferredSize = const Size.fromHeight(60),
         super(key: key);
 
@@ -33,11 +35,11 @@ class MAppBar extends StatelessWidget implements PreferredSizeWidget {
       return Container(
         decoration: showBG
             ? BoxDecoration(
-                image: page.fileTheme.path.isEmpty
+                image: page.bannerApp.path.isEmpty
                     ? DecorationImage(
                         image: NetworkImage(url), fit: BoxFit.cover)
                     : DecorationImage(
-                        image: FileImage(page.fileTheme), fit: BoxFit.cover))
+                        image: FileImage(page.bannerApp), fit: BoxFit.cover))
             : BoxDecoration(),
         child: AppBar(
           systemOverlayStyle: const SystemUiOverlayStyle(
@@ -70,7 +72,7 @@ class MAppBar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                 )
               : null,
-          centerTitle: true,
+          centerTitle: centerTitle,
           elevation: 0,
           automaticallyImplyLeading: false,
           actions: actions ??

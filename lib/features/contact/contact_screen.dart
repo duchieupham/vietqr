@@ -24,8 +24,7 @@ import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/contact_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
-import 'package:vierqr/services/shared_references/account_helper.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 import 'repostiroties/contact_repository.dart';
 import 'save_contact_screen.dart';
@@ -65,7 +64,7 @@ class _ContactStateState extends State<_ContactState>
   StreamSubscription? _syncSub;
   StreamSubscription? _syncGetSub;
 
-  String get userId => UserHelper.instance.getUserId();
+  String get userId => SharePrefUtils.getProfile().userId;
 
   Timer? _debounce;
 
@@ -104,8 +103,8 @@ class _ContactStateState extends State<_ContactState>
   }
 
   Future<ResponseMessageDTO> _insertContacts(List<VCardModel> list) async {
-    final String token = AccountHelper.instance.getToken();
-    final String tokenFree = AccountHelper.instance.getTokenFree();
+    final String token = await SharePrefUtils.getTokenInfo();
+    final String tokenFree = SharePrefUtils.getTokenFree();
     ReceivePort port = ReceivePort();
     await Isolate.spawn(_handleInsert, [port.sendPort, list, token, tokenFree]);
     ResponseMessageDTO data = await port.first;

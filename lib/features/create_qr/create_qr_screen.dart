@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:vierqr/models/terminal_qr_dto.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 import 'widgets/calculator_view.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +30,6 @@ import 'package:vierqr/features/create_qr/events/create_qr_event.dart';
 import 'package:vierqr/features/create_qr/states/create_qr_state.dart';
 import 'package:vierqr/features/create_qr/views/create_success_view.dart';
 import 'package:vierqr/features/create_qr/widgets/bottom_sheet_image.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
 import 'package:vierqr/features/transaction/widgets/transaction_sucess_widget.dart';
 
 import 'widgets/select_bank_view.dart';
@@ -787,7 +787,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
       bankId: bankAccountDTO?.id ?? '',
       amount: money,
       content: formattedName,
-      userId: UserHelper.instance.getUserId(),
+      userId: SharePrefUtils.getProfile().userId,
       orderId: _provider.orderCode,
       terminalCode: _provider.branchCode,
     );

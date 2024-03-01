@@ -19,7 +19,7 @@ import 'package:vierqr/models/bank_account_terminal.dart';
 import 'package:vierqr/models/detail_group_dto.dart';
 import 'package:vierqr/models/member_branch_model.dart';
 import 'package:vierqr/models/member_search_dto.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 import '../../../commons/widgets/button_icon_widget.dart';
 
@@ -38,7 +38,7 @@ class ShareBDSDInviteScreen extends StatefulWidget {
 class _ShareBDSDInviteState extends State<ShareBDSDInviteScreen> {
   late InviteBDSDBloc _bloc;
 
-  String get userId => UserHelper.instance.getUserId();
+  String get userId => SharePrefUtils.getProfile().userId;
 
   List<MemberBranchModel> listMemberData = [];
   List<MemberBranchModel> listMember = [];
@@ -294,25 +294,30 @@ class _ShareBDSDInviteState extends State<ShareBDSDInviteScreen> {
                               height: 20,
                             ),
                             const Text(
-                              'Địa chỉ',
+                              'Địa chỉ *',
                               style: TextStyle(fontWeight: FontWeight.bold),
                             ),
-                            Container(
-                              margin: EdgeInsets.only(top: 12),
-                              padding: EdgeInsets.only(left: 8),
-                              decoration: BoxDecoration(
-                                  color: AppColor.WHITE,
-                                  borderRadius: BorderRadius.circular(5)),
-                              child: TextField(
-                                controller: addressController,
-                                decoration: InputDecoration(
-                                    hintText: 'Nhập địa chỉ cửa hàng',
-                                    contentPadding: EdgeInsets.symmetric(
-                                        vertical: 4, horizontal: 12),
-                                    hintStyle: TextStyle(
-                                        color: AppColor.GREY_TEXT,
-                                        fontSize: 13)),
-                              ),
+                            Consumer<ShareBDSDInviteProvider>(
+                              builder: (context, provider, _) {
+                                return Container(
+                                  margin: EdgeInsets.only(top: 12),
+                                  padding: EdgeInsets.only(left: 8),
+                                  decoration: BoxDecoration(
+                                      color: AppColor.WHITE,
+                                      borderRadius: BorderRadius.circular(5)),
+                                  child: TextField(
+                                    controller: addressController,
+                                    onChanged: provider.onChangedAddress,
+                                    decoration: InputDecoration(
+                                        hintText: 'Nhập địa chỉ cửa hàng',
+                                        contentPadding: EdgeInsets.symmetric(
+                                            vertical: 4, horizontal: 12),
+                                        hintStyle: TextStyle(
+                                            color: AppColor.GREY_TEXT,
+                                            fontSize: 13)),
+                                  ),
+                                );
+                              },
                             ),
                             const SizedBox(
                               height: 30,
@@ -330,7 +335,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDInviteScreen> {
                                 onTap: () {
                                   Map<String, dynamic> param = {};
                                   param['userId'] =
-                                      UserHelper.instance.getUserId();
+                                      SharePrefUtils.getProfile().userId;
                                   param['terminalId'] =
                                       widget.groupDetailDTO?.id ?? '';
                                   _bloc.add(RemoveGroup(param: param));
@@ -411,6 +416,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDInviteScreen> {
                                   ? AppColor.BLUE_TEXT
                                   : AppColor.GREY_BUTTON,
                               function: () {
+                                if (!provider.validateFormIV) return;
                                 Map<String, dynamic> param = {};
                                 param['address'] = addressController.text;
                                 param['name'] = nameGroupController.text;
@@ -418,7 +424,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDInviteScreen> {
                                 param['bankIds'] = provider.bankIDs;
                                 param['userIds'] = provider.userIDS;
                                 param['userId'] =
-                                    UserHelper.instance.getUserId();
+                                    SharePrefUtils.getProfile().userId;
                                 print('-----------------------------$param ');
                                 _bloc.add(CreateNewGroup(param: param));
                               });
@@ -449,7 +455,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDInviteScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Thành viên*',
+                    'Thành viên',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   Text(
@@ -487,10 +493,10 @@ class _ShareBDSDInviteState extends State<ShareBDSDInviteScreen> {
                           });
 
                           if (!existed) {
-                            provider.addListMember(dto);
+                            // provider.addListMember(dto);
                           }
                         } else {
-                          provider.addListMember(dto);
+                          // provider.addListMember(dto);
                         }
                       },
                     ),
@@ -740,7 +746,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDInviteScreen> {
           const SizedBox(
             width: 12,
           ),
-          UserHelper.instance.getAccountInformation().imgId.isNotEmpty
+          SharePrefUtils.getProfile().imgId.isNotEmpty
               ? Container(
                   width: 30,
                   height: 30,
@@ -748,8 +754,8 @@ class _ShareBDSDInviteState extends State<ShareBDSDInviteScreen> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(30),
                     image: DecorationImage(
-                        image: ImageUtils.instance.getImageNetWork(
-                            UserHelper.instance.getAccountInformation().imgId),
+                        image: ImageUtils.instance
+                            .getImageNetWork(SharePrefUtils.getProfile().imgId),
                         fit: BoxFit.cover),
                   ),
                 )
@@ -772,11 +778,11 @@ class _ShareBDSDInviteState extends State<ShareBDSDInviteScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                UserHelper.instance.getUserFullName(),
+                SharePrefUtils.getProfile().fullName,
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               Text(
-                UserHelper.instance.getPhoneNo(),
+                SharePrefUtils.getPhone(),
                 style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
               )
             ],

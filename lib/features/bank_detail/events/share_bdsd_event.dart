@@ -37,6 +37,7 @@ class SearchMemberEvent extends ShareBDSDEvent {
   final String terminalId;
   final String value;
   final int type;
+
   SearchMemberEvent({
     this.terminalId = '',
     this.value = '',
@@ -141,28 +142,33 @@ class GetListGroupBDSDEvent extends ShareBDSDEvent {
   final int type;
   final int offset;
   final bool loadingPage;
+  final bool loadMore;
 
-  GetListGroupBDSDEvent(
-      {this.userID = '',
-      this.type = 0,
-      this.offset = 0,
-      this.loadingPage = false});
+  GetListGroupBDSDEvent({
+    this.userID = '',
+    this.type = 0,
+    this.offset = 0,
+    this.loadingPage = false,
+    this.loadMore = false,
+  });
 
   @override
-  List<Object?> get props => [userID, type, offset];
+  List<Object?> get props => [userID, type, offset, loadMore];
 }
 
 class GetMyListGroupBDSDEvent extends ShareBDSDEvent {
   final String userID;
   final String bankId;
   final int offset;
+  final bool isLoading;
 
   GetMyListGroupBDSDEvent({
     this.userID = '',
     this.bankId = '',
     this.offset = 0,
+    this.isLoading = true,
   });
 
   @override
-  List<Object?> get props => [userID, bankId, offset];
+  List<Object?> get props => [userID, bankId, offset, isLoading];
 }

@@ -9,7 +9,7 @@ import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/services/aes_convert.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class DialogScanLogin extends StatelessWidget {
   final String code;
@@ -69,7 +69,7 @@ class DialogScanLogin extends StatelessWidget {
 
     final body = {
       'loginId': loginId,
-      'userId': UserHelper.instance.getUserId(),
+      'userId': SharePrefUtils.getProfile().userId,
       'randomKey': randomKey,
     };
     try {

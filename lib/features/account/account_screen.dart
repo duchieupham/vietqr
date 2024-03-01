@@ -2,8 +2,8 @@ import 'dart:io';
 import 'package:vierqr/main.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:vierqr/services/shared_references/account_helper.dart';
-import 'package:vierqr/services/shared_references/event_bloc_helper.dart';
+import 'package:vierqr/models/user_profile.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'views/vietqr_id_card_view.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -34,7 +34,6 @@ import 'package:vierqr/features/setting_bdsd/setting_bdsd_screen.dart';
 import 'package:vierqr/features/account/widget/my_QR_bottom_sheet.dart';
 import 'package:vierqr/features/printer/views/printer_setting_screen.dart';
 import 'package:vierqr/features/personal/views/introduce_bottom_sheet.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class IconData {
   final String url;
@@ -63,6 +62,8 @@ List<IconData> listIcon = [
 ];
 
 class AccountScreen extends StatelessWidget {
+  static String routeName = '/account_screen';
+
   const AccountScreen({super.key});
 
   @override
@@ -98,15 +99,15 @@ class _AccountScreenState extends State<_AccountScreen>
     BuildContext context = NavigationService.navigatorKey.currentContext!;
     Provider.of<UserEditProvider>(context, listen: false).reset();
     Provider.of<AuthProvider>(context, listen: false).reset();
-    await EventBlocHelper.instance.updateLogoutBefore(true);
-    await UserHelper.instance.initialUserInformationHelper();
-    await AccountHelper.instance.setBankToken('');
-    await AccountHelper.instance.setToken('');
+    await SharePrefUtils.saveProfileToCache(UserProfile());
+    await SharePrefUtils.setTokenInfo('');
+    await SharePrefUtils.setTokenInfo('');
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
+
     return BlocConsumer<AccountBloc, AccountState>(
       listener: (context, state) async {
         if (state.status == BlocStatus.LOADING) {
@@ -140,25 +141,32 @@ class _AccountScreenState extends State<_AccountScreen>
         }
       },
       builder: (context, state) {
-        return RefreshIndicator(
-          onRefresh: _onRefresh,
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _BannerWidget(),
-                _FeatureWidget(),
-                const SizedBox(height: 30),
-                _IntroduceWidget(),
-                const SizedBox(height: 30),
-                _SettingWidget(),
-                const SizedBox(height: 30),
-                _SupportWidget(),
-                const SizedBox(height: 30),
-                _buildLogOutWidget(),
-              ],
-            ),
+        return Scaffold(
+          body: Stack(
+            children: [
+              _buildBannerApp(context),
+              RefreshIndicator(
+                onRefresh: _onRefresh,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _AvatarWidget(),
+                      _FeatureWidget(),
+                      const SizedBox(height: 30),
+                      _IntroduceWidget(),
+                      const SizedBox(height: 30),
+                      _SettingWidget(),
+                      const SizedBox(height: 30),
+                      _SupportWidget(),
+                      const SizedBox(height: 30),
+                      _buildLogOutWidget(),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         );
       },
@@ -203,39 +211,110 @@ class _AccountScreenState extends State<_AccountScreen>
   @override
   // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
+
+  Widget _buildBannerApp(BuildContext context) {
+    double paddingTop = MediaQuery.of(context).viewPadding.top;
+    double width = MediaQuery.of(context).size.width;
+    return Consumer<AuthProvider>(
+      builder: (context, authProvider, _) {
+        File file = authProvider.bannerApp;
+        return Container(
+          height: 230,
+          width: width,
+          padding: EdgeInsets.only(top: paddingTop + 12),
+          alignment: Alignment.topCenter,
+          decoration: BoxDecoration(
+              image: file.path.isNotEmpty
+                  ? DecorationImage(
+                      image: FileImage(file), fit: BoxFit.fitWidth)
+                  : DecorationImage(
+                      image: AssetImage('assets/images/bgr-header.png'),
+                      fit: BoxFit.fitWidth)),
+          child: Stack(
+            children: [
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  height: 50,
+                  width: width,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        colors: [
+                          Theme.of(context).scaffoldBackgroundColor,
+                          Theme.of(context)
+                              .scaffoldBackgroundColor
+                              .withOpacity(0.1),
+                        ],
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                        tileMode: TileMode.clamp),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 }
 
-class _BannerWidget extends StatelessWidget {
+class _AvatarWidget extends StatelessWidget {
+  _handleBack(BuildContext context) {
+    FocusManager.instance.primaryFocus?.unfocus();
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.28,
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.3,
       width: MediaQuery.of(context).size.width,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
+      child: Stack(
         children: [
-          const SizedBox(height: 30),
-          _buildAvatarWidget(context),
-          const SizedBox(height: 16),
-          Text(
-            UserHelper.instance.getUserFullName(),
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: AppColor.BLACK,
+          Positioned.fill(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(height: kToolbarHeight),
+                _buildAvatarWidget(context),
+                const SizedBox(height: 16),
+                Text(
+                  SharePrefUtils.getProfile().fullName,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: AppColor.BLACK,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  StringUtils.instance
+                      .formatPhoneNumberVN(SharePrefUtils.getPhone()),
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: AppColor.BLACK,
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 2),
-          Text(
-            StringUtils.instance
-                .formatPhoneNumberVN(UserHelper.instance.getPhoneNo()),
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: AppColor.BLACK,
+          Positioned(
+            top: kToolbarHeight,
+            child: IconButton(
+              onPressed: () => _handleBack(context),
+              padding: const EdgeInsets.only(left: 20),
+              icon: const Icon(
+                Icons.arrow_back_ios,
+                color: Colors.black,
+                size: 18,
+              ),
             ),
-          ),
+          )
         ],
       ),
     );
@@ -243,7 +322,7 @@ class _BannerWidget extends StatelessWidget {
 
   Widget _buildAvatarWidget(BuildContext context) {
     double size = 80;
-    String imgId = UserHelper.instance.getAccountInformation().imgId;
+    String imgId = SharePrefUtils.getProfile().imgId;
     return Consumer<AuthProvider>(
       builder: (context, provider, child) {
         return (provider.avatarUser.path.isNotEmpty)
@@ -334,8 +413,8 @@ class _FeatureWidget extends StatelessWidget {
         if (pickedFile != null) {
           File? file = File(pickedFile.path);
           File? compressedFile = FileUtils.instance.compressImage(file);
-          String userId = UserHelper.instance.getUserId();
-          String imgId = UserHelper.instance.getAccountInformation().imgId;
+          String userId = SharePrefUtils.getProfile().userId;
+          String imgId = SharePrefUtils.getProfile().imgId;
           context.read<AccountBloc>().add(UpdateAvatarEvent(
               userId: userId, imgId: imgId, image: compressedFile));
         }

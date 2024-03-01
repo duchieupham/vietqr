@@ -12,7 +12,7 @@ import 'package:vierqr/commons/widgets/textfield_custom.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/services/aes_convert.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class DialogScanWordPress extends StatefulWidget {
   final String code;
@@ -52,7 +52,7 @@ class _DialogScanWordPressState extends State<DialogScanWordPress> {
             child: Row(
               children: [
                 Text('Số điện thoại: ', style: TextStyle(fontSize: 14)),
-                Text('${UserHelper.instance.getPhoneNo()}',
+                Text('${SharePrefUtils.getPhone()}',
                     style:
                         TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
               ],
@@ -156,9 +156,9 @@ class _DialogScanWordPressState extends State<DialogScanWordPress> {
     }
     final body = {
       'loginId': loginId,
-      'userId': UserHelper.instance.getUserId(),
+      'userId': SharePrefUtils.getProfile().userId,
       'randomKey': randomKey,
-      'phoneNo': UserHelper.instance.getPhoneNo(),
+      'phoneNo': SharePrefUtils.getPhone(),
       'url': urlController.text,
     };
     try {

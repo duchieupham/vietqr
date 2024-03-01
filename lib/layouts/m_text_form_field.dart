@@ -43,6 +43,7 @@ class MTextFieldCustom extends StatefulWidget {
   final Color? fillColor;
   final Color? hintColor;
   final EdgeInsetsGeometry? contentPadding;
+  final InputDecoration? decoration;
 
   const MTextFieldCustom({
     Key? key,
@@ -80,6 +81,7 @@ class MTextFieldCustom extends StatefulWidget {
     this.child,
     this.contentPadding,
     this.showBorder = false,
+    this.decoration,
   }) : super(key: key);
 
   @override
@@ -138,21 +140,22 @@ class _TextFieldWidgetState extends State<MTextFieldCustom> {
       style: widget.styles,
       maxLines: (widget.maxLines == null) ? 1 : widget.maxLines,
       textInputAction: widget.keyboardAction,
-      decoration: InputDecoration(
-        hintText: widget.hintText,
-        counterText: '',
-        border: InputBorder.none,
-        hintStyle: TextStyle(
-          fontSize: (widget.fontSize != null) ? widget.fontSize : 14,
-          color: widget.hintColor ?? AppColor.GREY_TEXT,
-        ),
-        prefixIcon: widget.prefixIcon,
-        suffixIcon: widget.suffixIcon,
-        contentPadding:
-            widget.contentPadding ?? const EdgeInsets.symmetric(horizontal: 16),
-        fillColor: widget.fillColor ?? AppColor.WHITE,
-        filled: true,
-      ),
+      decoration: widget.decoration ??
+          InputDecoration(
+            hintText: widget.hintText,
+            counterText: '',
+            border: InputBorder.none,
+            hintStyle: TextStyle(
+              fontSize: (widget.fontSize != null) ? widget.fontSize : 14,
+              color: widget.hintColor ?? AppColor.GREY_TEXT,
+            ),
+            prefixIcon: widget.prefixIcon,
+            suffixIcon: widget.suffixIcon,
+            contentPadding: widget.contentPadding ??
+                const EdgeInsets.symmetric(horizontal: 16),
+            fillColor: widget.fillColor ?? AppColor.WHITE,
+            filled: true,
+          ),
     );
 
     return Column(

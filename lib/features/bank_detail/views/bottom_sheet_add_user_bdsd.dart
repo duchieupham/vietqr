@@ -211,21 +211,6 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
                 child: BlocConsumer<ShareBDSDBloc, ShareBDSDState>(
               listener: (context, state) {
                 if (state.request == ShareBDSDType.SHARE_BDSD) {
-                  // if (state.status == BlocStatus.LOADING_SHARE) {
-                  //   DialogWidget.instance.openLoadingDialog();
-                  // }
-                  // if (state.status == BlocStatus.UNLOADING) {
-                  //   Navigator.pop(context);
-                  //   Fluttertoast.showToast(
-                  //     msg: 'Chia sẻ BĐSD thành công',
-                  //     toastLength: Toast.LENGTH_SHORT,
-                  //     gravity: ToastGravity.CENTER,
-                  //     backgroundColor: Theme.of(context).cardColor,
-                  //     textColor: Theme.of(context).hintColor,
-                  //     fontSize: 15,
-                  //   );
-                  //   Navigator.pop(context);
-                  // }
                   if (state.request == ShareBDSDType.ERROR) {
                     DialogWidget.instance.openMsgDialog(
                         title: 'Đã có lỗi xảy ra', msg: state.msg ?? '');
@@ -235,11 +220,6 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
                   listMember = state.listMemberSearch;
                   isSearched = true;
                 }
-                //
-                // if (state.type == ContactType.SEARCH_USER) {
-                //   Provider.of<ContactProvider>(context, listen: false)
-                //       .updateList(state.listContactDTO);
-                // }
               },
               builder: (context, state) {
                 if (state.request == ShareBDSDType.SEARCH_MEMBER &&
@@ -425,43 +405,22 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
                 if (state.status == BlocStatus.LOADING_SHARE &&
                     state.userIdSelect == dto.id)
                   Expanded(
-                      child: Padding(
-                    padding: EdgeInsets.only(left: 20),
-                    child: UnconstrainedBox(
-                      child: SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(
-                            color: AppColor.BLUE_TEXT),
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 20),
+                      child: UnconstrainedBox(
+                        child: SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                              color: AppColor.BLUE_TEXT),
+                        ),
                       ),
                     ),
-                  ))
-                // else if (state.status == BlocStatus.UNLOADING &&
-                //     state.userIdSelect == dto.id)
-                //   SizedBox(
-                //     width: 80,
-                //     child: Padding(
-                //       padding: const EdgeInsets.only(top: 10, left: 8),
-                //       child: Row(
-                //         children: [
-                //           Text(
-                //             'Đã thêm',
-                //             textAlign: TextAlign.end,
-                //             style: TextStyle(color: AppColor.BLUE_TEXT),
-                //           ),
-                //           Icon(
-                //             Icons.check,
-                //             color: AppColor.BLUE_TEXT,
-                //             size: 18,
-                //           )
-                //         ],
-                //       ),
-                //     ),
-                //   )
+                  )
                 else
                   Padding(
                     padding: const EdgeInsets.only(left: 20),
-                    child: dto.existed == 0
+                    child: dto.existed == 0 && !dto.isMe
                         ? ButtonWidget(
                             height: 32,
                             width: 80,
@@ -471,10 +430,6 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetAddUserBDSD> {
                             function: () {
                               widget.onSelect(dto);
                               Navigator.pop(context);
-                              // Map<String, dynamic> param = {};
-                              // param['userId'] = dto.id;
-                              // param['bankId'] = widget.bankId;
-                              // bloc.add(ShareUserBDSDEvent(param));
                             },
                             fontSize: 12,
                             borderRadius: 5,

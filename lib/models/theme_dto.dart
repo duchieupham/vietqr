@@ -15,7 +15,7 @@ class ThemeDTO extends HiveObject {
   @HiveField(3)
   String name;
   @HiveField(4)
-  String file;
+  String photoPath;
 
   File? xFile;
 
@@ -24,7 +24,7 @@ class ThemeDTO extends HiveObject {
     this.type = -1,
     this.imgUrl = '',
     this.name = '',
-    this.file = '',
+    this.photoPath = '',
   });
 
   ThemeDTO get copy {
@@ -33,7 +33,7 @@ class ThemeDTO extends HiveObject {
       ..type = type
       ..imgUrl = imgUrl
       ..name = name
-      ..file = file;
+      ..photoPath = photoPath;
     return objectInstance;
   }
 
@@ -43,12 +43,22 @@ class ThemeDTO extends HiveObject {
       type: json['type'] ?? -1,
       imgUrl: json['imgUrl'] ?? '',
       name: json['name'] ?? '',
-      file: '',
+      photoPath: json['photoPath'] ?? '',
     );
   }
 
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = {};
+    data["id"] = id;
+    data["type"] = type;
+    data["imgUrl"] = imgUrl;
+    data["name"] = name;
+    data["photoPath"] = photoPath;
+    return data;
+  }
+
   setFile(String localPath) {
-    file = localPath;
+    photoPath = localPath;
   }
 
   void setType(int themeType) {

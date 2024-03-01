@@ -11,9 +11,9 @@ import 'package:vierqr/features/top_up/events/scan_qr_event.dart';
 import 'package:vierqr/features/top_up/states/top_up_state.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
-import 'package:vierqr/models/account_information_dto.dart';
+import 'package:vierqr/models/user_profile.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/top_up_provider.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
 
 class TopUpScreen extends StatelessWidget {
   const TopUpScreen({super.key});
@@ -35,7 +35,7 @@ class TopUpScreen extends StatelessWidget {
                 Navigator.pop(context);
                 Map<String, dynamic> param = {};
                 param['dto'] = state.dto;
-                param['phoneNo'] = UserHelper.instance.getPhoneNo();
+                param['phoneNo'] = SharePrefUtils.getPhone();
                 Navigator.pop(context);
                 Navigator.pushNamed(context, Routes.QR_TOP_UP,
                     arguments: param);
@@ -58,11 +58,9 @@ class TopUpScreen extends StatelessWidget {
                         ),
                         _buildTemplateSection('Tài khoản',
                             child: _buildAccountInfo(context,
-                                accountInformationDTO: UserHelper
-                                    .instance
-                                    .getAccountInformation(),
-                                phoneNumber: UserHelper.instance
-                                    .getPhoneNo())),
+                                accountInformationDTO:
+                                    SharePrefUtils.getProfile(),
+                                phoneNumber: SharePrefUtils.getPhone())),
                         const SizedBox(
                           height: 28,
                         ),
@@ -96,8 +94,7 @@ class TopUpScreen extends StatelessWidget {
                               onTap: () {
                                 FocusManager.instance.primaryFocus?.unfocus();
                                 Map<String, dynamic> data = {};
-                                data['phoneNo'] =
-                                    UserHelper.instance.getPhoneNo();
+                                data['phoneNo'] = SharePrefUtils.getPhone();
                                 data['amount'] =
                                     provider.money.replaceAll(',', '');
                                 data['transType'] = 'C';
@@ -131,7 +128,7 @@ class TopUpScreen extends StatelessWidget {
   }
 
   Widget _buildAccountInfo(BuildContext context,
-      {required AccountInformationDTO accountInformationDTO,
+      {required UserProfile accountInformationDTO,
       required String phoneNumber}) {
     return Container(
       decoration: BoxDecoration(

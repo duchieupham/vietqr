@@ -12,9 +12,9 @@ import 'package:vierqr/features/personal/events/user_edit_event.dart';
 import 'package:vierqr/features/personal/states/user_edit_state.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
-import 'package:vierqr/models/account_information_dto.dart';
+import 'package:vierqr/models/user_profile.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class NationalInformationView extends StatelessWidget {
   static late UserEditBloc userEditBloc;
@@ -177,21 +177,16 @@ class NationalInformationView extends StatelessWidget {
                           int gender = (dto.gender.trim() == 'Nam') ? 0 : 1;
                           List<String> namePaths =
                               StringUtils.instance.splitFullName(dto.fullname);
-                          AccountInformationDTO accountInformationDTO =
-                              AccountInformationDTO(
-                            userId: UserHelper.instance.getUserId(),
+                          UserProfile accountInformationDTO = UserProfile(
+                            userId: SharePrefUtils.getProfile().userId,
                             firstName: namePaths[0].trim(),
                             middleName: namePaths[1].trim(),
                             lastName: namePaths[2].trim(),
                             birthDate: dto.birthdate,
                             gender: gender,
                             address: dto.address,
-                            email: UserHelper.instance
-                                .getAccountInformation()
-                                .email,
-                            imgId: UserHelper.instance
-                                .getAccountInformation()
-                                .imgId,
+                            email: SharePrefUtils.getProfile().email,
+                            imgId: SharePrefUtils.getProfile().imgId,
                           );
                           userEditBloc.add(
                             UserEditInformationEvent(
@@ -281,7 +276,7 @@ class NationalInformationView extends StatelessWidget {
 
   Widget _buildAvatarWidget(BuildContext context) {
     double size = 100;
-    String imgId = UserHelper.instance.getAccountInformation().imgId;
+    String imgId = SharePrefUtils.getProfile().imgId;
     return (imgId.isEmpty)
         ? ClipOval(
             child: SizedBox(

@@ -7,7 +7,7 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/models/introduce_dto.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class IntroduceBottomSheet extends StatefulWidget {
   final IntroduceDTO? introduceDTO;
@@ -19,7 +19,7 @@ class IntroduceBottomSheet extends StatefulWidget {
 }
 
 class _IntroduceBottomSheetState extends State<IntroduceBottomSheet> {
-  String userId = UserHelper.instance.getUserId();
+  String get userId => SharePrefUtils.getProfile().userId;
 
   @override
   void initState() {

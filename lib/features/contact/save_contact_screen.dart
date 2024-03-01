@@ -24,7 +24,7 @@ import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/contact_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/vietqr_dto.dart';
-import 'package:vierqr/services/shared_references/user_information_helper.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 import 'views/save_vcard_view.dart';
 
@@ -252,8 +252,7 @@ class _SaveContactScreenState extends State<_BodyWidget> {
                                     companyName: companyController.text,
                                     website: webController.text,
                                     address: addressController.text,
-                                    userId: UserHelper.instance
-                                        .getUserId(),
+                                    userId: SharePrefUtils.getProfile().userId,
                                     additionalData: suggestController.text,
                                   );
                                   _bloc.add(InsertVCardEvent([vCard],
@@ -264,8 +263,7 @@ class _SaveContactScreenState extends State<_BodyWidget> {
                                     nickName: nameController.text,
                                     type: state.typeQR.value.toString(),
                                     value: state.qrCode,
-                                    userId: UserHelper.instance
-                                        .getUserId(),
+                                    userId: SharePrefUtils.getProfile().userId,
                                     bankTypeId: state.bankTypeDTO?.id ?? '',
                                     bankAccount: state.bankAccount ?? '',
                                     colorType: provider.colorType,
