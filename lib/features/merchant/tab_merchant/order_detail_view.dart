@@ -94,7 +94,9 @@ class _OrderDetailViewState extends State<OrderDetailView> {
                         const SizedBox(height: 24),
                         _buildItem('Số tiền',
                             '${CurrencyUtils.instance.getCurrencyFormatted('${dto.amount ?? 0}')} VND',
-                            textColor: AppColor.ORANGE_DARK),
+                            textColor: dto.status == 0
+                                ? AppColor.ORANGE_DARK
+                                : AppColor.GREEN),
                         _buildItem('Trạng thái:', dto.getStatus,
                             textColor: dto.status == 0
                                 ? AppColor.ORANGE_DARK
@@ -114,7 +116,8 @@ class _OrderDetailViewState extends State<OrderDetailView> {
                           dto.items!.length,
                           (index) {
                             Item item = dto.items![index];
-                            return _buildItemCategory(item, index);
+                            return _buildItemCategory(item, index,
+                                isSuccess: dto.status == 1);
                           },
                         ),
                       ]
@@ -164,7 +167,7 @@ class _OrderDetailViewState extends State<OrderDetailView> {
     );
   }
 
-  Widget _buildItemCategory(Item dto, int index) {
+  Widget _buildItemCategory(Item dto, int index, {bool isSuccess = false}) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
       margin: EdgeInsets.only(bottom: 12),
@@ -196,7 +199,9 @@ class _OrderDetailViewState extends State<OrderDetailView> {
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
-                    color: AppColor.ORANGE_DARK.withOpacity(0.2)),
+                    color: isSuccess
+                        ? AppColor.GREEN.withOpacity(0.2)
+                        : AppColor.ORANGE_DARK.withOpacity(0.2)),
                 child: Text(
                   '${dto.quantity ?? 0}',
                   style: TextStyle(color: AppColor.ORANGE_DARK),
@@ -214,7 +219,8 @@ class _OrderDetailViewState extends State<OrderDetailView> {
               const Spacer(),
               Text(
                 ' ${CurrencyUtils.instance.getCurrencyFormatted('${dto.totalAmount}')} VND',
-                style: TextStyle(color: AppColor.ORANGE_DARK),
+                style: TextStyle(
+                    color: isSuccess ? AppColor.GREEN : AppColor.ORANGE_DARK),
               ),
             ],
           ),
