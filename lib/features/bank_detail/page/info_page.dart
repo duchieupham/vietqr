@@ -14,11 +14,14 @@ import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
 import 'package:vierqr/features/bank_detail/views/bottom_sheet_detail_bank.dart';
 import 'package:vierqr/features/create_qr/create_qr_screen.dart';
+import 'package:vierqr/features/merchant/create_merchant_screen.dart';
+import 'package:vierqr/features/merchant/merchant_screen.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_account_remove_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
+import 'package:vierqr/models/merchant_dto.dart';
 import 'package:vierqr/models/qr_bank_detail.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
@@ -29,6 +32,8 @@ class InfoDetailBankAccount extends StatefulWidget {
   final AccountBankDetailDTO dto;
   final QRGeneratedDTO qrGeneratedDTO;
   final String bankId;
+  final bool isRegisterMerchant;
+  final MerchantDTO? merchantDTO;
   final GestureTapCallback? onChangePage;
   final GestureTapCallback? onChangePageThongKe;
   final Function(QRDetailBank) updateQRGeneratedDTO;
@@ -42,6 +47,8 @@ class InfoDetailBankAccount extends StatefulWidget {
     required this.bankId,
     this.onChangePage,
     this.onChangePageThongKe,
+    this.merchantDTO,
+    this.isRegisterMerchant = false,
     required this.updateQRGeneratedDTO,
   }) : super(key: key);
 
@@ -138,6 +145,35 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
                               width: width,
                               title: 'Chi tiết tài khoản',
                               description: 'Xem thông tin liên kết tài khoản',
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            child: DividerWidget(width: width),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              if (widget.isRegisterMerchant) {
+                                NavigatorUtils.navigatePage(
+                                    context,
+                                    MerchantScreen(
+                                        merchantDTO: widget.merchantDTO),
+                                    routeName: CreateMerchantScreen.routeName);
+                              } else {
+                                NavigatorUtils.navigatePage(
+                                    context,
+                                    CreateMerchantScreen(
+                                        bankDetail: widget.dto),
+                                    routeName: CreateMerchantScreen.routeName);
+                              }
+                            },
+                            child: _buildElement(
+                              icon: 'assets/images/ic-business-blue.png',
+                              context: context,
+                              width: width,
+                              title: 'Đại lý',
+                              description:
+                                  'Quản lý doanh nghiệp, các hoá đơn thanh toán',
                             ),
                           ),
                           Padding(

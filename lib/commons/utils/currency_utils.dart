@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class CurrencyUtils {
-  const CurrencyUtils._privateConsrtructor();
+  const CurrencyUtils._privateConstructor();
 
-  static const CurrencyUtils _instance = CurrencyUtils._privateConsrtructor();
+  static const CurrencyUtils _instance = CurrencyUtils._privateConstructor();
+
   static CurrencyUtils get instance => _instance;
 
   static const _locale = 'en';
+
   String _formatNumber(String s) =>
       NumberFormat.decimalPattern(_locale).format(int.tryParse(s) ?? '0');
 

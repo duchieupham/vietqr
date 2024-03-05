@@ -11,6 +11,7 @@ import 'package:vierqr/features/bank_detail/repositories/bank_card_repository.da
 import 'package:vierqr/features/bank_detail/states/bank_card_state.dart';
 import 'package:vierqr/features/transaction/blocs/transaction_bloc.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
+import 'package:vierqr/models/merchant_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/models/terminal_response_dto.dart';
@@ -28,6 +29,7 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
     on<UpdateEvent>(_updateEvent);
     on<BankCardGenerateDetailQR>(_createQRUnAuthen);
     on<GetMyListGroupEvent>(_getMyListGroup);
+    on<GetMerchantEvent>(_getMerchant);
   }
 
   void _getDetail(BankCardEvent event, Emitter emit) async {
@@ -50,6 +52,39 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
             isInit: event.isInit,
           ),
         );
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+        status: BlocStatus.NONE,
+        request: BankDetailType.ERROR,
+      ));
+    }
+  }
+
+  void _getMerchant(BankCardEvent event, Emitter emit) async {
+    try {
+      if (event is GetMerchantEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.NONE, request: BankDetailType.NONE));
+        final result = await bankCardRepository.getMerchantInfo(bankId);
+        bool isRegisterMerchant = false;
+        if (result != null) {
+          if (result is ResponseMessageDTO) {
+            isRegisterMerchant = false;
+            emit(state.copyWith(
+                status: BlocStatus.NONE,
+                request: BankDetailType.GET_MERCHANT_INFO,
+                isRegisterMerchant: isRegisterMerchant));
+          } else if (result is MerchantDTO) {
+            isRegisterMerchant = true;
+            emit(state.copyWith(
+                status: BlocStatus.NONE,
+                merchantDTO: result,
+                request: BankDetailType.GET_MERCHANT_INFO,
+                isRegisterMerchant: isRegisterMerchant));
+          }
+        }
       }
     } catch (e) {
       LOG.error(e.toString());

@@ -152,3 +152,5 @@ class GetMyListGroupEvent extends BankCardEvent {
   @override
   List<Object?> get props => [userID, offset];
 }
+
+class GetMerchantEvent extends BankCardEvent {}

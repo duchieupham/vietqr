@@ -228,6 +228,7 @@ extension TypeContactExt2 on TypeContact {
 enum BankDetailType {
   NONE,
   SUCCESS,
+  GET_MERCHANT_INFO,
   DELETED,
   ERROR,
   UN_LINK,

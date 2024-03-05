@@ -181,6 +181,7 @@ class _VietQRApp extends State<VietQRApp> {
   @override
   void initState() {
     super.initState();
+    print(userId);
     _mainScreen = (userId.isNotEmpty) ? const DashBoardScreen() : const Login();
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(

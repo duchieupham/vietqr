@@ -5,6 +5,7 @@ import 'package:vierqr/models/account_bank_detail_dto.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_card_request_otp.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
+import 'package:vierqr/models/merchant_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/terminal_response_dto.dart';
@@ -24,6 +25,8 @@ class BankCardState extends Equatable {
   final QRGeneratedDTO? qrGeneratedDTO;
   final TerminalDto? terminalDto;
   final bool isInit;
+  final bool isRegisterMerchant;
+  final MerchantDTO? merchantDTO;
 
   const BankCardState({
     this.msg,
@@ -39,7 +42,9 @@ class BankCardState extends Equatable {
     this.bankTypeDTO,
     this.qrGeneratedDTO,
     this.terminalDto,
+    this.merchantDTO,
     this.isInit = false,
+    this.isRegisterMerchant = false,
   });
 
   BankCardState copyWith({
@@ -59,6 +64,8 @@ class BankCardState extends Equatable {
     QRGeneratedDTO? qrGeneratedDTO,
     TerminalDto? terminalDto,
     bool? isInit,
+    bool? isRegisterMerchant,
+    MerchantDTO? merchantDTO,
   }) {
     return BankCardState(
       status: status ?? this.status,
@@ -75,6 +82,8 @@ class BankCardState extends Equatable {
       qrGeneratedDTO: qrGeneratedDTO ?? this.qrGeneratedDTO,
       terminalDto: terminalDto ?? this.terminalDto,
       isInit: isInit ?? this.isInit,
+      isRegisterMerchant: isRegisterMerchant ?? this.isRegisterMerchant,
+      merchantDTO: merchantDTO ?? this.merchantDTO,
     );
   }
 
@@ -93,5 +102,7 @@ class BankCardState extends Equatable {
         qrGeneratedDTO,
         terminalDto,
         isInit,
+        isRegisterMerchant,
+        merchantDTO,
       ];
 }

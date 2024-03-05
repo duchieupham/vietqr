@@ -18,6 +18,7 @@ import 'package:vierqr/models/bank_name_information_dto.dart';
 import 'package:vierqr/models/bank_name_search_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/confirm_otp_bank_dto.dart';
+import 'package:vierqr/models/merchant_dto.dart';
 import 'package:vierqr/models/qr_create_dto.dart';
 import 'package:vierqr/models/qr_create_list_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
@@ -356,6 +357,28 @@ class BankCardRepository {
       LOG.error(e.toString());
     }
     return result;
+  }
+
+  //get detail
+  Future<dynamic> getMerchantInfo(String bankId) async {
+    try {
+      final String url =
+          '${EnvConfig.getBaseUrl()}customer-va/information?bankId=$bankId';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        return MerchantDTO.fromJson(data);
+      } else {
+        var data = jsonDecode(response.body);
+        return ResponseMessageDTO.fromJson(data);
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return null;
   }
 
   Future<ResponseMessageDTO> updateRegisterAuthenticationBank(

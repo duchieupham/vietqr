@@ -99,6 +99,7 @@ class _BankCardDetailState extends State<BankCardDetailState> {
     bankCardBloc
         .add(const BankCardGetDetailEvent(isLoading: true, isInit: true));
     bankCardBloc.add(GetMyListGroupEvent(userID: userId, offset: 0));
+    bankCardBloc.add(GetMerchantEvent());
   }
 
   @override
@@ -308,6 +309,8 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                                     bloc: bankCardBloc,
                                     refresh: _refresh,
                                     dto: dto,
+                                    isRegisterMerchant: state.isRegisterMerchant,
+                                    merchantDTO: state.merchantDTO,
                                     qrGeneratedDTO: qrGeneratedDTO,
                                     bankId: state.bankId ?? '',
                                     onChangePage: () {
