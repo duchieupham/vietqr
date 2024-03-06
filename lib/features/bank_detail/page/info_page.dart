@@ -63,6 +63,11 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
 
   bool get small => MediaQuery.of(context).size.width < 400;
 
+  bool get isMerchant =>
+      widget.dto.bankCode == 'BIDV' &&
+      widget.dto.authenticated &&
+      widget.dto.userId == SharePrefUtils.getProfile().userId;
+
   void onSaveImage(BuildContext context) async {
     DialogWidget.instance.openLoadingDialog();
     await Future.delayed(
@@ -147,21 +152,23 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
                               description: 'Xem thông tin liên kết tài khoản',
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            child: DividerWidget(width: width),
-                          ),
-                          GestureDetector(
-                            onTap: _onMerchant,
-                            child: _buildElement(
-                              icon: 'assets/images/ic-business-blue.png',
-                              context: context,
-                              width: width,
-                              title: 'Đại lý',
-                              description:
-                                  'Quản lý doanh nghiệp, các hoá đơn thanh toán',
+                          if (isMerchant) ...[
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              child: DividerWidget(width: width),
                             ),
-                          ),
+                            GestureDetector(
+                              onTap: _onMerchant,
+                              child: _buildElement(
+                                icon: 'assets/images/ic-business-blue.png',
+                                context: context,
+                                width: width,
+                                title: 'Đại lý',
+                                description:
+                                    'Quản lý doanh nghiệp, các hoá đơn thanh toán',
+                              ),
+                            ),
+                          ],
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             child: DividerWidget(width: width),
@@ -281,110 +288,6 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
             ),
           ),
         ),
-
-        // SizedBox(
-        //   width: width,
-        //   height: 40,
-        //   child: Row(
-        //     crossAxisAlignment: CrossAxisAlignment.stretch,
-        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //     children: [
-        //       ButtonIconWidget(
-        //         width: width * 0.2,
-        //         height: 40,
-        //         pathIcon: 'assets/images/ic-print-blue.png',
-        //         title: '',
-        //         function: () async {
-        //           BluetoothPrinterDTO bluetoothPrinterDTO =
-        //               await LocalDatabase.instance.getBluetoothPrinter(userId);
-        //           if (bluetoothPrinterDTO.id.isNotEmpty) {
-        //             bool isPrinting = false;
-        //             if (!isPrinting) {
-        //               isPrinting = true;
-        //               DialogWidget.instance.showFullModalBottomContent(
-        //                   widget: const PrintingView());
-        //               await PrinterUtils.instance
-        //                   .print(widget.qrGeneratedDTO)
-        //                   .then((value) {
-        //                 Navigator.pop(context);
-        //                 isPrinting = false;
-        //               });
-        //             }
-        //           } else {
-        //             DialogWidget.instance.openMsgDialog(
-        //                 title: 'Không thể in',
-        //                 msg:
-        //                     'Vui lòng kết nối với máy in để thực hiện việc in.');
-        //           }
-        //         },
-        //         bgColor: Theme.of(context).cardColor,
-        //         textColor: AppColor.ORANGE,
-        //       ),
-        //       const Padding(
-        //         padding: EdgeInsets.only(left: 10),
-        //       ),
-        //       ButtonIconWidget(
-        //         width: width * 0.2,
-        //         height: 40,
-        //         pathIcon: 'assets/images/ic-edit-avatar-setting.png',
-        //         title: '',
-        //         function: () {
-        //           Provider.of<AuthProvider>(context, listen: false)
-        //               .updateAction(false);
-        //           onSaveImage(context);
-        //         },
-        //         bgColor: Theme.of(context).cardColor,
-        //         textColor: AppColor.RED_CALENDAR,
-        //       ),
-        //       const Padding(
-        //         padding: EdgeInsets.only(left: 10),
-        //       ),
-        //       ButtonIconWidget(
-        //         width: width * 0.2,
-        //         height: 40,
-        //         pathIcon: 'assets/images/ic-copy-blue.png',
-        //         title: '',
-        //         function: () async {
-        //           await FlutterClipboard.copy(ShareUtils.instance
-        //                   .getTextSharing(widget.qrGeneratedDTO))
-        //               .then(
-        //             (value) => Fluttertoast.showToast(
-        //               msg: 'Đã sao chép',
-        //               toastLength: Toast.LENGTH_SHORT,
-        //               gravity: ToastGravity.CENTER,
-        //               timeInSecForIosWeb: 1,
-        //               backgroundColor: Theme.of(context).cardColor,
-        //               textColor: Theme.of(context).hintColor,
-        //               fontSize: 15,
-        //               webBgColor: 'rgba(255, 255, 255)',
-        //               webPosition: 'center',
-        //             ),
-        //           );
-        //         },
-        //         bgColor: Theme.of(context).cardColor,
-        //         textColor: AppColor.BLUE_TEXT,
-        //       ),
-        //       const Padding(
-        //         padding: EdgeInsets.only(left: 10),
-        //       ),
-        //       ButtonIconWidget(
-        //         width: width * 0.2,
-        //         height: 40,
-        //         pathIcon: 'assets/images/ic-share-blue.png',
-        //         title: '',
-        //         function: () {
-        //           Provider.of<AuthProvider>(context, listen: false)
-        //               .updateAction(false);
-        //           Navigator.pushNamed(context, Routes.QR_SHARE_VIEW,
-        //               arguments: {'qrGeneratedDTO': widget.qrGeneratedDTO});
-        //         },
-        //         bgColor: Theme.of(context).cardColor,
-        //         textColor: AppColor.BLUE_TEXT,
-        //       ),
-        //     ],
-        //   ),
-        // ),
-
         Container(
           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 18),
           decoration: BoxDecoration(color: AppColor.WHITE),

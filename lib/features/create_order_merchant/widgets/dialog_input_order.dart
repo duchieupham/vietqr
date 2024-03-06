@@ -23,6 +23,7 @@ class _DialogInputOrderState extends State<DialogInputOrder> {
   String price = '';
   String quantity = '1';
   String amount = '';
+  OrderData data = OrderData();
 
   String getAmount(String a, String b) {
     String _price = a.replaceAll(',', '');
@@ -91,6 +92,7 @@ class _DialogInputOrderState extends State<DialogInputOrder> {
                         onChange: (value) {
                           setState(() {
                             name = value;
+                            data.name = value;
                           });
                         },
                       ),
@@ -109,6 +111,7 @@ class _DialogInputOrderState extends State<DialogInputOrder> {
                         onChange: (value) {
                           setState(() {
                             des = value;
+                            data.des = value;
                           });
                         },
                       ),
@@ -136,6 +139,7 @@ class _DialogInputOrderState extends State<DialogInputOrder> {
                                 .getCurrencyFormatted(value);
                             amount =
                                 getAmount(value.replaceAll(',', ''), quantity);
+                            data.price = price.replaceAll(',', '');
                           });
                         },
                       ),
@@ -153,7 +157,7 @@ class _DialogInputOrderState extends State<DialogInputOrder> {
                         keyboardAction: TextInputAction.next,
                         onChange: (value) {
                           setState(() {
-                            if (value.isEmpty) return;
+                            data.quantity = value;
                             quantity = value;
                             amount =
                                 getAmount(price.replaceAll(',', ''), quantity);
@@ -197,7 +201,8 @@ class _DialogInputOrderState extends State<DialogInputOrder> {
                                     TextSpan(
                                       text: ' VND',
                                       style: TextStyle(
-                                          color: AppColor.ORANGE, fontSize: 16),
+                                          color: AppColor.ORANGE_DARK,
+                                          fontSize: 16),
                                     ),
                                   ],
                                 ),
@@ -207,17 +212,15 @@ class _DialogInputOrderState extends State<DialogInputOrder> {
                         ),
                         MButtonWidget(
                           title: 'Hoàn tất',
-                          isEnable: true,
+                          isEnable: data.isEnable,
                           padding: EdgeInsets.symmetric(horizontal: 20),
+                          colorDisableBgr: AppColor.GREY_TEXT.withOpacity(0.3),
                           margin: EdgeInsets.symmetric(vertical: 20),
                           onTap: () {
-                            OrderData data = OrderData(
-                              name: name,
-                              des: des,
-                              price: price.replaceAll(',', ''),
-                              quantity: quantity,
-                              amount: amount.replaceAll(',', ''),
-                            );
+                            data.amount = amount.replaceAll(',', '');
+                            if (data.quantity.isEmpty) {
+                              data.quantity = '1';
+                            }
                             widget.onDone(data);
                           },
                         ),

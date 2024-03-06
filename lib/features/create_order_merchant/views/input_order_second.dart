@@ -53,7 +53,7 @@ class _InputNameStoreViewState extends State<InputOrderSecondView> {
       onTap: _hideKeyBoard,
       child: Stack(
         children: [
-          Padding(
+          SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -98,6 +98,7 @@ class _InputNameStoreViewState extends State<InputOrderSecondView> {
                     ),
                   ),
                 ),
+                const SizedBox(height: 100),
               ],
             ),
           ),
@@ -108,6 +109,7 @@ class _InputNameStoreViewState extends State<InputOrderSecondView> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               decoration: BoxDecoration(
+                color: AppColor.GREY_BG,
                 border: Border(
                   top: BorderSide(color: AppColor.GREY_TEXT.withOpacity(0.3)),
                 ),
@@ -133,7 +135,7 @@ class _InputNameStoreViewState extends State<InputOrderSecondView> {
                               TextSpan(
                                 text: ' VND',
                                 style: TextStyle(
-                                    color: AppColor.ORANGE, fontSize: 16),
+                                    color: AppColor.ORANGE_DARK, fontSize: 16),
                               ),
                             ],
                           ),
@@ -143,7 +145,7 @@ class _InputNameStoreViewState extends State<InputOrderSecondView> {
                   ),
                   MButtonWidget(
                     title: 'Tiếp tục',
-                    isEnable: true,
+                    isEnable: list.isNotEmpty,
                     padding: EdgeInsets.symmetric(horizontal: 20),
                     margin: EdgeInsets.symmetric(vertical: 20),
                     onTap: () => widget.callBack.call(list),
@@ -262,11 +264,11 @@ String OrderDataToJson(List<OrderData> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class OrderData {
-  final String name;
-  final String des;
-  final String price;
-  final String quantity;
-  final String amount;
+  String name;
+  String des;
+  String price;
+  String quantity;
+  String amount;
 
   OrderData({
     this.name = '',
@@ -275,6 +277,8 @@ class OrderData {
     this.quantity = '',
     this.amount = '',
   });
+
+  bool get isEnable => name.isNotEmpty && price.isNotEmpty;
 
   Map<String, dynamic> toJson() => {
         "name": name,

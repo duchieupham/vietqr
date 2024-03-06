@@ -103,7 +103,7 @@ class _InfoOrderViewState extends State<InfoOrderView> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    'Thông tin hoá đơn của bạn\nđã chính xác chưa?',
+                    'Thông tin hoá đơn của bạn\nđã chính xác chứ?',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 20,

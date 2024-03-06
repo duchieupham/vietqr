@@ -29,8 +29,10 @@ class _OrderDetailViewState extends State<OrderDetailView> {
     _onGetDetail();
   }
 
-  void _onGetDetail() async {
+  void _onGetDetail({bool loading = true}) async {
     try {
+      isLoading = loading;
+      updateState();
       final result = await orderRepository.getDetailOrder(widget.billId);
       isLoading = false;
       dto = result;
@@ -39,6 +41,10 @@ class _OrderDetailViewState extends State<OrderDetailView> {
       isLoading = false;
       updateState();
     }
+  }
+
+  Future<void> _onRefresh() async {
+    _onGetDetail(loading: false);
   }
 
   void _removeOrder() async {
@@ -77,51 +83,54 @@ class _OrderDetailViewState extends State<OrderDetailView> {
           Column(
             children: [
               Expanded(
-                child: SingleChildScrollView(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Text(
-                        dto.name ?? '',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      ...[
-                        const SizedBox(height: 24),
-                        _buildItem('Số tiền',
-                            '${CurrencyUtils.instance.getCurrencyFormatted('${dto.amount ?? 0}')} VND',
-                            textColor: dto.status == 0
-                                ? AppColor.ORANGE_DARK
-                                : AppColor.GREEN),
-                        _buildItem('Trạng thái:', dto.getStatus,
-                            textColor: dto.status == 0
-                                ? AppColor.ORANGE_DARK
-                                : AppColor.GREEN),
-                        _buildItem('Mã hoá đơn', dto.billId ?? ''),
-                        _buildItem('Ngày tạo', dto.getTimeCreate,
-                            isUnBorder: true),
-                      ],
-                      if (dto.items != null && dto.items!.isNotEmpty) ...[
-                        const SizedBox(height: 24),
+                child: RefreshIndicator(
+                  onRefresh: _onRefresh,
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
                         Text(
-                          'Danh mục hàng hoá, dịch vụ',
-                          style: TextStyle(fontSize: 18),
+                          dto.name ?? '',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                        const SizedBox(height: 12),
-                        ...List.generate(
-                          dto.items!.length,
-                          (index) {
-                            Item item = dto.items![index];
-                            return _buildItemCategory(item, index,
-                                isSuccess: dto.status == 1);
-                          },
-                        ),
-                      ]
-                    ],
+                        ...[
+                          const SizedBox(height: 24),
+                          _buildItem('Số tiền',
+                              '${CurrencyUtils.instance.getCurrencyFormatted('${dto.amount ?? 0}')} VND',
+                              textColor: dto.status == 0
+                                  ? AppColor.ORANGE_DARK
+                                  : AppColor.GREEN),
+                          _buildItem('Trạng thái:', dto.getStatus,
+                              textColor: dto.status == 0
+                                  ? AppColor.ORANGE_DARK
+                                  : AppColor.GREEN),
+                          _buildItem('Mã hoá đơn', dto.billId ?? ''),
+                          _buildItem('Ngày tạo', dto.getTimeCreate,
+                              isUnBorder: true),
+                        ],
+                        if (dto.items != null && dto.items!.isNotEmpty) ...[
+                          const SizedBox(height: 24),
+                          Text(
+                            'Danh mục hàng hoá, dịch vụ',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                          const SizedBox(height: 12),
+                          ...List.generate(
+                            dto.items!.length,
+                            (index) {
+                              Item item = dto.items![index];
+                              return _buildItemCategory(item, index,
+                                  isSuccess: dto.status == 1);
+                            },
+                          ),
+                        ]
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -204,7 +213,8 @@ class _OrderDetailViewState extends State<OrderDetailView> {
                         : AppColor.ORANGE_DARK.withOpacity(0.2)),
                 child: Text(
                   '${dto.quantity ?? 0}',
-                  style: TextStyle(color: AppColor.ORANGE_DARK),
+                  style: TextStyle(
+                      color: isSuccess ? AppColor.GREEN : AppColor.ORANGE_DARK),
                 ),
               ),
             ],
