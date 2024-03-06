@@ -4,7 +4,6 @@ import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
-import 'package:vierqr/models/bank_account_terminal.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 
 class MerchantRepository {

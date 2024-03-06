@@ -101,14 +101,15 @@ class _TabOrderMerchantState extends State<TabOrderMerchant> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _buildItemFeature(
-                  'Dịch vụ',
-                  des1: 'Tạo hoá đơn thanh toán',
-                  des2:
-                      'Hoá đơn có thể thanh toán từ các kênh giao dịch của BIDV.',
-                  path: 'assets/images/ic-invoice-blue.png',
-                  onTap: onCreateOrder,
-                ),
+                if (listUnpaid.isEmpty)
+                  _buildItemFeature(
+                    'Dịch vụ',
+                    des1: 'Tạo hoá đơn thanh toán',
+                    des2:
+                        'Hoá đơn có thể thanh toán từ các kênh giao dịch của BIDV.',
+                    path: 'assets/images/ic-invoice-blue.png',
+                    onTap: onCreateOrder,
+                  ),
                 const SizedBox(height: 16),
                 if (listUnpaid.isNotEmpty) ...[
                   Text('Chưa thanh toán', style: TextStyle(fontSize: 20)),

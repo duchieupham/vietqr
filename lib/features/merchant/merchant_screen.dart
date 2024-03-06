@@ -2,20 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
-import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/features/create_order_merchant/create_oder.dart';
 import 'package:vierqr/features/merchant/merchant.dart';
 import 'package:vierqr/features/merchant/tab_merchant/tab_info_merchant.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
-import 'package:vierqr/models/merchant_dto.dart';
 
 import 'tab_merchant/tab_order_merchant.dart';
 
 class MerchantScreen extends StatefulWidget {
-  final MerchantDTO? merchantDTO;
+  final String customerId;
+  final String bankId;
 
-  const MerchantScreen({super.key, this.merchantDTO});
+  const MerchantScreen({
+    super.key,
+    required this.customerId,
+    required this.bankId,
+  });
 
   @override
   State<MerchantScreen> createState() => _MerchantScreenState();
@@ -92,18 +94,11 @@ class _MerchantScreenState extends State<MerchantScreen> {
   Widget _buildBody() {
     if (tabSelect == 0) {
       return TabInfoMerchant(
-        merchantDTO: widget.merchantDTO,
-        onCreateOder: onCreateOrder,
-        onUnRegister: () {},
+        customerId: widget.customerId,
+        bankId: widget.bankId,
       );
     }
-    return TabOrderMerchant(customerId: widget.merchantDTO?.customerId ?? '');
-  }
-
-  void onCreateOrder() {
-    NavigatorUtils.navigatePage(context,
-        CreateOrderScreen(customerId: widget.merchantDTO?.customerId ?? ''),
-        routeName: CreateOrderScreen.routeName);
+    return TabOrderMerchant(customerId: widget.customerId);
   }
 
   Widget _buildItemTab(MerchantTab tab, bool select) {

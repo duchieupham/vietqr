@@ -152,21 +152,7 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
                             child: DividerWidget(width: width),
                           ),
                           GestureDetector(
-                            onTap: () {
-                              if (widget.isRegisterMerchant) {
-                                NavigatorUtils.navigatePage(
-                                    context,
-                                    MerchantScreen(
-                                        merchantDTO: widget.merchantDTO),
-                                    routeName: CreateMerchantScreen.routeName);
-                              } else {
-                                NavigatorUtils.navigatePage(
-                                    context,
-                                    CreateMerchantScreen(
-                                        bankDetail: widget.dto),
-                                    routeName: CreateMerchantScreen.routeName);
-                              }
-                            },
+                            onTap: _onMerchant,
                             child: _buildElement(
                               icon: 'assets/images/ic-business-blue.png',
                               context: context,
@@ -602,6 +588,25 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
           ),
         ),
       );
+    }
+  }
+
+  void _onMerchant() async {
+    if (widget.isRegisterMerchant) {
+      final data = await NavigatorUtils.navigatePage(
+          context,
+          MerchantScreen(
+            customerId: widget.merchantDTO?.customerId ?? '',
+            bankId: widget.bankId,
+          ),
+          routeName: CreateMerchantScreen.routeName);
+      if (data != null) {
+        widget.bloc.add(GetMerchantEvent());
+      }
+    } else {
+      NavigatorUtils.navigatePage(
+          context, CreateMerchantScreen(bankDetail: widget.dto),
+          routeName: CreateMerchantScreen.routeName);
     }
   }
 }
