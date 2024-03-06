@@ -79,9 +79,10 @@ class OrderMerchantRepository {
     try {
       final String url =
           '${EnvConfig.getBaseUrl()}customer-va/invoice/remove?billId=$billId';
-      final response = await BaseAPIClient.getAPI(
+      final response = await BaseAPIClient.deleteAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
+        body: {},
       );
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);

@@ -283,7 +283,10 @@ class _TabOrderMerchantState extends State<TabOrderMerchant> {
         routeName: '');
 
     if (data != null && data is bool) {
-      _onGetListOrder();
+      isLoadMore = true;
+      offset = 0;
+      updateState();
+      _onGetListOrder(isRefresh: true);
     }
   }
 }
