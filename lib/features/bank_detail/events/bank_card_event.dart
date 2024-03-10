@@ -111,10 +111,12 @@ class BankCardEventSearchName extends BankCardEvent {
   List<Object?> get props => [dto];
 }
 
-class BankCardEventUnlink extends BankCardEvent {
+class BankCardEventUnRequestOTP extends BankCardEvent {
   final String accountNumber;
 
-  const BankCardEventUnlink({required this.accountNumber});
+  const BankCardEventUnRequestOTP({
+    required this.accountNumber,
+  });
 
   @override
   List<Object?> get props => [accountNumber];
@@ -127,6 +129,15 @@ class BankCardEventUnConfirmOTP extends BankCardEvent {
 
   @override
   List<Object?> get props => [dto];
+}
+
+class BankCardEventUnLink extends BankCardEvent {
+  final Map<String, dynamic> body;
+
+  const BankCardEventUnLink({required this.body});
+
+  @override
+  List<Object?> get props => [body];
 }
 
 class UpdateEvent extends BankCardEvent {}

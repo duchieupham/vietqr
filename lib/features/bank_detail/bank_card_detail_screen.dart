@@ -146,11 +146,18 @@ class _BankCardDetailState extends State<BankCardDetailState> {
               }
 
               if (state.request == BankDetailType.UN_LINK) {
-                _onShowDialogUnLink(state.requestId ?? '',
-                    state.bankDetailDTO?.bankAccount ?? '');
+                _onShowDialogUnLink(
+                    state.requestId ?? '',
+                    state.bankDetailDTO?.bankAccount ?? '',
+                    state.bankDetailDTO);
               }
 
               if (state.request == BankDetailType.OTP) {
+                Navigator.of(context).pop();
+                bankCardBloc.add(const BankCardGetDetailEvent());
+              }
+              if (state.request == BankDetailType.OTP ||
+                  state.request == BankDetailType.UN_LINK) {
                 Navigator.of(context).pop();
                 bankCardBloc.add(const BankCardGetDetailEvent());
               }
@@ -309,7 +316,8 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                                     bloc: bankCardBloc,
                                     refresh: _refresh,
                                     dto: dto,
-                                    isRegisterMerchant: state.isRegisterMerchant,
+                                    isRegisterMerchant:
+                                        state.isRegisterMerchant,
                                     merchantDTO: state.merchantDTO,
                                     qrGeneratedDTO: qrGeneratedDTO,
                                     bankId: state.bankId ?? '',
@@ -369,16 +377,22 @@ class _BankCardDetailState extends State<BankCardDetailState> {
     );
   }
 
-  void _onShowDialogUnLink(String requestId, String bankAccount) {
+  void _onShowDialogUnLink(
+      String requestId, String bankAccount, AccountBankDetailDTO? dto) {
     showDialog(
       barrierDismissible: false,
       context: NavigationService.navigatorKey.currentContext!,
       builder: (BuildContext context) {
         return DialogOTPView(
-          phone: dto.phoneAuthenticated,
+          phone: dto?.phoneAuthenticated ?? '',
           onResend: () {
-            bankCardBloc
-                .add(BankCardEventUnlink(accountNumber: dto.bankAccount));
+            Map<String, dynamic> body = {
+              'ewalletToken': dto?.ewalletToken ?? '',
+              'bankAccount': dto?.bankAccount ?? '',
+              'bankCode': dto?.bankCode ?? '',
+            };
+
+            bankCardBloc.add(BankCardEventUnLink(body: body));
           },
           onChangeOTP: (value) {
             otpController.value = otpController.value.copyWith(text: value);

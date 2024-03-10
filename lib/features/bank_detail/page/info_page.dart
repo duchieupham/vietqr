@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
@@ -226,11 +227,23 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
                                     isSecondBT: true,
                                     functionConfirm: () {
                                       Navigator.of(context).pop();
-                                      widget.bloc.add(
-                                        BankCardEventUnlink(
-                                            accountNumber:
-                                                widget.dto.bankAccount),
-                                      );
+                                      if (widget.dto.unlinkedType.linkType ==
+                                          LinkBankType.LINK) {
+                                        Map<String, dynamic> body = {
+                                          'ewalletToken':
+                                              widget.dto.ewalletToken,
+                                          'bankAccount': widget.dto.bankAccount,
+                                          'bankCode': widget.dto.bankCode,
+                                        };
+                                        widget.bloc.add(
+                                            BankCardEventUnLink(body: body));
+                                      } else {
+                                        widget.bloc.add(
+                                          BankCardEventUnRequestOTP(
+                                              accountNumber:
+                                                  widget.dto.bankAccount),
+                                        );
+                                      }
                                     },
                                   );
                                 },

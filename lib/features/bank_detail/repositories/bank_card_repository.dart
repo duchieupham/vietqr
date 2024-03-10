@@ -299,7 +299,9 @@ class BankCardRepository {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getUrl()}bank/api/request_otp_bank';
+      // final String url = '${EnvConfig.getUrl()}bank/api/request_otp_bank';
+      final String url =
+          'https://dev.vietqr.org/vqr/bank/api/account-bank/linked/request_otp';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: dto.toJson(),
@@ -322,7 +324,9 @@ class BankCardRepository {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getUrl()}bank/api/confirm_otp_bank';
+      final String url =
+          'https://dev.vietqr.org/vqr/bank/api/account-bank/linked/confirm_otp';
+      // final String url = '${EnvConfig.getUrl()}bank/api/confirm_otp_bank';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: dto.toJson(),
@@ -344,7 +348,8 @@ class BankCardRepository {
   Future<AccountBankDetailDTO> getAccountBankDetail(String bankId) async {
     AccountBankDetailDTO result = AccountBankDetailDTO();
     try {
-      final String url = '${EnvConfig.getBaseUrl()}account-bank/detail/$bankId';
+      final String url =
+          '${EnvConfig.getBaseUrl()}account-bank/detail/web/$bankId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -414,7 +419,7 @@ class BankCardRepository {
     );
     try {
       final String url =
-          '${EnvConfig.getUrl()}bank/api/account/info/${dto.bankCode}/${dto.accountNumber}/${dto.accountType}/${dto.transferType}';
+          'https://dev.vietqr.org/vqr/bank/api/account/info/${dto.bankCode}/${dto.accountNumber}/${dto.accountType}/${dto.transferType}';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -434,6 +439,28 @@ class BankCardRepository {
         const ResponseMessageDTO(status: '', message: '');
     try {
       final String url = '${EnvConfig.getUrl()}bank/api/unregister_request';
+      final response = await BaseAPIClient.postAPI(
+        url: url,
+        body: body,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200 || response.statusCode == 400) {
+        var data = jsonDecode(response.body);
+        result = ResponseMessageDTO.fromJson(data);
+      } else {
+        result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return result;
+  }
+
+  Future<ResponseMessageDTO> unLinked(body) async {
+    ResponseMessageDTO result =
+        const ResponseMessageDTO(status: '', message: '');
+    try {
+      final String url = '${EnvConfig.getUrl()}bank/api/account-bank/unlinked';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: body,

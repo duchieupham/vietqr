@@ -4,6 +4,7 @@ class RegisterAuthenticationDTO {
   final String phoneAuthenticated;
   final String bankAccountName;
   final String bankAccount;
+  final String ewalletToken;
 
   const RegisterAuthenticationDTO({
     required this.bankId,
@@ -11,6 +12,7 @@ class RegisterAuthenticationDTO {
     required this.phoneAuthenticated,
     required this.bankAccountName,
     required this.bankAccount,
+    required this.ewalletToken,
   });
 
   factory RegisterAuthenticationDTO.fromJson(Map<String, dynamic> json) {
@@ -20,6 +22,7 @@ class RegisterAuthenticationDTO {
       phoneAuthenticated: json['phoneAuthenticated'] ?? '',
       bankAccountName: json['bankAccountName'] ?? '',
       bankAccount: json['bankAccount'] ?? '',
+      ewalletToken: json['ewalletToken'] ?? '',
     );
   }
 
@@ -30,6 +33,7 @@ class RegisterAuthenticationDTO {
     data['phoneAuthenticated'] = phoneAuthenticated;
     data['bankAccountName'] = bankAccountName;
     data['bankAccount'] = bankAccount;
+    data['ewalletToken'] = ewalletToken;
     return data;
   }
 }

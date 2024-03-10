@@ -97,6 +97,7 @@ class BankAccountDTO {
     data['bankShortName'] = bankShortName;
     data['authenticated'] = isAuthenticated;
     data['userId'] = userId;
+    data['unlinkedType'] = unlinkedType;
     return data;
   }
 }
