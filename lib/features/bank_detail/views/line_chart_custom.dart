@@ -122,7 +122,7 @@ class _LineChartCustomState extends State<LineChartCustom> {
                         ),
                       ),
                       Positioned(
-                        bottom: 25,
+                        bottom: 16,
                         right: 0,
                         child: Text(
                           'Thời gian\n(${widget.type == 0 ? 'Giờ' : 'Ngày'})',

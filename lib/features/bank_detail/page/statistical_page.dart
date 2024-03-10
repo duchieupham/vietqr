@@ -400,7 +400,7 @@ class _StatisticalState extends State<Statistical> {
     );
   }
 
-  String _terminalName(provider) {
+  String _terminalName(StatisticProvider provider) {
     if (provider.isOwner &&
         provider.terminalResponseDTO.id.isEmpty &&
         provider.codeSearch != provider.terminalResponseDTO.code) {
@@ -414,7 +414,7 @@ class _StatisticalState extends State<Statistical> {
     }
   }
 
-  String _terminalTitleName(provider) {
+  String _terminalTitleName(StatisticProvider provider) {
     if (provider.isOwner &&
         provider.terminalResponseDTO.id.isEmpty &&
         provider.codeSearch != provider.terminalResponseDTO.code) {
@@ -526,11 +526,11 @@ class _StatisticalState extends State<Statistical> {
         onApply:
             (dateTime, timeDay, terminal, codeSearch, keySearch, statusData) {
           provider.updateDateFilter(dateTime);
-          provider.updateTimeDay(timeDay);
           provider.updateKeyword(keySearch);
           provider.updateCodeSearch(codeSearch);
           provider.updateStatusData(statusData);
           provider.updateTerminalResponseDTO(terminal, isUpdate: true);
+          provider.updateTimeDay(timeDay);
           String terminalCode = terminal.code;
           if (terminal.id.isEmpty && codeSearch == terminal.code) {
             terminalCode = '';

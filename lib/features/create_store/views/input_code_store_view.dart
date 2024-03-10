@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
-import 'package:vierqr/features/store/create_store/bloc/create_store_bloc.dart';
-import 'package:vierqr/features/store/create_store/events/create_store_event.dart';
-import 'package:vierqr/features/store/create_store/states/create_store_state.dart';
-import 'package:vierqr/features/store/create_store/widgets/dialog_code_store.dart';
-import 'package:vierqr/features/store/create_store/widgets/header_store_widget.dart';
+import 'package:vierqr/features/create_store/create_store.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
 

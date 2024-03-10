@@ -25,6 +25,8 @@ class DetailGroupScreen extends StatefulWidget {
   final String groupId;
   final bool isHideBDSD;
 
+  static String routeName = '/DetailGroupScreen';
+
   const DetailGroupScreen({required this.groupId, this.isHideBDSD = false});
 
   @override

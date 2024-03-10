@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vierqr/features/store/create_store/views/info_store_view.dart';
+import 'package:vierqr/features/create_store/views/info_store_view.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/bank_account_terminal.dart';
 import 'package:vierqr/models/detail_group_dto.dart';

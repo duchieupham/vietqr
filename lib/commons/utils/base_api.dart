@@ -138,7 +138,7 @@ class BaseAPIClient {
     type ??= AuthenticationType.NONE;
 
     token ??= await SharePrefUtils.getTokenInfo();
-    tokenFree ??=  SharePrefUtils.getTokenFree();
+    tokenFree ??= SharePrefUtils.getTokenFree();
 
     switch (type) {
       case AuthenticationType.SYSTEM:

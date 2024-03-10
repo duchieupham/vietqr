@@ -75,7 +75,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
     const BankScreen(key: PageStorageKey('QR_GENERATOR_PAGE')),
     const HomeScreen(key: PageStorageKey('HOME_PAGE')),
     const ContactScreen(key: PageStorageKey('CONTACT_PAGE')),
-    // const StoreScreen(key: const PageStorageKey('STORE_PAGE')),
+    const StoreScreen(key: const PageStorageKey('STORE_PAGE')),
   ];
 
   StreamSubscription? _subscription;
@@ -538,13 +538,13 @@ class _DashBoardScreen extends State<DashBoardScreen>
   }
 
   void onTapPage(int index) async {
-    if (index.pageType == PageType.STORE) {
-      await DialogWidget.instance.openMsgDialog(
-        title: 'Thông báo',
-        msg: 'Chúng tôi sẽ ra mắt tính năng cửa hàng trong thời gian sớm.',
-      );
-      return;
-    }
+    // if (index.pageType == PageType.STORE) {
+    //   await DialogWidget.instance.openMsgDialog(
+    //     title: 'Thông báo',
+    //     msg: 'Chúng tôi sẽ ra mắt tính năng cửa hàng trong thời gian sớm.',
+    //   );
+    //   return;
+    // }
 
     if (index.pageType != PageType.SCAN_QR) {
       _animatedToPage(index);
