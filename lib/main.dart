@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:camera/camera.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:vierqr/commons/utils/encrypt_utils.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'models/qr_generated_dto.dart';
 import 'package:flutter/material.dart';
@@ -155,6 +156,9 @@ void main() async {
   await UserRepository.instance.getIntroContact();
   await UserRepository.instance.getThemes();
   LOG.verbose('Config Environment: ${EnvConfig.getEnv()}');
+  //
+  String pass = EncryptUtils.instance.encrypted('0898793581', '111111');
+  print('pass: $pass');
   runApp(VietQRApp());
 }
 
