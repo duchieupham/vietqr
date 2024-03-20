@@ -203,7 +203,7 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
           if (responseMessageDTO.message == 'E05') {
             emit(state.copyWith(
               msg:
-                  'Vui lòng kiểm tra thông tin đã khớp với thông tin khai báo MB Bank',
+                  'Vui lòng kiểm tra thông tin đã khớp với thông tin khai báo với ngân hàng.',
               request: AddBankType.ERROR_SYSTEM,
               status: BlocStatus.UNLOADING,
             ));
@@ -223,7 +223,7 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
       LOG.error(e.toString());
       emit(state.copyWith(
         msg:
-            'Vui lòng kiểm tra thông tin đã khớp với thông tin khai báo MB Bank',
+            'Vui lòng kiểm tra thông tin đã khớp với thông tin khai báo với ngân hàng.',
         request: AddBankType.ERROR_SYSTEM,
         status: BlocStatus.UNLOADING,
       ));
@@ -242,7 +242,7 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
             state.copyWith(
                 status: BlocStatus.UNLOADING,
                 request: AddBankType.OTP_BANK,
-                ewalletToken: responseMessageDTO.ewalletToken),
+                ewalletToken: responseMessageDTO.message),
           );
         } else {
           emit(

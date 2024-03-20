@@ -125,7 +125,8 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
                         );
                       },
                     ),
-                    if (widget.dto.bankCode.trim().toUpperCase() == 'MB')
+                    if (widget.dto.bankCode.trim().toUpperCase() == 'MB' ||
+                        widget.dto.bankCode.trim().toUpperCase() == 'BIDV')
                       _buildStatusConnect(),
                     const Padding(padding: EdgeInsets.only(top: 16)),
                     _buildTitle(title: 'Thông tin tài khoản'),

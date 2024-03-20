@@ -299,6 +299,7 @@ class BankCardRepository {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
+      print(dto.toJson());
       // final String url = '${EnvConfig.getUrl()}bank/api/request_otp_bank';
       final String url =
           'https://dev.vietqr.org/vqr/bank/api/account-bank/linked/request_otp';

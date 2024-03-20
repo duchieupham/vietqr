@@ -250,7 +250,8 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                   bankAccount: bankAccountController.text,
                   ewalletToken: state.ewalletToken ?? '',
                 );
-
+                print(
+                    '--------------------EWALLET TOKEN: ---------- ${state.ewalletToken}');
                 _bloc.add(BankCardEventRegisterLinkBank(dto: dto));
               } else {
                 String bankTypeId = _addBankProvider.bankTypeDTO!.id;
@@ -258,6 +259,8 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                 String formattedName = StringUtils.instance.removeDiacritic(
                     StringUtils.instance
                         .capitalFirstCharacter(nameController.text));
+                print(
+                    '--------------------EWALLET TOKEN: ---------- ${state.ewalletToken}');
                 BankCardInsertDTO dto = BankCardInsertDTO(
                   bankTypeId: bankTypeId,
                   userId: userId,

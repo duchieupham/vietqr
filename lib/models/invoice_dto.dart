@@ -22,8 +22,10 @@ class InvoiceDTO {
   final int? type;
   final List<Item>? items;
 
-  String get getTimeCreate => DateFormat('HH:mm dd/MM:yyyy')
-      .format(DateTime.fromMicrosecondsSinceEpoch(timeCreated ?? 0));
+  String get getTimeCreate => (timeCreated != null)
+      ? DateFormat('HH:mm dd/MM/yyyy')
+          .format(DateTime.fromMillisecondsSinceEpoch(timeCreated! * 1000))
+      : '0';
 
   String get getStatus => status == 1 ? 'Đã thanh toán' : 'Chưa thanh toán';
 

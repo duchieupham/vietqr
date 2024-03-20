@@ -119,29 +119,34 @@ class _InputCodeStoreViewState extends State<InfoConfirmView> {
                             },
                           ),
                           const SizedBox(height: 8),
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                national =
-                                    SharePrefUtils.getProfile().nationalId;
-                              });
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 30, vertical: 6),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(5),
-                                color: AppColor.BLUE_TEXT.withOpacity(0.25),
-                              ),
-                              child: Text(
-                                SharePrefUtils.getProfile().nationalId,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: AppColor.BLUE_TEXT,
+                          if (SharePrefUtils.getProfile().nationalId != null &&
+                              SharePrefUtils.getProfile()
+                                  .nationalId
+                                  .trim()
+                                  .isNotEmpty)
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  national =
+                                      SharePrefUtils.getProfile().nationalId;
+                                });
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 30, vertical: 6),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  color: AppColor.BLUE_TEXT.withOpacity(0.25),
+                                ),
+                                child: Text(
+                                  SharePrefUtils.getProfile().nationalId,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: AppColor.BLUE_TEXT,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
                           const SizedBox(height: 12),
                           RichText(
                             text: TextSpan(
