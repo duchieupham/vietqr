@@ -284,6 +284,6 @@ class OrderData {
         "name": name,
         "description": des,
         "quantity": int.parse(quantity),
-        "amount": int.parse(amount),
+        "amount": int.parse(price),
       };
 }
