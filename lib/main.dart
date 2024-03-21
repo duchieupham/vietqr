@@ -117,7 +117,7 @@ Future<File> getImageFile(String file) async {
   return File(file);
 }
 
-Future<PackageInfo> onClearCache() async {
+Future<void> onClearCache() async {
   PackageInfo data = await PackageInfo.fromPlatform();
   if (SharePrefUtils.getVersionApp() != data.version) {
     await sharedPrefs
@@ -135,8 +135,6 @@ Future<PackageInfo> onClearCache() async {
         .remove(Constants.SharedPreferenceKey.SingleTheme.sharedValue);
     SharePrefUtils.saveVersionApp(data.version);
   }
-
-  return data;
 }
 
 //go into EnvConfig to change env
@@ -440,11 +438,7 @@ class _VietQRApp extends State<VietQRApp> {
                 home: Builder(
                   builder: (context) {
                     authProvider.setContext(context);
-                    return Title(
-                      title: 'VietQR',
-                      color: AppColor.BLACK,
-                      child: _mainScreen,
-                    );
+                    return _mainScreen;
                   },
                 ),
               );

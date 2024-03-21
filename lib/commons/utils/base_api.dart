@@ -45,8 +45,7 @@ class BaseAPIClient {
     final http.Response result = await http
         .post(
       Uri.parse(url),
-      headers: await _getHeader(
-          type: type, header: header, token: token, tokenFree: tokenFree),
+      headers: await _getHeader(type: type, header: header),
       encoding: Encoding.getByName('utf-8'),
       body: jsonEncode(body),
     )
@@ -131,14 +130,12 @@ class BaseAPIClient {
   static Future<Map<String, String>?> _getHeader({
     AuthenticationType? type,
     Map<String, String>? header,
-    String? token,
-    String? tokenFree,
   }) async {
     Map<String, String>? result = {};
     type ??= AuthenticationType.NONE;
 
-    token ??= await SharePrefUtils.getTokenInfo();
-    tokenFree ??= SharePrefUtils.getTokenFree();
+    String? token = await SharePrefUtils.getTokenInfo();
+    String tokenFree = SharePrefUtils.getTokenFree();
 
     switch (type) {
       case AuthenticationType.SYSTEM:

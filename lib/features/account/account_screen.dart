@@ -95,15 +95,6 @@ class _AccountScreenState extends State<_AccountScreen>
     eventBus.fire(ReloadWallet());
   }
 
-  Future<void> _resetServices() async {
-    BuildContext context = NavigationService.navigatorKey.currentContext!;
-    Provider.of<UserEditProvider>(context, listen: false).reset();
-    Provider.of<AuthProvider>(context, listen: false).reset();
-    await SharePrefUtils.saveProfileToCache(UserProfile());
-    await SharePrefUtils.setTokenInfo('');
-    await SharePrefUtils.setTokenInfo('');
-  }
-
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -118,13 +109,7 @@ class _AccountScreenState extends State<_AccountScreen>
           Navigator.pop(context);
         }
         if (state.request == AccountType.LOG_OUT) {
-          if (Navigator.canPop(context)) {
-            Navigator.pop(context);
-          }
-          AppDataHelper.instance.clearListQRDetailBank();
-          Navigator.of(context).pushReplacementNamed(Routes.LOGIN);
-          await _resetServices();
-          eventBus.fire(ChangeBottomBarEvent(0));
+          await SharePrefUtils.resetServices();
         }
 
         if (state.request == AccountType.AVATAR) {
@@ -176,7 +161,6 @@ class _AccountScreenState extends State<_AccountScreen>
   Widget _buildLogOutWidget() {
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).popUntil((route) => route.isFirst);
         _accountBloc.add(LogoutEventSubmit());
       },
       child: Column(

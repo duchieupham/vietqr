@@ -1,9 +1,9 @@
 import 'package:vierqr/models/qr_bank_detail.dart';
 
 class AppDataHelper {
-  AppDataHelper._privateConsrtructor();
+  AppDataHelper._privateConstructor();
 
-  static AppDataHelper _instance = AppDataHelper._privateConsrtructor();
+  static AppDataHelper _instance = AppDataHelper._privateConstructor();
 
   static AppDataHelper get instance => _instance;
 

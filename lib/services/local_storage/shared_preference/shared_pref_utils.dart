@@ -1,11 +1,18 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart'
     as Constants;
+import 'package:vierqr/commons/helper/app_data_helper.dart';
+import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
+import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/info_user_dto.dart';
 import 'package:vierqr/models/introduce_dto.dart';
 import 'package:vierqr/models/setting_account_sto.dart';
 import 'package:vierqr/models/theme_dto.dart';
 import 'package:vierqr/models/user_profile.dart';
+import 'package:vierqr/services/providers/user_edit_provider.dart';
 
 import 'secure_storage_service.dart';
 import 'shared_pref_local.dart';
@@ -378,5 +385,16 @@ class SharePrefUtils {
     );
 
     return sharedPreferenceService.get() ?? '';
+  }
+
+  static Future<void> resetServices() async {
+    BuildContext context = NavigationService.navigatorKey.currentContext!;
+    Provider.of<UserEditProvider>(context, listen: false).reset();
+    Provider.of<AuthProvider>(context, listen: false).reset();
+    await saveProfileToCache(UserProfile());
+    await setTokenInfo('');
+    AppDataHelper.instance.clearListQRDetailBank();
+    Navigator.of(context)
+        .pushNamedAndRemoveUntil(Routes.LOGIN, (route) => route.isFirst);
   }
 }

@@ -344,7 +344,7 @@ enum TypePermission {
 enum LoginType {
   NONE,
   SUCCESS,
-  TOAST,
+  LOGIN,
   ERROR,
   CHECK_EXIST,
   REGISTER,

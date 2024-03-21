@@ -47,6 +47,12 @@ import 'package:vierqr/splash_screen.dart';
 
 import 'views/bgr_app_bar_login.dart';
 
+enum FlowType {
+  FIRST_LOGIN,
+  NEAREST_LOGIN,
+  QUICK_LOGIN,
+}
+
 class Login extends StatelessWidget {
   const Login({Key? key}) : super(key: key);
 
@@ -163,7 +169,7 @@ class _LoginState extends State<_Login> {
               }
             }
 
-            if (state.request == LoginType.TOAST) {
+            if (state.request == LoginType.LOGIN) {
               _authProvider.updateRenderUI(isLogout: true);
               UserProfile userProfile = SharePrefUtils.getProfile();
 
@@ -177,21 +183,19 @@ class _LoginState extends State<_Login> {
                 infoUserDTO.middleName = userProfile.middleName;
 
                 provider.updateInfoUser(infoUserDTO);
-
                 _saveAccount(provider);
               }
 
-              Navigator.of(context).popUntil((route) => route.isFirst);
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => DashBoardScreen(
-                    isFromLogin: true,
-                    isLogoutEnterHome: isLogoutEnterHome,
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DashBoardScreen(
+                      isFromLogin: true,
+                      isLogoutEnterHome: isLogoutEnterHome,
+                    ),
+                    settings: RouteSettings(name: SplashScreen.routeName),
                   ),
-                  settings: RouteSettings(name: SplashScreen.routeName),
-                ),
-              );
+                  (route) => route.isFirst);
 
               if (state.isToast) {
                 Fluttertoast.showToast(
@@ -205,7 +209,7 @@ class _LoginState extends State<_Login> {
               }
             }
             if (state.request == LoginType.CHECK_EXIST) {
-              provider.updateQuickLogin(2);
+              provider.updateQuickLogin(FlowType.QUICK_LOGIN);
               provider.updateInfoUser(state.infoUserDTO);
             }
 
@@ -245,14 +249,8 @@ class _LoginState extends State<_Login> {
               if (data is Map) {
                 AccountLoginDTO dto = AccountLoginDTO(
                   phoneNo: data['phone'],
-                  password: EncryptUtils.instance.encrypted(
-                    data['phone'],
-                    data['password'],
-                  ),
-                  device: '',
-                  fcmToken: '',
-                  platform: '',
-                  sharingCode: '',
+                  password: EncryptUtils.instance
+                      .encrypted(data['phone'], data['password']),
                 );
                 if (!mounted) return;
                 context
@@ -277,7 +275,7 @@ class _LoginState extends State<_Login> {
                 body: Stack(
                   children: [
                     Visibility(
-                      visible: provider.isQuickLogin == 0,
+                      visible: provider.isQuickLogin == FlowType.FIRST_LOGIN,
                       child: Scaffold(
                         body: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -295,8 +293,7 @@ class _LoginState extends State<_Login> {
                                           PhoneWidget(
                                             phoneController: phoneNoController,
                                             onChanged: provider.updatePhone,
-                                            autoFocus:
-                                                provider.isQuickLogin == 0,
+                                            autoFocus: false,
                                           ),
                                           Visibility(
                                             visible:
@@ -402,7 +399,7 @@ class _LoginState extends State<_Login> {
                       ),
                     ),
                     Visibility(
-                      visible: provider.isQuickLogin == 1,
+                      visible: provider.isQuickLogin == FlowType.NEAREST_LOGIN,
                       child: LoginAccountScreen(
                         list: provider.listInfoUsers,
                         appInfoDTO: provider.appInfoDTO,
@@ -419,16 +416,16 @@ class _LoginState extends State<_Login> {
                           provider.updateListInfoUser();
 
                           if (list.isEmpty) {
-                            provider.updateQuickLogin(0);
+                            provider.updateQuickLogin(FlowType.FIRST_LOGIN);
                           }
                         },
                         onQuickLogin: (dto) {
-                          provider.updateQuickLogin(2);
+                          provider.updateQuickLogin(FlowType.QUICK_LOGIN);
                           provider.updateInfoUser(dto);
                         },
                         onBackLogin: () {
                           provider.updateInfoUser(null);
-                          provider.updateQuickLogin(0);
+                          provider.updateQuickLogin(FlowType.FIRST_LOGIN);
                         },
                         onRegister: () async {
                           provider.updateInfoUser(null);
@@ -469,13 +466,13 @@ class _LoginState extends State<_Login> {
                           onTap: () async {
                             await provider
                                 .updateInfoUser(provider.listInfoUsers.first);
-                            provider.updateQuickLogin(2);
+                            provider.updateQuickLogin(FlowType.QUICK_LOGIN);
                           },
                         ),
                       ),
                     ),
                     Visibility(
-                      visible: provider.isQuickLogin == 2,
+                      visible: provider.isQuickLogin == FlowType.QUICK_LOGIN,
                       child: QuickLoginScreen(
                         pinController: passController,
                         passFocus: passFocus,
@@ -488,7 +485,7 @@ class _LoginState extends State<_Login> {
                         },
                         onQuickLogin: () {
                           passController.clear();
-                          provider.updateQuickLogin(0);
+                          provider.updateQuickLogin(FlowType.FIRST_LOGIN);
                           provider.updateInfoUser(null);
                         },
                         appInfoDTO: provider.appInfoDTO,
@@ -517,9 +514,9 @@ class _LoginState extends State<_Login> {
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 20),
                                         child: GestureDetector(
-                                          onTap: () async {
-                                            provider.updateQuickLogin(1);
-                                          },
+                                          onTap: () =>
+                                              provider.updateQuickLogin(
+                                                  FlowType.NEAREST_LOGIN),
                                           child: const Text(
                                             'Đăng nhập bằng tài khoản trước đó',
                                             style: TextStyle(
@@ -958,7 +955,6 @@ class _LoginState extends State<_Login> {
 
   void _onHandleAppSystem(AppInfoDTO dto, AuthProvider authProvider) async {
     String logoApp = SharePrefUtils.getLogoApp();
-    String bannerApp = SharePrefUtils.getBannerApp();
     bool isEvent = SharePrefUtils.getBannerEvent();
     ThemeDTO themeDTO = await SharePrefUtils.getSingleTheme() ?? ThemeDTO();
 

@@ -86,10 +86,12 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
           type = TokenType.Expired;
         }
 
-        emit(state.copyWith(
-            status: BlocStatus.NONE,
-            request: DashBoardType.TOKEN,
-            typeToken: type));
+        emit(
+          state.copyWith(
+              status: BlocStatus.NONE,
+              request: DashBoardType.TOKEN,
+              typeToken: type),
+        );
       }
     } catch (e) {
       LOG.error(e.toString());

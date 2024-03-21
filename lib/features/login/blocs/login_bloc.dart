@@ -30,7 +30,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         if (check) {
           emit(state.copyWith(
               isToast: event.isToast,
-              request: LoginType.TOAST,
+              request: LoginType.LOGIN,
               status: BlocStatus.UNLOADING));
         } else {
           emit(state.copyWith(
@@ -52,7 +52,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         if (check) {
           emit(state.copyWith(
               isToast: event.isToast,
-              request: LoginType.TOAST,
+              request: LoginType.LOGIN,
               status: BlocStatus.UNLOADING));
         } else {
           emit(state.copyWith(

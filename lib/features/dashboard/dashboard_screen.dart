@@ -392,14 +392,12 @@ class _DashBoardScreen extends State<DashBoardScreen>
               );
             } else if (state.typeToken == TokenType.Expired) {
               await DialogWidget.instance.openMsgDialog(
-                  title: 'Phiên đăng nhập hết hạn',
-                  msg: 'Vui lòng đăng nhập lại ứng dụng',
-                  function: () {
-                    Navigator.pop(context);
-                    _bloc.add(TokenEventLogout());
-                  });
+                title: 'Phiên đăng nhập hết hạn',
+                msg: 'Vui lòng đăng nhập lại ứng dụng',
+                function: () => _bloc.add(TokenEventLogout()),
+              );
             } else if (state.typeToken == TokenType.Logout) {
-              Navigator.of(context).pushReplacementNamed(Routes.LOGIN);
+              await SharePrefUtils.resetServices();
             } else if (state.typeToken == TokenType.Logout_failed) {
               await DialogWidget.instance.openMsgDialog(
                 title: 'Không thể đăng xuất',

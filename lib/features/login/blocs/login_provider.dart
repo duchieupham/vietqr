@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
+import 'package:vierqr/features/login/login_screen.dart';
 import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/info_user_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
@@ -18,11 +19,11 @@ class LoginProvider with ChangeNotifier {
   //0: trang login ban đầu
   // 1: trang login gần nhất
   // 2 : quickLogin
-  int isQuickLogin = 0;
+  FlowType isQuickLogin = FlowType.FIRST_LOGIN;
 
   init() async {
     listInfoUsers = await SharePrefUtils.getLoginAccount() ?? [];
-    if (listInfoUsers.isNotEmpty) isQuickLogin = 1;
+    if (listInfoUsers.isNotEmpty) isQuickLogin = FlowType.NEAREST_LOGIN;
     notifyListeners();
   }
 
@@ -41,7 +42,7 @@ class LoginProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void updateQuickLogin(value) {
+  void updateQuickLogin(FlowType value) {
     isQuickLogin = value;
     notifyListeners();
   }
