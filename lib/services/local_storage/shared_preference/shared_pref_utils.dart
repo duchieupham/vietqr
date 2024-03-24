@@ -31,6 +31,7 @@ class SharePrefUtils {
 
     final _tokenInfo = await secureStorageService.getStorage();
     tokenInfo = _tokenInfo ?? '';
+    print('Token - $tokenInfo');
     return tokenInfo;
   }
 

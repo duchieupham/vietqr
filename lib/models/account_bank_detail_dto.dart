@@ -21,24 +21,24 @@ class AccountBankDetailDTO {
 
   AccountBankDetailDTO(
       {this.id = '',
-      this.bankAccount = '',
-      this.userBankName = '',
-      this.bankCode = '',
-      this.bankName = '',
-      this.imgId = '',
-      this.type = 0,
-      this.caiValue = '',
-      this.userId = '',
-      this.bankTypeId = '',
-      this.bankTypeStatus = 0,
-      this.nationalId = '',
-      this.qrCode = '',
-      this.phoneAuthenticated = '',
-      this.ewalletToken = null,
-      this.unlinkedType = 0,
-      this.authenticated = false,
-      this.transactions,
-      this.bankShortName = ''});
+        this.bankAccount = '',
+        this.userBankName = '',
+        this.bankCode = '',
+        this.bankName = '',
+        this.imgId = '',
+        this.type = 0,
+        this.caiValue = '',
+        this.userId = '',
+        this.bankTypeId = '',
+        this.bankTypeStatus = 0,
+        this.nationalId = '',
+        this.qrCode = '',
+        this.phoneAuthenticated = '',
+        this.ewalletToken = null,
+        this.unlinkedType = 0,
+        this.authenticated = false,
+        this.transactions,
+        this.bankShortName = ''});
 
   bool get isHideBDSD => (!authenticated || bankTypeStatus == 0);
 

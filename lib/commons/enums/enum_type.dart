@@ -228,12 +228,14 @@ extension TypeContactExt2 on TypeContact {
 enum BankDetailType {
   NONE,
   SUCCESS,
+  GET_MERCHANT_INFO,
   DELETED,
   ERROR,
   UN_LINK,
   OTP,
   CREATE_QR,
-  GET_LIST_GROUP
+  GET_LIST_GROUP,
+  REQUEST_OTP
 }
 
 enum AccountType { NONE, LOG_OUT, POINT, AVATAR, ERROR }

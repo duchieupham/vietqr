@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
@@ -14,11 +15,14 @@ import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
 import 'package:vierqr/features/bank_detail/views/bottom_sheet_detail_bank.dart';
 import 'package:vierqr/features/create_qr/create_qr_screen.dart';
+import 'package:vierqr/features/merchant/create_merchant_screen.dart';
+import 'package:vierqr/features/merchant/merchant_screen.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_account_remove_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
+import 'package:vierqr/models/merchant_dto.dart';
 import 'package:vierqr/models/qr_bank_detail.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
@@ -29,6 +33,8 @@ class InfoDetailBankAccount extends StatefulWidget {
   final AccountBankDetailDTO dto;
   final QRGeneratedDTO qrGeneratedDTO;
   final String bankId;
+  final bool isRegisterMerchant;
+  final MerchantDTO? merchantDTO;
   final GestureTapCallback? onChangePage;
   final GestureTapCallback? onChangePageThongKe;
   final Function(QRDetailBank) updateQRGeneratedDTO;
@@ -42,6 +48,8 @@ class InfoDetailBankAccount extends StatefulWidget {
     required this.bankId,
     this.onChangePage,
     this.onChangePageThongKe,
+    this.merchantDTO,
+    this.isRegisterMerchant = false,
     required this.updateQRGeneratedDTO,
   }) : super(key: key);
 
@@ -55,6 +63,11 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
   final globalKey = GlobalKey();
 
   bool get small => MediaQuery.of(context).size.width < 400;
+
+  bool get isMerchant =>
+      widget.dto.bankCode == 'BIDV' &&
+      widget.dto.authenticated &&
+      widget.dto.userId == SharePrefUtils.getProfile().userId;
 
   void onSaveImage(BuildContext context) async {
     DialogWidget.instance.openLoadingDialog();
@@ -112,7 +125,8 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
                         );
                       },
                     ),
-                    if (widget.dto.bankCode.trim().toUpperCase() == 'MB')
+                    if (widget.dto.bankCode.trim().toUpperCase() == 'MB' ||
+                        widget.dto.bankCode.trim().toUpperCase() == 'BIDV')
                       _buildStatusConnect(),
                     const Padding(padding: EdgeInsets.only(top: 16)),
                     _buildTitle(title: 'Thông tin tài khoản'),
@@ -140,6 +154,23 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
                               description: 'Xem thông tin liên kết tài khoản',
                             ),
                           ),
+                          if (isMerchant) ...[
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              child: DividerWidget(width: width),
+                            ),
+                            GestureDetector(
+                              onTap: _onMerchant,
+                              child: _buildElement(
+                                icon: 'assets/images/ic-business-blue.png',
+                                context: context,
+                                width: width,
+                                title: 'Đại lý',
+                                description:
+                                    'Quản lý doanh nghiệp, các hoá đơn thanh toán',
+                              ),
+                            ),
+                          ],
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             child: DividerWidget(width: width),
@@ -197,11 +228,23 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
                                     isSecondBT: true,
                                     functionConfirm: () {
                                       Navigator.of(context).pop();
-                                      widget.bloc.add(
-                                        BankCardEventUnlink(
-                                            accountNumber:
-                                                widget.dto.bankAccount),
-                                      );
+                                      if (widget.dto.unlinkedType.linkType ==
+                                          LinkBankType.LINK) {
+                                        Map<String, dynamic> body = {
+                                          'ewalletToken':
+                                              widget.dto.ewalletToken,
+                                          'bankAccount': widget.dto.bankAccount,
+                                          'bankCode': widget.dto.bankCode,
+                                        };
+                                        widget.bloc.add(
+                                            BankCardEventUnLink(body: body));
+                                      } else {
+                                        widget.bloc.add(
+                                          BankCardEventUnRequestOTP(
+                                              accountNumber:
+                                                  widget.dto.bankAccount),
+                                        );
+                                      }
                                     },
                                   );
                                 },
@@ -259,110 +302,6 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
             ),
           ),
         ),
-
-        // SizedBox(
-        //   width: width,
-        //   height: 40,
-        //   child: Row(
-        //     crossAxisAlignment: CrossAxisAlignment.stretch,
-        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //     children: [
-        //       ButtonIconWidget(
-        //         width: width * 0.2,
-        //         height: 40,
-        //         pathIcon: 'assets/images/ic-print-blue.png',
-        //         title: '',
-        //         function: () async {
-        //           BluetoothPrinterDTO bluetoothPrinterDTO =
-        //               await LocalDatabase.instance.getBluetoothPrinter(userId);
-        //           if (bluetoothPrinterDTO.id.isNotEmpty) {
-        //             bool isPrinting = false;
-        //             if (!isPrinting) {
-        //               isPrinting = true;
-        //               DialogWidget.instance.showFullModalBottomContent(
-        //                   widget: const PrintingView());
-        //               await PrinterUtils.instance
-        //                   .print(widget.qrGeneratedDTO)
-        //                   .then((value) {
-        //                 Navigator.pop(context);
-        //                 isPrinting = false;
-        //               });
-        //             }
-        //           } else {
-        //             DialogWidget.instance.openMsgDialog(
-        //                 title: 'Không thể in',
-        //                 msg:
-        //                     'Vui lòng kết nối với máy in để thực hiện việc in.');
-        //           }
-        //         },
-        //         bgColor: Theme.of(context).cardColor,
-        //         textColor: AppColor.ORANGE,
-        //       ),
-        //       const Padding(
-        //         padding: EdgeInsets.only(left: 10),
-        //       ),
-        //       ButtonIconWidget(
-        //         width: width * 0.2,
-        //         height: 40,
-        //         pathIcon: 'assets/images/ic-edit-avatar-setting.png',
-        //         title: '',
-        //         function: () {
-        //           Provider.of<AuthProvider>(context, listen: false)
-        //               .updateAction(false);
-        //           onSaveImage(context);
-        //         },
-        //         bgColor: Theme.of(context).cardColor,
-        //         textColor: AppColor.RED_CALENDAR,
-        //       ),
-        //       const Padding(
-        //         padding: EdgeInsets.only(left: 10),
-        //       ),
-        //       ButtonIconWidget(
-        //         width: width * 0.2,
-        //         height: 40,
-        //         pathIcon: 'assets/images/ic-copy-blue.png',
-        //         title: '',
-        //         function: () async {
-        //           await FlutterClipboard.copy(ShareUtils.instance
-        //                   .getTextSharing(widget.qrGeneratedDTO))
-        //               .then(
-        //             (value) => Fluttertoast.showToast(
-        //               msg: 'Đã sao chép',
-        //               toastLength: Toast.LENGTH_SHORT,
-        //               gravity: ToastGravity.CENTER,
-        //               timeInSecForIosWeb: 1,
-        //               backgroundColor: Theme.of(context).cardColor,
-        //               textColor: Theme.of(context).hintColor,
-        //               fontSize: 15,
-        //               webBgColor: 'rgba(255, 255, 255)',
-        //               webPosition: 'center',
-        //             ),
-        //           );
-        //         },
-        //         bgColor: Theme.of(context).cardColor,
-        //         textColor: AppColor.BLUE_TEXT,
-        //       ),
-        //       const Padding(
-        //         padding: EdgeInsets.only(left: 10),
-        //       ),
-        //       ButtonIconWidget(
-        //         width: width * 0.2,
-        //         height: 40,
-        //         pathIcon: 'assets/images/ic-share-blue.png',
-        //         title: '',
-        //         function: () {
-        //           Provider.of<AuthProvider>(context, listen: false)
-        //               .updateAction(false);
-        //           Navigator.pushNamed(context, Routes.QR_SHARE_VIEW,
-        //               arguments: {'qrGeneratedDTO': widget.qrGeneratedDTO});
-        //         },
-        //         bgColor: Theme.of(context).cardColor,
-        //         textColor: AppColor.BLUE_TEXT,
-        //       ),
-        //     ],
-        //   ),
-        // ),
-
         Container(
           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 18),
           decoration: BoxDecoration(color: AppColor.WHITE),
@@ -566,6 +505,25 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
           ),
         ),
       );
+    }
+  }
+
+  void _onMerchant() async {
+    if (widget.isRegisterMerchant) {
+      final data = await NavigatorUtils.navigatePage(
+          context,
+          MerchantScreen(
+            customerId: widget.merchantDTO?.customerId ?? '',
+            bankId: widget.bankId,
+          ),
+          routeName: CreateMerchantScreen.routeName);
+      if (data != null) {
+        widget.bloc.add(GetMerchantEvent());
+      }
+    } else {
+      NavigatorUtils.navigatePage(
+          context, CreateMerchantScreen(bankDetail: widget.dto),
+          routeName: CreateMerchantScreen.routeName);
     }
   }
 }

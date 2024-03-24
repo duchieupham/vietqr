@@ -11,6 +11,7 @@ import 'package:vierqr/features/bank_detail/repositories/bank_card_repository.da
 import 'package:vierqr/features/bank_detail/states/bank_card_state.dart';
 import 'package:vierqr/features/transaction/blocs/transaction_bloc.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
+import 'package:vierqr/models/merchant_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/models/terminal_response_dto.dart';
@@ -23,11 +24,13 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
       : super(BankCardState(bankId: bankId)) {
     on<BankCardEventRemove>(_removeBankAccount);
     on<BankCardGetDetailEvent>(_getDetail);
-    on<BankCardEventUnlink>(_unlinkBankAccount);
+    on<BankCardEventUnRequestOTP>(_requestOTP);
     on<BankCardEventUnConfirmOTP>(_unConfirmOTP);
+    on<BankCardEventUnLink>(_unLinked);
     on<UpdateEvent>(_updateEvent);
     on<BankCardGenerateDetailQR>(_createQRUnAuthen);
     on<GetMyListGroupEvent>(_getMyListGroup);
+    on<GetMerchantEvent>(_getMerchant);
   }
 
   void _getDetail(BankCardEvent event, Emitter emit) async {
@@ -50,6 +53,39 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
             isInit: event.isInit,
           ),
         );
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+        status: BlocStatus.NONE,
+        request: BankDetailType.ERROR,
+      ));
+    }
+  }
+
+  void _getMerchant(BankCardEvent event, Emitter emit) async {
+    try {
+      if (event is GetMerchantEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.NONE, request: BankDetailType.NONE));
+        final result = await bankCardRepository.getMerchantInfo(bankId);
+        bool isRegisterMerchant = false;
+        if (result != null) {
+          if (result is ResponseMessageDTO) {
+            isRegisterMerchant = false;
+            emit(state.copyWith(
+                status: BlocStatus.NONE,
+                request: BankDetailType.GET_MERCHANT_INFO,
+                isRegisterMerchant: isRegisterMerchant));
+          } else if (result is MerchantDTO) {
+            isRegisterMerchant = true;
+            emit(state.copyWith(
+                status: BlocStatus.NONE,
+                merchantDTO: result,
+                request: BankDetailType.GET_MERCHANT_INFO,
+                isRegisterMerchant: isRegisterMerchant));
+          }
+        }
       }
     } catch (e) {
       LOG.error(e.toString());
@@ -127,9 +163,9 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
     }
   }
 
-  void _unlinkBankAccount(BankCardEvent event, Emitter emit) async {
+  void _requestOTP(BankCardEvent event, Emitter emit) async {
     try {
-      if (event is BankCardEventUnlink) {
+      if (event is BankCardEventUnRequestOTP) {
         emit(state.copyWith(
             status: BlocStatus.LOADING, request: BankDetailType.NONE));
         final ResponseMessageDTO responseMessageDTO = await bankCardRepository
@@ -139,7 +175,7 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
         });
         if (responseMessageDTO.status == Stringify.RESPONSE_STATUS_SUCCESS) {
           emit(state.copyWith(
-            request: BankDetailType.UN_LINK,
+            request: BankDetailType.REQUEST_OTP,
             status: BlocStatus.UNLOADING,
             requestId: responseMessageDTO.message,
           ));
@@ -192,6 +228,42 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
         } else {
           String message =
               ErrorUtils.instance.getErrorMessage(responseMessageDTO.message);
+          emit(state.copyWith(
+            msg: message,
+            status: BlocStatus.UNLOADING,
+            request: BankDetailType.ERROR,
+          ));
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+        msg: 'Không thể huỷ liên kết. Vui lòng kiểm tra lại kết nối',
+        status: BlocStatus.UNLOADING,
+        request: BankDetailType.ERROR,
+      ));
+    }
+  }
+
+  void _unLinked(BankCardEvent event, Emitter emit) async {
+    try {
+      if (event is BankCardEventUnLink) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, request: BankDetailType.NONE));
+        final response = await bankCardRepository.unLinked(event.body);
+        if (response.status == Stringify.RESPONSE_STATUS_SUCCESS) {
+          emit(state.copyWith(
+              request: BankDetailType.UN_LINK, status: BlocStatus.UNLOADING));
+        } else if (response.status == Stringify.RESPONSE_STATUS_CHECK) {
+          String message =
+              CheckUtils.instance.getCheckMessage(response.message);
+          emit(state.copyWith(
+              msg: message,
+              request: BankDetailType.ERROR,
+              status: BlocStatus.UNLOADING));
+        } else {
+          String message =
+              ErrorUtils.instance.getErrorMessage(response.message);
           emit(state.copyWith(
             msg: message,
             status: BlocStatus.UNLOADING,

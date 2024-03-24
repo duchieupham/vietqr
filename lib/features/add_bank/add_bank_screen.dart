@@ -64,6 +64,7 @@ class _AddBankScreenState extends StatefulWidget {
 
 class _AddBankScreenStateState extends State<_AddBankScreenState> {
   late AddBankBloc _bloc;
+  late AddBankProvider _addBankProvider;
 
   final focusAccount = FocusNode();
   final focusName = FocusNode();
@@ -78,6 +79,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
   void initState() {
     super.initState();
     _bloc = BlocProvider.of(context);
+    _addBankProvider = Provider.of<AddBankProvider>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       initData(context);
       focusAccount.addListener(() {
@@ -100,13 +102,12 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
       String bankId = bankTypeDTO.bankId;
 
       if (userName.isNotEmpty) {
-        Provider.of<AddBankProvider>(context, listen: false).updateEdit(false);
+        _addBankProvider.updateEdit(false);
         nameController.value = nameController.value.copyWith(text: userName);
       }
 
       if (bankId.isNotEmpty) {
-        Provider.of<AddBankProvider>(context, listen: false)
-            .updateBankId(bankId);
+        _addBankProvider.updateBankId(bankId);
       }
 
       if (bankAccount.isNotEmpty) {
@@ -115,26 +116,23 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
       }
 
       if (bankAccount.isNotEmpty && bankId.isNotEmpty && userName.isNotEmpty) {
-        Provider.of<AddBankProvider>(context, listen: false).updateStep(1);
+        _addBankProvider.updateStep(1);
       }
 
-      Provider.of<AddBankProvider>(context, listen: false)
-          .updateSelectBankType(bankTypeDTO, update: true);
-      Provider.of<AddBankProvider>(context, listen: false)
-          .updateEnableName(true);
+      _addBankProvider.updateSelectBankType(bankTypeDTO, update: true);
+      _addBankProvider.updateEnableName(true);
     }
   }
 
   void _onSearch() {
-    bool isEdit = Provider.of<AddBankProvider>(context, listen: false).isEdit;
+    bool isEdit = _addBankProvider.isEdit;
     if (bankAccountController.text.isNotEmpty &&
         bankAccountController.text.length > 5 &&
         isEdit) {
       String transferType = '';
       String caiValue = '';
       String bankCode = '';
-      BankTypeDTO? bankTypeDTO =
-          Provider.of<AddBankProvider>(context, listen: false).bankTypeDTO;
+      BankTypeDTO? bankTypeDTO = _addBankProvider.bankTypeDTO;
       if (bankTypeDTO != null) {
         caiValue = bankTypeDTO.caiValue;
         bankCode = bankTypeDTO.bankCode;
@@ -182,24 +180,16 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
               nameController.clear();
               nameController.value = nameController.value
                   .copyWith(text: state.informationDTO?.accountName ?? '');
-              if (Provider.of<AddBankProvider>(context, listen: false)
-                      .bankTypeDTO !=
-                  null) {
-                Provider.of<AddBankProvider>(context, listen: false)
-                    .updateValidUserBankName(nameController.text);
+              if (_addBankProvider.bankTypeDTO != null) {
+                _addBankProvider.updateValidUserBankName(nameController.text);
               }
             }
 
             if (state.request == AddBankType.EXIST_BANK) {
-              if (Provider.of<AddBankProvider>(context, listen: false)
-                  .isLinkBank) {
-                Provider.of<AddBankProvider>(context, listen: false)
-                    .updateStep(1);
+              if (_addBankProvider.isLinkBank) {
+                _addBankProvider.updateStep(1);
               } else {
-                String bankTypeId =
-                    Provider.of<AddBankProvider>(context, listen: false)
-                        .bankTypeDTO!
-                        .id;
+                String bankTypeId = _addBankProvider.bankTypeDTO!.id;
                 String userId = SharePrefUtils.getProfile().userId;
                 String formattedName = StringUtils.instance.removeDiacritic(
                     StringUtils.instance
@@ -226,8 +216,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
               //     title: state.titleMsg ?? 'Không thể thêm TK',
               //     msg: state.msg ?? '');
               if (!mounted) return;
-              Provider.of<AddBankProvider>(context, listen: false)
-                  .updateEnableName(true);
+              _addBankProvider.updateEnableName(true);
             }
 
             if (state.request == AddBankType.ERROR_EXIST) {
@@ -240,21 +229,18 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
               await DialogWidget.instance.openMsgDialog(
                   title: 'Không thể liên kết TK', msg: state.msg ?? '');
               if (!mounted) return;
-              Provider.of<AddBankProvider>(context, listen: false)
-                  .updateEnableName(true);
+              _addBankProvider.updateEnableName(true);
             }
 
             if (state.request == AddBankType.REQUEST_BANK) {
               if (!mounted) return;
               Navigator.of(context).pop();
-              Provider.of<AddBankProvider>(context, listen: false)
-                  .updateStep(2);
+              _addBankProvider.updateStep(2);
             }
 
             if (state.request == AddBankType.OTP_BANK) {
               if (!mounted) return;
-              String bankId =
-                  Provider.of<AddBankProvider>(context, listen: false).bankId;
+              String bankId = _addBankProvider.bankId;
               if (bankId.trim().isNotEmpty) {
                 final dto = RegisterAuthenticationDTO(
                   bankId: bankId,
@@ -262,28 +248,29 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                   phoneAuthenticated: phoneController.text,
                   bankAccountName: nameController.text,
                   bankAccount: bankAccountController.text,
+                  ewalletToken: state.ewalletToken ?? '',
                 );
-
+                print(
+                    '--------------------EWALLET TOKEN: ---------- ${state.ewalletToken}');
                 _bloc.add(BankCardEventRegisterLinkBank(dto: dto));
               } else {
-                String bankTypeId =
-                    Provider.of<AddBankProvider>(context, listen: false)
-                        .bankTypeDTO!
-                        .id;
+                String bankTypeId = _addBankProvider.bankTypeDTO!.id;
                 String userId = SharePrefUtils.getProfile().userId;
                 String formattedName = StringUtils.instance.removeDiacritic(
                     StringUtils.instance
                         .capitalFirstCharacter(nameController.text));
+                print(
+                    '--------------------EWALLET TOKEN: ---------- ${state.ewalletToken}');
                 BankCardInsertDTO dto = BankCardInsertDTO(
                   bankTypeId: bankTypeId,
                   userId: userId,
                   userBankName: formattedName,
                   bankAccount: bankAccountController.text,
-                  type:
-                      Provider.of<AddBankProvider>(context, listen: false).type,
+                  type: _addBankProvider.type,
                   branchId: '',
                   nationalId: cmtController.text,
                   phoneAuthenticated: phoneController.text,
+                  ewalletToken: state.ewalletToken ?? '',
                 );
                 _bloc.add(BankCardEventInsert(dto: dto));
               }
@@ -295,9 +282,8 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                 cmtController.value =
                     cmtController.value.copyWith(text: state.barCode);
                 if (!mounted) return;
-                Provider.of<AddBankProvider>(context, listen: false)
-                    .onChangeCMT(cmtController.text,
-                        phone: phoneController.text);
+                _addBankProvider.onChangeCMT(cmtController.text,
+                    phone: phoneController.text);
               }
             }
 
@@ -643,6 +629,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
               onSelectPolicy: provider.updatePolicy,
               isAgreeWithPolicy: provider.isAgreeWithPolicy,
               bankAccount: bankAccountController.text,
+              bankCode: provider.bankTypeDTO?.bankCode ?? '',
               onTap: () {
                 if (provider.isAgreeWithPolicy) {
                   String formattedName = StringUtils.instance.removeDiacritic(
@@ -654,6 +641,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                     accountName: formattedName,
                     applicationType: 'MOBILE',
                     phoneNumber: phoneController.text,
+                    bankCode: provider.bankTypeDTO?.bankCode ?? '',
                   );
                   context
                       .read<AddBankBloc>()
@@ -677,6 +665,8 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
           requestId: requestId,
           otpValue: otpController.text,
           applicationType: 'MOBILE',
+          bankAccount: bankAccountController.text,
+          bankCode: provider.bankTypeDTO?.bankCode ?? '',
         );
         _bloc.add(BankCardEventConfirmOTP(dto: confirmDTO));
       },
@@ -760,8 +750,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
       nameController.clear();
       provider.resetValidate();
       provider.updateSelectBankType(state.listBanks![data]);
-      Provider.of<AddBankProvider>(context, listen: false)
-          .updateEnableName(true);
+      _addBankProvider.updateEnableName(true);
     }
   }
 
@@ -774,6 +763,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
       accountName: formattedName,
       applicationType: 'MOBILE',
       phoneNumber: phoneController.text,
+      bankCode: _addBankProvider.bankTypeDTO?.bankCode ?? '',
     );
     _bloc.add(BankCardEventRequestOTP(dto: dto));
   }

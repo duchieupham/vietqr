@@ -7,6 +7,7 @@ class BankCardInsertDTO {
   final String branchId;
   final String nationalId;
   final String phoneAuthenticated;
+  final String ewalletToken;
 
   const BankCardInsertDTO({
     required this.bankTypeId,
@@ -17,6 +18,7 @@ class BankCardInsertDTO {
     required this.branchId,
     required this.nationalId,
     required this.phoneAuthenticated,
+    required this.ewalletToken,
   });
 
   factory BankCardInsertDTO.fromJson(Map<String, dynamic> json) {
@@ -29,6 +31,7 @@ class BankCardInsertDTO {
       branchId: json['branchId'] ?? '',
       nationalId: json['nationalId'] ?? '',
       phoneAuthenticated: json['phoneAuthenticated'] ?? '',
+      ewalletToken: json['ewalletToken'] ?? '',
     );
   }
 
@@ -42,6 +45,7 @@ class BankCardInsertDTO {
     data['branchId'] = branchId;
     data['nationalId'] = nationalId;
     data['phoneAuthenticated'] = phoneAuthenticated;
+    data['ewalletToken'] = ewalletToken;
     return data;
   }
 }
