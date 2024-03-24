@@ -5,6 +5,7 @@ import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/models/response_message_dto.dart';
+import 'package:vierqr/models/store/merchant_dto.dart';
 import 'package:vierqr/models/store/store_dto.dart';
 import 'package:vierqr/models/store/total_store_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
@@ -29,6 +30,28 @@ class StoreRepository {
         if (data != null) {
           result = data.map<StoreDTO>((json) {
             return StoreDTO.fromJson(json);
+          }).toList();
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      return result;
+    }
+    return result;
+  }
+
+  Future<List<MerchantDTO>> getListMerchant() async {
+    List<MerchantDTO> result = [];
+
+    try {
+      String url = '${EnvConfig.getBaseUrl()}merchant-list/$userId';
+      final response =
+          await BaseAPIClient.getAPI(url: url, type: AuthenticationType.SYSTEM);
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        if (data != null) {
+          result = data.map<MerchantDTO>((json) {
+            return MerchantDTO.fromJson(json);
           }).toList();
         }
       }

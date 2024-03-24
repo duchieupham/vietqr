@@ -8,7 +8,7 @@ import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/create_order_merchant/respository/order_merchant_repository.dart';
 import 'package:vierqr/features/create_order_merchant/views/input_order_second.dart';
-import 'package:vierqr/features/store/create_store/responsitory/create_store_responsitory.dart';
+import 'package:vierqr/features/create_store/responsitory/create_store_responsitory.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 
 class InfoOrderView extends StatefulWidget {

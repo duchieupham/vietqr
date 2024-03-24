@@ -145,10 +145,9 @@ class _ShareNotifyMemberViewState extends State<ShareNotifyMemberView> {
   }
 
   void _onInsertMember() async {
-    setState(() {
-      isEnableButton = false;
-    });
-    FocusScope.of(context).unfocus();
+    FocusManager.instance.primaryFocus?.unfocus();
+    isEnableButton = false;
+    setState(() {});
     await DialogWidget.instance.showModelBottomSheet(
       isDismissible: true,
       height: MediaQuery.of(context).size.height * 0.6,

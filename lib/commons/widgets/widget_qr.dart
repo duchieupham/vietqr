@@ -140,9 +140,9 @@ class _VietQrState extends State<WidgetQr> {
                         child: Container(
                           padding: const EdgeInsets.symmetric(
                               vertical: 10, horizontal: 8),
-                          alignment: Alignment.center,
+                          alignment: Alignment.centerLeft,
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(

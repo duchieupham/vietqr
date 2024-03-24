@@ -52,116 +52,119 @@ class _InputCodeStoreViewState extends State<InputCodeStoreView> {
           builder: (context, state) {
             return GestureDetector(
               onTap: _hideKeyBoard,
-              child: Column(
-                children: [
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          HeaderStoreWidget(
-                            nameStore: widget.nameStore,
-                            title:
-                                'Thiết lập thông tin để\ntạo mã VietQR cho cửa hàng',
-                            desTitle:
-                                'Nhận thông tin thanh toán và quản lý tiền bán hàng tiện lợi ngay trên ứng dụng VietQR.',
-                          ),
-                          const SizedBox(height: 40),
-                          ...[
-                            IntrinsicHeight(
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  Expanded(
-                                    child: MTextFieldCustom(
-                                      isObscureText: false,
-                                      maxLines: 1,
-                                      showBorder: true,
-                                      enable: false,
-                                      value: state.codeStore,
-                                      styles:
-                                          TextStyle(color: AppColor.GREY_TEXT),
-                                      fillColor: Colors.grey.withOpacity(0.2),
-                                      textFieldType: TextfieldType.LABEL,
-                                      title: 'Mã cửa hàng *',
-                                      autoFocus: true,
-                                      hintText: '',
-                                      maxLength: 13,
-                                      inputType: TextInputType.number,
-                                      keyboardAction: TextInputAction.next,
-                                      onChange: (value) {},
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Container(
-                                    alignment: Alignment.bottomCenter,
-                                    child: GestureDetector(
-                                      onTap: () =>
-                                          _onChangedCode(state.codeStore),
-                                      child: Container(
-                                        height: 50,
-                                        width: 50,
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(100),
-                                            color: AppColor.BLUE_TEXT
-                                                .withOpacity(0.35)),
-                                        child: Icon(Icons.edit,
-                                            color: AppColor.BLUE_TEXT),
+              child: Container(
+                color: Colors.transparent,
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            HeaderStoreWidget(
+                              nameStore: widget.nameStore,
+                              title:
+                                  'Thiết lập thông tin để\ntạo mã VietQR cho cửa hàng',
+                              desTitle:
+                                  'Nhận thông tin thanh toán và quản lý tiền bán hàng tiện lợi ngay trên ứng dụng VietQR.',
+                            ),
+                            const SizedBox(height: 40),
+                            ...[
+                              IntrinsicHeight(
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: [
+                                    Expanded(
+                                      child: MTextFieldCustom(
+                                        isObscureText: false,
+                                        maxLines: 1,
+                                        showBorder: true,
+                                        enable: false,
+                                        value: state.codeStore,
+                                        styles:
+                                            TextStyle(color: AppColor.GREY_TEXT),
+                                        fillColor: Colors.grey.withOpacity(0.2),
+                                        textFieldType: TextfieldType.LABEL,
+                                        title: 'Mã cửa hàng *',
+                                        autoFocus: true,
+                                        hintText: '',
+                                        maxLength: 13,
+                                        inputType: TextInputType.number,
+                                        keyboardAction: TextInputAction.next,
+                                        onChange: (value) {},
                                       ),
                                     ),
-                                  ),
-                                ],
+                                    const SizedBox(width: 8),
+                                    Container(
+                                      alignment: Alignment.bottomCenter,
+                                      child: GestureDetector(
+                                        onTap: () =>
+                                            _onChangedCode(state.codeStore),
+                                        child: Container(
+                                          height: 50,
+                                          width: 50,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(100),
+                                              color: AppColor.BLUE_TEXT
+                                                  .withOpacity(0.35)),
+                                          child: Icon(Icons.edit,
+                                              color: AppColor.BLUE_TEXT),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 12),
-                            RichText(
-                              text: TextSpan(
-                                style: TextStyle(
-                                    color: AppColor.GREY_TEXT, fontSize: 15),
-                                children: [
-                                  TextSpan(
-                                      text:
-                                          'Dùng để phân biệt loại giao dịch theo cửa hàng.\n'),
-                                  TextSpan(
-                                      text: 'Mã cửa hàng tối đa 13 ký tự.\n'),
-                                  TextSpan(
-                                      text:
-                                          'Mã cửa hàng không chứa tiếng việt và ký tự đặc biệt.\n'),
-                                ],
+                              const SizedBox(height: 12),
+                              RichText(
+                                text: TextSpan(
+                                  style: TextStyle(
+                                      color: AppColor.GREY_TEXT, fontSize: 15),
+                                  children: [
+                                    TextSpan(
+                                        text:
+                                            'Dùng để phân biệt loại giao dịch theo cửa hàng.\n'),
+                                    TextSpan(
+                                        text: 'Mã cửa hàng tối đa 13 ký tự.\n'),
+                                    TextSpan(
+                                        text:
+                                            'Mã cửa hàng không chứa tiếng việt và ký tự đặc biệt.\n'),
+                                  ],
+                                ),
                               ),
+                            ],
+                            const SizedBox(height: 30),
+                            MTextFieldCustom(
+                              isObscureText: false,
+                              maxLines: 1,
+                              showBorder: true,
+                              value: state.addressStore,
+                              fillColor: Colors.white,
+                              textFieldType: TextfieldType.LABEL,
+                              title: 'Địa chỉ cửa hàng *',
+                              hintText: 'Nhập địa chỉ cửa hàng',
+                              inputType: TextInputType.text,
+                              keyboardAction: TextInputAction.next,
+                              onChange: (value) {
+                                bloc.add(UpdateAddressStoreEvent(value));
+                              },
                             ),
+                            const SizedBox(height: 16),
                           ],
-                          const SizedBox(height: 30),
-                          MTextFieldCustom(
-                            isObscureText: false,
-                            maxLines: 1,
-                            showBorder: true,
-                            value: state.addressStore,
-                            fillColor: Colors.white,
-                            textFieldType: TextfieldType.LABEL,
-                            title: 'Địa chỉ cửa hàng *',
-                            hintText: 'Nhập địa chỉ cửa hàng',
-                            inputType: TextInputType.text,
-                            keyboardAction: TextInputAction.next,
-                            onChange: (value) {
-                              bloc.add(UpdateAddressStoreEvent(value));
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                        ],
+                        ),
                       ),
                     ),
-                  ),
-                  MButtonWidget(
-                    title: 'Tiếp tục',
-                    margin: EdgeInsets.zero,
-                    isEnable: state.addressStore.isNotEmpty &&
-                        state.codeStore.isNotEmpty,
-                    onTap: () => widget.callBack
-                        .call(state.codeStore, state.addressStore),
-                  )
-                ],
+                    MButtonWidget(
+                      title: 'Tiếp tục',
+                      margin: EdgeInsets.zero,
+                      isEnable: state.addressStore.isNotEmpty &&
+                          state.codeStore.isNotEmpty,
+                      onTap: () => widget.callBack
+                          .call(state.codeStore, state.addressStore),
+                    )
+                  ],
+                ),
               ),
             );
           }),

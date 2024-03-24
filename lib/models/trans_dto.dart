@@ -1,27 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 
-class RelatedTransactionReceiveDTO {
-  final String bankAccount;
+class TransDTO {
+  final String transactionId;
   final String amount;
-  final int status;
+  final String bankAccount;
+  final String content;
   final int time;
   final int timePaid;
-  final String content;
-  final String transactionId;
+  final int status;
   final int type;
   final String transType;
+  final String terminalCode;
+  final String note;
+  final String referenceNumber;
+  final String orderId;
+  final String bankShortName;
 
-  const RelatedTransactionReceiveDTO({
-    required this.bankAccount,
-    required this.amount,
-    required this.status,
-    required this.time,
-    required this.timePaid,
-    required this.content,
-    required this.transactionId,
-    required this.type,
-    required this.transType,
+  const TransDTO({
+    this.bankAccount = '',
+    this.amount = '',
+    this.status = -1,
+    this.time = 0,
+    this.timePaid = 0,
+    this.content = '',
+    this.transactionId = '',
+    this.type = -1,
+    this.transType = '',
+    this.terminalCode = '',
+    this.note = '',
+    this.referenceNumber = '',
+    this.orderId = '',
+    this.bankShortName = '',
   });
 
   bool get isTimeTT {
@@ -61,17 +71,22 @@ class RelatedTransactionReceiveDTO {
     return AppColor.TRANSPARENT;
   }
 
-  factory RelatedTransactionReceiveDTO.fromJson(Map<String, dynamic> json) {
-    return RelatedTransactionReceiveDTO(
-      bankAccount: json['bankAccount'] ?? '',
+  factory TransDTO.fromJson(Map<String, dynamic> json) {
+    return TransDTO(
+      transactionId: json['transactionId'] ?? '',
       amount: json['amount'] ?? '',
-      status: json['status'] ?? 0,
+      bankAccount: json['bankAccount'] ?? '',
+      content: json['content'] ?? '',
       time: json['time'] ?? 0,
       timePaid: json['timePaid'] ?? 0,
-      content: json['content'] ?? '',
-      transactionId: json['transactionId'] ?? '',
+      status: json['status'] ?? 0,
       type: json['type'] ?? 0,
       transType: json['transType'] ?? '',
+      terminalCode: json['terminalCode'] ?? '',
+      note: json['note'] ?? '',
+      referenceNumber: json['referenceNumber'] ?? '',
+      orderId: json['referenceNumber'] ?? '',
+      bankShortName: json['bankShortName'] ?? '',
     );
   }
 

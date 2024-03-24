@@ -169,8 +169,7 @@ class _PopupBankShareState extends State<PopupBankShare> {
                           if (widget.dto.amount.isNotEmpty ||
                               widget.dto.content.isNotEmpty)
                             Container(
-                              margin: EdgeInsets.symmetric(
-                                  horizontal: paddingHorizontal),
+                              width: 300,
                               padding: const EdgeInsets.symmetric(
                                   vertical: 12, horizontal: 16),
                               decoration: BoxDecoration(
@@ -192,14 +191,14 @@ class _PopupBankShareState extends State<PopupBankShare> {
                                     style: TextStyle(
                                       color: AppColor.ORANGE_DARK,
                                       fontSize: widget.dto.amount.length > 8
-                                          ? 24
-                                          : 28,
+                                          ? 22
+                                          : 26,
                                       fontWeight: FontWeight.bold,
                                     ),
                                     textAlign: TextAlign.center,
                                   ),
                                   if (widget.dto.content.isNotEmpty) ...[
-                                    const Divider(color: AppColor.GREY_TEXT),
+                                    const Divider(color: AppColor.GREY_BORDER),
                                     Text(
                                       'Nội dung:',
                                       style: TextStyle(

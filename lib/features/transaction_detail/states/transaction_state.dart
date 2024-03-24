@@ -1,6 +1,6 @@
 // import 'package:equatable/equatable.dart';
 // import 'package:vierqr/models/business_detail_dto.dart';
-// import 'package:vierqr/models/related_transaction_receive_dto.dart';
+// import 'package:vierqr/models/trans_dto.dart';
 // import 'package:vierqr/models/transaction_receive_dto.dart';
 //
 // class TransactionState extends Equatable {

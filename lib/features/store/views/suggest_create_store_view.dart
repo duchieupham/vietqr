@@ -1,64 +1,76 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/features/create_store/create_store_screen.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 
-class SuggestCreateStoreView extends StatelessWidget {
+class SuggestCreateStoreView extends StatefulWidget {
+  final RefreshCallback onRefresh;
+
+  const SuggestCreateStoreView({super.key, required this.onRefresh});
+
+  @override
+  State<SuggestCreateStoreView> createState() => _SuggestCreateStoreViewState();
+}
+
+class _SuggestCreateStoreViewState extends State<SuggestCreateStoreView> {
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Container(
-            height: MediaQuery.of(context).size.height * 0.2,
-            width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image:
-                    AssetImage('assets/images/banner-store-and-service-3D.png'),
+    return RefreshIndicator(
+      onRefresh: widget.onRefresh,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
+              height: MediaQuery.of(context).size.height * 0.2,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(
+                      'assets/images/banner-store-and-service-3D.png'),
+                ),
               ),
             ),
-          ),
-          ...[
-            Text(
-              'Cửa hàng và dịch vụ',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              'Nhận thanh toán và quản lý tiền bán hàng\ntiện lợi ngay trên ứng dụng',
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            MButtonWidget(
-              title: 'Tạo cửa hàng ngay',
-              icon: Image.asset('assets/images/ic-store-bottom-bar-blue.png',
-                  height: 40),
-              colorEnableText: AppColor.BLUE_TEXT,
-              isEnable: true,
-              margin: const EdgeInsets.symmetric(vertical: 16),
-              height: 50,
-              colorEnableBgr: AppColor.BLUE_TEXT.withOpacity(0.35),
-              onTap: () => NavigatorUtils.navigatePage(
-                  context, CreateStoreScreen(),
-                  routeName: '/'),
-            ),
-            const SizedBox(height: 16),
+            ...[
+              Text(
+                'Cửa hàng và dịch vụ',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Nhận thanh toán và quản lý tiền bán hàng\ntiện lợi ngay trên ứng dụng',
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              MButtonWidget(
+                title: 'Tạo cửa hàng ngay',
+                icon: Image.asset('assets/images/ic-store-bottom-bar-blue.png',
+                    height: 40),
+                colorEnableText: AppColor.BLUE_TEXT,
+                isEnable: true,
+                margin: const EdgeInsets.symmetric(vertical: 16),
+                height: 50,
+                colorEnableBgr: AppColor.BLUE_TEXT.withOpacity(0.35),
+                onTap: () => NavigatorUtils.navigatePage(
+                    context, CreateStoreScreen(),
+                    routeName: CreateStoreScreen.routeName),
+              ),
+              const SizedBox(height: 16),
+            ],
+            ...[
+              Text(
+                'Giới thiệu tính năng',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 12),
+              _buildListSuggest(),
+              const SizedBox(height: 24),
+            ],
           ],
-          ...[
-            Text(
-              'Giới thiệu tính năng',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(height: 12),
-            _buildListSuggest(),
-            const SizedBox(height: 24),
-          ],
-        ],
+        ),
       ),
     );
   }

@@ -11,7 +11,7 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/trans_history/blocs/trans_history_bloc.dart';
 import 'package:vierqr/features/trans_history/blocs/trans_history_provider.dart';
 import 'package:vierqr/features/trans_history/views/bottom_sheet_filter.dart';
-import 'package:vierqr/models/related_transaction_receive_dto.dart';
+import 'package:vierqr/models/trans_dto.dart';
 import 'package:vierqr/models/terminal_response_dto.dart';
 import 'package:vierqr/models/transaction_input_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
@@ -61,8 +61,8 @@ class _BodyWidget extends StatefulWidget {
 
 class _TransHistoryScreenState extends State<_BodyWidget> {
   late TransHistoryBloc _bloc;
-  List<RelatedTransactionReceiveDTO> listTransaction = [];
-  List<RelatedTransactionReceiveDTO> listFilterTransaction = [];
+  List<TransDTO> listTransaction = [];
+  List<TransDTO> listFilterTransaction = [];
 
   bool get isOwner => widget.bankUserId == SharePrefUtils.getProfile().userId;
 
@@ -143,7 +143,7 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
                                 style: TextStyle(
                                     fontSize: 18, fontWeight: FontWeight.bold),
                               ),
-                              if (isOwner)
+                              if (!isOwner)
                                 Text(
                                   'Hiển thị các giao dịch thuộc cửa hàng của bạn.',
                                   style: TextStyle(
@@ -325,7 +325,7 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
 
   Widget _buildElement({
     required BuildContext context,
-    required RelatedTransactionReceiveDTO dto,
+    required TransDTO dto,
   }) {
     final double width = MediaQuery.of(context).size.width;
     return InkWell(

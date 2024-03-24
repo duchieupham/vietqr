@@ -39,86 +39,98 @@ class _InputBankStoreViewState extends State<InputBankStoreView> {
         builder: (context, state) {
           return GestureDetector(
             onTap: _hideKeyBoard,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                HeaderStoreWidget(
-                  nameStore: widget.nameStore,
-                  title: 'Chọn tài khoản nhận tiền\ncho cửa hàng của bạn',
-                  desTitle:
-                      'Danh sách dưới đây là các tài khoản ngân hàng đã được liên kết của bạn.',
-                ),
-                const SizedBox(height: 16),
-                if (state.status == BlocStatus.LOADING_PAGE)
-                  Center(
-                    child: CircularProgressIndicator(),
-                  )
-                else ...[
-                  if (state.banks.isEmpty)
+            child: Container(
+              color: Colors.transparent,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  HeaderStoreWidget(
+                    nameStore: widget.nameStore,
+                    title: 'Chọn tài khoản nhận tiền\ncho cửa hàng của bạn',
+                    desTitle:
+                        'Danh sách dưới đây là các tài khoản ngân hàng đã được liên kết của bạn.',
+                  ),
+                  const SizedBox(height: 16),
+                  if (state.status == BlocStatus.LOADING_PAGE)
                     Expanded(
-                      child: ListView.builder(
-                        itemCount: state.banks.length,
-                        itemBuilder: (context, index) {
-                          BankAccountTerminal dto = state.banks[index];
-                          return _buildItemBank(dto);
-                        },
-                      ),
-                    )
-                  else if (!state.isEmpty) ...[
-                    Text(
-                      'Có vẻ như bạn chưa\nliên kết tài khoản ngân hàng!',
-                      style: TextStyle(fontSize: 20),
-                    ),
-                    const SizedBox(height: 16),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 20, horizontal: 20),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        gradient: LinearGradient(
-                          colors: [
-                            Color(0xFFFFF3DF),
-                            Color(0xFFFFE1C9),
-                          ],
-                        ),
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Liên kết tài khoản ngân hàng',
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  'Liên kết tài khoản ngân hàng để nhận và quản lý các thông tin giao dịch của bạn.',
-                                  style: TextStyle(
-                                      fontSize: 11, color: AppColor.GREY_TEXT),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            alignment: Alignment.bottomCenter,
-                            child: Image.asset(
-                              'assets/images/ic-add-bank.png',
-                              height: 30,
-                              width: 70,
-                              fit: BoxFit.cover,
-                            ),
+                          Center(
+                            child: CircularProgressIndicator(),
                           ),
                         ],
                       ),
-                    ),
-                  ],
-                ]
-              ],
+                    )
+                  else ...[
+                    if (state.banks.isNotEmpty)
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: state.banks.length,
+                          itemBuilder: (context, index) {
+                            BankAccountTerminal dto = state.banks[index];
+                            return _buildItemBank(dto);
+                          },
+                        ),
+                      )
+                    else if (state.isEmpty) ...[
+                      Text(
+                        'Có vẻ như bạn chưa\nliên kết tài khoản ngân hàng!',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                      const SizedBox(height: 16),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 20, horizontal: 20),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          gradient: LinearGradient(
+                            colors: [
+                              Color(0xFFFFF3DF),
+                              Color(0xFFFFE1C9),
+                            ],
+                          ),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Liên kết tài khoản ngân hàng',
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    'Liên kết tài khoản ngân hàng để nhận và quản lý các thông tin giao dịch của bạn.',
+                                    style: TextStyle(
+                                        fontSize: 11,
+                                        color: AppColor.GREY_TEXT),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              alignment: Alignment.bottomCenter,
+                              child: Image.asset(
+                                'assets/images/ic-add-bank.png',
+                                height: 30,
+                                width: 70,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ]
+                ],
+              ),
             ),
           );
         },

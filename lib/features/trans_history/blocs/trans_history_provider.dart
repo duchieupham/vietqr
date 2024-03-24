@@ -4,7 +4,7 @@ import 'package:jiffy/jiffy.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/features/transaction/repositories/transaction_repository.dart';
+import 'package:vierqr/features/transaction_detail/repositories/transaction_repository.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/terminal_response_dto.dart';
 import 'package:vierqr/models/transaction_input_dto.dart';
@@ -175,7 +175,7 @@ class TransProvider with ChangeNotifier {
     changeTimeDataFilter(filterTime);
 
     updateFromDate(fromDate);
-    updateToDate(_toDate);
+    updateToDate(toDate);
 
     _terminalResponseDTO = terminalResponseDTO;
 

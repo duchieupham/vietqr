@@ -7,7 +7,7 @@ import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/models/business_detail_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/qr_recreate_dto.dart';
-import 'package:vierqr/models/related_transaction_receive_dto.dart';
+import 'package:vierqr/models/trans_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/models/terminal_response_dto.dart';
 import 'package:vierqr/models/transaction_branch_input_dto.dart';
@@ -18,9 +18,9 @@ import 'package:vierqr/services/local_storage/shared_preference/shared_pref_util
 class TransactionRepository {
   const TransactionRepository();
 
-  Future<List<RelatedTransactionReceiveDTO>> getTransStatus(
+  Future<List<TransDTO>> getTransStatus(
       TransactionInputDTO dto) async {
-    List<RelatedTransactionReceiveDTO> result = [];
+    List<TransDTO> result = [];
     try {
       final String url =
           '${EnvConfig.getBaseUrl()}transactions?bankId=${dto.bankId}&status=${dto.status}&offset=${dto.offset}&from=${dto.from}&to=${dto.to}';
@@ -32,8 +32,8 @@ class TransactionRepository {
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         result = data
-            .map<RelatedTransactionReceiveDTO>(
-                (json) => RelatedTransactionReceiveDTO.fromJson(json))
+            .map<TransDTO>(
+                (json) => TransDTO.fromJson(json))
             .toList();
       }
     } catch (e) {
@@ -48,9 +48,9 @@ class TransactionRepository {
   // - 3: content
   // - 4: terminal code
   // - 5: status
-  Future<List<RelatedTransactionReceiveDTO>> getTrans(
+  Future<List<TransDTO>> getTrans(
       TransactionInputDTO dto) async {
-    List<RelatedTransactionReceiveDTO> result = [];
+    List<TransDTO> result = [];
     try {
       String userId = SharePrefUtils.getProfile().userId;
 
@@ -64,8 +64,8 @@ class TransactionRepository {
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         result = data
-            .map<RelatedTransactionReceiveDTO>(
-                (json) => RelatedTransactionReceiveDTO.fromJson(json))
+            .map<TransDTO>(
+                (json) => TransDTO.fromJson(json))
             .toList();
       }
     } catch (e) {
@@ -74,9 +74,9 @@ class TransactionRepository {
     return result;
   }
 
-  Future<List<RelatedTransactionReceiveDTO>> getTransIsOwner(
+  Future<List<TransDTO>> getTransIsOwner(
       TransactionInputDTO dto) async {
-    List<RelatedTransactionReceiveDTO> result = [];
+    List<TransDTO> result = [];
     try {
       final String url =
           '${EnvConfig.getBaseUrl()}transactions/list?bankId=${dto.bankId}&type=${dto.type}&offset=${dto.offset}&value=${dto.value}&from=${dto.from}&to=${dto.to}';
@@ -88,8 +88,8 @@ class TransactionRepository {
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         result = data
-            .map<RelatedTransactionReceiveDTO>(
-                (json) => RelatedTransactionReceiveDTO.fromJson(json))
+            .map<TransDTO>(
+                (json) => TransDTO.fromJson(json))
             .toList();
       }
     } catch (e) {

@@ -8,8 +8,8 @@ import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/bank_detail/blocs/share_bdsd_bloc.dart';
 import 'package:vierqr/features/bank_detail/states/share_bdsd_state.dart';
-import 'package:vierqr/features/bank_detail/widget/detail_group.dart';
-import 'package:vierqr/features/bank_detail/widget/share_bdsd_invite.dart';
+import 'package:vierqr/features/create_store/create_store_screen.dart';
+import 'package:vierqr/features/detail_store/detail_store_screen.dart';
 import 'package:vierqr/features/share_bdsd/provider/share_bdsd_provider.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
@@ -304,8 +304,8 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
                           child: GestureDetector(
                             onTap: () async {
                               await NavigatorUtils.navigatePage(
-                                  context, ShareBDSDInviteScreen(),
-                                  routeName: '/share_bdsd_invite');
+                                  context, CreateStoreScreen(),
+                                  routeName: CreateStoreScreen.routeName);
                               _bloc.add(GetListGroupBDSDEvent(
                                   userID: SharePrefUtils.getProfile().userId,
                                   type: provider.getTypeFilter(),
@@ -465,10 +465,12 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
       onTap: () async {
         await NavigatorUtils.navigatePage(
             context,
-            DetailGroupScreen(
-              groupId: dto.id,
+            DetailStoreScreen(
+              terminalCode: dto.code,
+              terminalId: dto.id,
+              terminalName: dto.name,
             ),
-            routeName: '/share_bdsd_invite');
+            routeName: DetailStoreScreen.routeName);
         _bloc.add(
           GetListGroupBDSDEvent(
               userID: SharePrefUtils.getProfile().userId,
@@ -531,19 +533,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
                 ),
                 SizedBox(width: 60),
                 GestureDetector(
-                  onTap: () async {
-                    await NavigatorUtils.navigatePage(
-                        context,
-                        DetailGroupScreen(
-                          groupId: dto.id,
-                        ),
-                        routeName: '/share_bdsd_invite');
-                    _bloc.add(GetListGroupBDSDEvent(
-                        userID: SharePrefUtils.getProfile().userId,
-                        type: 0,
-                        offset: 0,
-                        loadingPage: true));
-                  },
+                  onTap: () => _onDetailStore(dto.id, dto.code, dto.name),
                   child: Icon(
                     Icons.arrow_forward,
                     color: AppColor.BLUE_TEXT,
@@ -630,27 +620,13 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
 
   Widget _buildTerminalBank(TerminalShareDTO dto, bool showBorder) {
     return GestureDetector(
-      onTap: () async {
-        await NavigatorUtils.navigatePage(
-            context,
-            DetailGroupScreen(
-              groupId: dto.id,
-            ),
-            routeName: '/share_bdsd_invite');
-        _bloc.add(GetListGroupBDSDEvent(
-            userID: SharePrefUtils.getProfile().userId,
-            type: 0,
-            offset: 0,
-            loadingPage: true));
-      },
+      onTap: () => _onDetailStore(dto.id, dto.terminalCode, dto.terminalName),
       child: Container(
         padding: EdgeInsets.only(bottom: 12, top: 12),
         decoration: BoxDecoration(
             border: Border(
                 bottom: BorderSide(
-                    color: showBorder
-                        ? AppColor.GREY_TEXT.withOpacity(0.4)
-                        : AppColor.WHITE,
+                    color: showBorder ? AppColor.GREY_BORDER : AppColor.WHITE,
                     width: 0.5))),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -678,20 +654,8 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
               width: 12,
             ),
             GestureDetector(
-              onTap: () async {
-                await NavigatorUtils.navigatePage(
-                    context,
-                    DetailGroupScreen(
-                      groupId: dto.id,
-                      isHideBDSD: false,
-                    ),
-                    routeName: '/share_bdsd_invite');
-                _bloc.add(GetListGroupBDSDEvent(
-                    userID: SharePrefUtils.getProfile().userId,
-                    type: 0,
-                    offset: 0,
-                    loadingPage: true));
-              },
+              onTap: () =>
+                  _onDetailStore(dto.id, dto.terminalCode, dto.terminalName),
               child: Icon(
                 Icons.arrow_forward,
                 color: AppColor.BLUE_TEXT,
@@ -730,5 +694,21 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
         ],
       ),
     );
+  }
+
+  void _onDetailStore(String id, String code, String name) async {
+    await NavigatorUtils.navigatePage(
+        context,
+        DetailStoreScreen(
+          terminalCode: code,
+          terminalId: id,
+          terminalName: name,
+        ),
+        routeName: DetailStoreScreen.routeName);
+    _bloc.add(GetListGroupBDSDEvent(
+        userID: SharePrefUtils.getProfile().userId,
+        type: 0,
+        offset: 0,
+        loadingPage: true));
   }
 }

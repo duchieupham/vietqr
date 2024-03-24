@@ -9,7 +9,7 @@ import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
 import 'package:vierqr/features/bank_detail/repositories/bank_card_repository.dart';
 import 'package:vierqr/features/bank_detail/states/bank_card_state.dart';
-import 'package:vierqr/features/transaction/blocs/transaction_bloc.dart';
+import 'package:vierqr/features/transaction_detail/blocs/transaction_bloc.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
 import 'package:vierqr/models/merchant_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';

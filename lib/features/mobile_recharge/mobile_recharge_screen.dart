@@ -344,7 +344,7 @@ class MobileRechargeScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(5),
                       border: Border.all(
                           width: 0.5,
-                          color: AppColor.GREY_TEXT.withOpacity(0.3)),
+                          color: AppColor.GREY_BORDER),
                     ),
                     child: CircularProgressIndicator(),
                   )
@@ -369,7 +369,7 @@ class MobileRechargeScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(5),
                         border: Border.all(
                             width: 0.5,
-                            color: AppColor.GREY_TEXT.withOpacity(0.3)),
+                            color: AppColor.GREY_BORDER),
                         image: DecorationImage(
                           fit: BoxFit.cover,
                           image: provider.networkProviders.imgId.isNotEmpty
@@ -647,7 +647,7 @@ class MobileRechargeScreen extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
           border: Border.all(
-              width: 0.5, color: AppColor.GREY_TEXT.withOpacity(0.3)),
+              width: 0.5, color: AppColor.GREY_BORDER),
           image: provider.networkProviders.imgId.isNotEmpty
               ? DecorationImage(
                   fit: BoxFit.cover,

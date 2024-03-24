@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:vierqr/features/create_store/views/info_store_view.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/bank_account_terminal.dart';
 import 'package:vierqr/models/detail_group_dto.dart';
 
-import 'views/input_bank_store_view.dart';
-import 'views/input_code_store_view.dart';
-import 'views/input_name_store_view.dart';
-import 'views/share_notify_member_view.dart';
+import 'create_store.dart';
 
 enum StoreStep {
+  INFO_MERCHANT,
+  INPUT_NAME_MERCHANT,
   INPUT_NAME_STORE,
   ADD_MEMBER,
   CODE_STORE,
@@ -18,18 +16,27 @@ enum StoreStep {
 }
 
 class CreateStoreScreen extends StatefulWidget {
+  static String routeName = '/CreateStoreScreen';
+
   @override
   State<CreateStoreScreen> createState() => _CreateStoreScreenState();
 }
 
 class _CreateStoreScreenState extends State<CreateStoreScreen> {
-  StoreStep step = StoreStep.INPUT_NAME_STORE;
+  StoreStep step = StoreStep.INFO_MERCHANT;
   bool isEnableButton = false;
   String _storeName = '';
+  String _merchantName = '';
+  String _merchantId = '';
   String _storeCode = '';
   String _storeAddress = '';
   BankAccountTerminal _dto = BankAccountTerminal();
   List<AccountMemberDTO> members = [];
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +47,7 @@ class _CreateStoreScreenState extends State<CreateStoreScreen> {
         onPressed: _handleBack,
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16),
+        padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20),
         child: _buildBody(),
       ),
     );
@@ -50,6 +57,26 @@ class _CreateStoreScreenState extends State<CreateStoreScreen> {
     Widget _body = const SizedBox();
 
     switch (step) {
+      case StoreStep.INFO_MERCHANT:
+        _body = InfoMerchantView(
+          onAddMerchant: () {
+            setState(() {
+              step = StoreStep.INPUT_NAME_MERCHANT;
+            });
+          },
+          callBack: (merchantId) {
+            _merchantId = merchantId;
+            step = StoreStep.INPUT_NAME_STORE;
+            setState(() {});
+          },
+        );
+        break;
+      case StoreStep.INPUT_NAME_MERCHANT:
+        _body = InputCreateMerchantView(
+          callBack: _onHandleCreateMerchant,
+          storeName: _merchantName,
+        );
+        break;
       case StoreStep.ADD_MEMBER:
         _body = ShareNotifyMemberView(
           callBack: _onHandleMember,
@@ -76,6 +103,7 @@ class _CreateStoreScreenState extends State<CreateStoreScreen> {
           storeName: _storeName,
           storeCode: _storeCode,
           storeAddress: _storeAddress,
+          merchantId: _merchantId,
           dto: _dto,
           members: members,
         );
@@ -123,10 +151,33 @@ class _CreateStoreScreenState extends State<CreateStoreScreen> {
     });
   }
 
+  _onHandleCreateMerchant(String merchantName, String merchantId) {
+    setState(() {
+      step = StoreStep.INPUT_NAME_STORE;
+      _merchantName = merchantName;
+      _merchantId = merchantId;
+    });
+  }
+
   void _handleBack() {
     switch (step) {
-      case StoreStep.INPUT_NAME_STORE:
+      case StoreStep.INFO_MERCHANT:
         Navigator.pop(context);
+        break;
+      case StoreStep.INPUT_NAME_MERCHANT:
+        setState(() {
+          step = StoreStep.INFO_MERCHANT;
+          _merchantName = '';
+          _merchantId = '';
+        });
+        break;
+      case StoreStep.INPUT_NAME_STORE:
+        setState(() {
+          step = StoreStep.INFO_MERCHANT;
+          _storeName = '';
+          _merchantName = '';
+          _merchantId = '';
+        });
         break;
       case StoreStep.BANK_STORE:
         setState(() {

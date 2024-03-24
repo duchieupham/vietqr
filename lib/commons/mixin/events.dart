@@ -37,3 +37,10 @@ class SentDataToContact {
 
   SentDataToContact(this.datas, this.length);
 }
+
+class ReloadStoreEvent {
+  final String id;
+  final bool isUpdate;
+
+  ReloadStoreEvent(this.id, this.isUpdate);
+}

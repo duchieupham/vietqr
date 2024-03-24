@@ -23,7 +23,7 @@ class Register extends StatelessWidget {
   final String phoneNo;
   final bool isFocus;
 
-  const Register({super.key, required this.phoneNo, required this.isFocus});
+  const Register({super.key, this.phoneNo = '', required this.isFocus});
 
   @override
   Widget build(BuildContext context) {

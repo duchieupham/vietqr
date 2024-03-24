@@ -11,6 +11,7 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
 import 'package:vierqr/commons/widgets/widget_qr.dart';
+import 'package:vierqr/features/add_bank/add_bank_screen.dart';
 import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
 import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
 import 'package:vierqr/features/bank_detail/views/bottom_sheet_detail_bank.dart';
@@ -458,31 +459,7 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
     } else {
       return Center(
         child: GestureDetector(
-          onTap: () {
-            BankTypeDTO bankTypeDTO = BankTypeDTO(
-                id: widget.dto.bankTypeId,
-                bankCode: widget.dto.bankCode,
-                bankName: widget.dto.bankName,
-                imageId: widget.dto.imgId,
-                bankShortName: widget.dto.bankCode,
-                status: widget.dto.bankTypeStatus,
-                caiValue: widget.dto.caiValue);
-            Navigator.pushNamed(
-              context,
-              Routes.ADD_BANK_CARD,
-              arguments: {
-                'step': 1,
-                'bankAccount': widget.dto.bankAccount,
-                'name': widget.dto.userBankName,
-                'bankDTO': bankTypeDTO,
-                'bankId': widget.dto.id,
-              },
-            ).then((value) {
-              if (value is bool) {
-                widget.bloc.add(const BankCardGetDetailEvent());
-              }
-            });
-          },
+          onTap: _onLinked,
           child: Container(
             width: 170,
             margin: EdgeInsets.only(top: 20),
@@ -525,5 +502,28 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
           context, CreateMerchantScreen(bankDetail: widget.dto),
           routeName: CreateMerchantScreen.routeName);
     }
+  }
+
+  void _onLinked() async {
+    BankTypeDTO bankTypeDTO = BankTypeDTO(
+      id: widget.dto.bankTypeId,
+      bankCode: widget.dto.bankCode,
+      bankName: widget.dto.bankName,
+      imageId: widget.dto.imgId,
+      bankShortName: widget.dto.bankCode,
+      status: widget.dto.bankTypeStatus,
+      caiValue: widget.dto.caiValue,
+      bankId: widget.dto.id,
+      bankAccount: widget.dto.bankAccount,
+      userBankName: widget.dto.userBankName,
+    );
+    await NavigatorUtils.navigatePage(
+            context, AddBankScreen(bankTypeDTO: bankTypeDTO),
+            routeName: AddBankScreen.routeName)
+        .then((value) {
+      if (value is bool) {
+        widget.bloc.add(const BankCardGetDetailEvent());
+      }
+    });
   }
 }

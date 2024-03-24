@@ -381,7 +381,7 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
                       border: position != (list.length - 1)
                           ? Border(
                               bottom: BorderSide(
-                                  color: AppColor.GREY_TEXT.withOpacity(0.3),
+                                  color: AppColor.GREY_BORDER,
                                   width: 0.5))
                           : null,
                     ),

@@ -6,7 +6,6 @@ import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/error_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/merchant/merchant.dart';
-import 'package:vierqr/features/store/create_store/states/create_store_state.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 

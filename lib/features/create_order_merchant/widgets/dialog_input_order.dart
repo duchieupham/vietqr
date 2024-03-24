@@ -3,7 +3,7 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/features/create_order_merchant/views/input_order_second.dart';
-import 'package:vierqr/features/store/create_store/responsitory/create_store_responsitory.dart';
+import 'package:vierqr/features/create_store/responsitory/create_store_responsitory.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
 

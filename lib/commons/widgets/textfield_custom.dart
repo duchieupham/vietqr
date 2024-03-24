@@ -116,6 +116,7 @@ class _TextFieldWidgetState extends State<TextFieldCustom> {
       decoration: InputDecoration(
         hintText: widget.hintText,
         border: widget.inputBorder ?? InputBorder.none,
+        counterText: '',
         hintStyle: TextStyle(
           fontSize: (widget.fontSize != null) ? widget.fontSize : 14,
           color: (widget.title != null)

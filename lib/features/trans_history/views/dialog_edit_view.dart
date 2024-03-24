@@ -5,7 +5,7 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
 import 'package:vierqr/commons/utils/error_utils.dart';
 import 'package:vierqr/commons/widgets/textfield_custom.dart';
-import 'package:vierqr/features/transaction/repositories/transaction_repository.dart';
+import 'package:vierqr/features/transaction_detail/repositories/transaction_repository.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 
 class DialogEditView extends StatefulWidget {

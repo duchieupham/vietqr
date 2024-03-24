@@ -1,11 +1,14 @@
 import 'package:equatable/equatable.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/models/store/merchant_dto.dart';
 import 'package:vierqr/models/store/store_dto.dart';
 import 'package:vierqr/models/store/total_store_dto.dart';
 
 enum StoreType {
   NONE,
   GET_STORES,
+  GET_MERCHANTS,
+  UPDATE_MERCHANTS,
   GET_TOTAL,
 }
 
@@ -17,6 +20,7 @@ class StoreState extends Equatable {
   final bool isEmpty;
   final TotalStoreDTO? totalStoreDTO;
   final List<StoreDTO> stores;
+  final List<MerchantDTO> merchants;
   final int offset;
 
   StoreState({
@@ -28,6 +32,7 @@ class StoreState extends Equatable {
     this.totalStoreDTO,
     this.offset = 0,
     required this.stores,
+    required this.merchants,
   });
 
   StoreState copyWith({
@@ -38,6 +43,7 @@ class StoreState extends Equatable {
     bool? isEmpty,
     TotalStoreDTO? totalStoreDTO,
     List<StoreDTO>? stores,
+    List<MerchantDTO>? merchants,
     int? offset,
   }) {
     return StoreState(
@@ -48,6 +54,7 @@ class StoreState extends Equatable {
       isEmpty: isEmpty ?? this.isEmpty,
       totalStoreDTO: totalStoreDTO ?? this.totalStoreDTO,
       stores: stores ?? this.stores,
+      merchants: merchants ?? this.merchants,
       offset: offset ?? this.offset,
     );
   }
@@ -61,6 +68,7 @@ class StoreState extends Equatable {
         isEmpty,
         totalStoreDTO,
         isLoadMore,
-        stores
+        stores,
+        merchants
       ];
 }

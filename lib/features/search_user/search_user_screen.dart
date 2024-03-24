@@ -49,100 +49,89 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => bloc,
-      child: BlocConsumer<SearchUserBloc, SearchUserState>(
-          listener: (context, state) {
-        if (state.request == SearchUserType.CLEAR_MEMBER) {
-          _focusNode.requestFocus();
-        }
-      }, builder: (context, state) {
-        return GestureDetector(
-          onTap: _onHideKeyboard,
-          child: Container(
-            color: Colors.transparent,
-            child: Column(
-              children: [
-                _buildAppbar(state.insertMembers),
-                const SizedBox(height: 16),
-                _buildSearch(),
-                const SizedBox(height: 30),
-                Expanded(
-                  child: BlocConsumer<SearchUserBloc, SearchUserState>(
-                    listener: (context, state) {
-                      if (state.request == SearchUserType.CLEAR_MEMBER) {
-                        _focusNode.requestFocus();
-                      }
-                    },
-                    builder: (context, state) {
-                      if (state.request == SearchUserType.SEARCH_MEMBER) {
-                        return const Center(
-                          child: Padding(
-                            padding: EdgeInsets.only(bottom: 120),
-                            child: SizedBox(
-                                width: 32,
-                                height: 32,
-                                child: CircularProgressIndicator(
-                                    color: AppColor.BLUE_TEXT)),
+      child: GestureDetector(
+        onTap: _onHideKeyboard,
+        child: Container(
+          color: Colors.transparent,
+          child: Column(
+            children: [
+              _buildAppbar(),
+              const SizedBox(height: 16),
+              _buildSearch(),
+              const SizedBox(height: 30),
+              Expanded(
+                child: BlocConsumer<SearchUserBloc, SearchUserState>(
+                  listener: (context, state) {},
+                  builder: (context, state) {
+                    if (state.request == SearchUserType.SEARCH_MEMBER) {
+                      return const Center(
+                        child: Padding(
+                          padding: EdgeInsets.only(bottom: 120),
+                          child: SizedBox(
+                              width: 32,
+                              height: 32,
+                              child: CircularProgressIndicator(
+                                  color: AppColor.BLUE_TEXT)),
+                        ),
+                      );
+                    }
+
+                    if (state.members.isNotEmpty) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Kết quả tìm kiếm',
+                            style: TextStyle(fontWeight: FontWeight.w600),
                           ),
-                        );
-                      }
+                          const SizedBox(
+                            height: 12,
+                          ),
+                          Expanded(
+                            child: ListView.builder(
+                              itemCount: state.members.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                AccountMemberDTO e = state.members[index];
+                                return ItemMemberView(
+                                  dto: e,
+                                  callBack: () {
+                                    widget.onSelected(e);
+                                    bloc.add(InsertMemberToList(e));
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      );
+                    }
 
-                      if (state.members.isNotEmpty) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Kết quả tìm kiếm',
-                              style: TextStyle(fontWeight: FontWeight.w600),
-                            ),
-                            const SizedBox(
-                              height: 12,
-                            ),
-                            Expanded(
-                              child: ListView.builder(
-                                itemCount: state.members.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  AccountMemberDTO e = state.members[index];
-                                  return ItemMemberView(
-                                    dto: e,
-                                    callBack: () {
-                                      widget.onSelected(e);
-                                      bloc.add(InsertMemberToList(e));
-                                    },
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
-                        );
-                      }
-
-                      if (state.isEmpty) {
-                        return Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              'assets/images/ic-member-empty.png',
-                              height: 100,
-                            ),
-                            const SizedBox(
-                              height: 12,
-                            ),
-                            Text('Không tìm thấy người dùng'),
-                            const SizedBox(
-                              height: 48,
-                            ),
-                          ],
-                        );
-                      }
-                      return SizedBox.shrink();
-                    },
-                  ),
+                    if (state.isEmpty) {
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/ic-member-empty.png',
+                            height: 100,
+                          ),
+                          const SizedBox(
+                            height: 12,
+                          ),
+                          Text('Không tìm thấy người dùng'),
+                          const SizedBox(
+                            height: 48,
+                          ),
+                        ],
+                      );
+                    }
+                    return SizedBox.shrink();
+                  },
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        );
-      }),
+        ),
+      ),
     );
   }
 
@@ -181,7 +170,9 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
                       ? 'Tìm kiếm theo số điện thoại'
                       : 'Tìm kiếm theo tên',
                   contentPadding: EdgeInsets.symmetric(horizontal: 20),
-                  inputType: TextInputType.text,
+                  inputType:
+                      type == 0 ? TextInputType.phone : TextInputType.text,
+                  maxLength: type == 0 ? 10 : 200,
                   keyboardAction: TextInputAction.search,
                   controller: _searchController,
                   focusNode: _focusNode,
@@ -205,7 +196,7 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
     );
   }
 
-  _buildAppbar(List<AccountMemberDTO> list) {
+  _buildAppbar() {
     return Padding(
       padding: const EdgeInsets.only(top: 16),
       child: Row(
@@ -232,6 +223,8 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
   }
 
   void _onFilter() async {
+    _onHideKeyboard();
+
     final data = await showDialog(
       barrierDismissible: false,
       context: context,
@@ -254,6 +247,6 @@ class _SearchUserScreenState extends State<SearchUserScreen> {
   }
 
   void _onHideKeyboard() {
-    _focusNode.unfocus();
+    FocusManager.instance.primaryFocus?.unfocus();
   }
 }

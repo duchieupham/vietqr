@@ -16,7 +16,7 @@ class TotalStoreDTO {
   final DateTime? date;
   final int? totalTrans;
   final int? totalAmount;
-  final int? totalTerminal;
+  int? totalTerminal;
   final int? ratePreviousDate;
   final int? ratePreviousMonth;
 

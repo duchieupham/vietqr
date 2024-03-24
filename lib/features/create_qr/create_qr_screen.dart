@@ -30,7 +30,7 @@ import 'package:vierqr/features/create_qr/events/create_qr_event.dart';
 import 'package:vierqr/features/create_qr/states/create_qr_state.dart';
 import 'package:vierqr/features/create_qr/views/create_success_view.dart';
 import 'package:vierqr/features/create_qr/widgets/bottom_sheet_image.dart';
-import 'package:vierqr/features/transaction/widgets/transaction_sucess_widget.dart';
+import 'package:vierqr/features/transaction_detail/widgets/transaction_sucess_widget.dart';
 
 import 'widgets/select_bank_view.dart';
 
@@ -428,7 +428,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                               if (provider.imageFile != null) ...[
                                 _buildImage(provider.imageFile!),
                                 const SizedBox(height: 8),
-                                const Divider(color: AppColor.GREY_TEXT),
+                                const Divider(color: AppColor.GREY_BORDER),
                                 const SizedBox(height: 8),
                               ],
                               Row(

@@ -34,10 +34,29 @@ class GetListBankAccountLink extends CreateStoreEvent {
   List<Object?> get props => [terminalId];
 }
 
+class GetListMerchantEvent extends CreateStoreEvent {
+  final int offset;
+  final bool loadMore;
+
+  GetListMerchantEvent({this.offset = 0, this.loadMore = false});
+
+  @override
+  List<Object?> get props => [offset, loadMore];
+}
+
 class CreateNewStoreEvent extends CreateStoreEvent {
   final Map<String, dynamic> param;
 
   CreateNewStoreEvent(this.param);
+
+  @override
+  List<Object?> get props => [param];
+}
+
+class CreateMerchantEvent extends CreateStoreEvent {
+  final Map<String, dynamic> param;
+
+  CreateMerchantEvent(this.param);
 
   @override
   List<Object?> get props => [param];

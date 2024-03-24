@@ -137,6 +137,8 @@ class BaseAPIClient {
     String? token = await SharePrefUtils.getTokenInfo();
     String tokenFree = SharePrefUtils.getTokenFree();
 
+    print('token : $token');
+
     switch (type) {
       case AuthenticationType.SYSTEM:
         result['Authorization'] =

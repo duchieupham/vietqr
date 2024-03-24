@@ -1,4 +1,4 @@
-import 'package:vierqr/models/related_transaction_receive_dto.dart';
+import 'package:vierqr/models/trans_dto.dart';
 
 class BusinessItemDTO {
   final String businessId;
@@ -9,7 +9,7 @@ class BusinessItemDTO {
   final String name;
   final String address;
   final String taxCode;
-  final List<RelatedTransactionReceiveDTO> transactions;
+  final List<TransDTO> transactions;
   final List<BranchDTO> branchs;
   final List<BankAccountInBusiness> bankAccounts;
 
@@ -33,10 +33,10 @@ class BusinessItemDTO {
   });
 
   factory BusinessItemDTO.fromJson(Map<String, dynamic> json) {
-    List<RelatedTransactionReceiveDTO> transactions = [];
+    List<TransDTO> transactions = [];
     if (json['transactions'] != null) {
       json['transactions'].forEach((v) {
-        transactions.add(RelatedTransactionReceiveDTO.fromJson(v));
+        transactions.add(TransDTO.fromJson(v));
       });
     }
 

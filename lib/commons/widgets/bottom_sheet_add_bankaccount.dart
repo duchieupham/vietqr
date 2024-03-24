@@ -89,7 +89,7 @@ class BottomSheetAddBankAccount extends StatelessWidget {
                                       borderRadius: BorderRadius.circular(40),
                                       border: Border.all(
                                           width: 0.5,
-                                          color: AppColor.GREY_TEXT),
+                                          color: AppColor.GREY_BORDER),
                                       image: DecorationImage(
                                         image:
                                             ImageUtils.instance.getImageNetWork(

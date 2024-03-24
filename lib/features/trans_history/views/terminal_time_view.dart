@@ -23,15 +23,15 @@ class TerminalTimeView extends StatefulWidget {
 }
 
 class _TerminalTimeViewState extends State<TerminalTimeView> {
-  DateTime? toDate;
-  DateTime? fromDate;
+  DateTime toDate = DateTime.now();
+  DateTime fromDate = DateTime.now();
   MonthCalculator monthCalculator = MonthCalculator();
 
   @override
   void initState() {
     super.initState();
     setState(() {
-      toDate = widget.toDate;
+      toDate = widget.toDate ?? DateTime.now();
       fromDate = widget.fromDate;
     });
   }
@@ -53,63 +53,59 @@ class _TerminalTimeViewState extends State<TerminalTimeView> {
                   firstDate: DateTime(2021, 6),
                   lastDate: DateTime.now(),
                 );
-                if (toDate != null) {
-                  int numberOfMonths = monthCalculator.calculateMonths(
-                      date ?? DateTime.now(), toDate ?? DateTime.now());
-                  if (numberOfMonths > 3) {
-                    DialogWidget.instance.openMsgDialog(
-                        title: 'Không hợp lệ',
-                        msg:
-                            'Vui lòng nhập khoảng thời gian tối đa là 3 tháng.');
-                  } else {
-                    setState(() {
-                      fromDate = date;
-                    });
-                  }
+
+                int numberOfMonths = monthCalculator.calculateMonths(
+                    date ?? DateTime.now(), toDate);
+
+                if (numberOfMonths > 3) {
+                  DialogWidget.instance.openMsgDialog(
+                      title: 'Cảnh báo',
+                      msg: 'Vui lòng nhập khoảng thời gian tối đa là 3 tháng.');
+                } else if ((date ?? DateTime.now()).isAfter(toDate)) {
+                  DialogWidget.instance.openMsgDialog(
+                      title: 'Cảnh báo',
+                      msg: 'Vui lòng kiểm tra lại khoảng thời gian.');
                 } else {
                   setState(() {
-                    fromDate = date;
+                    fromDate = date ?? DateTime.now();
                   });
+
+                  widget.updateFromDate(fromDate);
                 }
-                widget.updateFromDate(fromDate!);
               },
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 8),
-                height: 50,
+                height: 40,
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                alignment: Alignment.center,
                 decoration: BoxDecoration(
-                    color: AppColor.WHITE,
-                    border: Border.all(
-                        color: AppColor.BLACK_BUTTON.withOpacity(0.5),
-                        width: 0.5),
-                    borderRadius: BorderRadius.circular(6)),
+                  color: AppColor.GREY_BG,
+                  border: Border.all(color: AppColor.GREY_LIGHT),
+                  borderRadius: BorderRadius.circular(5),
+                ),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     const Text(
-                      'Từ:',
-                      style: TextStyle(fontSize: 12, color: AppColor.textBlack),
+                      'Từ: ',
+                      style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
                     ),
-                    const SizedBox(width: 2),
+                    const SizedBox(width: 4),
                     Expanded(
                       child: Text(
                         TimeUtils.instance.formatDateToString(fromDate),
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                        style: const TextStyle(
-                            fontSize: 12, fontWeight: FontWeight.w500),
+                        style: const TextStyle(fontSize: 12),
                       ),
                     ),
-                    const SizedBox(width: 2),
+                    const SizedBox(width: 4),
                     const Icon(
                       Icons.calendar_month_outlined,
-                      size: 16,
-                    ),
+                      size: 12,
+                    )
                   ],
                 ),
               ),
             ),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 8),
           Expanded(
             child: InkWell(
               onTap: () async {
@@ -120,49 +116,50 @@ class _TerminalTimeViewState extends State<TerminalTimeView> {
                   lastDate: DateTime.now(),
                 );
                 int numberOfMonths = monthCalculator.calculateMonths(
-                    fromDate ?? DateTime.now(), date ?? DateTime.now());
+                    fromDate, date ?? DateTime.now());
+
                 if (numberOfMonths > 3) {
                   DialogWidget.instance.openMsgDialog(
-                      title: 'Không hợp lệ',
+                      title: 'Cảnh báo',
                       msg: 'Vui lòng nhập khoảng thời gian tối đa là 3 tháng.');
+                } else if ((date ?? DateTime.now()).isBefore(fromDate)) {
+                  DialogWidget.instance.openMsgDialog(
+                      title: 'Cảnh báo',
+                      msg: 'Vui lòng kiểm tra lại khoảng thời gian.');
                 } else {
                   setState(() {
-                    toDate = date;
+                    toDate = date ?? DateTime.now();
                   });
+                  widget.updateToDate(toDate);
                 }
               },
               child: Container(
-                height: 50,
-                padding: EdgeInsets.symmetric(horizontal: 8),
+                height: 40,
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                alignment: Alignment.center,
                 decoration: BoxDecoration(
-                    color: AppColor.WHITE,
-                    border: Border.all(
-                        color: AppColor.BLACK_BUTTON.withOpacity(0.5),
-                        width: 0.5),
-                    borderRadius: BorderRadius.circular(6)),
+                  color: AppColor.GREY_BG,
+                  border: Border.all(color: AppColor.GREY_LIGHT),
+                  borderRadius: BorderRadius.circular(5),
+                ),
                 child: Row(
                   children: [
                     const Text(
-                      'Đến:',
-                      style: TextStyle(fontSize: 12, color: AppColor.textBlack),
+                      'Đến: ',
+                      style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
                     ),
-                    const SizedBox(width: 2),
+                    const SizedBox(width: 4),
                     Expanded(
                       child: Text(
-                        toDate == null
-                            ? 'Chọn ngày'
-                            : TimeUtils.instance.formatDateToString(toDate),
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                        style: const TextStyle(
-                            fontSize: 12, fontWeight: FontWeight.w500),
+                        TimeUtils.instance.formatDateToString(toDate),
+                        style: const TextStyle(fontSize: 12),
                       ),
                     ),
-                    const SizedBox(width: 2),
+                    const SizedBox(width: 4),
                     const Icon(
                       Icons.calendar_month_outlined,
-                      size: 16,
-                    ),
+                      size: 12,
+                    )
                   ],
                 ),
               ),

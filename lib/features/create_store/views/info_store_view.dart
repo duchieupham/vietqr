@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/error_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/create_store/create_store.dart';
@@ -15,6 +16,7 @@ class InfoStoreView extends StatefulWidget {
   final String storeName;
   final String storeCode;
   final String storeAddress;
+  final String merchantId;
   final BankAccountTerminal dto;
   final List<AccountMemberDTO> members;
 
@@ -23,6 +25,7 @@ class InfoStoreView extends StatefulWidget {
       required this.storeName,
       required this.storeCode,
       required this.storeAddress,
+      required this.merchantId,
       required this.dto,
       required this.members});
 
@@ -53,6 +56,7 @@ class _InfoStoreViewState extends State<InfoStoreView> {
             Navigator.pop(context);
           }
           if (state.request == StoreType.CREATE_SUCCESS) {
+            eventBus.fire(ReloadStoreEvent('', false));
             Navigator.pop(context);
             Fluttertoast.showToast(
               msg: 'Tạo group thành công',
@@ -62,9 +66,6 @@ class _InfoStoreViewState extends State<InfoStoreView> {
               textColor: Theme.of(context).hintColor,
               fontSize: 15,
             );
-            if (Navigator.canPop(context)) {
-              Navigator.pop(context);
-            }
           }
           if (state.status == BlocStatus.ERROR) {
             Navigator.pop(context);
@@ -126,6 +127,7 @@ class _InfoStoreViewState extends State<InfoStoreView> {
     param['bankIds'] = [widget.dto.bankId];
     param['userIds'] = userIds;
     param['userId'] = SharePrefUtils.getProfile().userId;
+    param['merchantId'] = widget.merchantId;
 
     bloc.add(CreateNewStoreEvent(param));
   }

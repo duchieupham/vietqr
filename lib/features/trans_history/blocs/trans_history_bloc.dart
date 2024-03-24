@@ -5,8 +5,8 @@ import 'package:vierqr/commons/mixin/base_manager.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/trans_history/events/trans_history_event.dart';
 import 'package:vierqr/features/trans_history/states/trans_history_state.dart';
-import 'package:vierqr/features/transaction/blocs/transaction_bloc.dart';
-import 'package:vierqr/models/related_transaction_receive_dto.dart';
+import 'package:vierqr/features/transaction_detail/blocs/transaction_bloc.dart';
+import 'package:vierqr/models/trans_dto.dart';
 import 'package:vierqr/models/terminal_response_dto.dart';
 
 class TransHistoryBloc extends Bloc<TransHistoryEvent, TransHistoryState>
@@ -36,7 +36,7 @@ class TransHistoryBloc extends Bloc<TransHistoryEvent, TransHistoryState>
       if (event is TransactionStatusEventGetList) {
         bool isLoadMore = true;
         emit(state.copyWith(status: BlocStatus.LOADING));
-        final List<RelatedTransactionReceiveDTO> result =
+        final List<TransDTO> result =
             await transactionRepository.getTransStatus(event.dto);
         if (result.isEmpty || result.length < 20) {
           isLoadMore = false;
@@ -63,7 +63,7 @@ class TransHistoryBloc extends Bloc<TransHistoryEvent, TransHistoryState>
         bool isLoadMore = true;
         emit(state.copyWith(
             status: event.isLoading ? BlocStatus.LOADING : BlocStatus.NONE));
-        final List<RelatedTransactionReceiveDTO> result =
+        final List<TransDTO> result =
             await transactionRepository.getTrans(event.dto);
         if (result.isEmpty || result.length < 20) {
           isLoadMore = false;
@@ -91,7 +91,7 @@ class TransHistoryBloc extends Bloc<TransHistoryEvent, TransHistoryState>
         bool isLoadMore = true;
         emit(state.copyWith(
             status: event.isLoading ? BlocStatus.LOADING : BlocStatus.NONE));
-        final List<RelatedTransactionReceiveDTO> result =
+        final List<TransDTO> result =
             await transactionRepository.getTransIsOwner(event.dto);
         if (result.isEmpty || result.length < 20) {
           isLoadMore = false;
@@ -117,10 +117,10 @@ class TransHistoryBloc extends Bloc<TransHistoryEvent, TransHistoryState>
     try {
       if (event is TransactionEventFetchIsOwner) {
         bool isLoadMore = true;
-        List<RelatedTransactionReceiveDTO> data = state.list;
+        List<TransDTO> data = state.list;
         emit(state.copyWith(
             status: BlocStatus.NONE, type: TransHistoryType.NONE));
-        final List<RelatedTransactionReceiveDTO> result =
+        final List<TransDTO> result =
             await transactionRepository.getTransIsOwner(event.dto);
         if (result.isEmpty || result.length < 20) {
           isLoadMore = false;
@@ -146,10 +146,10 @@ class TransHistoryBloc extends Bloc<TransHistoryEvent, TransHistoryState>
     try {
       if (event is TransactionEventFetch) {
         bool isLoadMore = true;
-        List<RelatedTransactionReceiveDTO> data = state.list;
+        List<TransDTO> data = state.list;
         emit(state.copyWith(
             status: BlocStatus.NONE, type: TransHistoryType.NONE));
-        final List<RelatedTransactionReceiveDTO> result =
+        final List<TransDTO> result =
             await transactionRepository.getTrans(event.dto);
         if (result.isEmpty || result.length < 20) {
           isLoadMore = false;
@@ -172,10 +172,10 @@ class TransHistoryBloc extends Bloc<TransHistoryEvent, TransHistoryState>
     try {
       if (event is TransactionStatusEventFetch) {
         bool isLoadMore = true;
-        List<RelatedTransactionReceiveDTO> data = state.list;
+        List<TransDTO> data = state.list;
         emit(state.copyWith(
             status: BlocStatus.NONE, type: TransHistoryType.NONE));
-        final List<RelatedTransactionReceiveDTO> result =
+        final List<TransDTO> result =
             await transactionRepository.getTransStatus(event.dto);
         if (result.isEmpty || result.length < 20) {
           isLoadMore = false;

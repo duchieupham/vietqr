@@ -39,3 +39,14 @@ class GetTotalStoreByDayEvent extends StoreEvent {
   @override
   List<Object?> get props => [merchantId, fromDate, toDate];
 }
+
+class GetMerchantsEvent extends StoreEvent {}
+
+class UpdateListStoreEvent extends StoreEvent {
+  final String id;
+
+  UpdateListStoreEvent(this.id);
+
+  @override
+  List<Object?> get props => [id];
+}

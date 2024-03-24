@@ -1,16 +1,22 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
-import 'package:vierqr/features/bank_detail/widget/detail_group.dart';
+import 'package:vierqr/features/create_store/create_store_screen.dart';
+import 'package:vierqr/features/detail_store/detail_store_screen.dart';
+import 'package:vierqr/models/store/merchant_dto.dart';
 import 'package:vierqr/models/store/store_dto.dart';
 import 'package:vierqr/models/store/total_store_dto.dart';
 
 class InfoStoreView extends StatefulWidget {
   final TotalStoreDTO? totalStoreDTO;
+  final List<MerchantDTO> merchants;
+  final MerchantDTO dto;
   final List<StoreDTO> stores;
   final RefreshCallback onRefresh;
   final ScrollController controller;
+  final Function(MerchantDTO?) callBack;
 
   const InfoStoreView({
     super.key,
@@ -18,6 +24,9 @@ class InfoStoreView extends StatefulWidget {
     required this.stores,
     required this.controller,
     required this.onRefresh,
+    required this.merchants,
+    required this.dto,
+    required this.callBack,
   });
 
   @override
@@ -33,264 +42,113 @@ class _InfoStoreViewState extends State<InfoStoreView> {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: widget.onRefresh,
-      child: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 12.0),
-        physics: const AlwaysScrollableScrollPhysics(),
-        controller: widget.controller,
+      child: Stack(
         children: [
-          const SizedBox(height: 40),
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              color: Colors.white,
-            ),
-            child: Column(
-              children: [
-                Row(
+          ListView(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            physics: const AlwaysScrollableScrollPhysics(),
+            controller: widget.controller,
+            children: [
+              const SizedBox(height: 16),
+              _buildDropListTerminal(),
+              const SizedBox(height: 16),
+              _buildResultSaleToday(),
+              _buildListStore(),
+            ],
+          ),
+          Positioned(
+            bottom: 20,
+            right: 16,
+            child: GestureDetector(
+              onTap: _onCreateStore,
+              child: Container(
+                height: 40,
+                padding: EdgeInsets.symmetric(horizontal: 12),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                  color: AppColor.BLUE_TEXT,
+                ),
+                child: Row(
                   children: [
-                    Text(
-                      'Kết quả bán hàng hôm nay',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    Image.asset(
+                      'assets/images/ic-store-white.png',
+                      height: 26,
+                      color: Colors.white,
                     ),
-                    const Spacer(),
                     Text(
-                      stringDate,
-                      style: TextStyle(color: AppColor.GREY_TEXT),
-                    ),
-                    Image.asset('assets/images/ic-navigate-next-blue.png',
-                        width: 32),
+                      'Thêm cửa hàng',
+                      style: TextStyle(fontSize: 12, color: AppColor.WHITE),
+                    )
                   ],
                 ),
-                const SizedBox(height: 16),
-                IntrinsicHeight(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildItemTotal(
-                              title:
-                                  '${widget.totalStoreDTO?.totalTrans ?? 0} giao dịch',
-                              content: CurrencyUtils.instance
-                                  .getCurrencyFormatted(
-                                      (widget.totalStoreDTO?.totalAmount ?? 0)
-                                          .toString()),
-                              des: 'Doanh thu',
-                              image: 'assets/images/ic-money-white.png',
-                            ),
-                            const SizedBox(height: 12),
-                            _buildItemTotal(
-                              content:
-                                  '${(widget.totalStoreDTO?.ratePreviousDate ?? 0).toString().replaceAll('-', '')}%',
-                              des: 'So với hôm qua',
-                              image: (widget.totalStoreDTO?.ratePreviousDate ??
-                                          0) >=
-                                      0
-                                  ? 'assets/images/ic-uptrend-white.png'
-                                  : 'assets/images/ic-downtrend-white.png',
-                              contentColor:
-                                  (widget.totalStoreDTO?.ratePreviousDate ??
-                                              0) >=
-                                          0
-                                      ? AppColor.GREEN
-                                      : AppColor.RED_EC1010,
-                              iconColor:
-                                  (widget.totalStoreDTO?.ratePreviousDate ??
-                                              0) >=
-                                          0
-                                      ? AppColor.GREEN
-                                      : AppColor.RED_CALENDAR,
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      const VerticalDivider(color: AppColor.GREY_TEXT),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildItemTotal(
-                              title:
-                                  '${widget.totalStoreDTO?.totalTerminal ?? 0} cửa hàng',
-                              content: '',
-                              des: '',
-                              iconColor: AppColor.ORANGE_DARK,
-                              contentColor: AppColor.BLACK,
-                              image: 'assets/images/ic-store-new_white.png',
-                            ),
-                            const SizedBox(height: 12),
-                            _buildItemTotal(
-                              content:
-                                  '${widget.totalStoreDTO?.ratePreviousMonth ?? 0}%',
-                              des: 'So với cùng kỳ tháng trước',
-                              image: (widget.totalStoreDTO?.ratePreviousMonth ??
-                                          0) >=
-                                      0
-                                  ? 'assets/images/ic-uptrend-white.png'
-                                  : 'assets/images/ic-downtrend-white.png',
-                              contentColor:
-                                  (widget.totalStoreDTO?.ratePreviousMonth ??
-                                              0) >=
-                                          0
-                                      ? AppColor.GREEN
-                                      : AppColor.RED_EC1010,
-                              iconColor:
-                                  (widget.totalStoreDTO?.ratePreviousMonth ??
-                                              0) >=
-                                          0
-                                      ? AppColor.GREEN
-                                      : AppColor.RED_CALENDAR,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
-              ],
+              ),
             ),
           ),
-          const SizedBox(height: 24),
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              color: Colors.white,
-            ),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      'Danh sách cửa hàng',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const Spacer(),
-                    Text(
-                      '${widget.totalStoreDTO?.totalTerminal ?? 0} cửa hàng',
-                      style: TextStyle(color: AppColor.GREY_TEXT),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                GridView.builder(
-                  padding: EdgeInsets.zero,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 8,
-                    mainAxisSpacing: 8,
-                  ),
-                  itemCount: widget.stores.length,
-                  itemBuilder: (context, index) {
-                    var dto = widget.stores[index];
-                    return GestureDetector(
-                      onTap: () async {
-                        await NavigatorUtils.navigatePage(context,
-                            DetailGroupScreen(groupId: dto.terminalId ?? ''),
-                            routeName: DetailGroupScreen.routeName);
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 6, horizontal: 8),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                              color: AppColor.GREY_BORDER, width: 0.5),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    dto.terminalName ?? '',
-                                    maxLines: 2,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ),
-                                Image.asset(
-                                    'assets/images/ic-navigate-next-blue.png',
-                                    width: 32),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
-                            RichText(
-                              text: TextSpan(
-                                style: TextStyle(
-                                    color: Colors.black, fontSize: 11),
-                                children: [
-                                  TextSpan(
-                                    text: '${dto.totalTrans ?? 0} giao dịch\n',
-                                  ),
-                                  TextSpan(
-                                    text: CurrencyUtils.instance
-                                        .getCurrencyFormatted(
-                                            (dto.totalAmount ?? 0).toString()),
-                                    style: TextStyle(
-                                        color: AppColor.BLUE_TEXT,
-                                        fontSize: 14),
-                                  ),
-                                  TextSpan(
-                                    text: ' VND\n',
-                                    style: TextStyle(color: AppColor.GREY_TEXT),
-                                  ),
-                                  TextSpan(
-                                    text: 'Doanh thu',
-                                    style: TextStyle(
-                                        color: AppColor.GREY_TEXT,
-                                        fontSize: 11),
-                                  )
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            RichText(
-                              text: TextSpan(
-                                style: TextStyle(
-                                    color: Colors.black, fontSize: 11),
-                                children: [
-                                  TextSpan(
-                                    text: (dto.ratePreviousDate ?? 0) >= 0
-                                        ? '+${dto.ratePreviousDate ?? 0} %\n'
-                                        : '${dto.ratePreviousDate ?? 0} %\n',
-                                    style: TextStyle(
-                                        color: (dto.ratePreviousDate ?? 0) >= 0
-                                            ? AppColor.GREEN
-                                            : AppColor.RED_EC1010,
-                                        fontSize: 14),
-                                  ),
-                                  TextSpan(
-                                    text: 'So với hôm qua',
-                                    style: TextStyle(
-                                        color: AppColor.GREY_TEXT,
-                                        fontSize: 11),
-                                  )
-                                ],
-                              ),
-                            )
-                          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDropListTerminal() {
+    return Container(
+      height: 44,
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton2<MerchantDTO>(
+          isExpanded: true,
+          selectedItemBuilder: (context) {
+            return widget.merchants
+                .map(
+                  (item) => DropdownMenuItem<MerchantDTO>(
+                    value: item,
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        item.name,
+                        maxLines: 2,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                    );
-                  },
+                    ),
+                  ),
+                )
+                .toList();
+          },
+          items: widget.merchants.map((item) {
+            return DropdownMenuItem<MerchantDTO>(
+              value: item,
+              child: Text(
+                item.name,
+                maxLines: 2,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 24),
-              ],
+              ),
+            );
+          }).toList(),
+          value: widget.dto,
+          onChanged: widget.callBack,
+          iconStyleData: IconStyleData(
+            icon: Container(
+              decoration: BoxDecoration(
+                color: AppColor.BLUE_TEXT.withOpacity(0.25),
+                borderRadius: BorderRadius.circular(100),
+              ),
+              child: Image.asset('assets/images/ic-select-merchant.png',
+                  width: 34),
             ),
-          )
-        ],
+            iconEnabledColor: AppColor.BLACK,
+            iconDisabledColor: Colors.grey,
+          ),
+          dropdownStyleData: DropdownStyleData(
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(5)),
+            padding: EdgeInsets.zero,
+          ),
+        ),
       ),
     );
   }
@@ -354,6 +212,266 @@ class _InfoStoreViewState extends State<InfoStoreView> {
               ],
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  void _onCreateStore() async {
+    await NavigatorUtils.navigatePage(context, CreateStoreScreen(),
+        routeName: CreateStoreScreen.routeName);
+    widget.onRefresh();
+  }
+
+  void updateSubTerminal(MerchantDTO? value) {}
+
+  Widget _buildResultSaleToday() {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(5),
+        color: Colors.white,
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Text(
+                'Kết quả bán hàng hôm nay',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const Spacer(),
+              Text(
+                stringDate,
+                style: TextStyle(color: AppColor.GREY_TEXT, fontSize: 12),
+              ),
+              Image.asset('assets/images/ic-navigate-next-blue.png', width: 32),
+            ],
+          ),
+          const SizedBox(height: 16),
+          IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildItemTotal(
+                        title:
+                            '${widget.totalStoreDTO?.totalTrans ?? 0} giao dịch',
+                        content: CurrencyUtils.instance.getCurrencyFormatted(
+                            (widget.totalStoreDTO?.totalAmount ?? 0)
+                                .toString()),
+                        des: 'Doanh thu',
+                        image: 'assets/images/ic-money-white.png',
+                      ),
+                      const SizedBox(height: 12),
+                      _buildItemTotal(
+                        content:
+                            '${(widget.totalStoreDTO?.ratePreviousDate ?? 0).toString().replaceAll('-', '')}%',
+                        des: 'So với hôm qua',
+                        image:
+                            (widget.totalStoreDTO?.ratePreviousDate ?? 0) >= 0
+                                ? 'assets/images/ic-uptrend-white.png'
+                                : 'assets/images/ic-downtrend-white.png',
+                        contentColor:
+                            (widget.totalStoreDTO?.ratePreviousDate ?? 0) >= 0
+                                ? AppColor.GREEN
+                                : AppColor.RED_EC1010,
+                        iconColor:
+                            (widget.totalStoreDTO?.ratePreviousDate ?? 0) >= 0
+                                ? AppColor.GREEN
+                                : AppColor.RED_CALENDAR,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                const VerticalDivider(color: AppColor.GREY_TEXT),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildItemTotal(
+                        title:
+                            '${widget.totalStoreDTO?.totalTerminal ?? 0} cửa hàng',
+                        content: '',
+                        des: '',
+                        iconColor: AppColor.ORANGE_DARK,
+                        contentColor: AppColor.BLACK,
+                        image: 'assets/images/ic-store-new_white.png',
+                      ),
+                      const SizedBox(height: 12),
+                      _buildItemTotal(
+                        content:
+                            '${widget.totalStoreDTO?.ratePreviousMonth ?? 0}%',
+                        des: 'So với cùng kỳ tháng trước',
+                        image:
+                            (widget.totalStoreDTO?.ratePreviousMonth ?? 0) >= 0
+                                ? 'assets/images/ic-uptrend-white.png'
+                                : 'assets/images/ic-downtrend-white.png',
+                        contentColor:
+                            (widget.totalStoreDTO?.ratePreviousMonth ?? 0) >= 0
+                                ? AppColor.GREEN
+                                : AppColor.RED_EC1010,
+                        iconColor:
+                            (widget.totalStoreDTO?.ratePreviousMonth ?? 0) >= 0
+                                ? AppColor.GREEN
+                                : AppColor.RED_CALENDAR,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildListStore() {
+    if (widget.stores.isEmpty)
+      return Center(
+        child: Container(
+          margin: EdgeInsets.only(top: 60),
+          child: Text(
+            'Danh sách cửa hàng đang trống',
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+      margin: const EdgeInsets.only(top: 16, bottom: 16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(5),
+        color: Colors.white,
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Text(
+                'Danh sách cửa hàng',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const Spacer(),
+              Text(
+                '${widget.totalStoreDTO?.totalTerminal ?? 0} cửa hàng',
+                style: TextStyle(color: AppColor.GREY_TEXT),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          GridView.builder(
+            padding: EdgeInsets.zero,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
+            ),
+            itemCount: widget.stores.length,
+            itemBuilder: (context, index) {
+              var dto = widget.stores[index];
+              return GestureDetector(
+                onTap: () async {
+                  await NavigatorUtils.navigatePage(
+                      context,
+                      DetailStoreScreen(
+                        terminalId: dto.terminalId ?? '',
+                        terminalCode: dto.terminalCode ?? '',
+                        terminalName: dto.terminalName ?? '',
+                      ),
+                      routeName: DetailStoreScreen.routeName);
+                },
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: AppColor.GREY_BORDER, width: 0.5),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              dto.terminalName ?? '',
+                              maxLines: 2,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                          Image.asset('assets/images/ic-navigate-next-blue.png',
+                              width: 32),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      RichText(
+                        text: TextSpan(
+                          style: TextStyle(color: Colors.black, fontSize: 11),
+                          children: [
+                            TextSpan(
+                              text: '${dto.totalTrans ?? 0} giao dịch\n',
+                            ),
+                            TextSpan(
+                              text: CurrencyUtils.instance.getCurrencyFormatted(
+                                  (dto.totalAmount ?? 0).toString()),
+                              style: TextStyle(
+                                  color: AppColor.BLUE_TEXT, fontSize: 14),
+                            ),
+                            TextSpan(
+                              text: ' VND\n',
+                              style: TextStyle(color: AppColor.GREY_TEXT),
+                            ),
+                            TextSpan(
+                              text: 'Doanh thu',
+                              style: TextStyle(
+                                  color: AppColor.GREY_TEXT, fontSize: 11),
+                            )
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      RichText(
+                        text: TextSpan(
+                          style: TextStyle(color: Colors.black, fontSize: 11),
+                          children: [
+                            TextSpan(
+                              text: (dto.ratePreviousDate ?? 0) >= 0
+                                  ? '+${dto.ratePreviousDate ?? 0} %\n'
+                                  : '${dto.ratePreviousDate ?? 0} %\n',
+                              style: TextStyle(
+                                  color: (dto.ratePreviousDate ?? 0) >= 0
+                                      ? AppColor.GREEN
+                                      : AppColor.RED_EC1010,
+                                  fontSize: 14),
+                            ),
+                            TextSpan(
+                              text: 'So với hôm qua',
+                              style: TextStyle(
+                                  color: AppColor.GREY_TEXT, fontSize: 11),
+                            )
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 24),
         ],
       ),
     );

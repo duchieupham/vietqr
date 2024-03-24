@@ -8,3 +8,6 @@ export 'views/info_store_view.dart';
 export 'views/input_bank_store_view.dart';
 export 'views/input_code_store_view.dart';
 export 'views/input_name_store_view.dart';
+export 'views/info_merchant_view.dart';
+export 'views/share_notify_member_view.dart';
+export 'views/input_create_merchant_view.dart';

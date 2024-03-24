@@ -139,7 +139,7 @@ class _ReportScreenState extends State<ReportScreen> {
                   border: position != (list.length - 1)
                       ? const Border(
                           bottom:
-                              BorderSide(color: AppColor.GREY_TEXT, width: 0.5))
+                              BorderSide(color: AppColor.GREY_BORDER, width: 0.5))
                       : null,
                 ),
                 child: Row(

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart'
     as Constants;
 
@@ -91,6 +92,12 @@ class _LoginState extends State<_Login> {
   @override
   void initState() {
     super.initState();
+
+    if (kDebugMode) {
+      phoneNoController.text = '0373568944';
+      passController.text = '181101';
+    }
+
     _bloc = BlocProvider.of(context);
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
     code = uuid.v1();
@@ -427,37 +434,7 @@ class _LoginState extends State<_Login> {
                           provider.updateInfoUser(null);
                           provider.updateQuickLogin(FlowType.FIRST_LOGIN);
                         },
-                        onRegister: () async {
-                          provider.updateInfoUser(null);
-                          final data = await Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => Register(
-                                phoneNo: '',
-                                isFocus: true,
-                              ),
-                              settings: const RouteSettings(
-                                name: Routes.REGISTER,
-                              ),
-                            ),
-                          );
-
-                          if (data is Map) {
-                            AccountLoginDTO dto = AccountLoginDTO(
-                              phoneNo: data['phone'],
-                              password: EncryptUtils.instance.encrypted(
-                                data['phone'],
-                                data['password'],
-                              ),
-                              device: '',
-                              fcmToken: '',
-                              platform: '',
-                              sharingCode: '',
-                            );
-                            if (!mounted) return;
-                            context.read<LoginBloc>().add(
-                                LoginEventByPhone(dto: dto, isToast: true));
-                          }
-                        },
+                        onRegister: () => _onRegister(provider),
                         onLoginCard: onLoginCard,
                         child: _buildButtonBottom(state.appInfoDTO),
                         buttonNext: MButtonWidget(
@@ -491,17 +468,15 @@ class _LoginState extends State<_Login> {
                         appInfoDTO: provider.appInfoDTO,
                       ),
                     ),
-                    Positioned(
-                      bottom: height < 800 ? 50 : 66,
-                      left: 0,
-                      right: 0,
-                      child: Column(
-                        children: [
-                          if (provider.isQuickLogin != 1)
+                    if (provider.isQuickLogin != FlowType.NEAREST_LOGIN)
+                      Positioned(
+                        bottom: height < 800 ? 50 : 66,
+                        left: 0,
+                        right: 0,
+                        child: Column(
+                          children: [
                             _buildButtonBottom(state.appInfoDTO),
-                          SizedBox(height: 16),
-                          if (provider.isQuickLogin == 0 ||
-                              provider.isQuickLogin == 2)
+                            SizedBox(height: 16),
                             Column(
                               mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -533,10 +508,10 @@ class _LoginState extends State<_Login> {
                                 ),
                               ],
                             ),
-                          SizedBox(height: height < 800 ? 16 : 20),
-                        ],
+                            SizedBox(height: height < 800 ? 16 : 20),
+                          ],
+                        ),
                       ),
-                    ),
                     Consumer<AuthProvider>(
                       builder: (context, provider, child) {
                         return Positioned(
@@ -996,6 +971,30 @@ class _LoginState extends State<_Login> {
     if (isEvent != dto.isEventTheme) {
       await SharePrefUtils.saveBannerEvent(dto.isEventTheme);
       authProvider.updateEventTheme(dto.isEventTheme);
+    }
+  }
+
+  void _onRegister(LoginProvider provider) async {
+    provider.updateInfoUser(null);
+    final data = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => Register(isFocus: true),
+        settings: const RouteSettings(
+          name: Routes.REGISTER,
+        ),
+      ),
+    );
+
+    if (data is Map) {
+      AccountLoginDTO dto = AccountLoginDTO(
+        phoneNo: data['phone'],
+        password: EncryptUtils.instance.encrypted(
+          data['phone'],
+          data['password'],
+        ),
+      );
+      if (!mounted) return;
+      _bloc.add(LoginEventByPhone(dto: dto, isToast: true));
     }
   }
 }

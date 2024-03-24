@@ -448,10 +448,10 @@ class _DashBoardScreen extends State<DashBoardScreen>
                     physics: const AlwaysScrollableScrollPhysics(),
                     controller: _pageController,
                     onPageChanged: (index) async {
-                      if (index != PageType.STORE.pageIndex) {
+                      // if (index != PageType.STORE.pageIndex) {
                         provider.updateIndex(index);
                         sendDataFromBottomBar(index);
-                      }
+                      // }
                     },
                     children: _listScreens,
                   ),

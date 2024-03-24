@@ -11,8 +11,8 @@ import 'package:vierqr/features/bank_detail/blocs/share_bdsd_bloc.dart';
 import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
 import 'package:vierqr/features/bank_detail/events/share_bdsd_event.dart';
 import 'package:vierqr/features/bank_detail/states/share_bdsd_state.dart';
-import 'package:vierqr/features/bank_detail/widget/detail_group.dart';
-import 'package:vierqr/features/bank_detail/widget/share_bdsd_invite.dart';
+import 'package:vierqr/features/create_store/create_store_screen.dart';
+import 'package:vierqr/features/detail_store/detail_store_screen.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
 import 'package:vierqr/models/terminal_response_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
@@ -298,8 +298,8 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                     child: GestureDetector(
                       onTap: () async {
                         await NavigatorUtils.navigatePage(
-                            context, ShareBDSDInviteScreen(),
-                            routeName: _ShareBDSDScreenState.routeName);
+                            context, CreateStoreScreen(),
+                            routeName: CreateStoreScreen.routeName);
                         _bloc.add(GetMyListGroupBDSDEvent(
                             userID: userId,
                             bankId: widget.bankId,
@@ -340,7 +340,12 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
     return GestureDetector(
       onTap: () async {
         await NavigatorUtils.navigatePage(
-            context, DetailGroupScreen(groupId: dto.id),
+            context,
+            DetailStoreScreen(
+              terminalId: dto.id,
+              terminalCode: dto.code,
+              terminalName: dto.name,
+            ),
             routeName: _ShareBDSDScreenState.routeName);
         _bloc.add(GetMyListGroupBDSDEvent(
             userID: userId, bankId: widget.bankId, offset: 0));

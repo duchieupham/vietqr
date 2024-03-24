@@ -7,17 +7,21 @@ import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/create_store/create_store.dart';
 import 'package:vierqr/models/bank_account_terminal.dart';
 import 'package:vierqr/models/response_message_dto.dart';
+import 'package:vierqr/models/store/merchant_dto.dart';
 
 class CreateStoreBloc extends Bloc<CreateStoreEvent, CreateStoreState>
     with BaseManager {
   final BuildContext context;
 
-  CreateStoreBloc(this.context) : super(CreateStoreState(banks: [])) {
+  CreateStoreBloc(this.context)
+      : super(CreateStoreState(banks: [], merchants: [])) {
     on<RandomCodeStoreEvent>(_getRandomCode);
     on<UpdateCodeStoreEvent>(_updateRandomCode);
     on<UpdateAddressStoreEvent>(_updateAddress);
     on<GetListBankAccountLink>(_getBankAccountTerminal);
+    on<GetListMerchantEvent>(_getMerchants);
     on<CreateNewStoreEvent>(_createNewGroup);
+    on<CreateMerchantEvent>(_createMerchant);
   }
 
   CreateStoreRepository repository = CreateStoreRepository();
@@ -81,7 +85,8 @@ class CreateStoreBloc extends Bloc<CreateStoreEvent, CreateStoreState>
   void _getBankAccountTerminal(CreateStoreEvent event, Emitter emit) async {
     try {
       if (event is GetListBankAccountLink) {
-        emit(state.copyWith(status: BlocStatus.LOADING_PAGE));
+        emit(state.copyWith(
+            status: BlocStatus.LOADING_PAGE, request: StoreType.NONE));
 
         List<BankAccountTerminal> list = await repository
             .getListBankAccountTerminal(userId, event.terminalId);
@@ -91,6 +96,55 @@ class CreateStoreBloc extends Bloc<CreateStoreEvent, CreateStoreState>
             banks: list,
             status: BlocStatus.NONE,
             isEmpty: list.isEmpty));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(
+        state.copyWith(
+            status: BlocStatus.ERROR,
+            msg: 'Không thể tải danh sách. Vui lòng kiểm tra lại kết nối'),
+      );
+    }
+  }
+
+  final int _limit = 20;
+
+  void _getMerchants(CreateStoreEvent event, Emitter emit) async {
+    try {
+      if (event is GetListMerchantEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING_PAGE, request: StoreType.NONE));
+
+        if (event.loadMore && !state.isLoadMore) {
+          return;
+        }
+
+        List<MerchantDTO> merchants = [...state.merchants];
+        int offset = event.loadMore ? (state.offset + 1) : 0;
+        bool isLoadMore = true;
+
+        List<MerchantDTO> list = await repository.getMerchants(offset * _limit);
+
+        if (list.isEmpty || list.length < _limit) {
+          isLoadMore = false;
+        }
+
+        if (event.loadMore) {
+          merchants = [...merchants, ...list];
+        } else {
+          merchants = [...list];
+        }
+
+        emit(
+          state.copyWith(
+            request: StoreType.GET_MERCHANT,
+            merchants: merchants,
+            status: BlocStatus.NONE,
+            offset: offset,
+            isEmpty: list.isEmpty,
+            isLoadMore: isLoadMore,
+          ),
+        );
       }
     } catch (e) {
       LOG.error(e.toString());
@@ -128,6 +182,32 @@ class CreateStoreBloc extends Bloc<CreateStoreEvent, CreateStoreState>
         state.copyWith(
             status: BlocStatus.ERROR, msg: responseMessageDTO.message),
       );
+    }
+  }
+
+  void _createMerchant(CreateStoreEvent event, Emitter emit) async {
+    ResponseMessageDTO responseMessageDTO =
+        ResponseMessageDTO(status: '', message: '');
+    try {
+      if (event is CreateMerchantEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING_PAGE, request: StoreType.NONE));
+        responseMessageDTO = await repository.createMerchant(event.param);
+        if (responseMessageDTO.status == Stringify.RESPONSE_STATUS_SUCCESS) {
+          emit(state.copyWith(
+            request: StoreType.CREATE_SUCCESS,
+            status: BlocStatus.UNLOADING,
+            merchantId: responseMessageDTO.message,
+          ));
+        } else {
+          emit(state.copyWith(
+              status: BlocStatus.ERROR, msg: responseMessageDTO.message));
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+          status: BlocStatus.ERROR, msg: responseMessageDTO.message));
     }
   }
 }

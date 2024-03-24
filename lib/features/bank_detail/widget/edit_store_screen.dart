@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/error_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
@@ -16,26 +17,26 @@ import 'package:vierqr/features/bank_detail/views/bottom_sheet_add_bank_bdsd.dar
 import 'package:vierqr/features/bank_detail/views/bottom_sheet_add_user_bdsd.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/bank_account_terminal.dart';
-import 'package:vierqr/models/detail_group_dto.dart';
 import 'package:vierqr/models/member_branch_model.dart';
 import 'package:vierqr/models/member_search_dto.dart';
+import 'package:vierqr/models/store/detail_store_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 import '../../../commons/widgets/button_icon_widget.dart';
 
-class ShareBDSDInviteScreen extends StatefulWidget {
+class EditStoreScreen extends StatefulWidget {
   final bool isUpdate;
   final String terminalId;
-  final GroupDetailDTO? groupDetailDTO;
+  final DetailStoreDTO? detailStoreDTO;
 
-  const ShareBDSDInviteScreen(
-      {this.terminalId = '', this.isUpdate = false, this.groupDetailDTO});
+  const EditStoreScreen(
+      {this.terminalId = '', this.isUpdate = false, this.detailStoreDTO});
 
   @override
-  State<ShareBDSDInviteScreen> createState() => _ShareBDSDInviteState();
+  State<EditStoreScreen> createState() => _ShareBDSDInviteState();
 }
 
-class _ShareBDSDInviteState extends State<ShareBDSDInviteScreen> {
+class _ShareBDSDInviteState extends State<EditStoreScreen> {
   late InviteBDSDBloc _bloc;
 
   String get userId => SharePrefUtils.getProfile().userId;
@@ -51,9 +52,9 @@ class _ShareBDSDInviteState extends State<ShareBDSDInviteScreen> {
     super.initState();
     _bloc = InviteBDSDBloc();
     if (widget.isUpdate) {
-      ranDomCodeController.text = widget.groupDetailDTO?.code ?? '';
-      addressController.text = widget.groupDetailDTO?.address ?? '';
-      nameGroupController.text = widget.groupDetailDTO?.name ?? '';
+      ranDomCodeController.text = widget.detailStoreDTO?.terminalCode ?? '';
+      addressController.text = widget.detailStoreDTO?.terminalAddress ?? '';
+      nameGroupController.text = widget.detailStoreDTO?.terminalName ?? '';
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -62,10 +63,8 @@ class _ShareBDSDInviteState extends State<ShareBDSDInviteScreen> {
   }
 
   initData() {
+    if (widget.isUpdate) return;
     _bloc.add(GetRanDomCode());
-    // _bloc.add(GetInfoTelegramEvent(bankId: widget.bankId, isLoading: true));
-    // _bloc.add(GetInfoLarkEvent(bankId: widget.bankId));
-    // _bloc.add(GetMemberEvent(bankId: widget.bankId));
   }
 
   Future<void> onRefresh() async {
@@ -107,7 +106,9 @@ class _ShareBDSDInviteState extends State<ShareBDSDInviteScreen> {
                   }
 
                   if (state is RemoveGroupSuccessState) {
-                    Navigator.pop(context);
+                    eventBus.fire(ReloadStoreEvent(widget.terminalId, true));
+                    Navigator.popUntil(
+                        context, (Route<dynamic> route) => route.isFirst);
                     Fluttertoast.showToast(
                       msg: 'Đã xóa',
                       toastLength: Toast.LENGTH_SHORT,
@@ -116,12 +117,6 @@ class _ShareBDSDInviteState extends State<ShareBDSDInviteScreen> {
                       textColor: Theme.of(context).hintColor,
                       fontSize: 15,
                     );
-                    if (Navigator.canPop(context)) {
-                      Navigator.pop(context);
-                      if (Navigator.canPop(context)) {
-                        Navigator.pop(context);
-                      }
-                    }
                   }
                   if (state is UpdateGroupSuccessState) {
                     Navigator.pop(context);
@@ -133,9 +128,6 @@ class _ShareBDSDInviteState extends State<ShareBDSDInviteScreen> {
                       textColor: Theme.of(context).hintColor,
                       fontSize: 15,
                     );
-                    if (Navigator.canPop(context)) {
-                      Navigator.pop(context);
-                    }
                   }
                   if (state is CreateNewGroupSuccessState) {
                     Navigator.pop(context);
@@ -240,21 +232,24 @@ class _ShareBDSDInviteState extends State<ShareBDSDInviteScreen> {
                               children: [
                                 Expanded(
                                   child: Consumer<ShareBDSDInviteProvider>(
-                                      builder: (context, provider, _) {
-                                    return Container(
-                                      margin: EdgeInsets.only(top: 12),
-                                      padding: EdgeInsets.only(left: 8),
-                                      decoration: BoxDecoration(
-                                          color: AppColor.WHITE,
-                                          borderRadius:
-                                              BorderRadius.circular(5)),
-                                      child: TextField(
-                                        controller: ranDomCodeController,
-                                        onChanged: provider.updateRandomCode,
-                                        inputFormatters: [
-                                          LengthLimitingTextInputFormatter(10),
-                                        ],
-                                        decoration: InputDecoration(
+                                    builder: (context, provider, _) {
+                                      return Container(
+                                        margin: EdgeInsets.only(top: 12),
+                                        padding: EdgeInsets.only(left: 8),
+                                        decoration: BoxDecoration(
+                                            color: AppColor.grey979797
+                                                .withOpacity(0.6),
+                                            borderRadius:
+                                                BorderRadius.circular(5)),
+                                        child: TextField(
+                                          controller: ranDomCodeController,
+                                          onChanged: provider.updateRandomCode,
+                                          enabled: !widget.isUpdate,
+                                          inputFormatters: [
+                                            LengthLimitingTextInputFormatter(
+                                                10),
+                                          ],
+                                          decoration: InputDecoration(
                                             hintText: 'Nhập mã cửa hàng',
                                             contentPadding:
                                                 EdgeInsets.symmetric(
@@ -262,32 +257,34 @@ class _ShareBDSDInviteState extends State<ShareBDSDInviteScreen> {
                                                     horizontal: 12),
                                             hintStyle: TextStyle(
                                                 color: AppColor.GREY_TEXT,
-                                                fontSize: 13)),
-                                      ),
-                                    );
-                                  }),
+                                                fontSize: 13),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
                                 ),
-                                const SizedBox(
-                                  width: 12,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 12),
-                                  child: ButtonWidget(
-                                      height: 46,
-                                      borderRadius: 5,
-                                      fontSize: 12,
-                                      padding:
-                                          EdgeInsets.symmetric(horizontal: 12),
-                                      text: 'Tạo ngẫu nhiên',
-                                      textColor: AppColor.BLUE_TEXT,
-                                      bgColor:
-                                          AppColor.BLUE_TEXT.withOpacity(0.3),
-                                      function: () {
-                                        FocusScope.of(context).unfocus();
-                                        _bloc.add(
-                                            GetRanDomCode(isLoading: true));
-                                      }),
-                                )
+                                if (!widget.isUpdate) ...[
+                                  const SizedBox(width: 12),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 12),
+                                    child: ButtonWidget(
+                                        height: 46,
+                                        borderRadius: 5,
+                                        fontSize: 12,
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 12),
+                                        text: 'Tạo ngẫu nhiên',
+                                        textColor: AppColor.BLUE_TEXT,
+                                        bgColor:
+                                            AppColor.BLUE_TEXT.withOpacity(0.3),
+                                        function: () {
+                                          FocusScope.of(context).unfocus();
+                                          _bloc.add(
+                                              GetRanDomCode(isLoading: true));
+                                        }),
+                                  ),
+                                ],
                               ],
                             ),
                             const SizedBox(
@@ -337,7 +334,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDInviteScreen> {
                                   param['userId'] =
                                       SharePrefUtils.getProfile().userId;
                                   param['terminalId'] =
-                                      widget.groupDetailDTO?.id ?? '';
+                                      widget.detailStoreDTO?.terminalId ?? '';
                                   _bloc.add(RemoveGroup(param: param));
                                 },
                                 child: Container(
@@ -400,7 +397,8 @@ class _ShareBDSDInviteState extends State<ShareBDSDInviteScreen> {
                                   param['name'] = nameGroupController.text;
                                   param['code'] = ranDomCodeController.text;
 
-                                  param['id'] = widget.groupDetailDTO?.id ?? '';
+                                  param['id'] =
+                                      widget.detailStoreDTO?.terminalId ?? '';
                                   print('-----------------------------$param ');
                                   _bloc.add(UpdateGroup(param: param));
                                 });
