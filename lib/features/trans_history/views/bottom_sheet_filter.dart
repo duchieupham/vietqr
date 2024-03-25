@@ -137,9 +137,7 @@ class BottomSheetFilter extends StatelessWidget {
                         height: 50,
                         decoration: BoxDecoration(
                             color: AppColor.WHITE,
-                            border: Border.all(
-                                color: AppColor.BLACK_BUTTON.withOpacity(0.5),
-                                width: 0.5),
+                            border: Border.all(color: AppColor.GREY_BORDER),
                             borderRadius: BorderRadius.circular(6)),
                         child: Row(
                           children: [
@@ -297,8 +295,7 @@ class BottomSheetFilter extends StatelessWidget {
           height: 50,
           decoration: BoxDecoration(
               color: AppColor.WHITE,
-              border: Border.all(
-                  color: AppColor.BLACK_BUTTON.withOpacity(0.5), width: 0.5),
+              border: Border.all(color: AppColor.GREY_BORDER),
               borderRadius: BorderRadius.circular(6)),
           child: DropdownButtonHideUnderline(
             child: DropdownButton2<TerminalResponseDTO>(
@@ -411,9 +408,7 @@ class BottomSheetFilter extends StatelessWidget {
                     height: 50,
                     decoration: BoxDecoration(
                         color: AppColor.WHITE,
-                        border: Border.all(
-                            color: AppColor.BLACK_BUTTON.withOpacity(0.5),
-                            width: 0.5),
+                        border: Border.all(color: AppColor.GREY_BORDER),
                         borderRadius: BorderRadius.circular(6)),
                     child: Row(
                       children: [
@@ -456,9 +451,7 @@ class BottomSheetFilter extends StatelessWidget {
                             size: 12,
                           ),
                         ),
-                        const SizedBox(
-                          width: 8,
-                        ),
+                        const SizedBox(width: 8),
                       ],
                     ),
                   ),
@@ -466,7 +459,7 @@ class BottomSheetFilter extends StatelessWidget {
               ],
             ),
             if (provider.enableDropTime) ...[
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
               TerminalTimeView(
                 toDate: provider.toDate,
                 fromDate: provider.fromDate,
@@ -492,9 +485,9 @@ class BottomSheetFilter extends StatelessWidget {
           alignment: Alignment.center,
           padding: EdgeInsets.only(top: 4),
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              border: Border.all(
-                  color: AppColor.BLACK_BUTTON.withOpacity(0.5), width: 0.5)),
+            borderRadius: BorderRadius.circular(5),
+            border: Border.all(color: AppColor.GREY_BORDER),
+          ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [

@@ -239,7 +239,7 @@ class _ShareBDSDInviteState extends State<EditStoreScreen> {
                                         padding: EdgeInsets.only(left: 8),
                                         decoration: BoxDecoration(
                                             color: AppColor.grey979797
-                                                .withOpacity(0.6),
+                                                .withOpacity(0.25),
                                             borderRadius:
                                                 BorderRadius.circular(5)),
                                         child: TextField(
