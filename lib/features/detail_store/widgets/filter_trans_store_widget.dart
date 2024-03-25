@@ -195,7 +195,7 @@ class _FilterTransStoreWidgetState extends State<FilterTransStoreWidget> {
               ),
             ),
             const SizedBox(height: 20),
-            ...[
+            if (terminals.isNotEmpty) ...[
               Text(
                 'Máy QR box',
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
@@ -206,10 +206,12 @@ class _FilterTransStoreWidgetState extends State<FilterTransStoreWidget> {
             _buildFilterByWidget(),
             _buildFormSearch(),
             if (_filterBy.id == 5) _buildFilterByStatusWidget(),
-            const SizedBox(height: 30),
+            const SizedBox(height: 24),
             _buildFilterByTimeWidget(),
-            const SizedBox(height: 12),
-            if (_filterByTime.id == 5) _buildRangeTimeWidget(),
+            if (_filterByTime.id == 5) ...[
+              const SizedBox(height: 24),
+              _buildRangeTimeWidget(),
+            ],
             const Spacer(),
             Row(
               children: [
@@ -283,116 +285,51 @@ class _FilterTransStoreWidgetState extends State<FilterTransStoreWidget> {
     return Row(
       children: [
         Expanded(
-          child: InkWell(
-            onTap: () async {
-              DateTime? date = await showDateTimePicker(
-                context: context,
-                initialDate: _fromDate,
-                firstDate: DateTime(2021, 6),
-                lastDate: DateTime.now(),
-              );
-
-              int numberOfMonths = monthCalculator.calculateMonths(
-                  date ?? DateTime.now(), _toDate);
-
-              if (numberOfMonths > 3) {
-                DialogWidget.instance.openMsgDialog(
-                    title: 'Cảnh báo',
-                    msg: 'Vui lòng nhập khoảng thời gian tối đa là 3 tháng.');
-              } else if ((date ?? DateTime.now()).isAfter(_toDate)) {
-                DialogWidget.instance.openMsgDialog(
-                    title: 'Cảnh báo',
-                    msg: 'Vui lòng kiểm tra lại khoảng thời gian.');
-              } else {
-                updateFromDate(date ?? DateTime.now());
-              }
-            },
-            child: Container(
-              height: 40,
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: AppColor.GREY_BG,
-                border: Border.all(color: AppColor.GREY_LIGHT),
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: Row(
-                children: [
-                  const Text(
-                    'Từ: ',
-                    style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
-                  ),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: Text(
-                      TimeUtils.instance.formatDateToString(_fromDate),
-                      style: const TextStyle(fontSize: 12),
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  const Icon(
-                    Icons.calendar_month_outlined,
-                    size: 12,
-                  )
-                ],
-              ),
-            ),
-          ),
-        ),
+            child: _itemPickTime(
+                title: 'Từ ngày', date: _fromDate, onTap: _onPickToDate)),
         const SizedBox(width: 8),
-        Expanded(
-          child: InkWell(
-            onTap: () async {
-              DateTime? date = await showDateTimePicker(
-                context: context,
-                initialDate: _toDate,
-                firstDate: DateTime(2021, 6),
-                lastDate: DateTime.now(),
-              );
-              int numberOfMonths = monthCalculator.calculateMonths(
-                  _fromDate, date ?? DateTime.now());
+        Expanded(child: _itemPickTime()),
+      ],
+    );
+  }
 
-              if (numberOfMonths > 3) {
-                DialogWidget.instance.openMsgDialog(
-                    title: 'Cảnh báo',
-                    msg: 'Vui lòng nhập khoảng thời gian tối đa là 3 tháng.');
-              } else if ((date ?? DateTime.now()).isBefore(_fromDate)) {
-                DialogWidget.instance.openMsgDialog(
-                    title: 'Cảnh báo',
-                    msg: 'Vui lòng kiểm tra lại khoảng thời gian.');
-              } else {
-                updateToDate(date ?? DateTime.now());
-              }
-            },
-            child: Container(
-              height: 40,
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: AppColor.GREY_BG,
-                border: Border.all(color: AppColor.GREY_LIGHT),
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: Row(
-                children: [
-                  const Text(
-                    'Đến: ',
-                    style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
+  Widget _itemPickTime(
+      {String? title, GestureTapCallback? onTap, DateTime? date}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title ?? 'Đến ngày',
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(height: 6),
+        InkWell(
+          onTap: onTap ?? _onPickFromDate,
+          child: Container(
+            height: 40,
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: AppColor.WHITE,
+              border: Border.all(color: AppColor.GREY_BORDER),
+              borderRadius: BorderRadius.circular(5),
+            ),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.calendar_month_outlined,
+                  size: 12,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    TimeUtils.instance.formatDateToString(date ?? _toDate),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 12),
                   ),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: Text(
-                      TimeUtils.instance.formatDateToString(_toDate),
-                      style: const TextStyle(fontSize: 12),
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  const Icon(
-                    Icons.calendar_month_outlined,
-                    size: 12,
-                  )
-                ],
-              ),
+                ),
+                const SizedBox(width: 4),
+              ],
             ),
           ),
         ),
@@ -400,17 +337,62 @@ class _FilterTransStoreWidgetState extends State<FilterTransStoreWidget> {
     );
   }
 
+  void _onPickFromDate() async {
+    DateTime? date = await showDateTimePicker(
+      context: context,
+      initialDate: _toDate,
+      firstDate: DateTime(2021, 6),
+      lastDate: DateTime.now(),
+    );
+    int numberOfMonths =
+        monthCalculator.calculateMonths(_fromDate, date ?? DateTime.now());
+
+    if (numberOfMonths > 3) {
+      DialogWidget.instance.openMsgDialog(
+          title: 'Cảnh báo',
+          msg: 'Vui lòng nhập khoảng thời gian tối đa là 3 tháng.');
+    } else if ((date ?? DateTime.now()).isBefore(_fromDate)) {
+      DialogWidget.instance.openMsgDialog(
+          title: 'Cảnh báo', msg: 'Vui lòng kiểm tra lại khoảng thời gian.');
+    } else {
+      updateToDate(date ?? DateTime.now());
+    }
+  }
+
+  void _onPickToDate() async {
+    DateTime? date = await showDateTimePicker(
+      context: context,
+      initialDate: _fromDate,
+      firstDate: DateTime(2021, 6),
+      lastDate: DateTime.now(),
+    );
+
+    int numberOfMonths =
+        monthCalculator.calculateMonths(date ?? DateTime.now(), _toDate);
+
+    if (numberOfMonths > 3) {
+      DialogWidget.instance.openMsgDialog(
+          title: 'Cảnh báo',
+          msg: 'Vui lòng nhập khoảng thời gian tối đa là 3 tháng.');
+    } else if ((date ?? DateTime.now()).isAfter(_toDate)) {
+      DialogWidget.instance.openMsgDialog(
+          title: 'Cảnh báo', msg: 'Vui lòng kiểm tra lại khoảng thời gian.');
+    } else {
+      updateFromDate(date ?? DateTime.now());
+    }
+  }
+
   Widget _buildFormSearch() {
     if (_filterBy.id == 9 || _filterBy.id == 5) return const SizedBox();
     return Container(
       height: 44,
-      margin: const EdgeInsets.symmetric(vertical: 16),
+      margin: const EdgeInsets.symmetric(vertical: 8),
       padding: EdgeInsets.only(top: 2),
       alignment: Alignment.center,
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5),
-          border: Border.all(
-              color: AppColor.BLACK_BUTTON.withOpacity(0.5), width: 0.5)),
+        borderRadius: BorderRadius.circular(5),
+        border: Border.all(color: AppColor.GREY_BORDER),
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -542,8 +524,7 @@ class _FilterTransStoreWidgetState extends State<FilterTransStoreWidget> {
       height: 44,
       decoration: BoxDecoration(
           color: AppColor.WHITE,
-          border: Border.all(
-              color: AppColor.BLACK_BUTTON.withOpacity(0.5), width: 0.5),
+          border: Border.all(color: AppColor.GREY_BORDER),
           borderRadius: BorderRadius.circular(6)),
       child: DropdownButtonHideUnderline(
         child: DropdownButton2<SubTerminal>(
@@ -557,11 +538,7 @@ class _FilterTransStoreWidgetState extends State<FilterTransStoreWidget> {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         item.subTerminalName,
-                        style: TextStyle(
-                            fontSize: 14,
-                            color: item.subTerminalCode.isEmpty
-                                ? AppColor.GREY_TEXT
-                                : Colors.black),
+                        style: TextStyle(fontSize: 14),
                       ),
                     ),
                   ),

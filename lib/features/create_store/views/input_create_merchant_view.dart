@@ -62,7 +62,7 @@ class _InputCreateMerchantViewState extends State<InputCreateMerchantView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Image.asset(
-                  'assets/images/logo-store-3D.png',
+                  'assets/images/ic-merchant-3D.png',
                   height: 100,
                 ),
                 Text(

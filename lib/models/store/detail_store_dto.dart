@@ -28,6 +28,9 @@ class DetailStoreDTO {
 
   bool get admin => userId == SharePrefUtils.getProfile().userId;
 
+  bool get isHideVietQR =>
+      qrCode.isEmpty || bankAccount.isEmpty || bankShortName.isEmpty;
+
   DetailStoreDTO({
     this.terminalId = '',
     this.terminalCode = '',

@@ -137,32 +137,45 @@ class ShareUserBDSDEvent extends ShareBDSDEvent {
   List<Object?> get props => [body];
 }
 
-class GetListGroupBDSDEvent extends ShareBDSDEvent {
+class GetTerminalsBDSDScreenEvent extends ShareBDSDEvent {
   final String userID;
   final int type;
   final int offset;
   final bool loadingPage;
-  final bool loadMore;
 
-  GetListGroupBDSDEvent({
+  GetTerminalsBDSDScreenEvent({
     this.userID = '',
     this.type = 0,
     this.offset = 0,
     this.loadingPage = false,
-    this.loadMore = false,
   });
 
   @override
-  List<Object?> get props => [userID, type, offset, loadMore];
+  List<Object?> get props => [userID, type, offset];
 }
 
-class GetMyListGroupBDSDEvent extends ShareBDSDEvent {
+class FetchShareBDSDScreenEvent extends ShareBDSDEvent {
+  final String userID;
+  final int type;
+  final int offset;
+
+  FetchShareBDSDScreenEvent({
+    this.userID = '',
+    this.type = 0,
+    this.offset = 0,
+  });
+
+  @override
+  List<Object?> get props => [userID, type, offset];
+}
+
+class GetTerminalsBDSDPageEvent extends ShareBDSDEvent {
   final String userID;
   final String bankId;
   final int offset;
   final bool isLoading;
 
-  GetMyListGroupBDSDEvent({
+  GetTerminalsBDSDPageEvent({
     this.userID = '',
     this.bankId = '',
     this.offset = 0,
@@ -171,4 +184,17 @@ class GetMyListGroupBDSDEvent extends ShareBDSDEvent {
 
   @override
   List<Object?> get props => [userID, bankId, offset, isLoading];
+}
+
+class FetchTerminasBDSDPageEvent extends ShareBDSDEvent {
+  final String userID;
+  final String bankId;
+
+  FetchTerminasBDSDPageEvent({
+    this.userID = '',
+    this.bankId = '',
+  });
+
+  @override
+  List<Object?> get props => [userID, bankId];
 }

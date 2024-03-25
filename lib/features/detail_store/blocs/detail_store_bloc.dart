@@ -20,7 +20,10 @@ class DetailStoreBloc extends Bloc<DetailStoreEvent, DetailStoreState>
 
   DetailStoreBloc(this.context, {this.terminalId = '', this.terminalCode = ''})
       : super(DetailStoreState(
-            members: [], transDTO: TransStoreDTO(), terminals: [])) {
+            members: [],
+            transDTO: TransStoreDTO(),
+            terminals: [],
+            detailStore: DetailStoreDTO())) {
     on<GetTransStoreEvent>(_getTransStore);
     on<FetchTransStoreEvent>(_fetchTransStore);
     on<GetDetailStoreEvent>(_getDetailStore);
@@ -189,7 +192,9 @@ class DetailStoreBloc extends Bloc<DetailStoreEvent, DetailStoreState>
 
         final result = await repository.getTerminalStore(terminalId);
 
-        result.insert(0, SubTerminal(subTerminalName: 'Chọn máy QR box'));
+        if (result.isNotEmpty) {
+          result.insert(0, SubTerminal(subTerminalName: 'Tất cả'));
+        }
 
         emit(state.copyWith(
             status: BlocStatus.NONE,

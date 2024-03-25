@@ -2,9 +2,15 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
+import 'package:vierqr/features/detail_store/blocs/detail_store_bloc.dart';
+import 'package:vierqr/features/detail_store/events/detail_store_event.dart';
+import 'package:vierqr/features/detail_store/states/detail_store_state.dart';
 import 'package:vierqr/models/store/detail_store_dto.dart';
 
 import 'detail_store.dart';
@@ -57,6 +63,7 @@ class DetailStoreScreen extends StatefulWidget {
 class _DetailStoreScreenState extends State<DetailStoreScreen> {
   FlowTab tab = FlowTab.INFO;
   late PageController _controller;
+  late DetailStoreBloc bloc;
 
   DetailStoreDTO detailStoreDTO = DetailStoreDTO();
 
@@ -68,15 +75,42 @@ class _DetailStoreScreenState extends State<DetailStoreScreen> {
 
   bool get isVietQRStore => tab == FlowTab.STORE;
 
+  DateFormat get _dateFormat => DateFormat('yyyy-MM-dd HH:mm:ss');
+
+  DateTime get now => DateTime.now();
+
+  DateTime _formatFromDate(DateTime now) {
+    DateTime fromDate = DateTime(now.year, now.month, now.day);
+    return fromDate;
+  }
+
+  DateTime _endDate(DateTime now) {
+    DateTime fromDate = _formatFromDate(now);
+    return fromDate
+        .add(const Duration(days: 1))
+        .subtract(const Duration(seconds: 1));
+  }
+
   @override
   void initState() {
     super.initState();
+    bloc = DetailStoreBloc(context, terminalId: widget.terminalId);
     _controller = PageController(initialPage: 0, keepPage: true);
     detailStoreDTO = DetailStoreDTO(
       terminalId: widget.terminalId,
       terminalCode: widget.terminalCode,
       terminalName: widget.terminalName,
     );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadData();
+    });
+  }
+
+  void _loadData() {
+    String fromDate = _dateFormat.format(_formatFromDate(DateTime.now()));
+    String toDate = _dateFormat.format(_endDate(DateTime.now()));
+    bloc.add(GetDetailStoreEvent(fromDate: fromDate, toDate: toDate));
   }
 
   _handleBack(BuildContext context) {
@@ -86,50 +120,71 @@ class _DetailStoreScreenState extends State<DetailStoreScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _buildBody(context),
+    return BlocProvider<DetailStoreBloc>(
+      create: (context) => bloc,
+      child: Scaffold(
+        body: _buildBody(context),
+      ),
     );
   }
 
   Widget _buildBody(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height,
-      child: Stack(
-        children: [
-          _buildAppBar(context),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              children: [
-                const SizedBox(height: 120),
-                _buildTabBar(),
-                const SizedBox(height: 24),
-                Expanded(
-                  child: PageView(
-                    key: const PageStorageKey('PAGE_VIEW'),
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    controller: _controller,
-                    onPageChanged: _onChangedPage,
-                    children: [
-                      DetailStoreView(
-                        terminalId: widget.terminalId,
-                        callBack: _onChangedPage,
-                        updateStore: _updateStore,
+    return BlocConsumer<DetailStoreBloc, DetailStoreState>(
+      listener: (context, state) {
+        if (state.request == DetailStoreType.GET_DETAIL) {
+          detailStoreDTO = state.detailStore;
+          if (detailStoreDTO.isHideVietQR)
+            _tabs.removeAt(FlowTab.STORE.tabIndex);
+          setState(() {});
+        }
+      },
+      builder: (context, state) {
+        if (state.status == BlocStatus.LOADING) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        return Container(
+          height: MediaQuery.of(context).size.height,
+          child: Stack(
+            children: [
+              _buildAppBar(context),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 120),
+                    _buildTabBar(),
+                    const SizedBox(height: 24),
+                    Expanded(
+                      child: PageView(
+                        key: const PageStorageKey('PAGE_VIEW'),
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        controller: _controller,
+                        onPageChanged: _onChangedPage,
+                        children: [
+                          DetailStoreView(
+                            storeDTO: detailStoreDTO,
+                            callBack: _onChangedPage,
+                            updateStore: _updateStore,
+                          ),
+                          if (!detailStoreDTO.isHideVietQR)
+                            VietQRStoreView(
+                              terminalId: detailStoreDTO.terminalId,
+                            ),
+                          TransStoreView(
+                            detailStoreDTO: detailStoreDTO,
+                          ),
+                        ],
                       ),
-                      VietQRStoreView(
-                        terminalId: widget.terminalId,
-                      ),
-                      TransStoreView(
-                        detailStoreDTO: detailStoreDTO,
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -264,6 +319,7 @@ class _DetailStoreScreenState extends State<DetailStoreScreen> {
           model.title,
           textAlign: TextAlign.center,
           style: TextStyle(
+            fontSize: 12,
             color: isSelected
                 ? isVietQRStore
                     ? AppColor.WHITE
@@ -278,12 +334,14 @@ class _DetailStoreScreenState extends State<DetailStoreScreen> {
   }
 
   void _onChangedPage(int page) {
-    setState(() => tab = page.tab);
+    TabData _value = _tabs[page];
+
+    setState(() => tab = _value.type);
     try {
       _controller.jumpToPage(page);
     } catch (e) {
       _controller = PageController(
-        initialPage: tab.tabIndex,
+        initialPage: page,
         keepPage: true,
       );
       _onChangedPage(page);

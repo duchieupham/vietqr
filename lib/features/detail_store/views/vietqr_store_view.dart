@@ -4,6 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/widgets/dashed_line.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
@@ -12,6 +13,7 @@ import 'package:vierqr/commons/widgets/viet_qr_new.dart';
 import 'package:vierqr/features/detail_store/blocs/detail_store_bloc.dart';
 import 'package:vierqr/features/detail_store/events/detail_store_event.dart';
 import 'package:vierqr/features/detail_store/states/detail_store_state.dart';
+import 'package:vierqr/features/popup_bank/popup_bank_share.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/store/detail_store_dto.dart';
 
@@ -47,26 +49,19 @@ class _VietQRStoreViewState extends State<VietQRStoreView>
     bloc.add(GetDetailQREvent());
   }
 
-  void onSaveImage(BuildContext context) async {
-    DialogWidget.instance.openLoadingDialog();
-    await Future.delayed(
-      const Duration(milliseconds: 200),
-      () async {
-        await ShareUtils.instance.saveImageToGallery(globalKey).then(
-          (value) {
-            Navigator.pop(context);
-            Fluttertoast.showToast(
-              msg: 'Đã lưu ảnh',
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.CENTER,
-              backgroundColor: Theme.of(context).cardColor,
-              textColor: Theme.of(context).hintColor,
-              fontSize: 15,
-            );
-          },
-        );
-      },
+  void onSaveImage(DetailStoreDTO dto) async {
+    QRGeneratedDTO qrDTO = QRGeneratedDTO(
+      bankCode: '',
+      bankName: dto.bankShortName,
+      bankAccount: dto.bankAccount,
+      userBankName: dto.userBankName,
+      qrCode: dto.qrCode,
+      imgId: dto.imgId,
     );
+
+    NavigatorUtils.navigatePage(
+        context, PopupBankShare(dto: qrDTO, type: TypeImage.SAVE),
+        routeName: PopupBankShare.routeName);
   }
 
   void share(DetailStoreDTO dto) async {
@@ -79,13 +74,9 @@ class _VietQRStoreViewState extends State<VietQRStoreView>
       imgId: dto.imgId,
     );
 
-    await ShareUtils.instance
-        .shareImage(
-            key: globalKey,
-            textSharing: ShareUtils.instance.getTextSharing(qrDTO))
-        .then((value) {
-      Navigator.pop(context);
-    });
+    NavigatorUtils.navigatePage(
+        context, PopupBankShare(dto: qrDTO, type: TypeImage.SHARE),
+        routeName: PopupBankShare.routeName);
   }
 
   @override
@@ -214,13 +205,13 @@ class _VietQRStoreViewState extends State<VietQRStoreView>
                       _buildBottomBar(
                         url: 'assets/images/ic-save-img-blue.png',
                         title: 'Lưu ảnh vào thư viện',
-                        onTap: () => onSaveImage(context),
+                        onTap: () => onSaveImage(state.detailStore),
                       ),
                       const Divider(thickness: 1, color: AppColor.GREY_BORDER),
                       _buildBottomBar(
                         url: 'assets/images/ic-share-img-blue.png',
                         title: 'Chia sẻ mã QR',
-                        onTap: () => share(state.detailStore!),
+                        onTap: () => share(state.detailStore),
                       ),
                     ],
                   ),

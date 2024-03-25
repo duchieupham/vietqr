@@ -17,13 +17,13 @@ import 'package:vierqr/models/store/member_store_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class DetailStoreView extends StatefulWidget {
-  final String terminalId;
+  final DetailStoreDTO storeDTO;
   final Function(int) callBack;
   final Function(DetailStoreDTO) updateStore;
 
   const DetailStoreView(
       {super.key,
-      required this.terminalId,
+      required this.storeDTO,
       required this.callBack,
       required this.updateStore});
 
@@ -36,6 +36,7 @@ class _DetailStoreViewState extends State<DetailStoreView>
   late DetailStoreBloc bloc;
   late PageController _controller;
   int _pageIndex = 0;
+  DetailStoreDTO _storeDTO = DetailStoreDTO();
 
   DateFormat get _dateFormat => DateFormat('yyyy-MM-dd HH:mm:ss');
 
@@ -56,10 +57,12 @@ class _DetailStoreViewState extends State<DetailStoreView>
   @override
   void initState() {
     super.initState();
-    bloc = DetailStoreBloc(context, terminalId: widget.terminalId);
+    bloc = DetailStoreBloc(context, terminalId: widget.storeDTO.terminalId);
     _controller = PageController(initialPage: 0, keepPage: true);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadData();
+      bloc.add(GetMembersStoreEvent());
+      _storeDTO = widget.storeDTO;
+      setState(() {});
     });
   }
 
@@ -74,6 +77,10 @@ class _DetailStoreViewState extends State<DetailStoreView>
   }
 
   void _onChangedPage(int value) => setState(() => _pageIndex = value);
+
+  Future<void> _onRefresh() async {
+    _loadData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +98,9 @@ class _DetailStoreViewState extends State<DetailStoreView>
           }
 
           if (state.request == DetailStoreType.GET_DETAIL) {
-            widget.updateStore(state.detailStore!);
+            widget.updateStore(state.detailStore);
+            _storeDTO = state.detailStore;
+            setState(() {});
           }
 
           if (state.request == DetailStoreType.REMOVE_MEMBER) {
@@ -99,23 +108,22 @@ class _DetailStoreViewState extends State<DetailStoreView>
           }
         },
         builder: (context, state) {
-          if (state.detailStore == null)
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          return SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _buildInfo(state.detailStore!, state.members.length),
-                const SizedBox(height: 24),
-                _buildQRBox(state.detailStore!),
-                const SizedBox(height: 24),
-                _buildMembers(state.members, state.detailStore!),
-                const SizedBox(height: 24),
-                _buildFeature(),
-                const SizedBox(height: 24),
-              ],
+          return RefreshIndicator(
+            onRefresh: _onRefresh,
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _buildInfo(_storeDTO, state.members.length),
+                  const SizedBox(height: 24),
+                  _buildQRBox(_storeDTO),
+                  const SizedBox(height: 24),
+                  _buildMembers(state.members, _storeDTO),
+                  const SizedBox(height: 24),
+                  _buildFeature(),
+                  const SizedBox(height: 24),
+                ],
+              ),
             ),
           );
         },
@@ -154,7 +162,7 @@ class _DetailStoreViewState extends State<DetailStoreView>
                         await NavigatorUtils.navigatePage(
                             context,
                             EditStoreScreen(
-                              terminalId: widget.terminalId,
+                              terminalId: widget.storeDTO.terminalId,
                               detailStoreDTO: dto,
                               isUpdate: true,
                             ),
@@ -293,7 +301,7 @@ class _DetailStoreViewState extends State<DetailStoreView>
                       Text(
                         'Đăng ký QR Box ngay!',
                         style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
+                            fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 8),
                       Text(
@@ -530,17 +538,19 @@ class _DetailStoreViewState extends State<DetailStoreView>
           ),
           child: Column(
             children: [
-              GestureDetector(
-                onTap: () => widget.callBack(1),
-                child: _buildElement(
-                  icon: 'assets/images/ic-popup-bank-qr.png',
-                  context: context,
-                  width: width,
-                  title: 'Mã VietQR cửa hàng',
-                  description: 'Xem thông tin mã VietQR cửa hàng',
+              if (!_storeDTO.isHideVietQR) ...[
+                GestureDetector(
+                  onTap: () => widget.callBack(1),
+                  child: _buildElement(
+                    icon: 'assets/images/ic-popup-bank-qr.png',
+                    context: context,
+                    width: width,
+                    title: 'Mã VietQR cửa hàng',
+                    description: 'Xem thông tin mã VietQR cửa hàng',
+                  ),
                 ),
-              ),
-              const Divider(thickness: 1, color: AppColor.GREY_BORDER),
+                const Divider(thickness: 1, color: AppColor.GREY_BORDER),
+              ],
               GestureDetector(
                 onTap: () => widget.callBack(2),
                 child: _buildElement(

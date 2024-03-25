@@ -107,8 +107,9 @@ class _ShareBDSDInviteState extends State<EditStoreScreen> {
 
                   if (state is RemoveGroupSuccessState) {
                     eventBus.fire(ReloadStoreEvent(widget.terminalId, true));
-                    Navigator.popUntil(
-                        context, (Route<dynamic> route) => route.isFirst);
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+
                     Fluttertoast.showToast(
                       msg: 'Đã xóa',
                       toastLength: Toast.LENGTH_SHORT,

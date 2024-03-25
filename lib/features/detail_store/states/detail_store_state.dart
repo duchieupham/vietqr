@@ -19,7 +19,7 @@ class DetailStoreState extends Equatable {
   final BlocStatus status;
   final DetailStoreType request;
   final String? msg;
-  final DetailStoreDTO? detailStore;
+  final DetailStoreDTO detailStore;
   final List<MemberStoreDTO> members;
   final List<SubTerminal> terminals;
   final bool isEmpty;
@@ -31,7 +31,7 @@ class DetailStoreState extends Equatable {
     this.status = BlocStatus.NONE,
     this.request = DetailStoreType.NONE,
     this.msg,
-    this.detailStore,
+    required this.detailStore,
     this.isEmpty = false,
     this.isLoadMore = true,
     this.page = 1,

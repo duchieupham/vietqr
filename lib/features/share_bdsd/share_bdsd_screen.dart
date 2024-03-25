@@ -38,7 +38,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
     super.initState();
     _bloc = ShareBDSDBloc(context);
     provider = ShareBDSDProvider();
-    _bloc.add(GetListGroupBDSDEvent(
+    _bloc.add(GetTerminalsBDSDScreenEvent(
         userID: userId, type: 0, offset: 0, loadingPage: true));
     controller.addListener(_loadMore);
   }
@@ -46,7 +46,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
   Future<void> onRefresh(ShareBDSDProvider provider) async {
     int type = provider.getTypeFilter();
     provider.updateOffset(0);
-    _bloc.add(GetListGroupBDSDEvent(
+    _bloc.add(GetTerminalsBDSDScreenEvent(
         userID: userId, type: type, offset: 0, loadingPage: true));
   }
 
@@ -56,8 +56,8 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
 
     final maxScroll = controller.position.maxScrollExtent;
     if (controller.offset >= maxScroll && !controller.position.outOfRange) {
-      _bloc.add(GetListGroupBDSDEvent(
-          userID: userId, type: type, offset: offset, loadMore: true));
+      _bloc.add(FetchShareBDSDScreenEvent(
+          userID: userId, type: type, offset: offset));
     }
   }
 
@@ -83,7 +83,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
 
                 if (state.request == ShareBDSDType.GET_LIST_GROUP) {
                   provider.updateOffset(state.offset);
-                  terminalDto = state.listGroup;
+                  terminalDto = state.listTerminal;
 
                   if (state.bankShareTerminal != null) {
                     bankTerminalDto = state.bankShareTerminal!;
@@ -306,7 +306,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
                               await NavigatorUtils.navigatePage(
                                   context, CreateStoreScreen(),
                                   routeName: CreateStoreScreen.routeName);
-                              _bloc.add(GetListGroupBDSDEvent(
+                              _bloc.add(GetTerminalsBDSDScreenEvent(
                                   userID: SharePrefUtils.getProfile().userId,
                                   type: provider.getTypeFilter(),
                                   offset: 0,
@@ -472,7 +472,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
             ),
             routeName: DetailStoreScreen.routeName);
         _bloc.add(
-          GetListGroupBDSDEvent(
+          GetTerminalsBDSDScreenEvent(
               userID: SharePrefUtils.getProfile().userId,
               type: type,
               offset: 0,
@@ -705,7 +705,7 @@ class _ShareBDSDInviteState extends State<ShareBDSDScreen> {
           terminalName: name,
         ),
         routeName: DetailStoreScreen.routeName);
-    _bloc.add(GetListGroupBDSDEvent(
+    _bloc.add(GetTerminalsBDSDScreenEvent(
         userID: SharePrefUtils.getProfile().userId,
         type: 0,
         offset: 0,

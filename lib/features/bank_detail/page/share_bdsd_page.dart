@@ -57,8 +57,6 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
   List<MemberBranchModel> listMemberData = [];
   final ScrollController controller = ScrollController();
 
-  int offset = 0;
-
   @override
   void initState() {
     super.initState();
@@ -72,7 +70,7 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
   initData() {
     _bloc.add(GetInfoTelegramEvent(bankId: widget.bankId, isLoading: true));
     _bloc.add(GetInfoLarkEvent(bankId: widget.bankId));
-    _bloc.add(GetMyListGroupBDSDEvent(
+    _bloc.add(GetTerminalsBDSDPageEvent(
         userID: userId, bankId: widget.bankId, offset: 0));
   }
 
@@ -83,8 +81,8 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
   void _loadMore() {
     final maxScroll = controller.position.maxScrollExtent;
     if (controller.offset >= maxScroll && !controller.position.outOfRange) {
-      _bloc.add(GetListGroupBDSDEvent(
-          userID: userId, offset: offset + 1, loadMore: true));
+      _bloc.add(
+          FetchTerminasBDSDPageEvent(userID: userId, bankId: widget.bankId));
     }
   }
 
@@ -102,11 +100,7 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
             Navigator.pop(context);
           }
 
-          if (state.request == ShareBDSDType.GET_LIST_GROUP) {
-            setState(() {
-              offset = state.offset;
-            });
-          }
+          if (state.request == ShareBDSDType.GET_LIST_GROUP) {}
 
           if (state.request == ShareBDSDType.CONNECT) {
             widget.bloc.add(const BankCardGetDetailEvent());
@@ -172,24 +166,20 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                                     image: ImageUtils.instance
                                         .getImageNetWork(widget.dto.imgId))),
                           ),
-                          const SizedBox(
-                            width: 16,
-                          ),
+                          const SizedBox(width: 16),
                           Expanded(
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
                                 Text(
-                                  '${widget.dto.bankCode} Bank - ${widget.dto.bankAccount}',
-                                  overflow: TextOverflow.ellipsis,
+                                  '${widget.dto.bankCode}Bank - ${widget.dto.bankAccount}',
+                                  maxLines: 1,
                                   style: TextStyle(fontWeight: FontWeight.w600),
                                 ),
-                                const SizedBox(
-                                  height: 2,
-                                ),
+                                const SizedBox(height: 2),
                                 Text(
                                   '${widget.dto.userBankName}',
-                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
                                   style: TextStyle(fontSize: 12),
                                 )
                               ],
@@ -222,7 +212,7 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        if (state.listGroup.totalTerminals > 0)
+                        if (state.listTerminal.totalTerminals > 0)
                           Container(
                             padding: EdgeInsets.only(right: 8, left: 12),
                             decoration: BoxDecoration(
@@ -231,7 +221,7 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                             child: Row(
                               children: [
                                 Text(
-                                  '${state.listGroup.totalTerminals}',
+                                  '${state.listTerminal.totalTerminals}',
                                   style: TextStyle(color: AppColor.BLUE_TEXT),
                                 ),
                                 Image.asset(
@@ -251,11 +241,11 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                         ),
                       )
                     else ...[
-                      if (state.listGroup.totalTerminals > 0)
+                      if (state.listTerminal.terminals.isNotEmpty)
                         Column(
                           children: [
                             const SizedBox(height: 12),
-                            ...state.listGroup.terminals.map((e) {
+                            ...state.listTerminal.terminals.map((e) {
                               return _buildItemGroup(e);
                             }).toList(),
                             if (state.isLoadMore)
@@ -300,7 +290,7 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
                         await NavigatorUtils.navigatePage(
                             context, CreateStoreScreen(),
                             routeName: CreateStoreScreen.routeName);
-                        _bloc.add(GetMyListGroupBDSDEvent(
+                        _bloc.add(GetTerminalsBDSDPageEvent(
                             userID: userId,
                             bankId: widget.bankId,
                             offset: 0,
@@ -347,7 +337,7 @@ class _ShareBDSDScreenState extends State<_ShareBDSDScreen> {
               terminalName: dto.name,
             ),
             routeName: _ShareBDSDScreenState.routeName);
-        _bloc.add(GetMyListGroupBDSDEvent(
+        _bloc.add(GetTerminalsBDSDPageEvent(
             userID: userId, bankId: widget.bankId, offset: 0));
       },
       child: Container(

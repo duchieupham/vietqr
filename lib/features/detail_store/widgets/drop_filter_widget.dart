@@ -29,8 +29,7 @@ class DropFilterWidget extends StatelessWidget {
           height: 44,
           decoration: BoxDecoration(
               color: AppColor.WHITE,
-              border: Border.all(
-                  color: AppColor.BLACK_BUTTON.withOpacity(0.5), width: 0.5),
+              border: Border.all(color: AppColor.GREY_BORDER, width: 1),
               borderRadius: BorderRadius.circular(6)),
           child: DropdownButtonHideUnderline(
             child: DropdownButton2<DataFilter>(
