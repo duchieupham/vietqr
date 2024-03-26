@@ -37,7 +37,7 @@ class BankTypeDTO extends HiveObject {
     this.bankName = '',
     this.bankShortName = '',
     this.imageId = '',
-    this.status = 0,
+    this.status = 0, // = 1 là ngân hàng được liên kết
     this.caiValue = '',
     this.photoPath = '', // dùng lưu local
     this.bankId = '', //dùng cho màn create qr

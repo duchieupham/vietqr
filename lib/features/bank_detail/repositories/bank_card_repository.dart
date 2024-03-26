@@ -300,9 +300,8 @@ class BankCardRepository {
         const ResponseMessageDTO(status: '', message: '');
     try {
       print(dto.toJson());
-      // final String url = '${EnvConfig.getUrl()}bank/api/request_otp_bank';
       final String url =
-          'https://dev.vietqr.org/vqr/bank/api/account-bank/linked/request_otp';
+          '${EnvConfig.getUrl()}bank/api/account-bank/linked/request_otp';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: dto.toJson(),
@@ -326,8 +325,7 @@ class BankCardRepository {
         const ResponseMessageDTO(status: '', message: '');
     try {
       final String url =
-          'https://dev.vietqr.org/vqr/bank/api/account-bank/linked/confirm_otp';
-      // final String url = '${EnvConfig.getUrl()}bank/api/confirm_otp_bank';
+          '${EnvConfig.getUrl()}bank/api/account-bank/linked/confirm_otp';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: dto.toJson(),
@@ -420,7 +418,7 @@ class BankCardRepository {
     );
     try {
       final String url =
-          'https://dev.vietqr.org/vqr/bank/api/account/info/${dto.bankCode}/${dto.accountNumber}/${dto.accountType}/${dto.transferType}';
+          '${EnvConfig.getUrl()}bank/api/account/info/${dto.bankCode}/${dto.accountNumber}/${dto.accountType}/${dto.transferType}';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,

@@ -211,12 +211,19 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
               Navigator.of(context).pop(true);
             }
 
-            if (state.request == AddBankType.ERROR) {
-              // await DialogWidget.instance.openMsgDialog(
-              //     title: state.titleMsg ?? 'Không thể thêm TK',
-              //     msg: state.msg ?? '');
+            if (state.request == AddBankType.ERROR_SEARCH_NAME) {
               if (!mounted) return;
               _addBankProvider.updateEnableName(true);
+            }
+            if (state.request == AddBankType.ERROR) {
+              await DialogWidget.instance.openMsgDialog(
+                  title: state.titleMsg ?? 'Không thể thêm TK',
+                  msg: state.msg ?? '');
+            }
+            if (state.request == AddBankType.ERROR_OTP) {
+              await DialogWidget.instance.openMsgDialog(
+                  title: state.titleMsg ?? 'Thông báo',
+                  msg: 'Mã OTP không chính xác, vui lòng thử lại');
             }
 
             if (state.request == AddBankType.ERROR_EXIST) {
@@ -237,6 +244,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
               Navigator.of(context).pop();
               _addBankProvider.updateStep(2);
             }
+            if (state.request == AddBankType.RESENT_REQUEST_BANK) {}
 
             if (state.request == AddBankType.OTP_BANK) {
               if (!mounted) return;
@@ -314,62 +322,14 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                     title: 'Thêm tài khoản',
                     actions: [
                       GestureDetector(
-                        onTap: () async {
-                          final data = await Navigator.pushNamed(
-                              context, Routes.SCAN_QR_VIEW,
-                              arguments: {'isScanAll': false});
-                          if (data is Map<String, dynamic>) {
-                            if (!mounted) return;
-                            final type = data['type'];
-                            final value = data['data'];
-                            final bankTypeDTO = data['bankTypeDTO'];
-                            if (type == TypeContact.Bank) {
-                              if (value != null && value is QRGeneratedDTO) {
-                                bankAccountController.value =
-                                    bankAccountController.value
-                                        .copyWith(text: value.bankAccount);
-                                nameController.value = nameController.value
-                                    .copyWith(text: value.userBankName);
-                                if (nameController.text.isNotEmpty &&
-                                    !value.isNaviAddBank) {
-                                  Provider.of<AddBankProvider>(context,
-                                          listen: false)
-                                      .updateEdit(false);
-                                }
-                                if (bankTypeDTO != null &&
-                                    bankTypeDTO is BankTypeDTO) {
-                                  Provider.of<AddBankProvider>(context,
-                                          listen: false)
-                                      .updateSelectBankType(bankTypeDTO,
-                                          update: bankAccountController
-                                                  .text.isNotEmpty &&
-                                              nameController.text.isNotEmpty);
-                                  Provider.of<AddBankProvider>(context,
-                                          listen: false)
-                                      .updateValidUserBankName(
-                                          nameController.text);
-                                }
-                              }
-                            } else {
-                              DialogWidget.instance.openMsgDialog(
-                                title: 'Không thể xác nhận mã QR',
-                                msg:
-                                    'Không tìm thấy thông tin trong đoạn mã QR. Vui lòng kiểm tra lại thông tin.',
-                                function: () {
-                                  Navigator.pop(context);
-                                },
-                              );
-                            }
-                          }
-                          // _bloc.add(ContactEventGetList());
-                        },
+                        onTap: _onScanQR,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Image.asset(
                             'assets/images/ic-tb-qr.png',
                           ),
                         ),
-                      )
+                      ),
                     ],
                   ),
                   body: SafeArea(
@@ -765,7 +725,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
       phoneNumber: phoneController.text,
       bankCode: _addBankProvider.bankTypeDTO?.bankCode ?? '',
     );
-    _bloc.add(BankCardEventRequestOTP(dto: dto));
+    _bloc.add(ResendRequestOTPEvent(dto: dto));
   }
 
   _buildSelectBankWidget(AddBankState state, AddBankProvider provider, height) {
@@ -828,6 +788,46 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
         ),
       ],
     );
+  }
+
+  void _onScanQR() async {
+    final data = await Navigator.pushNamed(context, Routes.SCAN_QR_VIEW,
+        arguments: {'isScanAll': false});
+    if (data is Map<String, dynamic>) {
+      if (!mounted) return;
+      final type = data['type'];
+      final value = data['data'];
+      final bankTypeDTO = data['bankTypeDTO'];
+      if (type == TypeContact.Bank) {
+        if (value != null && value is QRGeneratedDTO) {
+          bankAccountController.value =
+              bankAccountController.value.copyWith(text: value.bankAccount);
+          nameController.value =
+              nameController.value.copyWith(text: value.userBankName);
+          if (nameController.text.isNotEmpty && !value.isNaviAddBank) {
+            Provider.of<AddBankProvider>(context, listen: false)
+                .updateEdit(false);
+          }
+          if (bankTypeDTO != null && bankTypeDTO is BankTypeDTO) {
+            Provider.of<AddBankProvider>(context, listen: false)
+                .updateSelectBankType(bankTypeDTO,
+                    update: bankAccountController.text.isNotEmpty &&
+                        nameController.text.isNotEmpty);
+            Provider.of<AddBankProvider>(context, listen: false)
+                .updateValidUserBankName(nameController.text);
+          }
+        }
+      } else {
+        DialogWidget.instance.openMsgDialog(
+          title: 'Không thể xác nhận mã QR',
+          msg:
+              'Không tìm thấy thông tin trong đoạn mã QR. Vui lòng kiểm tra lại thông tin.',
+          function: () {
+            Navigator.pop(context);
+          },
+        );
+      }
+    }
   }
 }
 

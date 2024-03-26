@@ -81,6 +81,15 @@ class BankCardEventRequestOTP extends AddBankEvent {
   List<Object?> get props => [dto];
 }
 
+class ResendRequestOTPEvent extends AddBankEvent {
+  final BankCardRequestOTP dto;
+
+  const ResendRequestOTPEvent({required this.dto});
+
+  @override
+  List<Object?> get props => [dto];
+}
+
 class BankCardEventConfirmOTP extends AddBankEvent {
   final ConfirmOTPBankDTO dto;
 

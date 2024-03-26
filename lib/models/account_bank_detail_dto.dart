@@ -1,3 +1,5 @@
+import 'package:vierqr/commons/enums/enum_type.dart';
+
 class AccountBankDetailDTO {
   final String id;
   final String bankAccount;
@@ -6,7 +8,7 @@ class AccountBankDetailDTO {
   final String bankName;
   final String imgId;
   final String bankTypeId;
-  final int bankTypeStatus;
+  final int bankTypeStatus; // = 1 là ngân hàng được liên kết
   final String caiValue;
   final String userId;
   final int type;
@@ -21,26 +23,28 @@ class AccountBankDetailDTO {
 
   AccountBankDetailDTO(
       {this.id = '',
-        this.bankAccount = '',
-        this.userBankName = '',
-        this.bankCode = '',
-        this.bankName = '',
-        this.imgId = '',
-        this.type = 0,
-        this.caiValue = '',
-        this.userId = '',
-        this.bankTypeId = '',
-        this.bankTypeStatus = 0,
-        this.nationalId = '',
-        this.qrCode = '',
-        this.phoneAuthenticated = '',
-        this.ewalletToken = null,
-        this.unlinkedType = 0,
-        this.authenticated = false,
-        this.transactions,
-        this.bankShortName = ''});
+      this.bankAccount = '',
+      this.userBankName = '',
+      this.bankCode = '',
+      this.bankName = '',
+      this.imgId = '',
+      this.type = 0,
+      this.caiValue = '',
+      this.userId = '',
+      this.bankTypeId = '',
+      this.bankTypeStatus = 0,
+      this.nationalId = '',
+      this.qrCode = '',
+      this.phoneAuthenticated = '',
+      this.ewalletToken = null,
+      this.unlinkedType = 0,
+      this.authenticated = false,
+      this.transactions,
+      this.bankShortName = ''});
 
   bool get isHideBDSD => (!authenticated || bankTypeStatus == 0);
+
+  bool get unLinkBIDV => unlinkedType.linkType == LinkBankType.LINK;
 
   factory AccountBankDetailDTO.fromJson(Map<String, dynamic> json) {
     final List<BusinessDetails> businessDetails = [];

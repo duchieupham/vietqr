@@ -26,7 +26,7 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
     on<BankCardGetDetailEvent>(_getDetail);
     on<BankCardEventUnRequestOTP>(_requestOTP);
     on<BankCardEventUnConfirmOTP>(_unConfirmOTP);
-    on<BankCardEventUnLink>(_unLinked);
+    on<BankCardEventUnLink>(_unLinkedBIDV);
     on<UpdateEvent>(_updateEvent);
     on<BankCardGenerateDetailQR>(_createQRUnAuthen);
     on<GetMyListGroupEvent>(_getMyListGroup);
@@ -245,7 +245,7 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
     }
   }
 
-  void _unLinked(BankCardEvent event, Emitter emit) async {
+  void _unLinkedBIDV(BankCardEvent event, Emitter emit) async {
     try {
       if (event is BankCardEventUnLink) {
         emit(state.copyWith(
@@ -253,7 +253,8 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
         final response = await bankCardRepository.unLinked(event.body);
         if (response.status == Stringify.RESPONSE_STATUS_SUCCESS) {
           emit(state.copyWith(
-              request: BankDetailType.UN_LINK, status: BlocStatus.UNLOADING));
+              request: BankDetailType.UN_LINK_BIDV,
+              status: BlocStatus.UNLOADING));
         } else if (response.status == Stringify.RESPONSE_STATUS_CHECK) {
           String message =
               CheckUtils.instance.getCheckMessage(response.message);

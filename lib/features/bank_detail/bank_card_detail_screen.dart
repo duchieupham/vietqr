@@ -115,7 +115,6 @@ class _BankCardDetailState extends State<BankCardDetailState> {
   }
 
   _handleBack() {
-    eventBus.fire(GetListBankScreen());
     FocusManager.instance.primaryFocus?.unfocus();
     Navigator.of(context).pop();
   }
@@ -145,8 +144,14 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                 Navigator.pop(context);
               }
 
-              if (state.request == BankDetailType.UN_LINK) {
-                _onShowDialogUnLink(
+              if (state.request == BankDetailType.UN_LINK_BIDV) {
+                _onShowDialogRequestOTP(
+                    state.requestId ?? '',
+                    state.bankDetailDTO?.bankAccount ?? '',
+                    state.bankDetailDTO);
+              }
+              if (state.request == BankDetailType.REQUEST_OTP) {
+                _onShowDialogRequestOTP(
                     state.requestId ?? '',
                     state.bankDetailDTO?.bankAccount ?? '',
                     state.bankDetailDTO);
@@ -155,11 +160,7 @@ class _BankCardDetailState extends State<BankCardDetailState> {
               if (state.request == BankDetailType.OTP) {
                 Navigator.of(context).pop();
                 bankCardBloc.add(const BankCardGetDetailEvent());
-              }
-              if (state.request == BankDetailType.OTP ||
-                  state.request == BankDetailType.UN_LINK) {
-                Navigator.of(context).pop();
-                bankCardBloc.add(const BankCardGetDetailEvent());
+                eventBus.fire(GetListBankScreen());
               }
 
               if (state.request == BankDetailType.DELETED) {
@@ -377,7 +378,7 @@ class _BankCardDetailState extends State<BankCardDetailState> {
     );
   }
 
-  void _onShowDialogUnLink(
+  void _onShowDialogRequestOTP(
       String requestId, String bankAccount, AccountBankDetailDTO? dto) {
     showDialog(
       barrierDismissible: false,
@@ -386,13 +387,9 @@ class _BankCardDetailState extends State<BankCardDetailState> {
         return DialogOTPView(
           phone: dto?.phoneAuthenticated ?? '',
           onResend: () {
-            Map<String, dynamic> body = {
-              'ewalletToken': dto?.ewalletToken ?? '',
-              'bankAccount': dto?.bankAccount ?? '',
-              'bankCode': dto?.bankCode ?? '',
-            };
-
-            bankCardBloc.add(BankCardEventUnLink(body: body));
+            Navigator.pop(context);
+            bankCardBloc.add(BankCardEventUnRequestOTP(
+                accountNumber: dto?.bankAccount ?? ''));
           },
           onChangeOTP: (value) {
             otpController.value = otpController.value.copyWith(text: value);

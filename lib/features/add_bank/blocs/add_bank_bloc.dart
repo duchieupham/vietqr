@@ -24,6 +24,7 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
     on<BankCardCheckExistedEvent>(_checkExistedBank);
     on<BankCardEventInsertUnauthenticated>(_insertBankCardUnauthenticated);
     on<BankCardEventRequestOTP>(_requestOTP);
+    on<ResendRequestOTPEvent>(_resendRequestOTP);
     on<BankCardEventConfirmOTP>(_confirmOTP);
     on<BankCardEventInsert>(_insertBankCard);
     on<BankCardEventRegisterLinkBank>(_registerLinkBank);
@@ -81,7 +82,7 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
           emit(
             state.copyWith(
               msg: 'Tài khoản ngân hàng không tồn tại.',
-              request: AddBankType.ERROR,
+              request: AddBankType.ERROR_SEARCH_NAME,
               status: BlocStatus.NONE,
             ),
           );
@@ -91,7 +92,7 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
       LOG.error(e.toString());
       emit(state.copyWith(
         msg: 'Tài khoản ngân hàng không tồn tại.',
-        request: AddBankType.ERROR,
+        request: AddBankType.ERROR_SEARCH_NAME,
         status: BlocStatus.NONE,
       ));
     }
@@ -133,7 +134,7 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
       }
     } catch (e) {
       LOG.error(e.toString());
-      emit(state.copyWith(request: AddBankType.ERROR));
+      emit(state.copyWith(request: AddBankType.ERROR_EXIST));
     }
   }
 
@@ -230,6 +231,53 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
     }
   }
 
+  void _resendRequestOTP(AddBankEvent event, Emitter emit) async {
+    try {
+      if (event is ResendRequestOTPEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, request: AddBankType.NONE));
+        final ResponseMessageDTO responseMessageDTO =
+            await bankCardRepository.requestOTP(event.dto);
+        if (responseMessageDTO.status == Stringify.RESPONSE_STATUS_SUCCESS) {
+          emit(
+            state.copyWith(
+              dto: event.dto,
+              requestId: responseMessageDTO.message,
+              status: BlocStatus.UNLOADING,
+              request: AddBankType.RESENT_REQUEST_BANK,
+            ),
+          );
+        } else {
+          if (responseMessageDTO.message == 'E05') {
+            emit(state.copyWith(
+              msg:
+                  'Vui lòng kiểm tra thông tin đã khớp với thông tin khai báo với ngân hàng.',
+              request: AddBankType.ERROR_SYSTEM,
+              status: BlocStatus.UNLOADING,
+            ));
+          } else {
+            emit(
+              state.copyWith(
+                msg: ErrorUtils.instance
+                    .getErrorMessage(responseMessageDTO.message),
+                request: AddBankType.ERROR_SYSTEM,
+                status: BlocStatus.UNLOADING,
+              ),
+            );
+          }
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+        msg:
+            'Vui lòng kiểm tra thông tin đã khớp với thông tin khai báo với ngân hàng.',
+        request: AddBankType.ERROR_SYSTEM,
+        status: BlocStatus.UNLOADING,
+      ));
+    }
+  }
+
   void _confirmOTP(AddBankEvent event, Emitter emit) async {
     try {
       if (event is BankCardEventConfirmOTP) {
@@ -249,7 +297,7 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
             state.copyWith(
               msg: ErrorUtils.instance
                   .getErrorMessage(responseMessageDTO.message),
-              request: AddBankType.ERROR,
+              request: AddBankType.ERROR_OTP,
               status: BlocStatus.UNLOADING,
             ),
           );
@@ -262,7 +310,7 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
       emit(
         state.copyWith(
           msg: ErrorUtils.instance.getErrorMessage(responseMessageDTO.message),
-          request: AddBankType.ERROR,
+          request: AddBankType.ERROR_OTP,
           status: BlocStatus.UNLOADING,
         ),
       );

@@ -126,9 +126,7 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
                         );
                       },
                     ),
-                    if (widget.dto.bankCode.trim().toUpperCase() == 'MB' ||
-                        widget.dto.bankCode.trim().toUpperCase() == 'BIDV')
-                      _buildStatusConnect(),
+                    if (widget.dto.bankTypeStatus == 1) _buildStatusConnect(),
                     const Padding(padding: EdgeInsets.only(top: 16)),
                     _buildTitle(title: 'Thông tin tài khoản'),
                     BoxLayout(
@@ -227,26 +225,7 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
                                     title: 'Huỷ liên kết',
                                     msg: 'Bạn có chắc chắn muốn huỷ liên kết?',
                                     isSecondBT: true,
-                                    functionConfirm: () {
-                                      Navigator.of(context).pop();
-                                      if (widget.dto.unlinkedType.linkType ==
-                                          LinkBankType.LINK) {
-                                        Map<String, dynamic> body = {
-                                          'ewalletToken':
-                                              widget.dto.ewalletToken,
-                                          'bankAccount': widget.dto.bankAccount,
-                                          'bankCode': widget.dto.bankCode,
-                                        };
-                                        widget.bloc.add(
-                                            BankCardEventUnLink(body: body));
-                                      } else {
-                                        widget.bloc.add(
-                                          BankCardEventUnRequestOTP(
-                                              accountNumber:
-                                                  widget.dto.bankAccount),
-                                        );
-                                      }
-                                    },
+                                    functionConfirm: _unLink,
                                   );
                                 },
                                 child: _buildElement(
@@ -525,5 +504,20 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
         widget.bloc.add(const BankCardGetDetailEvent());
       }
     });
+  }
+
+  void _unLink() {
+    Navigator.of(context).pop();
+    if (widget.dto.unLinkBIDV) {
+      Map<String, dynamic> body = {
+        'ewalletToken': widget.dto.ewalletToken,
+        'bankAccount': widget.dto.bankAccount,
+        'bankCode': widget.dto.bankCode,
+      };
+      widget.bloc.add(BankCardEventUnLink(body: body));
+    } else {
+      widget.bloc.add(
+          BankCardEventUnRequestOTP(accountNumber: widget.dto.bankAccount));
+    }
   }
 }
