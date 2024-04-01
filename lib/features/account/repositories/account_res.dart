@@ -14,6 +14,7 @@ import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/models/setting_account_sto.dart';
 import 'package:vierqr/models/theme_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
+import 'package:vierqr/services/socket_service/socket_service.dart';
 
 class AccountRepository {
   const AccountRepository();
@@ -244,6 +245,7 @@ class AccountRepository {
       );
       if (response.statusCode == 200) {
         result = true;
+        SocketService.instance.closeListenTransaction();
       }
     } catch (e) {
       LOG.error(e.toString());

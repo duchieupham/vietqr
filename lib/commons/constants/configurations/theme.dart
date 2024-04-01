@@ -72,6 +72,7 @@ class AppColor {
   static const grey979797 = Color(0xff979797);
   static const greyF1F2F5 = Color(0xffF1F2F5);
   static const grey989EBE = Color(0xff989EBE);
+  static const Color GREY_DADADA = Color(0xFFDADADA);
 
   //THEME NAME
   static const String THEME_LIGHT = 'LIGHT';

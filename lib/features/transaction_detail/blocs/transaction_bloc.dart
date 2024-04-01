@@ -35,7 +35,10 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState>
   void _getDetail(TransactionEvent event, Emitter emit) async {
     try {
       if (event is TransactionEventGetDetail) {
-        emit(state.copyWith(status: BlocStatus.NONE));
+        emit(state.copyWith(
+          status: event.isLoading ? BlocStatus.LOADING_PAGE : BlocStatus.NONE,
+          type: TransactionType.NONE,
+        ));
         TransactionReceiveDTO dto =
             await transactionRepository.getTransactionDetail(transactionId);
         emit(state.copyWith(

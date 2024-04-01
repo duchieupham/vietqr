@@ -14,7 +14,7 @@ import 'package:vierqr/features/home/blocs/home_bloc.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
-import 'package:vierqr/models/notification_transaction_success_dto.dart';
+import 'package:vierqr/models/notify_trans_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/models/terminal_qr_dto.dart';
@@ -207,7 +207,7 @@ class CreateQRBloc extends Bloc<CreateQREvent, CreateQRState> with BaseManager {
         emit(state.copyWith(
             status: BlocStatus.LOADING, type: CreateQRType.NONE));
         final dto = await qrRepository.paid(event.id);
-        if (dto != null && dto is NotificationTransactionSuccessDTO) {
+        if (dto != null && dto is NotifyTransDTO) {
           emit(state.copyWith(
               type: CreateQRType.PAID,
               transDTO: dto,

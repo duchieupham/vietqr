@@ -8,11 +8,11 @@ import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/commons/utils/transaction_utils.dart';
 import 'package:vierqr/commons/widgets/divider_widget.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
-import 'package:vierqr/models/notification_transaction_success_dto.dart';
+import 'package:vierqr/models/notify_trans_dto.dart';
 import 'package:rive/rive.dart' as rive;
 
 class TransactionSuccessWidget extends StatefulWidget {
-  final NotificationTransactionSuccessDTO dto;
+  final NotifyTransDTO dto;
 
   const TransactionSuccessWidget({super.key, required this.dto});
 

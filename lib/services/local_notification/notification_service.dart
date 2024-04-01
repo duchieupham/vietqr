@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/utils/log.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
+import 'package:vierqr/features/transaction_detail/transaction_detail_screen.dart';
 import 'package:vierqr/main.dart';
 
 class NotificationService {
@@ -44,14 +46,11 @@ class NotificationService {
       onDidReceiveNotificationResponse: (details) async {
         Map<String, dynamic> data = json.decode(details.payload!);
         if (data['transactionReceiveId'] != null) {
-          Navigator.pushNamed(
-            NavigationService.navigatorKey.currentContext!,
-            Routes.TRANSACTION_DETAIL,
-            arguments: {
-              'transactionId': data['transactionReceiveId'],
-              // 'bankId': bankId,
-            },
-          );
+          NavigatorUtils.navigatePage(
+              NavigationService.navigatorKey.currentContext!,
+              TransactionDetailScreen(
+                  transactionId: data['transactionReceiveId']),
+              routeName: TransactionDetailScreen.routeName);
         }
 
         LOG.info('onDidReceiveNotificationResponse: ${details.payload}');

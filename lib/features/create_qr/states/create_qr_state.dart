@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
-import 'package:vierqr/models/notification_transaction_success_dto.dart';
+import 'package:vierqr/models/notify_trans_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/terminal_qr_dto.dart';
 
@@ -11,7 +11,7 @@ class CreateQRState extends Equatable {
   final String? msg;
   final QRGeneratedDTO? dto;
   final BankAccountDTO? bankAccountDTO;
-  final NotificationTransactionSuccessDTO? transDTO;
+  final NotifyTransDTO? transDTO;
   final int page;
   final String? barCode;
   final List<BankAccountDTO> listBanks;
@@ -36,7 +36,7 @@ class CreateQRState extends Equatable {
       String? msg,
       QRGeneratedDTO? dto,
       BankAccountDTO? bankAccountDTO,
-      NotificationTransactionSuccessDTO? transDTO,
+      NotifyTransDTO? transDTO,
       int? page,
       String? barCode,
       List<BankAccountDTO>? listBanks,

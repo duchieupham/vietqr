@@ -6,13 +6,13 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/models/app_info_dto.dart';
+import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/introduce_dto.dart';
 import 'package:vierqr/models/theme_dto.dart';
 import 'package:vierqr/models/user_repository.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:flutter/material.dart';
 
-import 'package:nfc_manager/nfc_manager.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/contact_dto.dart';
@@ -24,6 +24,8 @@ class AuthProvider with ChangeNotifier {
   BuildContext? context;
 
   String get userId => userRes.userId;
+
+  List<BankAccountDTO> listBank = [];
 
   String versionApp = '';
 
@@ -56,8 +58,6 @@ class AuthProvider with ChangeNotifier {
 
   List<ContactDTO> listSync = [];
   bool isSync = false;
-
-  NfcTag? tag;
 
   SettingAccountDTO settingDTO = SettingAccountDTO();
 
@@ -327,12 +327,18 @@ class AuthProvider with ChangeNotifier {
   }
 
   void reset() {
+    _indexSelected = 0;
     introduceDTO = null;
     isUpdateVersion = false;
     _showActionShare = false;
     versionApp = '';
     isShowToastUpdate = -1;
     avatarUser = File('');
+    notifyListeners();
+  }
+
+  void updateBanks(List<BankAccountDTO> values) {
+    listBank = [...values];
     notifyListeners();
   }
 

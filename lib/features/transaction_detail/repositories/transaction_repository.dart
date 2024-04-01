@@ -7,6 +7,7 @@ import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/models/business_detail_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/qr_recreate_dto.dart';
+import 'package:vierqr/models/trans/trans_request_dto.dart';
 import 'package:vierqr/models/trans_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/models/terminal_response_dto.dart';
@@ -18,8 +19,9 @@ import 'package:vierqr/services/local_storage/shared_preference/shared_pref_util
 class TransactionRepository {
   const TransactionRepository();
 
-  Future<List<TransDTO>> getTransStatus(
-      TransactionInputDTO dto) async {
+  String get userId => SharePrefUtils().userId;
+
+  Future<List<TransDTO>> getTransStatus(TransactionInputDTO dto) async {
     List<TransDTO> result = [];
     try {
       final String url =
@@ -31,10 +33,7 @@ class TransactionRepository {
       );
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
-        result = data
-            .map<TransDTO>(
-                (json) => TransDTO.fromJson(json))
-            .toList();
+        result = data.map<TransDTO>((json) => TransDTO.fromJson(json)).toList();
       }
     } catch (e) {
       LOG.error(e.toString());
@@ -48,8 +47,7 @@ class TransactionRepository {
   // - 3: content
   // - 4: terminal code
   // - 5: status
-  Future<List<TransDTO>> getTrans(
-      TransactionInputDTO dto) async {
+  Future<List<TransDTO>> getTrans(TransactionInputDTO dto) async {
     List<TransDTO> result = [];
     try {
       String userId = SharePrefUtils.getProfile().userId;
@@ -63,10 +61,7 @@ class TransactionRepository {
       );
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
-        result = data
-            .map<TransDTO>(
-                (json) => TransDTO.fromJson(json))
-            .toList();
+        result = data.map<TransDTO>((json) => TransDTO.fromJson(json)).toList();
       }
     } catch (e) {
       LOG.error(e.toString());
@@ -74,8 +69,7 @@ class TransactionRepository {
     return result;
   }
 
-  Future<List<TransDTO>> getTransIsOwner(
-      TransactionInputDTO dto) async {
+  Future<List<TransDTO>> getTransIsOwner(TransactionInputDTO dto) async {
     List<TransDTO> result = [];
     try {
       final String url =
@@ -87,10 +81,7 @@ class TransactionRepository {
       );
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
-        result = data
-            .map<TransDTO>(
-                (json) => TransDTO.fromJson(json))
-            .toList();
+        result = data.map<TransDTO>((json) => TransDTO.fromJson(json)).toList();
       }
     } catch (e) {
       LOG.error(e.toString());
@@ -251,5 +242,66 @@ class TransactionRepository {
       LOG.error(e.toString());
       return result;
     }
+  }
+
+  Future<ResponseMessageDTO> updateTerminal(
+      String transactionId, String terminalCode) async {
+    ResponseMessageDTO result =
+        const ResponseMessageDTO(status: '', message: '');
+
+    try {
+      String url = '${EnvConfig.getBaseUrl()}transaction/map-terminal';
+      final response = await BaseAPIClient.postAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+        body: {
+          "transactionId": transactionId,
+          "terminalCode": terminalCode,
+          "userId": userId,
+        },
+      );
+      if (response.statusCode == 200 || response.statusCode == 400) {
+        var data = jsonDecode(response.body);
+        result = ResponseMessageDTO.fromJson(data);
+      } else {
+        result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+    }
+    return result;
+  }
+
+  Future<ResponseMessageDTO> transRequest(TransRequest dto) async {
+    ResponseMessageDTO result =
+        const ResponseMessageDTO(status: '', message: '');
+    try {
+      final String url = '${EnvConfig.getBaseUrl()}transaction-request';
+
+      final response = await BaseAPIClient.postAPI(
+          url: url,
+          type: AuthenticationType.SYSTEM,
+          body: {
+            'transactionId': dto.transactionId,
+            'requestType': dto.requestType,
+            'requestValue': dto.terminalCode,
+            'userId': userId,
+            'terminalId': dto.terminalId,
+            'merchantId': dto.merchantId,
+          });
+      if (response.statusCode == 200 || response.statusCode == 400) {
+        var data = jsonDecode(response.body);
+        if (data != null) {
+          result = ResponseMessageDTO.fromJson(data);
+        }
+      } else {
+        result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+    }
+    return result;
   }
 }

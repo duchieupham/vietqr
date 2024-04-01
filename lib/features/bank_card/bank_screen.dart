@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
@@ -21,11 +22,13 @@ import 'package:vierqr/features/add_bank/add_bank_screen.dart';
 import 'package:vierqr/features/bank_card/blocs/bank_bloc.dart';
 import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/bank_card/states/bank_state.dart';
+import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/dashboard_screen.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
 import 'package:vierqr/features/share_bdsd/share_bdsd_screen.dart';
+import 'package:vierqr/features/transaction_detail/transaction_detail_screen.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
@@ -97,13 +100,11 @@ class _BankScreenState extends State<_BankScreen>
       (remoteMessage) {
         if (remoteMessage != null) {
           if (remoteMessage.data['transactionReceiveId'] != null) {
-            Navigator.pushNamed(
-              NavigationService.navigatorKey.currentContext!,
-              Routes.TRANSACTION_DETAIL,
-              arguments: {
-                'transactionId': remoteMessage.data['transactionReceiveId'],
-              },
-            );
+            NavigatorUtils.navigatePage(
+                context,
+                TransactionDetailScreen(
+                    transactionId: remoteMessage.data['transactionReceiveId']),
+                routeName: TransactionDetailScreen.routeName);
           }
         }
       },
@@ -187,6 +188,8 @@ class _BankScreenState extends State<_BankScreen>
         }
 
         if (state.request == BankType.BANK) {
+          Provider.of<AuthProvider>(context, listen: false)
+              .updateBanks(state.listBanks);
           if (scrollController.hasClients) {
             scrollController.jumpTo(0);
           }

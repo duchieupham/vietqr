@@ -38,15 +38,21 @@ class NavigatorUtils {
       {required String routeName}) async {
     return Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => widget,
-        settings: RouteSettings(name: routeName),
-      ),
+          builder: (context) => widget,
+          settings: RouteSettings(name: routeName)),
     );
   }
 
-  static void navigateToRoot(
-    BuildContext context,
-  ) {
+  static Future navigatePageReplacement(BuildContext context, Widget widget,
+      {required String routeName}) async {
+    return Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+          builder: (context) => widget,
+          settings: RouteSettings(name: routeName)),
+    );
+  }
+
+  static void navigateToRoot(BuildContext context) {
     return Navigator.of(context).popUntil((route) => route.isFirst);
   }
 }

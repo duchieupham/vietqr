@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/commons/utils/transaction_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
@@ -12,6 +12,7 @@ import 'package:vierqr/features/detail_store/blocs/detail_store_bloc.dart';
 import 'package:vierqr/features/detail_store/events/detail_store_event.dart';
 import 'package:vierqr/features/detail_store/states/detail_store_state.dart';
 import 'package:vierqr/features/detail_store/widgets/filter_trans_store_widget.dart';
+import 'package:vierqr/features/transaction_detail/transaction_detail_screen.dart';
 import 'package:vierqr/models/store/detail_store_dto.dart';
 import 'package:vierqr/models/trans_dto.dart';
 
@@ -365,13 +366,9 @@ class _TransStoreViewState extends State<TransStoreView>
     final double width = MediaQuery.of(context).size.width;
     return InkWell(
       onTap: () {
-        Navigator.pushNamed(
-          context,
-          Routes.TRANSACTION_DETAIL,
-          arguments: {
-            'transactionId': dto.transactionId,
-          },
-        );
+        NavigatorUtils.navigatePage(
+            context, TransactionDetailScreen(transactionId: dto.transactionId),
+            routeName: TransactionDetailScreen.routeName);
       },
       child: Container(
         width: width,

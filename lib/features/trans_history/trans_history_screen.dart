@@ -5,12 +5,14 @@ import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/commons/utils/transaction_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/trans_history/blocs/trans_history_bloc.dart';
 import 'package:vierqr/features/trans_history/blocs/trans_history_provider.dart';
 import 'package:vierqr/features/trans_history/views/bottom_sheet_filter.dart';
+import 'package:vierqr/features/transaction_detail/transaction_detail_screen.dart';
 import 'package:vierqr/models/trans_dto.dart';
 import 'package:vierqr/models/terminal_response_dto.dart';
 import 'package:vierqr/models/transaction_input_dto.dart';
@@ -330,13 +332,9 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
     final double width = MediaQuery.of(context).size.width;
     return InkWell(
       onTap: () {
-        Navigator.pushNamed(
-          context,
-          Routes.TRANSACTION_DETAIL,
-          arguments: {
-            'transactionId': dto.transactionId,
-          },
-        );
+        NavigatorUtils.navigatePage(
+            context, TransactionDetailScreen(transactionId: dto.transactionId),
+            routeName: TransactionDetailScreen.routeName);
       },
       child: Container(
         width: width,

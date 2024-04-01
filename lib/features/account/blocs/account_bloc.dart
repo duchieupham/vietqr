@@ -29,9 +29,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> with BaseManager {
         bool check = await accRepository.logout();
         if (check) {
           emit(state.copyWith(
-            status: BlocStatus.UNLOADING,
-            request: AccountType.LOG_OUT,
-          ));
+              status: BlocStatus.UNLOADING, request: AccountType.LOG_OUT));
         } else {
           emit(state.copyWith(status: BlocStatus.ERROR));
         }

@@ -20,6 +20,8 @@ import 'shared_pref_local.dart';
 class SharePrefUtils {
   static String tokenInfo = '';
 
+  String get userId => getProfile().userId;
+
   /// Access Token
   static Future<String> getTokenInfo() async {
     if (tokenInfo.isNotEmpty) {

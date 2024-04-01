@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-class CountdownProvider extends ValueNotifier {
+class CountdownProvider extends ValueNotifier<int> {
   CountdownProvider(super.value);
 
   Timer? _timer;
@@ -11,7 +11,7 @@ class CountdownProvider extends ValueNotifier {
     this.value = value;
   }
 
-  void countDown() {
+  void countDown({VoidCallback? callback}) {
     if (_timer != null) {
       _timer!.cancel();
     }
@@ -19,6 +19,10 @@ class CountdownProvider extends ValueNotifier {
       const Duration(seconds: 1),
       (Timer t) {
         if (value != 0) value -= 1;
+        if (value == 0 && callback != null) {
+          callback.call();
+          _timer!.cancel();
+        }
       },
     );
   }

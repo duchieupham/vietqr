@@ -14,7 +14,7 @@ import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
-import 'package:vierqr/features/notification/views/notification_screen.dart';
+import 'package:vierqr/features/notification/notification_screen.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class BackgroundAppBarHome extends StatefulWidget {

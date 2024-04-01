@@ -4,9 +4,12 @@ import 'dart:convert';
 import 'package:camera/camera.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/features/transaction_detail/transaction_detail_screen.dart';
 import 'package:vierqr/features/transaction_detail/widgets/transaction_sucess_widget.dart';
+import 'package:vierqr/layouts/bottom_sheet/notify_trans_widget.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
+import 'package:vierqr/services/socket_service/socket_service.dart';
 import 'models/qr_generated_dto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -61,7 +64,7 @@ import 'package:vierqr/features/personal/views/national_information_view.dart';
 import 'package:vierqr/features/personal/views/user_update_password_view.dart';
 import 'package:vierqr/features/register_new_bank/register_mb_bank.dart';
 import 'package:vierqr/features/top_up/widget/pop_up_top_up_sucsess.dart';
-import 'package:vierqr/models/notification_transaction_success_dto.dart';
+import 'package:vierqr/models/notify_trans_dto.dart';
 import 'package:vierqr/models/user_repository.dart';
 import 'package:vierqr/services/local_notification/notification_service.dart';
 import 'package:vierqr/features/mobile_recharge/mobile_recharge_screen.dart';
@@ -189,6 +192,8 @@ class _VietQRApp extends State<VietQRApp> {
       ),
     );
 
+    SocketService.instance.init();
+
     if (notificationController.isClosed) {
       notificationController = BehaviorSubject<bool>();
     }
@@ -239,22 +244,26 @@ class _VietQRApp extends State<VietQRApp> {
             );
           }
         }
-        //process success transcation
-        if (message.data['notificationType'] != null &&
-            message.data['notificationType'] ==
-                Stringify.NOTI_TYPE_UPDATE_TRANSACTION) {
-          Map<String, dynamic> param = {};
-          param['userId'] = SharePrefUtils.getProfile().userId;
-          param['amount'] = message.data['amount'];
-          param['type'] = 0;
-          param['transactionId'] = message.data['transactionReceiveId'];
-          MediaHelper.instance.playAudio(param);
-          DialogWidget.instance.openWidgetDialog(
-            child: TransactionSuccessWidget(
-              dto: NotificationTransactionSuccessDTO.fromJson(message.data),
-            ),
-          );
-        }
+        //   //process success transcation
+        //   if (message.data['notificationType'] != null &&
+        //       message.data['notificationType'] ==
+        //           Stringify.NOTI_TYPE_UPDATE_TRANSACTION) {
+        //     Map<String, dynamic> param = {};
+        //     param['userId'] = SharePrefUtils.getProfile().userId;
+        //     param['amount'] = message.data['amount'];
+        //     param['type'] = 0;
+        //     param['transactionId'] = message.data['transactionReceiveId'];
+        //     MediaHelper.instance.playAudio(param);
+        //     DialogWidget.instance.showModelBottomSheet(
+        //       isDismissible: true,
+        //       margin: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
+        //       height: 750,
+        //       borderRadius: BorderRadius.circular(16),
+        //       widget: NotifyTransWidget(
+        //         dto: NotifyTransDTO.fromJson(message.data),
+        //       ),
+        //     );
+        //   }
       }
       notificationController.sink.add(true);
     });
@@ -264,13 +273,11 @@ class _VietQRApp extends State<VietQRApp> {
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       // Xử lý push notification nếu ứng dụng không đang chạy
       if (message.data['transactionReceiveId'] != null) {
-        Navigator.pushNamed(
-          NavigationService.navigatorKey.currentContext!,
-          Routes.TRANSACTION_DETAIL,
-          arguments: {
-            'transactionId': message.data['transactionReceiveId'],
-          },
-        );
+        NavigatorUtils.navigatePage(
+            context,
+            TransactionDetailScreen(
+                transactionId: message.data['transactionReceiveId']),
+            routeName: TransactionDetailScreen.routeName);
       }
       if (message.notification != null) {
         LOG.info(
@@ -284,13 +291,11 @@ class _VietQRApp extends State<VietQRApp> {
       (remoteMessage) {
         if (remoteMessage != null) {
           if (remoteMessage.data['transactionReceiveId'] != null) {
-            Navigator.pushNamed(
-              NavigationService.navigatorKey.currentContext!,
-              Routes.TRANSACTION_DETAIL,
-              arguments: {
-                'transactionId': remoteMessage.data['transactionReceiveId'],
-              },
-            );
+            NavigatorUtils.navigatePage(
+                context,
+                TransactionDetailScreen(
+                    transactionId: remoteMessage.data['transactionReceiveId']),
+                routeName: TransactionDetailScreen.routeName);
           }
         }
       },
@@ -344,8 +349,6 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.QR_SHARE_VIEW: (context) => QRShareView(),
                   Routes.SCAN_QR_VIEW: (context) => const ScanQrScreen(),
                   Routes.SEARCH_BANK: (context) => SearchBankView(),
-                  Routes.TRANSACTION_DETAIL: (context) =>
-                      const TransactionDetailScreen(),
                   Routes.NATIONAL_INFORMATION: (context) =>
                       const NationalInformationView(),
                   Routes.INTRODUCE_SCREEN: (context) => const IntroduceScreen(),

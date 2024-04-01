@@ -16,6 +16,7 @@ import 'package:vierqr/models/info_user_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:vierqr/services/socket_service/socket_service.dart';
 
 class LoginRepository {
   static final codeLoginController = BehaviorSubject<CodeLoginDTO>();
@@ -70,6 +71,7 @@ class LoginRepository {
         await SharePrefUtils.saveTokenFree('');
         await SharePrefUtils.saveTokenFCM(fcmToken);
         await SharePrefUtils.savePhone(dto.phoneNo);
+        SocketService.instance.init();
         result = true;
       }
     } catch (e) {

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/features/notification/blocs/notification_bloc.dart';
 import 'package:vierqr/features/notification/events/notification_event.dart';
 import 'package:vierqr/features/notification/states/notification_state.dart';
+import 'package:vierqr/features/transaction_detail/transaction_detail_screen.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/models/notification_dto.dart';
@@ -151,11 +152,9 @@ class _NotificationViewState extends State<NotificationView> {
       onTap: () {
         if (dto.type == Stringify.NOTI_TYPE_NEW_TRANSACTION ||
             dto.type == Stringify.NOTI_TYPE_UPDATE_TRANSACTION) {
-          Navigator.pushNamed(
-            context,
-            Routes.TRANSACTION_DETAIL,
-            arguments: {'transactionId': dto.data},
-          );
+          NavigatorUtils.navigatePage(
+              context, TransactionDetailScreen(transactionId: dto.data),
+              routeName: TransactionDetailScreen.routeName);
         }
       },
       child: Container(
