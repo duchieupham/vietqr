@@ -98,6 +98,7 @@ class CurvedNavigationBarState extends State<CurvedNavigationBar>
     super.initState();
     widget.stream.listen((event) {
       _endingIndex = event;
+      if (!mounted) return;
       setState(() {});
     });
 
