@@ -100,8 +100,6 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
               switch (state.msg) {
                 case 'E55':
                   errorMsg = 'Mật khẩu không chính xác';
-                  Provider.of<MaintainChargeProvider>(context, listen: false)
-                      .setIsError(true);
                   break;
                 case 'E25':
                   errorMsg = 'TK ngân hàng không tồn tại trong hệ thống';
@@ -288,6 +286,12 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                 String phone = SharePrefUtils.getPhone();
                 DialogWidget.instance.openConfirmPassDialog(
                   title: "",
+                  onClose: () {
+                    Provider.of<PinProvider>(context, listen: false).reset();
+                    Provider.of<MaintainChargeProvider>(context, listen: false)
+                        .setIsError(false);
+                    Navigator.of(context).pop();
+                  },
                   onDone: (pin) {
                     _bloc.add(MaintainChargeEvent(
                         dto: MaintainChargeCreate(

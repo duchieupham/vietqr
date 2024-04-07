@@ -21,32 +21,33 @@ class _ActiveSuccessScreenState extends State<ActiveSuccessScreen> {
       backgroundColor: Colors.white,
       bottomNavigationBar: _bottom(),
       body: CustomScrollView(
+        physics: NeverScrollableScrollPhysics(),
         slivers: [
           SliverAppBar(
             pinned: true,
             leadingWidth: 100,
-            leading: InkWell(
-              onTap: () {
-                Navigator.of(context).pop();
-              },
-              child: Container(
-                padding: const EdgeInsets.only(left: 8),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.keyboard_arrow_left,
-                      color: Colors.black,
-                      size: 25,
-                    ),
-                    const SizedBox(width: 2),
-                    Text(
-                      "Trở về",
-                      style: TextStyle(color: Colors.black, fontSize: 14),
-                    )
-                  ],
-                ),
-              ),
-            ),
+            // leading: InkWell(
+            //   onTap: () {
+            //     Navigator.of(context).pop();
+            //   },
+            //   child: Container(
+            //     padding: const EdgeInsets.only(left: 8),
+            //     child: Row(
+            //       children: [
+            //         Icon(
+            //           Icons.keyboard_arrow_left,
+            //           color: Colors.black,
+            //           size: 25,
+            //         ),
+            //         const SizedBox(width: 2),
+            //         Text(
+            //           "Trở về",
+            //           style: TextStyle(color: Colors.black, fontSize: 14),
+            //         )
+            //       ],
+            //     ),
+            //   ),
+            // ),
             actions: [
               Padding(
                 padding: const EdgeInsets.only(right: 8),

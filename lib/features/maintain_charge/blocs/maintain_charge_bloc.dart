@@ -88,9 +88,12 @@ class MaintainChargeBloc extends Bloc<MaintainChargeEvents, MaintainChargeState>
           emit(state.copyWith(
               request: MainChargeType.CONFIRM_SUCCESS,
               status: BlocStatus.SUCCESS));
-          Navigator.pushNamed(context, Routes.ACTIVE_SUCCESS_SCREEN);
-          // Navigator.of(context)
-          //     .push(MaterialPageRoute(builder: (_) => ActiveSuccessScreen()));
+          // Navigator.pushNamed(context, Routes.ACTIVE_SUCCESS_SCREEN);
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ActiveSuccessScreen(),
+              ));
         } else {
           emit(state.copyWith(
             status: BlocStatus.ERROR,

@@ -14,6 +14,7 @@ import 'package:vierqr/commons/widgets/pin_widget.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_information_dto.dart';
+import 'package:vierqr/services/providers/maintain_charge_provider.dart';
 import 'package:vierqr/services/providers/pin_provider.dart';
 
 import 'error_widget.dart';
@@ -29,7 +30,9 @@ class DialogWidget {
   static bool isPopLoading = false;
 
   openConfirmPassDialog(
-      {required String title, required Function(String) onDone}) {
+      {required String title,
+      required Function(String) onDone,
+      required Function() onClose}) {
     final FocusNode focusNode = FocusNode();
     focusNode.requestFocus();
     return showDialog(
@@ -48,30 +51,11 @@ class DialogWidget {
               width: MediaQuery.of(context).size.width * 0.9,
               height: MediaQuery.of(context).size.height * 0.25,
               // alignment: Alignment.center,
-              child: Stack(
-                children: [
-                  ErrorDialogWidget(
-                      focusNode: focusNode,
-                      onDone: onDone,
-                      text: "Mật khẩu không khớp. Vui lòng thử lại."),
-                  Positioned(
-                    top: 0,
-                    right: 0,
-                    child: GestureDetector(
-                      onTap: () {
-                        Provider.of<PinProvider>(context, listen: false)
-                            .reset();
-                        Navigator.of(context).pop();
-                      },
-                      child: Icon(
-                        Icons.close,
-                        color: Colors.black,
-                        size: 20,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              child: ErrorDialogWidget(
+                  focusNode: focusNode,
+                  onDone: onDone,
+                  onClose: onClose,
+                  text: "Mật khẩu không khớp. Vui lòng thử lại."),
             ),
           ),
         );
