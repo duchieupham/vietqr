@@ -7,16 +7,20 @@ import 'package:vierqr/features/bank_detail/bank_card_detail_screen.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
+import '../../../commons/constants/configurations/app_images.dart';
+
 class CardWidget extends StatelessWidget {
   final List<BankAccountDTO> listBanks;
   final int index;
   final GestureTapCallback? onLinked;
+  final GestureTapCallback? onActive;
 
   const CardWidget({
     super.key,
     required this.listBanks,
     required this.index,
     this.onLinked,
+    this.onActive,
   });
 
   String get userId => SharePrefUtils.getProfile().userId;
@@ -189,6 +193,29 @@ class CardWidget extends StatelessWidget {
                           ),
                         ),
                       ],
+                    ),
+                  ),
+                ),
+                Positioned(
+                  bottom: 30,
+                  right: 10,
+                  child: GestureDetector(
+                    onTap: onActive,
+                    child: Container(
+                      padding: const EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                        color: AppColor.WHITE,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        children: [
+                          Image.asset(
+                            AppImages.icKeyActive,
+                            height: 20,
+                            width: 20,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

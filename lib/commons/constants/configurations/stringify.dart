@@ -63,6 +63,7 @@ enum SharedPreferenceKey {
   ScrollCard,
   BankToken,
   WalletInfo,
+  LoginAccountList,
   LoginAccount,
   AccountSetting,
   WalletID,
@@ -97,6 +98,8 @@ extension SharedPreferenceKeyExtension on SharedPreferenceKey {
         return 'BANK_TOKEN';
       case SharedPreferenceKey.WalletInfo:
         return 'WALLET_INFO';
+      case SharedPreferenceKey.LoginAccountList:
+        return 'LOGIN_ACCOUNT_LIST';
       case SharedPreferenceKey.LoginAccount:
         return 'LOGIN_ACCOUNT';
       case SharedPreferenceKey.AccountSetting:

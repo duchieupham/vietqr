@@ -153,12 +153,13 @@ class UserEditRepository {
         result = ResponseMessageDTO.fromJson(data);
         final String phone = SharePrefUtils.getPhone();
 
-        List<InfoUserDTO> list = await SharePrefUtils.getLoginAccount() ?? [];
+        List<InfoUserDTO> list =
+            await SharePrefUtils.getLoginAccountList() ?? [];
 
         if (list.isNotEmpty) {
           list.removeWhere((element) => element.phoneNo == phone.trim());
 
-          await SharePrefUtils.saveLoginAccount(list);
+          await SharePrefUtils.saveLoginAccountList(list);
         }
 
         await _resetServices();

@@ -44,11 +44,13 @@ class PinWidget extends StatelessWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(pinSize),
                         color: (value.pinLength < index + 1)
-                            ? AppColor.TRANSPARENT
-                            : AppColor.GREY_TOP_TAB_BAR,
+                            ? AppColor.GREY_TOP_TAB_BAR
+                            : AppColor.BLUE_TEXT,
                         border: Border.all(
                           width: 2,
-                          color: AppColor.GREY_TOP_TAB_BAR,
+                          color: (value.pinLength < index + 1)
+                              ? AppColor.GREY_TOP_TAB_BAR
+                              : AppColor.BLUE_TEXT,
                         ),
                       ),
                     ),
@@ -58,30 +60,37 @@ class PinWidget extends StatelessWidget {
             }),
           ),
         ),
-        TextField(
-          focusNode: focusNode,
-          obscureText: true,
-          maxLength: pinLength,
-          maxLengthEnforcement: MaxLengthEnforcement.enforced,
-          showCursor: false,
-          decoration: const InputDecoration(
-            counterStyle: TextStyle(
-              height: 0,
+        Positioned(
+          top: 0,
+          child: Container(
+            width: width,
+            height: pinSize + 5,
+            child: TextField(
+              focusNode: focusNode,
+              obscureText: true,
+              maxLength: pinLength,
+              maxLengthEnforcement: MaxLengthEnforcement.enforced,
+              showCursor: false,
+              decoration: const InputDecoration(
+                counterStyle: TextStyle(
+                  height: 0,
+                ),
+                counterText: '',
+                border: InputBorder.none,
+              ),
+              style: const TextStyle(color: AppColor.TRANSPARENT),
+              keyboardType: TextInputType.number,
+              onChanged: ((text) {
+                Provider.of<PinProvider>(context, listen: false)
+                    .updatePinLength(text.length);
+                if (text.length == pinLength) {
+                  focusNode.unfocus();
+                  // Provider.of<PinProvider>(context, listen: false).reset();
+                  onDone(text);
+                }
+              }),
             ),
-            counterText: '',
-            border: InputBorder.none,
           ),
-          style: const TextStyle(color: AppColor.TRANSPARENT),
-          keyboardType: TextInputType.number,
-          onChanged: ((text) {
-            Provider.of<PinProvider>(context, listen: false)
-                .updatePinLength(text.length);
-            if (text.length == pinLength) {
-              focusNode.unfocus();
-              Provider.of<PinProvider>(context, listen: false).reset();
-              onDone(text);
-            }
-          }),
         ),
       ],
     );

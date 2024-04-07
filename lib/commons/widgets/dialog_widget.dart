@@ -16,6 +16,8 @@ import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_information_dto.dart';
 import 'package:vierqr/services/providers/pin_provider.dart';
 
+import 'error_widget.dart';
+
 class DialogWidget {
   //
   const DialogWidget._privateConstructor();
@@ -25,6 +27,57 @@ class DialogWidget {
   static DialogWidget get instance => _instance;
 
   static bool isPopLoading = false;
+
+  openConfirmPassDialog(
+      {required String title, required Function(String) onDone}) {
+    final FocusNode focusNode = FocusNode();
+    focusNode.requestFocus();
+    return showDialog(
+      barrierDismissible: false,
+      context: NavigationService.navigatorKey.currentContext!,
+      builder: (context) {
+        return Material(
+          color: AppColor.TRANSPARENT,
+          child: Center(
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: AppColor.WHITE,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              width: MediaQuery.of(context).size.width * 0.9,
+              height: MediaQuery.of(context).size.height * 0.25,
+              // alignment: Alignment.center,
+              child: Stack(
+                children: [
+                  ErrorDialogWidget(
+                      focusNode: focusNode,
+                      onDone: onDone,
+                      text: "Mật khẩu không khớp. Vui lòng thử lại."),
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: GestureDetector(
+                      onTap: () {
+                        Provider.of<PinProvider>(context, listen: false)
+                            .reset();
+                        Navigator.of(context).pop();
+                      },
+                      child: Icon(
+                        Icons.close,
+                        color: Colors.black,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   openPINDialog({required String title, required Function(String) onDone}) {
     final FocusNode focusNode = FocusNode();

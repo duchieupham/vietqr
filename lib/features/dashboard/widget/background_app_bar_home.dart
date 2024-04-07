@@ -1,9 +1,11 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:vierqr/commons/constants/configurations/app_images.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
@@ -14,8 +16,11 @@ import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
+import 'package:vierqr/features/dashboard/widget/maintain_widget.dart';
 import 'package:vierqr/features/notification/notification_screen.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
+
+import '../../maintain_charge/maintain_charge_screen.dart';
 
 class BackgroundAppBarHome extends StatefulWidget {
   const BackgroundAppBarHome({super.key});

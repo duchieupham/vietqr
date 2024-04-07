@@ -5,11 +5,17 @@ import 'package:camera/camera.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
+import 'package:vierqr/features/maintain_charge/blocs/maintain_charge_bloc.dart';
+import 'package:vierqr/features/maintain_charge/maintain_charge_screen.dart';
+import 'package:vierqr/features/maintain_charge/views/confirm_active_key_screen.dart';
 import 'package:vierqr/features/transaction_detail/transaction_detail_screen.dart';
 import 'package:vierqr/features/transaction_detail/widgets/transaction_sucess_widget.dart';
 import 'package:vierqr/layouts/bottom_sheet/notify_trans_widget.dart';
+import 'package:vierqr/models/maintain_charge_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
+import 'package:vierqr/services/providers/maintain_charge_provider.dart';
 import 'package:vierqr/services/socket_service/socket_service.dart';
+import 'features/maintain_charge/views/active_success_screen.dart';
 import 'models/qr_generated_dto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -322,6 +328,8 @@ class _VietQRApp extends State<VietQRApp> {
           providers: [
             ChangeNotifierProvider(create: (context) => AuthProvider()),
             ChangeNotifierProvider(create: (context) => PinProvider()),
+            ChangeNotifierProvider(
+                create: (context) => MaintainChargeProvider()),
             ChangeNotifierProvider(create: (context) => UserEditProvider()),
           ],
           child: Consumer<AuthProvider>(
@@ -365,6 +373,8 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.REPORT_SCREEN: (context) => const ReportScreen(),
                   Routes.TRANSACTION_WALLET: (context) =>
                       const TransWalletScreen(),
+                  Routes.ACTIVE_SUCCESS_SCREEN: (context) =>
+                      const ActiveSuccessScreen(),
                 },
                 onGenerateRoute: (settings) {
                   if (settings.name == Routes.SHOW_QR) {
@@ -381,6 +391,45 @@ class _VietQRApp extends State<VietQRApp> {
                       },
                     );
                   }
+
+                  if (settings.name == Routes.MAINTAIN_CHARGE_SCREEN) {
+                    Map<String, dynamic> param =
+                        settings.arguments as Map<String, dynamic>;
+                    int type = param['type'] as int;
+                    String bankId = param['bankId'] as String;
+
+                    return MaterialPageRoute(
+                      builder: (context) {
+                        return MaintainChargeScreen(
+                          type: type,
+                          bankId: bankId,
+                        );
+                      },
+                    );
+                  }
+                  if (settings.name == Routes.ACTIVE_SUCCESS_SCREEN) {
+                    Map<String, dynamic> param =
+                        settings.arguments as Map<String, dynamic>;
+
+                    return MaterialPageRoute(
+                      builder: (context) {
+                        return ActiveSuccessScreen();
+                      },
+                    );
+                  }
+                  // if (settings.name == Routes.CONFIRM_ACTIVE_KEY_SCREEN) {
+                  //   Map<String, dynamic> param =
+                  //       settings.arguments as Map<String, dynamic>;
+                  //   MaintainChargeDTO dto = param['dto'] as MaintainChargeDTO;
+
+                  //   return MaterialPageRoute(
+                  //     builder: (context) {
+                  //       return ConfirmActiveKeyScreen(
+                  //         dto: dto,
+                  //       );
+                  //     },
+                  //   );
+                  // }
 
                   if (settings.name == Routes.QR_TOP_UP) {
                     Map<String, dynamic> param =

@@ -10,4 +10,7 @@ class AppImages {
   static String icSaveImage = 'assets/images/ic-edit-avatar-setting.png';
   static String icShare = 'assets/images/ic-share-blue.png';
   static String icUpdateTrans = 'assets/images/ic-update-transaction-blue.png';
+  static String icKeyActive = 'assets/images/ic-key-active.png';
+  static String icVietQrSemiSmall = 'assets/images/ic-vietqr-semi-small.png';
+  static String icLogoVietQr = 'assets/images/logo-viet-qr.png';
 }

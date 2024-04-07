@@ -26,6 +26,7 @@ import 'package:vierqr/features/dashboard/blocs/isolate_stream.dart';
 import 'package:vierqr/features/dashboard/curved_navi_bar/curved_nav_bar_model.dart';
 import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
 import 'package:vierqr/features/dashboard/widget/background_app_bar_home.dart';
+import 'package:vierqr/features/dashboard/widget/floating_button.dart';
 import 'package:vierqr/features/dashboard/widget/maintain_widget.dart';
 import 'package:vierqr/features/home/home.dart';
 import 'package:vierqr/features/home/widget/dialog_update.dart';
@@ -428,6 +429,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
         if (!provider.isRenderUI)
           return SplashScreen(isFromLogin: widget.isFromLogin);
         return Scaffold(
+          // floatingActionButton: MyFloatingButton(),
           body: Stack(
             children: [
               BackgroundAppBarHome(),
@@ -449,8 +451,8 @@ class _DashBoardScreen extends State<DashBoardScreen>
                     controller: _pageController,
                     onPageChanged: (index) async {
                       // if (index != PageType.STORE.pageIndex) {
-                        provider.updateIndex(index);
-                        sendDataFromBottomBar(index);
+                      provider.updateIndex(index);
+                      sendDataFromBottomBar(index);
                       // }
                     },
                     children: _listScreens,

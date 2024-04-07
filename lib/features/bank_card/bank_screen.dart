@@ -3,6 +3,7 @@ import 'dart:isolate';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -36,6 +37,8 @@ import 'package:vierqr/models/qr_create_dto.dart';
 import 'package:vierqr/models/user_repository.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
+import '../../commons/constants/configurations/app_images.dart';
+import '../../services/providers/maintain_charge_provider.dart';
 import 'widgets/card_widget.dart';
 
 class BankScreen extends StatelessWidget {
@@ -93,6 +96,158 @@ class _BankScreenState extends State<_BankScreen>
     _subscription = eventBus.on<GetListBankScreen>().listen((_) {
       _bloc.add(BankCardEventGetList());
     });
+  }
+
+  void onActiveKey({
+    required String bankId,
+  }) async {
+    await showCupertinoModalPopup(
+      context: context,
+      builder: (context) => Container(
+        margin: const EdgeInsets.fromLTRB(10, 0, 10, 30),
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+        height: MediaQuery.of(context).size.height * 0.35,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Stack(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                DefaultTextStyle(
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  child: Text(
+                    "Thanh toán phí \ndịch vụ nhận Biến động số dư",
+                  ),
+                ),
+                const SizedBox(height: 24),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.pushNamed(context, Routes.MAINTAIN_CHARGE_SCREEN,
+                        arguments: {
+                          'type': 0,
+                          'bankId': bankId,
+                        });
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.fromLTRB(18, 12, 18, 12),
+                    width: double.infinity,
+                    height: MediaQuery.of(context).size.height * 0.1,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(
+                          width: 0.5, color: Colors.black.withOpacity(0.5)),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            DefaultTextStyle(
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              child: Text("Kích hoạt KEY"),
+                            ),
+                            const SizedBox(height: 3),
+                            DefaultTextStyle(
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 13,
+                              ),
+                              child: Text(
+                                  "Sử dụng KEY để kích hoạt \ndịch vụ nhận biến động số dư."),
+                            )
+                          ],
+                        ),
+                        Image.asset(
+                          AppImages.icKeyActive,
+                          height: 60,
+                          width: 60,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                GestureDetector(
+                  onTap: null,
+                  child: Container(
+                    padding: const EdgeInsets.all(20),
+                    width: double.infinity,
+                    height: MediaQuery.of(context).size.height * 0.1,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(
+                          width: 0.5, color: Colors.black.withOpacity(0.5)),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            DefaultTextStyle(
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              child: Text("Quét mã VietQR"),
+                            ),
+                            const SizedBox(height: 3),
+                            DefaultTextStyle(
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 13,
+                              ),
+                              child: Text(
+                                  "Quét mã VietQR để thanh toán phí dịch vụ."),
+                            )
+                          ],
+                        ),
+                        Image.asset(
+                          AppImages.icVietQrSemiSmall,
+                          height: 60,
+                          width: 60,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Positioned(
+              top: 0,
+              right: 0,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+                child: Icon(
+                  Icons.close,
+                  color: Colors.black,
+                  size: 20,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   void handleMessageOnBackground() {
@@ -233,6 +388,16 @@ class _BankScreenState extends State<_BankScreen>
                                 index: index,
                                 onLinked: () =>
                                     onLinked(context, state.listBanks[index]),
+                                onActive: () {
+                                  Provider.of<MaintainChargeProvider>(context,
+                                          listen: false)
+                                      .selectedBank(
+                                          state.listBanks[index].bankAccount,
+                                          state.listBanks[index].bankShortName);
+                                  onActiveKey(
+                                    bankId: state.listBanks[index].id,
+                                  );
+                                },
                               ),
                             );
                           }).toList(),

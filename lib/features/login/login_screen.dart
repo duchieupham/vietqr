@@ -418,7 +418,7 @@ class _LoginState extends State<_Login> {
                                 .compareTo(b.expiryAsDateTime));
                           }
 
-                          await SharePrefUtils.saveLoginAccount(list);
+                          await SharePrefUtils.saveLoginAccountList(list);
 
                           provider.updateListInfoUser();
 
@@ -894,7 +894,8 @@ class _LoginState extends State<_Login> {
   }
 
   void _saveAccount(LoginProvider provider) async {
-    List<InfoUserDTO> listCheck = await SharePrefUtils.getLoginAccount() ?? [];
+    List<InfoUserDTO> listCheck =
+        await SharePrefUtils.getLoginAccountList() ?? [];
 
     if (listCheck.isNotEmpty) {
       if (listCheck.length >= 3) {
@@ -924,7 +925,7 @@ class _LoginState extends State<_Login> {
           .sort((a, b) => a.expiryAsDateTime.compareTo(b.expiryAsDateTime));
     }
 
-    await SharePrefUtils.saveLoginAccount(listCheck);
+    await SharePrefUtils.saveLoginAccountList(listCheck);
     provider.updateListInfoUser();
   }
 
