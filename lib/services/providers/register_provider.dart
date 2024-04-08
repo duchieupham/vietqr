@@ -1,6 +1,8 @@
+import 'package:dudv_base/dudv_base.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/commons/utils/string_utils.dart';
 
 class RegisterProvider with ChangeNotifier {
   //error handler
@@ -30,6 +32,8 @@ class RegisterProvider with ChangeNotifier {
   int? _resendToken;
 
   get resendToken => _resendToken;
+
+  get phoneNumberValue => phoneNoController.value;
 
   final auth = FirebaseAuth.instance;
 
@@ -118,6 +122,42 @@ class RegisterProvider with ChangeNotifier {
         passwordController.text.isNotEmpty &&
         confirmPassController.text.isNotEmpty) {
       if (isValidValidation()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  bool isValidValidationPhone() {
+    return !_isPhoneErr;
+  }
+
+  /// > xu ly validate ????
+  bool isEnableButtonPhone() {
+    if (phoneNoController.text.isNotEmpty) {
+      var isValid =
+          StringUtils.instance.isValidatePhone(phoneNoController.value.text) ??
+              true;
+      debugPrint("is Valid ==> $isValid");
+      if (isValidValidationPhone() && !isValid) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  bool isValidValidationPassword() {
+    return !_isPhoneErr && !_isPasswordErr;
+  }
+
+  /// > xu ly validate ????
+  bool isEnableButtonPassword() {
+    if (phoneNoController.text.isNotEmpty) {
+      var isValid =
+          StringUtils.instance.isValidatePhone(phoneNoController.value.text) ??
+              true;
+      debugPrint("is Valid ==> $isValid");
+      if (isValidValidationPhone() && !isValid) {
         return true;
       }
     }

@@ -101,7 +101,7 @@ class _BodyWidget extends State<PhoneWidget> {
                     fillColor: AppColor.WHITE,
                     filled: true,
                     border: InputBorder.none,
-                    hintText: '090 123 4567',
+                    hintText: 'Nhập số điện thoại ở đây',
                     hintStyle:
                         TextStyle(color: AppColor.GREY_TEXT, fontSize: 14),
                     focusedBorder: OutlineInputBorder(
