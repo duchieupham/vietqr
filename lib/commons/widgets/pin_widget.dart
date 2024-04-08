@@ -10,6 +10,7 @@ class PinWidget extends StatelessWidget {
   final int pinLength;
   final FocusNode focusNode;
   final Function(String) onDone;
+  final TextEditingController? editingController;
 
   const PinWidget({
     super.key,
@@ -18,6 +19,7 @@ class PinWidget extends StatelessWidget {
     required this.pinLength,
     required this.focusNode,
     required this.onDone,
+    this.editingController,
   });
 
   @override
@@ -66,6 +68,7 @@ class PinWidget extends StatelessWidget {
             width: width,
             height: pinSize + 5,
             child: TextField(
+              controller: editingController,
               focusNode: focusNode,
               obscureText: true,
               maxLength: pinLength,
@@ -83,6 +86,7 @@ class PinWidget extends StatelessWidget {
               onChanged: ((text) {
                 Provider.of<PinProvider>(context, listen: false)
                     .updatePinLength(text.length);
+
                 if (text.length == pinLength) {
                   focusNode.unfocus();
                   // Provider.of<PinProvider>(context, listen: false).reset();

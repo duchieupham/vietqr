@@ -13,14 +13,17 @@ class ErrorDialogWidget extends StatelessWidget {
   final String text;
   final Function(String) onDone;
   final Function() onClose;
+  final TextEditingController editingController;
 
   final FocusNode focusNode;
-  const ErrorDialogWidget(
-      {super.key,
-      required this.text,
-      required this.onDone,
-      required this.onClose,
-      required this.focusNode});
+  const ErrorDialogWidget({
+    super.key,
+    required this.text,
+    required this.onDone,
+    required this.onClose,
+    required this.focusNode,
+    required this.editingController,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +52,7 @@ class ErrorDialogWidget extends StatelessWidget {
                           width: 0.5)),
                   child: Center(
                     child: PinWidget(
+                      editingController: editingController,
                       width: MediaQuery.of(context).size.width,
                       pinSize: 15,
                       pinLength: Numeral.DEFAULT_PIN_LENGTH,

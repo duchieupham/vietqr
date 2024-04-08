@@ -20,6 +20,26 @@ class MaintainChargeEvent extends MaintainChargeEvents {
   List<Object?> get props => [dto];
 }
 
+class GetAnnualFeeListEvent extends MaintainChargeEvents {}
+
+class RequestActiveAnnualFeeEvent extends MaintainChargeEvents {
+  final int type;
+  final String feeId;
+  final String bankId;
+  final String userId;
+  final String password;
+
+  const RequestActiveAnnualFeeEvent(
+      {required this.type,
+      required this.feeId,
+      required this.bankId,
+      required this.userId,
+      required this.password});
+
+  @override
+  List<Object?> get props => [type, feeId, bankId, userId, password];
+}
+
 class ConfirmMaintainChargeEvent extends MaintainChargeEvents {
   final ConfirmMaintainCharge dto;
 

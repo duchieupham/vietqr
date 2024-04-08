@@ -183,7 +183,14 @@ class _BankScreenState extends State<_BankScreen>
                 ),
                 const SizedBox(height: 12),
                 GestureDetector(
-                  onTap: null,
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.pushNamed(context, Routes.MAINTAIN_CHARGE_SCREEN,
+                        arguments: {
+                          'type': 1,
+                          'bankId': bankId,
+                        });
+                  },
                   child: Container(
                     padding: const EdgeInsets.all(20),
                     width: double.infinity,

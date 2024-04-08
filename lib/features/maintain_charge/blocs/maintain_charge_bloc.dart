@@ -5,6 +5,7 @@ import 'package:vierqr/commons/mixin/base_manager.dart';
 import 'package:vierqr/features/maintain_charge/events/maintain_charge_events.dart';
 import 'package:vierqr/features/maintain_charge/repositories/maintain_charge_repositories.dart';
 import 'package:vierqr/features/maintain_charge/views/active_success_screen.dart';
+import 'package:vierqr/models/annual_fee_dto.dart';
 import 'package:vierqr/models/maintain_charge_dto.dart';
 
 import '../../../commons/constants/configurations/route.dart';
@@ -13,6 +14,7 @@ import '../../../commons/utils/log.dart';
 import '../../../services/providers/maintain_charge_provider.dart';
 import '../../../services/providers/pin_provider.dart';
 import '../states/maintain_charge_state.dart';
+import '../views/annual_fee_screen.dart';
 import '../views/confirm_active_key_screen.dart';
 
 class MaintainChargeBloc extends Bloc<MaintainChargeEvents, MaintainChargeState>
@@ -23,9 +25,122 @@ class MaintainChargeBloc extends Bloc<MaintainChargeEvents, MaintainChargeState>
   MaintainChargeBloc(this.context) : super(MaintainChargeState()) {
     on<MaintainChargeEvent>(_chargeMaintain);
     on<ConfirmMaintainChargeEvent>(_confirmMaintainCharge);
+    on<GetAnnualFeeListEvent>(_getAnnualFeeList);
+    on<RequestActiveAnnualFeeEvent>(_requestActiveAnnualFee);
   }
 
-  final maintainChareRepositories = const MaintainChargeRepositories();
+  final _maintainChareRepositories = const MaintainChargeRepositories();
+
+  void _requestActiveAnnualFee(MaintainChargeEvents event, Emitter emit) async {
+    try {
+      if (event is RequestActiveAnnualFeeEvent) {
+        if (state.status == BlocStatus.NONE) {
+          emit(state.copyWith(status: BlocStatus.LOADING));
+        }
+        final ActiveAnnualStatus? statusResquest =
+            await _maintainChareRepositories.activeAnnual(
+                type: event.type,
+                feeId: event.feeId,
+                bankId: event.bankId,
+                userId: event.userId,
+                password: event.password);
+        if (statusResquest?.code == "SUCCESS") {
+          emit(state.copyWith(
+              request: MainChargeType.REQUEST_ACTIVE_ANNUAL_FEE,
+              status: BlocStatus.SUCCESS));
+          final ActiveAnnualStatus? statusConfirm =
+              await _maintainChareRepositories.confirmActiveAnnual(
+                  otp: statusResquest?.res?.otp,
+                  bankId: event.bankId,
+                  userId: event.userId,
+                  password: event.password,
+                  request: statusResquest?.res?.request,
+                  otpPayment: statusResquest?.res?.otpPayment,
+                  feeId: event.feeId);
+          if (statusConfirm?.code == "SUCCESS") {
+            emit(state.copyWith(
+                request: MainChargeType.CONFIRM_ACTIVE_ANNUAL_FEE,
+                status: BlocStatus.SUCCESS));
+            Provider.of<MaintainChargeProvider>(context, listen: false)
+                .setIsError(false);
+            Provider.of<PinProvider>(context, listen: false).reset();
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => QrAnnualFeeScreen(
+                    qr: statusConfirm?.confirm?.qr,
+                    duration: statusResquest?.res?.duration,
+                    amount: statusConfirm?.confirm?.amount,
+                    validFrom: statusResquest?.res?.validFrom,
+                    validTo: statusResquest?.res?.validTo,
+                  ),
+                ));
+          } else {
+            emit(state.copyWith(
+              status: BlocStatus.ERROR,
+              request: MainChargeType.REQUEST_ACTIVE_ANNUAL_FEE,
+              msg: statusResquest?.message,
+            ));
+
+            if (state.status == BlocStatus.ERROR && state.msg != 'E55') {
+              Provider.of<PinProvider>(context, listen: false).reset();
+              Navigator.of(context).pop();
+            } else if (state.msg == 'E55') {
+              Provider.of<MaintainChargeProvider>(context, listen: false)
+                  .setIsError(true);
+              Provider.of<PinProvider>(context, listen: false).reset();
+            }
+          }
+        } else {
+          emit(state.copyWith(
+            status: BlocStatus.ERROR,
+            request: MainChargeType.REQUEST_ACTIVE_ANNUAL_FEE,
+            msg: statusResquest?.message,
+          ));
+
+          if (state.status == BlocStatus.ERROR && state.msg != 'E55') {
+            Provider.of<PinProvider>(context, listen: false).reset();
+            Navigator.of(context).pop();
+          } else if (state.msg == 'E55') {
+            Provider.of<MaintainChargeProvider>(context, listen: false)
+                .setIsError(true);
+            Provider.of<PinProvider>(context, listen: false).reset();
+          }
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(status: BlocStatus.ERROR, msg: 'Đã có lỗi xảy ra.'));
+    }
+  }
+
+  void _getAnnualFeeList(MaintainChargeEvents event, Emitter emit) async {
+    try {
+      if (event is GetAnnualFeeListEvent) {
+        if (state.status == BlocStatus.NONE) {
+          emit(state.copyWith(status: BlocStatus.LOADING));
+        }
+        List<AnnualFeeDTO>? list =
+            await _maintainChareRepositories.getAnnualFeeList();
+        if (list!.isNotEmpty) {
+          emit(state.copyWith(
+              listAnnualFee: list,
+              request: MainChargeType.GET_ANNUAL_FEE_LIST,
+              status: BlocStatus.SUCCESS));
+          Provider.of<MaintainChargeProvider>(context, listen: false)
+              .updateList(list);
+        } else {
+          emit(state.copyWith(
+              listAnnualFee: null,
+              request: MainChargeType.GET_ANNUAL_FEE_LIST,
+              status: BlocStatus.NONE));
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(status: BlocStatus.ERROR, msg: 'Đã có lỗi xảy ra.'));
+    }
+  }
 
   void _chargeMaintain(MaintainChargeEvents event, Emitter emit) async {
     try {
@@ -34,7 +149,7 @@ class MaintainChargeBloc extends Bloc<MaintainChargeEvents, MaintainChargeState>
           emit(state.copyWith(status: BlocStatus.LOADING));
         }
         final MaintainChargeStatus? status =
-            await maintainChareRepositories.chargeMaintainace(event.dto);
+            await _maintainChareRepositories.chargeMaintainace(event.dto);
         if (status?.code == "SUCCESS") {
           emit(state.copyWith(
               dto: status?.dto,
@@ -84,7 +199,7 @@ class MaintainChargeBloc extends Bloc<MaintainChargeEvents, MaintainChargeState>
           emit(state.copyWith(status: BlocStatus.LOADING));
         }
         final bool? isSuccess =
-            await maintainChareRepositories.confirmMaintainCharge(event.dto);
+            await _maintainChareRepositories.confirmMaintainCharge(event.dto);
         if (isSuccess == true) {
           emit(state.copyWith(
               request: MainChargeType.CONFIRM_SUCCESS,
@@ -93,7 +208,7 @@ class MaintainChargeBloc extends Bloc<MaintainChargeEvents, MaintainChargeState>
           Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => ActiveSuccessScreen(),
+                builder: (context) => ActiveSuccessScreen(type: 0),
               ));
         } else {
           emit(state.copyWith(

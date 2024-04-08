@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:vierqr/commons/constants/configurations/app_images.dart';
 import 'package:vierqr/commons/constants/configurations/numeral.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/bank_information_utils.dart';
@@ -29,10 +30,72 @@ class DialogWidget {
 
   static bool isPopLoading = false;
 
+  openActiveAnnualSuccess() {
+    return showCupertinoModalPopup(
+      // barrierDismissible: false,
+      context: NavigationService.navigatorKey.currentContext!,
+      builder: (context) {
+        return Material(
+          color: AppColor.TRANSPARENT,
+          child: Container(
+            margin: const EdgeInsets.fromLTRB(10, 0, 10, 30),
+            padding: const EdgeInsets.fromLTRB(30, 50, 30, 30),
+            height: MediaQuery.of(context).size.height * 0.55,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  children: [
+                    Image.asset(
+                      AppImages.icSuccessInBlue,
+                      height: 200,
+                      fit: BoxFit.fitHeight,
+                    ),
+                    Text(
+                      "Kích hoạt dịch vụ \nnhận BĐSD thành công!",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                InkWell(
+                  onTap: () {},
+                  child: Container(
+                    width: double.infinity,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: AppColor.BLUE_TEXT,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Center(
+                      child: Text(
+                        "Hoàn thành",
+                        style: TextStyle(fontSize: 13, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   openConfirmPassDialog(
       {required String title,
       required Function(String) onDone,
-      required Function() onClose}) {
+      required Function() onClose,
+      required TextEditingController editingController}) {
     final FocusNode focusNode = FocusNode();
     focusNode.requestFocus();
     return showDialog(
@@ -52,6 +115,7 @@ class DialogWidget {
               height: MediaQuery.of(context).size.height * 0.25,
               // alignment: Alignment.center,
               child: ErrorDialogWidget(
+                  editingController: editingController,
                   focusNode: focusNode,
                   onDone: onDone,
                   onClose: onClose,

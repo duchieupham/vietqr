@@ -222,6 +222,7 @@ class ConfirmActiveKeyScreen extends StatelessWidget {
                 BlocProvider.of<MaintainChargeBloc>(context).add(
                     ConfirmMaintainChargeEvent(
                         dto: ConfirmMaintainCharge(
+                            keyValue: createDto.key,
                             otp: dto.otp!,
                             bankId: createDto.bankId,
                             userId: createDto.userId,

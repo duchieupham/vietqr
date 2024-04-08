@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:vierqr/models/maintain_charge_dto.dart';
 
 import '../../../commons/enums/enum_type.dart';
+import '../../../models/annual_fee_dto.dart';
 import '../../../models/maintain_charge_create.dart';
 
 class MaintainChargeState extends Equatable {
@@ -10,6 +11,7 @@ class MaintainChargeState extends Equatable {
   final MainChargeType request;
   final MaintainChargeDTO? dto;
   final MaintainChargeCreate? createDto;
+  final List<AnnualFeeDTO>? listAnnualFee;
 
   const MaintainChargeState({
     this.msg,
@@ -17,6 +19,7 @@ class MaintainChargeState extends Equatable {
     this.request = MainChargeType.NONE,
     this.dto,
     this.createDto,
+    this.listAnnualFee,
   });
 
   MaintainChargeState copyWith({
@@ -25,6 +28,7 @@ class MaintainChargeState extends Equatable {
     String? msg,
     MaintainChargeDTO? dto,
     MaintainChargeCreate? createDto,
+    List<AnnualFeeDTO>? listAnnualFee,
   }) {
     return MaintainChargeState(
       status: status ?? this.status,
@@ -32,6 +36,7 @@ class MaintainChargeState extends Equatable {
       msg: msg ?? this.msg,
       dto: dto ?? this.dto,
       createDto: createDto ?? this.createDto,
+      listAnnualFee: listAnnualFee ?? this.listAnnualFee,
     );
   }
 
@@ -42,5 +47,6 @@ class MaintainChargeState extends Equatable {
         msg,
         dto,
         createDto,
+        listAnnualFee,
       ];
 }
