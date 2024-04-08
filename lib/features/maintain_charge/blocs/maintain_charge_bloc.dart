@@ -47,13 +47,13 @@ class MaintainChargeBloc extends Bloc<MaintainChargeEvents, MaintainChargeState>
           Provider.of<MaintainChargeProvider>(context, listen: false)
               .setIsError(false);
           Provider.of<PinProvider>(context, listen: false).reset();
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (_) => ConfirmActiveKeyScreen(
-                    dto: state.dto!,
-                    createDto: event.dto,
-                  )));
-          // Navigator.pushNamed(context, Routes.CONFIRM_ACTIVE_KEY_SCREEN,
-          //     arguments: param);
+          // Navigator.of(context).push(MaterialPageRoute(
+          //     builder: (_) => ConfirmActiveKeyScreen(
+          //           dto: state.dto!,
+          //           createDto: event.dto,
+          //         )));
+          Navigator.pushNamed(context, Routes.CONFIRM_ACTIVE_KEY_SCREEN,
+              arguments: {'dto': state.dto, 'createDto': event.dto});
         } else {
           emit(state.copyWith(
             status: BlocStatus.ERROR,

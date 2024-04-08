@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
 import 'package:camera/camera.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
@@ -16,6 +17,7 @@ import 'package:vierqr/services/local_storage/shared_preference/shared_pref_util
 import 'package:vierqr/services/providers/maintain_charge_provider.dart';
 import 'package:vierqr/services/socket_service/socket_service.dart';
 import 'features/maintain_charge/views/active_success_screen.dart';
+import 'models/maintain_charge_create.dart';
 import 'models/qr_generated_dto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -373,8 +375,8 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.REPORT_SCREEN: (context) => const ReportScreen(),
                   Routes.TRANSACTION_WALLET: (context) =>
                       const TransWalletScreen(),
-                  Routes.ACTIVE_SUCCESS_SCREEN: (context) =>
-                      const ActiveSuccessScreen(),
+                  // Routes.ACTIVE_SUCCESS_SCREEN: (context) =>
+                  //     const ActiveSuccessScreen(),
                 },
                 onGenerateRoute: (settings) {
                   if (settings.name == Routes.SHOW_QR) {
@@ -398,7 +400,7 @@ class _VietQRApp extends State<VietQRApp> {
                     int type = param['type'] as int;
                     String bankId = param['bankId'] as String;
 
-                    return MaterialPageRoute(
+                    return CupertinoPageRoute<bool>(
                       builder: (context) {
                         return MaintainChargeScreen(
                           type: type,
@@ -411,25 +413,28 @@ class _VietQRApp extends State<VietQRApp> {
                     Map<String, dynamic> param =
                         settings.arguments as Map<String, dynamic>;
 
-                    return MaterialPageRoute(
+                    return CupertinoPageRoute<bool>(
                       builder: (context) {
                         return ActiveSuccessScreen();
                       },
                     );
                   }
-                  // if (settings.name == Routes.CONFIRM_ACTIVE_KEY_SCREEN) {
-                  //   Map<String, dynamic> param =
-                  //       settings.arguments as Map<String, dynamic>;
-                  //   MaintainChargeDTO dto = param['dto'] as MaintainChargeDTO;
+                  if (settings.name == Routes.CONFIRM_ACTIVE_KEY_SCREEN) {
+                    Map<String, dynamic> param =
+                        settings.arguments as Map<String, dynamic>;
+                    MaintainChargeDTO dto = param['dto'] as MaintainChargeDTO;
+                    MaintainChargeCreate createDto =
+                        param['createDto'] as MaintainChargeCreate;
 
-                  //   return MaterialPageRoute(
-                  //     builder: (context) {
-                  //       return ConfirmActiveKeyScreen(
-                  //         dto: dto,
-                  //       );
-                  //     },
-                  //   );
-                  // }
+                    return CupertinoPageRoute<bool>(
+                      builder: (context) {
+                        return ConfirmActiveKeyScreen(
+                          createDto: createDto,
+                          dto: dto,
+                        );
+                      },
+                    );
+                  }
 
                   if (settings.name == Routes.QR_TOP_UP) {
                     Map<String, dynamic> param =
