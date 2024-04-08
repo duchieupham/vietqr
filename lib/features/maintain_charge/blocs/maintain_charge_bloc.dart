@@ -62,6 +62,7 @@ class MaintainChargeBloc extends Bloc<MaintainChargeEvents, MaintainChargeState>
             dto: null,
           ));
           if (state.status == BlocStatus.ERROR && state.msg != 'E55') {
+            Provider.of<PinProvider>(context, listen: false).reset();
             Navigator.of(context).pop();
           } else if (state.msg == 'E55') {
             Provider.of<MaintainChargeProvider>(context, listen: false)
