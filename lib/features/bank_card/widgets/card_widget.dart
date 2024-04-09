@@ -244,76 +244,108 @@ class CardWidget extends StatelessWidget {
                     MySeparator(
                       color: AppColor.WHITE,
                     ),
-                    Container(
-                      padding: const EdgeInsets.fromLTRB(20, 8, 10, 10),
-                      width: double.infinity,
-                      child: e.isValidService!
-                          ? Row(
+                    e.isOwner == false
+                        ? Container(
+                            padding: const EdgeInsets.fromLTRB(20, 8, 10, 10),
+                            width: double.infinity,
+                            child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Row(
                                   children: [
                                     Icon(
-                                      Icons.check_circle_outline_rounded,
+                                      Icons.remove_circle_outline,
                                       size: 15,
                                       color: AppColor.WHITE,
                                     ),
-                                    const SizedBox(width: 4),
+                                    const SizedBox(width: 10),
                                     Text(
-                                      "Đăng ký nhận BĐSD",
+                                      "Chưa đăng ký nhận BĐSD",
                                       style: TextStyle(
                                           fontSize: 12, color: AppColor.WHITE),
                                     )
                                   ],
                                 ),
-                                inclusiveDays <= 7
-                                    ? Container(
+                              ],
+                            ),
+                          )
+                        : Container(
+                            padding: const EdgeInsets.fromLTRB(20, 8, 10, 10),
+                            width: double.infinity,
+                            child: e.isValidService!
+                                ? Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            Icons.check_circle_outline_rounded,
+                                            size: 15,
+                                            color: AppColor.WHITE,
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Text(
+                                            "Đăng ký nhận BĐSD",
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                color: AppColor.WHITE),
+                                          )
+                                        ],
+                                      ),
+                                      inclusiveDays <= 7
+                                          ? Container(
+                                              padding:
+                                                  const EdgeInsets.fromLTRB(
+                                                      10, 5, 10, 5),
+                                              decoration: BoxDecoration(
+                                                  color: AppColor.RED_FFFF0000,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          50)),
+                                              child: Center(
+                                                child: Text(
+                                                  "Còn $inclusiveDays ngày hết hạn",
+                                                  style: TextStyle(
+                                                      fontSize: 12,
+                                                      color: AppColor.WHITE),
+                                                ),
+                                              ),
+                                            )
+                                          : Text(
+                                              "${timestampToDate(e.validFeeFrom!)} - ${timestampToDate(e.validFeeTo!)}",
+                                              style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: AppColor.WHITE),
+                                            ),
+                                    ],
+                                  )
+                                : Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(30, 0, 30, 0),
+                                    child: InkWell(
+                                      onTap: onActive,
+                                      child: Container(
+                                        // width: double.infinity,
                                         padding: const EdgeInsets.fromLTRB(
-                                            10, 5, 10, 5),
+                                            20, 5, 20, 5),
+                                        // height: 30,
                                         decoration: BoxDecoration(
-                                            color: AppColor.RED_FFFF0000,
+                                            color: AppColor.BLUE_TEXT,
                                             borderRadius:
-                                                BorderRadius.circular(50)),
+                                                BorderRadius.circular(5)),
                                         child: Center(
                                           child: Text(
-                                            "Còn $inclusiveDays ngày hết hạn",
+                                            "Đăng ký dịch vụ nhận BĐSD ngay!",
                                             style: TextStyle(
                                                 fontSize: 12,
                                                 color: AppColor.WHITE),
                                           ),
                                         ),
-                                      )
-                                    : Text(
-                                        "${timestampToDate(e.validFeeFrom!)} - ${timestampToDate(e.validFeeTo!)}",
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            color: AppColor.WHITE),
                                       ),
-                              ],
-                            )
-                          : Padding(
-                              padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
-                              child: InkWell(
-                                onTap: onActive,
-                                child: Container(
-                                  // width: double.infinity,
-                                  padding:
-                                      const EdgeInsets.fromLTRB(20, 5, 20, 5),
-                                  // height: 30,
-                                  decoration: BoxDecoration(
-                                      color: AppColor.BLUE_TEXT,
-                                      borderRadius: BorderRadius.circular(5)),
-                                  child: Center(
-                                    child: Text(
-                                      "Đăng ký dịch vụ nhận BĐSD ngay!",
-                                      style: TextStyle(
-                                          fontSize: 12, color: AppColor.WHITE),
                                     ),
                                   ),
-                                ),
-                              ),
-                            ),
-                    ),
+                          ),
                   ] else
                     const SizedBox.shrink(),
                 ]),

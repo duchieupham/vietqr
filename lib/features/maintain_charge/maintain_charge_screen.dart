@@ -43,6 +43,8 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
   final TextEditingController _controller = TextEditingController(text: '');
   final TextEditingController _editingController =
       TextEditingController(text: '');
+  final _formKey = GlobalKey<FormState>();
+  FocusNode node = FocusNode();
 
   String? _validateTest;
   late MaintainChargeBloc _bloc;
@@ -106,6 +108,37 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
     return input.trim(); // Remove trailing whitespace
   }
 
+  void onSubmit() {
+    isClear = false;
+    Provider.of<MaintainChargeProvider>(context, listen: false)
+        .setIsError(false);
+    String phone = SharePrefUtils.getPhone();
+    DialogWidget.instance.openConfirmPassDialog(
+      editingController: _editingController,
+      title: "",
+      onClose: () {
+        Provider.of<PinProvider>(context, listen: false).reset();
+        Provider.of<MaintainChargeProvider>(context, listen: false)
+            .setIsError(false);
+        Navigator.of(context).pop();
+      },
+      onDone: (pin) {
+        _bloc.add(MaintainChargeEvent(
+            dto: MaintainChargeCreate(
+          type: widget.type,
+          key: keyValue,
+          bankId: widget.bankId,
+          userId: userRes.userId,
+          password: EncryptUtils.instance.encrypted(
+            phone,
+            pin,
+          ),
+        )));
+        _editingController.text = '';
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider<MaintainChargeBloc>(
@@ -162,11 +195,10 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
           }
           return Scaffold(
               backgroundColor: Colors.white,
-              bottomNavigationBar: _bottom(state),
+              resizeToAvoidBottomInset: true,
+              // bottomNavigationBar: _bottom(state),
               body: CustomScrollView(
-                physics: widget.type == 0
-                    ? NeverScrollableScrollPhysics()
-                    : AlwaysScrollableScrollPhysics(),
+                physics: NeverScrollableScrollPhysics(),
                 slivers: [
                   SliverAppBar(
                     pinned: false,
@@ -208,14 +240,48 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                       )
                     ],
                   ),
-                  SliverList(
-                    delegate: SliverChildListDelegate(<Widget>[
-                      if (widget.type == 0)
-                        _activeKeyWidget()
-                      else
-                        _annualFeeWidget(),
-                    ]),
-                  )
+                  if (widget.type == 0)
+                    SliverToBoxAdapter(
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Expanded(
+                              // flex: 1,
+                              child: _activeKeyWidget(),
+                            ),
+                            _bottom(state),
+                          ],
+                        ),
+                      ),
+                    )
+                  else
+                    SliverToBoxAdapter(
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Expanded(
+                              // flex: 1,
+                              child: _annualFeeWidget(),
+                            ),
+                            _bottom(state),
+                          ],
+                        ),
+                      ),
+                    )
+                  // SliverList(
+                  //   delegate: SliverChildListDelegate(<Widget>[
+                  //     if (widget.type == 0)
+                  //       _activeKeyWidget()
+                  //     else
+                  //       _annualFeeWidget(),
+                  //   ]),
+                  // )
                 ],
               ));
         },
@@ -239,16 +305,16 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
               Consumer<MaintainChargeProvider>(
                 builder: (context, value, child) {
                   return Text(
-                    "Chọn gói phí \nđể kích hoạt nhận BĐSD \nTK ${value.bankName} - ${value.bankAccount}",
+                    "Chọn gói phí \nđể kích hoạt phần mềm VietQR \nTK ${value.bankName} - ${value.bankAccount}",
                     style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                   );
                 },
               ),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+              SizedBox(height: 10),
               Container(
-                height: MediaQuery.of(context).size.height,
+                height: 500,
                 child: GridView.builder(
-                  physics: NeverScrollableScrollPhysics(),
+                  physics: AlwaysScrollableScrollPhysics(),
                   itemCount: value.listAnnualFee.length,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
@@ -379,15 +445,30 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
           Consumer<MaintainChargeProvider>(
             builder: (context, value, child) {
               return Text(
-                "Nhập mã \nđể kích hoạt nhận BĐSD \nTK ${value.bankName} - ${value.bankAccount}",
+                "Nhập mã để \nkích hoạt phần mềm VietQR \nTK ${value.bankName} - ${value.bankAccount}",
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
               );
             },
           ),
           SizedBox(height: 12),
           TextFormField(
+            focusNode: node,
+            textInputAction: TextInputAction.next,
             keyboardType: TextInputType.multiline,
-            // maxLength: 14,
+            onFieldSubmitted: (value) {
+              final formattedText = formatInput(value);
+              if (formattedText != _controller.text) {
+                _controller.value = TextEditingValue(
+                  text: formattedText,
+                  selection:
+                      TextSelection.collapsed(offset: formattedText.length),
+                );
+              }
+              setState(() {
+                keyValue = value.replaceAll(RegExp(r'[-\s]+'), '');
+              });
+              onSubmit();
+            },
             onChanged: (text) {
               final formattedText = formatInput(text);
               if (formattedText != _controller.text) {
@@ -401,7 +482,6 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                 keyValue = text.replaceAll(RegExp(r'[-\s]+'), '');
               });
             },
-
             inputFormatters: [
               UpperCaseTextInputFormatter(),
             ],
@@ -441,6 +521,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                   fontSize: 15,
                   color: errorMsg.isEmpty ? AppColor.BLACK : AppColor.RED_TEXT),
               textAlign: TextAlign.right,
+              maxLines: 1,
             ),
           ),
         ],
@@ -451,42 +532,14 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
   Widget _bottom(MaintainChargeState state) {
     return widget.type == 0
         ? Container(
-            padding: const EdgeInsets.only(left: 40, right: 40, bottom: 30),
+            // height: 200,
+            padding: const EdgeInsets.only(left: 40, right: 40, bottom: 0),
+            margin: const EdgeInsets.only(bottom: 100),
             child: InkWell(
               onTap: _controller.text.length < 12
                   ? null
                   : () {
-                      isClear = false;
-                      Provider.of<MaintainChargeProvider>(context,
-                              listen: false)
-                          .setIsError(false);
-                      String phone = SharePrefUtils.getPhone();
-                      DialogWidget.instance.openConfirmPassDialog(
-                        editingController: _editingController,
-                        title: "",
-                        onClose: () {
-                          Provider.of<PinProvider>(context, listen: false)
-                              .reset();
-                          Provider.of<MaintainChargeProvider>(context,
-                                  listen: false)
-                              .setIsError(false);
-                          Navigator.of(context).pop();
-                        },
-                        onDone: (pin) {
-                          _bloc.add(MaintainChargeEvent(
-                              dto: MaintainChargeCreate(
-                            type: widget.type,
-                            key: keyValue,
-                            bankId: widget.bankId,
-                            userId: userRes.userId,
-                            password: EncryptUtils.instance.encrypted(
-                              phone,
-                              pin,
-                            ),
-                          )));
-                          _editingController.text = '';
-                        },
-                      );
+                      onSubmit();
                     },
               child: Container(
                 padding: const EdgeInsets.only(left: 10, right: 10),
@@ -523,6 +576,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
           )
         : Container(
             height: MediaQuery.of(context).size.height * 0.12,
+            margin: const EdgeInsets.only(bottom: 80),
             child: Column(
               children: [
                 MySeparator(

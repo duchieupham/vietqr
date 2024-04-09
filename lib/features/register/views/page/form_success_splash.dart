@@ -10,7 +10,10 @@ import '../../../../commons/constants/configurations/theme.dart';
 import '../../../../layouts/m_button_widget.dart';
 
 class FormRegisterSuccessSplash extends StatefulWidget {
-  const FormRegisterSuccessSplash({super.key});
+  final Function() onEdit;
+  final Function() onHome;
+  const FormRegisterSuccessSplash(
+      {super.key, required this.onEdit, required this.onHome});
 
   @override
   State<FormRegisterSuccessSplash> createState() =>
@@ -19,7 +22,7 @@ class FormRegisterSuccessSplash extends StatefulWidget {
 
 class _FormRegisterSuccessSplashState extends State<FormRegisterSuccessSplash> {
   Timer? _timer;
-  int _start = 3;
+  int _start = 15;
 
   @override
   void initState() {
@@ -33,10 +36,8 @@ class _FormRegisterSuccessSplashState extends State<FormRegisterSuccessSplash> {
       oneSec,
       (Timer timer) {
         if (_start == 0) {
-          setState(() {
-            timer.cancel();
-            // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
-          });
+          timer.cancel();
+          // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
         } else {
           setState(() {
             _start--;
@@ -62,7 +63,7 @@ class _FormRegisterSuccessSplashState extends State<FormRegisterSuccessSplash> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Padding(
-              padding: EdgeInsets.only(top: 100),
+              padding: EdgeInsets.only(top: 90),
               child: Image.asset(
                 AppImages.icLogoVietQr,
                 width: 160,
@@ -71,7 +72,7 @@ class _FormRegisterSuccessSplashState extends State<FormRegisterSuccessSplash> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 100),
+              padding: const EdgeInsets.only(top: 90),
               child: Image.asset(
                 AppImages.icRegisterSuccessful,
                 width: 236,
@@ -91,7 +92,7 @@ class _FormRegisterSuccessSplashState extends State<FormRegisterSuccessSplash> {
               ),
             ),
             SizedBox(
-              height: 90,
+              height: 70,
             ),
             // Container(
             //   child: DefaultTextStyle(
@@ -104,13 +105,7 @@ class _FormRegisterSuccessSplashState extends State<FormRegisterSuccessSplash> {
             //       colorEnableBgr: AppColor.WHITE,
             //       colorEnableText: AppColor.BLUE_TEXT,
             //       border: Border.all(width: 1, color: AppColor.BLUE_TEXT),
-            //       onTap: () {
-            //         // Navigator.push(
-            //         //   context,
-            //         //   MaterialPageRoute(
-            //         //       builder: (context) => UserEditView()),
-            //         // );
-            //       },
+            //       onTap: widget.onEdit,
             //     ),
             //   ),
             // ),
@@ -122,7 +117,7 @@ class _FormRegisterSuccessSplashState extends State<FormRegisterSuccessSplash> {
             //       isEnable: true,
             //       margin: EdgeInsets.only(left: 40, right: 40),
             //       height: 50,
-            //       onTap: () {},
+            //       onTap: widget.onHome,
             //     ),
             //   ),
             // ),

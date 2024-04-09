@@ -23,6 +23,7 @@ import 'package:vierqr/services/providers/register_provider.dart';
 
 import '../../commons/utils/navigator_utils.dart';
 import '../../services/providers/pin_provider.dart';
+import '../personal/views/user_edit_view.dart';
 import 'views/verify_otp_screen.dart';
 
 class Register extends StatelessWidget {
@@ -142,13 +143,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => FormRegisterSuccessSplash()),
+                    builder: (context) => FormRegisterSuccessSplash(
+                          onEdit: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => UserEditView()),
+                            );
+                          },
+                          onHome: () {
+                            Navigator.of(context).pop();
+                            Navigator.of(context).pop();
+                            backToPreviousPage(context, true);
+                          },
+                        )),
               );
-              Future.delayed(Duration(seconds: 3), () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
-                backToPreviousPage(context, true);
-              });
+              // Future.delayed(Duration(seconds: 3), () {
+              // Navigator.of(context).pop();
+              // Navigator.of(context).pop();
+              // backToPreviousPage(context, true);
+              // });
             }
           },
           builder: (context, state) {
