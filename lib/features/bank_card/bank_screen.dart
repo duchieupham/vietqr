@@ -402,7 +402,7 @@ class _BankScreenState extends State<_BankScreen>
                   children: [
                     if (extendAnnualFeeList.isNotEmpty) ...[
                       Container(
-                        height: (extendAnnualFeeList.length * 110) -
+                        height: (extendAnnualFeeList.length * 115) -
                             extendAnnualFeeList.length * 12 -
                             (extendAnnualFeeList.length - 1) * 8,
                         child: Stack(
@@ -426,7 +426,7 @@ class _BankScreenState extends State<_BankScreen>
                               left: 0,
                               bottom: 0,
                               child: Container(
-                                height: (extendAnnualFeeList.length * 94) -
+                                height: (extendAnnualFeeList.length * 100) -
                                     extendAnnualFeeList.length * 12 -
                                     (extendAnnualFeeList.length - 1) * 8,
                                 width: double.infinity,

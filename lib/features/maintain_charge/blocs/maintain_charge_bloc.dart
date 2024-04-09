@@ -68,6 +68,7 @@ class MaintainChargeBloc extends Bloc<MaintainChargeEvents, MaintainChargeState>
                 context,
                 MaterialPageRoute(
                   builder: (context) => QrAnnualFeeScreen(
+                    billNumber: statusConfirm?.confirm?.billNumber,
                     qr: statusConfirm?.confirm?.qr,
                     duration: statusResquest?.res?.duration,
                     amount: statusConfirm?.confirm?.amount,

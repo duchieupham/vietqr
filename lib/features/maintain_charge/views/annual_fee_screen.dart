@@ -23,11 +23,13 @@ class QrAnnualFeeScreen extends StatefulWidget {
   final int? duration;
   final int? validFrom;
   final int? validTo;
+  final String? billNumber;
   final String? qr;
 
   const QrAnnualFeeScreen(
       {super.key,
       required this.qr,
+      required this.billNumber,
       required this.duration,
       required this.amount,
       required this.validFrom,
@@ -224,7 +226,7 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
                   child: Container(
                     width: 300,
                     height: 300,
-                    padding: const EdgeInsets.fromLTRB(40, 20, 40, 10),
+                    padding: const EdgeInsets.fromLTRB(25, 20, 25, 10),
                     decoration: BoxDecoration(
                       color: AppColor.WHITE,
                       borderRadius: BorderRadius.circular(10),
@@ -233,8 +235,8 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          width: 220,
-                          height: 220,
+                          width: 240,
+                          height: 240,
                           // color: AppColor.GREY_DADADA,
                           child: QrImage(
                             data: widget.qr ?? '',
@@ -247,7 +249,7 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 15),
+                        const SizedBox(height: 8),
                         Expanded(
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -411,6 +413,25 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
                           style: TextStyle(fontSize: 15),
                         );
                       },
+                    ),
+                  ],
+                ),
+              ),
+              MySeparator(
+                color: AppColor.GREY_DADADA,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 16, bottom: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Hoá đơn:",
+                      style: TextStyle(fontSize: 15),
+                    ),
+                    Text(
+                      "${widget.billNumber}",
+                      style: TextStyle(fontSize: 15),
                     ),
                   ],
                 ),
