@@ -21,6 +21,9 @@ class BankAccountDTO {
   final String nationalId;
   final String ewalletToken;
   final int unlinkedType;
+  bool? isValidService;
+  int? validFeeFrom;
+  int? validFeeTo;
 
   //thêm
   Color? bankColor;
@@ -54,6 +57,9 @@ class BankAccountDTO {
     this.ewalletToken = '',
     this.unlinkedType = -1,
     this.bankTypeStatus = -1,
+    this.isValidService,
+    this.validFeeFrom,
+    this.validFeeTo,
   });
 
   setColor(value) {
@@ -81,6 +87,9 @@ class BankAccountDTO {
       nationalId: json['nationalId'] ?? '',
       ewalletToken: json['ewalletToken'] ?? '',
       unlinkedType: json['unlinkedType'] ?? -1,
+      isValidService: json['isValidService'],
+      validFeeFrom: json['validFeeFrom'],
+      validFeeTo: json['validFeeTo'],
     );
   }
 

@@ -267,7 +267,6 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                           selectedId = value.listAnnualFee[index].feeId;
                           selectFeeAmount = value.listAnnualFee[index].amount;
                         });
-                        print(selectedId);
                       },
                       child: Stack(
                         children: [
