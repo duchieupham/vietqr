@@ -5,10 +5,15 @@ import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
+import 'package:vierqr/commons/utils/error_utils.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
+import 'package:vierqr/commons/widgets/dialog_widget.dart';
+import 'package:vierqr/features/customer_va/repositories/customer_va_repository.dart';
 import 'package:vierqr/features/customer_va/views/customer_va_policy_view.dart';
 import 'package:vierqr/features/customer_va/widgets/customer_va_header_widget.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
+import 'package:vierqr/models/customer_va_request_dto.dart';
+import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/services/providers/customer_va/customer_va_insert_provider.dart';
 
 class CustomerVaInsertBankAuthView extends StatefulWidget {
@@ -20,6 +25,8 @@ class CustomerVaInsertBankAuthView extends StatefulWidget {
 
 class _CustomerVaInsertBankAuthView
     extends State<CustomerVaInsertBankAuthView> {
+  final CustomerVaRepository customerVaRepository =
+      const CustomerVaRepository();
   String _nationalId = '';
   String _phoneAuthenticated = '';
 
@@ -257,10 +264,26 @@ class _CustomerVaInsertBankAuthView
                               Animation animation,
                               Animation secondaryAnimation) {
                             return CustomerVaPolicyView(
-                              onTap: () {
+                              onTap: () async {
                                 if (provider.aggreePolicy) {
-                                  Navigator.pushNamed(
-                                      context, Routes.CUSTOMER_VA_CONFIRM_OTP);
+                                  Navigator.pop(context);
+                                  CustomerVaRequestDTO dto =
+                                      CustomerVaRequestDTO(
+                                    merchantName:
+                                        provider.merchantName.toString().trim(),
+                                    bankAccount:
+                                        provider.bankAccount.toString().trim(),
+                                    bankCode: 'BIDV',
+                                    userBankName:
+                                        provider.userBankName.toString().trim(),
+                                    nationalId:
+                                        provider.nationalId.toString().trim(),
+                                    phoneAuthenticated: provider
+                                        .phoneAuthenticated
+                                        .toString()
+                                        .trim(),
+                                  );
+                                  await _requestCustomerVaOTP(dto);
                                 }
                               },
                               isAgreeWithPolicy: provider.aggreePolicy,
@@ -280,5 +303,22 @@ class _CustomerVaInsertBankAuthView
     );
   }
 
-  Future<void> _requestCustomerVaOTP() async {}
+  Future<void> _requestCustomerVaOTP(CustomerVaRequestDTO dto) async {
+    DialogWidget.instance.openLoadingDialog();
+    ResponseMessageDTO result =
+        await customerVaRepository.requestCustomerVaOTP(dto);
+    String status = result.status;
+    String msg = '';
+    if (status == 'FAILED') {
+      print(result.message);
+      msg = ErrorUtils.instance.getErrorMessage(result.message);
+    }
+    Navigator.pop(context);
+    if (status == 'SUCCESS') {
+      Navigator.pushNamed(context, Routes.CUSTOMER_VA_CONFIRM_OTP);
+    } else {
+      DialogWidget.instance
+          .openMsgDialog(title: 'Không thể đăng ký dịch vụ', msg: msg);
+    }
+  }
 }

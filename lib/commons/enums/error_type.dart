@@ -44,6 +44,7 @@ enum ErrorType {
   E72,
   C03,
   E110,
+  E112,
   E117,
   E118,
   E119,

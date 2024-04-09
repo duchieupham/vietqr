@@ -5,6 +5,7 @@ import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/models/customer_va_item_dto.dart';
+import 'package:vierqr/models/customer_va_request_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 
 class CustomerVaRepository {
@@ -58,14 +59,15 @@ class CustomerVaRepository {
   }
 
 //request va
-  Future<ResponseMessageDTO> requestCustomerVaOTP(body) async {
+  Future<ResponseMessageDTO> requestCustomerVaOTP(
+      CustomerVaRequestDTO dto) async {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: 'FAILED', message: 'E05');
     try {
       String url = '${EnvConfig.getBaseUrl()}customer-va/request';
       final response = await BaseAPIClient.postAPI(
-          url: url, type: AuthenticationType.SYSTEM, body: body);
-      if (response.statusCode == 200) {
+          url: url, type: AuthenticationType.SYSTEM, body: dto.toJson());
+      if (response.statusCode == 200 || response.statusCode == 400) {
         var data = jsonDecode(response.body);
         if (data != null) {
           result = ResponseMessageDTO.fromJson(data);
@@ -86,7 +88,7 @@ class CustomerVaRepository {
       String url = '${EnvConfig.getBaseUrl()}customer-va/confirm';
       final response = await BaseAPIClient.postAPI(
           url: url, type: AuthenticationType.SYSTEM, body: body);
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 400) {
         var data = jsonDecode(response.body);
         if (data != null) {
           result = ResponseMessageDTO.fromJson(data);
@@ -112,7 +114,7 @@ class CustomerVaRepository {
         type: AuthenticationType.SYSTEM,
         body: {},
       );
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 400) {
         var data = jsonDecode(response.body);
         if (data != null) {
           result = ResponseMessageDTO.fromJson(data);
@@ -133,7 +135,7 @@ class CustomerVaRepository {
       String url = '${EnvConfig.getBaseUrl()}customer-va/insert';
       final response = await BaseAPIClient.postAPI(
           url: url, type: AuthenticationType.SYSTEM, body: body);
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 400) {
         var data = jsonDecode(response.body);
         if (data != null) {
           result = ResponseMessageDTO.fromJson(data);

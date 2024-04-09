@@ -135,6 +135,10 @@ class ErrorUtils {
       case ErrorType.E110:
         result = 'Mã nhóm đã tồn tại trong hệ thống';
         break;
+      case ErrorType.E112:
+        result =
+            'Tài khoản đã đăng ký dịch vụ thanh toán định danh. Vui lòng kiểm tra lại thông tin.';
+        break;
       case ErrorType.E117:
         result =
             'Không tìm thấy chứng minh thư/Mã số thuế trên hệ thống ngân hàng. Vui lòng kiểm tra lại thông tin.';

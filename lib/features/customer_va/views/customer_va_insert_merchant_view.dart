@@ -62,7 +62,10 @@ class _CustomerVAInsertMerchantView
                   title: '',
                   hintText: '',
                   inputType: TextInputType.text,
-                  keyboardAction: TextInputAction.next,
+                  keyboardAction: TextInputAction.done,
+                  onSubmitted: (value) {
+                    print('tapped');
+                  },
                   maxLength: 20,
                   onChange: (value) {
                     _value = value;
