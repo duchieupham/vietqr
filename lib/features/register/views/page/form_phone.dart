@@ -49,11 +49,17 @@ class _FormPhoneState extends State<FormPhone> {
                 phoneController: widget.phoneController,
                 autoFocus: widget.isFocus,
               ),
+              Container(
+                margin: const EdgeInsets.only(top: 5),
+                height: 1,
+                color: AppColor.GREY_LIGHT,
+                width: double.infinity,
+              ),
               Visibility(
                 visible: provider.phoneErr,
                 child: Container(
                   alignment: Alignment.centerRight,
-                  padding: EdgeInsets.only( top: 10),
+                  padding: EdgeInsets.only(top: 10),
                   child: Text(
                     'Số điện thoại không đúng định dạng.',
                     style: TextStyle(color: AppColor.RED_TEXT, fontSize: 13),

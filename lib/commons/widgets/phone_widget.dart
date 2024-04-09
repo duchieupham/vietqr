@@ -39,25 +39,25 @@ class _BodyWidget extends State<PhoneWidget> {
           bottomLeft: Radius.circular(5),
         ),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: const [
-          SizedBox(
-            width: 16,
-          ),
-          Text(
-            '+84',
-            style: TextStyle(fontSize: 14.0),
-          ),
-          SizedBox(
-            width: 8,
-          ),
-          VerticalDivider(
-            color: Colors.black,
-            thickness: 0.2,
-          ),
-        ],
-      ),
+      // child: Row(
+      //   mainAxisSize: MainAxisSize.min,
+      //   children: const [
+      //     SizedBox(
+      //       width: 16,
+      //     ),
+      //     Text(
+      //       '+84',
+      //       style: TextStyle(fontSize: 14.0),
+      //     ),
+      //     SizedBox(
+      //       width: 8,
+      //     ),
+      //     VerticalDivider(
+      //       color: AppColor.GREY_LIGHT,
+      //       thickness: 1,
+      //     ),
+      //   ],
+      // ),
     );
     return Column(
       children: [
@@ -103,7 +103,7 @@ class _BodyWidget extends State<PhoneWidget> {
                     border: InputBorder.none,
                     hintText: 'Nhập số điện thoại ở đây',
                     hintStyle:
-                        TextStyle(color: AppColor.GREY_TEXT, fontSize: 14),
+                        TextStyle(color: AppColor.GREY_TEXT, fontSize: 15),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.only(
                         topRight: Radius.circular(5),

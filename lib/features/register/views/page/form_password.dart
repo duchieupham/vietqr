@@ -1,14 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../commons/constants/configurations/numeral.dart';
 import '../../../../commons/constants/configurations/theme.dart';
+import '../../../../commons/widgets/pin_widget.dart';
 import '../../../../layouts/pin_code_input.dart';
 import '../../../../services/providers/register_provider.dart';
 
-class FormPassword extends StatelessWidget {
-   FormPassword({super.key});
+class FormPassword extends StatefulWidget {
+  const FormPassword({super.key});
 
+  @override
+  State<FormPassword> createState() => _FormPasswordState();
+}
+
+class _FormPasswordState extends State<FormPassword> {
   final repassFocus = FocusNode();
+  bool isFocus = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,20 +47,40 @@ class FormPassword extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: 40,
-                  width: 280,
-                  child: PinCodeInput(
-                    autoFocus: true,
-                    obscureText: true,
-                    onChanged: (value) {
-                      provider.updatePassword(value);
-                      Future.delayed(const Duration(seconds: 1), () {
-                        if (value.length == 6) {
-                          repassFocus.requestFocus();
-                        }
-                      });
-                    },
+                Focus(
+                  onFocusChange: (value) {
+                    setState(() {
+                      isFocus = value;
+                    });
+                  },
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 50,
+                    margin: EdgeInsets.only(left: 20,right: 20),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(50),
+                        border: Border.all(
+                            color: isFocus
+                                ? AppColor.BLUE_TEXT
+                                : AppColor.GREY_TEXT,
+                            width: 0.5)),
+                    child: Center(
+                      child: PinWidget(
+                        width: MediaQuery.of(context).size.width,
+                        pinSize: 15,
+                        pinLength: Numeral.DEFAULT_PIN_LENGTH,
+                        focusNode: repassFocus,
+                        onDone: (value) {
+                          provider.updatePassword(value);
+                          Future.delayed(const Duration(seconds: 1), () {
+                            if (value.length == 6) {
+                              repassFocus.requestFocus();
+                            }
+                          });
+   
+                        },
+                      ),
+                    ),
                   ),
                 ),
                 Container(

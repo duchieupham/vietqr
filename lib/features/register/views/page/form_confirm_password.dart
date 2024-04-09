@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../commons/constants/configurations/numeral.dart';
 import '../../../../commons/constants/configurations/theme.dart';
+import '../../../../commons/widgets/pin_widget.dart';
 import '../../../../layouts/pin_code_input.dart';
+import '../../../../services/providers/pin_provider.dart';
 import '../../../../services/providers/register_provider.dart';
 
 class FormConfirmPassword extends StatefulWidget {
@@ -19,73 +22,99 @@ class FormConfirmPassword extends StatefulWidget {
 
 class _FormConfirmPasswordState extends State<FormConfirmPassword> {
   final repassFocus = FocusNode();
+  bool isFocus = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<RegisterProvider>(
       builder: (context, provider, child) {
         var phoneNumber = provider.phoneNumberValue;
-        return SingleChildScrollView(
+        return Expanded(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                margin: EdgeInsets.only(
-                  bottom: 30,
-                  top: 150,
-                ),
-                width: double.infinity,
-                child: Text(
-                  'Vui lòng xác nhận lại\nmật khẩu vừa đặt',
-                  style: TextStyle(
-                    color: Color(0xFF000000),
-                    fontSize: 25,
-                    fontWeight: FontWeight.bold,
+              Column(
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(top: 150, bottom: 30, left: 20),
+                    width: double.infinity,
+                    child: Text(
+                      'Vui lòng xác nhận lại\nmật khẩu vừa đặt',
+                      style: TextStyle(
+                        color: Color(0xFF000000),
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-                ),
+                  Focus(
+                    onFocusChange: (value) {
+                      setState(() {
+                        isFocus = value;
+                      });
+                    },
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: 50,
+                      margin: EdgeInsets.only(left: 20, right: 20),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(50),
+                          border: Border.all(
+                              color: isFocus
+                                  ? AppColor.BLUE_TEXT
+                                  : AppColor.GREY_TEXT,
+                              width: 0.5)),
+                      child: Center(
+                        child: PinWidget(
+                          width: MediaQuery.of(context).size.width,
+                          pinSize: 15,
+                          pinLength: Numeral.DEFAULT_PIN_LENGTH,
+                          focusNode: repassFocus,
+                          onDone: (value) {
+                            provider.updateConfirmPassword(value);
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                  Visibility(
+                    visible: provider.confirmPassErr,
+                    child: Container(
+                      alignment: Alignment.centerRight,
+                      padding: EdgeInsets.only(top: 10, right: 40),
+                      child: Text(
+                        'Mật khẩu xác nhận không trùng khớp',
+                        style:
+                            TextStyle(color: AppColor.RED_TEXT, fontSize: 13),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(
-                height: 40,
-                width: 280,
-                child: PinCodeInput(
-                  autoFocus: true,
-                  obscureText: true,
-                  focusNode: repassFocus,
-                  onChanged: (value) {
-                    provider.updateConfirmPassword(value);
-                  },
-                ),
-              ),
-              Visibility(
-                visible: provider.confirmPassErr,
+              GestureDetector(
+                onTap: () async {
+                  if (provider.isEnableButton()) {
+                    widget.onEnterIntro(1);
+                  } else {
+                    provider.updatePhone(provider.phoneNoController.text);
+                    provider.updatePassword(provider.passwordController.text);
+                    provider.updateConfirmPassword(
+                        provider.confirmPassController.text);
+                  }
+                },
                 child: Container(
-                  alignment: Alignment.centerRight,
-                  padding: EdgeInsets.only(top: 10, right: 40),
-                  child: Text(
-                    'Mật khẩu xác nhận không trùng khớp',
-                    style: TextStyle(color: AppColor.RED_TEXT, fontSize: 13),
+                  width: 350,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: AppColor.BLUE_TEXT),
+                    borderRadius: BorderRadius.circular(5),
                   ),
-                ),
-              ),
-              Container(
-                width: 350,
-                height: 50,
-                margin: EdgeInsets.only(top: 288),
-                decoration: BoxDecoration(
-                  border: Border.all(color: AppColor.BLUE_TEXT),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                alignment: Alignment.center,
-                child: GestureDetector(
-                  onTap: () async {
-                    if (provider.isEnableButton()) {
-                      widget.onEnterIntro(1);
-                    } else {
-                      provider.updatePhone(provider.phoneNoController.text);
-                      provider.updatePassword(provider.passwordController.text);
-                      provider.updateConfirmPassword(
-                          provider.confirmPassController.text);
-                    }
-                  },
+                  alignment: Alignment.center,
                   child: const Text(
                     'Tôi được giới thiệu đăng ký',
                     style: TextStyle(
