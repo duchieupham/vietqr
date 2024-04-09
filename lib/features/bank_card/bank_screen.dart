@@ -159,7 +159,7 @@ class _BankScreenState extends State<_BankScreen>
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                               ),
-                              child: Text("Kích hoạt KEY"),
+                              child: Text("Kích hoạt bằng mã"),
                             ),
                             const SizedBox(height: 3),
                             DefaultTextStyle(

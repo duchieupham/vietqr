@@ -133,7 +133,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                       'Bạn không có quyền thực hiện mở khóa TK ngân hàng này';
                   break;
                 case 'E127':
-                  errorMsg = 'Key không tồn tại hoặc đã được sử dụng';
+                  errorMsg = 'Mã không tồn tại hoặc đã được sử dụng';
                   break;
                 case 'E132':
                   errorMsg = 'Gói phí không tồn tại, vui lòng thử lại';
@@ -379,7 +379,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
           Consumer<MaintainChargeProvider>(
             builder: (context, value, child) {
               return Text(
-                "Nhập mã KEY \nđể kích hoạt nhận BĐSD \nTK ${value.bankName} - ${value.bankAccount}",
+                "Nhập mã \nđể kích hoạt nhận BĐSD \nTK ${value.bankName} - ${value.bankAccount}",
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
               );
             },
@@ -407,7 +407,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
             ],
             controller: _controller,
             decoration: InputDecoration(
-                hintText: 'Nhập mã KEY ở đây',
+                hintText: 'Nhập mã ở đây',
                 hintStyle: TextStyle(
                     fontSize: 15, color: AppColor.BLACK.withOpacity(0.5)),
                 focusedBorder: UnderlineInputBorder(
@@ -436,7 +436,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
           Container(
             width: double.infinity,
             child: Text(
-              errorMsg.isNotEmpty ? errorMsg : "Đoạn KEY chứa 12 ký tự.",
+              errorMsg.isNotEmpty ? errorMsg : "Đoạn mã chứa 12 ký tự.",
               style: TextStyle(
                   fontSize: 15,
                   color: errorMsg.isEmpty ? AppColor.BLACK : AppColor.RED_TEXT),
