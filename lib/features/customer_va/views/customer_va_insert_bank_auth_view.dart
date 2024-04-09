@@ -279,4 +279,6 @@ class _CustomerVaInsertBankAuthView
       ),
     );
   }
+
+  Future<void> _requestCustomerVaOTP() async {}
 }
