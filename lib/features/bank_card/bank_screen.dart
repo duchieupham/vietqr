@@ -106,7 +106,7 @@ class _BankScreenState extends State<_BankScreen>
       builder: (context) => Container(
         margin: const EdgeInsets.fromLTRB(10, 0, 10, 30),
         padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-        height: MediaQuery.of(context).size.height * 0.35,
+        height: MediaQuery.of(context).size.height * 0.38,
         width: double.infinity,
         decoration: BoxDecoration(
           color: Colors.white,
@@ -401,6 +401,9 @@ class _BankScreenState extends State<_BankScreen>
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
                   children: [
                     if (extendAnnualFeeList.isNotEmpty) ...[
+                      const SizedBox(
+                        height: 10,
+                      ),
                       Container(
                         height: (extendAnnualFeeList.length * 115) -
                             extendAnnualFeeList.length * 12 -
@@ -522,7 +525,7 @@ class _BankScreenState extends State<_BankScreen>
                     ],
                     if (listUnAuthenticated.isNotEmpty) ...[
                       Text(
-                        'Danh sách tài khoản',
+                        'Tài khoản lưu trữ',
                         textAlign: TextAlign.start,
                         style: TextStyle(
                           fontSize: 18,

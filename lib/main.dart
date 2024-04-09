@@ -17,6 +17,7 @@ import 'package:vierqr/services/local_storage/shared_preference/shared_pref_util
 import 'package:vierqr/services/providers/maintain_charge_provider.dart';
 import 'package:vierqr/services/socket_service/socket_service.dart';
 import 'features/maintain_charge/views/active_success_screen.dart';
+import 'features/maintain_charge/views/annual_fee_screen.dart';
 import 'models/maintain_charge_create.dart';
 import 'models/qr_generated_dto.dart';
 import 'package:flutter/material.dart';
@@ -255,6 +256,11 @@ class _VietQRApp extends State<VietQRApp> {
         if (message.data['notificationType'] != null &&
             message.data['notificationType'] ==
                 Stringify.NOTI_TYPE_ANNUAL_FEE_SUCCESS) {
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DashBoardScreen(),
+              ));
           DialogWidget.instance.openActiveAnnualSuccess();
         }
         //   //process success transcation
@@ -410,6 +416,30 @@ class _VietQRApp extends State<VietQRApp> {
                         return MaintainChargeScreen(
                           type: type,
                           bankId: bankId,
+                        );
+                      },
+                    );
+                  }
+                  if (settings.name == Routes.ANNUAL_FEE_SCREEN) {
+                    Map<String, dynamic> param =
+                        settings.arguments as Map<String, dynamic>;
+                    int amount = param['amount'] as int;
+                    int validFrom = param['validFrom'] as int;
+                    int validTo = param['validTo'] as int;
+                    int duration = param['duration'] as int;
+
+                    String qr = param['qr'] as String;
+                    String billNumber = param['billNumber'] as String;
+
+                    return CupertinoPageRoute<bool>(
+                      builder: (context) {
+                        return QrAnnualFeeScreen(
+                          duration: duration,
+                          qr: qr,
+                          billNumber: billNumber,
+                          amount: amount,
+                          validFrom: validFrom,
+                          validTo: validTo,
                         );
                       },
                     );

@@ -292,13 +292,13 @@ class CardWidget extends StatelessWidget {
                               ],
                             )
                           : Padding(
-                              padding: const EdgeInsets.fromLTRB(40, 0, 40, 0),
+                              padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
                               child: InkWell(
                                 onTap: onActive,
                                 child: Container(
-                                  width: double.infinity,
+                                  // width: double.infinity,
                                   padding:
-                                      const EdgeInsets.fromLTRB(30, 5, 30, 5),
+                                      const EdgeInsets.fromLTRB(20, 5, 20, 5),
                                   // height: 30,
                                   decoration: BoxDecoration(
                                       color: AppColor.BLUE_TEXT,

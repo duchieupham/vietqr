@@ -67,7 +67,9 @@ class DialogWidget {
                   ],
                 ),
                 InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
                   child: Container(
                     width: double.infinity,
                     height: 50,

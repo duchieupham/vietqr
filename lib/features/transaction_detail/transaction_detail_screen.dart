@@ -585,7 +585,8 @@ class _BodyWidgetState extends State<_BodyWidget> {
               _bloc.add(UpdateNoteEvent(body));
             },
           ),
-          if ((state.dto?.transType.trim() != 'D') && role.isAdmin || role.isRequestTrans)
+          if ((state.dto?.transType.trim() != 'D') && role.isAdmin ||
+              role.isRequestTrans)
             MButtonWidget(
               title: 'Cập nhật cửa hàng',
               padding: EdgeInsets.symmetric(horizontal: 20),
