@@ -211,7 +211,9 @@ class CardWidget extends StatelessWidget {
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
-                                              color: AppColor.WHITE,
+                                              color: isExtend!
+                                                  ? AppColor.BLACK
+                                                  : AppColor.WHITE,
                                               fontSize: 15,
                                               fontWeight: FontWeight.w600),
                                         ),
@@ -220,7 +222,9 @@ class CardWidget extends StatelessWidget {
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
-                                            color: AppColor.WHITE,
+                                            color: isExtend!
+                                                ? AppColor.BLACK
+                                                : AppColor.WHITE,
                                             fontSize: 12,
                                           ),
                                         ),
