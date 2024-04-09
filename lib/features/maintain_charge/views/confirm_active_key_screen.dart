@@ -127,7 +127,7 @@ class ConfirmActiveKeyScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "KEY:",
+                            "Mã:",
                             style: TextStyle(fontSize: 15),
                           ),
                           Text(
@@ -146,7 +146,7 @@ class ConfirmActiveKeyScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Thời hạn KEY:",
+                            "Thời hạn mã:",
                             style: TextStyle(fontSize: 15),
                           ),
                           Text(
@@ -222,6 +222,7 @@ class ConfirmActiveKeyScreen extends StatelessWidget {
                 BlocProvider.of<MaintainChargeBloc>(context).add(
                     ConfirmMaintainChargeEvent(
                         dto: ConfirmMaintainCharge(
+                            keyValue: createDto.key,
                             otp: dto.otp!,
                             bankId: createDto.bankId,
                             userId: createDto.userId,

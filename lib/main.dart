@@ -252,6 +252,11 @@ class _VietQRApp extends State<VietQRApp> {
             );
           }
         }
+        if (message.data['notificationType'] != null &&
+            message.data['notificationType'] ==
+                Stringify.NOTI_TYPE_ANNUAL_FEE_SUCCESS) {
+          DialogWidget.instance.openActiveAnnualSuccess();
+        }
         //   //process success transcation
         //   if (message.data['notificationType'] != null &&
         //       message.data['notificationType'] ==
@@ -409,23 +414,27 @@ class _VietQRApp extends State<VietQRApp> {
                       },
                     );
                   }
+
                   if (settings.name == Routes.ACTIVE_SUCCESS_SCREEN) {
                     Map<String, dynamic> param =
                         settings.arguments as Map<String, dynamic>;
+                    int type = param['type'] as int;
 
                     return CupertinoPageRoute<bool>(
                       builder: (context) {
-                        return ActiveSuccessScreen();
+                        return ActiveSuccessScreen(
+                          type: type,
+                        );
                       },
                     );
                   }
+
                   if (settings.name == Routes.CONFIRM_ACTIVE_KEY_SCREEN) {
                     Map<String, dynamic> param =
                         settings.arguments as Map<String, dynamic>;
                     MaintainChargeDTO dto = param['dto'] as MaintainChargeDTO;
                     MaintainChargeCreate createDto =
                         param['createDto'] as MaintainChargeCreate;
-
                     return CupertinoPageRoute<bool>(
                       builder: (context) {
                         return ConfirmActiveKeyScreen(

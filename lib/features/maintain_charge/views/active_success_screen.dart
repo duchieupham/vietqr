@@ -8,7 +8,8 @@ import '../../../commons/constants/configurations/app_images.dart';
 import '../../../commons/constants/configurations/theme.dart';
 
 class ActiveSuccessScreen extends StatefulWidget {
-  const ActiveSuccessScreen({super.key});
+  final int? type;
+  const ActiveSuccessScreen({super.key, required this.type});
 
   @override
   State<ActiveSuccessScreen> createState() => _ActiveSuccessScreenState();
@@ -69,17 +70,30 @@ class _ActiveSuccessScreenState extends State<ActiveSuccessScreen> {
                 child: Column(
                   children: [
                     Image.asset(
-                      AppImages.icSuccessInBlue,
+                      widget.type == 0
+                          ? AppImages.icSuccessInBlue
+                          : AppImages.icPendingTrans,
                       width: 200,
                       height: 200,
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      "Kích hoạt dịch vụ \nhận BĐSD thành công!",
+                      widget.type == 0
+                          ? "Kích hoạt dịch vụ \nhận BĐSD thành công!"
+                          : 'Mã VietQR  hết hạn thanh toán',
                       textAlign: TextAlign.center,
                       style:
                           TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                    )
+                    ),
+                    widget.type == 1
+                        ? Text(
+                            'Hoá đơn thanh toán dịch vụ nhận biến động số dư hết hạn. Vui lòng chọn lại gói dịch vụ và tiến hành thanh toán.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 15,
+                            ),
+                          )
+                        : const SizedBox.shrink(),
                   ],
                 ),
               ),
@@ -92,29 +106,65 @@ class _ActiveSuccessScreenState extends State<ActiveSuccessScreen> {
 
   Widget _bottom() {
     return Container(
+      height: 150,
       padding: const EdgeInsets.only(left: 40, right: 40, bottom: 30),
-      child: InkWell(
-        onTap: () {
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => DashBoardScreen(),
-              ));
-        },
-        child: Container(
-          padding: const EdgeInsets.only(left: 10, right: 10),
-          height: 50,
-          width: double.infinity,
-          decoration: BoxDecoration(
-              color: AppColor.BLUE_TEXT,
-              borderRadius: BorderRadius.circular(5)),
-          child: Center(
-            child: Text(
-              "Hoàn thành",
-              style: TextStyle(fontSize: 13, color: Colors.white),
+      child: Column(
+        children: [
+          widget.type == 1
+              ? InkWell(
+                  onTap: () {
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DashBoardScreen(),
+                        ));
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    height: 50,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                        // color: AppColor.BLUE_TEXT,
+                        border: Border.all(color: AppColor.BLUE_TEXT, width: 1),
+                        borderRadius: BorderRadius.circular(5)),
+                    child: Center(
+                      child: Text(
+                        "Về trang chủ",
+                        style:
+                            TextStyle(fontSize: 13, color: AppColor.BLUE_TEXT),
+                      ),
+                    ),
+                  ),
+                )
+              : const SizedBox.shrink(),
+          widget.type == 1 ? SizedBox(height: 10) : const SizedBox.shrink(),
+          InkWell(
+            onTap: () {
+              widget.type == 1
+                  ? Navigator.of(context).pop()
+                  : Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DashBoardScreen(),
+                      ));
+              ;
+            },
+            child: Container(
+              padding: const EdgeInsets.only(left: 10, right: 10),
+              height: 50,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                  color: AppColor.BLUE_TEXT,
+                  borderRadius: BorderRadius.circular(5)),
+              child: Center(
+                child: Text(
+                  widget.type == 0 ? "Hoàn thành" : 'Chọn lại gói dịch vụ',
+                  style: TextStyle(fontSize: 13, color: Colors.white),
+                ),
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
