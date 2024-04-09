@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
+import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
@@ -39,7 +40,70 @@ class _ServiceSectionState extends State<ServiceSection> {
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
         ),
         const SizedBox(
-          height: 10,
+          height: 20,
+        ),
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 10),
+          decoration: BoxDecoration(
+            color: AppColor.WHITE,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          height: 120,
+          child: InkWell(
+            onTap: () {
+              Navigator.pushNamed(context, Routes.INSERT_CUSTOMER_VA_MERCHANT);
+            },
+            child: Row(
+              children: [
+                const SizedBox(
+                  width: 10,
+                ),
+                Image.asset(
+                  'assets/images/ic-invoice-3D.png',
+                  width: 80,
+                ),
+                const SizedBox(
+                  width: 15,
+                ),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Thu hộ hoá đơn\nqua tài khoản định danh',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        '- Quản lý hoá đơn thanh toán.',
+                        style: TextStyle(
+                          fontSize: 13,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        '- Áp dụng cho TK ngân hàng BIDV.',
+                        style: TextStyle(
+                          fontSize: 13,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(
+          height: 20,
         ),
         _buildListService(context),
         const SizedBox(

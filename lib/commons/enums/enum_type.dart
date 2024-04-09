@@ -62,7 +62,7 @@ enum TypeSelect {
   MEMBER,
 }
 
-enum CheckType { C01, C02, C03, C04, C06 }
+enum CheckType { C01, C02, C03, C04, C06, C12 }
 
 enum TypeOTP {
   SUCCESS,

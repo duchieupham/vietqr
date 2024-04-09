@@ -135,7 +135,42 @@ class ErrorUtils {
       case ErrorType.E110:
         result = 'Mã nhóm đã tồn tại trong hệ thống';
         break;
-
+      case ErrorType.E117:
+        result =
+            'Không tìm thấy chứng minh thư/Mã số thuế trên hệ thống ngân hàng. Vui lòng kiểm tra lại thông tin.';
+        break;
+      case ErrorType.E118:
+        result =
+            'Không tìm thấy số điện thoại trên hệ thống ngân hàng. Vui lòng kiểm tra lại thông tin.';
+        break;
+      case ErrorType.E119:
+        result =
+            'Số tài khoản không tồn tại trên hệ thống ngân hàng. Vui lòng kiểm tra lại thông tin.';
+        break;
+      case ErrorType.E120:
+        result =
+            'Tài khoản khách hàng bị tạm giữ. Vui lòng liên hệ với ngân hàng thụ hưởng để kiểm tra vấn đề.';
+        break;
+      case ErrorType.E121:
+        result =
+            'Tài khoản thanh toán không hoạt động. Vui lòng liên hệ với ngân hàng thụ hưởng để kiểm tra vấn đề.';
+        break;
+      case ErrorType.E122:
+        result =
+            'Trạng thái đăng ký dịch vụ BIDV Online không hợp lệ. Vui lòng liên hệ với ngân hàng thụ hưởng để kiểm tra vấn đề.';
+        break;
+      case ErrorType.E123:
+        result =
+            'Quý khách chưa đăng ký dịch vụ E-Banking (BIDV Online/BIDV SmartBanking) hoặc dịch vụ đang KHÔNG ở trạng thái hoạt động. Vui lòng liên hệ với ngân hàng thụ hưởng để kiểm tra vấn đề.';
+        break;
+      case ErrorType.E124:
+        result =
+            'Có lỗi trong quá trình xác thực OTP (Mã OTP không hợp lệ). Vui lòng thử lại sau.';
+        break;
+      case ErrorType.E125:
+        result =
+            'Có lỗi trong quá trình xác thực OTP hoặc khách hàng bị khóa OTP tạm thời do nhập sai OTP 5 lần liên tiếp. Vui lòng thử lại sau.';
+        break;
       default:
         result = message;
     }

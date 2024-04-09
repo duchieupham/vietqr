@@ -5,10 +5,15 @@ import 'package:camera/camera.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
+import 'package:vierqr/features/customer_va/views/customer_va_confirm_otp_view.dart';
+import 'package:vierqr/features/customer_va/views/customer_va_insert_bank_auth_view.dart';
+import 'package:vierqr/features/customer_va/views/customer_va_insert_bank_info_view.dart';
+import 'package:vierqr/features/customer_va/views/customer_va_insert_merchant_view.dart';
 import 'package:vierqr/features/transaction_detail/transaction_detail_screen.dart';
 import 'package:vierqr/features/transaction_detail/widgets/transaction_sucess_widget.dart';
 import 'package:vierqr/layouts/bottom_sheet/notify_trans_widget.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
+import 'package:vierqr/services/providers/customer_va/customer_va_insert_provider.dart';
 import 'package:vierqr/services/socket_service/socket_service.dart';
 import 'models/qr_generated_dto.dart';
 import 'package:flutter/material.dart';
@@ -323,6 +328,8 @@ class _VietQRApp extends State<VietQRApp> {
             ChangeNotifierProvider(create: (context) => AuthProvider()),
             ChangeNotifierProvider(create: (context) => PinProvider()),
             ChangeNotifierProvider(create: (context) => UserEditProvider()),
+            ChangeNotifierProvider(
+                create: (context) => CustomerVaInsertProvider()),
           ],
           child: Consumer<AuthProvider>(
             builder: (context, authProvider, child) {
@@ -365,6 +372,14 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.REPORT_SCREEN: (context) => const ReportScreen(),
                   Routes.TRANSACTION_WALLET: (context) =>
                       const TransWalletScreen(),
+                  Routes.INSERT_CUSTOMER_VA_MERCHANT: (context) =>
+                      CustomerVAInsertMerchantView(),
+                  Routes.INSERT_CUSTOMER_VA_BANK_INFO: (context) =>
+                      CustomerVaInsertBankInfoView(),
+                  Routes.INSERT_CUSTOMER_VA_BANK_AUTH: (context) =>
+                      CustomerVaInsertBankAuthView(),
+                  Routes.CUSTOMER_VA_CONFIRM_OTP: (context) =>
+                      CustomerVaConfirmOtpView(),
                 },
                 onGenerateRoute: (settings) {
                   if (settings.name == Routes.SHOW_QR) {

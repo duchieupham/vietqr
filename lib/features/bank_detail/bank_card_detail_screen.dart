@@ -145,10 +145,8 @@ class _BankCardDetailState extends State<BankCardDetailState> {
               }
 
               if (state.request == BankDetailType.UN_LINK_BIDV) {
-                _onShowDialogRequestOTP(
-                    state.requestId ?? '',
-                    state.bankDetailDTO?.bankAccount ?? '',
-                    state.bankDetailDTO);
+                eventBus.fire(GetListBankScreen());
+                bankCardBloc.add(const BankCardGetDetailEvent());
               }
               if (state.request == BankDetailType.REQUEST_OTP) {
                 _onShowDialogRequestOTP(
@@ -245,7 +243,7 @@ class _BankCardDetailState extends State<BankCardDetailState> {
               }
               if (state.request == BankDetailType.ERROR) {
                 await DialogWidget.instance.openMsgDialog(
-                  title: 'Không thể xoá tài khoản',
+                  title: 'Thông báo',
                   msg: state.msg ?? '',
                 );
               }
