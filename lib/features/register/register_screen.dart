@@ -363,6 +363,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 border: Border.all(width: 1, color: AppColor.BLUE_TEXT),
                 onTap: () async {
                   onRegister(provider, height);
+                  Provider.of<PinProvider>(context, listen: false).reset();
                 },
               ),
             ),
@@ -377,6 +378,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 height: 50,
                 onTap: () async {
                   onRegister(provider, height);
+                  Provider.of<PinProvider>(context, listen: false).reset();
                 },
               ),
             ),
