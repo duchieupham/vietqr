@@ -34,7 +34,7 @@ class _FormPasswordState extends State<FormPassword> {
               Container(
                 margin: EdgeInsets.only(
                   bottom: 30,
-                  top: 140,
+                  top: 50,
                   left: 20,
                 ),
                 width: double.infinity,

@@ -25,7 +25,7 @@ class FormRegisterSuccessSplash extends StatefulWidget {
 
 class _FormRegisterSuccessSplashState extends State<FormRegisterSuccessSplash> {
   Timer? _timer;
-  int _start = 3;
+  int _start = 100;
 
   @override
   void initState() {
@@ -61,7 +61,8 @@ class _FormRegisterSuccessSplashState extends State<FormRegisterSuccessSplash> {
       decoration: BoxDecoration(
         color: AppColor.WHITE,
       ),
-      child: Center(
+      child: Container(
+        height: MediaQuery.of(context).size.height,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -75,7 +76,7 @@ class _FormRegisterSuccessSplashState extends State<FormRegisterSuccessSplash> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 90),
+              padding: const EdgeInsets.only(top: 40),
               child: Image.asset(
                 AppImages.icRegisterSuccessful,
                 width: 236,
@@ -125,7 +126,7 @@ class _FormRegisterSuccessSplashState extends State<FormRegisterSuccessSplash> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(bottom: 50),
+              padding: const EdgeInsets.only(bottom: 25),
               child: DefaultTextStyle(
                 style: TextStyle(fontSize: 15, color: AppColor.BLACK),
                 child: RichText(

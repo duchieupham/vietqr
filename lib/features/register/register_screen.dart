@@ -144,25 +144,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => FormRegisterSuccessSplash(
-                          // onEdit: () {
-                          //   Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //         builder: (context) => UserEditView()),
-                          //   );
-                          // },
-                          // onHome: () {
-                          //   Navigator.of(context).pop();
-                          //   Navigator.of(context).pop();
-                          //   Navigator.of(context).pop();
-                          //   backToPreviousPage(context, true);
-                          // },
+                        // onEdit: () {
+                        //   Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: (context) => UserEditView()),
+                        //   );
+                        // },
+                        // onHome: () {
+                        //   Navigator.of(context).pop();
+                        //   Navigator.of(context).pop();
+                        //   Navigator.of(context).pop();
+                        //   backToPreviousPage(context, true);
+                        // },
                         )),
               );
-              Future.delayed(Duration(seconds: 3), () {
-              Navigator.of(context).pop();
-              Navigator.of(context).pop();
-              backToPreviousPage(context, true);
+              Future.delayed(Duration(seconds: 100), () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+                backToPreviousPage(context, true);
               });
             }
           },
@@ -194,6 +194,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 16.0),
                               child: FormPhone(
+                                pageController: pageController,
                                 phoneController: _phoneNoController,
                                 isFocus: widget.isFocus,
                                 onEnterIntro: (value) {
@@ -254,7 +255,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               }
 
               return Padding(
-                padding: const EdgeInsets.only(bottom: 20),
+                padding: const EdgeInsets.only(bottom: 10),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
