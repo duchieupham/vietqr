@@ -159,7 +159,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         // },
                         )),
               );
-              Future.delayed(Duration(seconds: 100), () {
+              Future.delayed(Duration(seconds: 3), () {
                 Navigator.of(context).pop();
                 Navigator.of(context).pop();
                 backToPreviousPage(context, true);

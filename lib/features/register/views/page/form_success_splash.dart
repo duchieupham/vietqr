@@ -25,7 +25,7 @@ class FormRegisterSuccessSplash extends StatefulWidget {
 
 class _FormRegisterSuccessSplashState extends State<FormRegisterSuccessSplash> {
   Timer? _timer;
-  int _start = 100;
+  int _start = 3;
 
   @override
   void initState() {
@@ -98,33 +98,33 @@ class _FormRegisterSuccessSplashState extends State<FormRegisterSuccessSplash> {
             SizedBox(
               height: 70,
             ),
-            Container(
-              child: DefaultTextStyle(
-                style: TextStyle(fontSize: 15),
-                child: MButtonWidget(
-                  title: 'Bạn có muốn cập nhật thông tin cá nhân',
-                  isEnable: true,
-                  height: 50,
-                  margin: EdgeInsets.only(left: 40, right: 40),
-                  colorEnableBgr: AppColor.WHITE,
-                  colorEnableText: AppColor.BLUE_TEXT,
-                  border: Border.all(width: 1, color: AppColor.BLUE_TEXT),
-                  // onTap: widget.onEdit,
-                ),
-              ),
-            ),
-            Container(
-              child: DefaultTextStyle(
-                style: TextStyle(fontSize: 15),
-                child: MButtonWidget(
-                  title: 'Truy cập trang chủ VietQR VN',
-                  isEnable: true,
-                  margin: EdgeInsets.only(left: 40, right: 40),
-                  height: 50,
-                  // onTap: widget.onHome,
-                ),
-              ),
-            ),
+            // Container(
+            //   child: DefaultTextStyle(
+            //     style: TextStyle(fontSize: 15),
+            //     child: MButtonWidget(
+            //       title: 'Bạn có muốn cập nhật thông tin cá nhân',
+            //       isEnable: true,
+            //       height: 50,
+            //       margin: EdgeInsets.only(left: 40, right: 40),
+            //       colorEnableBgr: AppColor.WHITE,
+            //       colorEnableText: AppColor.BLUE_TEXT,
+            //       border: Border.all(width: 1, color: AppColor.BLUE_TEXT),
+            //       // onTap: widget.onEdit,
+            //     ),
+            //   ),
+            // ),
+            // Container(
+            //   child: DefaultTextStyle(
+            //     style: TextStyle(fontSize: 15),
+            //     child: MButtonWidget(
+            //       title: 'Truy cập trang chủ VietQR VN',
+            //       isEnable: true,
+            //       margin: EdgeInsets.only(left: 40, right: 40),
+            //       height: 50,
+            //       // onTap: widget.onHome,
+            //     ),
+            //   ),
+            // ),
             Padding(
               padding: const EdgeInsets.only(bottom: 25),
               child: DefaultTextStyle(
