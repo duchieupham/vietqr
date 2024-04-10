@@ -144,25 +144,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => FormRegisterSuccessSplash(
-                          // onEdit: () {
-                          //   Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //         builder: (context) => UserEditView()),
-                          //   );
-                          // },
-                          // onHome: () {
-                          //   Navigator.of(context).pop();
-                          //   Navigator.of(context).pop();
-                          //   Navigator.of(context).pop();
-                          //   backToPreviousPage(context, true);
-                          // },
+                        // onEdit: () {
+                        //   Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: (context) => UserEditView()),
+                        //   );
+                        // },
+                        // onHome: () {
+                        //   Navigator.of(context).pop();
+                        //   Navigator.of(context).pop();
+                        //   Navigator.of(context).pop();
+                        //   backToPreviousPage(context, true);
+                        // },
                         )),
               );
               Future.delayed(Duration(seconds: 3), () {
-              Navigator.of(context).pop();
-              Navigator.of(context).pop();
-              backToPreviousPage(context, true);
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+                backToPreviousPage(context, true);
               });
             }
           },
@@ -181,7 +181,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   },
                 ),
                 backgroundColor: AppColor.WHITE,
-                resizeToAvoidBottomInset: false,
+                resizeToAvoidBottomInset: true,
                 bottomNavigationBar:
                     _bottom(width, height, viewInsets, provider),
                 body: Container(
@@ -252,6 +252,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               curve: Curves.ease)
                         });
               }
+              if (_provider.page == 2) {
+                return _buildButtonSubmitFormPassword(
+                    heights,
+                    () => {
+                          Provider.of<PinProvider>(context, listen: false)
+                              .reset(),
+                          provider.updatePage(3),
+                          pageController.animateToPage(3,
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.ease),
+                        });
+              }
 
               return Padding(
                 padding: const EdgeInsets.only(bottom: 20),
@@ -264,18 +276,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     if (_provider.page == 3) ...[
                       _buildButtonSubmitFormConfirmPassword(height),
                     ],
-                    if (_provider.page == 2) ...[
-                      _buildButtonSubmitFormPassword(
-                          heights,
-                          () => {
-                                Provider.of<PinProvider>(context, listen: false)
-                                    .reset(),
-                                provider.updatePage(3),
-                                pageController.animateToPage(3,
-                                    duration: const Duration(milliseconds: 300),
-                                    curve: Curves.ease),
-                              }),
-                    ],
+                    // if (_provider.page == 2) ...[
+                    //   _buildButtonSubmitFormPassword(
+                    //       heights,
+                    //       () => {
+                    //             Provider.of<PinProvider>(context, listen: false)
+                    //                 .reset(),
+                    //             provider.updatePage(3),
+                    //             pageController.animateToPage(3,
+                    //                 duration: const Duration(milliseconds: 300),
+                    //                 curve: Curves.ease),
+                    //           }),
+                    // ],
                     if (!_provider.isShowButton)
                       SizedBox(height: viewInsets.bottom),
                     const SizedBox(height: 10),
@@ -341,7 +353,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         return MButtonWidget(
           title: 'Tiếp tục',
           isEnable: provider.isEnableButtonPassword(),
-          margin: EdgeInsets.only(bottom: 16),
+          margin: EdgeInsets.only(bottom: 36),
           colorDisableBgr: AppColor.GREY_BUTTON,
           width: 350,
           height: 50,

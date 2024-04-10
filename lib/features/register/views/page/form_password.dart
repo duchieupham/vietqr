@@ -29,6 +29,7 @@ class _FormPasswordState extends State<FormPassword> {
     return Consumer<RegisterProvider>(
       builder: (context, provider, child) {
         return SingleChildScrollView(
+          physics: NeverScrollableScrollPhysics(),
           child: Column(
             children: [
               Container(
