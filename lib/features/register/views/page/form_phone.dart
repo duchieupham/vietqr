@@ -7,11 +7,13 @@ import '../../../../services/providers/register_provider.dart';
 
 class FormPhone extends StatefulWidget {
   final TextEditingController phoneController;
+  final PageController pageController;
   final bool isFocus;
   final Function(int) onEnterIntro;
 
   const FormPhone(
       {Key? key,
+      required this.pageController,
       required this.phoneController,
       required this.isFocus,
       required this.onEnterIntro})
@@ -32,20 +34,29 @@ class _FormPhoneState extends State<FormPhone> {
               Container(
                 margin: EdgeInsets.only(
                   bottom: 20,
-                  top: 150,
+                  top: 100,
                 ),
                 width: double.infinity,
                 child: Text(
                   'Xin chào, vui lòng nhập\nSố điện thoại để đăng ký\ntài khoản VietQR VN',
                   style: TextStyle(
                     color: Color(0xFF000000),
-                    fontSize: 25,
+                    fontSize: 22,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
               PhoneWidget(
                 onChanged: provider.updatePhone,
+                onSubmit: (value) {
+                  String text = value..replaceAll(' ', '');
+                  if (text.length == 10) {
+                    provider.updatePage(2);
+                    widget.pageController.animateToPage(2,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.ease);
+                  }
+                },
                 phoneController: widget.phoneController,
                 autoFocus: widget.isFocus,
               ),

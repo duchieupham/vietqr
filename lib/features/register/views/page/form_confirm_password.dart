@@ -8,7 +8,7 @@ import '../../../../services/providers/register_provider.dart';
 
 class FormConfirmPassword extends StatefulWidget {
   final Function(int) onEnterIntro;
-  bool isFocus ;
+  bool isFocus;
 
   FormConfirmPassword({
     Key? key,
@@ -22,7 +22,6 @@ class FormConfirmPassword extends StatefulWidget {
 
 class _FormConfirmPasswordState extends State<FormConfirmPassword> {
   final repassFocus = FocusNode();
-  
 
   @override
   void initState() {
@@ -41,7 +40,7 @@ class _FormConfirmPasswordState extends State<FormConfirmPassword> {
               Column(
                 children: [
                   Container(
-                    margin: EdgeInsets.only(top: 150, bottom: 30, left: 20),
+                    margin: EdgeInsets.only(top: 50, bottom: 30, left: 20),
                     width: double.infinity,
                     child: Text(
                       'Vui lòng xác nhận lại\nmật khẩu vừa đặt',

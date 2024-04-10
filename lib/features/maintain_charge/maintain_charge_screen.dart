@@ -357,7 +357,8 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                       onTap: () {
                         setState(() {
                           selectedId = value.listAnnualFee[index].feeId;
-                          selectFeeAmount = value.listAnnualFee[index].amount;
+                          selectFeeAmount = value.listAnnualFee[index].amount! *
+                              value.listAnnualFee[index].duration!;
                         });
                       },
                       child: Stack(
@@ -390,7 +391,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                                           "${value.listAnnualFee[index].duration}",
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            fontSize: 20,
+                                            fontSize: 22,
                                             color: AppColor.BLACK,
                                           ),
                                         ),
@@ -425,7 +426,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                                         Text(
                                           "VND/THÁNG",
                                           style: TextStyle(
-                                              fontSize: 18,
+                                              fontSize: 16,
                                               color: AppColor.BLACK
                                                   .withOpacity(0.3)),
                                         ),

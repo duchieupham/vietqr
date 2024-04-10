@@ -61,7 +61,8 @@ class _FormRegisterSuccessSplashState extends State<FormRegisterSuccessSplash> {
       decoration: BoxDecoration(
         color: AppColor.WHITE,
       ),
-      child: Center(
+      child: Container(
+        height: MediaQuery.of(context).size.height,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -75,7 +76,7 @@ class _FormRegisterSuccessSplashState extends State<FormRegisterSuccessSplash> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 90),
+              padding: const EdgeInsets.only(top: 40),
               child: Image.asset(
                 AppImages.icRegisterSuccessful,
                 width: 236,
@@ -97,35 +98,35 @@ class _FormRegisterSuccessSplashState extends State<FormRegisterSuccessSplash> {
             SizedBox(
               height: 70,
             ),
-            Container(
-              child: DefaultTextStyle(
-                style: TextStyle(fontSize: 15),
-                child: MButtonWidget(
-                  title: 'Bạn có muốn cập nhật thông tin cá nhân',
-                  isEnable: true,
-                  height: 50,
-                  margin: EdgeInsets.only(left: 40, right: 40),
-                  colorEnableBgr: AppColor.WHITE,
-                  colorEnableText: AppColor.BLUE_TEXT,
-                  border: Border.all(width: 1, color: AppColor.BLUE_TEXT),
-                  // onTap: widget.onEdit,
-                ),
-              ),
-            ),
-            Container(
-              child: DefaultTextStyle(
-                style: TextStyle(fontSize: 15),
-                child: MButtonWidget(
-                  title: 'Truy cập trang chủ VietQR VN',
-                  isEnable: true,
-                  margin: EdgeInsets.only(left: 40, right: 40),
-                  height: 50,
-                  // onTap: widget.onHome,
-                ),
-              ),
-            ),
+            // Container(
+            //   child: DefaultTextStyle(
+            //     style: TextStyle(fontSize: 15),
+            //     child: MButtonWidget(
+            //       title: 'Bạn có muốn cập nhật thông tin cá nhân',
+            //       isEnable: true,
+            //       height: 50,
+            //       margin: EdgeInsets.only(left: 40, right: 40),
+            //       colorEnableBgr: AppColor.WHITE,
+            //       colorEnableText: AppColor.BLUE_TEXT,
+            //       border: Border.all(width: 1, color: AppColor.BLUE_TEXT),
+            //       // onTap: widget.onEdit,
+            //     ),
+            //   ),
+            // ),
+            // Container(
+            //   child: DefaultTextStyle(
+            //     style: TextStyle(fontSize: 15),
+            //     child: MButtonWidget(
+            //       title: 'Truy cập trang chủ VietQR VN',
+            //       isEnable: true,
+            //       margin: EdgeInsets.only(left: 40, right: 40),
+            //       height: 50,
+            //       // onTap: widget.onHome,
+            //     ),
+            //   ),
+            // ),
             Padding(
-              padding: const EdgeInsets.only(bottom: 50),
+              padding: const EdgeInsets.only(bottom: 25),
               child: DefaultTextStyle(
                 style: TextStyle(fontSize: 15, color: AppColor.BLACK),
                 child: RichText(

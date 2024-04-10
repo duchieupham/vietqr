@@ -4,6 +4,8 @@ import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 
 class PhoneWidget extends StatefulWidget {
   final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onSubmit;
+
   final TextEditingController phoneController;
   final bool isShowTitle;
   final bool autoFocus;
@@ -11,6 +13,7 @@ class PhoneWidget extends StatefulWidget {
   const PhoneWidget({
     super.key,
     this.onChanged,
+    this.onSubmit,
     required this.phoneController,
     this.isShowTitle = false,
     this.autoFocus = false,
@@ -91,6 +94,7 @@ class _BodyWidget extends State<PhoneWidget> {
               countryDropDown,
               Expanded(
                 child: TextFormField(
+                  onFieldSubmitted: widget.onSubmit,
                   keyboardType: TextInputType.number,
                   textInputAction: TextInputAction.next,
                   controller: widget.phoneController,

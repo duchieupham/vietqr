@@ -242,9 +242,22 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 30),
-              Text(
-                "Thanh toán qua \nứng dụng ngân hàng / Ví điện tử \ncó hỗ trợ VietQR",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Thanh toán qua ứng dụng",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "ngân hàng / Ví điện tử",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "có hỗ trợ VietQR",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                ],
               ),
               const SizedBox(height: 30),
               Container(
@@ -260,7 +273,7 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
                   child: Container(
                     width: 300,
                     height: 300,
-                    padding: const EdgeInsets.fromLTRB(25, 20, 25, 10),
+                    padding: const EdgeInsets.fromLTRB(30, 20, 30, 10),
                     decoration: BoxDecoration(
                       color: AppColor.WHITE,
                       borderRadius: BorderRadius.circular(10),
@@ -567,52 +580,56 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
                       ],
                     ),
                     const SizedBox(width: 15),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 4),
-                          child: Icon(
-                            Icons.circle,
-                            color: AppColor.BLACK,
-                            size: 8,
+                    Container(
+                      width: double.infinity,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4),
+                            child: Icon(
+                              Icons.circle,
+                              color: AppColor.BLACK,
+                              size: 8,
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 6),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                  "Vui lòng không chỉnh sửa ",
-                                  style: TextStyle(fontSize: 12),
-                                ),
-                                Text(
-                                  '"Số tiền" ',
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                Text(
-                                  "và",
-                                  style: TextStyle(fontSize: 12),
-                                ),
-                                Text(
-                                  ' "Nội dung"',
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                            ),
-                            Text(
-                              'chuyển khoản, điều này ảnh hưởng tới việc \nthanh toán dịch vụ nhận biến động số dư.',
-                              style: TextStyle(fontSize: 12),
-                            ),
-                          ],
-                        ),
-                      ],
+                          const SizedBox(width: 4),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    "Vui lòng không chỉnh sửa ",
+                                    style: TextStyle(fontSize: 11),
+                                  ),
+                                  Text(
+                                    '"Số tiền" ',
+                                    style: TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(
+                                    "và",
+                                    style: TextStyle(fontSize: 10),
+                                  ),
+                                  Text(
+                                    ' "Nội dung"',
+                                    style: TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                              Text(
+                                'chuyển khoản, điều này ảnh hưởng tới việc thanh \ntoán dịch vụ nhận biến động số dư.',
+                                style: TextStyle(fontSize: 11),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),

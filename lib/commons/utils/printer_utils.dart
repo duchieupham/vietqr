@@ -54,7 +54,7 @@ class PrinterUtils {
           bytes += generator.feed(3);
           if (dto.amount.trim().isNotEmpty && dto.amount.trim() != '0') {
             bytes += generator.text(
-              '${CurrencyUtils.instance.getCurrencyFormatted(dto.amount)} VND',
+              '${dto.amount} VND',
               styles: const PosStyles(
                 align: PosAlign.center,
                 height: PosTextSize.size2,

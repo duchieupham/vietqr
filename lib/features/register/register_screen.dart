@@ -194,6 +194,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 16.0),
                               child: FormPhone(
+                                pageController: pageController,
                                 phoneController: _phoneNoController,
                                 isFocus: widget.isFocus,
                                 onEnterIntro: (value) {
@@ -266,7 +267,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               }
 
               return Padding(
-                padding: const EdgeInsets.only(bottom: 20),
+                padding: const EdgeInsets.only(bottom: 10),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
