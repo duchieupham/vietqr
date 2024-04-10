@@ -124,7 +124,7 @@ class _BankScreenState extends State<_BankScreen>
                     fontWeight: FontWeight.bold,
                   ),
                   child: Text(
-                    "Thanh toán phí \ndịch vụ nhận Biến động số dư",
+                    "Thanh toán phí \ndịch vụ phần mềm VietQR",
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -140,14 +140,14 @@ class _BankScreenState extends State<_BankScreen>
                   child: Container(
                     padding: const EdgeInsets.fromLTRB(18, 12, 18, 12),
                     width: double.infinity,
-                    height: MediaQuery.of(context).size.height * 0.1,
+                    height: MediaQuery.of(context).size.height * 0.10,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
                       border: Border.all(
                           width: 0.5, color: Colors.black.withOpacity(0.5)),
                     ),
                     child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Column(
@@ -168,12 +168,12 @@ class _BankScreenState extends State<_BankScreen>
                                 fontSize: 13,
                               ),
                               child: Text(
-                                  "Sử dụng KEY để kích hoạt \ndịch vụ nhận biến động số dư."),
+                                  "Sử dụng mã để kích hoạt \ndịch vụ nhận biến động số dư."),
                             )
                           ],
                         ),
                         Image.asset(
-                          AppImages.icKeyActive,
+                          AppImages.icPassUnlock,
                           height: 60,
                           width: 60,
                         ),
@@ -192,9 +192,9 @@ class _BankScreenState extends State<_BankScreen>
                         });
                   },
                   child: Container(
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.fromLTRB(18, 12, 18, 12),
                     width: double.infinity,
-                    height: MediaQuery.of(context).size.height * 0.1,
+                    height: MediaQuery.of(context).size.height * 0.10,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
                       border: Border.all(
@@ -222,7 +222,7 @@ class _BankScreenState extends State<_BankScreen>
                                 fontSize: 13,
                               ),
                               child: Text(
-                                  "Quét mã VietQR để thanh toán phí dịch vụ."),
+                                  "Quét mã VietQR để thanh toán \nphí dịch vụ."),
                             )
                           ],
                         ),
@@ -368,22 +368,6 @@ class _BankScreenState extends State<_BankScreen>
                 element.isValidService == true &&
                 element.validFeeTo! - sevenDaysFromNowTimestamp <= 7)
             .toList();
-        List<Widget> annualList = [];
-        // List<BankAccountDTO> extendAnnualFeeList =
-        //     state.listBanks.where((element) {
-        //   element.isAuthenticated == true;
-        //   element.isValidService == true;
-        //   DateTime now = DateTime.now();
-        //   int millisecondsSinceEpoch = now.millisecondsSinceEpoch;
-        //   DateTime dateTimeFromMilliseconds =
-        //       DateTime.fromMillisecondsSinceEpoch(millisecondsSinceEpoch);
-        //   DateTime validTo =
-        //       DateTime.fromMillisecondsSinceEpoch(element.validFeeTo! * 1000);
-        //   int daysDifference =
-        //       validTo.difference(dateTimeFromMilliseconds).inDays;
-        //   int inclusiveDays = daysDifference + 1;
-        //   return inclusiveDays <= 7;
-        // }).toList();
         List<BankAccountDTO> listAuthenticated = state.listBanks
             .where((element) => element.isAuthenticated == true)
             .toList();
@@ -405,7 +389,8 @@ class _BankScreenState extends State<_BankScreen>
                         height: 10,
                       ),
                       Container(
-                        height: (extendAnnualFeeList.length * 115) -
+                        height: (extendAnnualFeeList.length *
+                                (extendAnnualFeeList.length != 1 ? 120 : 135)) -
                             extendAnnualFeeList.length * 12 -
                             (extendAnnualFeeList.length - 1) * 8,
                         child: Stack(
@@ -419,7 +404,7 @@ class _BankScreenState extends State<_BankScreen>
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Text(
-                                "Gia hạn dịch vụ nhận BĐSD",
+                                "Gia hạn dịch vụ phần mềm VietQR",
                                 style: TextStyle(
                                     fontSize: 15, fontWeight: FontWeight.bold),
                               ),

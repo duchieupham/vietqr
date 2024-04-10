@@ -57,7 +57,7 @@ class DialogWidget {
                       fit: BoxFit.fitHeight,
                     ),
                     Text(
-                      "Kích hoạt dịch vụ \nnhận BĐSD thành công!",
+                      "Kích hoạt dịch vụ \nphần mềm VietQR thành công!",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 25,

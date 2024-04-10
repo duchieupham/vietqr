@@ -253,16 +253,13 @@ class _VietQRApp extends State<VietQRApp> {
             );
           }
         }
-        if (message.data['notificationType'] != null &&
-            message.data['notificationType'] ==
-                Stringify.NOTI_TYPE_ANNUAL_FEE_SUCCESS) {
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => DashBoardScreen(),
-              ));
-          DialogWidget.instance.openActiveAnnualSuccess();
-        }
+        // if (message.data['notificationType'] != null &&
+        //     message.data['notificationType'] ==
+        //         Stringify.NOTI_TYPE_ANNUAL_FEE_SUCCESS) {
+        //   NavigatorUtils.navigatePageReplacement(context, DashBoardScreen(),
+        //       routeName: Routes.DASHBOARD);
+        //   DialogWidget.instance.openActiveAnnualSuccess();
+        // }
         //   //process success transcation
         //   if (message.data['notificationType'] != null &&
         //       message.data['notificationType'] ==

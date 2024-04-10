@@ -103,7 +103,7 @@ class TransactionRepository {
       bankCode: '',
       bankName: '',
       imgId: '',
-      amount: 0,
+      amount: '',
       transType: '',
       traceId: '',
       refId: '',

@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -13,16 +16,20 @@ import 'package:vierqr/features/maintain_charge/states/maintain_charge_state.dar
 import 'package:vierqr/services/providers/pin_provider.dart';
 
 import '../../commons/constants/configurations/route.dart';
+import '../../commons/constants/configurations/stringify.dart';
 import '../../commons/utils/encrypt_utils.dart';
 import '../../commons/utils/format_price.dart';
+import '../../commons/utils/log.dart';
 import '../../commons/utils/navigator_utils.dart';
 import '../../commons/widgets/dialog_widget.dart';
 import '../../layouts/m_app_bar.dart';
 import '../../models/annual_fee_dto.dart';
 import '../../models/maintain_charge_create.dart';
 import '../../models/user_repository.dart';
+import '../../services/local_notification/notification_service.dart';
 import '../../services/local_storage/shared_preference/shared_pref_utils.dart';
 import '../../services/providers/maintain_charge_provider.dart';
+import '../dashboard/dashboard_screen.dart';
 import 'events/maintain_charge_events.dart';
 import 'views/annual_fee_screen.dart';
 
@@ -58,6 +65,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
   String? selectedId = '';
   int? selectFeeAmount = 0;
   List<AnnualFeeDTO>? annualList;
+  bool? isPayment = false;
 
   void initData() async {
     _bloc.add(GetAnnualFeeListEvent());
@@ -68,12 +76,31 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
     super.initState();
 
     _bloc = MaintainChargeBloc(context);
-    if (widget.type == 1)
+    if (widget.type == 1) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         initData();
+        onFcmMessage();
       });
+    }
+  }
 
-    // _bloc = BlocProvider.of<MaintainChargeBloc>(context);
+  void onFcmMessage() async {
+    await NotificationService().initialNotification();
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      // Xử lý push notification nếu ứng dụng đang chạy
+      LOG.info(
+          "Push notification received: ${message.notification?.title} - ${message.notification?.body}");
+      LOG.info("receive data: ${message.data}");
+      //process when receive data
+      if (message.data.isNotEmpty) {
+        if (message.data['notificationType'] != null &&
+            message.data['notificationType'] ==
+                Stringify.NOTI_TYPE_ANNUAL_FEE_SUCCESS) {
+          Navigator.pushReplacementNamed(context, Routes.DASHBOARD);
+          DialogWidget.instance.openActiveAnnualSuccess();
+        }
+      }
+    });
   }
 
   @override
@@ -145,6 +172,10 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
       create: (context) => _bloc,
       child: BlocBuilder<MaintainChargeBloc, MaintainChargeState>(
         builder: (context, state) {
+          // if (isPayment!) {
+          //   NavigatorUtils.navigatePageReplacement(context, DashBoardScreen(),
+          //       routeName: Routes.DASHBOARD);
+          // }
           if (state.status == BlocStatus.ERROR) {
             // status = state.status;
             if (isClear) {
@@ -196,7 +227,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
           return Scaffold(
               backgroundColor: Colors.white,
               resizeToAvoidBottomInset: true,
-              // bottomNavigationBar: _bottom(state),
+              bottomNavigationBar: widget.type == 1 ? _bottom(state) : null,
               body: CustomScrollView(
                 physics: NeverScrollableScrollPhysics(),
                 slivers: [
@@ -246,42 +277,21 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                         width: MediaQuery.of(context).size.width,
                         height: MediaQuery.of(context).size.height,
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          // crossAxisAlignment: CrossAxisAlignment.stretch,
+                          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Expanded(
-                              // flex: 1,
-                              child: _activeKeyWidget(),
-                            ),
+                            Expanded(child: _activeKeyWidget()),
                             _bottom(state),
                           ],
                         ),
                       ),
                     )
                   else
-                    SliverToBoxAdapter(
-                      child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Expanded(
-                              // flex: 1,
-                              child: _annualFeeWidget(),
-                            ),
-                            _bottom(state),
-                          ],
-                        ),
-                      ),
+                    SliverList(
+                      delegate: SliverChildListDelegate(<Widget>[
+                        _annualFeeWidget(),
+                      ]),
                     )
-                  // SliverList(
-                  //   delegate: SliverChildListDelegate(<Widget>[
-                  //     if (widget.type == 0)
-                  //       _activeKeyWidget()
-                  //     else
-                  //       _annualFeeWidget(),
-                  //   ]),
-                  // )
                 ],
               ));
         },
@@ -300,26 +310,43 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
           width: MediaQuery.of(context).size.width,
           // height: MediaQuery.of(context).size.height,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: MediaQuery.of(context).size.height * 0.06),
               Consumer<MaintainChargeProvider>(
                 builder: (context, value, child) {
-                  return Text(
-                    "Chọn gói phí \nđể kích hoạt phần mềm VietQR \nTK ${value.bankName} - ${value.bankAccount}",
-                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Chọn gói phí kích hoạt ",
+                        style: TextStyle(
+                            fontSize: 22, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        "dịch vụ phần mềm VietQR",
+                        style: TextStyle(
+                            fontSize: 22, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        "TK ${value.bankName} - ${value.bankAccount}",
+                        style: TextStyle(
+                            fontSize: 22, fontWeight: FontWeight.bold),
+                      ),
+                    ],
                   );
                 },
               ),
               SizedBox(height: 10),
               Container(
-                height: 500,
+                height: MediaQuery.of(context).size.height * 0.5,
                 child: GridView.builder(
                   physics: AlwaysScrollableScrollPhysics(),
                   itemCount: value.listAnnualFee.length,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     mainAxisSpacing: 30,
-                    mainAxisExtent: 120,
+                    mainAxisExtent: 135,
                     crossAxisSpacing: 20,
                     childAspectRatio: 0.2,
                   ),
@@ -339,10 +366,10 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               Container(
-                                height: 110,
+                                height: 120,
                                 width: double.infinity,
                                 padding:
-                                    const EdgeInsets.fromLTRB(20, 30, 20, 30),
+                                    const EdgeInsets.fromLTRB(17, 20, 17, 20),
                                 decoration: BoxDecoration(
                                   color: isSelect
                                       ? AppColor.BLUE_TEXT.withOpacity(0.3)
@@ -357,17 +384,32 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                      "${value.listAnnualFee[index].duration} tháng",
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        color: isSelect
-                                            ? AppColor.BLUE_TEXT
-                                            : AppColor.BLACK,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
                                     Row(
+                                      children: [
+                                        Text(
+                                          "${value.listAnnualFee[index].duration}",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20,
+                                            color: AppColor.BLACK,
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: 4,
+                                        ),
+                                        Text(
+                                          "tháng",
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            color: AppColor.BLACK,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           formatNumber(value
@@ -379,14 +421,13 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                                                   ? FontWeight.bold
                                                   : FontWeight.normal),
                                         ),
-                                        const SizedBox(width: 2),
+                                        const SizedBox(height: 2),
                                         Text(
-                                          "VND",
+                                          "VND/THÁNG",
                                           style: TextStyle(
                                               fontSize: 18,
-                                              color: isSelect
-                                                  ? AppColor.BLUE_TEXT
-                                                  : AppColor.BLACK),
+                                              color: AppColor.BLACK
+                                                  .withOpacity(0.3)),
                                         ),
                                       ],
                                     ),
@@ -398,14 +439,14 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                           value.listAnnualFee[index].description != ''
                               ? Positioned(
                                   top: 0,
-                                  right: 0,
+                                  left: 0,
                                   child: Container(
                                     padding:
                                         const EdgeInsets.fromLTRB(15, 2, 15, 2),
-                                    height: 20,
+                                    height: 30,
                                     decoration: BoxDecoration(
-                                      color: AppColor.ORANGE,
-                                      borderRadius: BorderRadius.circular(50),
+                                      color: Color(0xFF209493),
+                                      borderRadius: BorderRadius.circular(5),
                                     ),
                                     child: Center(
                                       child: Text(
@@ -437,16 +478,29 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
     return Container(
       padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
       width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
+      height: MediaQuery.of(context).size.height * 0.7,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: MediaQuery.of(context).size.height * 0.14),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.1),
           Consumer<MaintainChargeProvider>(
             builder: (context, value, child) {
-              return Text(
-                "Nhập mã để \nkích hoạt phần mềm VietQR \nTK ${value.bankName} - ${value.bankAccount}",
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Nhập mã kích hoạt",
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "dịch vụ phần mềm VietQR",
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "TK ${value.bankName} - ${value.bankAccount}",
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  ),
+                ],
               );
             },
           ),
@@ -481,6 +535,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
               setState(() {
                 keyValue = text.replaceAll(RegExp(r'[-\s]+'), '');
               });
+              if (keyValue.length == 12) onSubmit();
             },
             inputFormatters: [
               UpperCaseTextInputFormatter(),
@@ -532,9 +587,10 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
   Widget _bottom(MaintainChargeState state) {
     return widget.type == 0
         ? Container(
-            // height: 200,
+            height: 50,
+            width: MediaQuery.of(context).size.width,
             padding: const EdgeInsets.only(left: 40, right: 40, bottom: 0),
-            margin: const EdgeInsets.only(bottom: 100),
+            margin: const EdgeInsets.only(bottom: 150),
             child: InkWell(
               onTap: _controller.text.length < 12
                   ? null
@@ -576,7 +632,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
           )
         : Container(
             height: MediaQuery.of(context).size.height * 0.12,
-            margin: const EdgeInsets.only(bottom: 80),
+            // margin: const EdgeInsets.only(bottom: 80),
             child: Column(
               children: [
                 MySeparator(

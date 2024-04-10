@@ -87,7 +87,7 @@ class ConfirmActiveKeyScreen extends StatelessWidget {
                   children: [
                     SizedBox(height: MediaQuery.of(context).size.height * 0.1),
                     Text(
-                      "Xác nhận thông tin kích hoạt \ndịch vụ nhận BĐSD",
+                      "Xác nhận thông tin kích hoạt \ndịch vụ phần mềm VietQR",
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),

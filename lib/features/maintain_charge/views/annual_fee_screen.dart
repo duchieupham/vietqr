@@ -15,7 +15,11 @@ import 'package:vierqr/features/maintain_charge/events/maintain_charge_events.da
 import 'package:vierqr/services/providers/maintain_charge_provider.dart';
 
 import '../../../commons/constants/configurations/app_images.dart';
+import '../../../commons/enums/enum_type.dart';
 import '../../../commons/utils/format_price.dart';
+import '../../../commons/utils/navigator_utils.dart';
+import '../../../models/qr_generated_dto.dart';
+import '../../popup_bank/popup_bank_share.dart';
 import 'active_success_screen.dart';
 
 class QrAnnualFeeScreen extends StatefulWidget {
@@ -71,6 +75,36 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
   void dispose() {
     _timer.cancel();
     super.dispose();
+  }
+
+  void onShare(BuildContext context) {
+    QRGeneratedDTO dto = QRGeneratedDTO(
+      bankCode: ' bankAccountDTO.bankCode',
+      bankName: ' bankAccountDTO.bankName',
+      bankAccount: '',
+      userBankName: '',
+      qrCode: widget.qr!,
+      imgId: '',
+      amount: widget.amount.toString(),
+    );
+    NavigatorUtils.navigatePage(
+        context, PopupBankShare(dto: dto, type: TypeImage.SHARE),
+        routeName: PopupBankShare.routeName);
+  }
+
+  void onSaveImage(BuildContext context) {
+    QRGeneratedDTO dto = QRGeneratedDTO(
+      bankCode: ' bankAccountDTO.bankCode',
+      bankName: ' bankAccountDTO.bankName',
+      bankAccount: '',
+      userBankName: '',
+      qrCode: widget.qr!,
+      imgId: '',
+      amount: widget.amount.toString(),
+    );
+    NavigatorUtils.navigatePage(
+        context, PopupBankShare(dto: dto, type: TypeImage.SAVE),
+        routeName: PopupBankShare.routeName);
   }
 
   String timestampToDate(int timestamp) {
@@ -278,9 +312,11 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      onSaveImage(context);
+                    },
                     child: Container(
-                      padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                       width: MediaQuery.of(context).size.width * 0.4,
                       height: 40,
                       decoration: BoxDecoration(
@@ -309,9 +345,11 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
                     ),
                   ),
                   InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      onShare(context);
+                    },
                     child: Container(
-                      padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                       width: MediaQuery.of(context).size.width * 0.4,
                       height: 40,
                       decoration: BoxDecoration(
@@ -363,7 +401,7 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
                           formatNumber(widget.amount),
                           style: TextStyle(
                               fontSize: 15,
-                              color: AppColor.BLUE_TEXT,
+                              color: AppColor.ORANGE_DARK,
                               fontWeight: FontWeight.bold),
                         ),
                         Text(

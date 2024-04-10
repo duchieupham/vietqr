@@ -79,7 +79,7 @@ class _ActiveSuccessScreenState extends State<ActiveSuccessScreen> {
                     const SizedBox(height: 10),
                     Text(
                       widget.type == 0
-                          ? "Kích hoạt dịch vụ \nhận BĐSD thành công!"
+                          ? "Kích hoạt dịch vụ \nphần mềm VietQR thành công!"
                           : 'Mã VietQR  hết hạn thanh toán',
                       textAlign: TextAlign.center,
                       style:
