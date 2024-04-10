@@ -4,8 +4,10 @@ import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
+import 'package:vierqr/models/customer_va_confirm_dto.dart';
 import 'package:vierqr/models/customer_va_item_dto.dart';
 import 'package:vierqr/models/customer_va_request_dto.dart';
+import 'package:vierqr/models/customer_va_response_otp_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 
 class CustomerVaRepository {
@@ -59,12 +61,32 @@ class CustomerVaRepository {
   }
 
 //request va
-  Future<ResponseMessageDTO> requestCustomerVaOTP(
-      CustomerVaRequestDTO dto) async {
-    ResponseMessageDTO result =
-        const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+  Future<dynamic> requestCustomerVaOTP(CustomerVaRequestDTO dto) async {
+    dynamic result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
     try {
       String url = '${EnvConfig.getBaseUrl()}customer-va/request';
+      final response = await BaseAPIClient.postAPI(
+          url: url, type: AuthenticationType.SYSTEM, body: dto.toJson());
+      if (response.statusCode == 200 || response.statusCode == 400) {
+        var data = jsonDecode(response.body);
+        if (data != null && response.statusCode == 400) {
+          result = ResponseMessageDTO.fromJson(data);
+        } else if (data != null && response.statusCode == 200) {
+          result = ResponseObjectDTO.fromJson(data);
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return result;
+  }
+
+//confirm va
+  Future<ResponseMessageDTO> confirmCustomerVaOTP(
+      CustomerVaConfirmDTO dto) async {
+    dynamic result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+    try {
+      String url = '${EnvConfig.getBaseUrl()}customer-va/confirm';
       final response = await BaseAPIClient.postAPI(
           url: url, type: AuthenticationType.SYSTEM, body: dto.toJson());
       if (response.statusCode == 200 || response.statusCode == 400) {
@@ -74,29 +96,7 @@ class CustomerVaRepository {
         }
       }
     } catch (e) {
-      LOG.error(e.toString());
-      return result;
-    }
-    return result;
-  }
-
-//confirm va
-  Future<ResponseMessageDTO> confirmCustomerVaOTP(body) async {
-    ResponseMessageDTO result =
-        const ResponseMessageDTO(status: 'FAILED', message: 'E05');
-    try {
-      String url = '${EnvConfig.getBaseUrl()}customer-va/confirm';
-      final response = await BaseAPIClient.postAPI(
-          url: url, type: AuthenticationType.SYSTEM, body: body);
-      if (response.statusCode == 200 || response.statusCode == 400) {
-        var data = jsonDecode(response.body);
-        if (data != null) {
-          result = ResponseMessageDTO.fromJson(data);
-        }
-      }
-    } catch (e) {
-      LOG.error(e.toString());
-      return result;
+      LOG.error('confirmCustomerVaOTP: ' + e.toString());
     }
     return result;
   }
@@ -121,8 +121,7 @@ class CustomerVaRepository {
         }
       }
     } catch (e) {
-      LOG.error(e.toString());
-      return result;
+      LOG.error('unRegisterCustomerVa: ERROR: ' + e.toString());
     }
     return result;
   }
@@ -142,8 +141,7 @@ class CustomerVaRepository {
         }
       }
     } catch (e) {
-      LOG.error(e.toString());
-      return result;
+      LOG.error('insertCustomerVa: ERROR:' + e.toString());
     }
     return result;
   }

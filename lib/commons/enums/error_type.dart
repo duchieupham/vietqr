@@ -54,4 +54,5 @@ enum ErrorType {
   E123,
   E124,
   E125,
+  E133,
 }

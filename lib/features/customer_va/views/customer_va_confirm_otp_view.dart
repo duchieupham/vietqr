@@ -234,4 +234,7 @@ class _CustomerVaConfirmOtpView extends State<CustomerVaConfirmOtpView>
   }
 
   //
+  Future<void> _confirmOTP() async {
+    //
+  }
 }

@@ -175,6 +175,10 @@ class ErrorUtils {
         result =
             'Có lỗi trong quá trình xác thực OTP hoặc khách hàng bị khóa OTP tạm thời do nhập sai OTP 5 lần liên tiếp. Vui lòng thử lại sau.';
         break;
+      case ErrorType.E133:
+        result =
+            'Không tìm thấy thông tin tài khoản ngân hàng. Vui lòng kiểm tra lại thông tin.';
+        break;
       default:
         result = message;
     }

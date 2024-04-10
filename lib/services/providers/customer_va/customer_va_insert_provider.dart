@@ -17,6 +17,9 @@ class CustomerVaInsertProvider with ChangeNotifier {
   String _phoneAuthenticated = '';
   String _otp = '';
 
+  String _merchantId = '';
+  String _confirmId = '';
+
   get bidvLogoUrl => _bidvLogoUrl;
   get merchantName => _merchantName;
   get merchantNameErr => _isMerchantNameErr;
@@ -30,6 +33,14 @@ class CustomerVaInsertProvider with ChangeNotifier {
   get phoneAuthenticatedErr => _isPhoneAuthenticatedErr;
   get aggreePolicy => _isAgreePolicy;
   get otp => _otp;
+  get merchantId => _merchantId;
+  get confirmId => _confirmId;
+
+  void updateMerchantIdAndConfirmId(String value1, String value2) {
+    _merchantId = value1;
+    _confirmId = value2;
+    notifyListeners();
+  }
 
   void updateOtp(String value) {
     _otp = value;
@@ -92,8 +103,21 @@ class CustomerVaInsertProvider with ChangeNotifier {
   }
 
   void doInit() {
-    _merchantName = '';
     _isMerchantNameErr = false;
+    _isBankAccountErr = false;
+    _isUserBankNameErr = false;
+    _isNationalIdErr = false;
+    _isPhoneAuthenticatedErr = false;
+    _isAgreePolicy = false;
+    //
+    _merchantName = '';
+    _bankAccount = '';
+    _userBankName = '';
+    _nationalId = '';
+    _phoneAuthenticated = '';
+    _otp = '';
+    _merchantId = '';
+    _confirmId = '';
     notifyListeners();
   }
 

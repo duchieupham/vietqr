@@ -13,6 +13,7 @@ import 'package:vierqr/features/customer_va/views/customer_va_policy_view.dart';
 import 'package:vierqr/features/customer_va/widgets/customer_va_header_widget.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
 import 'package:vierqr/models/customer_va_request_dto.dart';
+import 'package:vierqr/models/customer_va_response_otp_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/services/providers/customer_va/customer_va_insert_provider.dart';
 
@@ -305,18 +306,25 @@ class _CustomerVaInsertBankAuthView
 
   Future<void> _requestCustomerVaOTP(CustomerVaRequestDTO dto) async {
     DialogWidget.instance.openLoadingDialog();
-    ResponseMessageDTO result =
-        await customerVaRepository.requestCustomerVaOTP(dto);
-    String status = result.status;
-    String msg = '';
-    if (status == 'FAILED') {
-      print(result.message);
-      msg = ErrorUtils.instance.getErrorMessage(result.message);
-    }
-    Navigator.pop(context);
-    if (status == 'SUCCESS') {
+    dynamic result = await customerVaRepository.requestCustomerVaOTP(dto);
+    String msg = ErrorUtils.instance.getErrorMessage('E05');
+    if (result is ResponseObjectDTO) {
+      //save data response
+      Provider.of<CustomerVaInsertProvider>(context, listen: false)
+          .updateMerchantIdAndConfirmId(
+        result.data.merchantId,
+        result.data.confirmId,
+      );
+      //
+      Navigator.pop(context);
       Navigator.pushNamed(context, Routes.CUSTOMER_VA_CONFIRM_OTP);
+    } else if (result is ResponseMessageDTO) {
+      msg = ErrorUtils.instance.getErrorMessage(result.message);
+      Navigator.pop(context);
+      DialogWidget.instance
+          .openMsgDialog(title: 'Không thể đăng ký dịch vụ', msg: msg);
     } else {
+      Navigator.pop(context);
       DialogWidget.instance
           .openMsgDialog(title: 'Không thể đăng ký dịch vụ', msg: msg);
     }
