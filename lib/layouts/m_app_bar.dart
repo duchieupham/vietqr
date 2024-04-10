@@ -92,7 +92,7 @@ class MAppBar extends StatelessWidget implements PreferredSizeWidget {
                       imageUrl: page.settingDTO.logoUrl,
                       height: 40,
                       width: 96,
-                      fit: BoxFit.fill,
+                      fit: BoxFit.contain,
                     ),
                   ),
                 ),

@@ -26,6 +26,7 @@ class ReferralCode extends StatelessWidget {
                 title: 'Nhập thông tin\nngười giới thiệu cho bạn',
                 titleSize: 25,
                 hintText: 'Nhập mã giới thiệu ở đây',
+                contentPadding: EdgeInsets.symmetric(horizontal: 0),
                 fontSize: 15,
                 controller: provider.introduceController,
                 inputType: TextInputType.text,

@@ -144,25 +144,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => FormRegisterSuccessSplash(
-                          onEdit: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => UserEditView()),
-                            );
-                          },
-                          onHome: () {
-                            Navigator.of(context).pop();
-                            Navigator.of(context).pop();
-                            backToPreviousPage(context, true);
-                          },
+                          // onEdit: () {
+                          //   Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context) => UserEditView()),
+                          //   );
+                          // },
+                          // onHome: () {
+                          //   Navigator.of(context).pop();
+                          //   Navigator.of(context).pop();
+                          //   Navigator.of(context).pop();
+                          //   backToPreviousPage(context, true);
+                          // },
                         )),
               );
-              // Future.delayed(Duration(seconds: 3), () {
-              // Navigator.of(context).pop();
-              // Navigator.of(context).pop();
-              // backToPreviousPage(context, true);
-              // });
+              Future.delayed(Duration(seconds: 3), () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+              backToPreviousPage(context, true);
+              });
             }
           },
           builder: (context, state) {
@@ -209,10 +210,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ? ReferralCode()
                           : const SizedBox.shrink(),
                       provider.page == 2
-                          ? FormPassword()
+                          ? FormPassword(
+                              isFocus: true,
+                            )
                           : const SizedBox.shrink(),
                       provider.page == 3
                           ? FormConfirmPassword(
+                              isFocus: true,
                               onEnterIntro: (value) {
                                 provider.updatePage(value);
                                 pageController.animateToPage(value,
@@ -258,7 +262,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       _buildButtonSubmit(context, heights),
                     ],
                     if (_provider.page == 3) ...[
-                      _buildButtonSubmitFormAccount(height),
+                      _buildButtonSubmitFormConfirmPassword(height),
                     ],
                     if (_provider.page == 2) ...[
                       _buildButtonSubmitFormPassword(
@@ -293,7 +297,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     });
   }
 
-  Widget _buildButtonSubmitFormAccount(double height) {
+  Widget _buildButtonSubmitFormConfirmPassword(double height) {
     return Consumer<RegisterProvider>(
       builder: (context, provider, child) {
         return MButtonWidget(

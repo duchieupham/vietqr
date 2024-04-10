@@ -3,17 +3,17 @@ import 'package:provider/provider.dart';
 
 import '../../../../commons/constants/configurations/numeral.dart';
 import '../../../../commons/constants/configurations/theme.dart';
-import '../../../../commons/widgets/pin_widget.dart';
-import '../../../../layouts/pin_code_input.dart';
-import '../../../../services/providers/pin_provider.dart';
+import '../../../../commons/widgets/pin_widget_register.dart';
 import '../../../../services/providers/register_provider.dart';
 
 class FormConfirmPassword extends StatefulWidget {
   final Function(int) onEnterIntro;
+  bool isFocus ;
 
   FormConfirmPassword({
     Key? key,
     required this.onEnterIntro,
+    required this.isFocus,
   }) : super(key: key);
 
   @override
@@ -22,7 +22,7 @@ class FormConfirmPassword extends StatefulWidget {
 
 class _FormConfirmPasswordState extends State<FormConfirmPassword> {
   final repassFocus = FocusNode();
-  bool isFocus = false;
+  
 
   @override
   void initState() {
@@ -55,7 +55,7 @@ class _FormConfirmPasswordState extends State<FormConfirmPassword> {
                   Focus(
                     onFocusChange: (value) {
                       setState(() {
-                        isFocus = value;
+                        widget.isFocus = value;
                       });
                     },
                     child: Container(
@@ -65,16 +65,17 @@ class _FormConfirmPasswordState extends State<FormConfirmPassword> {
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(50),
                           border: Border.all(
-                              color: isFocus
+                              color: widget.isFocus
                                   ? AppColor.BLUE_TEXT
                                   : AppColor.GREY_TEXT,
                               width: 0.5)),
                       child: Center(
-                        child: PinWidget(
+                        child: PinWidgetRegister(
                           width: MediaQuery.of(context).size.width,
                           pinSize: 15,
                           pinLength: Numeral.DEFAULT_PIN_LENGTH,
                           focusNode: repassFocus,
+                          autoFocus: widget.isFocus,
                           onDone: (value) {
                             provider.updateConfirmPassword(value);
                           },
@@ -86,7 +87,7 @@ class _FormConfirmPasswordState extends State<FormConfirmPassword> {
                     visible: provider.confirmPassErr,
                     child: Container(
                       alignment: Alignment.centerRight,
-                      padding: EdgeInsets.only(top: 10, right: 40),
+                      padding: EdgeInsets.only(top: 10, right: 20),
                       child: Text(
                         'Mật khẩu xác nhận không trùng khớp',
                         style:

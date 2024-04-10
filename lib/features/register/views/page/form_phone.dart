@@ -36,7 +36,7 @@ class _FormPhoneState extends State<FormPhone> {
                 ),
                 width: double.infinity,
                 child: Text(
-                  'Xin chào, \nVui lòng nhập Số điện thoại\nđể đăng ký tài khoản',
+                  'Xin chào, vui lòng nhập\nSố điện thoại để đăng ký\ntài khoản VietQR VN',
                   style: TextStyle(
                     color: Color(0xFF000000),
                     fontSize: 25,

@@ -97,7 +97,7 @@ class _BodyWidget extends State<PhoneWidget> {
                   onChanged: widget.onChanged,
                   autofocus: widget.autoFocus,
                   decoration: const InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 0),
                     fillColor: AppColor.WHITE,
                     filled: true,
                     border: InputBorder.none,
