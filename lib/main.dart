@@ -15,6 +15,7 @@ import 'package:vierqr/layouts/bottom_sheet/notify_trans_widget.dart';
 import 'package:vierqr/models/maintain_charge_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/maintain_charge_provider.dart';
+import 'package:vierqr/services/providers/register_provider.dart';
 import 'package:vierqr/services/socket_service/socket_service.dart';
 import 'features/maintain_charge/views/active_success_screen.dart';
 import 'features/maintain_charge/views/annual_fee_screen.dart';
@@ -340,6 +341,7 @@ class _VietQRApp extends State<VietQRApp> {
             ChangeNotifierProvider(create: (context) => PinProvider()),
             ChangeNotifierProvider(
                 create: (context) => MaintainChargeProvider()),
+            ChangeNotifierProvider(create: (context) => RegisterProvider()),
             ChangeNotifierProvider(create: (context) => UserEditProvider()),
           ],
           child: Consumer<AuthProvider>(

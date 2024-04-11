@@ -9,7 +9,7 @@ import '../../../../services/providers/register_provider.dart';
 
 class FormPassword extends StatefulWidget {
   bool isFocus;
-  FormPassword({super.key, required this.isFocus});
+  FormPassword({super.key, required this.isFocus,});
 
   @override
   State<FormPassword> createState() => _FormPasswordState();

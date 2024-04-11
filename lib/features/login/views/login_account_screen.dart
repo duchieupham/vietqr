@@ -49,6 +49,7 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
+      backgroundColor: AppColor.WHITE,
       resizeToAvoidBottomInset: false,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -150,7 +151,7 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
                         child: MButtonWidget(
                           title: '',
                           isEnable: true,
-                          colorEnableBgr: AppColor.WHITE,
+                          colorEnableBgr: AppColor.BLUE_E1EFFF,
                           margin: EdgeInsets.zero,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -182,7 +183,7 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
                       child: GestureDetector(
                         onTap: widget.onRegister,
                         child: const Text(
-                          'Đăng kí tài khoản mới',
+                          'Đăng ký tài khoản mới',
                           style: TextStyle(
                               color: AppColor.BLUE_TEXT,
                               decoration: TextDecoration.underline),
@@ -212,7 +213,9 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
           ? const EdgeInsets.only(left: 20, right: 20, bottom: 6)
           : const EdgeInsets.only(left: 20, right: 20, bottom: 10),
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5), color: AppColor.WHITE),
+          border: Border.all(color: AppColor.GREY_DADADA,width: 2),
+          borderRadius: BorderRadius.circular(5),
+          color: AppColor.WHITE),
       child: Container(
         padding: EdgeInsets.symmetric(
             horizontal: 20, vertical: height < 800 ? 6 : 12),

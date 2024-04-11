@@ -44,6 +44,7 @@ import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/info_user_dto.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
+import 'package:vierqr/services/providers/register_provider.dart';
 import 'package:vierqr/splash_screen.dart';
 
 import 'views/bgr_app_bar_login.dart';
@@ -77,6 +78,7 @@ class _Login extends StatefulWidget {
 class _LoginState extends State<_Login> {
   final phoneNoController = TextEditingController();
   final passController = TextEditingController();
+  final PageController pageController = PageController();
 
   final passFocus = FocusNode();
 
@@ -86,7 +88,6 @@ class _LoginState extends State<_Login> {
 
   late LoginBloc _bloc;
   late AuthProvider _authProvider;
-
   var controller = StreamController<AccountLoginDTO?>.broadcast();
 
   @override
@@ -241,9 +242,14 @@ class _LoginState extends State<_Login> {
               }
 
               if (!mounted) return;
+              if (state.phone != '') {
+                Provider.of<RegisterProvider>(context, listen: false)
+                    .updatePage(2);
+              }
               final data = await Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => Register(
+                    pageController: pageController,
                     phoneNo: state.phone ?? '',
                     isFocus: false,
                   ),
@@ -284,6 +290,7 @@ class _LoginState extends State<_Login> {
                     Visibility(
                       visible: provider.isQuickLogin == FlowType.FIRST_LOGIN,
                       child: Scaffold(
+                        backgroundColor: AppColor.WHITE,
                         body: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
@@ -294,21 +301,41 @@ class _LoginState extends State<_Login> {
                                     BackgroundAppBarLogin(),
                                     Padding(
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: 20, vertical: 20),
+                                          horizontal: 40, vertical: 30),
                                       child: Column(
                                         children: [
+                                          Container(
+                                            margin: EdgeInsets.only(
+                                              bottom: 20,
+                                            ),
+                                            width: double.infinity,
+                                            child: Text(
+                                              'Xin chào,\nvui lòng nhập số điện thoại',
+                                              style: TextStyle(
+                                                color: AppColor.BLACK,
+                                                fontSize: 25,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
                                           PhoneWidget(
                                             phoneController: phoneNoController,
                                             onChanged: provider.updatePhone,
                                             autoFocus: false,
                                           ),
+                                          Container(
+                                            margin:
+                                                const EdgeInsets.only(top: 5),
+                                            height: 1,
+                                            color: AppColor.GREY_LIGHT,
+                                            width: double.infinity,
+                                          ),
                                           Visibility(
                                             visible:
                                                 provider.errorPhone != null,
                                             child: Container(
-                                              alignment: Alignment.centerLeft,
-                                              padding: const EdgeInsets.only(
-                                                  left: 5, top: 5, right: 30),
+                                              alignment: Alignment.centerRight,
+                                              padding: EdgeInsets.only(top: 10),
                                               child: Text(
                                                 provider.errorPhone ?? '',
                                                 textAlign: TextAlign.left,
@@ -318,43 +345,25 @@ class _LoginState extends State<_Login> {
                                               ),
                                             ),
                                           ),
-                                          const SizedBox(height: 16),
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                child: Container(
-                                                    height: 0.5,
-                                                    color: AppColor.BLACK
-                                                        .withOpacity(0.6)),
-                                              ),
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 8.0),
-                                                child: Text(
-                                                  'Hoặc',
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w300),
-                                                ),
-                                              ),
-                                              Expanded(
-                                                child: Container(
-                                                    height: 0.5,
-                                                    color: AppColor.BLACK
-                                                        .withOpacity(0.6)),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 16),
+                                          const SizedBox(height: 50),
                                           Row(
                                             children: [
                                               Expanded(
                                                 child: MButtonWidget(
                                                   title: '',
                                                   isEnable: true,
+                                                  // gradient: LinearGradient(
+                                                  //   colors: <Color>[
+                                                  //     AppColor.BLUE_E1EFFF,
+                                                  //     AppColor.BLUE_E5F9FF
+                                                  //   ],
+                                                  //   begin: Alignment.centerLeft,
+                                                  //   end: Alignment.centerRight,
+                                                  // ),
+                                                  // colorEnableBgr:
+                                                  //     AppColor.WHITE,
                                                   colorEnableBgr:
-                                                      AppColor.WHITE,
+                                                      AppColor.BLUE_E1EFFF,
                                                   margin: EdgeInsets.zero,
                                                   child: Row(
                                                     mainAxisAlignment:
@@ -388,9 +397,11 @@ class _LoginState extends State<_Login> {
                             ),
                             MButtonWidget(
                               title: 'Tiếp tục',
+                              width: 350,
+                              height: 50,
                               isEnable: provider.isEnableButton,
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 8),
+                              colorDisableBgr: AppColor.GREY_BUTTON,
+                              margin: EdgeInsets.only(bottom: 0),
                               colorEnableText: provider.isEnableButton
                                   ? AppColor.WHITE
                                   : AppColor.GREY_TEXT,
@@ -453,8 +464,10 @@ class _LoginState extends State<_Login> {
                       child: QuickLoginScreen(
                         pinController: passController,
                         passFocus: passFocus,
+                        isFocus: true,
                         userName: provider.infoUserDTO?.fullName ?? '',
                         phone: provider.infoUserDTO?.phoneNo ?? '',
+                        imgId: provider.infoUserDTO?.imgId ?? '',
                         onLogin: (dto) {
                           context
                               .read<LoginBloc>()
@@ -468,15 +481,19 @@ class _LoginState extends State<_Login> {
                         appInfoDTO: provider.appInfoDTO,
                       ),
                     ),
-                    if (provider.isQuickLogin != FlowType.NEAREST_LOGIN)
+                    if (provider.isQuickLogin != FlowType.NEAREST_LOGIN && provider.isQuickLogin != FlowType.QUICK_LOGIN)
                       Positioned(
                         bottom: height < 800 ? 50 : 66,
                         left: 0,
                         right: 0,
                         child: Column(
                           children: [
-                            _buildButtonBottom(state.appInfoDTO),
-                            SizedBox(height: 16),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child: _buildButtonBottom(state.appInfoDTO),
+                            ),
+                            SizedBox(height: 20),
                             Column(
                               mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -508,7 +525,26 @@ class _LoginState extends State<_Login> {
                                 ),
                               ],
                             ),
-                            SizedBox(height: height < 800 ? 16 : 20),
+                            SizedBox(
+                              height: 16,
+                            ),
+                            MButtonWidget(
+                              title: 'Tôi là người dùng mới',
+                              isEnable: true,
+                              width: 350,
+                              height: 50,
+                              colorEnableBgr: AppColor.WHITE,
+                              border: Border.all(
+                                width: 1,
+                                color: AppColor.BLUE_TEXT,
+                              ),
+                              margin: EdgeInsets.zero,
+                              colorEnableText: AppColor.BLUE_TEXT,
+                              onTap: () {
+                                _onRegister(provider);
+                              },
+                            ),
+                            SizedBox(height: height < 800 ? 16 : 5),
                           ],
                         ),
                       ),
@@ -659,13 +695,18 @@ class _LoginState extends State<_Login> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
+            width: 77,
+            height: 77,
             padding: EdgeInsets.all(4),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(30),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: AppColor.GREY_DADADA,
+              ),
               color: AppColor.WHITE,
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(30),
+              borderRadius: BorderRadius.circular(10),
               child: Image.asset(
                 pathIcon,
                 height: 36,
@@ -977,9 +1018,11 @@ class _LoginState extends State<_Login> {
 
   void _onRegister(LoginProvider provider) async {
     provider.updateInfoUser(null);
+    Provider.of<RegisterProvider>(context, listen: false).updatePage(0);
     final data = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => Register(isFocus: true),
+        builder: (context) =>
+            Register(pageController: pageController, isFocus: true),
         settings: const RouteSettings(
           name: Routes.REGISTER,
         ),

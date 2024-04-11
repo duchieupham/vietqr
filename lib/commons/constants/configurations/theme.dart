@@ -24,6 +24,8 @@ class AppColor {
   static const Color RED_TEXT = Color(0xFFFF0A0A);
   static const Color RED_EC1010 = Color(0xffEC1010);
   static const Color RED_FFFF0000 = Color(0xFFFF0000);
+  static const Color BLUE_E1EFFF = Color(0xFFE1EFFF);
+  static const Color BLUE_E5F9FF = Color(0xFFE5F9FF);
 
   static const Color error700 = Color(0xffD8281E);
   static const Color BLUE_TEXT = Color(0xFF0A7AFF);

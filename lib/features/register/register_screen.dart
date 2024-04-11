@@ -27,29 +27,40 @@ import '../personal/views/user_edit_view.dart';
 import 'views/verify_otp_screen.dart';
 
 class Register extends StatelessWidget {
+  final PageController pageController;
   final String phoneNo;
   final bool isFocus;
 
-  const Register({super.key, this.phoneNo = '', required this.isFocus});
+  const Register({
+    super.key,
+    this.phoneNo = '',
+    required this.isFocus,
+    required this.pageController,
+  });
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<RegisterBloc>(
       create: (BuildContext context) => RegisterBloc(),
-      child: ChangeNotifierProvider<RegisterProvider>(
-        create: (_) => RegisterProvider(),
-        child: RegisterScreen(phoneNo: phoneNo, isFocus: isFocus),
+      child: RegisterScreen(
+        phoneNo: phoneNo,
+        isFocus: isFocus,
+        pageController: pageController,
       ),
     );
   }
 }
 
 class RegisterScreen extends StatefulWidget {
+  final PageController pageController;
   final String phoneNo;
   final bool isFocus;
 
   const RegisterScreen(
-      {super.key, required this.phoneNo, required this.isFocus});
+      {super.key,
+      required this.phoneNo,
+      required this.isFocus,
+      required this.pageController});
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -59,7 +70,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   late RegisterBloc _bloc;
   final _phoneNoController = TextEditingController();
   final focusNode = FocusNode();
-  final PageController pageController = PageController();
+  // final PageController pageController = PageController();
   final controller = ScrollController();
 
   // final auth = FirebaseAuth.instance;
@@ -194,12 +205,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 16.0),
                               child: FormPhone(
-                                pageController: pageController,
+                                pageController: widget.pageController,
                                 phoneController: _phoneNoController,
                                 isFocus: widget.isFocus,
                                 onEnterIntro: (value) {
                                   provider.updatePage(value);
-                                  pageController.animateToPage(value,
+                                  widget.pageController.animateToPage(value,
                                       duration:
                                           const Duration(milliseconds: 300),
                                       curve: Curves.ease);
@@ -220,7 +231,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               isFocus: true,
                               onEnterIntro: (value) {
                                 provider.updatePage(value);
-                                pageController.animateToPage(value,
+                                widget.pageController.animateToPage(value,
                                     duration: const Duration(milliseconds: 300),
                                     curve: Curves.ease);
                               },
@@ -248,7 +259,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     height,
                     () => {
                           provider.updatePage(2),
-                          pageController.animateToPage(2,
+                          widget.pageController.animateToPage(2,
                               duration: const Duration(milliseconds: 300),
                               curve: Curves.ease)
                         });
@@ -260,7 +271,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           Provider.of<PinProvider>(context, listen: false)
                               .reset(),
                           provider.updatePage(3),
-                          pageController.animateToPage(3,
+                          widget.pageController.animateToPage(3,
                               duration: const Duration(milliseconds: 300),
                               curve: Curves.ease),
                         });
