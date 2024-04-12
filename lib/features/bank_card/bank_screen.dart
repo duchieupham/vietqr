@@ -687,9 +687,12 @@ class _BankScreenState extends State<_BankScreen>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              'Thêm tài khoản ngân hàng',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            Padding(
+              padding: const EdgeInsets.only(top:20),
+              child: Text(
+                'Thêm tài khoản ngân hàng',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              ),
             ),
             const SizedBox(height: 16),
             Expanded(
