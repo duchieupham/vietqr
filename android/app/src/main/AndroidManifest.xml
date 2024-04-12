@@ -4,6 +4,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:name="${applicationName}"
+        android:allowBackup="false"
         android:icon="@mipmap/launcher_icon"
         android:enableOnBackInvokedCallback="true"
         android:label="VietQR">

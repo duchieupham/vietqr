@@ -172,10 +172,6 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
       create: (context) => _bloc,
       child: BlocBuilder<MaintainChargeBloc, MaintainChargeState>(
         builder: (context, state) {
-          // if (isPayment!) {
-          //   NavigatorUtils.navigatePageReplacement(context, DashBoardScreen(),
-          //       routeName: Routes.DASHBOARD);
-          // }
           if (state.status == BlocStatus.ERROR) {
             // status = state.status;
             if (isClear) {
