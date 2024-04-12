@@ -15,11 +15,14 @@ class TransHistoryBloc extends Bloc<TransHistoryEvent, TransHistoryState>
   final BuildContext context;
 
   final String bankId;
-  final TerminalDto terminalDto;
-  final TerminalAccountDTO terminalAccountDto;
+  // final TerminalDto terminalDto;
+  final List<TerminalAccountDTO> terminalAccountList;
 
-  TransHistoryBloc(this.context, this.bankId, this.terminalDto,this.terminalAccountDto)
-      : super(TransHistoryState(list: [], terminalDto: terminalDto, terminalAccountDto: terminalAccountDto)) {
+  TransHistoryBloc(this.context, this.bankId, this.terminalAccountList)
+      : super(TransHistoryState(
+            list: [],
+            // terminalDto: terminalDto,
+            terminalAccountList: terminalAccountList)) {
     // on<TransactionEventGetDetail>(_getDetail);
     // on<TransactionEventGetImage>(_loadImage);
     // on<TransEventQRRegenerate>(_regenerateQR);
@@ -221,8 +224,9 @@ class TransHistoryBloc extends Bloc<TransHistoryEvent, TransHistoryState>
         emit(state.copyWith(
             status: BlocStatus.NONE, type: TransHistoryType.NONE));
 
-        final TerminalAccountDTO  terminaAccountlDto = await transactionRepository
-            .getMyListGroupTrans(event.userID, event.bankId, event.offset);
+        final List<TerminalAccountDTO>? terminaAccountlDto =
+            await transactionRepository.getMyListGroupTrans(
+                event.userID, event.bankId, event.offset);
         emit(state.copyWith(
           status: BlocStatus.NONE,
           terminalAccountDto: terminaAccountlDto,

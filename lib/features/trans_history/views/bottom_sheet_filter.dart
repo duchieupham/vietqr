@@ -14,7 +14,7 @@ import 'package:vierqr/models/terminal_response_dto.dart';
 import 'package:vierqr/models/transaction_input_dto.dart';
 
 class BottomSheetFilter extends StatelessWidget {
-  final List<TerminalResponseDTO> terminals;
+  final List<TerminalAccountDTO> terminals;
   final String bankId;
   final DateTime fromDate;
   final DateTime toDate;
@@ -25,7 +25,7 @@ class BottomSheetFilter extends StatelessWidget {
   final String keyword;
   final String codeTerminal;
   final FilterTransaction filterTerminal;
-  final TerminalResponseDTO? terminalResponseDTO;
+  final TerminalAccountDTO? terminalAcc;
   final Function(
     TransactionInputDTO,
     DateTime fromDate,
@@ -36,7 +36,7 @@ class BottomSheetFilter extends StatelessWidget {
     String codeTerminal,
     FilterStatusTransaction filterStatusTransaction,
     FilterTransaction filterTerminal,
-    TerminalResponseDTO terminalResponseDTO,
+    TerminalAccountDTO terminalAcc,
   ) onApply;
   final Function reset;
 
@@ -54,7 +54,7 @@ class BottomSheetFilter extends StatelessWidget {
     required this.bankId,
     required this.filterStatusTransaction,
     required this.filterTerminal,
-    required this.terminalResponseDTO,
+    required this.terminalAcc,
     this.isOwner = false,
   }) : super(key: key);
 
@@ -69,7 +69,7 @@ class BottomSheetFilter extends StatelessWidget {
         child: ChangeNotifierProvider<TransProvider>(
           create: (context) => TransProvider(isOwner, terminals)
             ..updateTerminals(
-              terminals,
+              // terminals,
               bankId,
               fromDate,
               toDate,
@@ -79,7 +79,8 @@ class BottomSheetFilter extends StatelessWidget {
               filterTransaction,
               filterStatusTransaction,
               filterTerminal,
-              terminalRes: terminalResponseDTO,
+              // terminalRes: terminalResponseDTO,
+              listTerminal: terminals,
             ),
           child: Consumer<TransProvider>(builder: (context, provider, child) {
             return Column(
@@ -271,7 +272,7 @@ class BottomSheetFilter extends StatelessWidget {
                                 provider.codeTerminal,
                                 provider.statusValue,
                                 provider.valueFilterTerminal,
-                                provider.terminalResponseDTO,
+                                provider.terminalAccountDTO,
                               );
                             });
                             Navigator.pop(context);
@@ -298,12 +299,12 @@ class BottomSheetFilter extends StatelessWidget {
               border: Border.all(color: AppColor.GREY_BORDER),
               borderRadius: BorderRadius.circular(6)),
           child: DropdownButtonHideUnderline(
-            child: DropdownButton2<TerminalResponseDTO>(
+            child: DropdownButton2<TerminalAccountDTO>(
               isExpanded: true,
               selectedItemBuilder: (context) {
-                return provider.terminals
+                return provider.terminalList
                     .map(
-                      (item) => DropdownMenuItem<TerminalResponseDTO>(
+                      (item) => DropdownMenuItem<TerminalAccountDTO>(
                         value: item,
                         child: MTextFieldCustom(
                           isObscureText: false,
@@ -312,7 +313,7 @@ class BottomSheetFilter extends StatelessWidget {
                           fillColor: AppColor.WHITE,
                           value: isOwner
                               ? provider.keywordSearch
-                              : provider.terminalResponseDTO.name,
+                              : provider.terminalAccountDTO.terminalName,
                           styles: TextStyle(fontSize: 14),
                           textFieldType: TextfieldType.DEFAULT,
                           maxLength: 10,
@@ -328,8 +329,8 @@ class BottomSheetFilter extends StatelessWidget {
                     )
                     .toList();
               },
-              items: provider.terminals.map((item) {
-                return DropdownMenuItem<TerminalResponseDTO>(
+              items: provider.terminalList.map((item) {
+                return DropdownMenuItem<TerminalAccountDTO>(
                   value: item,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -340,7 +341,7 @@ class BottomSheetFilter extends StatelessWidget {
                           child: Row(
                             children: [
                               Text(
-                                item.name,
+                                item.terminalName!,
                                 style: const TextStyle(
                                     fontSize: 14, fontWeight: FontWeight.w500),
                               ),
@@ -349,14 +350,14 @@ class BottomSheetFilter extends StatelessWidget {
                           ),
                         ),
                       ),
-                      if (provider.terminals.length > 1) ...[
+                      if (provider.terminalList.length > 1) ...[
                         const Divider(),
                       ]
                     ],
                   ),
                 );
               }).toList(),
-              value: provider.terminalResponseDTO,
+              value: provider.terminalAccountDTO,
               onChanged: provider.updateTerminalResponseDTO,
               buttonStyleData: ButtonStyleData(
                 width: MediaQuery.of(context).size.width,

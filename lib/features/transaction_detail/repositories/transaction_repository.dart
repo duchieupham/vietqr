@@ -244,9 +244,10 @@ class TransactionRepository {
   //   }
   // }
 
-  Future<TerminalAccountDTO> getMyListGroupTrans(
+  Future<List<TerminalAccountDTO>?> getMyListGroupTrans(
       String userId, String type, int offset) async {
-    TerminalAccountDTO result = TerminalAccountDTO();
+    // TerminalAccountDTO result = TerminalAccountDTO();
+    List<TerminalAccountDTO> result = [];
     try {
       final String url =
           '${EnvConfig.getBaseUrl()}account-bank/terminal?bankId=$type&userId=$userId';
@@ -257,13 +258,16 @@ class TransactionRepository {
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         if (data != null) {
-          result = TerminalAccountDTO.fromJson(data);
+          result = data
+              .map<TerminalAccountDTO>(
+                  (json) => TerminalAccountDTO.fromJson(json))
+              .toList();
         }
       }
       return result;
     } catch (e) {
       LOG.error(e.toString());
-      return result;
+      return null;
     }
   }
 

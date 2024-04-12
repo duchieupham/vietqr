@@ -30,21 +30,21 @@ class TerminalAccountDTO {
   final String? terminalName;
   final String? terminalAddress;
 
-  TerminalAccountDTO(
-   { this.userId,
+  TerminalAccountDTO({
+    this.userId,
     this.terminalId,
     this.terminalCode,
     this.terminalName,
-    this.terminalAddress,}
-  );
+    this.terminalAddress,
+  });
 
   factory TerminalAccountDTO.fromJson(Map<String, dynamic> json) {
     return TerminalAccountDTO(
-      userId : json['userId'],
-      terminalId:json['terminalId'],
-      terminalCode:json['terminalCode'],
-      terminalName:json['terminalName'],
-      terminalAddress:json['terminalAddress'],
+      userId: json['userId'] ?? '',
+      terminalId: json['terminalId'] ?? '',
+      terminalCode: json['terminalCode'] ?? '',
+      terminalName: json['terminalName'] ?? '',
+      terminalAddress: json['terminalAddress'] ?? '',
     );
   }
 }

@@ -24,26 +24,31 @@ import 'states/trans_history_state.dart';
 class TransHistoryScreen extends StatelessWidget {
   final String bankId;
   final String bankUserId;
-  final TerminalDto terminalDto;
-  final TerminalAccountDTO terminalAccountDto;
+  // final TerminalDto terminalDto;
+  final List<TerminalAccountDTO> terminalAccountList;
 
   const TransHistoryScreen({
     super.key,
     required this.bankId,
     required this.bankUserId,
-    required this.terminalDto, required this.terminalAccountDto,
+    // required this.terminalDto,
+    required this.terminalAccountList,
   });
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => TransHistoryBloc(context, bankId, terminalDto,terminalAccountDto),
+      create: (context) =>
+          TransHistoryBloc(context, bankId, terminalAccountList),
       child: ChangeNotifierProvider<TransProvider>(
         create: (context) =>
             TransProvider(bankUserId == SharePrefUtils.getProfile().userId, [
-          TerminalResponseDTO(
-              banks: [], code: 'Tất cả (mặc định)', name: 'Tất cả (mặc định)'),
-          ...terminalDto.terminals
+          TerminalAccountDTO(
+              terminalCode: 'Tất cả (mặc định)',
+              terminalName: 'Tất cả (mặc định)'),
+          // TerminalResponseDTO(
+          //     banks: [], code: 'Tất cả (mặc định)', name: 'Tất cả (mặc định)'),
+          ...terminalAccountList
         ])
               ..setBankId(bankId),
         child: _BodyWidget(bankId: bankId, bankUserId: bankUserId),
@@ -159,7 +164,7 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
                           builder: (context, provider, child) {
                             return GestureDetector(
                               onTap: () =>
-                                  onFilter(provider, provider.terminals),
+                                  onFilter(provider, provider.terminalList),
                               child: Container(
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(30),
@@ -195,11 +200,11 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
                                           'Cửa hàng: ${provider.keywordSearch}')
                                     else
                                       _buildFilterWith(
-                                          'Cửa hàng: ${provider.terminalResponseDTO.name}'),
+                                          'Cửa hàng: ${provider.terminalAccountDTO.terminalName}'),
                                     const SizedBox(width: 4),
                                   ] else if (!isOwner) ...[
                                     _buildFilterWith(
-                                        'Cửa hàng: ${provider.terminalResponseDTO.name}'),
+                                        'Cửa hàng: ${provider.terminalAccountDTO.terminalName}'),
                                     const SizedBox(width: 4),
                                   ],
                                   if (provider.valueFilter.id == 5) ...[
@@ -428,7 +433,7 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
   }
 
   void onFilter(
-      TransProvider provider, List<TerminalResponseDTO> terminals) async {
+      TransProvider provider, List<TerminalAccountDTO> terminals) async {
     await DialogWidget.instance.showModelBottomSheet(
       isDismissible: true,
       margin: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
@@ -446,7 +451,8 @@ class _TransHistoryScreenState extends State<_BodyWidget> {
         filterStatusTransaction: provider.statusValue,
         filterTerminal: provider.valueFilterTerminal,
         filterTimeTransaction: provider.valueTimeFilter,
-        terminalResponseDTO: provider.terminalResponseDTO,
+        // terminalResponseDTO: provider.terminalResponseDTO,
+        terminalAcc: provider.terminalAccountDTO,
         onApply: (dto,
             fromDate,
             toDate,

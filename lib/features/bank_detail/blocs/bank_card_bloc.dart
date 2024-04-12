@@ -302,14 +302,14 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
   //   }
   // }
 
-
   void _getMyListGroupTrans(BankCardEvent event, Emitter emit) async {
     try {
       if (event is GetMyListGroupEvent) {
         emit(state.copyWith(request: BankDetailType.NONE));
 
-        final TerminalAccountDTO  terminaAccountlDto = await transactionRepository
-            .getMyListGroupTrans(event.userID, bankId, event.offset);
+        final List<TerminalAccountDTO>? terminaAccountlDto =
+            await transactionRepository.getMyListGroupTrans(
+                event.userID, bankId, event.offset);
         emit(state.copyWith(
           status: BlocStatus.NONE,
           terminalAccountDto: terminaAccountlDto,
