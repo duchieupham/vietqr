@@ -4,6 +4,8 @@ import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 
 class PhoneWidget extends StatefulWidget {
   final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onSubmit;
+
   final TextEditingController phoneController;
   final bool isShowTitle;
   final bool autoFocus;
@@ -11,6 +13,7 @@ class PhoneWidget extends StatefulWidget {
   const PhoneWidget({
     super.key,
     this.onChanged,
+    this.onSubmit,
     required this.phoneController,
     this.isShowTitle = false,
     this.autoFocus = false,
@@ -39,25 +42,25 @@ class _BodyWidget extends State<PhoneWidget> {
           bottomLeft: Radius.circular(5),
         ),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: const [
-          SizedBox(
-            width: 16,
-          ),
-          Text(
-            '+84',
-            style: TextStyle(fontSize: 14.0),
-          ),
-          SizedBox(
-            width: 8,
-          ),
-          VerticalDivider(
-            color: Colors.black,
-            thickness: 0.2,
-          ),
-        ],
-      ),
+      // child: Row(
+      //   mainAxisSize: MainAxisSize.min,
+      //   children: const [
+      //     SizedBox(
+      //       width: 16,
+      //     ),
+      //     Text(
+      //       '+84',
+      //       style: TextStyle(fontSize: 14.0),
+      //     ),
+      //     SizedBox(
+      //       width: 8,
+      //     ),
+      //     VerticalDivider(
+      //       color: AppColor.GREY_LIGHT,
+      //       thickness: 1,
+      //     ),
+      //   ],
+      // ),
     );
     return Column(
       children: [
@@ -91,19 +94,20 @@ class _BodyWidget extends State<PhoneWidget> {
               countryDropDown,
               Expanded(
                 child: TextFormField(
+                  onFieldSubmitted: widget.onSubmit,
                   keyboardType: TextInputType.number,
                   textInputAction: TextInputAction.next,
                   controller: widget.phoneController,
                   onChanged: widget.onChanged,
                   autofocus: widget.autoFocus,
                   decoration: const InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 12),
                     fillColor: AppColor.WHITE,
                     filled: true,
                     border: InputBorder.none,
-                    hintText: '090 123 4567',
+                    hintText: 'Nhập số điện thoại ở đây',
                     hintStyle:
-                        TextStyle(color: AppColor.GREY_TEXT, fontSize: 14),
+                        TextStyle(color: AppColor.GREY_TEXT, fontSize: 15),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.only(
                         topRight: Radius.circular(5),

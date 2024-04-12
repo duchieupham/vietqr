@@ -98,71 +98,74 @@ class _PopupBankShareState extends State<PopupBankShare> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Container(
-                            width: 300,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(6),
-                              color: AppColor.GREY_BG,
-                            ),
-                            child: IntrinsicHeight(
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  Container(
-                                    alignment: Alignment.center,
-                                    width: small ? 60 : 80,
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 24),
-                                    decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                        image: ImageUtils.instance
-                                            .getImageNetWork(widget.dto.imgId),
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    height: 40,
-                                    padding: const EdgeInsets.only(
-                                        left: 12, right: 10),
-                                    child: VerticalDashedLine(),
-                                  ),
-                                  Expanded(
-                                    child: Container(
+                          if (widget.dto.bankAccount.isNotEmpty)
+                            Container(
+                              width: 300,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(6),
+                                color: AppColor.GREY_BG,
+                              ),
+                              child: IntrinsicHeight(
+                                child: Row(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    Container(
+                                      alignment: Alignment.center,
+                                      width: small ? 60 : 80,
                                       padding: const EdgeInsets.symmetric(
-                                          vertical: 10, horizontal: 8),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            widget.dto.bankAccount,
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                                color: AppColor.BLACK,
-                                                fontSize: small ? 12 : 15,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          Text(
-                                            widget.dto.userBankName
-                                                .toUpperCase(),
-                                            maxLines: 3,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                              color: AppColor.textBlack,
-                                              fontSize: small ? 11 : 13,
-                                            ),
-                                          ),
-                                        ],
+                                          horizontal: 24),
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image: ImageUtils.instance
+                                              .getImageNetWork(
+                                                  widget.dto.imgId),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                    Container(
+                                      height: 40,
+                                      padding: const EdgeInsets.only(
+                                          left: 12, right: 10),
+                                      child: VerticalDashedLine(),
+                                    ),
+                                    Expanded(
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 10, horizontal: 8),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              widget.dto.bankAccount,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                  color: AppColor.BLACK,
+                                                  fontSize: small ? 12 : 15,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            Text(
+                                              widget.dto.userBankName
+                                                  .toUpperCase(),
+                                              maxLines: 3,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                color: AppColor.textBlack,
+                                                fontSize: small ? 11 : 13,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
                           const SizedBox(height: 12),
                           VietQrNew(qrCode: widget.dto.qrCode),
                           const SizedBox(height: 12),

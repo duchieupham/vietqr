@@ -11,12 +11,19 @@ import 'package:vierqr/features/register/blocs/register_bloc.dart';
 import 'package:vierqr/features/register/events/register_event.dart';
 import 'package:vierqr/features/register/states/register_state.dart';
 import 'package:vierqr/features/register/views/page/form_account.dart';
+import 'package:vierqr/features/register/views/page/form_confirm_password.dart';
+import 'package:vierqr/features/register/views/page/form_password.dart';
+import 'package:vierqr/features/register/views/page/form_phone.dart';
+import 'package:vierqr/features/register/views/page/form_success_splash.dart';
 import 'package:vierqr/features/register/views/page/referral_code.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/account_login_dto.dart';
 import 'package:vierqr/services/providers/register_provider.dart';
 
+import '../../commons/utils/navigator_utils.dart';
+import '../../services/providers/pin_provider.dart';
+import '../personal/views/user_edit_view.dart';
 import 'views/verify_otp_screen.dart';
 
 class Register extends StatelessWidget {
@@ -133,10 +140,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
               );
             }
             if (state is RegisterSuccessState) {
-              //pop loading dialog
-              Navigator.of(context).pop();
-              //pop to login page
-              backToPreviousPage(context, true);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => FormRegisterSuccessSplash(
+                        // onEdit: () {
+                        //   Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: (context) => UserEditView()),
+                        //   );
+                        // },
+                        // onHome: () {
+                        //   Navigator.of(context).pop();
+                        //   Navigator.of(context).pop();
+                        //   Navigator.of(context).pop();
+                        //   backToPreviousPage(context, true);
+                        // },
+                        )),
+              );
+              Future.delayed(Duration(seconds: 3), () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+                backToPreviousPage(context, true);
+              });
             }
           },
           builder: (context, state) {
@@ -145,21 +172,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 FocusManager.instance.primaryFocus?.unfocus();
               },
               child: Scaffold(
-                appBar: const MAppBar(title: 'Đăng ký'),
+                appBar: MAppBar(
+                  title: '',
+                  onPressed: () {
+                    Provider.of<PinProvider>(context, listen: false).reset();
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    Navigator.of(context).pop();
+                  },
+                ),
+                backgroundColor: AppColor.WHITE,
                 resizeToAvoidBottomInset: false,
-                body: Padding(
+                bottomNavigationBar:
+                    _bottom(width, height, viewInsets, provider),
+                body: Container(
                   padding: const EdgeInsets.all(20),
+                  height: MediaQuery.of(context).size.height,
                   child: Column(
                     children: [
-                      Expanded(
-                        child: PageView(
-                          controller: pageController,
-                          physics: NeverScrollableScrollPhysics(),
-                          children: [
-                            Padding(
+                      provider.page == 0
+                          ? Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 16.0),
-                              child: FormAccount(
+                              child: FormPhone(
+                                pageController: pageController,
                                 phoneController: _phoneNoController,
                                 isFocus: widget.isFocus,
                                 onEnterIntro: (value) {
@@ -170,31 +205,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       curve: Curves.ease);
                                 },
                               ),
-                            ),
-                            ReferralCode()
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      (PlatformUtils.instance.checkResize(width))
-                          ? const SizedBox()
-                          : Consumer<RegisterProvider>(
-                              builder: (context, _provider, child) {
-                                if (_provider.page == 0) {
-                                  return _buildButtonSubmitFormAccount(height);
-                                }
-
-                                return Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    _buildButtonSubmit(context, heights),
-                                    if (!_provider.isShowButton)
-                                      SizedBox(height: viewInsets.bottom),
-                                    const SizedBox(height: 10),
-                                  ],
-                                );
+                            )
+                          : const SizedBox.shrink(),
+                      provider.page == 1
+                          ? ReferralCode()
+                          : const SizedBox.shrink(),
+                      provider.page == 2
+                          ? FormPassword(
+                              isFocus: true,
+                            )
+                          : const SizedBox.shrink(),
+                      provider.page == 3
+                          ? FormConfirmPassword(
+                              isFocus: true,
+                              onEnterIntro: (value) {
+                                provider.updatePage(value);
+                                pageController.animateToPage(value,
+                                    duration: const Duration(milliseconds: 300),
+                                    curve: Curves.ease);
                               },
-                            ),
+                            )
+                          : const SizedBox.shrink(),
                     ],
                   ),
                 ),
@@ -204,6 +235,56 @@ class _RegisterScreenState extends State<RegisterScreen> {
         );
       },
     );
+  }
+
+  Widget _bottom(double width, double height, EdgeInsets viewInsets,
+      RegisterProvider provider) {
+    return (PlatformUtils.instance.checkResize(width))
+        ? const SizedBox()
+        : Consumer<RegisterProvider>(
+            builder: (context, _provider, child) {
+              if (_provider.page == 0) {
+                return _buildButtonSubmitFormPhone(
+                    height,
+                    () => {
+                          provider.updatePage(2),
+                          pageController.animateToPage(2,
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.ease)
+                        });
+              }
+
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (_provider.page == 1) ...[
+                      _buildButtonSubmit(context, heights),
+                    ],
+                    if (_provider.page == 3) ...[
+                      _buildButtonSubmitFormConfirmPassword(height),
+                    ],
+                    if (_provider.page == 2) ...[
+                      _buildButtonSubmitFormPassword(
+                          heights,
+                          () => {
+                                Provider.of<PinProvider>(context, listen: false)
+                                    .reset(),
+                                provider.updatePage(3),
+                                pageController.animateToPage(3,
+                                    duration: const Duration(milliseconds: 300),
+                                    curve: Curves.ease),
+                              }),
+                    ],
+                    if (!_provider.isShowButton)
+                      SizedBox(height: viewInsets.bottom),
+                    const SizedBox(height: 10),
+                  ],
+                ),
+              );
+            },
+          );
   }
 
   void backToPreviousPage(BuildContext context, bool isRegisterSuccess) {
@@ -217,20 +298,55 @@ class _RegisterScreenState extends State<RegisterScreen> {
     });
   }
 
-  Widget _buildButtonSubmitFormAccount(double height) {
+  Widget _buildButtonSubmitFormConfirmPassword(double height) {
     return Consumer<RegisterProvider>(
       builder: (context, provider, child) {
         return MButtonWidget(
           title: 'Đăng ký',
-          isEnable: provider.isEnableButton(),
+          isEnable: provider.isEnableButton(), //isEnableButton(),
           margin: EdgeInsets.zero,
+          colorDisableBgr: AppColor.GREY_BUTTON,
+          width: 350,
+          height: 50,
           onTap: () async {
             // await provider.phoneAuthentication(_phoneNoController.text,
             //     onSentOtp: (type) {
             //   _bloc.add(RegisterEventSentOTP(typeOTP: type));
             // });
             onRegister(provider, height);
+            Provider.of<PinProvider>(context, listen: false).reset();
           },
+        );
+      },
+    );
+  }
+
+  Widget _buildButtonSubmitFormPhone(double height, VoidCallback callback) {
+    return Consumer<RegisterProvider>(
+      builder: (context, provider, child) {
+        return MButtonWidget(
+            title: 'Tiếp tục',
+            isEnable: provider.isEnableButtonPhone(),
+            margin: EdgeInsets.only(bottom: 36),
+            colorDisableBgr: AppColor.GREY_BUTTON,
+            width: 350,
+            height: 50,
+            onTap: callback);
+      },
+    );
+  }
+
+  Widget _buildButtonSubmitFormPassword(double height, VoidCallback callback) {
+    return Consumer<RegisterProvider>(
+      builder: (context, provider, child) {
+        return MButtonWidget(
+          title: 'Tiếp tục',
+          isEnable: provider.isEnableButtonPassword(),
+          margin: EdgeInsets.only(bottom: 16),
+          colorDisableBgr: AppColor.GREY_BUTTON,
+          width: 350,
+          height: 50,
+          onTap: callback,
         );
       },
     );
@@ -239,37 +355,35 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget _buildButtonSubmit(BuildContext context, double height) {
     return Consumer<RegisterProvider>(
       builder: (context, provider, child) {
-        return Row(
+        return Column(
           children: [
-            Expanded(
+            Container(
               child: MButtonWidget(
                 title: 'Bỏ qua',
                 isEnable: true,
-                margin: EdgeInsets.zero,
-                colorEnableBgr: AppColor.BLUE_TEXT.withOpacity(0.3),
+                height: 50,
+                margin: EdgeInsets.only(bottom: 15, left: 40, right: 40),
+                colorEnableBgr: AppColor.WHITE,
                 colorEnableText: AppColor.BLUE_TEXT,
+                border: Border.all(width: 1, color: AppColor.BLUE_TEXT),
                 onTap: () async {
-                  await provider.phoneAuthentication(_phoneNoController.text,
-                      onSentOtp: (type) {
-                    _bloc.add(RegisterEventSentOTP(typeOTP: type));
-                  });
+                  onRegister(provider, height);
+                  Provider.of<PinProvider>(context, listen: false).reset();
                 },
               ),
             ),
             const SizedBox(
               width: 12,
             ),
-            Expanded(
+            Container(
               child: MButtonWidget(
                 title: 'Đăng ký',
                 isEnable: provider.isEnableButton(),
-                margin: EdgeInsets.zero,
+                margin: EdgeInsets.only(bottom: 2, left: 40, right: 40),
+                height: 50,
                 onTap: () async {
                   onRegister(provider, height);
-                  // await provider.phoneAuthentication(_phoneNoController.text,
-                  //     onSentOtp: (type) {
-                  //   _bloc.add(RegisterEventSentOTP(typeOTP: type));
-                  // });
+                  Provider.of<PinProvider>(context, listen: false).reset();
                 },
               ),
             ),

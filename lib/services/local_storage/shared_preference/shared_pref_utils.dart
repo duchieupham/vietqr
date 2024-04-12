@@ -154,20 +154,36 @@ class SharePrefUtils {
   }
 
   ///List Login Account
-  static Future<void> saveLoginAccount(List<InfoUserDTO> list) async {
-    final sharedPreferenceService =
-        SharedPrefLocal(Constants.SharedPreferenceKey.LoginAccount.sharedValue);
+  static Future<void> saveLoginAccountList(List<InfoUserDTO> list) async {
+    final sharedPreferenceService = SharedPrefLocal(
+        Constants.SharedPreferenceKey.LoginAccountList.sharedValue);
     await sharedPreferenceService.set(data: list);
   }
 
-  static Future<List<InfoUserDTO>?> getLoginAccount() async {
+  static Future<List<InfoUserDTO>?> getLoginAccountList() async {
     final sharedPreferenceService = SharedPrefLocal<InfoUserDTO>(
-      Constants.SharedPreferenceKey.LoginAccount.sharedValue,
+      Constants.SharedPreferenceKey.LoginAccountList.sharedValue,
     );
 
     return sharedPreferenceService.getList(
       fromJson: (json) => InfoUserDTO.fromJson(json),
     );
+  }
+
+  static Future<void> setLoginAccount(InfoUserDTO dto) async {
+    final sharedPreferenceService = SharedPrefLocal<InfoUserDTO>(
+        Constants.SharedPreferenceKey.LoginAccount.sharedValue);
+    await sharedPreferenceService.set(data: dto);
+  }
+
+  static InfoUserDTO getLoginAccount() {
+    final sharedPreferenceService = SharedPrefLocal<InfoUserDTO>(
+      Constants.SharedPreferenceKey.LoginAccount.sharedValue,
+    );
+
+    return sharedPreferenceService.get(
+            fromJson: (json) => InfoUserDTO.fromJson(json)) ??
+        InfoUserDTO();
   }
 
   /// Account Setting

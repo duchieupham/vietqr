@@ -60,7 +60,7 @@ class NotifyTransDTO {
   String get getTransType => (transType.trim() == 'C') ? '+' : '-';
 
   String get getAmount =>
-      '$getTransType ${CurrencyUtils.instance.getCurrencyFormatted(amount)} VND';
+      '$getTransType ${amount.contains('*') ? amount : CurrencyUtils.instance.getCurrencyFormatted(amount)} VND';
 
   Color get colorAmount => (transType.trim() == 'C')
       ? isTransUnclassified

@@ -269,6 +269,15 @@ enum BankType {
   GET_BANK_LOCAL,
 }
 
+enum MainChargeType {
+  NONE,
+  CREATE_MAINTAIN,
+  CONFIRM_SUCCESS,
+  GET_ANNUAL_FEE_LIST,
+  REQUEST_ACTIVE_ANNUAL_FEE,
+  CONFIRM_ACTIVE_ANNUAL_FEE
+}
+
 enum TransType { NONE, GET_TRANDS, GET_FILTER }
 
 enum ContactType {

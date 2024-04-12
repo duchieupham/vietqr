@@ -32,6 +32,7 @@ class Stringify {
   static const String NOTI_TYPE_UPDATE_TRANSACTION = "N05";
   static const String NOTI_TYPE_TOPUP = "N10";
   static const String NOTI_TYPE_MOBILE_RECHARGE = "N11";
+  static const String NOTI_TYPE_ANNUAL_FEE_SUCCESS = "N13";
 
   //
   static final String urlStore = PlatformUtils.instance.isAndroidApp()
@@ -63,6 +64,7 @@ enum SharedPreferenceKey {
   ScrollCard,
   BankToken,
   WalletInfo,
+  LoginAccountList,
   LoginAccount,
   AccountSetting,
   WalletID,
@@ -97,6 +99,8 @@ extension SharedPreferenceKeyExtension on SharedPreferenceKey {
         return 'BANK_TOKEN';
       case SharedPreferenceKey.WalletInfo:
         return 'WALLET_INFO';
+      case SharedPreferenceKey.LoginAccountList:
+        return 'LOGIN_ACCOUNT_LIST';
       case SharedPreferenceKey.LoginAccount:
         return 'LOGIN_ACCOUNT';
       case SharedPreferenceKey.AccountSetting:

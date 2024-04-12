@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:vierqr/commons/constants/configurations/app_images.dart';
 import 'package:vierqr/commons/constants/configurations/numeral.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/bank_information_utils.dart';
@@ -14,7 +15,10 @@ import 'package:vierqr/commons/widgets/pin_widget.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_information_dto.dart';
+import 'package:vierqr/services/providers/maintain_charge_provider.dart';
 import 'package:vierqr/services/providers/pin_provider.dart';
+
+import 'error_widget.dart';
 
 class DialogWidget {
   //
@@ -25,6 +29,105 @@ class DialogWidget {
   static DialogWidget get instance => _instance;
 
   static bool isPopLoading = false;
+
+  openActiveAnnualSuccess() {
+    return showCupertinoModalPopup(
+      // barrierDismissible: false,
+      context: NavigationService.navigatorKey.currentContext!,
+      builder: (context) {
+        return Material(
+          color: AppColor.TRANSPARENT,
+          child: Container(
+            margin: const EdgeInsets.fromLTRB(10, 0, 10, 30),
+            padding: const EdgeInsets.fromLTRB(30, 50, 30, 30),
+            height: MediaQuery.of(context).size.height * 0.55,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  children: [
+                    Image.asset(
+                      AppImages.icSuccessInBlue,
+                      height: 200,
+                      fit: BoxFit.fitHeight,
+                    ),
+                    Text(
+                      "Kích hoạt dịch vụ \nphần mềm VietQR thành công!",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: AppColor.BLUE_TEXT,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Center(
+                      child: Text(
+                        "Hoàn thành",
+                        style: TextStyle(fontSize: 13, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  openConfirmPassDialog(
+      {required String title,
+      required Function(String) onDone,
+      required Function() onClose,
+      required TextEditingController editingController}) {
+    final FocusNode focusNode = FocusNode();
+    focusNode.requestFocus();
+    return showDialog(
+      barrierDismissible: false,
+      context: NavigationService.navigatorKey.currentContext!,
+      builder: (context) {
+        return Material(
+          color: AppColor.TRANSPARENT,
+          child: Center(
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: AppColor.WHITE,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              width: MediaQuery.of(context).size.width * 0.9,
+              height: MediaQuery.of(context).size.height * 0.25,
+              // alignment: Alignment.center,
+              child: ErrorDialogWidget(
+                  editingController: editingController,
+                  focusNode: focusNode,
+                  onDone: onDone,
+                  onClose: onClose,
+                  text: "Mật khẩu không khớp. Vui lòng thử lại."),
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   openPINDialog({required String title, required Function(String) onDone}) {
     final FocusNode focusNode = FocusNode();

@@ -2,14 +2,23 @@ import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
 import 'package:camera/camera.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
+import 'package:vierqr/features/maintain_charge/blocs/maintain_charge_bloc.dart';
+import 'package:vierqr/features/maintain_charge/maintain_charge_screen.dart';
+import 'package:vierqr/features/maintain_charge/views/confirm_active_key_screen.dart';
 import 'package:vierqr/features/transaction_detail/transaction_detail_screen.dart';
 import 'package:vierqr/features/transaction_detail/widgets/transaction_sucess_widget.dart';
 import 'package:vierqr/layouts/bottom_sheet/notify_trans_widget.dart';
+import 'package:vierqr/models/maintain_charge_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
+import 'package:vierqr/services/providers/maintain_charge_provider.dart';
 import 'package:vierqr/services/socket_service/socket_service.dart';
+import 'features/maintain_charge/views/active_success_screen.dart';
+import 'features/maintain_charge/views/annual_fee_screen.dart';
+import 'models/maintain_charge_create.dart';
 import 'models/qr_generated_dto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -244,6 +253,13 @@ class _VietQRApp extends State<VietQRApp> {
             );
           }
         }
+        // if (message.data['notificationType'] != null &&
+        //     message.data['notificationType'] ==
+        //         Stringify.NOTI_TYPE_ANNUAL_FEE_SUCCESS) {
+        //   NavigatorUtils.navigatePageReplacement(context, DashBoardScreen(),
+        //       routeName: Routes.DASHBOARD);
+        //   DialogWidget.instance.openActiveAnnualSuccess();
+        // }
         //   //process success transcation
         //   if (message.data['notificationType'] != null &&
         //       message.data['notificationType'] ==
@@ -322,6 +338,8 @@ class _VietQRApp extends State<VietQRApp> {
           providers: [
             ChangeNotifierProvider(create: (context) => AuthProvider()),
             ChangeNotifierProvider(create: (context) => PinProvider()),
+            ChangeNotifierProvider(
+                create: (context) => MaintainChargeProvider()),
             ChangeNotifierProvider(create: (context) => UserEditProvider()),
           ],
           child: Consumer<AuthProvider>(
@@ -365,6 +383,8 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.REPORT_SCREEN: (context) => const ReportScreen(),
                   Routes.TRANSACTION_WALLET: (context) =>
                       const TransWalletScreen(),
+                  // Routes.ACTIVE_SUCCESS_SCREEN: (context) =>
+                  //     const ActiveSuccessScreen(),
                 },
                 onGenerateRoute: (settings) {
                   if (settings.name == Routes.SHOW_QR) {
@@ -377,6 +397,76 @@ class _VietQRApp extends State<VietQRApp> {
                         return ShowQr(
                           dto: dto,
                           appInfo: appInfoDTO,
+                        );
+                      },
+                    );
+                  }
+
+                  if (settings.name == Routes.MAINTAIN_CHARGE_SCREEN) {
+                    Map<String, dynamic> param =
+                        settings.arguments as Map<String, dynamic>;
+                    int type = param['type'] as int;
+                    String bankId = param['bankId'] as String;
+
+                    return CupertinoPageRoute<bool>(
+                      builder: (context) {
+                        return MaintainChargeScreen(
+                          type: type,
+                          bankId: bankId,
+                        );
+                      },
+                    );
+                  }
+                  if (settings.name == Routes.ANNUAL_FEE_SCREEN) {
+                    Map<String, dynamic> param =
+                        settings.arguments as Map<String, dynamic>;
+                    int amount = param['amount'] as int;
+                    int validFrom = param['validFrom'] as int;
+                    int validTo = param['validTo'] as int;
+                    int duration = param['duration'] as int;
+
+                    String qr = param['qr'] as String;
+                    String billNumber = param['billNumber'] as String;
+
+                    return CupertinoPageRoute<bool>(
+                      builder: (context) {
+                        return QrAnnualFeeScreen(
+                          duration: duration,
+                          qr: qr,
+                          billNumber: billNumber,
+                          amount: amount,
+                          validFrom: validFrom,
+                          validTo: validTo,
+                        );
+                      },
+                    );
+                  }
+
+                  if (settings.name == Routes.ACTIVE_SUCCESS_SCREEN) {
+                    Map<String, dynamic> param =
+                        settings.arguments as Map<String, dynamic>;
+                    int type = param['type'] as int;
+
+                    return CupertinoPageRoute<bool>(
+                      builder: (context) {
+                        return ActiveSuccessScreen(
+                          type: type,
+                        );
+                      },
+                    );
+                  }
+
+                  if (settings.name == Routes.CONFIRM_ACTIVE_KEY_SCREEN) {
+                    Map<String, dynamic> param =
+                        settings.arguments as Map<String, dynamic>;
+                    MaintainChargeDTO dto = param['dto'] as MaintainChargeDTO;
+                    MaintainChargeCreate createDto =
+                        param['createDto'] as MaintainChargeCreate;
+                    return CupertinoPageRoute<bool>(
+                      builder: (context) {
+                        return ConfirmActiveKeyScreen(
+                          createDto: createDto,
+                          dto: dto,
                         );
                       },
                     );

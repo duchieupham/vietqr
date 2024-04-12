@@ -383,7 +383,7 @@ class _TransStoreViewState extends State<TransStoreView>
           children: [
             const SizedBox(height: 16),
             Text(
-              '${TransactionUtils.instance.getTransType(dto.transType)} ${CurrencyUtils.instance.getCurrencyFormatted(dto.amount)} VND',
+              '${TransactionUtils.instance.getTransType(dto.transType)} ${dto.amount.contains('*') ? dto.amount : CurrencyUtils.instance.getCurrencyFormatted(dto.amount)} VND',
               style: TextStyle(fontSize: 18, color: dto.getColorStatus),
             ),
             const SizedBox(height: 8),

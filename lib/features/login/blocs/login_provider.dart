@@ -22,7 +22,7 @@ class LoginProvider with ChangeNotifier {
   FlowType isQuickLogin = FlowType.FIRST_LOGIN;
 
   init() async {
-    listInfoUsers = await SharePrefUtils.getLoginAccount() ?? [];
+    listInfoUsers = await SharePrefUtils.getLoginAccountList() ?? [];
     if (listInfoUsers.isNotEmpty) isQuickLogin = FlowType.NEAREST_LOGIN;
     notifyListeners();
   }
@@ -33,7 +33,7 @@ class LoginProvider with ChangeNotifier {
   }
 
   void updateListInfoUser() async {
-    listInfoUsers = await SharePrefUtils.getLoginAccount() ?? [];
+    listInfoUsers = await SharePrefUtils.getLoginAccountList() ?? [];
     notifyListeners();
   }
 

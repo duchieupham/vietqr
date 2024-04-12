@@ -17,7 +17,7 @@ class TransactionReceiveDTO {
   final String content;
   final String bankName;
   final String imgId;
-  final int amount;
+  final String amount;
   final String transType;
   final String traceId;
   final String refId;
@@ -57,8 +57,7 @@ class TransactionReceiveDTO {
 
   String get getStatus => TransactionUtils.instance.getStatusString(status);
 
-  String get getAmount =>
-      CurrencyUtils.instance.getCurrencyFormatted(amount.toString());
+  String get getAmount => amount;
 
   // type = 0: Giao dịch có đối soát, tạo bằng mã VietQR động.
   // type = 1: Giao dịch có đối soát, tạo bằng mã VietQR tĩnh.
