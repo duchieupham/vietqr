@@ -16,9 +16,10 @@ class TransHistoryBloc extends Bloc<TransHistoryEvent, TransHistoryState>
 
   final String bankId;
   final TerminalDto terminalDto;
+  final TerminalAccountDTO terminalAccountDto;
 
-  TransHistoryBloc(this.context, this.bankId, this.terminalDto)
-      : super(TransHistoryState(list: [], terminalDto: terminalDto)) {
+  TransHistoryBloc(this.context, this.bankId, this.terminalDto,this.terminalAccountDto)
+      : super(TransHistoryState(list: [], terminalDto: terminalDto, terminalAccountDto: terminalAccountDto)) {
     // on<TransactionEventGetDetail>(_getDetail);
     // on<TransactionEventGetImage>(_loadImage);
     // on<TransEventQRRegenerate>(_regenerateQR);
@@ -28,7 +29,7 @@ class TransHistoryBloc extends Bloc<TransHistoryEvent, TransHistoryState>
     on<TransactionEventFetchIsOwner>(_fetchTransactionsIsOwner);
     on<TransactionEventGetList>(_getTransactions);
     on<TransactionEventFetch>(_fetchTransactions);
-    on<GetMyListGroupEvent>(_getMyListGroup);
+    on<GetMyListGroupEvent>(_getMyListGroupTrans);
   }
 
   void _getTransactionsStatus(TransHistoryEvent event, Emitter emit) async {
@@ -194,17 +195,37 @@ class TransHistoryBloc extends Bloc<TransHistoryEvent, TransHistoryState>
     }
   }
 
-  void _getMyListGroup(TransHistoryEvent event, Emitter emit) async {
+  // void _getMyListGroup(TransHistoryEvent event, Emitter emit) async {
+  //   try {
+  //     if (event is GetMyListGroupEvent) {
+  //       emit(state.copyWith(
+  //           status: BlocStatus.NONE, type: TransHistoryType.NONE));
+
+  //       final TerminalDto terminalDto = await transactionRepository
+  //           .getMyListGroup(event.userID, event.bankId, event.offset);
+  //       emit(state.copyWith(
+  //         status: BlocStatus.NONE,
+  //         terminalDto: terminalDto,
+  //         type: TransHistoryType.GET_LIST_GROUP,
+  //       ));
+  //     }
+  //   } catch (e) {
+  //     LOG.error(e.toString());
+  //     emit(state.copyWith(status: BlocStatus.NONE));
+  //   }
+  // }
+
+  void _getMyListGroupTrans(TransHistoryEvent event, Emitter emit) async {
     try {
       if (event is GetMyListGroupEvent) {
         emit(state.copyWith(
             status: BlocStatus.NONE, type: TransHistoryType.NONE));
 
-        final TerminalDto terminalDto = await transactionRepository
-            .getMyListGroup(event.userID, event.bankId, event.offset);
+        final TerminalAccountDTO  terminaAccountlDto = await transactionRepository
+            .getMyListGroupTrans(event.userID, event.bankId, event.offset);
         emit(state.copyWith(
           status: BlocStatus.NONE,
-          terminalDto: terminalDto,
+          terminalAccountDto: terminaAccountlDto,
           type: TransHistoryType.GET_LIST_GROUP,
         ));
       }

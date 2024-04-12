@@ -29,7 +29,8 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
     on<BankCardEventUnLink>(_unLinkedBIDV);
     on<UpdateEvent>(_updateEvent);
     on<BankCardGenerateDetailQR>(_createQRUnAuthen);
-    on<GetMyListGroupEvent>(_getMyListGroup);
+    // on<GetMyListGroupEvent>(_getMyListGroup);
+    on<GetMyListGroupEvent>(_getMyListGroupTrans);
     on<GetMerchantEvent>(_getMerchant);
   }
 
@@ -282,16 +283,36 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
     }
   }
 
-  void _getMyListGroup(BankCardEvent event, Emitter emit) async {
+  // void _getMyListGroup(BankCardEvent event, Emitter emit) async {
+  //   try {
+  //     if (event is GetMyListGroupEvent) {
+  //       emit(state.copyWith(request: BankDetailType.NONE));
+
+  //       final TerminalDto terminalDto = await transactionRepository
+  //           .getMyListGroup(event.userID, bankId, event.offset);
+
+  //       emit(state.copyWith(
+  //         terminalDto: terminalDto,
+  //         request: BankDetailType.GET_LIST_GROUP,
+  //       ));
+  //     }
+  //   } catch (e) {
+  //     LOG.error(e.toString());
+  //     emit(state.copyWith(status: BlocStatus.NONE));
+  //   }
+  // }
+
+
+  void _getMyListGroupTrans(BankCardEvent event, Emitter emit) async {
     try {
       if (event is GetMyListGroupEvent) {
         emit(state.copyWith(request: BankDetailType.NONE));
 
-        final TerminalDto terminalDto = await transactionRepository
-            .getMyListGroup(event.userID, bankId, event.offset);
-
+        final TerminalAccountDTO  terminaAccountlDto = await transactionRepository
+            .getMyListGroupTrans(event.userID, bankId, event.offset);
         emit(state.copyWith(
-          terminalDto: terminalDto,
+          status: BlocStatus.NONE,
+          terminalAccountDto: terminaAccountlDto,
           request: BankDetailType.GET_LIST_GROUP,
         ));
       }

@@ -23,6 +23,32 @@ class TerminalDto {
   }
 }
 
+class TerminalAccountDTO {
+  final String? userId;
+  final String? terminalId;
+  final String? terminalCode;
+  final String? terminalName;
+  final String? terminalAddress;
+
+  TerminalAccountDTO(
+   { this.userId,
+    this.terminalId,
+    this.terminalCode,
+    this.terminalName,
+    this.terminalAddress,}
+  );
+
+  factory TerminalAccountDTO.fromJson(Map<String, dynamic> json) {
+    return TerminalAccountDTO(
+      userId : json['userId'],
+      terminalId:json['terminalId'],
+      terminalCode:json['terminalCode'],
+      terminalName:json['terminalName'],
+      terminalAddress:json['terminalAddress'],
+    );
+  }
+}
+
 class TerminalResponseDTO {
   String id;
   int totalMembers;

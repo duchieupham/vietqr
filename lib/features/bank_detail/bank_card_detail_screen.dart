@@ -347,6 +347,7 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                                     bankId: state.bankId ?? '',
                                     terminalDto: state.terminalDto ??
                                         TerminalDto(terminals: []),
+                                    terminalAccountDto: state.terminalAccountDto ?? TerminalAccountDTO(),
                                   ),
                                   StatisticalScreen(
                                     bankId: state.bankId ?? '',

@@ -10,6 +10,7 @@ class TransHistoryState extends Equatable {
   final List<TransDTO> list;
   final int offset;
   final TerminalDto terminalDto;
+  final TerminalAccountDTO terminalAccountDto;
   final bool isEmpty;
   final bool isLoadMore;
 
@@ -22,6 +23,7 @@ class TransHistoryState extends Equatable {
     this.isEmpty = false,
     this.isLoadMore = false,
     required this.terminalDto,
+    required this.terminalAccountDto,
   });
 
   TransHistoryState copyWith({
@@ -31,6 +33,7 @@ class TransHistoryState extends Equatable {
     List<TransDTO>? list,
     int? offset,
     TerminalDto? terminalDto,
+    TerminalAccountDTO? terminalAccountDto,
     bool? isLoadMore,
     bool? isEmpty,
   }) {
@@ -40,6 +43,7 @@ class TransHistoryState extends Equatable {
       msg: msg ?? this.msg,
       list: list ?? this.list,
       terminalDto: terminalDto ?? this.terminalDto,
+      terminalAccountDto: terminalAccountDto ?? this.terminalAccountDto,
       isLoadMore: isLoadMore ?? this.isLoadMore,
       isEmpty: isEmpty ?? this.isEmpty,
       offset: offset ?? this.offset,

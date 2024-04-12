@@ -25,18 +25,19 @@ class TransHistoryScreen extends StatelessWidget {
   final String bankId;
   final String bankUserId;
   final TerminalDto terminalDto;
+  final TerminalAccountDTO terminalAccountDto;
 
   const TransHistoryScreen({
     super.key,
     required this.bankId,
     required this.bankUserId,
-    required this.terminalDto,
+    required this.terminalDto, required this.terminalAccountDto,
   });
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => TransHistoryBloc(context, bankId, terminalDto),
+      create: (context) => TransHistoryBloc(context, bankId, terminalDto,terminalAccountDto),
       child: ChangeNotifierProvider<TransProvider>(
         create: (context) =>
             TransProvider(bankUserId == SharePrefUtils.getProfile().userId, [
