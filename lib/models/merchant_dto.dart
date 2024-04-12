@@ -23,7 +23,8 @@ class MerchantDTO {
   final String? merchantType;
   final String? vaNumber;
 
-  String get accountBank => '${userBankName ?? ''} - ${bankAccount ?? ''}';
+  String get accountBank =>
+      'BIDV - ${bankAccount ?? ''}\n${userBankName ?? ''}';
 
   MerchantDTO({
     this.id,

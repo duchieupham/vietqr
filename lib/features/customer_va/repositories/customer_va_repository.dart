@@ -5,10 +5,12 @@ import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/models/customer_va_confirm_dto.dart';
+import 'package:vierqr/models/customer_va_insert_dto.dart';
 import 'package:vierqr/models/customer_va_item_dto.dart';
 import 'package:vierqr/models/customer_va_request_dto.dart';
 import 'package:vierqr/models/customer_va_response_otp_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
+import 'package:vierqr/models/vietqr_va_request_dto.dart';
 
 class CustomerVaRepository {
   const CustomerVaRepository();
@@ -127,13 +129,33 @@ class CustomerVaRepository {
   }
 
 //insert va
-  Future<ResponseMessageDTO> insertCustomerVa(body) async {
+  Future<ResponseMessageDTO> insertCustomerVa(CustomerVaInsertDTO dto) async {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: 'FAILED', message: 'E05');
     try {
       String url = '${EnvConfig.getBaseUrl()}customer-va/insert';
       final response = await BaseAPIClient.postAPI(
-          url: url, type: AuthenticationType.SYSTEM, body: body);
+          url: url, type: AuthenticationType.SYSTEM, body: dto.toJson());
+      if (response.statusCode == 200 || response.statusCode == 400) {
+        var data = jsonDecode(response.body);
+        if (data != null) {
+          result = ResponseMessageDTO.fromJson(data);
+        }
+      }
+    } catch (e) {
+      LOG.error('insertCustomerVa: ERROR:' + e.toString());
+    }
+    return result;
+  }
+
+  //create vietqr va invoice
+  Future<ResponseMessageDTO> generateVietQRVa(VietQRVaRequestDTO dto) async {
+    ResponseMessageDTO result =
+        const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+    try {
+      String url = '${EnvConfig.getBaseUrl()}customer-va/invoice/vietqr';
+      final response = await BaseAPIClient.postAPI(
+          url: url, type: AuthenticationType.SYSTEM, body: dto.toJson());
       if (response.statusCode == 200 || response.statusCode == 400) {
         var data = jsonDecode(response.body);
         if (data != null) {

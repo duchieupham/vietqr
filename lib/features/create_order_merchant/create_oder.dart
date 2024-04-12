@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 
 import 'views/info_order_view.dart';
@@ -28,6 +29,7 @@ class _CreateOrderScreenState extends State<CreateOrderScreen> {
         title: 'Tạo hoá đơn',
         onPressed: _handleBack,
       ),
+      backgroundColor: AppColor.WHITE,
       body: Column(
         children: [
           Expanded(child: _buildStep()),

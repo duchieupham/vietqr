@@ -56,4 +56,7 @@ class Routes {
   static const String INSERT_CUSTOMER_VA_BANK_AUTH =
       'customer_va/insert/bank_auth';
   static const String CUSTOMER_VA_CONFIRM_OTP = 'customer_va/confirm_otp';
+  static const String CUSTOMER_VA_SUCCESS = 'customer_va/success';
+  static const String CUSTOMER_VA_SPLASH = 'customer_va/splash';
+  static const String CUSTOMER_VA_LIST = 'customer_va/list';
 }

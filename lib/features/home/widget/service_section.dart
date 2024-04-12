@@ -51,7 +51,7 @@ class _ServiceSectionState extends State<ServiceSection> {
           height: 120,
           child: InkWell(
             onTap: () {
-              Navigator.pushNamed(context, Routes.INSERT_CUSTOMER_VA_MERCHANT);
+              Navigator.pushNamed(context, Routes.CUSTOMER_VA_SPLASH);
             },
             child: Row(
               children: [

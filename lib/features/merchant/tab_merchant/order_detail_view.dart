@@ -5,6 +5,7 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/create_order_merchant/respository/order_merchant_repository.dart';
+import 'package:vierqr/features/customer_va/widgets/customer_va_header_widget.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/invoice_dto.dart';
@@ -77,7 +78,8 @@ class _OrderDetailViewState extends State<OrderDetailView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MAppBar(title: 'Hoá đơn'),
+      appBar: CustomerVaHeaderWidget(),
+      backgroundColor: AppColor.WHITE,
       body: Stack(
         children: [
           Column(
@@ -99,12 +101,15 @@ class _OrderDetailViewState extends State<OrderDetailView> {
                           ),
                         ),
                         ...[
-                          const SizedBox(height: 24),
-                          _buildItem('Số tiền',
-                              '${CurrencyUtils.instance.getCurrencyFormatted('${dto.amount ?? 0}')} VND',
-                              textColor: dto.status == 0
-                                  ? AppColor.ORANGE_DARK
-                                  : AppColor.GREEN),
+                          const SizedBox(height: 10),
+                          _buildItem(
+                            'Số tiền',
+                            '${CurrencyUtils.instance.getCurrencyFormatted('${dto.amount ?? 0}')} VND',
+                            textColor: dto.status == 0
+                                ? AppColor.ORANGE_DARK
+                                : AppColor.GREEN,
+                            textSized: 20,
+                          ),
                           _buildItem('Trạng thái:', dto.getStatus,
                               textColor: dto.status == 0
                                   ? AppColor.ORANGE_DARK
@@ -114,12 +119,17 @@ class _OrderDetailViewState extends State<OrderDetailView> {
                               isUnBorder: true),
                         ],
                         if (dto.items != null && dto.items!.isNotEmpty) ...[
-                          const SizedBox(height: 24),
+                          const SizedBox(
+                            height: 30,
+                          ),
                           Text(
                             'Danh mục hàng hoá, dịch vụ',
-                            style: TextStyle(fontSize: 18),
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 15),
                           ...List.generate(
                             dto.items!.length,
                             (index) {
@@ -178,61 +188,82 @@ class _OrderDetailViewState extends State<OrderDetailView> {
 
   Widget _buildItemCategory(Item dto, int index, {bool isSuccess = false}) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-      margin: EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 0),
+      margin: EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-        border: Border.all(color: AppColor.GREY_TEXT.withOpacity(0.3)),
-        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Color(0XFFFFFFFF), width: 1),
+        borderRadius: BorderRadius.circular(5),
       ),
       child: Column(
         children: [
-          Row(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    dto.name ?? '',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+          SizedBox(
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    (index + 1).toString() + '. ' + (dto.name ?? ''),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                  Text(
-                    dto.description ?? '',
-                    style: TextStyle(fontSize: 14),
-                  ),
-                ],
-              ),
-              const Spacer(),
-              Container(
-                width: 25,
-                height: 25,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: isSuccess
-                        ? AppColor.GREEN.withOpacity(0.2)
-                        : AppColor.ORANGE_DARK.withOpacity(0.2)),
-                child: Text(
-                  '${dto.quantity ?? 0}',
-                  style: TextStyle(
-                      color: isSuccess ? AppColor.GREEN : AppColor.ORANGE_DARK),
                 ),
-              ),
-            ],
+                const SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  CurrencyUtils.instance
+                      .getCurrencyFormatted(dto.amount.toString()),
+                ),
+                const SizedBox(
+                  width: 5,
+                ),
+                Text('VND'),
+              ],
+            ),
           ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Text(
-                'Đơn giá:${CurrencyUtils.instance.getCurrencyFormatted('${dto.amount}')} VND',
-                style: TextStyle(color: AppColor.GREY_TEXT),
-              ),
-              const Spacer(),
-              Text(
-                ' ${CurrencyUtils.instance.getCurrencyFormatted('${dto.totalAmount}')} VND',
-                style: TextStyle(
-                    color: isSuccess ? AppColor.GREEN : AppColor.ORANGE_DARK),
-              ),
-            ],
+          const SizedBox(
+            height: 10,
+          ),
+          Divider(
+            color: Color(0xFFDADADA),
+            height: 1,
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          SizedBox(
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'x ${dto.quantity} = ',
+                    textAlign: TextAlign.right,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: AppColor.GREY_TEXT,
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  CurrencyUtils.instance
+                      .getCurrencyFormatted(dto.amount.toString()),
+                  style: TextStyle(
+                    color: (isSuccess) ? AppColor.GREEN : AppColor.ORANGE_DARK,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(
+                  width: 5,
+                ),
+                Text('VND'),
+              ],
+            ),
           ),
         ],
       ),
@@ -240,27 +271,40 @@ class _OrderDetailViewState extends State<OrderDetailView> {
   }
 
   Widget _buildItem(String title, String content,
-      {bool isUnBorder = false, Color? textColor}) {
+      {bool isUnBorder = false, Color? textColor, double? textSized}) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 18),
+      padding: EdgeInsets.symmetric(vertical: 15),
       decoration: BoxDecoration(
         border: isUnBorder
             ? null
             : Border(
-                bottom: BorderSide(
-                    color: AppColor.grey979797.withOpacity(0.3), width: 2),
+                bottom: BorderSide(color: Color(0XFFDADADA), width: 1),
               ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(title, maxLines: 1),
-          const SizedBox(height: 4),
           Text(
-            content,
-            overflow: TextOverflow.ellipsis,
-            maxLines: 2,
-            style: TextStyle(fontSize: 18, color: textColor),
+            title,
+            maxLines: 1,
+            style: const TextStyle(fontSize: 13),
+          ),
+          const SizedBox(
+            width: 20,
+          ),
+          Expanded(
+            child: Text(
+              content,
+              textAlign: TextAlign.right,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+              style: TextStyle(
+                fontSize: textSized ?? 13,
+                fontWeight: FontWeight.w500,
+                color: textColor,
+              ),
+            ),
           ),
         ],
       ),

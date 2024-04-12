@@ -14,7 +14,12 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/customer_va/repositories/customer_va_repository.dart';
 import 'package:vierqr/features/customer_va/widgets/customer_va_header_widget.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
+import 'package:vierqr/models/customer_va_confirm_dto.dart';
+import 'package:vierqr/models/customer_va_insert_dto.dart';
+import 'package:vierqr/models/customer_va_request_dto.dart';
+import 'package:vierqr/models/customer_va_response_otp_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/customer_va/customer_va_insert_provider.dart';
 
 class CustomerVaConfirmOtpView extends StatefulWidget {
@@ -86,26 +91,57 @@ class _CustomerVaConfirmOtpView extends State<CustomerVaConfirmOtpView>
                         const SizedBox(
                           width: 50,
                         ),
-                        ButtonWidget(
-                            text: 'Gửi lại OTP',
-                            width: 120,
-                            height: 40,
-                            borderRadius: 5,
-                            textColor: AppColor.BLUE_TEXT,
-                            bgColor: AppColor.BLUE_TEXT.withOpacity(0.3),
-                            function: () {
-                              timer = 120;
-                              _isTimeout = false;
-                              setState(() {});
-                              _controller = AnimationController(
-                                  vsync: this,
-                                  duration: Duration(
-                                      seconds:
-                                          timer) // gameData.levelClock is a user entered number elsewhere in the applciation
-                                  );
+                        Consumer<CustomerVaInsertProvider>(
+                          builder: (context, provider, child) {
+                            bool isValidButton = (!provider.nationalIdErr &&
+                                provider.nationalId
+                                    .toString()
+                                    .trim()
+                                    .isNotEmpty &&
+                                !provider.phoneAuthenticatedErr &&
+                                provider.phoneAuthenticated
+                                    .toString()
+                                    .trim()
+                                    .isNotEmpty);
+                            return ButtonWidget(
+                              text: 'Gửi lại OTP',
+                              width: 120,
+                              height: 40,
+                              borderRadius: 5,
+                              textColor: AppColor.BLUE_TEXT,
+                              bgColor: AppColor.BLUE_TEXT.withOpacity(0.3),
+                              function: () async {
+                                timer = 120;
+                                _isTimeout = false;
+                                setState(() {});
+                                _controller = AnimationController(
+                                    vsync: this,
+                                    duration: Duration(
+                                        seconds:
+                                            timer) // gameData.levelClock is a user entered number elsewhere in the applciation
+                                    );
 
-                              _controller.forward();
-                            }),
+                                _controller.forward();
+                                CustomerVaRequestDTO dto = CustomerVaRequestDTO(
+                                  merchantName:
+                                      provider.merchantName.toString().trim(),
+                                  bankAccount:
+                                      provider.bankAccount.toString().trim(),
+                                  bankCode: 'BIDV',
+                                  userBankName:
+                                      provider.userBankName.toString().trim(),
+                                  nationalId:
+                                      provider.nationalId.toString().trim(),
+                                  phoneAuthenticated: provider
+                                      .phoneAuthenticated
+                                      .toString()
+                                      .trim(),
+                                );
+                                await _requestCustomerVaOTP(dto);
+                              },
+                            );
+                          },
+                        ),
                       ],
                     )
                   : Row(
@@ -210,10 +246,9 @@ class _CustomerVaConfirmOtpView extends State<CustomerVaConfirmOtpView>
             ),
             child: Consumer<CustomerVaInsertProvider>(
               builder: (context, provider, child) {
-                bool isValidButton = (!provider.bankAccountErr &&
-                    provider.bankAccount.toString().trim().isNotEmpty &&
-                    !provider.userBankNameErr &&
-                    provider.userBankName.toString().trim().isNotEmpty);
+                bool isValidButton =
+                    (provider.otp.toString().trim().isNotEmpty &&
+                        provider.otp.toString().trim().length == 6);
                 return ButtonWidget(
                   text: 'Xác thực',
                   textColor: (!isValidButton) ? AppColor.BLACK : AppColor.WHITE,
@@ -222,7 +257,21 @@ class _CustomerVaConfirmOtpView extends State<CustomerVaConfirmOtpView>
                       : AppColor.BLUE_TEXT,
                   borderRadius: 5,
                   function: () async {
-                    if (isValidButton) {}
+                    if (isValidButton) {
+                      CustomerVaConfirmDTO dto = CustomerVaConfirmDTO(
+                        merchantId: provider.merchantId.toString().trim(),
+                        merchantName: provider.merchantName.toString().trim(),
+                        confirmId: provider.confirmId.toString().trim(),
+                        otpNumber: provider.otp.toString().trim(),
+                      );
+                      _confirmOTP(
+                        dto,
+                        provider.bankAccount.toString().trim(),
+                        provider.userBankName.toString().trim(),
+                        provider.nationalId.toString().trim(),
+                        provider.phoneAuthenticated.toString().trim(),
+                      );
+                    }
                   },
                 );
               },
@@ -234,7 +283,73 @@ class _CustomerVaConfirmOtpView extends State<CustomerVaConfirmOtpView>
   }
 
   //
-  Future<void> _confirmOTP() async {
+  Future<void> _requestCustomerVaOTP(CustomerVaRequestDTO dto) async {
+    DialogWidget.instance.openLoadingDialog();
+    dynamic result = await customerVaRepository.requestCustomerVaOTP(dto);
+    String msg = ErrorUtils.instance.getErrorMessage('E05');
+    if (result is ResponseObjectDTO) {
+      //save data response
+      Provider.of<CustomerVaInsertProvider>(context, listen: false)
+          .updateMerchantIdAndConfirmId(
+        result.data.merchantId,
+        result.data.confirmId,
+      );
+      //
+      Navigator.pop(context);
+    } else if (result is ResponseMessageDTO) {
+      msg = ErrorUtils.instance.getErrorMessage(result.message);
+      Navigator.pop(context);
+      DialogWidget.instance
+          .openMsgDialog(title: 'Không thể đăng ký dịch vụ', msg: msg);
+    } else {
+      Navigator.pop(context);
+      DialogWidget.instance
+          .openMsgDialog(title: 'Không thể đăng ký dịch vụ', msg: msg);
+    }
+  }
+
+  //
+  Future<void> _confirmOTP(CustomerVaConfirmDTO dto, String bankAccount,
+      String userBankName, String nationalId, String phoneAuthenticated) async {
     //
+
+    DialogWidget.instance.openLoadingDialog();
+    ResponseMessageDTO result =
+        await customerVaRepository.confirmCustomerVaOTP(dto);
+    String status = result.status;
+    String msg = '';
+    if (status == 'SUCCESS') {
+      CustomerVaInsertDTO insertDTO = CustomerVaInsertDTO(
+        merchantId: dto.merchantId,
+        merchantName: dto.merchantName,
+        bankId: '',
+        userId: SharePrefUtils.getProfile().userId,
+        bankAccount: bankAccount,
+        userBankName: userBankName,
+        nationalId: nationalId,
+        phoneAuthenticated: phoneAuthenticated,
+        vaNumber: result.message,
+      );
+      //insert
+      ResponseMessageDTO resultInsert =
+          await customerVaRepository.insertCustomerVa(insertDTO);
+      String statusInsert = resultInsert.status;
+      String msgInsert = '';
+      if (statusInsert == 'SUCCESS') {
+        Navigator.pop(context);
+        //navigator success insert customer va screen
+        Navigator.pushReplacementNamed(context, Routes.CUSTOMER_VA_SUCCESS);
+      } else {
+        msgInsert = ErrorUtils.instance.getErrorMessage(resultInsert.message);
+        Navigator.pop(context);
+        DialogWidget.instance
+            .openMsgDialog(title: 'Không thể xác thực', msg: msgInsert);
+      }
+    } else {
+      msg = ErrorUtils.instance.getErrorMessage(result.message);
+      Navigator.pop(context);
+      DialogWidget.instance
+          .openMsgDialog(title: 'Không thể xác thực', msg: msg);
+    }
   }
 }

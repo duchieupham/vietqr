@@ -9,6 +9,9 @@ import 'package:vierqr/features/customer_va/views/customer_va_confirm_otp_view.d
 import 'package:vierqr/features/customer_va/views/customer_va_insert_bank_auth_view.dart';
 import 'package:vierqr/features/customer_va/views/customer_va_insert_bank_info_view.dart';
 import 'package:vierqr/features/customer_va/views/customer_va_insert_merchant_view.dart';
+import 'package:vierqr/features/customer_va/views/customer_va_list_view.dart';
+import 'package:vierqr/features/customer_va/views/customer_va_splash_view.dart';
+import 'package:vierqr/features/customer_va/views/customer_va_success_view.dart';
 import 'package:vierqr/features/transaction_detail/transaction_detail_screen.dart';
 import 'package:vierqr/features/transaction_detail/widgets/transaction_sucess_widget.dart';
 import 'package:vierqr/layouts/bottom_sheet/notify_trans_widget.dart';
@@ -380,6 +383,11 @@ class _VietQRApp extends State<VietQRApp> {
                       CustomerVaInsertBankAuthView(),
                   Routes.CUSTOMER_VA_CONFIRM_OTP: (context) =>
                       CustomerVaConfirmOtpView(),
+                  Routes.CUSTOMER_VA_SUCCESS: (context) =>
+                      CustomerVaSuccessView(),
+                  Routes.CUSTOMER_VA_SPLASH: (context) =>
+                      CustomerVaSplashView(),
+                  Routes.CUSTOMER_VA_LIST: (context) => CustomerVaListView(),
                 },
                 onGenerateRoute: (settings) {
                   if (settings.name == Routes.SHOW_QR) {

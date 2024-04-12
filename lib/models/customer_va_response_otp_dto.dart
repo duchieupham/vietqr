@@ -1,15 +1,15 @@
 class ResponseObjectDTO {
-  final String message;
+  final String status;
   final CustomerVaResponseOtpDTO data;
 
   ResponseObjectDTO({
-    required this.message,
+    required this.status,
     required this.data,
   });
 
   factory ResponseObjectDTO.fromJson(Map<String, dynamic> json) {
     return ResponseObjectDTO(
-      message: json['message'],
+      status: json['status'],
       data: CustomerVaResponseOtpDTO.fromJson(
         json['data'],
       ),
@@ -18,7 +18,7 @@ class ResponseObjectDTO {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> json = {};
-    json['message'] = message;
+    json['status'] = status;
     json['data'] = data.toJson();
     return json;
   }

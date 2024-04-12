@@ -367,7 +367,7 @@ class BankCardRepository {
   Future<dynamic> getMerchantInfo(String bankId) async {
     try {
       final String url =
-          '${EnvConfig.getBaseUrl()}customer-va/information?bankId=$bankId';
+          '${EnvConfig.getBaseUrl()}customer-va/information?id=$bankId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
