@@ -274,115 +274,118 @@ class CardWidget extends StatelessWidget {
                             ],
                           ),
                         )
-                      : Container(
-                          padding: const EdgeInsets.fromLTRB(20, 5, 10, 10),
-                          width: double.infinity,
-                          child: (e.isValidService!)
-                              ? (inclusiveDays != 0)
-                                  ? Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Icon(
-                                              Icons
-                                                  .check_circle_outline_rounded,
-                                              size: 15,
-                                              color: AppColor.WHITE,
+                      : InkWell(
+                        onTap: onActive,
+                        child: Container(
+                            padding: const EdgeInsets.fromLTRB(20, 5, 10, 10),
+                            width: double.infinity,
+                            child: (e.isValidService!)
+                                ? (inclusiveDays != 0)
+                                    ? Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Icon(
+                                                Icons
+                                                    .check_circle_outline_rounded,
+                                                size: 15,
+                                                color: AppColor.WHITE,
+                                              ),
+                                              const SizedBox(width: 5),
+                                              Text(
+                                                "Đã đăng ký dịch vụ VietQR",
+                                                style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: AppColor.WHITE),
+                                              )
+                                            ],
+                                          ),
+                                          inclusiveDays <= 7
+                                              ? Container(
+                                                  padding:
+                                                      const EdgeInsets.fromLTRB(
+                                                          10, 5, 10, 5),
+                                                  decoration: BoxDecoration(
+                                                      color:
+                                                          AppColor.RED_FFFF0000,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              50)),
+                                                  child: Center(
+                                                    child: Text(
+                                                      "Còn $inclusiveDays ngày hết hạn",
+                                                      style: TextStyle(
+                                                          fontSize: 12,
+                                                          color: AppColor.WHITE),
+                                                    ),
+                                                  ),
+                                                )
+                                              : Text(
+                                                  "Đến ${timestampToDate(e.validFeeTo!)}",
+                                                  style: TextStyle(
+                                                      fontSize: 12,
+                                                      color: AppColor.WHITE),
+                                                ),
+                                        ],
+                                      )
+                                    : Row(
+                                        // crossAxisAlignment: CrossAxisAlignment.end,
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        children: [
+                                          InkWell(
+                                            onTap: onActive,
+                                            child: Container(
+                                              // width: double.infinity,
+                                              padding: const EdgeInsets.fromLTRB(
+                                                  10, 5, 10, 5),
+                                              height: 26,
+                                              decoration: BoxDecoration(
+                                                  color: AppColor.BLUE_TEXT,
+                                                  borderRadius:
+                                                      BorderRadius.circular(50)),
+                                              child: Center(
+                                                child: Text(
+                                                  "Gia hạn dịch vụ VietQR",
+                                                  style: TextStyle(
+                                                      fontSize: 12,
+                                                      color: AppColor.WHITE),
+                                                ),
+                                              ),
                                             ),
-                                            const SizedBox(width: 5),
-                                            Text(
-                                              "Đã đăng ký dịch vụ VietQR",
+                                          ),
+                                        ],
+                                      )
+                                : Row(
+                                    // crossAxisAlignment: CrossAxisAlignment.end,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      InkWell(
+                                        onTap: onActive,
+                                        child: Container(
+                                          // width: double.infinity,
+                                          padding: const EdgeInsets.fromLTRB(
+                                              10, 5, 10, 5),
+                                          height: 26,
+                                          decoration: BoxDecoration(
+                                              color: AppColor.BLUE_TEXT,
+                                              borderRadius:
+                                                  BorderRadius.circular(50)),
+                                          child: Center(
+                                            child: Text(
+                                              "Đăng ký dịch vụ VietQR",
                                               style: TextStyle(
                                                   fontSize: 12,
                                                   color: AppColor.WHITE),
-                                            )
-                                          ],
-                                        ),
-                                        inclusiveDays <= 7
-                                            ? Container(
-                                                padding:
-                                                    const EdgeInsets.fromLTRB(
-                                                        10, 5, 10, 5),
-                                                decoration: BoxDecoration(
-                                                    color:
-                                                        AppColor.RED_FFFF0000,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            50)),
-                                                child: Center(
-                                                  child: Text(
-                                                    "Còn $inclusiveDays ngày hết hạn",
-                                                    style: TextStyle(
-                                                        fontSize: 12,
-                                                        color: AppColor.WHITE),
-                                                  ),
-                                                ),
-                                              )
-                                            : Text(
-                                                "Đến ${timestampToDate(e.validFeeTo!)}",
-                                                style: TextStyle(
-                                                    fontSize: 12,
-                                                    color: AppColor.WHITE),
-                                              ),
-                                      ],
-                                    )
-                                  : Row(
-                                      // crossAxisAlignment: CrossAxisAlignment.end,
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        InkWell(
-                                          onTap: onActive,
-                                          child: Container(
-                                            // width: double.infinity,
-                                            padding: const EdgeInsets.fromLTRB(
-                                                10, 5, 10, 5),
-                                            height: 26,
-                                            decoration: BoxDecoration(
-                                                color: AppColor.BLUE_TEXT,
-                                                borderRadius:
-                                                    BorderRadius.circular(50)),
-                                            child: Center(
-                                              child: Text(
-                                                "Gia hạn dịch vụ VietQR",
-                                                style: TextStyle(
-                                                    fontSize: 12,
-                                                    color: AppColor.WHITE),
-                                              ),
                                             ),
                                           ),
                                         ),
-                                      ],
-                                    )
-                              : Row(
-                                  // crossAxisAlignment: CrossAxisAlignment.end,
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    InkWell(
-                                      onTap: onActive,
-                                      child: Container(
-                                        // width: double.infinity,
-                                        padding: const EdgeInsets.fromLTRB(
-                                            10, 5, 10, 5),
-                                        height: 26,
-                                        decoration: BoxDecoration(
-                                            color: AppColor.BLUE_TEXT,
-                                            borderRadius:
-                                                BorderRadius.circular(50)),
-                                        child: Center(
-                                          child: Text(
-                                            "Đăng ký dịch vụ VietQR",
-                                            style: TextStyle(
-                                                fontSize: 12,
-                                                color: AppColor.WHITE),
-                                          ),
-                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                        ),
+                                    ],
+                                  ),
+                          ),
+                      ),
                 ] else
                   const SizedBox.shrink(),
               ]),
