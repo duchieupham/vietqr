@@ -36,7 +36,7 @@ class ErrorDialogWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  "Nhập mật khẩu tài khoản \ncủa bạn để xác thực",
+                  "Nhập mật khẩu ứng dụng\nVietQR để xác thực",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 30),
