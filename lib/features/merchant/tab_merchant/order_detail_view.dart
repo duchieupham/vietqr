@@ -5,10 +5,10 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/create_order_merchant/respository/order_merchant_repository.dart';
+import 'package:vierqr/features/customer_va/views/invoice_va_vietqr_view.dart';
 import 'package:vierqr/features/customer_va/widgets/customer_va_header_widget.dart';
-import 'package:vierqr/layouts/m_app_bar.dart';
-import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/invoice_dto.dart';
+import 'package:vierqr/models/vietqr_va_request_dto.dart';
 
 class OrderDetailView extends StatefulWidget {
   final String billId;
@@ -93,6 +93,48 @@ class _OrderDetailViewState extends State<OrderDetailView> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
+                        UnconstrainedBox(
+                          alignment: Alignment.centerLeft,
+                          child: InkWell(
+                            onTap: () async {
+                              dto = InvoiceDTO();
+                              setState(() {});
+                              await _onRefresh();
+                            },
+                            child: Container(
+                              width: 150,
+                              height: 35,
+                              decoration: BoxDecoration(
+                                color: AppColor.WHITE,
+                                borderRadius: BorderRadius.circular(5),
+                                border: Border.all(
+                                  color: AppColor.BLUE_TEXT,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.refresh_rounded,
+                                    size: 13,
+                                    color: AppColor.BLUE_TEXT,
+                                  ),
+                                  const Padding(
+                                      padding: EdgeInsets.only(left: 5)),
+                                  Text(
+                                    'Tải lại',
+                                    style: const TextStyle(
+                                        color: AppColor.BLUE_TEXT,
+                                        fontSize: 13),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
                         Text(
                           dto.name ?? '',
                           style: TextStyle(
@@ -145,25 +187,88 @@ class _OrderDetailViewState extends State<OrderDetailView> {
                 ),
               ),
               if (dto.status == 0)
-                MButtonWidget(
-                  title: 'Huỷ hoá đơn thanh toán',
-                  isEnable: true,
-                  colorEnableBgr: AppColor.RED_EC1010.withOpacity(0.2),
-                  height: 50,
-                  onTap: _removeOrder,
+                SizedBox(
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset(
-                        'assets/images/ic-remove-account.png',
-                        width: 30,
-                        color: AppColor.RED_EC1010,
+                      const SizedBox(
+                        width: 20,
                       ),
-                      const SizedBox(width: 24),
-                      Text(
-                        'Huỷ hoá đơn thanh toán',
-                        style: TextStyle(color: AppColor.RED_EC1010),
-                      )
+                      Expanded(
+                        child: Container(
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: AppColor.BLUE_TEXT,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: InkWell(
+                            onTap: () {
+                              print(dto.toJson());
+                              VietQRVaRequestDTO requestVietQRDTO =
+                                  VietQRVaRequestDTO(
+                                      billId: dto.billId ?? '',
+                                      userBankName: dto.userBankName ?? '',
+                                      amount: dto.amount.toString(),
+                                      description: dto.billId ?? '');
+                              // _generateVietQRVa(requestVietQRDTO);
+                              DialogWidget.instance.showModelBottomSheet(
+                                widget: InvoiceVaVietQRView(
+                                  vietQRVaRequestDTO: requestVietQRDTO,
+                                  invoiceDTO: dto,
+                                ),
+                                height:
+                                    MediaQuery.of(context).size.height * 0.9,
+                              );
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.qr_code_rounded,
+                                  size: 15,
+                                  color: AppColor.WHITE,
+                                ),
+                                const SizedBox(width: 5),
+                                Text(
+                                  'QR thanh toán',
+                                  style: TextStyle(color: AppColor.WHITE),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Container(
+                        height: 40,
+                        width: 100,
+                        decoration: BoxDecoration(
+                          color: AppColor.RED_EC1010.withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: InkWell(
+                          onTap: _removeOrder,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                'assets/images/ic-remove-account.png',
+                                width: 30,
+                                color: AppColor.RED_EC1010,
+                              ),
+                              const SizedBox(width: 5),
+                              Text(
+                                'Huỷ TT',
+                                style: TextStyle(color: AppColor.RED_EC1010),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
                     ],
                   ),
                 ),

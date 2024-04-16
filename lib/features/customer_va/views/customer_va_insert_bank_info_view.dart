@@ -50,11 +50,17 @@ class _CustomerVaInsertBankInfoView
                 ),
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: CachedNetworkImage(
-                    imageUrl: Provider.of<CustomerVaInsertProvider>(context,
-                            listen: false)
-                        .bidvLogoUrl,
-                    height: 50,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(color: Color(0XFFDADADA), width: 1),
+                    ),
+                    child: CachedNetworkImage(
+                      imageUrl: Provider.of<CustomerVaInsertProvider>(context,
+                              listen: false)
+                          .bidvLogoUrl,
+                      height: 50,
+                    ),
                   ),
                 ),
                 const SizedBox(

@@ -179,6 +179,10 @@ class ErrorUtils {
         result =
             'Không tìm thấy thông tin tài khoản ngân hàng. Vui lòng kiểm tra lại thông tin.';
         break;
+      case ErrorType.E135:
+        result =
+            'Mã OTP không hợp lệ hoặc có lỗi khi xác thực mã OTP. Vui lòng kiểm tra lại thông tin.';
+        break;
       default:
         result = message;
     }

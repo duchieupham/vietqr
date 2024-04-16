@@ -7,7 +7,9 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/create_order_merchant/create_oder.dart';
 import 'package:vierqr/features/create_order_merchant/respository/order_merchant_repository.dart';
 import 'package:vierqr/features/customer_va/repositories/customer_va_repository.dart';
+import 'package:vierqr/features/customer_va/widgets/customer_va_invoice_success_widget.dart';
 import 'package:vierqr/features/merchant/tab_merchant/order_detail_view.dart';
+import 'package:vierqr/models/customer_va_invoice_success_dto.dart';
 import 'package:vierqr/models/invoice_dto.dart';
 import 'package:vierqr/models/vietqr_va_request_dto.dart';
 
@@ -117,8 +119,46 @@ class _TabOrderMerchantState extends State<TabOrderMerchant> {
                     path: 'assets/images/ic-invoice-blue.png',
                     onTap: onCreateOrder,
                   ),
-                if (listUnpaid.isNotEmpty) ...[
+                if (list.isNotEmpty) ...[
                   const SizedBox(height: 30),
+                  UnconstrainedBox(
+                    alignment: Alignment.centerLeft,
+                    child: InkWell(
+                      onTap: () async {
+                        await _onRefresh();
+                      },
+                      child: Container(
+                        width: 150,
+                        height: 35,
+                        decoration: BoxDecoration(
+                          color: AppColor.WHITE,
+                          borderRadius: BorderRadius.circular(5),
+                          border: Border.all(
+                            color: AppColor.BLUE_TEXT,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.refresh_rounded,
+                              size: 13,
+                              color: AppColor.BLUE_TEXT,
+                            ),
+                            const Padding(padding: EdgeInsets.only(left: 5)),
+                            Text(
+                              'Tải lại danh sách',
+                              style: const TextStyle(
+                                  color: AppColor.BLUE_TEXT, fontSize: 13),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+                if (listUnpaid.isNotEmpty) ...[
+                  const SizedBox(height: 10),
                   Text(
                     'Hoá đơn chưa thanh toán',
                     style: TextStyle(
@@ -162,7 +202,8 @@ class _TabOrderMerchantState extends State<TabOrderMerchant> {
           visible: isLoading,
           child: Positioned.fill(
             child: Container(
-              color: AppColor.GREY_BG,
+              height: 100,
+              color: AppColor.WHITE,
               child: Center(child: CircularProgressIndicator()),
             ),
           ),
@@ -276,7 +317,7 @@ class _TabOrderMerchantState extends State<TabOrderMerchant> {
                         color: AppColor.BLUE_TEXT.withOpacity(0.3),
                       ),
                       child: InkWell(
-                        onTap: () async {
+                        onTap: () {
                           VietQRVaRequestDTO requestVietQRDTO =
                               VietQRVaRequestDTO(
                                   billId: dto.billId ?? '',
@@ -284,11 +325,13 @@ class _TabOrderMerchantState extends State<TabOrderMerchant> {
                                   amount: dto.amount.toString(),
                                   description: dto.billId ?? '');
                           // _generateVietQRVa(requestVietQRDTO);
-                          // DialogWidget.instance.showModelBottomSheet(
-                          //   widget:
-                          //       InvoiceVaVietQRView(billId: dto.billId ?? ''),
-                          //   height: MediaQuery.of(context).size.height * 0.8,
-                          // );
+                          DialogWidget.instance.showModelBottomSheet(
+                            widget: InvoiceVaVietQRView(
+                              vietQRVaRequestDTO: requestVietQRDTO,
+                              invoiceDTO: dto,
+                            ),
+                            height: MediaQuery.of(context).size.height * 0.9,
+                          );
                         },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -390,11 +433,5 @@ class _TabOrderMerchantState extends State<TabOrderMerchant> {
       updateState();
       _onGetListOrder(isRefresh: true);
     }
-  }
-
-  Future<void> _generateVietQRVa(VietQRVaRequestDTO dto) async {
-    // ResponseMessageDTO result =
-    //     await customerVaRepository.generateVietQRVa(dto);
-    // print(result);
   }
 }

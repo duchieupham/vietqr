@@ -158,7 +158,7 @@ class CustomerVaSuccessView extends StatelessWidget {
                 Navigator.pop(context);
                 Navigator.pop(context);
                 if (Navigator.canPop(context)) {
-                  Navigator.pop(context);
+                  Navigator.pop(context, true);
                 }
 
                 // Navigator.popUntil(context, (route) => route.isFirst);
