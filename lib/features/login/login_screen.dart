@@ -352,16 +352,6 @@ class _LoginState extends State<_Login> {
                                                 child: MButtonWidget(
                                                   title: '',
                                                   isEnable: true,
-                                                  // gradient: LinearGradient(
-                                                  //   colors: <Color>[
-                                                  //     AppColor.BLUE_E1EFFF,
-                                                  //     AppColor.BLUE_E5F9FF
-                                                  //   ],
-                                                  //   begin: Alignment.centerLeft,
-                                                  //   end: Alignment.centerRight,
-                                                  // ),
-                                                  // colorEnableBgr:
-                                                  //     AppColor.WHITE,
                                                   colorEnableBgr:
                                                       AppColor.BLUE_E1EFFF,
                                                   margin: EdgeInsets.zero,
@@ -395,23 +385,23 @@ class _LoginState extends State<_Login> {
                                 ),
                               ),
                             ),
-                            MButtonWidget(
-                              title: 'Tiếp tục',
-                              width: 350,
-                              height: 50,
-                              isEnable: provider.isEnableButton,
-                              colorDisableBgr: AppColor.GREY_BUTTON,
-                              margin: EdgeInsets.only(bottom: 0),
-                              colorEnableText: provider.isEnableButton
-                                  ? AppColor.WHITE
-                                  : AppColor.GREY_TEXT,
-                              onTap: () {
-                                FocusManager.instance.primaryFocus?.unfocus();
-                                _bloc.add(CheckExitsPhoneEvent(
-                                    phone: provider.phone));
-                              },
-                            ),
-                            SizedBox(height: height < 800 ? 0 : 16),
+                            // MButtonWidget(
+                            //   title: 'Tiếp tục',
+                            //   width: 350,
+                            //   height: 50,
+                            //   isEnable: provider.isEnableButton,
+                            //   colorDisableBgr: AppColor.GREY_BUTTON,
+                            //   margin: EdgeInsets.only(bottom: 0),
+                            //   colorEnableText: provider.isEnableButton
+                            //       ? AppColor.WHITE
+                            //       : AppColor.GREY_TEXT,
+                            //   onTap: () {
+                            //     FocusManager.instance.primaryFocus?.unfocus();
+                            //     _bloc.add(CheckExitsPhoneEvent(
+                            //         phone: provider.phone));
+                            //   },
+                            // ),
+                            // SizedBox(height: height < 800 ? 0 : 16),
                           ],
                         ),
                       ),
@@ -449,6 +439,8 @@ class _LoginState extends State<_Login> {
                         onLoginCard: onLoginCard,
                         child: _buildButtonBottom(state.appInfoDTO),
                         buttonNext: MButtonWidget(
+                          height: 50,
+                          width: 350,
                           title: 'Tiếp tục',
                           isEnable: true,
                           onTap: () async {
@@ -481,7 +473,8 @@ class _LoginState extends State<_Login> {
                         appInfoDTO: provider.appInfoDTO,
                       ),
                     ),
-                    if (provider.isQuickLogin != FlowType.NEAREST_LOGIN && provider.isQuickLogin != FlowType.QUICK_LOGIN)
+                    if (provider.isQuickLogin != FlowType.NEAREST_LOGIN &&
+                        provider.isQuickLogin != FlowType.QUICK_LOGIN)
                       Positioned(
                         bottom: height < 800 ? 50 : 66,
                         left: 0,
@@ -544,10 +537,36 @@ class _LoginState extends State<_Login> {
                                 _onRegister(provider);
                               },
                             ),
+                            SizedBox(
+                              height: 10,
+                            ),
                             SizedBox(height: height < 800 ? 16 : 5),
                           ],
                         ),
                       ),
+                    if (provider.isQuickLogin == FlowType.FIRST_LOGIN)
+                      Positioned(
+                        bottom: 20,
+                        left: 0,
+                        right: 0,
+                        child: MButtonWidget(
+                          title: 'Tiếp tục',
+                          width: 350,
+                          height: 50,
+                          isEnable: provider.isEnableButton,
+                          colorDisableBgr: AppColor.GREY_BUTTON,
+                          margin: EdgeInsets.only(bottom: 0),
+                          colorEnableText: provider.isEnableButton
+                              ? AppColor.WHITE
+                              : AppColor.GREY_TEXT,
+                          onTap: () {
+                            FocusManager.instance.primaryFocus?.unfocus();
+                            _bloc.add(
+                                CheckExitsPhoneEvent(phone: provider.phone));
+                          },
+                        ),
+                      ),
+                    SizedBox(height: height < 800 ? 0 : 16),
                     Consumer<AuthProvider>(
                       builder: (context, provider, child) {
                         return Positioned(
