@@ -92,13 +92,18 @@ class _BackgroundAppBarHomeState extends State<BackgroundAppBarHome> {
                     const Spacer(),
                     page.logoApp.path.isEmpty
                         ? Container(
-                            width: 60,
-                            height: 30,
+                            width: 96,
+                            height: 56,
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10)),
                             child: CachedNetworkImage(
-                                imageUrl: page.settingDTO.logoUrl, width: 50))
-                        : Image.file(page.logoApp, width: 60, height: 40),
+                                imageUrl: page.settingDTO.logoUrl))
+                        : Image.file(
+                            page.logoApp,
+                            width: 96,
+                            height: 56,
+                            fit: BoxFit.contain,
+                          ),
                   ],
                 ),
               ),
