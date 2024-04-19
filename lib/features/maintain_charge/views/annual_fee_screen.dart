@@ -246,15 +246,19 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Thanh toán qua ứng dụng",
+                    "Dùng ứng dụng Ngân hàng",
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    "ngân hàng / Ví điện tử",
+                    "và Ví điện tử",
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    "có hỗ trợ VietQR",
+                    "có hỗ trợ mã VietQR để thanh toán",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "gói phí dịch vụ ${widget.duration} tháng",
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                 ],

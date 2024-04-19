@@ -107,21 +107,25 @@ class DialogWidget {
         return Material(
           color: AppColor.TRANSPARENT,
           child: Center(
-            child: Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: AppColor.WHITE,
-                borderRadius: BorderRadius.circular(20),
+            child: AnimatedPadding(
+              padding: MediaQuery.of(context).viewInsets,
+              duration: const Duration(milliseconds: 100),
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: AppColor.WHITE,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                width: MediaQuery.of(context).size.width * 0.9,
+                height: MediaQuery.of(context).size.height * 0.25,
+                // alignment: Alignment.center,
+                child: ErrorDialogWidget(
+                    editingController: editingController,
+                    focusNode: focusNode,
+                    onDone: onDone,
+                    onClose: onClose,
+                    text: "Mật khẩu không khớp. Vui lòng thử lại."),
               ),
-              width: MediaQuery.of(context).size.width * 0.9,
-              height: MediaQuery.of(context).size.height * 0.25,
-              // alignment: Alignment.center,
-              child: ErrorDialogWidget(
-                  editingController: editingController,
-                  focusNode: focusNode,
-                  onDone: onDone,
-                  onClose: onClose,
-                  text: "Mật khẩu không khớp. Vui lòng thử lại."),
             ),
           ),
         );
