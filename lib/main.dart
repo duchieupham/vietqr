@@ -132,6 +132,7 @@ Future<File> getImageFile(String file) async {
 
 Future<void> onClearCache() async {
   PackageInfo data = await PackageInfo.fromPlatform();
+  print('Version------- ${SharePrefUtils.getVersionApp()}');
   if (SharePrefUtils.getVersionApp() != data.version) {
     await sharedPrefs
         .remove(Constants.SharedPreferenceKey.ThemeVersion.sharedValue);
@@ -146,6 +147,7 @@ Future<void> onClearCache() async {
     await sharedPrefs.remove(Constants.SharedPreferenceKey.Themes.sharedValue);
     await sharedPrefs
         .remove(Constants.SharedPreferenceKey.SingleTheme.sharedValue);
+    // await sharedPrefs.remove(Constants.SharedPreferenceKey.Profile.sharedValue);
     SharePrefUtils.saveVersionApp(data.version);
   }
 }
@@ -192,8 +194,9 @@ class _VietQRApp extends State<VietQRApp> {
   @override
   void initState() {
     super.initState();
-    print(userId);
+    print('User: $userId');
     _mainScreen = (userId.isNotEmpty) ? const DashBoardScreen() : const Login();
+    // _mainScreen = const DashBoardScreen();
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,

@@ -237,7 +237,8 @@ class AccountRepository {
     bool result = false;
     try {
       final String url = '${EnvConfig.getBaseUrl()}accounts/logout';
-      String fcmToken = await FirebaseMessaging.instance.getToken() ?? '';
+      // String fcmToken = await FirebaseMessaging.instance.getToken() ?? '';
+      final String fcmToken = await SharePrefUtils.getTokenInfo();
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: {'fcmToken': fcmToken},
