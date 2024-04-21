@@ -193,17 +193,26 @@ class _LoginState extends State<_Login> {
                 provider.updateInfoUser(infoUserDTO);
                 _saveAccount(provider);
               }
-
-              Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => DashBoardScreen(
-                      isFromLogin: true,
-                      isLogoutEnterHome: isLogoutEnterHome,
-                    ),
-                    settings: RouteSettings(name: SplashScreen.routeName),
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DashBoardScreen(
+                    isFromLogin: true,
+                    isLogoutEnterHome: isLogoutEnterHome,
                   ),
-                  (route) => route.isFirst);
+                  settings: RouteSettings(name: SplashScreen.routeName),
+                ),
+              );
+              // Navigator.pushAndRemoveUntil(
+              //     context,
+              //     MaterialPageRoute(
+              //       builder: (context) => DashBoardScreen(
+              //         isFromLogin: true,
+              //         isLogoutEnterHome: isLogoutEnterHome,
+              //       ),
+              //       settings: RouteSettings(name: SplashScreen.routeName),
+              //     ),
+              //     (route) => route.isFirst);
 
               if (state.isToast) {
                 Fluttertoast.showToast(
