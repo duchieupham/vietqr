@@ -185,6 +185,9 @@ class NationalInformationView extends StatelessWidget {
                             birthDate: dto.birthdate,
                             gender: gender,
                             address: dto.address,
+                            nationalId: dto.nationalId,
+                            oldNationalId: dto.oldNationalId,
+                            nationalDate: dto.dateValid,
                             email: SharePrefUtils.getProfile().email,
                             imgId: SharePrefUtils.getProfile().imgId,
                           );

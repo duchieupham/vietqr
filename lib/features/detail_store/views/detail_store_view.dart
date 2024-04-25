@@ -16,6 +16,11 @@ import 'package:vierqr/models/store/detail_store_dto.dart';
 import 'package:vierqr/models/store/member_store_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
+import '../../../models/detail_group_dto.dart';
+import '../../bank_detail/blocs/detail_group_bloc.dart';
+import '../../bank_detail/events/detail_group_event.dart';
+import '../../search_user/search_user_screen.dart';
+
 class DetailStoreView extends StatefulWidget {
   final DetailStoreDTO storeDTO;
   final Function(int) callBack;
@@ -80,6 +85,25 @@ class _DetailStoreViewState extends State<DetailStoreView>
 
   Future<void> _onRefresh() async {
     _loadData();
+  }
+
+  void _onInsertMember(List<AccountMemberDTO> listMember) async {
+    FocusManager.instance.primaryFocus?.unfocus();
+
+    setState(() {});
+    await DialogWidget.instance.showModelBottomSheet(
+      isDismissible: true,
+      height: MediaQuery.of(context).size.height * 0.6,
+      margin: EdgeInsets.only(left: 10, right: 10, bottom: 10, top: 40),
+      borderRadius: BorderRadius.circular(16),
+      widget: SearchUserScreen(
+        listMember: listMember,
+        onSelected: (dto) async {
+          listMember = [...listMember, dto];
+          setState(() {});
+        },
+      ),
+    );
   }
 
   @override
@@ -486,28 +510,59 @@ class _DetailStoreViewState extends State<DetailStoreView>
     return Column(
       children: [
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              'Danh sách nhân viên',
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 16,
-              ),
+            Row(
+              children: [
+                Text(
+                  'Danh sách nhân viên',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Container(
+                  height: 25,
+                  padding: const EdgeInsets.fromLTRB(12, 1, 8, 1),
+                  decoration: BoxDecoration(
+                    color: AppColor.BLUE_TEXT.withOpacity(0.25),
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  child: Row(
+                    children: [
+                      Text('${members.length}',
+                          style: TextStyle(color: AppColor.BLUE_TEXT)),
+                      Image.asset('assets/images/ic-member-bdsd-blue.png',
+                          width: 25)
+                    ],
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(width: 10),
-            Container(
-              padding: const EdgeInsets.fromLTRB(12, 1, 8, 1),
-              decoration: BoxDecoration(
-                color: AppColor.BLUE_TEXT.withOpacity(0.25),
-                borderRadius: BorderRadius.circular(25),
-              ),
-              child: Row(
-                children: [
-                  Text('${members.length}',
-                      style: TextStyle(color: AppColor.BLUE_TEXT)),
-                  Image.asset('assets/images/ic-member-bdsd-blue.png',
-                      width: 25)
-                ],
+            GestureDetector(
+              onTap: () {},
+              child: Container(
+                height: 25,
+                padding: EdgeInsets.fromLTRB(12, 4, 20, 4),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(25),
+                  color: AppColor.BLUE_TEXT.withOpacity(0.35),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset(
+                      'assets/images/ic-add-member-white.png',
+                      height: 30,
+                      color: AppColor.BLUE_TEXT,
+                    ),
+                    Text(
+                      'Thêm thành viên',
+                      style: TextStyle(color: AppColor.BLUE_TEXT),
+                    )
+                  ],
+                ),
               ),
             ),
           ],

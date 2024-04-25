@@ -24,12 +24,14 @@ import 'package:vierqr/features/contact/contact_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/blocs/isolate_stream.dart';
 import 'package:vierqr/features/dashboard/curved_navi_bar/curved_nav_bar_model.dart';
+import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
 import 'package:vierqr/features/dashboard/widget/background_app_bar_home.dart';
 import 'package:vierqr/features/dashboard/widget/floating_button.dart';
 import 'package:vierqr/features/dashboard/widget/maintain_widget.dart';
 import 'package:vierqr/features/home/home.dart';
 import 'package:vierqr/features/home/widget/dialog_update.dart';
+import 'package:vierqr/features/login/blocs/login_bloc.dart';
 import 'package:vierqr/features/network/network_bloc.dart';
 import 'package:vierqr/features/network/network_state.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
@@ -44,7 +46,6 @@ import 'package:vierqr/services/local_storage/shared_preference/shared_pref_util
 import 'package:vierqr/splash_screen.dart';
 
 import 'curved_navi_bar/custom_navigation_bar.dart';
-import 'events/dashboard_event.dart';
 import 'widget/disconnect_widget.dart';
 
 class DashBoardScreen extends StatefulWidget {
@@ -397,6 +398,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
                 msg: 'Vui lòng đăng nhập lại ứng dụng',
                 function: () => _bloc.add(TokenEventLogout()),
               );
+              // context.read<LoginBloc>().add(event)
             } else if (state.typeToken == TokenType.Logout) {
               await SharePrefUtils.resetServices();
             } else if (state.typeToken == TokenType.Logout_failed) {

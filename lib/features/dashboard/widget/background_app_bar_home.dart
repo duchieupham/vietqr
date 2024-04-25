@@ -46,7 +46,7 @@ class _BackgroundAppBarHomeState extends State<BackgroundAppBarHome> {
       builder: (context, page, child) {
         File file = page.bannerApp;
         return Container(
-          height: 230,
+          height: 240,
           width: width,
           padding: EdgeInsets.only(top: paddingTop + 12),
           alignment: Alignment.topCenter,
@@ -62,7 +62,7 @@ class _BackgroundAppBarHomeState extends State<BackgroundAppBarHome> {
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
-                  height: 50,
+                  height: 40,
                   width: width,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(

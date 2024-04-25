@@ -93,9 +93,9 @@ class _BankScreenState extends State<_BankScreen>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       initData();
     });
-    _subscription = eventBus.on<GetListBankScreen>().listen((_) {
-      _bloc.add(BankCardEventGetList());
-    });
+    // _subscription = eventBus.on<GetListBankScreen>().listen((_) {
+    //   _bloc.add(BankCardEventGetList());
+    // });
   }
 
   void onActiveKey({
@@ -688,7 +688,7 @@ class _BankScreenState extends State<_BankScreen>
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Padding(
-              padding: const EdgeInsets.only(top:20),
+              padding: const EdgeInsets.only(top: 20),
               child: Text(
                 'Thêm tài khoản ngân hàng',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
