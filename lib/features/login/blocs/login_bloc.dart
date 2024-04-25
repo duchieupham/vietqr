@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/check_utils.dart';
@@ -11,8 +13,13 @@ import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/info_user_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 
+import '../../dashboard/blocs/auth_provider.dart';
+
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
-  LoginBloc() : super(LoginState(appInfoDTO: AppInfoDTO())) {
+
+    @override
+  final BuildContext context;
+  LoginBloc(this.context) : super(LoginState(appInfoDTO: AppInfoDTO())) {
     on<LoginEventByPhone>(_login);
     on<LoginEventByNFC>(_loginNFC);
     on<CheckExitsPhoneEvent>(_checkExitsPhone);
@@ -21,7 +28,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     on<GetVersionAppEvent>(_getVersionApp);
   }
 
-  void _login(LoginEvent event, Emitter emit) async {
+  Future<void> _login(LoginEvent event, Emitter emit) async {
     try {
       if (event is LoginEventByPhone) {
         emit(state.copyWith(
@@ -32,10 +39,13 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
               isToast: event.isToast,
               request: LoginType.LOGIN,
               status: BlocStatus.UNLOADING));
+              Provider.of<AuthProvider>(context, listen: false).checkStateLogin(false);
         } else {
           emit(state.copyWith(
               request: LoginType.ERROR,
               msg: 'Sai mật khẩu. Vui lòng kiểm tra lại mật khẩu của bạn'));
+              Provider.of<AuthProvider>(context, listen: false).checkStateLogin(true);
+
         }
       }
     } catch (e) {

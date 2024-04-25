@@ -61,7 +61,7 @@ class Login extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<LoginBloc>(
-      create: (BuildContext context) => LoginBloc(),
+      create: (BuildContext context) => LoginBloc(context),
       child: ChangeNotifierProvider<LoginProvider>(
         create: (_) => LoginProvider()..init(),
         child: _Login(),

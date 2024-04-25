@@ -28,15 +28,15 @@ class DashBoardEventInsertUnauthenticated extends DashBoardEvent {
   List<Object?> get props => [dto];
 }
 
-class UpdateEvent extends DashBoardEvent {}
+class UpdateEventDashboard extends DashBoardEvent {}
 
 class GetPointEvent extends DashBoardEvent {}
 
-class GetVersionAppEvent extends DashBoardEvent {
+class GetVersionAppEventDashboard extends DashBoardEvent {
   final bool isCheckVer;
   final bool isExist;
 
-  GetVersionAppEvent({
+  GetVersionAppEventDashboard({
     this.isCheckVer = false,
     this.isExist = false,
   });

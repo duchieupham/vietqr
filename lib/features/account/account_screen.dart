@@ -720,7 +720,7 @@ class _SettingWidget extends StatelessWidget {
           onCheckUpdate: () {
             context
                 .read<DashBoardBloc>()
-                .add(GetVersionAppEvent(isCheckVer: true));
+                .add(GetVersionAppEventDashboard(isCheckVer: true));
           },
         );
       },

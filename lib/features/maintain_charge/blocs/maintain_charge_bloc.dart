@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/mixin/base_manager.dart';
+import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/maintain_charge/events/maintain_charge_events.dart';
 import 'package:vierqr/features/maintain_charge/repositories/maintain_charge_repositories.dart';
 import 'package:vierqr/features/maintain_charge/views/active_success_screen.dart';
@@ -61,8 +62,8 @@ class MaintainChargeBloc extends Bloc<MaintainChargeEvents, MaintainChargeState>
             emit(state.copyWith(
                 request: MainChargeType.CONFIRM_ACTIVE_ANNUAL_FEE,
                 status: BlocStatus.SUCCESS));
-            Provider.of<MaintainChargeProvider>(context, listen: false)
-                .setIsError(false);
+            Provider.of<AuthProvider>(context, listen: false)
+                .checkStateLogin(false);
             Provider.of<PinProvider>(context, listen: false).reset();
             Navigator.pushReplacement(
                 context,
@@ -87,8 +88,8 @@ class MaintainChargeBloc extends Bloc<MaintainChargeEvents, MaintainChargeState>
               Provider.of<PinProvider>(context, listen: false).reset();
               Navigator.of(context).pop();
             } else if (state.msg == 'E55') {
-              Provider.of<MaintainChargeProvider>(context, listen: false)
-                  .setIsError(true);
+              Provider.of<AuthProvider>(context, listen: false)
+                  .checkStateLogin(true);
               Provider.of<PinProvider>(context, listen: false).reset();
             }
           }
@@ -103,8 +104,8 @@ class MaintainChargeBloc extends Bloc<MaintainChargeEvents, MaintainChargeState>
             Provider.of<PinProvider>(context, listen: false).reset();
             Navigator.of(context).pop();
           } else if (state.msg == 'E55') {
-            Provider.of<MaintainChargeProvider>(context, listen: false)
-                .setIsError(true);
+            Provider.of<AuthProvider>(context, listen: false)
+                .checkStateLogin(true);
             Provider.of<PinProvider>(context, listen: false).reset();
           }
         }
@@ -160,8 +161,8 @@ class MaintainChargeBloc extends Bloc<MaintainChargeEvents, MaintainChargeState>
           Map<String, dynamic> param = {};
           param['dto'] = state.dto;
           Navigator.of(context).pop();
-          Provider.of<MaintainChargeProvider>(context, listen: false)
-              .setIsError(false);
+          Provider.of<AuthProvider>(context, listen: false)
+              .checkStateLogin(false);
           Provider.of<PinProvider>(context, listen: false).reset();
           // Navigator.of(context).push(MaterialPageRoute(
           //     builder: (_) => ConfirmActiveKeyScreen(
@@ -181,8 +182,8 @@ class MaintainChargeBloc extends Bloc<MaintainChargeEvents, MaintainChargeState>
             Provider.of<PinProvider>(context, listen: false).reset();
             Navigator.of(context).pop();
           } else if (state.msg == 'E55') {
-            Provider.of<MaintainChargeProvider>(context, listen: false)
-                .setIsError(true);
+            Provider.of<AuthProvider>(context, listen: false)
+                .checkStateLogin(true);
             Provider.of<PinProvider>(context, listen: false).reset();
           }
         }

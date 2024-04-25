@@ -11,6 +11,7 @@ import 'package:vierqr/commons/constants/configurations/app_images.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
+import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/maintain_charge/blocs/maintain_charge_bloc.dart';
 import 'package:vierqr/features/maintain_charge/states/maintain_charge_state.dart';
 import 'package:vierqr/services/providers/pin_provider.dart';
@@ -137,16 +138,16 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
 
   void onSubmit() {
     isClear = false;
-    Provider.of<MaintainChargeProvider>(context, listen: false)
-        .setIsError(false);
+    Provider.of<AuthProvider>(context, listen: false)
+        .checkStateLogin(false);
     String phone = SharePrefUtils.getPhone();
     DialogWidget.instance.openConfirmPassDialog(
       editingController: _editingController,
-      title: "",
+      title: "Nhập mật khẩu ứng dụng\nVietQR để xác thực",
       onClose: () {
         Provider.of<PinProvider>(context, listen: false).reset();
-        Provider.of<MaintainChargeProvider>(context, listen: false)
-            .setIsError(false);
+        Provider.of<AuthProvider>(context, listen: false)
+            .checkStateLogin(false);
         Navigator.of(context).pop();
       },
       onDone: (pin) {
@@ -556,8 +557,8 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                   onPressed: () {
                     _controller.clear();
                     isClear = true;
-                    Provider.of<MaintainChargeProvider>(context, listen: false)
-                        .setIsError(false);
+                    Provider.of<AuthProvider>(context, listen: false)
+                        .checkStateLogin(false);
                     setState(() {
                       keyValue = '';
                     });
@@ -672,19 +673,19 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                       ),
                       InkWell(
                         onTap: () {
-                          Provider.of<MaintainChargeProvider>(context,
+                          Provider.of<AuthProvider>(context,
                                   listen: false)
-                              .setIsError(false);
+                              .checkStateLogin(false);
                           String phone = SharePrefUtils.getPhone();
                           DialogWidget.instance.openConfirmPassDialog(
                             editingController: _editingController,
-                            title: "",
+                            title: "Nhập mật khẩu ứng dụng\nVietQR để xác thực",
                             onClose: () {
                               Provider.of<PinProvider>(context, listen: false)
                                   .reset();
-                              Provider.of<MaintainChargeProvider>(context,
+                              Provider.of<AuthProvider>(context,
                                       listen: false)
-                                  .setIsError(false);
+                                  .checkStateLogin(false);
                               Navigator.of(context).pop();
                             },
                             onDone: (pin) {

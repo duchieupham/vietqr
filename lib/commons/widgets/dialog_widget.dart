@@ -120,6 +120,7 @@ class DialogWidget {
                 height: MediaQuery.of(context).size.height * 0.25,
                 // alignment: Alignment.center,
                 child: ErrorDialogWidget(
+                    title: title,
                     editingController: editingController,
                     focusNode: focusNode,
                     onDone: onDone,

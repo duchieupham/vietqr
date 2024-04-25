@@ -33,8 +33,8 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
     on<GetUserSettingEvent>(_getUserSetting);
     on<TokenEventLogout>(_logout);
     on<GetPointEvent>(_getPointAccount);
-    on<GetVersionAppEvent>(_getVersionApp);
-    on<UpdateEvent>(_updateEvent);
+    on<GetVersionAppEventDashboard>(_getVersionApp);
+    on<UpdateEventDashboard>(_updateEvent);
     on<GetListThemeEvent>(_getListTheme);
     on<GetBanksEvent>(_getListBankTypes);
     on<UpdateThemeEvent>(_updateTheme);
@@ -177,7 +177,7 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
     try {
       emit(
           state.copyWith(status: BlocStatus.NONE, request: DashBoardType.NONE));
-      if (event is GetVersionAppEvent) {
+      if (event is GetVersionAppEventDashboard) {
         final result = await dashBoardRepository.getVersionApp();
         if (result.id.isNotEmpty) {
           result.isCheckApp = event.isCheckVer;
