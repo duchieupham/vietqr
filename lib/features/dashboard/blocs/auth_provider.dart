@@ -77,6 +77,13 @@ class AuthProvider with ChangeNotifier {
 
   File avatarUser = File('');
 
+  bool isError = false;
+
+  void checkStateLogin(bool check){
+    isError = check;
+    notifyListeners();
+  }
+
   void setImage(File? file) {
     if (file == null) return;
     avatarUser = file;

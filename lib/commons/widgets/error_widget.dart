@@ -3,6 +3,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/widgets/pin_widget.dart';
+import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/services/providers/maintain_charge_provider.dart';
 
 import '../../services/providers/pin_provider.dart';
@@ -14,6 +15,7 @@ class ErrorDialogWidget extends StatelessWidget {
   final Function(String) onDone;
   final Function() onClose;
   final TextEditingController editingController;
+  final String title;
 
   final FocusNode focusNode;
   const ErrorDialogWidget({
@@ -23,11 +25,12 @@ class ErrorDialogWidget extends StatelessWidget {
     required this.onClose,
     required this.focusNode,
     required this.editingController,
+    required this.title,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<MaintainChargeProvider>(
+    return Consumer<AuthProvider>(
       builder: (context, value, child) {
         return Stack(
           children: [
@@ -36,7 +39,8 @@ class ErrorDialogWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  "Nhập mật khẩu ứng dụng\nVietQR để xác thực",
+                  // "Nhập mật khẩu ứng dụng\nVietQR để xác thực",
+                  title,
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 30),

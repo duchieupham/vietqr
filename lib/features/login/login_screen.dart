@@ -61,7 +61,7 @@ class Login extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<LoginBloc>(
-      create: (BuildContext context) => LoginBloc(),
+      create: (BuildContext context) => LoginBloc(context),
       child: ChangeNotifierProvider<LoginProvider>(
         create: (_) => LoginProvider()..init(),
         child: _Login(),
@@ -446,7 +446,8 @@ class _LoginState extends State<_Login> {
                         },
                         onRegister: () => _onRegister(provider),
                         onLoginCard: onLoginCard,
-                        child: _buildButtonBottom(state.appInfoDTO),
+                        // child: _buildButtonBottom(state.appInfoDTO),
+                        child: Padding(padding: EdgeInsets.all(0)),
                         buttonNext: MButtonWidget(
                           height: 50,
                           width: 350,
@@ -493,7 +494,7 @@ class _LoginState extends State<_Login> {
                             Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 20),
-                              child: _buildButtonBottom(state.appInfoDTO),
+                              // child: _buildButtonBottom(state.appInfoDTO),
                             ),
                             SizedBox(height: 20),
                             Column(
@@ -635,124 +636,124 @@ class _LoginState extends State<_Login> {
     );
   }
 
-  Widget _buildButtonBottom(AppInfoDTO? appInfoDTO) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildCustomButtonIcon(
-            onTap: () async {
-              FocusManager.instance.primaryFocus?.unfocus();
-              _bloc.add(GetFreeToken());
-              final data = await Navigator.pushNamed(
-                context,
-                Routes.SCAN_QR_VIEW,
-              );
-              if (data != null) {
-                if (data is Map<String, dynamic>) {
-                  if (!mounted) return;
-                  await QRScannerUtils.instance.onScanNavi(
-                    data,
-                    context,
-                    isShowIconFirst: false,
-                  );
-                  await SharePrefUtils.saveTokenFree('');
-                }
-              }
-            },
-            title: 'Quét QR',
-            pathIcon: 'assets/images/qr-contact-other-blue.png',
-          ),
-          _buildCustomButtonIcon(
-            onTap: () async {
-              FocusManager.instance.primaryFocus?.unfocus();
-              NavigatorUtils.navigatePage(
-                  context, CreateQrUnQuthen(appInfo: appInfoDTO),
-                  routeName: CreateQrUnQuthen.routeName);
-            },
-            title: 'Tạo mã VietQR',
-            pathIcon: 'assets/images/ic-viet-qr-small.png',
-          ),
-          _buildCustomButtonIcon(
-            onTap: () {
-              FocusManager.instance.primaryFocus?.unfocus();
-              NavigatorUtils.navigatePage(
-                  context,
-                  ContactUSScreen(
-                    appInfoDTO: appInfoDTO ?? AppInfoDTO(),
-                  ),
-                  routeName: ContactUSScreen.routeName);
-            },
-            title: 'Liên hệ',
-            pathIcon: 'assets/images/ic-introduce.png',
-          ),
-          _buildCustomButtonIcon(
-            onTap: () async {
-              FocusManager.instance.primaryFocus?.unfocus();
-              showDialog(
-                barrierDismissible: false,
-                context: NavigationService.navigatorKey.currentContext!,
-                builder: (BuildContext context) {
-                  return DialogUpdateView(
-                    onCheckUpdate: () {
-                      _bloc.add(GetFreeToken(isCheckVer: true));
-                    },
-                  );
-                },
-              );
-            },
-            title: 'Phiên bản app',
-            pathIcon: 'assets/images/ic-gear.png',
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildButtonBottom(AppInfoDTO? appInfoDTO) {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(horizontal: 12),
+  //     child: Row(
+  //       mainAxisAlignment: MainAxisAlignment.spaceAround,
+  //       children: [
+  //         _buildCustomButtonIcon(
+  //           onTap: () async {
+  //             FocusManager.instance.primaryFocus?.unfocus();
+  //             _bloc.add(GetFreeToken());
+  //             final data = await Navigator.pushNamed(
+  //               context,
+  //               Routes.SCAN_QR_VIEW,
+  //             );
+  //             if (data != null) {
+  //               if (data is Map<String, dynamic>) {
+  //                 if (!mounted) return;
+  //                 await QRScannerUtils.instance.onScanNavi(
+  //                   data,
+  //                   context,
+  //                   isShowIconFirst: false,
+  //                 );
+  //                 await SharePrefUtils.saveTokenFree('');
+  //               }
+  //             }
+  //           },
+  //           title: 'Quét QR',
+  //           pathIcon: 'assets/images/qr-contact-other-blue.png',
+  //         ),
+  //         _buildCustomButtonIcon(
+  //           onTap: () async {
+  //             FocusManager.instance.primaryFocus?.unfocus();
+  //             NavigatorUtils.navigatePage(
+  //                 context, CreateQrUnQuthen(appInfo: appInfoDTO),
+  //                 routeName: CreateQrUnQuthen.routeName);
+  //           },
+  //           title: 'Tạo mã VietQR',
+  //           pathIcon: 'assets/images/ic-viet-qr-small.png',
+  //         ),
+  //         _buildCustomButtonIcon(
+  //           onTap: () {
+  //             FocusManager.instance.primaryFocus?.unfocus();
+  //             NavigatorUtils.navigatePage(
+  //                 context,
+  //                 ContactUSScreen(
+  //                   appInfoDTO: appInfoDTO ?? AppInfoDTO(),
+  //                 ),
+  //                 routeName: ContactUSScreen.routeName);
+  //           },
+  //           title: 'Liên hệ',
+  //           pathIcon: 'assets/images/ic-introduce.png',
+  //         ),
+  //         _buildCustomButtonIcon(
+  //           onTap: () async {
+  //             FocusManager.instance.primaryFocus?.unfocus();
+  //             showDialog(
+  //               barrierDismissible: false,
+  //               context: NavigationService.navigatorKey.currentContext!,
+  //               builder: (BuildContext context) {
+  //                 return DialogUpdateView(
+  //                   onCheckUpdate: () {
+  //                     _bloc.add(GetFreeToken(isCheckVer: true));
+  //                   },
+  //                 );
+  //               },
+  //             );
+  //           },
+  //           title: 'Phiên bản app',
+  //           pathIcon: 'assets/images/ic-gear.png',
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
-  Widget _buildCustomButtonIcon({
-    required String title,
-    required Function() onTap,
-    required String pathIcon,
-  }) {
-    return InkWell(
-      onTap: () {
-        onTap();
-      },
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 77,
-            height: 77,
-            padding: EdgeInsets.all(4),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                color: AppColor.GREY_DADADA,
-              ),
-              color: AppColor.WHITE,
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.asset(
-                pathIcon,
-                height: 36,
-                width: 36,
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 8,
-          ),
-          Text(
-            title,
-            style: TextStyle(fontSize: 12),
-          )
-        ],
-      ),
-    );
-  }
+  // Widget _buildCustomButtonIcon({
+  //   required String title,
+  //   required Function() onTap,
+  //   required String pathIcon,
+  // }) {
+  //   return InkWell(
+  //     onTap: () {
+  //       onTap();
+  //     },
+  //     child: Column(
+  //       mainAxisSize: MainAxisSize.min,
+  //       children: [
+  //         Container(
+  //           width: 77,
+  //           height: 77,
+  //           padding: EdgeInsets.all(4),
+  //           decoration: BoxDecoration(
+  //             borderRadius: BorderRadius.circular(10),
+  //             border: Border.all(
+  //               color: AppColor.GREY_DADADA,
+  //             ),
+  //             color: AppColor.WHITE,
+  //           ),
+  //           child: ClipRRect(
+  //             borderRadius: BorderRadius.circular(10),
+  //             child: Image.asset(
+  //               pathIcon,
+  //               height: 36,
+  //               width: 36,
+  //             ),
+  //           ),
+  //         ),
+  //         const SizedBox(
+  //           height: 8,
+  //         ),
+  //         Text(
+  //           title,
+  //           style: TextStyle(fontSize: 12),
+  //         )
+  //       ],
+  //     ),
+  //   );
+  // }
 
   String readTagToKey(NfcTag tag, String userId) {
     String card = '';

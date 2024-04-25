@@ -60,6 +60,15 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
             child: Stack(
               children: [
                 BackgroundAppBarLogin(),
+                Positioned(
+                  bottom: 10,
+                  left: 20,
+                  right: 20,
+                  child: Text(
+                    'Chọn tài khoản\nđể tiếp tục đăng nhập',
+                    style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold),
+                  ),
+                ),
               ],
             ),
           ),
@@ -213,7 +222,7 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
           ? const EdgeInsets.only(left: 20, right: 20, bottom: 6)
           : const EdgeInsets.only(left: 20, right: 20, bottom: 10),
       decoration: BoxDecoration(
-          border: Border.all(color: AppColor.GREY_DADADA,width: 2),
+          border: Border.all(color: AppColor.GREY_DADADA, width: 2),
           borderRadius: BorderRadius.circular(5),
           color: AppColor.WHITE),
       child: Container(
