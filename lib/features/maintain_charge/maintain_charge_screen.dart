@@ -353,8 +353,9 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                       onTap: () {
                         setState(() {
                           selectedId = value.listAnnualFee[index].feeId;
-                          selectFeeAmount = value.listAnnualFee[index].amount! *
-                              value.listAnnualFee[index].duration!;
+                          // selectFeeAmount = value.listAnnualFee[index].amount! *
+                          //     value.listAnnualFee[index].duration!;
+                          selectFeeAmount = value.listAnnualFee[index].totalWithVat;
                         });
                       },
                       child: Stack(
@@ -645,7 +646,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Tổng tiền:",
+                            "(Tổng tiền + VAT)",
                             style: TextStyle(fontSize: 15),
                           ),
                           const SizedBox(height: 2),
