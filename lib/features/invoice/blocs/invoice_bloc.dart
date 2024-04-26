@@ -26,15 +26,26 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceStates> with BaseManager {
 
   void _getDetailInvoice(GetInvoiceDetail event, Emitter emit) async {
     try {
-      emit(GetInvoiceDetailLoading());
+      if (state.status == BlocStatus.NONE) {
+        emit(state.copyWith(status: BlocStatus.LOADING));
+      }
+
       final result =
           await _invoiceRepository.getInvoiceDetail(invoiceId: event.invoiceId);
       if (result != null) {
-        emit(GetInvoiceDetailSuccess(data: result));
+        emit(state.copyWith(
+            status: BlocStatus.SUCCESS,
+            invoiceDetailDTO: result,
+            request: InvoiceType.INVOICE_DETAIL));
       } else {
-        //emiterror
+        emit(state.copyWith(
+            invoiceDetailDTO: null,
+            request: InvoiceType.INVOICE_DETAIL,
+            status: BlocStatus.NONE));
       }
     } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(status: BlocStatus.ERROR, msg: 'Đã có lỗi xảy ra.'));
       //emiterror
     }
   }

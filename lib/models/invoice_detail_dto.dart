@@ -8,7 +8,7 @@ class InvoiceDetailDTO {
   int? status;
   int? vatAmount;
   int? amount;
-  int? vat;
+  double? vat;
   String? bankId;
   String? bankAccount;
   String? bankShortName;

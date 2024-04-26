@@ -17,6 +17,7 @@ import 'package:vierqr/features/invoice/widgets/popup_filter_widget.dart';
 import 'package:vierqr/models/metadata_dto.dart';
 
 import '../../commons/constants/configurations/app_images.dart';
+import '../../commons/constants/configurations/route.dart';
 import '../../commons/utils/currency_utils.dart';
 import '../../services/providers/invoice_provider.dart';
 import 'blocs/invoice_bloc.dart';
@@ -256,7 +257,10 @@ class __InvoiceState extends State<_Invoice> {
         itemCount: state.listInvoice!.length,
         itemBuilder: (context, index) {
           return GestureDetector(
-            onTap: () {},
+            onTap: () {
+              Navigator.of(context).pushNamed(Routes.INVOICE_DETAIL,
+                  arguments: {'id': state.listInvoice?[index].invoiceId});
+            },
             child: Container(
               height: 150,
               width: double.infinity,
@@ -371,7 +375,7 @@ class __InvoiceState extends State<_Invoice> {
       child: ListView.separated(
         physics: NeverScrollableScrollPhysics(),
         separatorBuilder: (context, index) => const SizedBox(height: 10),
-        itemCount: 3,
+        itemCount: 4,
         itemBuilder: (context, index) {
           return Container(
             height: 150,
@@ -379,7 +383,8 @@ class __InvoiceState extends State<_Invoice> {
             decoration: BoxDecoration(
                 color: AppColor.GREY_DADADA.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(5),
-                border: Border.all(color: AppColor.GREY_DADADA, width: 0.5)),
+                border: Border.all(
+                    color: AppColor.GREY_DADADA.withOpacity(0.2), width: 0.5)),
             child: Column(
               children: [
                 Container(

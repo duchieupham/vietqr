@@ -68,9 +68,7 @@ class InvoiceRepository extends BaseRepo {
       );
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
-        return result = data.map<InvoiceDetailDTO>((json) {
-          return InvoiceDetailDTO.fromJson(json);
-        });
+        return InvoiceDetailDTO.fromJson(data);
       }
     } catch (e) {
       LOG.error(e.toString());
