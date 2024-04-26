@@ -7,6 +7,7 @@ import 'package:vierqr/models/invoice_detail_dto.dart';
 
 import '../../../commons/constants/configurations/app_images.dart';
 import '../../../commons/constants/configurations/theme.dart';
+import '../../../commons/widgets/dialog_qr_invoice_widget.dart';
 import '../../../commons/widgets/separator_widget.dart';
 import '../states/invoice_states.dart';
 
@@ -319,7 +320,11 @@ class _InvoiceDetailScreenState extends State<_InvoiceDetailScreen> {
     return Container(
       padding: const EdgeInsets.only(left: 40, right: 40, bottom: 30),
       child: InkWell(
-        onTap: () {},
+        onTap: () {
+          showDialog(context: context, builder: (context){
+            return DialogQrInvoiceDetailWidget();
+          });
+        },
         child: Container(
           padding: const EdgeInsets.only(left: 10, right: 10),
           height: 50,
