@@ -98,11 +98,14 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
   void onFcmMessage() async {
     await NotificationService().initialNotification();
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      // Xử lý push notification nếu ứng dụng đang chạy
-      LOG.info(
-          "Push notification received: ${message.notification?.title} - ${message.notification?.body}");
-      LOG.info("receive data: ${message.data}");
-      //process when receive data
+      if (message.data.isNotEmpty) {
+        if (message.data['notificationType'] != null &&
+            message.data['notificationType'] ==
+                Stringify.NOTI_TYPE_ANNUAL_FEE_SUCCESS) {
+          Navigator.pushReplacementNamed(context, Routes.DASHBOARD);
+          DialogWidget.instance.openActiveAnnualSuccess();
+        }
+      }
     });
   }
 
