@@ -8,7 +8,6 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/wallet_provider.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import '../../scan_qr/widgets/qr_scan_widget.dart';
 
 class CardWallet extends StatelessWidget {
@@ -194,6 +193,7 @@ class CardWallet extends StatelessWidget {
                                     context, Routes.INVOICE_SCREEN);
 
                                 // eventBus.fire(ChangeBottomBarEvent(2));
+                                Navigator.pushNamed(context, Routes.INVOICE_DETAIL);
                               },
                             ),
                           ),
@@ -245,17 +245,11 @@ class CardWallet extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            isSvg == false
-                ? Image.asset(
-                    pathIcon,
-                    height: 25,
-                    width: 25,
-                  )
-                : SvgPicture.asset(
-                    pathIcon,
-                    height: 35,
-                    // color: AppColor.BLACK,
-                  ),
+            Image.asset(
+              pathIcon,
+              height: 25,
+              width: 25,
+            ),
             const SizedBox(height: 8),
             Text(
               title,

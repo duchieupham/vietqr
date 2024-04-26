@@ -18,6 +18,7 @@ import 'package:vierqr/services/local_storage/shared_preference/shared_pref_util
 import 'package:vierqr/services/providers/maintain_charge_provider.dart';
 import 'package:vierqr/services/providers/register_provider.dart';
 import 'package:vierqr/services/socket_service/socket_service.dart';
+import 'features/invoice/widgets/invoice_detail_screen.dart';
 import 'features/maintain_charge/views/active_success_screen.dart';
 import 'features/maintain_charge/views/annual_fee_screen.dart';
 import 'models/maintain_charge_create.dart';
@@ -376,6 +377,7 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.QR_SHARE_VIEW: (context) => QRShareView(),
                   Routes.SCAN_QR_VIEW: (context) => const ScanQrScreen(),
                   Routes.SEARCH_BANK: (context) => SearchBankView(),
+                  Routes.INVOICE_DETAIL: (context) => InvoiceDetailScreen(),
                   Routes.NATIONAL_INFORMATION: (context) =>
                       const NationalInformationView(),
                   Routes.INTRODUCE_SCREEN: (context) => const IntroduceScreen(),

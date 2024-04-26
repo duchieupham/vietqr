@@ -48,6 +48,7 @@ class Routes {
   static const String ACTIVE_SUCCESS_SCREEN = '/active_success_screen';
   static const String ANNUAL_FEE_SCREEN = '/annual_fee_screen';
   static const String INVOICE_SCREEN = '/invoice_screen';
+  static const String INVOICE_DETAIL = '/invoice_detail';
 
   // static const String SETTING_BDSD = '/setting_bdsd';
   static const String TRANSACTION_WALLET = '/transaction_wallet';
