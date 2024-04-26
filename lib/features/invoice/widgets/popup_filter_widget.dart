@@ -21,6 +21,7 @@ class PopupFilterWidget extends StatefulWidget {
 class _PopupFilterWidgetState extends State<PopupFilterWidget> {
   int? status = 0;
   int? selectBank = 0;
+  int? selectTime = 9;
   List<BankAccountDTO> list = [];
 
   @override
@@ -196,6 +197,83 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                             onChanged: (value) {
                               setState(() {
                                 selectBank = value!;
+                              });
+                            },
+                            buttonStyleData: ButtonStyleData(
+                              width: MediaQuery.of(context).size.width,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 12),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: Colors.white,
+                              ),
+                            ),
+                            iconStyleData: const IconStyleData(
+                              icon: Icon(Icons.expand_more),
+                              iconSize: 14,
+                              iconEnabledColor: Colors.black,
+                              iconDisabledColor: Colors.grey,
+                            ),
+                            dropdownStyleData: DropdownStyleData(
+                              decoration: BoxDecoration(
+                                  color: AppColor.WHITE,
+                                  borderRadius: BorderRadius.circular(5)),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+                      DefaultTextStyle(
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        child: Text(
+                          "Thời gian",
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Container(
+                        padding: const EdgeInsets.fromLTRB(20, 4, 20, 4),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            border: Border.all(
+                                color: AppColor.GREY_DADADA, width: 0.5)),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton2<int>(
+                            items: [
+                              DropdownMenuItem<int>(
+                                value: 9,
+                                child: Container(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    'Tất cả',
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              DropdownMenuItem<int>(
+                                value: 1,
+                                child: Container(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    'Tháng',
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                            value: selectTime,
+                            onChanged: (value) {
+                              setState(() {
+                                selectTime = value!;
                               });
                             },
                             buttonStyleData: ButtonStyleData(

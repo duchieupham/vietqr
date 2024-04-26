@@ -16,10 +16,17 @@ class InvoiceProvider extends ChangeNotifier {
     // const InvoiceStatus(id: 2, name: ''),
   ];
 
+  BankAccountDTO? selectBank;
+
   InvoiceTime invoiceTime = const InvoiceTime(id: 0, name: 'Tất cả');
 
   InvoiceStatus invoiceStatus =
       const InvoiceStatus(id: 0, name: 'Chưa thanh toán');
+
+  void selectBankAccount(BankAccountDTO bank) {
+    selectBank = bank;
+    notifyListeners();
+  }
 
   void changeTime(InvoiceTime time) {
     invoiceTime = time;
