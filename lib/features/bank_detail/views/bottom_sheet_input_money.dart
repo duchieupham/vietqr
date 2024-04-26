@@ -87,7 +87,7 @@ class _BottomSheetAddUserBDSDState extends State<BottomSheetInputMoney> {
                         const Text(
                           'VND',
                           style: TextStyle(
-                              fontSize: 14, color: AppColor.textBlack),
+                              fontSize: 14, color: AppColor.BLACK_TEXT),
                         ),
                         const SizedBox(width: 8),
                       ],

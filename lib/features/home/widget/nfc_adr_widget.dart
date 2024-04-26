@@ -97,7 +97,7 @@ class _NFCDialogState extends State<NFCDialog> {
                 text: TextSpan(
                   style: TextStyle(
                     fontSize: 14,
-                    color: AppColor.textBlack,
+                    color: AppColor.BLACK_TEXT,
                     height: 1.4,
                   ),
                   children: [

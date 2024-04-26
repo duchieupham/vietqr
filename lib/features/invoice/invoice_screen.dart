@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
@@ -13,6 +14,7 @@ import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/commons/widgets/shimmer_block.dart';
 import 'package:vierqr/features/invoice/states/invoice_states.dart';
 import 'package:vierqr/features/invoice/widgets/popup_filter_widget.dart';
+import 'package:vierqr/models/metadata_dto.dart';
 
 import '../../commons/constants/configurations/app_images.dart';
 import '../../commons/utils/currency_utils.dart';
@@ -43,13 +45,17 @@ class __InvoiceState extends State<_Invoice> {
   late InvoiceBloc _bloc;
   late InvoiceProvider _provider;
   String? selectBankId;
+  MetaDataDTO? metadata;
+  ScrollController? scrollController;
 
   initData({bool isRefresh = false}) {
     if (isRefresh) {}
+
     _bloc.add(GetInvoiceList(
-        status: _provider.invoiceStatus.id,
+        status: _provider.invoiceStatus?.id,
         bankId: selectBankId ?? '',
-        filterBy: _provider.invoiceTime.id,
+        // time: _provider.invoiceTime,
+        filterBy: 1,
         page: 1));
   }
 
@@ -61,19 +67,45 @@ class __InvoiceState extends State<_Invoice> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       initData();
     });
+    scrollController = ScrollController();
+    scrollController!.addListener(() async {
+      if (scrollController!.position.pixels ==
+          scrollController!.position.maxScrollExtent) {
+        int total_page = (metadata!.total! / 20).ceil();
+        if (total_page > metadata!.page!) {
+          _bloc.add(LoadMoreInvoice(
+              status: _provider.invoiceStatus?.id,
+              bankId: _provider.selectBank?.id ?? '',
+              time: _provider.invoiceMonth != null
+                  ? DateFormat('yyyy-MM').format(_provider.invoiceMonth!)
+                  : '',
+              filterBy: 1,
+              page: 1));
+        }
+      }
+    });
   }
 
   void onFilter() async {
     await showCupertinoModalPopup(
       context: context,
-      builder: (context) => PopupFilterWidget(status: _provider.invoiceStatus),
+      builder: (context) => PopupFilterWidget(
+          bloc: _bloc,
+          bank: _provider.selectBank ?? null,
+          status: _provider.selectedStatus!,
+          bankType: _provider.selectBankType!,
+          invoiceMonth: _provider.invoiceMonth ?? DateTime.now()),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<InvoiceBloc, InvoiceStates>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state.status == BlocStatus.SUCCESS) {
+          metadata = state.metaDataDTO;
+        }
+      },
       builder: (context, state) {
         return Consumer<InvoiceProvider>(
           builder: (context, provider, child) {
@@ -88,6 +120,7 @@ class __InvoiceState extends State<_Invoice> {
                     leadingWidth: 100,
                     leading: InkWell(
                       onTap: () {
+                        provider.reset();
                         Navigator.of(context).pop();
                       },
                       child: Container(
@@ -125,7 +158,8 @@ class __InvoiceState extends State<_Invoice> {
                       const SizedBox(height: 30),
                       _invoiceSection(provider, state),
                       // const SizedBox(height: 15),
-                      _buildListInvoice(state),
+                      _buildListInvoice(state, provider),
+                      loadMoreIcon(state)
                     ]),
                   )
                 ],
@@ -152,9 +186,25 @@ class __InvoiceState extends State<_Invoice> {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               Text(
-                provider.invoiceStatus.name,
+                provider.selectedStatus == 0
+                    ? 'chưa thanh toán'
+                    : 'đã thanh toán',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
+              provider.invoiceMonth != null
+                  ? Text(
+                      'Tháng ${provider.invoiceMonth?.month}/${provider.invoiceMonth?.year}',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    )
+                  : const SizedBox.shrink(),
+              provider.selectBank != null
+                  ? Text(
+                      'TK ${provider.selectBank?.bankShortName} - ${provider.selectBank?.bankAccount}',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    )
+                  : const SizedBox.shrink(),
             ],
           ),
           GestureDetector(
@@ -179,16 +229,31 @@ class __InvoiceState extends State<_Invoice> {
     );
   }
 
-  Widget _buildListInvoice(InvoiceStates state) {
-    if (state.status == BlocStatus.LOADING) {
-      return _buildLoading();
+  Widget _buildListInvoice(InvoiceStates state, InvoiceProvider provider) {
+    switch (state.status) {
+      case BlocStatus.LOADING:
+        return _buildLoading();
+      case BlocStatus.ERROR:
+        return const SizedBox.shrink();
+      case BlocStatus.NONE:
+        return Container(
+          padding: const EdgeInsets.only(top: 250),
+          // height: MediaQuery.of(context).size.height,
+          child: Center(
+            child: Text('Trống'),
+          ),
+        );
+      default:
+        break;
     }
     return Container(
-      padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-      height: MediaQuery.of(context).size.height,
+      padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
+      height: MediaQuery.of(context).size.height * 0.78,
       child: ListView.separated(
+        physics: const AlwaysScrollableScrollPhysics(),
+        controller: scrollController,
         separatorBuilder: (context, index) => const SizedBox(height: 10),
-        itemCount: 3,
+        itemCount: state.listInvoice!.length,
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {},
@@ -212,13 +277,18 @@ class __InvoiceState extends State<_Invoice> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              'Hoá đơn phí giao dịch tháng \n04/2024',
-                              style: TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.bold),
+                            SizedBox(
+                              width: 260,
+                              child: Text(
+                                '${state.listInvoice?[index].invoiceName}',
+                                style: TextStyle(
+                                    fontSize: 15, fontWeight: FontWeight.bold),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                             Text(
-                              'MBBank - 1123355589',
+                              '${state.listInvoice?[index].bankShortName} - ${state.listInvoice?[index].bankAccount}',
                               style: TextStyle(fontSize: 15),
                             ),
                           ],
@@ -238,11 +308,13 @@ class __InvoiceState extends State<_Invoice> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            '${CurrencyUtils.instance.getCurrencyFormatted('7200000')} VND',
+                            '${CurrencyUtils.instance.getCurrencyFormatted(state.listInvoice![index].totalAmount.toString())} VND',
                             style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
-                                color: AppColor.ORANGE_DARK),
+                                color: provider.selectedStatus == 0
+                                    ? AppColor.ORANGE_DARK
+                                    : AppColor.GREEN),
                           ),
                           Container(
                             padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
@@ -278,6 +350,18 @@ class __InvoiceState extends State<_Invoice> {
         },
       ),
     );
+  }
+
+  Widget loadMoreIcon(InvoiceStates state) {
+    if (state.status == BlocStatus.LOAD_MORE) {
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+    return const SizedBox.shrink();
   }
 
   Widget _buildLoading() {

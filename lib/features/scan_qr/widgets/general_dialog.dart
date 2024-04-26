@@ -65,7 +65,7 @@ class GeneralDialog extends StatelessWidget {
             textAlign: TextAlign.center,
             text: TextSpan(
               style: TextStyle(
-                color: AppColor.textBlack,
+                color: AppColor.BLACK_TEXT,
               ),
               children: [
                 TextSpan(text: 'Để chia sẻ hình ảnh, vui lòng cấp quyền cho '),
@@ -73,7 +73,7 @@ class GeneralDialog extends StatelessWidget {
                   text: '"App VietQR"',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: AppColor.textBlack,
+                    color: AppColor.BLACK_TEXT,
                   ),
                 ),
                 TextSpan(text: ' truy cập ảnh, phương tiện và tệp tại mục '),
@@ -81,7 +81,7 @@ class GeneralDialog extends StatelessWidget {
                   text: 'Cài đặt',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: AppColor.textBlack,
+                    color: AppColor.BLACK_TEXT,
                   ),
                 ),
                 TextSpan(text: ' của thiết bị.'),

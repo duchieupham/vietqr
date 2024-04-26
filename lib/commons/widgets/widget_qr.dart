@@ -159,7 +159,7 @@ class _VietQrState extends State<WidgetQr> {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
-                                  color: AppColor.textBlack,
+                                  color: AppColor.BLACK_TEXT,
                                   fontSize: small ? 10 : 12,
                                 ),
                               ),

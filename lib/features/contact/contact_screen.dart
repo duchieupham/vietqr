@@ -614,7 +614,7 @@ class _ContactStateState extends State<_ContactState>
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: (i == 0)
-                                          ? AppColor.textBlack
+                                          ? AppColor.BLACK_TEXT
                                           : AppColor.TRANSPARENT,
                                       fontSize: 16,
                                     ),
@@ -706,7 +706,7 @@ class _ContactStateState extends State<_ContactState>
                             fontSize: 11,
                             fontWeight: FontWeight.w400,
                             color: dto.type == 4
-                                ? AppColor.textBlack
+                                ? AppColor.BLACK_TEXT
                                 : dto.bankColor,
                             height: 1.4,
                           ),

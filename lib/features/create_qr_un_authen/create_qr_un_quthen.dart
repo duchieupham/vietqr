@@ -51,7 +51,8 @@ class _CreateQrUnQuthenState extends State<CreateQrUnQuthen> {
     return Scaffold(
       appBar: const MAppBar(title: 'Tạo mã VietQR'),
       body: BlocProvider<QRCodeUnUTBloc>(
-        create: (context) => QRCodeUnUTBloc(context)..add(LoadDataBankTypeEvent()),
+        create: (context) =>
+            QRCodeUnUTBloc(context)..add(LoadDataBankTypeEvent()),
         child: BlocConsumer<QRCodeUnUTBloc, QRCodeUnUTState>(
           listener: (context, state) {
             if (state is CreateQRLoadingState) {
@@ -213,7 +214,7 @@ class _CreateQrUnQuthenState extends State<CreateQrUnQuthen> {
                                             'VND',
                                             style: TextStyle(
                                                 fontSize: 14,
-                                                color: AppColor.textBlack),
+                                                color: AppColor.BLACK_TEXT),
                                           ),
                                           const SizedBox(width: 8),
                                           GestureDetector(
