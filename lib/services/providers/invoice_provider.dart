@@ -16,8 +16,15 @@ class InvoiceProvider extends ChangeNotifier {
     // const InvoiceStatus(id: 2, name: ''),
   ];
 
+  InvoiceTime invoiceTime = const InvoiceTime(id: 0, name: 'Tất cả');
+
   InvoiceStatus invoiceStatus =
       const InvoiceStatus(id: 0, name: 'Chưa thanh toán');
+
+  void changeTime(InvoiceTime time) {
+    invoiceTime = time;
+    notifyListeners();
+  }
 
   void changeStatus(InvoiceStatus type) {
     invoiceStatus = type;

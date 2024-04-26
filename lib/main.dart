@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
+import 'package:vierqr/features/invoice/invoice_screen.dart';
 import 'package:vierqr/features/maintain_charge/blocs/maintain_charge_bloc.dart';
 import 'package:vierqr/features/maintain_charge/maintain_charge_screen.dart';
 import 'package:vierqr/features/maintain_charge/views/confirm_active_key_screen.dart';
@@ -80,6 +81,8 @@ import 'package:vierqr/services/local_notification/notification_service.dart';
 import 'package:vierqr/features/mobile_recharge/mobile_recharge_screen.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart'
     as Constants;
+
+import 'services/providers/invoice_provider.dart';
 
 //Share Preferences
 late SharedPreferences sharedPrefs;
@@ -344,6 +347,7 @@ class _VietQRApp extends State<VietQRApp> {
             ChangeNotifierProvider(create: (context) => PinProvider()),
             ChangeNotifierProvider(
                 create: (context) => MaintainChargeProvider()),
+            ChangeNotifierProvider(create: (context) => InvoiceProvider()),
             ChangeNotifierProvider(create: (context) => RegisterProvider()),
             ChangeNotifierProvider(create: (context) => UserEditProvider()),
           ],
@@ -388,6 +392,7 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.REPORT_SCREEN: (context) => const ReportScreen(),
                   Routes.TRANSACTION_WALLET: (context) =>
                       const TransWalletScreen(),
+                  Routes.INVOICE_SCREEN: (context) => InvoiceScreen(),
                   // Routes.ACTIVE_SUCCESS_SCREEN: (context) =>
                   //     const ActiveSuccessScreen(),
                 },

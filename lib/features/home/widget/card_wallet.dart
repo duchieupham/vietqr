@@ -190,6 +190,9 @@ class CardWallet extends StatelessWidget {
                               'assets/images/ic-invoice-black.png',
                               'Hóa đơn',
                               () {
+                                Navigator.pushNamed(
+                                    context, Routes.INVOICE_SCREEN);
+
                                 // eventBus.fire(ChangeBottomBarEvent(2));
                               },
                             ),

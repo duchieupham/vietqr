@@ -269,6 +269,13 @@ enum BankType {
   GET_BANK_LOCAL,
 }
 
+enum InvoiceType {
+  NONE,
+  GET_INVOICE_LIST,
+  INVOICE_DETAIL,
+  FILTER_INVOICE,
+}
+
 enum MainChargeType {
   NONE,
   CREATE_MAINTAIN,

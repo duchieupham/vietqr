@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:palette_generator/palette_generator.dart';
+import 'package:provider/provider.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/base_manager.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
@@ -12,6 +13,8 @@ import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_account_terminal.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
+
+import '../../../services/providers/invoice_provider.dart';
 
 class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
   @override
@@ -93,7 +96,8 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
               list.where((e) => !e.isAuthenticated).toList();
 
           list = [...listLinked, ...listNotLinked];
-
+          Provider.of<InvoiceProvider>(context, listen: false)
+              .setListBank(listLinked);
           for (BankAccountDTO dto in list) {
             int index = list.indexOf(dto);
             dto.position = index * 100;

@@ -36,6 +36,7 @@ import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/qr_create_dto.dart';
 import 'package:vierqr/models/user_repository.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
+import 'package:vierqr/services/providers/invoice_provider.dart';
 
 import '../../commons/constants/configurations/app_images.dart';
 import '../../services/providers/maintain_charge_provider.dart';
@@ -352,6 +353,7 @@ class _BankScreenState extends State<_BankScreen>
         if (state.request == BankType.BANK) {
           Provider.of<AuthProvider>(context, listen: false)
               .updateBanks(state.listBanks);
+
           if (scrollController.hasClients) {
             scrollController.jumpTo(0);
           }
@@ -371,6 +373,7 @@ class _BankScreenState extends State<_BankScreen>
         List<BankAccountDTO> listAuthenticated = state.listBanks
             .where((element) => element.isAuthenticated == true)
             .toList();
+
         List<BankAccountDTO> listUnAuthenticated = state.listBanks
             .where((element) => element.isAuthenticated == false)
             .toList();
