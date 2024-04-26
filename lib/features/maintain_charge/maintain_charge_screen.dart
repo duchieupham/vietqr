@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -14,6 +15,7 @@ import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/maintain_charge/blocs/maintain_charge_bloc.dart';
 import 'package:vierqr/features/maintain_charge/states/maintain_charge_state.dart';
+import 'package:vierqr/features/maintain_charge/views/popup_detail_widget.dart';
 import 'package:vierqr/services/providers/pin_provider.dart';
 
 import '../../commons/constants/configurations/route.dart';
@@ -163,6 +165,13 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
         )));
         _editingController.text = '';
       },
+    );
+  }
+
+  void _onOpenPopup() {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) => PopupDetailAnnualFee(),
     );
   }
 
@@ -355,7 +364,8 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                           selectedId = value.listAnnualFee[index].feeId;
                           // selectFeeAmount = value.listAnnualFee[index].amount! *
                           //     value.listAnnualFee[index].duration!;
-                          selectFeeAmount = value.listAnnualFee[index].totalWithVat;
+                          selectFeeAmount =
+                              value.listAnnualFee[index].totalWithVat;
                         });
                       },
                       child: Stack(
@@ -646,7 +656,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "(Tổng tiền + VAT)",
+                            "Tổng tiền",
                             style: TextStyle(fontSize: 15),
                           ),
                           const SizedBox(height: 2),
@@ -666,6 +676,14 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                               Text(
                                 "VND",
                                 style: TextStyle(fontSize: 15),
+                              ),
+                              const SizedBox(width: 12),
+                              InkWell(
+                                onTap: _onOpenPopup,
+                                child: Icon(
+                                  Icons.info_outline,
+                                  color: AppColor.BLUE_TEXT,
+                                ),
                               ),
                             ],
                           ),
