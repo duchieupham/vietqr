@@ -325,7 +325,12 @@ class _CustomerVaInsertBankAuthView
       Navigator.pop(context);
       Navigator.pushNamed(context, Routes.CUSTOMER_VA_CONFIRM_OTP);
     } else if (result is ResponseMessageDTO) {
-      msg = ErrorUtils.instance.getErrorMessage(result.message);
+      if (result.status == 'FAILED') {
+        msg = ErrorUtils.instance.getErrorMessage(result.message);
+      } else {
+        msg =
+            'Lỗi liên kết tài khoản (${result.message}). Vui lòng thử lại sau';
+      }
       Navigator.pop(context);
       DialogWidget.instance
           .openMsgDialog(title: 'Không thể đăng ký dịch vụ', msg: msg);

@@ -262,6 +262,8 @@ class _InvoiceVaVietQRView extends State<InvoiceVaVietQRView> {
                     userBankName: widget.invoiceDTO.userBankName ?? '',
                     amount: widget.invoiceDTO.amount.toString(),
                     content: widget.invoiceDTO.billId ?? '',
+                    qrCode: _qr,
+                    imgId: 'cb18c1b3-d661-4695-b2e8-dba8e887abd6',
                   );
                   NavigatorUtils.navigatePage(context,
                       PopupBankShare(dto: qrgeneratedDTO, type: TypeImage.SAVE),
@@ -284,6 +286,8 @@ class _InvoiceVaVietQRView extends State<InvoiceVaVietQRView> {
                     userBankName: widget.invoiceDTO.userBankName ?? '',
                     amount: widget.invoiceDTO.amount.toString(),
                     content: widget.invoiceDTO.billId ?? '',
+                    imgId: 'cb18c1b3-d661-4695-b2e8-dba8e887abd6',
+                    qrCode: _qr,
                   );
                   NavigatorUtils.navigatePage(
                       context,

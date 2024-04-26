@@ -179,9 +179,29 @@ class ErrorUtils {
         result =
             'Không tìm thấy thông tin tài khoản ngân hàng. Vui lòng kiểm tra lại thông tin.';
         break;
+      case ErrorType.E134:
+        result =
+            'Thông tin tên khách hàng không đúng. Vui lòng kiểm tra lại thông tin.';
+        break;
       case ErrorType.E135:
         result =
             'Mã OTP không hợp lệ hoặc có lỗi khi xác thực mã OTP. Vui lòng kiểm tra lại thông tin.';
+        break;
+      case ErrorType.E136:
+        result =
+            'Không tìm thấy CMT/CCCD/HC trên hệ thống ngân hàng. Vui lòng kiểm tra lại thông tin.';
+        break;
+      case ErrorType.E137:
+        result =
+            'Không tìm thấy SĐT trên hệ thống ngân hàng. Vui lòng kiểm tra lại thông tin.';
+        break;
+      case ErrorType.E138:
+        result =
+            'Quý khách bị khoá tạm thời do nhập sai mã OTP quá 5 lần. Vui lòng thử lại sau.';
+        break;
+      case ErrorType.E139:
+        result =
+            'Tài khoản không hoạt động. Vui lòng kiểm tra lại thông tin đăng ký.';
         break;
       default:
         result = message;

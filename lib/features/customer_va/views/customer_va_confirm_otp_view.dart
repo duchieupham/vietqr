@@ -303,7 +303,12 @@ class _CustomerVaConfirmOtpView extends State<CustomerVaConfirmOtpView>
       //
       Navigator.pop(context);
     } else if (result is ResponseMessageDTO) {
-      msg = ErrorUtils.instance.getErrorMessage(result.message);
+      if (result.status == 'FAILED') {
+        msg = ErrorUtils.instance.getErrorMessage(result.message);
+      } else {
+        msg =
+            'Lỗi liên kết tài khoản (${result.message}). Vui lòng thử lại sau';
+      }
       Navigator.pop(context);
       DialogWidget.instance
           .openMsgDialog(title: 'Không thể đăng ký dịch vụ', msg: msg);
@@ -346,7 +351,12 @@ class _CustomerVaConfirmOtpView extends State<CustomerVaConfirmOtpView>
         //navigator success insert customer va screen
         Navigator.pushReplacementNamed(context, Routes.CUSTOMER_VA_SUCCESS);
       } else {
-        msgInsert = ErrorUtils.instance.getErrorMessage(resultInsert.message);
+        if (resultInsert.status == 'FAILED') {
+          msgInsert = ErrorUtils.instance.getErrorMessage(result.message);
+        } else {
+          msgInsert =
+              'Lỗi liên kết tài khoản (${result.message}). Vui lòng thử lại sau';
+        }
         Navigator.pop(context);
         DialogWidget.instance
             .openMsgDialog(title: 'Không thể xác thực', msg: msgInsert);
