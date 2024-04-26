@@ -19,7 +19,6 @@ import '../../commons/utils/currency_utils.dart';
 import '../../services/providers/invoice_provider.dart';
 import 'blocs/invoice_bloc.dart';
 import 'events/invoice_events.dart';
-import 'package:shimmer/shimmer.dart';
 
 class InvoiceScreen extends StatelessWidget {
   const InvoiceScreen({super.key});
