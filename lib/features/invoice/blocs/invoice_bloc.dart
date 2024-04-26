@@ -33,6 +33,7 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceStates> with BaseManager {
           page: event.page,
           size: event.size,
         );
+        Future.delayed(const Duration(milliseconds: 200));
         if (list!.isNotEmpty) {
           emit(state.copyWith(
               metaDataDTO: _invoiceRepository.metaDataDTO,

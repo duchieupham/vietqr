@@ -11,7 +11,8 @@ import '../../../commons/utils/image_utils.dart';
 import '../../../models/bank_account_dto.dart';
 
 class PopupFilterWidget extends StatefulWidget {
-  const PopupFilterWidget({super.key});
+  final InvoiceStatus status;
+  const PopupFilterWidget({super.key, required this.status});
 
   @override
   State<PopupFilterWidget> createState() => _PopupFilterWidgetState();
@@ -20,6 +21,14 @@ class PopupFilterWidget extends StatefulWidget {
 class _PopupFilterWidgetState extends State<PopupFilterWidget> {
   int? status = 0;
   int? selectBank = 0;
+  List<BankAccountDTO> list = [];
+
+  @override
+  void initState() {
+    super.initState();
+    selectBank = widget.status.id;
+  }
+
   // bool? isLoading;
   @override
   Widget build(BuildContext context) {
@@ -39,7 +48,6 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
           children: [
             Consumer<InvoiceProvider>(
               builder: (context, provider, child) {
-                List<BankAccountDTO> list = [];
                 if (provider.listBank != null) {
                   list = provider.listBank!;
                 }
@@ -259,7 +267,7 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                         fontWeight: FontWeight.bold,
                       ),
                       child: Text(
-                        "Tài khoản ngân hàng",
+                        "Tất cả tài khoản ngân hàng",
                       ),
                     ),
                     GestureDetector(
