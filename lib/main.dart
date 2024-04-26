@@ -377,7 +377,6 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.QR_SHARE_VIEW: (context) => QRShareView(),
                   Routes.SCAN_QR_VIEW: (context) => const ScanQrScreen(),
                   Routes.SEARCH_BANK: (context) => SearchBankView(),
-                  Routes.INVOICE_DETAIL: (context) => InvoiceDetailScreen(),
                   Routes.NATIONAL_INFORMATION: (context) =>
                       const NationalInformationView(),
                   Routes.INTRODUCE_SCREEN: (context) => const IntroduceScreen(),
@@ -524,6 +523,19 @@ class _VietQRApp extends State<VietQRApp> {
                         return RechargeSuccess(
                           phoneNo: data['phoneNo'],
                           money: data['money'],
+                        );
+                      },
+                    );
+                  }
+
+                  if (settings.name == Routes.INVOICE_DETAIL) {
+                    Map map = settings.arguments as Map;
+
+                    String id = map['id'];
+                    return MaterialPageRoute(
+                      builder: (context) {
+                        return InvoiceDetailScreen(
+                          invoiceId: id,
                         );
                       },
                     );

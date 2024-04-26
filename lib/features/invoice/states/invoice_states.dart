@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:vierqr/models/invoice_detail_dto.dart';
 
 import '../../../commons/enums/enum_type.dart';
 import '../../../models/bank_account_dto.dart';
@@ -11,6 +12,7 @@ class InvoiceStates extends Equatable {
   final InvoiceType? request;
   final BlocStatus status;
   final MetaDataDTO? metaDataDTO;
+  final InvoiceDetailDTO? invoiceDetailDTO;
 
   const InvoiceStates({
     this.msg,
@@ -18,6 +20,7 @@ class InvoiceStates extends Equatable {
     this.request = InvoiceType.NONE,
     this.listInvoice,
     this.metaDataDTO,
+    this.invoiceDetailDTO,
   });
 
   InvoiceStates copyWith({
@@ -43,4 +46,18 @@ class InvoiceStates extends Equatable {
         listInvoice,
         metaDataDTO,
       ];
+}
+
+class GetInvoiceDetailSuccess extends InvoiceStates {
+  final InvoiceDetailDTO data;
+  const GetInvoiceDetailSuccess({
+    required this.data,
+  });
+  @override
+  List<Object?> get props => [
+        data,
+      ];
+}
+
+class GetInvoiceDetailLoading extends InvoiceStates {
 }

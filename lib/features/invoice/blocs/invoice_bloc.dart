@@ -16,8 +16,24 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceStates> with BaseManager {
 
   InvoiceBloc(this.context) : super(const InvoiceStates()) {
     on<InvoiceEvent>(_getListInvoice);
+    on<GetInvoiceDetail>(_getDetailInvoice);
   }
   InvoiceRepository _invoiceRepository = InvoiceRepository();
+
+  void _getDetailInvoice(GetInvoiceDetail event, Emitter emit) async {
+        try {
+            emit(GetInvoiceDetailLoading());
+            final result = await _invoiceRepository.getInvoiceDetail(invoiceId: event.invoiceId);
+            if (result != null) {
+              emit(GetInvoiceDetailSuccess(data: result));
+            } else {
+              //emiterror
+            }
+        } catch (e) {
+          //emiterror
+        }
+  }
+
   void _getListInvoice(InvoiceEvent event, Emitter emit) async {
     try {
       if (event is GetInvoiceList) {

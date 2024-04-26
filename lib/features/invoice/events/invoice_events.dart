@@ -25,3 +25,14 @@ class GetInvoiceList extends InvoiceEvent {
   @override
   List<Object?> get props => [status, bankId, filterBy, time, page, size];
 }
+
+class GetInvoiceDetail extends InvoiceEvent {
+  final String invoiceId;
+
+  const GetInvoiceDetail(
+    this.invoiceId,
+  );
+
+  @override
+  List<Object?> get props => [invoiceId];
+}

@@ -119,6 +119,18 @@ class CardWallet extends StatelessWidget {
           }),
         ),
         Expanded(
+          child: _buildItemAction(
+            'assets/images/ic-invoice-black.png',
+            'Hoá đơn',
+            color: AppColor.GREY_TEXT,
+            () {
+              Navigator.of(context).pushNamed(Routes.INVOICE_DETAIL,arguments: {
+                  'id' : '345310c1-470b-4663-846b-7d1555b037b1'
+              });
+            },
+          ),
+        ),
+        Expanded(
           child: _buildItemAction('assets/images/ic-tb-qr.png', 'Quét QR',
               () async {
             if (SharePrefUtils.getQrIntro()) {
@@ -134,15 +146,6 @@ class CardWallet extends StatelessWidget {
         ),
         Expanded(
           child: _buildItemAction(
-            'assets/images/ic-qr-wallet-grey.png',
-            'Ví QR',
-            () {
-              eventBus.fire(ChangeBottomBarEvent(2));
-            },
-          ),
-        ),
-        Expanded(
-          child: _buildItemAction(
             'assets/images/ic-history-transaction-wallet.png',
             'Lịch sử GD',
             () {
@@ -154,7 +157,8 @@ class CardWallet extends StatelessWidget {
     );
   }
 
-  Widget _buildItemAction(String pathIcon, String title, VoidCallback onTap) {
+  Widget _buildItemAction(String pathIcon, String title, VoidCallback onTap,
+      {Color? color = null}) {
     return GestureDetector(
       onTap: onTap,
       child: Column(
@@ -163,6 +167,7 @@ class CardWallet extends StatelessWidget {
           Image.asset(
             pathIcon,
             height: 35,
+            color: color,
           ),
           Text(
             title,
