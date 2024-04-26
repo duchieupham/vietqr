@@ -87,15 +87,15 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                       return CustomButton(
                         buttonTapped: clearInputAndOutput,
                         color: AppColor.BLUE_TEXT.withOpacity(0.2),
-                        textColor: AppColor.textBlack,
+                        textColor: AppColor.BLACK_TEXT,
                         text: buttons[index].text,
                         style: TextStyle(
-                            color: AppColor.textBlack,
+                            color: AppColor.BLACK_TEXT,
                             fontSize: 24,
                             fontWeight: FontWeight.w500),
                         isIcon: isOperator(buttons[index].text),
                         icon: buttons[index].icon,
-                        iconColor: AppColor.textBlack,
+                        iconColor: AppColor.BLACK_TEXT,
                       );
 
                     /// DELETE BTN
@@ -103,15 +103,15 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                       return CustomButton(
                         buttonTapped: deleteBtnAction,
                         color: AppColor.BLUE_TEXT.withOpacity(0.2),
-                        textColor: AppColor.textBlack,
+                        textColor: AppColor.BLACK_TEXT,
                         text: buttons[index].text,
                         style: TextStyle(
-                            color: AppColor.textBlack,
+                            color: AppColor.BLACK_TEXT,
                             fontSize: 24,
                             fontWeight: FontWeight.w500),
                         isIcon: isOperator(buttons[index].text),
                         icon: buttons[index].icon,
-                        iconColor: AppColor.textBlack,
+                        iconColor: AppColor.BLACK_TEXT,
                       );
 
                     /// %
@@ -119,15 +119,15 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                       return CustomButton(
                         buttonTapped: onPT,
                         color: AppColor.BLUE_TEXT.withOpacity(0.2),
-                        textColor: AppColor.textBlack,
+                        textColor: AppColor.BLACK_TEXT,
                         text: buttons[index].text,
                         style: TextStyle(
-                            color: AppColor.textBlack,
+                            color: AppColor.BLACK_TEXT,
                             fontSize: 24,
                             fontWeight: FontWeight.w500),
                         isIcon: isOperator(buttons[index].text),
                         icon: buttons[index].icon,
-                        iconColor: AppColor.textBlack,
+                        iconColor: AppColor.BLACK_TEXT,
                       );
                     case 3:
                     case 7:

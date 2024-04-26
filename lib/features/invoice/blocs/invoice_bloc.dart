@@ -14,8 +14,11 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceStates> with BaseManager {
   @override
   final BuildContext context;
 
+  List<InvoiceFeeDTO> listInvoice = [];
+
   InvoiceBloc(this.context) : super(const InvoiceStates()) {
-    on<InvoiceEvent>(_getListInvoice);
+    on<GetInvoiceList>(_getListInvoice);
+    on<LoadMoreInvoice>(_loadMoreInvoice);
   }
   InvoiceRepository _invoiceRepository = InvoiceRepository();
   void _getListInvoice(InvoiceEvent event, Emitter emit) async {
@@ -33,11 +36,46 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceStates> with BaseManager {
           page: event.page,
           size: event.size,
         );
-        Future.delayed(const Duration(milliseconds: 200));
+        Future.delayed(const Duration(milliseconds: 500));
         if (list!.isNotEmpty) {
+          listInvoice = list;
           emit(state.copyWith(
               metaDataDTO: _invoiceRepository.metaDataDTO,
               listInvoice: list,
+              request: InvoiceType.GET_INVOICE_LIST,
+              status: BlocStatus.SUCCESS));
+        } else {
+          emit(state.copyWith(
+              listInvoice: [],
+              request: InvoiceType.GET_INVOICE_LIST,
+              status: BlocStatus.NONE));
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(status: BlocStatus.ERROR, msg: 'Đã có lỗi xảy ra.'));
+    }
+  }
+
+  void _loadMoreInvoice(InvoiceEvent event, Emitter emit) async {
+    try {
+      if (event is LoadMoreInvoice) {
+        emit(state.copyWith(status: BlocStatus.LOAD_MORE));
+
+        List<InvoiceFeeDTO>? list = await _invoiceRepository.getInvoiceList(
+          status: event.status,
+          bankId: event.bankId,
+          filterBy: event.filterBy,
+          time: event.time,
+          page: event.page! + 1,
+          size: event.size,
+        );
+        Future.delayed(const Duration(milliseconds: 1000));
+        if (list!.isNotEmpty) {
+          listInvoice += list;
+          emit(state.copyWith(
+              metaDataDTO: _invoiceRepository.metaDataDTO,
+              listInvoice: listInvoice,
               request: InvoiceType.GET_INVOICE_LIST,
               status: BlocStatus.SUCCESS));
         } else {

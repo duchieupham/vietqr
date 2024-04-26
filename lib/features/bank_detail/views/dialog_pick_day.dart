@@ -87,7 +87,8 @@ class _TerminalTimeViewState extends State<DialogPickDay> {
                   children: [
                     const Text(
                       'Từ:',
-                      style: TextStyle(fontSize: 12, color: AppColor.textBlack),
+                      style:
+                          TextStyle(fontSize: 12, color: AppColor.BLACK_TEXT),
                     ),
                     const SizedBox(width: 2),
                     Expanded(
@@ -144,7 +145,8 @@ class _TerminalTimeViewState extends State<DialogPickDay> {
                   children: [
                     const Text(
                       'Đến:',
-                      style: TextStyle(fontSize: 12, color: AppColor.textBlack),
+                      style:
+                          TextStyle(fontSize: 12, color: AppColor.BLACK_TEXT),
                     ),
                     const SizedBox(width: 2),
                     Expanded(
