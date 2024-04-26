@@ -326,7 +326,7 @@ class _DetailStoreScreenState extends State<DetailStoreScreen> {
                     : AppColor.BLUE_TEXT
                 : isVietQRStore
                     ? AppColor.WHITE
-                    : AppColor.textBlack,
+                    : AppColor.BLACK_TEXT,
           ),
         ),
       ),

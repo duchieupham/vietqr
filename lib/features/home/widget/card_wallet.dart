@@ -124,9 +124,10 @@ class CardWallet extends StatelessWidget {
             'Hoá đơn',
             color: AppColor.GREY_TEXT,
             () {
-              Navigator.of(context).pushNamed(Routes.INVOICE_DETAIL,arguments: {
-                  'id' : '345310c1-470b-4663-846b-7d1555b037b1'
-              });
+              Navigator.of(context).pushNamed(Routes.INVOICE_SCREEN);
+              // Navigator.of(context).pushNamed(Routes.INVOICE_DETAIL,arguments: {
+              //     'id' : '345310c1-470b-4663-846b-7d1555b037b1'
+              // });
             },
           ),
         ),

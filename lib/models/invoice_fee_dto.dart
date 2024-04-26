@@ -10,7 +10,7 @@ class InvoiceFeeDTO {
   String? bankAccount;
   String? bankShortName;
   String? qrCode;
-  double? totalAmount;
+  int? totalAmount;
 
   InvoiceFeeDTO({
     this.invoiceId,
@@ -40,7 +40,7 @@ class InvoiceFeeDTO {
       bankAccount: json['bankAccount'],
       bankShortName: json['bankShortName'],
       qrCode: json['qrCode'],
-      totalAmount: json['totalAmount'].toDouble(),
+      totalAmount: json['totalAmount'],
     );
   }
 

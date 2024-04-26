@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/layouts/m_button_widget.dart';
+
+import '../../layouts/m_button_widget.dart';
+import '../constants/configurations/theme.dart';
 
 class DialogPickDate extends StatefulWidget {
   final DateTime dateTime;
@@ -13,6 +14,8 @@ class DialogPickDate extends StatefulWidget {
 
 class _DialogPickDateState extends State<DialogPickDate> {
   List<int> listMonth = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  List<int> listMonthNow = [];
+
   List<int> listYear = [];
 
   int _monthSelect = 0;
@@ -25,9 +28,12 @@ class _DialogPickDateState extends State<DialogPickDate> {
     super.initState();
     _monthSelect = widget.dateTime.month;
     _year = widget.dateTime.year;
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 2; i++) {
       int yearNow = _now.year;
       listYear.add(yearNow - i);
+    }
+    for (int i = 1; i <= _monthSelect; i++) {
+      listMonthNow.add(i);
     }
     updateState();
   }
@@ -46,8 +52,10 @@ class _DialogPickDateState extends State<DialogPickDate> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(4),
       ),
+      height: 500,
+      width: 500,
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        // mainAxisSize: MainAxisSize.min,
         children: [
           Container(
             color: Colors.lightBlue,
@@ -70,7 +78,7 @@ class _DialogPickDateState extends State<DialogPickDate> {
                           _year = value!;
                           updateState();
                         },
-                        dropdownColor: AppColor.grey979797,
+                        dropdownColor: AppColor.GREY_979797,
                         items: listYear.map<DropdownMenuItem<int>>((int value) {
                           return DropdownMenuItem<int>(
                             value: value,
@@ -88,72 +96,55 @@ class _DialogPickDateState extends State<DialogPickDate> {
                   ),
                 ),
                 const Spacer(),
-                IconButton(
-                  onPressed: () {
-                    if (_year >= _now.year) {
-                      return;
-                    }
-                    _year++;
-                    updateState();
-                  },
-                  color: Colors.white,
-                  icon: Icon(Icons.keyboard_arrow_up_outlined),
-                  constraints: BoxConstraints(),
-                  padding: EdgeInsets.only(right: 12, left: 12, top: 16),
-                ),
-                IconButton(
-                  onPressed: () {
-                    _year--;
-                    updateState();
-                  },
-                  color: Colors.white,
-                  icon: Icon(Icons.keyboard_arrow_down_outlined),
-                  constraints: BoxConstraints(),
-                  padding: EdgeInsets.only(right: 12, left: 12, top: 16),
-                ),
               ],
             ),
           ),
           const SizedBox(height: 30),
-          Container(
-            height: 160,
-            padding: EdgeInsets.symmetric(horizontal: 10),
-            child: GridView.builder(
-              padding: EdgeInsets.zero,
-              physics: NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 20,
-                childAspectRatio: 2,
-              ),
-              itemCount: listMonth.length,
-              itemBuilder: (context, index) {
-                var data = listMonth[index];
-                return GestureDetector(
-                  onTap: () async {
-                    _monthSelect = data;
-                    updateState();
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: data == _monthSelect
-                            ? Colors.lightBlue
-                            : Colors.transparent,
-                        borderRadius: BorderRadius.circular(5)),
-                    alignment: Alignment.center,
-                    child: Text(
-                      'Tháng $data',
-                      style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
+          Expanded(
+            child: Container(
+              height: 100,
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: GridView.builder(
+                padding: EdgeInsets.zero,
+                physics: NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 4,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 20,
+                  childAspectRatio: 2,
+                ),
+                itemCount: _year == widget.dateTime.year
+                    ? listMonthNow.length
+                    : listMonth.length,
+                itemBuilder: (context, index) {
+                  var data = _year == widget.dateTime.year
+                      ? listMonthNow[index]
+                      : listMonth[index];
+                  return GestureDetector(
+                    onTap: () async {
+                      _monthSelect = data;
+                      updateState();
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
                           color: data == _monthSelect
-                              ? Colors.white
-                              : AppColor.BLACK_TEXT),
+                              ? Colors.lightBlue
+                              : Colors.transparent,
+                          borderRadius: BorderRadius.circular(5)),
+                      alignment: Alignment.center,
+                      child: Text(
+                        'Tháng $data',
+                        style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: data == _monthSelect
+                                ? Colors.white
+                                : AppColor.BLACK_TEXT),
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
           ),
           const SizedBox(height: 30),

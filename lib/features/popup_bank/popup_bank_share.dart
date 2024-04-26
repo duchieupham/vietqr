@@ -154,7 +154,7 @@ class _PopupBankShareState extends State<PopupBankShare> {
                                               maxLines: 3,
                                               overflow: TextOverflow.ellipsis,
                                               style: TextStyle(
-                                                color: AppColor.textBlack,
+                                                color: AppColor.BLACK_TEXT,
                                                 fontSize: small ? 11 : 13,
                                               ),
                                             ),
@@ -185,7 +185,7 @@ class _PopupBankShareState extends State<PopupBankShare> {
                                   Text(
                                     'Số tiền:',
                                     style: TextStyle(
-                                        color: AppColor.textBlack
+                                        color: AppColor.BLACK_TEXT
                                             .withOpacity(0.6)),
                                   ),
                                   const SizedBox(height: 8),
@@ -205,7 +205,7 @@ class _PopupBankShareState extends State<PopupBankShare> {
                                     Text(
                                       'Nội dung:',
                                       style: TextStyle(
-                                          color: AppColor.textBlack
+                                          color: AppColor.BLACK_TEXT
                                               .withOpacity(0.6)),
                                     ),
                                     const SizedBox(height: 4),

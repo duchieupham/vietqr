@@ -34,7 +34,7 @@ class _NFCWidgetState extends State<NFCWidget> {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 18,
-                  color: AppColor.textBlack,
+                  color: AppColor.BLACK_TEXT,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -71,7 +71,7 @@ class _NFCWidgetState extends State<NFCWidget> {
                             text: ' VQR',
                             style: TextStyle(
                               fontSize: 18,
-                              color: AppColor.textBlack,
+                              color: AppColor.BLACK_TEXT,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -91,7 +91,7 @@ class _NFCWidgetState extends State<NFCWidget> {
                 text: TextSpan(
                   style: TextStyle(
                     fontSize: 15,
-                    color: AppColor.textBlack,
+                    color: AppColor.BLACK_TEXT,
                     height: 1.4,
                     fontWeight: FontWeight.w500,
                   ),

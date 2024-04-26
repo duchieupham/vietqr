@@ -29,6 +29,7 @@ class InvoiceStates extends Equatable {
     String? msg,
     List<InvoiceFeeDTO>? listInvoice,
     MetaDataDTO? metaDataDTO,
+    InvoiceDetailDTO? invoiceDetailDTO,
   }) {
     return InvoiceStates(
       status: status ?? this.status,
@@ -36,6 +37,7 @@ class InvoiceStates extends Equatable {
       msg: msg ?? this.msg,
       listInvoice: listInvoice ?? this.listInvoice,
       metaDataDTO: metaDataDTO ?? this.metaDataDTO,
+      invoiceDetailDTO: invoiceDetailDTO ?? this.invoiceDetailDTO,
     );
   }
 
@@ -46,18 +48,4 @@ class InvoiceStates extends Equatable {
         listInvoice,
         metaDataDTO,
       ];
-}
-
-class GetInvoiceDetailSuccess extends InvoiceStates {
-  final InvoiceDetailDTO data;
-  const GetInvoiceDetailSuccess({
-    required this.data,
-  });
-  @override
-  List<Object?> get props => [
-        data,
-      ];
-}
-
-class GetInvoiceDetailLoading extends InvoiceStates {
 }

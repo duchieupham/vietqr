@@ -26,7 +26,7 @@ class InvoiceRepository extends BaseRepo {
       //  final String url = '${EnvConfig.getBaseUrl()}key-active-bank/annual-fee';
       String userId = SharePrefUtils.getProfile().userId.trim();
       final String url =
-          'https://dev.vietqr.org/vqr/api/invoice/$userId?filterBy=$filterBy&time=${time ?? ''}&page=$page&size=${size ?? 20}&bankId=$bankId&status=$status';
+          '${EnvConfig.getBaseUrl()}invoice/$userId?filterBy=$filterBy&time=${time ?? ''}&page=$page&size=${size ?? 20}&bankId=$bankId&status=$status';
 
       final String token = await SharePrefUtils.getTokenInfo();
       final response = await BaseAPIClient.getAPI(
@@ -68,9 +68,7 @@ class InvoiceRepository extends BaseRepo {
       );
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
-        return result = data.map<InvoiceDetailDTO>((json) {
-          return InvoiceDetailDTO.fromJson(json);
-        });
+        return InvoiceDetailDTO.fromJson(data);
       }
     } catch (e) {
       LOG.error(e.toString());

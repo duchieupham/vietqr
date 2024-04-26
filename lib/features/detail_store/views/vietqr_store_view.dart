@@ -167,7 +167,7 @@ class _VietQRStoreViewState extends State<VietQRStoreView>
                                             maxLines: 3,
                                             overflow: TextOverflow.ellipsis,
                                             style: TextStyle(
-                                              color: AppColor.textBlack,
+                                              color: AppColor.BLACK_TEXT,
                                               fontSize: 13,
                                             ),
                                           ),

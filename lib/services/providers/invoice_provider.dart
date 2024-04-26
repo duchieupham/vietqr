@@ -5,8 +5,8 @@ import '../../models/bank_account_dto.dart';
 class InvoiceProvider extends ChangeNotifier {
   List<BankAccountDTO>? listBank;
   List<InvoiceStatus> status = [
-    const InvoiceStatus(id: 0, name: 'Chưa thanh toán'),
-    const InvoiceStatus(id: 1, name: 'Thanh toán'),
+    const InvoiceStatus(id: 0, name: 'chưa thanh toán'),
+    const InvoiceStatus(id: 1, name: 'đã Thanh toán'),
     // const InvoiceStatus(id: 2, name: ''),
   ];
 
@@ -16,23 +16,52 @@ class InvoiceProvider extends ChangeNotifier {
     // const InvoiceStatus(id: 2, name: ''),
   ];
 
-  InvoiceTime invoiceTime = const InvoiceTime(id: 0, name: 'Tất cả');
+  int? selectBankType = 0;
+  BankAccountDTO? selectBank;
+  DateTime? invoiceMonth;
 
-  InvoiceStatus invoiceStatus =
+  InvoiceTime? invoiceTime = const InvoiceTime(id: 0, name: 'Tất cả');
+
+  InvoiceStatus? invoiceStatus =
       const InvoiceStatus(id: 0, name: 'Chưa thanh toán');
+  int? selectedStatus = 0;
+
+  void selectMonth(DateTime? month) {
+    invoiceMonth = month;
+    notifyListeners();
+  }
+
+  void changeBankType(int? bankType) {
+    selectBankType = bankType;
+    notifyListeners();
+  }
+
+  void selectBankAccount(BankAccountDTO? bank) {
+    selectBank = bank;
+    notifyListeners();
+  }
 
   void changeTime(InvoiceTime time) {
     invoiceTime = time;
     notifyListeners();
   }
 
-  void changeStatus(InvoiceStatus type) {
-    invoiceStatus = type;
+  void changeStatus(int type) {
+    selectedStatus = type;
     notifyListeners();
   }
 
   void setListBank(List<BankAccountDTO>? list) {
     listBank = list;
+    notifyListeners();
+  }
+
+  void reset() {
+    selectBankType = 0;
+    invoiceStatus = const InvoiceStatus(id: 0, name: 'Chưa thanh toán');
+    invoiceTime = const InvoiceTime(id: 0, name: 'Tất cả');
+    selectBank = null;
+    invoiceMonth = null;
     notifyListeners();
   }
 }
