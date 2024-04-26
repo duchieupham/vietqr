@@ -67,7 +67,7 @@ class __InvoiceState extends State<_Invoice> {
   void onFilter() async {
     await showCupertinoModalPopup(
       context: context,
-      builder: (context) => PopupFilterWidget(),
+      builder: (context) => PopupFilterWidget(status: _provider.invoiceStatus),
     );
   }
 

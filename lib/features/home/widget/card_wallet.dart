@@ -193,7 +193,7 @@ class CardWallet extends StatelessWidget {
                                     context, Routes.INVOICE_SCREEN);
 
                                 // eventBus.fire(ChangeBottomBarEvent(2));
-                                Navigator.pushNamed(context, Routes.INVOICE_DETAIL);
+                                // Navigator.pushNamed(context, Routes.INVOICE_DETAIL);
                               },
                             ),
                           ),
