@@ -56,7 +56,7 @@ class InvoiceRepository extends BaseRepo {
     InvoiceDetailDTO? result;
     try {
       final String url =
-          'https://dev.vietqr.org/vqr/mock/api/invoice-detail/$invoiceId';
+          'https://dev.vietqr.org/vqr/api/invoice-detail/$invoiceId';
       final String token = await SharePrefUtils.getTokenInfo();
       final response = await BaseAPIClient.getAPI(
         url: url,

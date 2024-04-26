@@ -37,10 +37,18 @@ import 'views/annual_fee_screen.dart';
 class MaintainChargeScreen extends StatefulWidget {
   final int type;
   final String bankId;
+  final String bankCode;
+  final String bankName;
+  final String bankAccount;
+  final String userBankName;
   const MaintainChargeScreen({
     super.key,
     required this.type,
     required this.bankId,
+    required this.bankCode,
+    required this.bankName,
+    required this.bankAccount,
+    required this.userBankName,
   });
 
   @override
@@ -93,14 +101,6 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
           "Push notification received: ${message.notification?.title} - ${message.notification?.body}");
       LOG.info("receive data: ${message.data}");
       //process when receive data
-      if (message.data.isNotEmpty) {
-        if (message.data['notificationType'] != null &&
-            message.data['notificationType'] ==
-                Stringify.NOTI_TYPE_ANNUAL_FEE_SUCCESS) {
-          Navigator.pushReplacementNamed(context, Routes.DASHBOARD);
-          DialogWidget.instance.openActiveAnnualSuccess();
-        }
-      }
     });
   }
 
@@ -138,8 +138,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
 
   void onSubmit() {
     isClear = false;
-    Provider.of<AuthProvider>(context, listen: false)
-        .checkStateLogin(false);
+    Provider.of<AuthProvider>(context, listen: false).checkStateLogin(false);
     String phone = SharePrefUtils.getPhone();
     DialogWidget.instance.openConfirmPassDialog(
       editingController: _editingController,
@@ -673,8 +672,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                       ),
                       InkWell(
                         onTap: () {
-                          Provider.of<AuthProvider>(context,
-                                  listen: false)
+                          Provider.of<AuthProvider>(context, listen: false)
                               .checkStateLogin(false);
                           String phone = SharePrefUtils.getPhone();
                           DialogWidget.instance.openConfirmPassDialog(
@@ -683,13 +681,16 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                             onClose: () {
                               Provider.of<PinProvider>(context, listen: false)
                                   .reset();
-                              Provider.of<AuthProvider>(context,
-                                      listen: false)
+                              Provider.of<AuthProvider>(context, listen: false)
                                   .checkStateLogin(false);
                               Navigator.of(context).pop();
                             },
                             onDone: (pin) {
                               _bloc.add(RequestActiveAnnualFeeEvent(
+                                bankAccount: widget.bankAccount,
+                                userBankName: widget.userBankName,
+                                bankCode: widget.bankCode,
+                                bankName: widget.bankName,
                                 type: widget.type,
                                 feeId: selectedId!,
                                 bankId: widget.bankId,

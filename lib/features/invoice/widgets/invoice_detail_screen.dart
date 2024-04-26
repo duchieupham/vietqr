@@ -1,3 +1,5 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -5,13 +7,20 @@ import 'package:provider/provider.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/features/invoice/blocs/invoice_bloc.dart';
 import 'package:vierqr/features/invoice/events/invoice_events.dart';
+import 'package:vierqr/features/invoice/widgets/popup_invoice_success.dart';
+import 'package:vierqr/features/invoice/widgets/popup_invoice_widget.dart';
 import 'package:vierqr/models/invoice_detail_dto.dart';
 
 import '../../../commons/constants/configurations/app_images.dart';
+import '../../../commons/constants/configurations/stringify.dart';
 import '../../../commons/constants/configurations/theme.dart';
 import '../../../commons/utils/currency_utils.dart';
-import '../../../commons/widgets/dialog_qr_invoice_widget.dart';
+import '../../../commons/utils/log.dart';
+import '../../../commons/utils/navigator_utils.dart';
 import '../../../commons/widgets/separator_widget.dart';
+import '../../../models/qr_generated_dto.dart';
+import '../../../services/local_notification/notification_service.dart';
+import '../../popup_bank/popup_bank_share.dart';
 import '../states/invoice_states.dart';
 
 class InvoiceDetailScreen extends StatelessWidget {
@@ -48,6 +57,56 @@ class _InvoiceDetailScreenState extends State<_InvoiceDetailScreen> {
     context.read<InvoiceBloc>().add(GetInvoiceDetail(widget.invoiceId));
   }
 
+  void _onQrCreate() async {
+    if (_data != null) {
+      await showCupertinoModalPopup(
+        context: context,
+        builder: (context) => PopupQrCreate(
+          onSave: () {
+            onSaveImage(context);
+          },
+          onShare: () {
+            onShare(context);
+          },
+          invoiceName: _data!.invoiceName!,
+          totalAmount: _data!.totalAmount.toString(),
+          billNumber: _data!.billNumber!,
+          qr: _data!.qrCode!,
+        ),
+      );
+    }
+  }
+
+  void onShare(BuildContext context) {
+    QRGeneratedDTO dto = QRGeneratedDTO(
+      bankCode: _data!.bankCode!,
+      bankName: _data!.bankName!,
+      bankAccount: _data!.bankAccount!,
+      userBankName: _data!.userBankName!,
+      qrCode: _data!.qrCode!,
+      imgId: '',
+      amount: _data!.totalAmount.toString(),
+    );
+    NavigatorUtils.navigatePage(
+        context, PopupBankShare(dto: dto, type: TypeImage.SHARE),
+        routeName: PopupBankShare.routeName);
+  }
+
+  void onSaveImage(BuildContext context) {
+    QRGeneratedDTO dto = QRGeneratedDTO(
+      bankCode: _data!.bankCode!,
+      bankName: _data!.bankName!,
+      bankAccount: _data!.bankAccount!,
+      userBankName: _data!.userBankName!,
+      qrCode: _data!.qrCode!,
+      imgId: '',
+      amount: _data!.totalAmount.toString(),
+    );
+    NavigatorUtils.navigatePage(
+        context, PopupBankShare(dto: dto, type: TypeImage.SAVE),
+        routeName: PopupBankShare.routeName);
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<InvoiceBloc, InvoiceStates>(
@@ -62,7 +121,7 @@ class _InvoiceDetailScreenState extends State<_InvoiceDetailScreen> {
     if (state.status == BlocStatus.SUCCESS) {
       _data = state.invoiceDetailDTO;
     }
-    int timestamp = _data != null ? int.parse(_data!.timePaid!) : 0;
+    int timestamp = _data != null ? _data!.timePaid! : 0;
     DateTime date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
     String timePaid = DateFormat('dd/MM/yyyy HH:mm:ss').format(date);
     return Scaffold(
@@ -360,11 +419,7 @@ class _InvoiceDetailScreenState extends State<_InvoiceDetailScreen> {
     return Container(
       padding: const EdgeInsets.only(left: 40, top: 20, right: 40, bottom: 30),
       child: InkWell(
-        onTap: () {
-          showDialog(context: context, builder: (context){
-            return DialogQrInvoiceDetailWidget();
-          });
-        },
+        onTap: _onQrCreate,
         child: Container(
           padding: const EdgeInsets.only(left: 10, right: 10),
           height: 50,

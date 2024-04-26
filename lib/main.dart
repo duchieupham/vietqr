@@ -19,6 +19,7 @@ import 'package:vierqr/services/providers/maintain_charge_provider.dart';
 import 'package:vierqr/services/providers/register_provider.dart';
 import 'package:vierqr/services/socket_service/socket_service.dart';
 import 'features/invoice/widgets/invoice_detail_screen.dart';
+import 'features/invoice/widgets/popup_invoice_success.dart';
 import 'features/maintain_charge/views/active_success_screen.dart';
 import 'features/maintain_charge/views/annual_fee_screen.dart';
 import 'models/maintain_charge_create.dart';
@@ -261,6 +262,18 @@ class _VietQRApp extends State<VietQRApp> {
             );
           }
         }
+        if (message.data['notificationType'] != null &&
+            message.data['notificationType'] ==
+                Stringify.NOTI_TYPE_INVOICE_SUCCESS) {
+          showCupertinoModalPopup(
+            context: context,
+            builder: (context) => PopupInvoiceSuccess(
+              billNumber: message.data['billNumber'],
+              totalAmount: message.data['amount'].toString(),
+              timePaid: message.data['timePaid'],
+            ),
+          );
+        }
         // if (message.data['notificationType'] != null &&
         //     message.data['notificationType'] ==
         //         Stringify.NOTI_TYPE_ANNUAL_FEE_SUCCESS) {
@@ -418,12 +431,20 @@ class _VietQRApp extends State<VietQRApp> {
                         settings.arguments as Map<String, dynamic>;
                     int type = param['type'] as int;
                     String bankId = param['bankId'] as String;
+                    String bankCode = param['bankCode'] as String;
+                    String bankName = param['bankName'] as String;
+                    String bankAccount = param['bankAccount'] as String;
+                    String userBankName = param['userBankName'] as String;
 
                     return CupertinoPageRoute<bool>(
                       builder: (context) {
                         return MaintainChargeScreen(
                           type: type,
                           bankId: bankId,
+                          bankCode: bankCode,
+                          bankName: bankName,
+                          bankAccount: bankAccount,
+                          userBankName: userBankName,
                         );
                       },
                     );
@@ -438,16 +459,24 @@ class _VietQRApp extends State<VietQRApp> {
 
                     String qr = param['qr'] as String;
                     String billNumber = param['billNumber'] as String;
+                    String bankCode = param['bankCode'] as String;
+                    String bankName = param['bankName'] as String;
+                    String bankAccount = param['bankAccount'] as String;
+                    String userBankName = param['userBankName'] as String;
 
                     return CupertinoPageRoute<bool>(
                       builder: (context) {
                         return QrAnnualFeeScreen(
+                          bankAccount: bankAccount,
+                          userBankName: userBankName,
                           duration: duration,
                           qr: qr,
                           billNumber: billNumber,
                           amount: amount,
                           validFrom: validFrom,
                           validTo: validTo,
+                          bankName: bankName,
+                          bankCode: bankCode,
                         );
                       },
                     );

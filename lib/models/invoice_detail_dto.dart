@@ -3,8 +3,8 @@ class InvoiceDetailDTO {
   String? billNumber;
   String? invoiceNumber;
   String? invoiceName;
-  String? timeCreated;
-  String? timePaid;
+  int? timeCreated;
+  int? timePaid;
   int? status;
   int? vatAmount;
   int? amount;
@@ -12,6 +12,9 @@ class InvoiceDetailDTO {
   String? bankId;
   String? bankAccount;
   String? bankShortName;
+  String? bankCode;
+  String? bankName;
+  String? userBankName;
   String? qrCode;
   int? totalAmount;
   List<Items>? items;
@@ -30,6 +33,9 @@ class InvoiceDetailDTO {
       this.bankId,
       this.bankAccount,
       this.bankShortName,
+      this.bankCode,
+      this.bankName,
+      this.userBankName,
       this.qrCode,
       this.totalAmount,
       this.items});
@@ -48,6 +54,9 @@ class InvoiceDetailDTO {
     bankId = json['bankId'];
     bankAccount = json['bankAccount'];
     bankShortName = json['bankShortName'];
+    bankCode = json['bankCodeForPayment'];
+    bankName = json['bankNameForPayment'];
+    userBankName = json['userBankNameForPayment'];
     qrCode = json['qrCode'];
     totalAmount = json['totalAmount'];
     if (json['items'] != null) {

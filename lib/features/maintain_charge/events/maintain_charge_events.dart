@@ -26,6 +26,11 @@ class RequestActiveAnnualFeeEvent extends MaintainChargeEvents {
   final int type;
   final String feeId;
   final String bankId;
+  final String bankCode;
+  final String bankName;
+  final String bankAccount;
+  final String userBankName;
+
   final String userId;
   final String password;
 
@@ -33,11 +38,16 @@ class RequestActiveAnnualFeeEvent extends MaintainChargeEvents {
       {required this.type,
       required this.feeId,
       required this.bankId,
+      required this.bankCode,
+      required this.bankName,
+      required this.bankAccount,
+      required this.userBankName,
       required this.userId,
       required this.password});
 
   @override
-  List<Object?> get props => [type, feeId, bankId, userId, password];
+  List<Object?> get props =>
+      [type, feeId, bankId, bankCode, bankName, userId, password];
 }
 
 class ConfirmMaintainChargeEvent extends MaintainChargeEvents {

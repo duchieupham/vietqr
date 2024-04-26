@@ -101,6 +101,10 @@ class _BankScreenState extends State<_BankScreen>
 
   void onActiveKey({
     required String bankId,
+    required String bankCode,
+    required String bankName,
+    required String bankAccount,
+    required String userBankName,
   }) async {
     await showCupertinoModalPopup(
       context: context,
@@ -136,6 +140,10 @@ class _BankScreenState extends State<_BankScreen>
                         arguments: {
                           'type': 0,
                           'bankId': bankId,
+                          'bankCode': bankCode,
+                          'bankName': bankName,
+                          'bankAccount': bankAccount,
+                          'userBankName': userBankName,
                         });
                   },
                   child: Container(
@@ -190,6 +198,10 @@ class _BankScreenState extends State<_BankScreen>
                         arguments: {
                           'type': 1,
                           'bankId': bankId,
+                          'bankCode': bankCode,
+                          'bankName': bankName,
+                          'bankAccount': bankAccount,
+                          'userBankName': userBankName,
                         });
                   },
                   child: Container(
@@ -449,6 +461,18 @@ class _BankScreenState extends State<_BankScreen>
                                             onActiveKey(
                                               bankId:
                                                   extendAnnualFeeList[index].id,
+                                              bankCode:
+                                                  extendAnnualFeeList[index]
+                                                      .bankCode,
+                                              bankName:
+                                                  extendAnnualFeeList[index]
+                                                      .bankName,
+                                              bankAccount:
+                                                  extendAnnualFeeList[index]
+                                                      .bankAccount,
+                                              userBankName:
+                                                  extendAnnualFeeList[index]
+                                                      .userBankName,
                                             );
                                           },
                                         ),
@@ -502,6 +526,12 @@ class _BankScreenState extends State<_BankScreen>
                                               .bankShortName);
                                   onActiveKey(
                                     bankId: listAuthenticated[index].id,
+                                    bankCode: listAuthenticated[index].bankCode,
+                                    bankName: listAuthenticated[index].bankName,
+                                    bankAccount:
+                                        listAuthenticated[index].bankAccount,
+                                    userBankName:
+                                        listAuthenticated[index].userBankName,
                                   );
                                 },
                               ),
@@ -551,6 +581,14 @@ class _BankScreenState extends State<_BankScreen>
                                               .bankShortName);
                                   onActiveKey(
                                     bankId: listUnAuthenticated[index].id,
+                                    bankCode:
+                                        listUnAuthenticated[index].bankCode,
+                                    bankName:
+                                        listUnAuthenticated[index].bankName,
+                                    bankAccount:
+                                        listUnAuthenticated[index].bankAccount,
+                                    userBankName:
+                                        listUnAuthenticated[index].userBankName,
                                   );
                                 },
                               ),
