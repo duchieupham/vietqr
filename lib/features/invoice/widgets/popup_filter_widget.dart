@@ -259,9 +259,10 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                               ),
                               DropdownMenuItem<int>(
                                 value: 1,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                child: Row(
+                                  // crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       bankSelect == null

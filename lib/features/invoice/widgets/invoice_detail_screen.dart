@@ -357,7 +357,7 @@ class _InvoiceDetailScreenState extends State<_InvoiceDetailScreen> {
 
   Widget _bottom(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(left: 40, right: 40, bottom: 30),
+      padding: const EdgeInsets.only(left: 40, top: 20, right: 40, bottom: 30),
       child: InkWell(
         onTap: () {},
         child: Container(
