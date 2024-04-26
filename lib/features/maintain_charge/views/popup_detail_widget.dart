@@ -1,17 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
 
 import '../../../commons/constants/configurations/theme.dart';
 import '../../../commons/utils/currency_utils.dart';
+import '../../../models/annual_fee_dto.dart';
 
 class PopupDetailAnnualFee extends StatelessWidget {
-  // final String amount;
+  final AnnualFeeDTO dto;
+  final String bankName;
+  final String bankAccount;
   // final String duration;
-  const PopupDetailAnnualFee(
-      {super.key,});
+  const PopupDetailAnnualFee({
+    super.key,
+    required this.dto,
+    required this.bankName,
+    required this.bankAccount,
+  });
 
   @override
   Widget build(BuildContext context) {
+    int vat = dto.totalWithVat! - dto.totalAmount!;
+    DateTime now = DateTime.now();
+    DateTime endDate = DateTime(now.year, now.month + dto.duration!, now.day);
+
+    String formattedStartDate = DateFormat('dd/MM/yyyy').format(now);
+    String formattedEndDate = DateFormat('dd/MM/yyyy').format(endDate);
+    String dateRange = '$formattedStartDate - $formattedEndDate';
+
     return Container(
       margin: const EdgeInsets.fromLTRB(10, 0, 10, 30),
       padding: const EdgeInsets.fromLTRB(30, 20, 30, 20),
@@ -51,37 +67,105 @@ class PopupDetailAnnualFee extends StatelessWidget {
           SizedBox(
             height: 60,
           ),
-          _buildItem('Dịch vụ', 'Dịch vụ phần mềm VietQR', FontWeight.normal),
+          _buildItem(
+            'Dịch vụ',
+            'Dịch vụ phần mềm VietQR',
+            FontWeight.normal,
+          ),
           MySeparator(
             color: AppColor.GREY_TEXT,
           ),
-          _buildItem('TK Kích hoạt', 'MBBank - 1231312312', FontWeight.normal),
-          MySeparator(
-            color: AppColor.GREY_TEXT,
+          // _buildItem(
+          //   'TK Kích hoạt',
+          //   "$bankName - $bankAccount",
+          //   FontWeight.normal,
+          //   height: 100,
+          // ),
+          Container(
+            width: double.infinity,
+            height: 50,
+            child: Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  DefaultTextStyle(
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 15,
+                      fontWeight: FontWeight.normal,
+                    ),
+                    child: Text(
+                      'TK Kích hoạt',
+                    ),
+                  ),
+                  Column(
+                    children: [
+                      DefaultTextStyle(
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 15,
+                          fontWeight: FontWeight.normal,
+                        ),
+                        child: Text(
+                          "$bankName",
+                        ),
+                      ),
+                      DefaultTextStyle(
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 15,
+                          fontWeight: FontWeight.normal,
+                        ),
+                        child: Text(
+                          "$bankAccount",
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ),
-          _buildItem('Thời gian', '26/04/2024 - 26/10/2024', FontWeight.normal),
           MySeparator(
             color: AppColor.GREY_TEXT,
           ),
           _buildItem(
-              'Đơn giá',
-              ' 66,000 VND',
-              FontWeight.bold),
+            'Thời gian',
+            dateRange,
+            FontWeight.normal,
+          ),
           MySeparator(
             color: AppColor.GREY_TEXT,
           ),
           _buildItem(
-              'Số lượng',
-              '6 tháng',
-              FontWeight.bold),
+            'Đơn giá',
+            '${CurrencyUtils.instance.getCurrencyFormatted(dto.amount.toString())} VND',
+            FontWeight.bold,
+          ),
           MySeparator(
             color: AppColor.GREY_TEXT,
           ),
-          _buildItem('VAT', '31,680 VND', FontWeight.bold),
+          _buildItem(
+            'Số lượng',
+            '${CurrencyUtils.instance.getCurrencyFormatted(dto.duration.toString())} tháng',
+            FontWeight.bold,
+          ),
           MySeparator(
             color: AppColor.GREY_TEXT,
           ),
-          _buildItem('Thành tiền', '427,680 VND', FontWeight.bold),
+          _buildItem(
+            'VAT',
+            '${CurrencyUtils.instance.getCurrencyFormatted(vat.toString())} VND',
+            FontWeight.bold,
+          ),
+          MySeparator(
+            color: AppColor.GREY_TEXT,
+          ),
+          _buildItem(
+            'Thành tiền',
+            '${CurrencyUtils.instance.getCurrencyFormatted(dto.totalWithVat.toString())} VND',
+            FontWeight.bold,
+          ),
         ],
       ),
     );
@@ -90,11 +174,12 @@ class PopupDetailAnnualFee extends StatelessWidget {
   Widget _buildItem(
     String leftText,
     String rightText,
-    FontWeight fontWeightText,
-  ) {
+    FontWeight fontWeightText, {
+    double height = 50.0,
+  }) {
     return Container(
       width: double.infinity,
-      height: 50,
+      height: height,
       child: Center(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
