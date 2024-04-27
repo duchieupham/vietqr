@@ -77,6 +77,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
   int? selectFeeAmount = 0;
   List<AnnualFeeDTO>? annualList;
   bool? isPayment = false;
+  AnnualFeeDTO? selectedDTO;
 
   void initData() async {
     _bloc.add(GetAnnualFeeListEvent());
@@ -172,10 +173,16 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
   }
 
   void _onOpenPopup() {
-    showCupertinoModalPopup(
-      context: context,
-      builder: (context) => PopupDetailAnnualFee(),
-    );
+    if (selectedDTO != null) {
+      showCupertinoModalPopup(
+        context: context,
+        builder: (context) => PopupDetailAnnualFee(
+          dto: selectedDTO!,
+          bankAccount: widget.bankAccount,
+          bankName: widget.bankName,
+        ),
+      );
+    }
   }
 
   @override
@@ -369,6 +376,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                           //     value.listAnnualFee[index].duration!;
                           selectFeeAmount =
                               value.listAnnualFee[index].totalWithVat;
+                          selectedDTO = value.listAnnualFee[index];
                         });
                       },
                       child: Stack(
