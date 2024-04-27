@@ -113,16 +113,15 @@ class CardWallet extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
-          child:
-              _buildItemAction('assets/images/ic-tb-card.png', 'Tài khoản', () {
+          child: _buildItemAction(
+              'assets/images/ic-bank-account-home.png', 'Tài khoản', () {
             Navigator.pushNamed(context, Routes.SEARCH_BANK);
           }),
         ),
         Expanded(
           child: _buildItemAction(
-            'assets/images/ic-invoice-black.png',
+            'assets/images/ic-invoice-home.png',
             'Hoá đơn',
-            color: AppColor.GREY_TEXT,
             () {
               Navigator.of(context).pushNamed(Routes.INVOICE_SCREEN);
               // Navigator.of(context).pushNamed(Routes.INVOICE_DETAIL,arguments: {
@@ -132,8 +131,8 @@ class CardWallet extends StatelessWidget {
           ),
         ),
         Expanded(
-          child: _buildItemAction('assets/images/ic-tb-qr.png', 'Quét QR',
-              () async {
+          child: _buildItemAction(
+              'assets/images/ic-scan-qr-home.png', 'Quét QR', () async {
             if (SharePrefUtils.getQrIntro()) {
               startBarcodeScanStream();
             } else {
@@ -147,10 +146,10 @@ class CardWallet extends StatelessWidget {
         ),
         Expanded(
           child: _buildItemAction(
-            'assets/images/ic-history-transaction-wallet.png',
-            'Lịch sử GD',
+            'assets/images/ic-application-home.png',
+            'Khám phá\nsản phẩm',
             () {
-              Navigator.pushNamed(context, Routes.TRANSACTION_WALLET);
+              // Navigator.pushNamed(context, Routes.TRANSACTION_WALLET);
             },
           ),
         ),
