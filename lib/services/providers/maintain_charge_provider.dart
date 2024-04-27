@@ -5,11 +5,13 @@ class MaintainChargeProvider extends ChangeNotifier {
   bool _isError = false;
   String _bankAccount = '';
   String _bankName = '';
+  String _bankShortName = '';
   List<AnnualFeeDTO> listAnnualFee = [];
 
   get isError => _isError;
   get bankAccount => _bankAccount;
   get bankName => _bankName;
+  get bankShortName => _bankShortName;
 
   void selectedBank(String acc, String name) {
     _bankAccount = acc;

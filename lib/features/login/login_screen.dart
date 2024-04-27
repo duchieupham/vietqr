@@ -96,7 +96,7 @@ class _LoginState extends State<_Login> {
 
     if (kDebugMode) {
       phoneNoController.text = '0373568944';
-      passController.text = '181101';
+      passController.text = '';
     }
 
     _bloc = BlocProvider.of(context);

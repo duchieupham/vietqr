@@ -75,56 +75,10 @@ class PopupDetailAnnualFee extends StatelessWidget {
           MySeparator(
             color: AppColor.GREY_TEXT,
           ),
-          // _buildItem(
-          //   'TK Kích hoạt',
-          //   "$bankName - $bankAccount",
-          //   FontWeight.normal,
-          //   height: 100,
-          // ),
-          Container(
-            width: double.infinity,
-            height: 50,
-            child: Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  DefaultTextStyle(
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 15,
-                      fontWeight: FontWeight.normal,
-                    ),
-                    child: Text(
-                      'TK Kích hoạt',
-                    ),
-                  ),
-                  Column(
-                    children: [
-                      DefaultTextStyle(
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 15,
-                          fontWeight: FontWeight.normal,
-                        ),
-                        child: Text(
-                          "$bankName",
-                        ),
-                      ),
-                      DefaultTextStyle(
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 15,
-                          fontWeight: FontWeight.normal,
-                        ),
-                        child: Text(
-                          "$bankAccount",
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+          _buildItem(
+            'TK Kích hoạt',
+            "$bankName - $bankAccount",
+            FontWeight.normal,
           ),
           MySeparator(
             color: AppColor.GREY_TEXT,
@@ -202,6 +156,7 @@ class PopupDetailAnnualFee extends StatelessWidget {
               ),
               child: Text(
                 rightText,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],

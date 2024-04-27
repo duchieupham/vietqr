@@ -145,7 +145,7 @@ class _InvoiceDetailScreenState extends State<_InvoiceDetailScreen> {
     }
     int timestamp = _data != null ? _data!.timePaid! : 0;
     DateTime date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
-    String timePaid = DateFormat('dd/MM/yyyy HH:mm:ss').format(date);
+    String timePaid = _data?.status == 1 ? DateFormat('dd/MM/yyyy HH:mm').format(date) : '-';
     return Scaffold(
       backgroundColor: AppColor.WHITE,
       bottomNavigationBar:
@@ -360,7 +360,7 @@ class _InvoiceDetailScreenState extends State<_InvoiceDetailScreen> {
                   ),
                   IntrinsicHeight(
                     child: Text(
-                      '$itemAmount VND',
+                      '${CurrencyUtils.instance.getCurrencyFormatted(itemAmount.toString())} VND',
                       style: TextStyle(color: AppColor.BLACK, fontSize: 15),
                     ),
                   )
@@ -383,7 +383,7 @@ class _InvoiceDetailScreenState extends State<_InvoiceDetailScreen> {
                   ),
                   IntrinsicHeight(
                     child: Text(
-                      '$totalItemAmount VND',
+                      '${CurrencyUtils.instance.getCurrencyFormatted(totalItemAmount.toString())} VND',
                       style: TextStyle(color: AppColor.BLACK, fontSize: 15),
                     ),
                   ),
