@@ -14,6 +14,7 @@ import 'package:vierqr/models/theme_dto.dart';
 import 'package:vierqr/models/user_profile.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
 
+import '../../../features/login/login_screen.dart';
 import 'secure_storage_service.dart';
 import 'shared_pref_local.dart';
 
@@ -413,7 +414,10 @@ class SharePrefUtils {
     await saveProfileToCache(UserProfile());
     await setTokenInfo('');
     AppDataHelper.instance.clearListQRDetailBank();
-    Navigator.of(context)
-        .pushNamedAndRemoveUntil(Routes.LOGIN, (route) => route.isFirst);
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
+      builder: (context) => Login(),
+    ));
+    // Navigator.of(context)
+    //     .pushNamedAndRemoveUntil(Routes.LOGIN, (route) => route.isFirst);
   }
 }

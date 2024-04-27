@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 
+import '../../../commons/constants/configurations/theme.dart';
+
 class BackgroundAppBarLogin extends StatelessWidget {
   final Widget? child;
 
@@ -16,37 +18,38 @@ class BackgroundAppBarLogin extends StatelessWidget {
       File _file = provider.bannerApp;
       bool isFileNotEmpty = _file.path.isNotEmpty;
       return Container(
-        height: 230,
+        height: 200,
         width: width,
         alignment: Alignment.topCenter,
         decoration: BoxDecoration(
-          image: isFileNotEmpty
-              ? DecorationImage(image: FileImage(_file), fit: BoxFit.cover)
-              : DecorationImage(
-                  image: AssetImage('assets/images/bgr-header.png'),
-                  fit: BoxFit.cover),
+          color: AppColor.WHITE,
+          // image: isFileNotEmpty
+          //     ? DecorationImage(image: FileImage(_file), fit: BoxFit.cover)
+          //     : DecorationImage(
+          //         image: AssetImage('assets/images/bgr-header.png'),
+          //         fit: BoxFit.cover),
         ),
         child: Stack(
           children: [
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                height: 50,
-                width: width,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      colors: [
-                        Theme.of(context).scaffoldBackgroundColor,
-                        Theme.of(context)
-                            .scaffoldBackgroundColor
-                            .withOpacity(0.1),
-                      ],
-                      begin: Alignment.bottomCenter,
-                      end: Alignment.topCenter,
-                      tileMode: TileMode.clamp),
-                ),
-              ),
-            ),
+            // Align(
+            //   alignment: Alignment.bottomCenter,
+            //   child: Container(
+            //     height: 50,
+            //     width: width,
+            //     decoration: BoxDecoration(
+            //       gradient: LinearGradient(
+            //           colors: [
+            //             Theme.of(context).scaffoldBackgroundColor,
+            //             Theme.of(context)
+            //                 .scaffoldBackgroundColor
+            //                 .withOpacity(0.1),
+            //           ],
+            //           begin: Alignment.bottomCenter,
+            //           end: Alignment.topCenter,
+            //           tileMode: TileMode.clamp),
+            //     ),
+            //   ),
+            // ),
             child ??
                 Align(
                   alignment: Alignment.center,

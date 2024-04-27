@@ -149,7 +149,7 @@ class _DialogPickDateState extends State<DialogPickDate> {
                           fontWeight: FontWeight.w600,
                           color: data == _monthSelect
                               ? Colors.white
-                              : AppColor.textBlack),
+                              : AppColor.BLACK_TEXT),
                     ),
                   ),
                 );

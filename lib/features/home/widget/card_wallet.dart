@@ -113,14 +113,26 @@ class CardWallet extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
-          child:
-              _buildItemAction('assets/images/ic-tb-card.png', 'Tài khoản', () {
+          child: _buildItemAction(
+              'assets/images/ic-bank-account-home.png', 'Tài khoản', () {
             Navigator.pushNamed(context, Routes.SEARCH_BANK);
           }),
         ),
         Expanded(
-          child: _buildItemAction('assets/images/ic-tb-qr.png', 'Quét QR',
-              () async {
+          child: _buildItemAction(
+            'assets/images/ic-invoice-home.png',
+            'Hoá đơn',
+            () {
+              Navigator.of(context).pushNamed(Routes.INVOICE_SCREEN);
+              // Navigator.of(context).pushNamed(Routes.INVOICE_DETAIL,arguments: {
+              //     'id' : '345310c1-470b-4663-846b-7d1555b037b1'
+              // });
+            },
+          ),
+        ),
+        Expanded(
+          child: _buildItemAction(
+              'assets/images/ic-scan-qr-home.png', 'Quét QR', () async {
             if (SharePrefUtils.getQrIntro()) {
               startBarcodeScanStream();
             } else {
@@ -134,19 +146,10 @@ class CardWallet extends StatelessWidget {
         ),
         Expanded(
           child: _buildItemAction(
-            'assets/images/ic-qr-wallet-grey.png',
-            'Ví QR',
+            'assets/images/ic-application-home.png',
+            'Khám phá\nsản phẩm',
             () {
-              eventBus.fire(ChangeBottomBarEvent(2));
-            },
-          ),
-        ),
-        Expanded(
-          child: _buildItemAction(
-            'assets/images/ic-history-transaction-wallet.png',
-            'Lịch sử GD',
-            () {
-              Navigator.pushNamed(context, Routes.TRANSACTION_WALLET);
+              // Navigator.pushNamed(context, Routes.TRANSACTION_WALLET);
             },
           ),
         ),
@@ -154,7 +157,8 @@ class CardWallet extends StatelessWidget {
     );
   }
 
-  Widget _buildItemAction(String pathIcon, String title, VoidCallback onTap) {
+  Widget _buildItemAction(String pathIcon, String title, VoidCallback onTap,
+      {Color? color = null}) {
     return GestureDetector(
       onTap: onTap,
       child: Column(
@@ -163,6 +167,7 @@ class CardWallet extends StatelessWidget {
           Image.asset(
             pathIcon,
             height: 35,
+            color: color,
           ),
           Text(
             title,

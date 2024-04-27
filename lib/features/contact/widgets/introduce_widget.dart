@@ -50,7 +50,7 @@ class _ContactIntroWidgetState extends State<ContactIntroWidget> {
                   ),
                   IconButton(
                     icon: Icon(Icons.clear),
-                    color: AppColor.textBlack,
+                    color: AppColor.BLACK_TEXT,
                     onPressed: () {
                       widget.onSelected(isSelect);
                     },
@@ -69,7 +69,7 @@ class _ContactIntroWidgetState extends State<ContactIntroWidget> {
                   text: TextSpan(
                     style: TextStyle(
                       fontSize: 12,
-                      color: AppColor.textBlack,
+                      color: AppColor.BLACK_TEXT,
                       height: 1.4,
                       fontWeight: FontWeight.w500,
                     ),
@@ -110,7 +110,7 @@ class _ContactIntroWidgetState extends State<ContactIntroWidget> {
                       activeColor: AppColor.BLUE_TEXT,
                       value: isSelect,
                       shape: const CircleBorder(),
-                      side: const BorderSide(color: AppColor.textBlack),
+                      side: const BorderSide(color: AppColor.BLACK_TEXT),
                       onChanged: (value) async {
                         setState(() {
                           isSelect = value ?? false;
@@ -120,7 +120,7 @@ class _ContactIntroWidgetState extends State<ContactIntroWidget> {
                   ),
                   const Text(
                     'Không hiển thị ở lần sau',
-                    style: TextStyle(color: AppColor.textBlack, fontSize: 15),
+                    style: TextStyle(color: AppColor.BLACK_TEXT, fontSize: 15),
                   ),
                 ],
               ),

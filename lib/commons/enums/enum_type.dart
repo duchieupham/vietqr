@@ -4,6 +4,7 @@ enum BlocStatus {
   LOADING_PAGE,
   NONE,
   LOADING,
+  LOAD_MORE,
   LOADING_SHARE,
   UNLOADING,
   ERROR,
@@ -267,6 +268,13 @@ enum BankType {
   BANK,
   GET_BANK,
   GET_BANK_LOCAL,
+}
+
+enum InvoiceType {
+  NONE,
+  GET_INVOICE_LIST,
+  INVOICE_DETAIL,
+  FILTER_INVOICE,
 }
 
 enum MainChargeType {

@@ -49,6 +49,7 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
+      backgroundColor: AppColor.WHITE,
       resizeToAvoidBottomInset: false,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -59,6 +60,15 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
             child: Stack(
               children: [
                 BackgroundAppBarLogin(),
+                Positioned(
+                  bottom: 10,
+                  left: 20,
+                  right: 20,
+                  child: Text(
+                    'Chọn tài khoản\nđể tiếp tục đăng nhập',
+                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                  ),
+                ),
               ],
             ),
           ),
@@ -150,7 +160,7 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
                         child: MButtonWidget(
                           title: '',
                           isEnable: true,
-                          colorEnableBgr: AppColor.WHITE,
+                          colorEnableBgr: AppColor.BLUE_E1EFFF,
                           margin: EdgeInsets.zero,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -182,7 +192,7 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
                       child: GestureDetector(
                         onTap: widget.onRegister,
                         child: const Text(
-                          'Đăng kí tài khoản mới',
+                          'Đăng ký tài khoản mới',
                           style: TextStyle(
                               color: AppColor.BLUE_TEXT,
                               decoration: TextDecoration.underline),
@@ -212,7 +222,9 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
           ? const EdgeInsets.only(left: 20, right: 20, bottom: 6)
           : const EdgeInsets.only(left: 20, right: 20, bottom: 10),
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5), color: AppColor.WHITE),
+          border: Border.all(color: AppColor.GREY_DADADA, width: 2),
+          borderRadius: BorderRadius.circular(5),
+          color: AppColor.WHITE),
       child: Container(
         padding: EdgeInsets.symmetric(
             horizontal: 20, vertical: height < 800 ? 6 : 12),
@@ -223,14 +235,14 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
               child: dto.imgId?.isNotEmpty ?? false
                   ? Image(
                       image: ImageUtils.instance.getImageNetWork(dto.imgId!),
-                      width: 30,
-                      height: 30,
+                      width: 40,
+                      height: 40,
                       fit: BoxFit.fill,
                     )
                   : Image.asset(
                       'assets/images/ic-avatar.png',
-                      width: 30,
-                      height: 30,
+                      width: 40,
+                      height: 40,
                     ),
             ),
             const SizedBox(width: 10),
@@ -245,6 +257,7 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
+                  const SizedBox(height: 2),
                   Text(
                     dto.phoneNo ?? '',
                     style: TextStyle(fontSize: 15, color: AppColor.GREY_TEXT),

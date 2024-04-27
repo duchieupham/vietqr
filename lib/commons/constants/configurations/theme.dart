@@ -6,7 +6,8 @@ import 'package:flutter/services.dart';
 class AppColor {
   //COLOR
   static const Color BLACK = Color(0xFF000000);
-  static const Color textBlack = Color(0xff393939);
+
+  static const Color BLACK_TEXT = Color(0xff393939);
   static const Color BLACK_DARK = Color(0xFF1B1C1E);
   static const Color BLACK_BUTTON = Color(0xFF303030);
   static const Color BLACK_LIGHT = Color(0xFF464646);
@@ -18,12 +19,15 @@ class AppColor {
   static const Color GREY_LIGHT = Color(0xFF9BA5B9);
   static const Color GREY_EBEBEB = Color(0xFFebebeb);
   static const Color GREY_BG = Color(0xFFF4F4F4);
+  static const Color GREY_979797 = Color(0xff979797);
   static const Color GREY_F1F2F5 = Color(0xFFF1F2F5);
   static const Color GREY_HIGHLIGHT = Color(0xFF222222);
   static const Color GREY_444B56 = Color(0xff444B56);
   static const Color RED_TEXT = Color(0xFFFF0A0A);
   static const Color RED_EC1010 = Color(0xffEC1010);
   static const Color RED_FFFF0000 = Color(0xFFFF0000);
+  static const Color BLUE_E1EFFF = Color(0xFFE1EFFF);
+  static const Color BLUE_E5F9FF = Color(0xFFE5F9FF);
 
   static const Color error700 = Color(0xffD8281E);
   static const Color BLUE_TEXT = Color(0xFF0A7AFF);

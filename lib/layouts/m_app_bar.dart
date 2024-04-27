@@ -86,11 +86,11 @@ class MAppBar extends StatelessWidget implements PreferredSizeWidget {
                       : callBackHome,
                   child: Container(
                     width: 96,
-                    height: 40,
+                    height: 56,
                     margin: const EdgeInsets.only(right: 20),
                     child: CachedNetworkImage(
                       imageUrl: page.settingDTO.logoUrl,
-                      height: 40,
+                      height: 56,
                       width: 96,
                       fit: BoxFit.contain,
                     ),

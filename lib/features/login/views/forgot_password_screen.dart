@@ -94,8 +94,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                                       .isNotEmpty
                                   ? DecorationImage(
                                       image: FileImage(
-                                          Provider.of<AuthProvider>(
-                                                  context,
+                                          Provider.of<AuthProvider>(context,
                                                   listen: false)
                                               .bannerApp),
                                       fit: BoxFit.cover)
@@ -514,7 +513,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                       style: TextStyle(
                           color: step == 1
                               ? AppColor.WHITE
-                              : AppColor.textBlack.withOpacity(0.6)),
+                              : AppColor.BLACK_TEXT.withOpacity(0.6)),
                     ),
                   ),
                   Expanded(child: const SizedBox()),

@@ -275,8 +275,8 @@ class CardWidget extends StatelessWidget {
                           ),
                         )
                       : InkWell(
-                        onTap: onActive,
-                        child: Container(
+                          onTap: !e.isValidService! ? onActive : null,
+                          child: Container(
                             padding: const EdgeInsets.fromLTRB(20, 5, 10, 10),
                             width: double.infinity,
                             child: (e.isValidService!)
@@ -318,7 +318,8 @@ class CardWidget extends StatelessWidget {
                                                       "Còn $inclusiveDays ngày hết hạn",
                                                       style: TextStyle(
                                                           fontSize: 12,
-                                                          color: AppColor.WHITE),
+                                                          color:
+                                                              AppColor.WHITE),
                                                     ),
                                                   ),
                                                 )
@@ -332,19 +333,22 @@ class CardWidget extends StatelessWidget {
                                       )
                                     : Row(
                                         // crossAxisAlignment: CrossAxisAlignment.end,
-                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
                                         children: [
                                           InkWell(
                                             onTap: onActive,
                                             child: Container(
                                               // width: double.infinity,
-                                              padding: const EdgeInsets.fromLTRB(
-                                                  10, 5, 10, 5),
+                                              padding:
+                                                  const EdgeInsets.fromLTRB(
+                                                      10, 5, 10, 5),
                                               height: 26,
                                               decoration: BoxDecoration(
                                                   color: AppColor.BLUE_TEXT,
                                                   borderRadius:
-                                                      BorderRadius.circular(50)),
+                                                      BorderRadius.circular(
+                                                          50)),
                                               child: Center(
                                                 child: Text(
                                                   "Gia hạn dịch vụ VietQR",
@@ -385,7 +389,7 @@ class CardWidget extends StatelessWidget {
                                     ],
                                   ),
                           ),
-                      ),
+                        ),
                 ] else
                   const SizedBox.shrink(),
               ]),

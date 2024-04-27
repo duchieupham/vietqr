@@ -77,6 +77,13 @@ class AuthProvider with ChangeNotifier {
 
   File avatarUser = File('');
 
+  bool isError = false;
+
+  void checkStateLogin(bool check) {
+    isError = check;
+    notifyListeners();
+  }
+
   void setImage(File? file) {
     if (file == null) return;
     avatarUser = file;
@@ -274,7 +281,7 @@ class AuthProvider with ChangeNotifier {
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.CENTER,
             backgroundColor: AppColor.GREY_BG,
-            textColor: AppColor.textBlack,
+            textColor: AppColor.BLACK_TEXT,
             fontSize: 15,
           );
         }
@@ -302,7 +309,7 @@ class AuthProvider with ChangeNotifier {
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.CENTER,
             backgroundColor: AppColor.GREY_BG,
-            textColor: AppColor.textBlack,
+            textColor: AppColor.BLACK_TEXT,
             fontSize: 15,
           );
         }

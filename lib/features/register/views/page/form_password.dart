@@ -9,7 +9,7 @@ import '../../../../services/providers/register_provider.dart';
 
 class FormPassword extends StatefulWidget {
   bool isFocus;
-  FormPassword({super.key, required this.isFocus});
+  FormPassword({super.key, required this.isFocus,});
 
   @override
   State<FormPassword> createState() => _FormPasswordState();
@@ -29,6 +29,7 @@ class _FormPasswordState extends State<FormPassword> {
     return Consumer<RegisterProvider>(
       builder: (context, provider, child) {
         return SingleChildScrollView(
+          physics: NeverScrollableScrollPhysics(),
           child: Column(
             children: [
               Container(

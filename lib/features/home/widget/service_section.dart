@@ -148,7 +148,7 @@ class _ServiceSectionState extends State<ServiceSection> {
                   onCheckUpdate: () {
                     context
                         .read<DashBoardBloc>()
-                        .add(GetVersionAppEvent(isCheckVer: true));
+                        .add(GetVersionAppEventDashboard(isCheckVer: true));
                   },
                 );
               },

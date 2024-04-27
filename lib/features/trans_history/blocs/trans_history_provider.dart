@@ -14,9 +14,9 @@ class TransProvider with ChangeNotifier {
   final controller = TextEditingController();
 
   final bool isOwner;
-  final List<TerminalResponseDTO> terminals;
+  final List<TerminalAccountDTO> terminalList;
 
-  TransProvider(this.isOwner, this.terminals);
+  TransProvider(this.isOwner, this.terminalList);
 
   List<FilterTransaction> listFilter = [
     const FilterTransaction(id: 9, title: 'Tất cả (mặc định)'),
@@ -95,16 +95,19 @@ class TransProvider with ChangeNotifier {
   int get currentPage => _currentPage;
   List<BankAccountDTO> bankAccounts = [];
 
-  TerminalResponseDTO _terminalResponseDTO = TerminalResponseDTO(banks: []);
+  TerminalAccountDTO _terminalAccountDTO = TerminalAccountDTO();
+  TerminalAccountDTO get terminalAccountDTO => _terminalAccountDTO;
 
-  TerminalResponseDTO get terminalResponseDTO => _terminalResponseDTO;
+  // TerminalResponseDTO _terminalResponseDTO = TerminalResponseDTO(banks: []);
+
+  // TerminalResponseDTO get terminalResponseDTO => _terminalResponseDTO;
 
   String get fromDateText => dateFormat.format(fromDate);
 
   String get toDateText => dateFormat.format(toDate ?? DateTime.now());
 
   void updateTerminals(
-    List<TerminalResponseDTO> value,
+    // List<TerminalResponseDTO> value,
     String bankID,
     DateTime formDate,
     DateTime toDate,
@@ -114,7 +117,8 @@ class TransProvider with ChangeNotifier {
     FilterTransaction filterTransaction,
     FilterStatusTransaction valueStatus,
     FilterTransaction filterTerminal, {
-    TerminalResponseDTO? terminalRes,
+    // TerminalResponseDTO? terminalRes,
+    List<TerminalAccountDTO>? listTerminal,
   }) {
     bankId = bankID;
     _formDate = formDate;
@@ -124,10 +128,10 @@ class TransProvider with ChangeNotifier {
       onChangeDropTime(true);
     }
 
-    if (terminalRes != null) {
-      _terminalResponseDTO = terminalRes;
+    if (listTerminal != null && listTerminal.isNotEmpty) {
+      _terminalAccountDTO = terminalList.first;
     } else {
-      _terminalResponseDTO = terminals.first;
+      _terminalAccountDTO = listTerminal![0];
     }
 
     _keywordSearch = keyword;
@@ -144,12 +148,12 @@ class TransProvider with ChangeNotifier {
     }
   }
 
-  void updateTerminalResponseDTO(TerminalResponseDTO? value) {
+  void updateTerminalResponseDTO(TerminalAccountDTO? value) {
     if (value == null) return;
-    _terminalResponseDTO = value;
+    _terminalAccountDTO = value;
     if (isOwner) {
-      _keywordSearch = value.name;
-      codeTerminal = value.code;
+      _keywordSearch = value.terminalName!;
+      codeTerminal = value.terminalCode!;
     }
     notifyListeners();
   }
@@ -163,7 +167,7 @@ class TransProvider with ChangeNotifier {
     FilterTimeTransaction? filterTime,
     DateTime fromDate,
     DateTime? toDate,
-    TerminalResponseDTO terminalResponseDTO,
+    TerminalAccountDTO terminalAccount,
   ) {
     _valueFilterTerminal = filterTerminal;
     if (filterTransaction != null) {
@@ -177,7 +181,7 @@ class TransProvider with ChangeNotifier {
     updateFromDate(fromDate);
     updateToDate(toDate);
 
-    _terminalResponseDTO = terminalResponseDTO;
+    _terminalAccountDTO = terminalAccount;
 
     if (statusFilter != null) {
       controller.clear();
@@ -215,7 +219,7 @@ class TransProvider with ChangeNotifier {
     DateTime fromDate = DateTime(now.year, now.month, now.day);
     DateTime endDate = fromDate.subtract(const Duration(days: 0));
 
-    _terminalResponseDTO = terminals.first;
+    _terminalAccountDTO = terminalList.first;
 
     fromDate = fromDate
         .add(const Duration(days: 1))
@@ -227,7 +231,7 @@ class TransProvider with ChangeNotifier {
       bankId: bankId,
       offset: 0,
       value: '',
-      terminalCode: _terminalResponseDTO.id,
+      terminalCode: _terminalAccountDTO.terminalCode!,
       userId: SharePrefUtils.getProfile().userId,
       status: 0,
       from: TimeUtils.instance.getCurrentDate(endDate),
@@ -245,7 +249,7 @@ class TransProvider with ChangeNotifier {
             bankId: bankId,
             offset: offset,
             value: keywordSearch,
-            terminalCode: _terminalResponseDTO.id,
+            terminalCode: _terminalAccountDTO.terminalId!,
             userId: SharePrefUtils.getProfile().userId,
             status: statusValue.id,
           );
@@ -311,12 +315,12 @@ class TransProvider with ChangeNotifier {
       updateKeyword('');
       _valueFilter = value;
       if (value.id == 4) {
-        _keywordSearch = _terminalResponseDTO.code;
+        _keywordSearch = _terminalAccountDTO.terminalCode!;
       } else {
         updateKeyword('');
       }
 
-      _terminalResponseDTO = terminals.first;
+      _terminalAccountDTO = terminalList.first;
 
       if (_valueFilter.id.typeTrans == TypeFilter.ALL) {
         onSearch(callBack);
@@ -467,7 +471,7 @@ class TransProvider with ChangeNotifier {
         bankId: bankId,
         offset: offset,
         value: codeTerminal,
-        terminalCode: _terminalResponseDTO.code,
+        terminalCode: _terminalAccountDTO.terminalCode!,
         userId: SharePrefUtils.getProfile().userId,
         status: statusValue.id,
       );
@@ -479,13 +483,13 @@ class TransProvider with ChangeNotifier {
         param.to = TimeUtils.instance.getCurrentDate(_toDate);
       }
 
-      if (codeTerminal == _terminalResponseDTO.code &&
-          _terminalResponseDTO.id.isEmpty) {
+      if (codeTerminal == _terminalAccountDTO.terminalCode! &&
+          _terminalAccountDTO.terminalId!.isEmpty) {
         param.terminalCode = '';
         param.value = '';
       }
 
-      if (!isOwner && _terminalResponseDTO.id.isEmpty) {
+      if (!isOwner && _terminalAccountDTO.terminalId!.isEmpty) {
         param.terminalCode = '';
       }
 

@@ -159,19 +159,18 @@ class _AccountScreenState extends State<_AccountScreen>
   }
 
   Widget _buildLogOutWidget() {
-    return GestureDetector(
-      onTap: () {
-        _accountBloc.add(LogoutEventSubmit());
-      },
-      child: Column(
-        children: [
-          Consumer<AuthProvider>(
-            builder: (context, provider, child) {
-              return Text(
-                  'Phiên bản ứng dụng: ${provider.packageInfo.version}');
-            },
-          ),
-          Container(
+    return Column(
+      children: [
+        Consumer<AuthProvider>(
+          builder: (context, provider, child) {
+            return Text('Phiên bản ứng dụng: ${provider.packageInfo.version}');
+          },
+        ),
+        GestureDetector(
+          onTap: () {
+            _accountBloc.add(LogoutEventSubmit());
+          },
+          child: Container(
             alignment: Alignment.center,
             margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
@@ -187,8 +186,8 @@ class _AccountScreenState extends State<_AccountScreen>
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -721,7 +720,7 @@ class _SettingWidget extends StatelessWidget {
           onCheckUpdate: () {
             context
                 .read<DashBoardBloc>()
-                .add(GetVersionAppEvent(isCheckVer: true));
+                .add(GetVersionAppEventDashboard(isCheckVer: true));
           },
         );
       },

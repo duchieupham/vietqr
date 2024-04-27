@@ -87,6 +87,7 @@ class _BankCardDetailState extends State<BankCardDetailState> {
       imgId: '');
 
   late AccountBankDetailDTO dto = AccountBankDetailDTO();
+  late List<TerminalAccountDTO> listTerminalAcc = [];
   final otpController = TextEditingController();
   late AccountBankDetailProvider _provider;
 
@@ -226,6 +227,11 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                   );
                 }
               }
+              if (state.request == BankDetailType.GET_LIST_GROUP) {
+                if (state.terminalAccountDto != null) {
+                  listTerminalAcc = state.terminalAccountDto!;
+                }
+              }
 
               if (state.request == BankDetailType.CREATE_QR) {
                 Navigator.of(context).pop();
@@ -345,8 +351,9 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                                   TransHistoryScreen(
                                     bankUserId: dto.userId,
                                     bankId: state.bankId ?? '',
-                                    terminalDto: state.terminalDto ??
-                                        TerminalDto(terminals: []),
+                                    // terminalDto: state.terminalDto ??
+                                    //     TerminalDto(terminals: []),
+                                    terminalAccountList: listTerminalAcc ?? [],
                                   ),
                                   StatisticalScreen(
                                     bankId: state.bankId ?? '',

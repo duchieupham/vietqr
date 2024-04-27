@@ -27,6 +27,7 @@ class BankCardState extends Equatable {
   final bool isInit;
   final bool isRegisterMerchant;
   final MerchantDTO? merchantDTO;
+  final List<TerminalAccountDTO>? terminalAccountDto;
 
   const BankCardState({
     this.msg,
@@ -42,6 +43,7 @@ class BankCardState extends Equatable {
     this.bankTypeDTO,
     this.qrGeneratedDTO,
     this.terminalDto,
+    this.terminalAccountDto,
     this.merchantDTO,
     this.isInit = false,
     this.isRegisterMerchant = false,
@@ -63,6 +65,7 @@ class BankCardState extends Equatable {
     BankTypeDTO? bankTypeDTO,
     QRGeneratedDTO? qrGeneratedDTO,
     TerminalDto? terminalDto,
+    List<TerminalAccountDTO>? terminalAccountDto,
     bool? isInit,
     bool? isRegisterMerchant,
     MerchantDTO? merchantDTO,
@@ -84,6 +87,7 @@ class BankCardState extends Equatable {
       isInit: isInit ?? this.isInit,
       isRegisterMerchant: isRegisterMerchant ?? this.isRegisterMerchant,
       merchantDTO: merchantDTO ?? this.merchantDTO,
+      terminalAccountDto: terminalAccountDto ?? this.terminalAccountDto,
     );
   }
 
@@ -104,5 +108,6 @@ class BankCardState extends Equatable {
         isInit,
         isRegisterMerchant,
         merchantDTO,
+        terminalAccountDto,
       ];
 }

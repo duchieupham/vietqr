@@ -29,11 +29,19 @@ class QrAnnualFeeScreen extends StatefulWidget {
   final int? validTo;
   final String? billNumber;
   final String? qr;
+  final String? bankCode;
+  final String? bankName;
+  final String? bankAccount;
+  final String? userBankName;
 
   const QrAnnualFeeScreen(
       {super.key,
       required this.qr,
       required this.billNumber,
+      required this.bankCode,
+      required this.bankName,
+      required this.bankAccount,
+      required this.userBankName,
       required this.duration,
       required this.amount,
       required this.validFrom,
@@ -79,10 +87,10 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
 
   void onShare(BuildContext context) {
     QRGeneratedDTO dto = QRGeneratedDTO(
-      bankCode: ' bankAccountDTO.bankCode',
-      bankName: ' bankAccountDTO.bankName',
-      bankAccount: '',
-      userBankName: '',
+      bankCode: widget.bankCode!,
+      bankName: widget.bankName!,
+      bankAccount: widget.bankAccount!,
+      userBankName: widget.userBankName!,
       qrCode: widget.qr!,
       imgId: '',
       amount: widget.amount.toString(),
@@ -94,10 +102,10 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
 
   void onSaveImage(BuildContext context) {
     QRGeneratedDTO dto = QRGeneratedDTO(
-      bankCode: ' bankAccountDTO.bankCode',
-      bankName: ' bankAccountDTO.bankName',
-      bankAccount: '',
-      userBankName: '',
+      bankCode: widget.bankCode!,
+      bankName: widget.bankName!,
+      bankAccount: widget.bankAccount!,
+      userBankName: widget.userBankName!,
       qrCode: widget.qr!,
       imgId: '',
       amount: widget.amount.toString(),

@@ -36,6 +36,7 @@ import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/qr_create_dto.dart';
 import 'package:vierqr/models/user_repository.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
+import 'package:vierqr/services/providers/invoice_provider.dart';
 
 import '../../commons/constants/configurations/app_images.dart';
 import '../../services/providers/maintain_charge_provider.dart';
@@ -93,13 +94,17 @@ class _BankScreenState extends State<_BankScreen>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       initData();
     });
-    _subscription = eventBus.on<GetListBankScreen>().listen((_) {
-      _bloc.add(BankCardEventGetList());
-    });
+    // _subscription = eventBus.on<GetListBankScreen>().listen((_) {
+    //   _bloc.add(BankCardEventGetList());
+    // });
   }
 
   void onActiveKey({
     required String bankId,
+    required String bankCode,
+    required String bankName,
+    required String bankAccount,
+    required String userBankName,
   }) async {
     await showCupertinoModalPopup(
       context: context,
@@ -135,6 +140,10 @@ class _BankScreenState extends State<_BankScreen>
                         arguments: {
                           'type': 0,
                           'bankId': bankId,
+                          'bankCode': bankCode,
+                          'bankName': bankName,
+                          'bankAccount': bankAccount,
+                          'userBankName': userBankName,
                         });
                   },
                   child: Container(
@@ -189,6 +198,10 @@ class _BankScreenState extends State<_BankScreen>
                         arguments: {
                           'type': 1,
                           'bankId': bankId,
+                          'bankCode': bankCode,
+                          'bankName': bankName,
+                          'bankAccount': bankAccount,
+                          'userBankName': userBankName,
                         });
                   },
                   child: Container(
@@ -352,6 +365,7 @@ class _BankScreenState extends State<_BankScreen>
         if (state.request == BankType.BANK) {
           Provider.of<AuthProvider>(context, listen: false)
               .updateBanks(state.listBanks);
+
           if (scrollController.hasClients) {
             scrollController.jumpTo(0);
           }
@@ -371,6 +385,7 @@ class _BankScreenState extends State<_BankScreen>
         List<BankAccountDTO> listAuthenticated = state.listBanks
             .where((element) => element.isAuthenticated == true)
             .toList();
+
         List<BankAccountDTO> listUnAuthenticated = state.listBanks
             .where((element) => element.isAuthenticated == false)
             .toList();
@@ -446,6 +461,18 @@ class _BankScreenState extends State<_BankScreen>
                                             onActiveKey(
                                               bankId:
                                                   extendAnnualFeeList[index].id,
+                                              bankCode:
+                                                  extendAnnualFeeList[index]
+                                                      .bankCode,
+                                              bankName:
+                                                  extendAnnualFeeList[index]
+                                                      .bankName,
+                                              bankAccount:
+                                                  extendAnnualFeeList[index]
+                                                      .bankAccount,
+                                              userBankName:
+                                                  extendAnnualFeeList[index]
+                                                      .userBankName,
                                             );
                                           },
                                         ),
@@ -499,6 +526,12 @@ class _BankScreenState extends State<_BankScreen>
                                               .bankShortName);
                                   onActiveKey(
                                     bankId: listAuthenticated[index].id,
+                                    bankCode: listAuthenticated[index].bankCode,
+                                    bankName: listAuthenticated[index].bankName,
+                                    bankAccount:
+                                        listAuthenticated[index].bankAccount,
+                                    userBankName:
+                                        listAuthenticated[index].userBankName,
                                   );
                                 },
                               ),
@@ -548,6 +581,14 @@ class _BankScreenState extends State<_BankScreen>
                                               .bankShortName);
                                   onActiveKey(
                                     bankId: listUnAuthenticated[index].id,
+                                    bankCode:
+                                        listUnAuthenticated[index].bankCode,
+                                    bankName:
+                                        listUnAuthenticated[index].bankName,
+                                    bankAccount:
+                                        listUnAuthenticated[index].bankAccount,
+                                    userBankName:
+                                        listUnAuthenticated[index].userBankName,
                                   );
                                 },
                               ),
@@ -687,9 +728,12 @@ class _BankScreenState extends State<_BankScreen>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              'Thêm tài khoản ngân hàng',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            Padding(
+              padding: const EdgeInsets.only(top: 20),
+              child: Text(
+                'Thêm tài khoản ngân hàng',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              ),
             ),
             const SizedBox(height: 16),
             Expanded(

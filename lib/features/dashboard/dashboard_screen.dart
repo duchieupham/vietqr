@@ -24,12 +24,14 @@ import 'package:vierqr/features/contact/contact_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/blocs/isolate_stream.dart';
 import 'package:vierqr/features/dashboard/curved_navi_bar/curved_nav_bar_model.dart';
+import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
 import 'package:vierqr/features/dashboard/widget/background_app_bar_home.dart';
 import 'package:vierqr/features/dashboard/widget/floating_button.dart';
 import 'package:vierqr/features/dashboard/widget/maintain_widget.dart';
 import 'package:vierqr/features/home/home.dart';
 import 'package:vierqr/features/home/widget/dialog_update.dart';
+import 'package:vierqr/features/login/blocs/login_bloc.dart';
 import 'package:vierqr/features/network/network_bloc.dart';
 import 'package:vierqr/features/network/network_state.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
@@ -43,8 +45,12 @@ import 'package:vierqr/models/user_repository.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/splash_screen.dart';
 
+import '../../commons/utils/encrypt_utils.dart';
+import '../../models/account_login_dto.dart';
+import '../../services/providers/pin_provider.dart';
+import '../login/blocs/login_bloc.dart';
+import '../login/events/login_event.dart';
 import 'curved_navi_bar/custom_navigation_bar.dart';
-import 'events/dashboard_event.dart';
 import 'widget/disconnect_widget.dart';
 
 class DashBoardScreen extends StatefulWidget {
@@ -88,15 +94,26 @@ class _DashBoardScreen extends State<DashBoardScreen>
 
   //blocs
   late DashBoardBloc _bloc;
+  late LoginBloc _blocLogin;
   late AuthProvider _provider;
   late Stream<int> bottomBarStream;
   late IsolateStream _isolateStream;
+
+  final TextEditingController _editingController =
+      TextEditingController(text: '');
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _bloc = BlocProvider.of(context);
+    _blocLogin = LoginBloc(context);
+    _blocLogin.stream.listen((statLogin) {
+      if (statLogin.request == LoginType.LOGIN) {
+        initialServices();
+        Navigator.of(context).pop();
+      }
+    });
     _provider = Provider.of<AuthProvider>(context, listen: false);
     _isolateStream = IsolateStream(context);
     _pageController =
@@ -240,7 +257,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
           return DialogUpdateView(
             isHideClose: true,
             onCheckUpdate: () {
-              _bloc.add(GetVersionAppEvent(isCheckVer: true));
+              _bloc.add(GetVersionAppEventDashboard(isCheckVer: true));
             },
           );
         },
@@ -377,7 +394,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
         //check lỗi hệ thống
         if (state.request == DashBoardType.TOKEN) {
           if (state.typeToken == TokenType.Valid) {
-            _bloc.add(GetVersionAppEvent());
+            _bloc.add(GetVersionAppEventDashboard());
             _updateFcmToken(widget.isFromLogin);
           } else {
             _provider.updateRenderUI();
@@ -392,11 +409,32 @@ class _DashBoardScreen extends State<DashBoardScreen>
                 ),
               );
             } else if (state.typeToken == TokenType.Expired) {
-              await DialogWidget.instance.openMsgDialog(
-                title: 'Phiên đăng nhập hết hạn',
-                msg: 'Vui lòng đăng nhập lại ứng dụng',
-                function: () => _bloc.add(TokenEventLogout()),
+              String phone = SharePrefUtils.getPhone();
+              Provider.of<AuthProvider>(context, listen: false)
+                  .checkStateLogin(false);
+              await DialogWidget.instance.openConfirmPassDialog(
+                editingController: _editingController,
+                title: "Phiên đăng nhập hết hạn\nNhập mật khẩu để đăng nhập",
+                onClose: () {
+                  Provider.of<PinProvider>(context, listen: false).reset();
+                  DialogWidget.instance.openMsgDialog(
+                    title: 'Phiên đăng nhập hết hạn',
+                    msg: 'Vui lòng đăng nhập lại ứng dụng',
+                    function: () => _bloc.add(TokenEventLogout()),
+                  );
+                },
+                onDone: (pin) {
+                  Provider.of<PinProvider>(context, listen: false).reset();
+                  _editingController.text = '';
+                  AccountLoginDTO dto = AccountLoginDTO(
+                    phoneNo: phone,
+                    password: EncryptUtils.instance.encrypted(phone, pin),
+                  );
+                  _blocLogin.add(LoginEventByPhone(dto: dto));
+                  if (!mounted) return;
+                },
               );
+              // context.read<LoginBloc>().add(event)
             } else if (state.typeToken == TokenType.Logout) {
               await SharePrefUtils.resetServices();
             } else if (state.typeToken == TokenType.Logout_failed) {
@@ -422,7 +460,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
             state.request != DashBoardType.NONE ||
             state.typeQR != TypeQR.NONE ||
             state.typePermission == DashBoardTypePermission.None) {
-          _bloc.add(UpdateEvent());
+          _bloc.add(UpdateEventDashboard());
         }
       },
       child: Consumer<AuthProvider>(builder: (context, provider, _) {

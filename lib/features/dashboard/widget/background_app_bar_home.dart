@@ -46,7 +46,7 @@ class _BackgroundAppBarHomeState extends State<BackgroundAppBarHome> {
       builder: (context, page, child) {
         File file = page.bannerApp;
         return Container(
-          height: 230,
+          height: 240,
           width: width,
           padding: EdgeInsets.only(top: paddingTop + 12),
           alignment: Alignment.topCenter,
@@ -62,7 +62,7 @@ class _BackgroundAppBarHomeState extends State<BackgroundAppBarHome> {
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
-                  height: 50,
+                  height: 40,
                   width: width,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -92,13 +92,18 @@ class _BackgroundAppBarHomeState extends State<BackgroundAppBarHome> {
                     const Spacer(),
                     page.logoApp.path.isEmpty
                         ? Container(
-                            width: 60,
-                            height: 30,
+                            width: 96,
+                            height: 56,
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10)),
                             child: CachedNetworkImage(
-                                imageUrl: page.settingDTO.logoUrl, width: 50))
-                        : Image.file(page.logoApp, width: 60, height: 40),
+                                imageUrl: page.settingDTO.logoUrl))
+                        : Image.file(
+                            page.logoApp,
+                            width: 96,
+                            height: 56,
+                            fit: BoxFit.contain,
+                          ),
                   ],
                 ),
               ),

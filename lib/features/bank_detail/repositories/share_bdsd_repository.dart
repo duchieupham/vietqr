@@ -340,6 +340,29 @@ class ShareBDSDRepository {
     }
   }
 
+    Future<TerminalDto> getMyListGroup1(
+      String userId, String type, int offset) async {
+    TerminalDto result = TerminalDto(terminals: []);
+    try {
+      final String url =
+          '${EnvConfig.getBaseUrl()}account-bank/terminal?userId=$userId&bankId=$type';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        if (data != null) {
+          result = TerminalDto.fromJson(data);
+        }
+      }
+      return result;
+    } catch (e) {
+      LOG.error(e.toString());
+      return result;
+    }
+  }
+
   Future<BankTerminalDto> getListBankShare(
       String userId, int type, int offset) async {
     BankTerminalDto result = BankTerminalDto(bankShares: []);

@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
+import 'package:vierqr/features/invoice/invoice_screen.dart';
 import 'package:vierqr/features/maintain_charge/blocs/maintain_charge_bloc.dart';
 import 'package:vierqr/features/maintain_charge/maintain_charge_screen.dart';
 import 'package:vierqr/features/maintain_charge/views/confirm_active_key_screen.dart';
@@ -15,7 +16,10 @@ import 'package:vierqr/layouts/bottom_sheet/notify_trans_widget.dart';
 import 'package:vierqr/models/maintain_charge_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/maintain_charge_provider.dart';
+import 'package:vierqr/services/providers/register_provider.dart';
 import 'package:vierqr/services/socket_service/socket_service.dart';
+import 'features/invoice/widgets/invoice_detail_screen.dart';
+import 'features/invoice/widgets/popup_invoice_success.dart';
 import 'features/maintain_charge/views/active_success_screen.dart';
 import 'features/maintain_charge/views/annual_fee_screen.dart';
 import 'models/maintain_charge_create.dart';
@@ -80,6 +84,8 @@ import 'package:vierqr/features/mobile_recharge/mobile_recharge_screen.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart'
     as Constants;
 
+import 'services/providers/invoice_provider.dart';
+
 //Share Preferences
 late SharedPreferences sharedPrefs;
 List<CameraDescription> cameras = [];
@@ -131,6 +137,7 @@ Future<File> getImageFile(String file) async {
 
 Future<void> onClearCache() async {
   PackageInfo data = await PackageInfo.fromPlatform();
+  print('Version------- ${SharePrefUtils.getVersionApp()}');
   if (SharePrefUtils.getVersionApp() != data.version) {
     await sharedPrefs
         .remove(Constants.SharedPreferenceKey.ThemeVersion.sharedValue);
@@ -145,6 +152,7 @@ Future<void> onClearCache() async {
     await sharedPrefs.remove(Constants.SharedPreferenceKey.Themes.sharedValue);
     await sharedPrefs
         .remove(Constants.SharedPreferenceKey.SingleTheme.sharedValue);
+    // await sharedPrefs.remove(Constants.SharedPreferenceKey.Profile.sharedValue);
     SharePrefUtils.saveVersionApp(data.version);
   }
 }
@@ -191,8 +199,9 @@ class _VietQRApp extends State<VietQRApp> {
   @override
   void initState() {
     super.initState();
-    print(userId);
+    print('User: $userId');
     _mainScreen = (userId.isNotEmpty) ? const DashBoardScreen() : const Login();
+    // _mainScreen = const DashBoardScreen();
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -253,33 +262,25 @@ class _VietQRApp extends State<VietQRApp> {
             );
           }
         }
-        // if (message.data['notificationType'] != null &&
-        //     message.data['notificationType'] ==
-        //         Stringify.NOTI_TYPE_ANNUAL_FEE_SUCCESS) {
-        //   NavigatorUtils.navigatePageReplacement(context, DashBoardScreen(),
-        //       routeName: Routes.DASHBOARD);
-        //   DialogWidget.instance.openActiveAnnualSuccess();
-        // }
-        //   //process success transcation
-        //   if (message.data['notificationType'] != null &&
-        //       message.data['notificationType'] ==
-        //           Stringify.NOTI_TYPE_UPDATE_TRANSACTION) {
-        //     Map<String, dynamic> param = {};
-        //     param['userId'] = SharePrefUtils.getProfile().userId;
-        //     param['amount'] = message.data['amount'];
-        //     param['type'] = 0;
-        //     param['transactionId'] = message.data['transactionReceiveId'];
-        //     MediaHelper.instance.playAudio(param);
-        //     DialogWidget.instance.showModelBottomSheet(
-        //       isDismissible: true,
-        //       margin: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
-        //       height: 750,
-        //       borderRadius: BorderRadius.circular(16),
-        //       widget: NotifyTransWidget(
-        //         dto: NotifyTransDTO.fromJson(message.data),
-        //       ),
-        //     );
-        //   }
+        if (message.data['notificationType'] != null &&
+            message.data['notificationType'] ==
+                Stringify.NOTI_TYPE_INVOICE_SUCCESS) {
+          // BuildContext? checkContext =
+          //     NavigationService.navigatorKey.currentContext;
+          // ModalRoute? modalRoute = ModalRoute.of(checkContext!);
+          // String? currentRoute = modalRoute?.settings.name;
+          bool? isClose = true;
+
+          // if (currentRoute != null && currentRoute == Routes.INVOICE_DETAIL) {
+          //   isClose = true;
+          // }
+          DialogWidget.instance.showCuperModelPopUp(
+            isInvoiceDetail: isClose,
+            billNumber: message.data['billNumber'],
+            totalAmount: message.data['amount'],
+            timePaid: message.data['timePaid'],
+          );
+        }
       }
       notificationController.sink.add(true);
     });
@@ -340,6 +341,8 @@ class _VietQRApp extends State<VietQRApp> {
             ChangeNotifierProvider(create: (context) => PinProvider()),
             ChangeNotifierProvider(
                 create: (context) => MaintainChargeProvider()),
+            ChangeNotifierProvider(create: (context) => InvoiceProvider()),
+            ChangeNotifierProvider(create: (context) => RegisterProvider()),
             ChangeNotifierProvider(create: (context) => UserEditProvider()),
           ],
           child: Consumer<AuthProvider>(
@@ -383,6 +386,7 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.REPORT_SCREEN: (context) => const ReportScreen(),
                   Routes.TRANSACTION_WALLET: (context) =>
                       const TransWalletScreen(),
+                  Routes.INVOICE_SCREEN: (context) => InvoiceScreen(),
                   // Routes.ACTIVE_SUCCESS_SCREEN: (context) =>
                   //     const ActiveSuccessScreen(),
                 },
@@ -407,12 +411,20 @@ class _VietQRApp extends State<VietQRApp> {
                         settings.arguments as Map<String, dynamic>;
                     int type = param['type'] as int;
                     String bankId = param['bankId'] as String;
+                    String bankCode = param['bankCode'] as String;
+                    String bankName = param['bankName'] as String;
+                    String bankAccount = param['bankAccount'] as String;
+                    String userBankName = param['userBankName'] as String;
 
                     return CupertinoPageRoute<bool>(
                       builder: (context) {
                         return MaintainChargeScreen(
                           type: type,
                           bankId: bankId,
+                          bankCode: bankCode,
+                          bankName: bankName,
+                          bankAccount: bankAccount,
+                          userBankName: userBankName,
                         );
                       },
                     );
@@ -427,16 +439,24 @@ class _VietQRApp extends State<VietQRApp> {
 
                     String qr = param['qr'] as String;
                     String billNumber = param['billNumber'] as String;
+                    String bankCode = param['bankCode'] as String;
+                    String bankName = param['bankName'] as String;
+                    String bankAccount = param['bankAccount'] as String;
+                    String userBankName = param['userBankName'] as String;
 
                     return CupertinoPageRoute<bool>(
                       builder: (context) {
                         return QrAnnualFeeScreen(
+                          bankAccount: bankAccount,
+                          userBankName: userBankName,
                           duration: duration,
                           qr: qr,
                           billNumber: billNumber,
                           amount: amount,
                           validFrom: validFrom,
                           validTo: validTo,
+                          bankName: bankName,
+                          bankCode: bankCode,
                         );
                       },
                     );
@@ -512,6 +532,19 @@ class _VietQRApp extends State<VietQRApp> {
                         return RechargeSuccess(
                           phoneNo: data['phoneNo'],
                           money: data['money'],
+                        );
+                      },
+                    );
+                  }
+
+                  if (settings.name == Routes.INVOICE_DETAIL) {
+                    Map map = settings.arguments as Map;
+
+                    String id = map['id'];
+                    return MaterialPageRoute(
+                      builder: (context) {
+                        return InvoiceDetailScreen(
+                          invoiceId: id,
                         );
                       },
                     );

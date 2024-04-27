@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -11,8 +12,10 @@ import 'package:vierqr/commons/constants/configurations/app_images.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
+import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/maintain_charge/blocs/maintain_charge_bloc.dart';
 import 'package:vierqr/features/maintain_charge/states/maintain_charge_state.dart';
+import 'package:vierqr/features/maintain_charge/views/popup_detail_widget.dart';
 import 'package:vierqr/services/providers/pin_provider.dart';
 
 import '../../commons/constants/configurations/route.dart';
@@ -36,10 +39,18 @@ import 'views/annual_fee_screen.dart';
 class MaintainChargeScreen extends StatefulWidget {
   final int type;
   final String bankId;
+  final String bankCode;
+  final String bankName;
+  final String bankAccount;
+  final String userBankName;
   const MaintainChargeScreen({
     super.key,
     required this.type,
     required this.bankId,
+    required this.bankCode,
+    required this.bankName,
+    required this.bankAccount,
+    required this.userBankName,
   });
 
   @override
@@ -66,9 +77,10 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
   int? selectFeeAmount = 0;
   List<AnnualFeeDTO>? annualList;
   bool? isPayment = false;
+  AnnualFeeDTO? selectedDTO;
 
   void initData() async {
-    _bloc.add(GetAnnualFeeListEvent());
+    _bloc.add(GetAnnualFeeListEvent(bankId: widget.bankId));
   }
 
   @override
@@ -87,11 +99,6 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
   void onFcmMessage() async {
     await NotificationService().initialNotification();
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      // Xử lý push notification nếu ứng dụng đang chạy
-      LOG.info(
-          "Push notification received: ${message.notification?.title} - ${message.notification?.body}");
-      LOG.info("receive data: ${message.data}");
-      //process when receive data
       if (message.data.isNotEmpty) {
         if (message.data['notificationType'] != null &&
             message.data['notificationType'] ==
@@ -137,16 +144,15 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
 
   void onSubmit() {
     isClear = false;
-    Provider.of<MaintainChargeProvider>(context, listen: false)
-        .setIsError(false);
+    Provider.of<AuthProvider>(context, listen: false).checkStateLogin(false);
     String phone = SharePrefUtils.getPhone();
     DialogWidget.instance.openConfirmPassDialog(
       editingController: _editingController,
-      title: "",
+      title: "Nhập mật khẩu ứng dụng\nVietQR để xác thực",
       onClose: () {
         Provider.of<PinProvider>(context, listen: false).reset();
-        Provider.of<MaintainChargeProvider>(context, listen: false)
-            .setIsError(false);
+        Provider.of<AuthProvider>(context, listen: false)
+            .checkStateLogin(false);
         Navigator.of(context).pop();
       },
       onDone: (pin) {
@@ -166,16 +172,27 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
     );
   }
 
+  void _onOpenPopup() async {
+    String? bankName =
+        Provider.of<MaintainChargeProvider>(context, listen: false).bankName;
+    if (selectedDTO != null && bankName != null) {
+      await showCupertinoModalPopup(
+        context: context,
+        builder: (context) => PopupDetailAnnualFee(
+          dto: selectedDTO!,
+          bankAccount: widget.bankAccount,
+          bankName: bankName,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider<MaintainChargeBloc>(
       create: (context) => _bloc,
       child: BlocBuilder<MaintainChargeBloc, MaintainChargeState>(
         builder: (context, state) {
-          // if (isPayment!) {
-          //   NavigatorUtils.navigatePageReplacement(context, DashBoardScreen(),
-          //       routeName: Routes.DASHBOARD);
-          // }
           if (state.status == BlocStatus.ERROR) {
             // status = state.status;
             if (isClear) {
@@ -357,8 +374,9 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                       onTap: () {
                         setState(() {
                           selectedId = value.listAnnualFee[index].feeId;
-                          selectFeeAmount = value.listAnnualFee[index].amount! *
-                              value.listAnnualFee[index].duration!;
+                          selectFeeAmount =
+                              value.listAnnualFee[index].totalWithVat;
+                          selectedDTO = value.listAnnualFee[index];
                         });
                       },
                       child: Stack(
@@ -560,8 +578,8 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                   onPressed: () {
                     _controller.clear();
                     isClear = true;
-                    Provider.of<MaintainChargeProvider>(context, listen: false)
-                        .setIsError(false);
+                    Provider.of<AuthProvider>(context, listen: false)
+                        .checkStateLogin(false);
                     setState(() {
                       keyValue = '';
                     });
@@ -641,7 +659,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                 ),
                 Container(
                   padding: const EdgeInsets.only(
-                      left: 40, right: 40, bottom: 30, top: 20),
+                      left: 25, right: 25, bottom: 30, top: 20),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -649,7 +667,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Tổng tiền:",
+                            "Tổng tiền",
                             style: TextStyle(fontSize: 15),
                           ),
                           const SizedBox(height: 2),
@@ -660,7 +678,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                                     ? formatNumber(selectFeeAmount)
                                     : '0',
                                 style: TextStyle(
-                                  fontSize: 18,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                   color: AppColor.BLUE_TEXT,
                                 ),
@@ -670,29 +688,41 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                                 "VND",
                                 style: TextStyle(fontSize: 15),
                               ),
+                              const SizedBox(width: 6),
+                              selectFeeAmount != 0
+                                  ? InkWell(
+                                      onTap: _onOpenPopup,
+                                      child: Icon(
+                                        Icons.info_outline,
+                                        color: AppColor.BLUE_TEXT,
+                                      ),
+                                    )
+                                  : const SizedBox.shrink(),
                             ],
                           ),
                         ],
                       ),
                       InkWell(
                         onTap: () {
-                          Provider.of<MaintainChargeProvider>(context,
-                                  listen: false)
-                              .setIsError(false);
+                          Provider.of<AuthProvider>(context, listen: false)
+                              .checkStateLogin(false);
                           String phone = SharePrefUtils.getPhone();
                           DialogWidget.instance.openConfirmPassDialog(
                             editingController: _editingController,
-                            title: "",
+                            title: "Nhập mật khẩu ứng dụng\nVietQR để xác thực",
                             onClose: () {
                               Provider.of<PinProvider>(context, listen: false)
                                   .reset();
-                              Provider.of<MaintainChargeProvider>(context,
-                                      listen: false)
-                                  .setIsError(false);
+                              Provider.of<AuthProvider>(context, listen: false)
+                                  .checkStateLogin(false);
                               Navigator.of(context).pop();
                             },
                             onDone: (pin) {
                               _bloc.add(RequestActiveAnnualFeeEvent(
+                                bankAccount: widget.bankAccount,
+                                userBankName: widget.userBankName,
+                                bankCode: widget.bankCode,
+                                bankName: widget.bankName,
                                 type: widget.type,
                                 feeId: selectedId!,
                                 bankId: widget.bankId,
