@@ -80,7 +80,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
   AnnualFeeDTO? selectedDTO;
 
   void initData() async {
-    _bloc.add(GetAnnualFeeListEvent());
+    _bloc.add(GetAnnualFeeListEvent(bankId: widget.bankId));
   }
 
   @override

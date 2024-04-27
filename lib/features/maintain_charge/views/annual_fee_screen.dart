@@ -89,8 +89,8 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
     QRGeneratedDTO dto = QRGeneratedDTO(
       bankCode: widget.bankCode!,
       bankName: widget.bankName!,
-      bankAccount: '',
-      userBankName: '',
+      bankAccount: widget.bankAccount!,
+      userBankName: widget.userBankName!,
       qrCode: widget.qr!,
       imgId: '',
       amount: widget.amount.toString(),
@@ -104,8 +104,8 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
     QRGeneratedDTO dto = QRGeneratedDTO(
       bankCode: widget.bankCode!,
       bankName: widget.bankName!,
-      bankAccount: '',
-      userBankName: '',
+      bankAccount: widget.bankAccount!,
+      userBankName: widget.userBankName!,
       qrCode: widget.qr!,
       imgId: '',
       amount: widget.amount.toString(),

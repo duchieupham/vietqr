@@ -127,7 +127,7 @@ class MaintainChargeBloc extends Bloc<MaintainChargeEvents, MaintainChargeState>
           emit(state.copyWith(status: BlocStatus.LOADING));
         }
         List<AnnualFeeDTO>? list =
-            await _maintainChareRepositories.getAnnualFeeList();
+            await _maintainChareRepositories.getAnnualFeeList(event.bankId);
         if (list!.isNotEmpty) {
           emit(state.copyWith(
               listAnnualFee: list,

@@ -119,10 +119,11 @@ class MaintainChargeRepositories {
     }
   }
 
-  Future<List<AnnualFeeDTO>?> getAnnualFeeList() async {
+  Future<List<AnnualFeeDTO>?> getAnnualFeeList(String bankId) async {
     List<AnnualFeeDTO>? result = [];
     try {
-      final String url = '${EnvConfig.getBaseUrl()}key-active-bank/annual-fee';
+      final String url =
+          '${EnvConfig.getBaseUrl()}key-active-bank/annual-fee?bankId=$bankId';
       final String token = await SharePrefUtils.getTokenInfo();
       final response = await BaseAPIClient.getAPI(
         url: url,

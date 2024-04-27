@@ -182,25 +182,30 @@ class _PopupBankShareState extends State<PopupBankShare> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
-                                  Text(
-                                    'Số tiền:',
-                                    style: TextStyle(
-                                        color: AppColor.BLACK_TEXT
-                                            .withOpacity(0.6)),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    '+ ${CurrencyUtils.instance.getCurrencyFormatted(widget.dto.amount)} VND',
-                                    style: TextStyle(
-                                      color: AppColor.ORANGE_DARK,
-                                      fontSize: widget.dto.amount.length > 8
-                                          ? 22
-                                          : 26,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    textAlign: TextAlign.center,
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'Số tiền:',
+                                        style: TextStyle(
+                                            color: AppColor.BLACK_TEXT
+                                                .withOpacity(0.6)),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        '+ ${CurrencyUtils.instance.getCurrencyFormatted(widget.dto.amount)} VND',
+                                        style: TextStyle(
+                                          color: AppColor.ORANGE_DARK,
+                                          fontSize: widget.dto.amount.length > 8
+                                              ? 22
+                                              : 26,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
                                   ),
                                   if (widget.dto.content.isNotEmpty) ...[
+                                    const SizedBox(height: 8),
                                     const Divider(color: AppColor.GREY_BORDER),
                                     Text(
                                       'Nội dung:',

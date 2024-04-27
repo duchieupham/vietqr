@@ -55,6 +55,28 @@ class _InvoiceDetailScreenState extends State<_InvoiceDetailScreen> {
   void initState() {
     super.initState();
     context.read<InvoiceBloc>().add(GetInvoiceDetail(widget.invoiceId));
+
+    onFcmMessage();
+  }
+
+  void onFcmMessage() async {
+    // await NotificationService().initialNotification();
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      if (message.data.isNotEmpty) {
+        if (message.data['notificationType'] != null &&
+            message.data['notificationType'] ==
+                Stringify.NOTI_TYPE_INVOICE_SUCCESS) {
+          showCupertinoModalPopup(
+            context: context,
+            builder: (context) => PopupInvoiceSuccess(
+              billNumber: message.data['billNumber'],
+              totalAmount: message.data['amount'],
+              timePaid: message.data['timePaid'],
+            ),
+          );
+        }
+      }
+    });
   }
 
   void _onQrCreate() async {

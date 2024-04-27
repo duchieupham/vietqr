@@ -6,6 +6,8 @@ class AnnualFeeDTO {
   int? totalAmount;
   double? vat;
   int? totalWithVat;
+  int? timeFrom;
+  int? timeTo;
 
   AnnualFeeDTO({
     this.feeId,
@@ -15,6 +17,8 @@ class AnnualFeeDTO {
     this.totalAmount,
     this.vat,
     this.totalWithVat,
+    this.timeFrom,
+    this.timeTo,
   });
 
   factory AnnualFeeDTO.fromJson(Map<String, dynamic> json) {
@@ -27,6 +31,8 @@ class AnnualFeeDTO {
       totalAmount: json['totalAmount'],
       vat: json['vat'],
       totalWithVat: json['totalWithVat'],
+      timeFrom: json['timeFrom'],
+      timeTo: json['timeTo'],
     );
   }
 }

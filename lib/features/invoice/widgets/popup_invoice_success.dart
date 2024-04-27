@@ -11,7 +11,7 @@ import '../../../commons/utils/currency_utils.dart';
 class PopupInvoiceSuccess extends StatelessWidget {
   final String billNumber;
   final String totalAmount;
-  final int timePaid;
+  final String timePaid;
 
   const PopupInvoiceSuccess(
       {super.key,
@@ -21,12 +21,13 @@ class PopupInvoiceSuccess extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    DateTime date = DateTime.fromMillisecondsSinceEpoch(timePaid * 1000);
+    DateTime date =
+        DateTime.fromMillisecondsSinceEpoch(int.parse(timePaid) * 1000);
     String formattedDate = DateFormat('dd/MM/yyyy HH:mm').format(date);
     return Container(
       margin: const EdgeInsets.fromLTRB(10, 0, 10, 30),
       padding: const EdgeInsets.fromLTRB(30, 20, 30, 20),
-      height: MediaQuery.of(context).size.height * 0.8,
+      height: MediaQuery.of(context).size.height * 0.6,
       width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.white,
@@ -69,7 +70,7 @@ class PopupInvoiceSuccess extends StatelessWidget {
                       fontWeight: FontWeight.normal,
                     ),
                     child: Text(
-                      'thành công!',
+                      ' thành công!',
                     ),
                   ),
                 ],

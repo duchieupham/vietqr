@@ -262,45 +262,6 @@ class _VietQRApp extends State<VietQRApp> {
             );
           }
         }
-        if (message.data['notificationType'] != null &&
-            message.data['notificationType'] ==
-                Stringify.NOTI_TYPE_INVOICE_SUCCESS) {
-          showCupertinoModalPopup(
-            context: context,
-            builder: (context) => PopupInvoiceSuccess(
-              billNumber: message.data['billNumber'],
-              totalAmount: message.data['amount'].toString(),
-              timePaid: message.data['timePaid'],
-            ),
-          );
-        }
-        // if (message.data['notificationType'] != null &&
-        //     message.data['notificationType'] ==
-        //         Stringify.NOTI_TYPE_ANNUAL_FEE_SUCCESS) {
-        //   NavigatorUtils.navigatePageReplacement(context, DashBoardScreen(),
-        //       routeName: Routes.DASHBOARD);
-        //   DialogWidget.instance.openActiveAnnualSuccess();
-        // }
-        //   //process success transcation
-        //   if (message.data['notificationType'] != null &&
-        //       message.data['notificationType'] ==
-        //           Stringify.NOTI_TYPE_UPDATE_TRANSACTION) {
-        //     Map<String, dynamic> param = {};
-        //     param['userId'] = SharePrefUtils.getProfile().userId;
-        //     param['amount'] = message.data['amount'];
-        //     param['type'] = 0;
-        //     param['transactionId'] = message.data['transactionReceiveId'];
-        //     MediaHelper.instance.playAudio(param);
-        //     DialogWidget.instance.showModelBottomSheet(
-        //       isDismissible: true,
-        //       margin: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
-        //       height: 750,
-        //       borderRadius: BorderRadius.circular(16),
-        //       widget: NotifyTransWidget(
-        //         dto: NotifyTransDTO.fromJson(message.data),
-        //       ),
-        //     );
-        //   }
       }
       notificationController.sink.add(true);
     });

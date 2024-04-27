@@ -22,8 +22,11 @@ import 'package:vierqr/models/metadata_dto.dart';
 import '../../commons/constants/configurations/app_images.dart';
 import '../../commons/constants/configurations/route.dart';
 import '../../commons/utils/currency_utils.dart';
+import '../../commons/utils/navigator_utils.dart';
 import '../../models/invoice_detail_dto.dart';
+import '../../models/qr_generated_dto.dart';
 import '../../services/providers/invoice_provider.dart';
+import '../popup_bank/popup_bank_share.dart';
 import 'blocs/invoice_bloc.dart';
 import 'events/invoice_events.dart';
 
@@ -92,17 +95,18 @@ class __InvoiceState extends State<_Invoice> {
   }
 
   void _onQrCreate(InvoiceStates state, int index) async {
-    InvoiceDetailDTO? _data;
+    InvoiceDetailDTO? _data =
+        await _bloc.getDetail(state.listInvoice![index].invoiceId!);
 
     if (_data != null) {
       await showCupertinoModalPopup(
         context: context,
         builder: (context) => PopupQrCreate(
           onSave: () {
-            // onSaveImage(context);
+            onSaveImage(context, _data);
           },
           onShare: () {
-            // onShare(context);
+            onShare(context, _data);
           },
           invoiceName: _data.invoiceName!,
           totalAmount: _data.totalAmount.toString(),
@@ -111,6 +115,36 @@ class __InvoiceState extends State<_Invoice> {
         ),
       );
     }
+  }
+
+  void onShare(BuildContext context, InvoiceDetailDTO _data) {
+    QRGeneratedDTO dto = QRGeneratedDTO(
+      bankCode: _data.bankCode!,
+      bankName: _data.bankName!,
+      bankAccount: _data.bankAccount!,
+      userBankName: _data.userBankName!,
+      qrCode: _data.qrCode!,
+      imgId: '',
+      amount: _data.totalAmount.toString(),
+    );
+    NavigatorUtils.navigatePage(
+        context, PopupBankShare(dto: dto, type: TypeImage.SHARE),
+        routeName: PopupBankShare.routeName);
+  }
+
+  void onSaveImage(BuildContext context, InvoiceDetailDTO _data) {
+    QRGeneratedDTO dto = QRGeneratedDTO(
+      bankCode: _data.bankCode!,
+      bankName: _data.bankName!,
+      bankAccount: _data.bankAccount!,
+      userBankName: _data.userBankName!,
+      qrCode: _data.qrCode!,
+      imgId: '',
+      amount: _data.totalAmount.toString(),
+    );
+    NavigatorUtils.navigatePage(
+        context, PopupBankShare(dto: dto, type: TypeImage.SAVE),
+        routeName: PopupBankShare.routeName);
   }
 
   void onFilter() async {

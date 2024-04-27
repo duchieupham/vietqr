@@ -10,9 +10,11 @@ import 'package:vierqr/features/invoice/blocs/invoice_bloc.dart';
 import 'package:vierqr/services/providers/invoice_provider.dart';
 
 import '../../../commons/utils/image_utils.dart';
+import '../../../commons/utils/navigator_utils.dart';
 import '../../../commons/widgets/dialog_pick_month.dart';
 import '../../../main.dart';
 import '../../../models/bank_account_dto.dart';
+import '../../add_bank/add_bank_screen.dart';
 import '../events/invoice_events.dart';
 
 class PopupFilterWidget extends StatefulWidget {
@@ -177,7 +179,7 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                                   child: Text(
                                     'Chưa thanh toán',
                                     style: const TextStyle(
-                                      fontSize: 12,
+                                      fontSize: 15,
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
@@ -190,7 +192,7 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                                   child: Text(
                                     'Đã thanh toán',
                                     style: const TextStyle(
-                                      fontSize: 12,
+                                      fontSize: 15,
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
@@ -254,7 +256,7 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                                   child: Text(
                                     'Tất cả',
                                     style: const TextStyle(
-                                      fontSize: 12,
+                                      fontSize: 15,
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
@@ -272,7 +274,7 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                                           ? 'Chọn ngân hàng'
                                           : '${bankSelect?.bankShortName} - ${bankSelect?.bankAccount}',
                                       style: const TextStyle(
-                                        fontSize: 12,
+                                        fontSize: 15,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
@@ -339,7 +341,7 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                                         child: Text(
                                           'Tất cả',
                                           style: const TextStyle(
-                                            fontSize: 12,
+                                            fontSize: 15,
                                             fontWeight: FontWeight.w500,
                                           ),
                                         ),
@@ -352,7 +354,7 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                                         child: Text(
                                           'Tháng',
                                           style: const TextStyle(
-                                            fontSize: 12,
+                                            fontSize: 15,
                                             fontWeight: FontWeight.w500,
                                           ),
                                         ),
@@ -417,7 +419,7 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                                             child: Text(
                                               'Tất cả',
                                               style: const TextStyle(
-                                                fontSize: 12,
+                                                fontSize: 15,
                                                 fontWeight: FontWeight.w500,
                                               ),
                                             ),
@@ -430,7 +432,7 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                                             child: Text(
                                               'Tháng',
                                               style: const TextStyle(
-                                                fontSize: 12,
+                                                fontSize: 15,
                                                 fontWeight: FontWeight.w500,
                                               ),
                                             ),
@@ -741,7 +743,10 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                 ),
                 const SizedBox(height: 50),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () async {
+                    await NavigatorUtils.navigatePage(context, AddBankScreen(),
+                        routeName: AddBankScreen.routeName);
+                  },
                   child: Container(
                     width: 200,
                     padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
