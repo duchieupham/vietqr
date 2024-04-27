@@ -73,7 +73,7 @@ class PopupDetailAnnualFee extends StatelessWidget {
             FontWeight.normal,
           ),
           MySeparator(
-            color: AppColor.GREY_TEXT,
+            color: AppColor.GREY_DADADA,
           ),
           _buildItem(
             'TK Kích hoạt',
@@ -81,7 +81,7 @@ class PopupDetailAnnualFee extends StatelessWidget {
             FontWeight.normal,
           ),
           MySeparator(
-            color: AppColor.GREY_TEXT,
+            color: AppColor.GREY_DADADA,
           ),
           _buildItem(
             'Thời gian',
@@ -89,7 +89,7 @@ class PopupDetailAnnualFee extends StatelessWidget {
             FontWeight.normal,
           ),
           MySeparator(
-            color: AppColor.GREY_TEXT,
+            color: AppColor.GREY_DADADA,
           ),
           _buildItem(
             'Đơn giá',
@@ -97,7 +97,7 @@ class PopupDetailAnnualFee extends StatelessWidget {
             FontWeight.bold,
           ),
           MySeparator(
-            color: AppColor.GREY_TEXT,
+            color: AppColor.GREY_DADADA,
           ),
           _buildItem(
             'Số lượng',
@@ -105,7 +105,7 @@ class PopupDetailAnnualFee extends StatelessWidget {
             FontWeight.bold,
           ),
           MySeparator(
-            color: AppColor.GREY_TEXT,
+            color: AppColor.GREY_DADADA,
           ),
           _buildItem(
             'VAT',
@@ -113,7 +113,7 @@ class PopupDetailAnnualFee extends StatelessWidget {
             FontWeight.bold,
           ),
           MySeparator(
-            color: AppColor.GREY_TEXT,
+            color: AppColor.GREY_DADADA,
           ),
           _buildItem(
             'Thành tiền',

@@ -659,7 +659,7 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                                         ),
                                       ),
                                     ),
-                                    const SizedBox(width: 12),
+                                    const SizedBox(width: 10),
                                     SizedBox(
                                       height: 40,
                                       child: Column(
@@ -679,6 +679,7 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                                             style: TextStyle(
                                               fontSize: 13,
                                             ),
+                                            overflow: TextOverflow.ellipsis,
                                           )
                                         ],
                                       ),

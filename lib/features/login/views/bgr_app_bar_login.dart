@@ -18,7 +18,7 @@ class BackgroundAppBarLogin extends StatelessWidget {
       File _file = provider.bannerApp;
       bool isFileNotEmpty = _file.path.isNotEmpty;
       return Container(
-        height: 230,
+        height: 200,
         width: width,
         alignment: Alignment.topCenter,
         decoration: BoxDecoration(

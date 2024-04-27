@@ -172,14 +172,16 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
     );
   }
 
-  void _onOpenPopup() {
-    if (selectedDTO != null) {
-      showCupertinoModalPopup(
+  void _onOpenPopup() async {
+    String? bankName =
+        Provider.of<MaintainChargeProvider>(context, listen: false).bankName;
+    if (selectedDTO != null && bankName != null) {
+      await showCupertinoModalPopup(
         context: context,
         builder: (context) => PopupDetailAnnualFee(
           dto: selectedDTO!,
           bankAccount: widget.bankAccount,
-          bankName: Provider.of<MaintainChargeProvider>(context, listen: false).bankName,
+          bankName: bankName,
         ),
       );
     }
@@ -372,8 +374,6 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                       onTap: () {
                         setState(() {
                           selectedId = value.listAnnualFee[index].feeId;
-                          // selectFeeAmount = value.listAnnualFee[index].amount! *
-                          //     value.listAnnualFee[index].duration!;
                           selectFeeAmount =
                               value.listAnnualFee[index].totalWithVat;
                           selectedDTO = value.listAnnualFee[index];
@@ -659,7 +659,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                 ),
                 Container(
                   padding: const EdgeInsets.only(
-                      left: 40, right: 40, bottom: 30, top: 20),
+                      left: 25, right: 25, bottom: 30, top: 20),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -678,7 +678,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                                     ? formatNumber(selectFeeAmount)
                                     : '0',
                                 style: TextStyle(
-                                  fontSize: 18,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                   color: AppColor.BLUE_TEXT,
                                 ),
@@ -688,14 +688,16 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                                 "VND",
                                 style: TextStyle(fontSize: 15),
                               ),
-                              const SizedBox(width: 12),
-                              InkWell(
-                                onTap: _onOpenPopup,
-                                child: Icon(
-                                  Icons.info_outline,
-                                  color: AppColor.BLUE_TEXT,
-                                ),
-                              ),
+                              const SizedBox(width: 6),
+                              selectFeeAmount != 0
+                                  ? InkWell(
+                                      onTap: _onOpenPopup,
+                                      child: Icon(
+                                        Icons.info_outline,
+                                        color: AppColor.BLUE_TEXT,
+                                      ),
+                                    )
+                                  : const SizedBox.shrink(),
                             ],
                           ),
                         ],

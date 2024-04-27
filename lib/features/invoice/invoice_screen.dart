@@ -302,7 +302,7 @@ class __InvoiceState extends State<_Invoice> {
           padding: const EdgeInsets.only(top: 250),
           // height: MediaQuery.of(context).size.height,
           child: Center(
-            child: Text('Trống'),
+            child: Text('Chưa có hóa đơn nào'),
           ),
         );
       default:
