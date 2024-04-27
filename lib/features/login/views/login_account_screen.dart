@@ -66,7 +66,7 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
                   right: 20,
                   child: Text(
                     'Chọn tài khoản\nđể tiếp tục đăng nhập',
-                    style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
@@ -235,14 +235,14 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
               child: dto.imgId?.isNotEmpty ?? false
                   ? Image(
                       image: ImageUtils.instance.getImageNetWork(dto.imgId!),
-                      width: 30,
-                      height: 30,
+                      width: 40,
+                      height: 40,
                       fit: BoxFit.fill,
                     )
                   : Image.asset(
                       'assets/images/ic-avatar.png',
-                      width: 30,
-                      height: 30,
+                      width: 40,
+                      height: 40,
                     ),
             ),
             const SizedBox(width: 10),
@@ -257,6 +257,7 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
+                  const SizedBox(height: 2),
                   Text(
                     dto.phoneNo ?? '',
                     style: TextStyle(fontSize: 15, color: AppColor.GREY_TEXT),

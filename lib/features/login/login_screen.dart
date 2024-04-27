@@ -365,6 +365,7 @@ class _LoginState extends State<_Login> {
                                         children: [
                                           Expanded(
                                             child: MButtonWidget(
+                                              height: 50,
                                               title: '',
                                               isEnable: true,
                                               colorEnableBgr:
@@ -375,15 +376,17 @@ class _LoginState extends State<_Login> {
                                                     MainAxisAlignment.center,
                                                 children: [
                                                   Image.asset(
-                                                      'assets/images/ic-card.png'),
+                                                    'assets/images/ic-card.png',
+                                                    height: 40,
+                                                  ),
                                                   const SizedBox(width: 8),
                                                   Text(
                                                     'VQR ID Card',
                                                     style: height < 800
                                                         ? TextStyle(
-                                                            fontSize: 10)
+                                                            fontSize: 12)
                                                         : TextStyle(
-                                                            fontSize: 12),
+                                                            fontSize: 14),
                                                   ),
                                                 ],
                                               ),
@@ -397,23 +400,23 @@ class _LoginState extends State<_Login> {
                                 ),
                               ),
                             ),
-                            // MButtonWidget(
-                            //   title: 'Tiếp tục',
-                            //   width: 350,
-                            //   height: 50,
-                            //   isEnable: provider.isEnableButton,
-                            //   colorDisableBgr: AppColor.GREY_BUTTON,
-                            //   margin: EdgeInsets.only(bottom: 0),
-                            //   colorEnableText: provider.isEnableButton
-                            //       ? AppColor.WHITE
-                            //       : AppColor.GREY_TEXT,
-                            //   onTap: () {
-                            //     FocusManager.instance.primaryFocus?.unfocus();
-                            //     _bloc.add(CheckExitsPhoneEvent(
-                            //         phone: provider.phone));
-                            //   },
-                            // ),
-                            // SizedBox(height: height < 800 ? 0 : 16),
+                            MButtonWidget(
+                              title: 'Tiếp tục',
+                              width: 350,
+                              height: 50,
+                              isEnable: provider.isEnableButton,
+                              colorDisableBgr: AppColor.GREY_BUTTON,
+                              margin: EdgeInsets.only(bottom: 0),
+                              colorEnableText: provider.isEnableButton
+                                  ? AppColor.WHITE
+                                  : AppColor.GREY_TEXT,
+                              onTap: () {
+                                FocusManager.instance.primaryFocus?.unfocus();
+                                _bloc.add(CheckExitsPhoneEvent(
+                                    phone: provider.phone));
+                              },
+                            ),
+                            SizedBox(height: height < 800 ? 0 : 16),
                           ],
                         ),
                       ),
@@ -557,29 +560,29 @@ class _LoginState extends State<_Login> {
                           ],
                         ),
                       ),
-                    if (provider.isQuickLogin == FlowType.FIRST_LOGIN)
-                      Positioned(
-                        bottom: 20,
-                        left: 0,
-                        right: 0,
-                        child: MButtonWidget(
-                          title: 'Tiếp tục',
-                          width: 350,
-                          height: 50,
-                          isEnable: provider.isEnableButton,
-                          colorDisableBgr: AppColor.GREY_BUTTON,
-                          margin: EdgeInsets.only(bottom: 0),
-                          colorEnableText: provider.isEnableButton
-                              ? AppColor.WHITE
-                              : AppColor.GREY_TEXT,
-                          onTap: () {
-                            FocusManager.instance.primaryFocus?.unfocus();
-                            _bloc.add(
-                                CheckExitsPhoneEvent(phone: provider.phone));
-                          },
-                        ),
-                      ),
-                    SizedBox(height: height < 800 ? 0 : 16),
+                    // if (provider.isQuickLogin == FlowType.FIRST_LOGIN)
+                    //   Positioned(
+                    //     bottom: 20,
+                    //     left: 0,
+                    //     right: 0,
+                    //     child: MButtonWidget(
+                    //       title: 'Tiếp tục',
+                    //       width: 350,
+                    //       height: 50,
+                    //       isEnable: provider.isEnableButton,
+                    //       colorDisableBgr: AppColor.GREY_BUTTON,
+                    //       margin: EdgeInsets.only(bottom: 0),
+                    //       colorEnableText: provider.isEnableButton
+                    //           ? AppColor.WHITE
+                    //           : AppColor.GREY_TEXT,
+                    //       onTap: () {
+                    //         FocusManager.instance.primaryFocus?.unfocus();
+                    //         _bloc.add(
+                    //             CheckExitsPhoneEvent(phone: provider.phone));
+                    //       },
+                    //     ),
+                    //   ),
+                    // SizedBox(height: height < 800 ? 0 : 16),
                     Consumer<AuthProvider>(
                       builder: (context, provider, child) {
                         return Positioned(
