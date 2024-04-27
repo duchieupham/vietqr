@@ -179,7 +179,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
         builder: (context) => PopupDetailAnnualFee(
           dto: selectedDTO!,
           bankAccount: widget.bankAccount,
-          bankName: widget.bankName,
+          bankName: Provider.of<MaintainChargeProvider>(context, listen: false).bankName,
         ),
       );
     }
