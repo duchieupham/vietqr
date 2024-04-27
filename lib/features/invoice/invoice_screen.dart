@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -14,11 +16,13 @@ import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/commons/widgets/shimmer_block.dart';
 import 'package:vierqr/features/invoice/states/invoice_states.dart';
 import 'package:vierqr/features/invoice/widgets/popup_filter_widget.dart';
+import 'package:vierqr/features/invoice/widgets/popup_invoice_widget.dart';
 import 'package:vierqr/models/metadata_dto.dart';
 
 import '../../commons/constants/configurations/app_images.dart';
 import '../../commons/constants/configurations/route.dart';
 import '../../commons/utils/currency_utils.dart';
+import '../../models/invoice_detail_dto.dart';
 import '../../services/providers/invoice_provider.dart';
 import 'blocs/invoice_bloc.dart';
 import 'events/invoice_events.dart';
@@ -87,6 +91,28 @@ class __InvoiceState extends State<_Invoice> {
     });
   }
 
+  void _onQrCreate(InvoiceStates state, int index) async {
+    InvoiceDetailDTO? _data;
+
+    if (_data != null) {
+      await showCupertinoModalPopup(
+        context: context,
+        builder: (context) => PopupQrCreate(
+          onSave: () {
+            // onSaveImage(context);
+          },
+          onShare: () {
+            // onShare(context);
+          },
+          invoiceName: _data.invoiceName!,
+          totalAmount: _data.totalAmount.toString(),
+          billNumber: _data.billNumber!,
+          qr: _data.qrCode!,
+        ),
+      );
+    }
+  }
+
   void onFilter() async {
     await showCupertinoModalPopup(
       context: context,
@@ -95,6 +121,7 @@ class __InvoiceState extends State<_Invoice> {
           bank: _provider.selectBank ?? null,
           status: _provider.selectedStatus!,
           bankType: _provider.selectBankType!,
+          isMonthSelect: _provider.isMonthSelect!,
           invoiceMonth: _provider.invoiceMonth ?? DateTime.now()),
     );
   }
@@ -320,29 +347,40 @@ class __InvoiceState extends State<_Invoice> {
                                     ? AppColor.ORANGE_DARK
                                     : AppColor.GREEN),
                           ),
-                          Container(
-                            padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
-                            decoration: BoxDecoration(
-                              color: AppColor.BLUE_TEXT.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                  'assets/images/ic-tb-qr-blue.png',
-                                  width: 15,
-                                  height: 15,
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  'QR thanh toán',
-                                  style: TextStyle(
-                                      fontSize: 12, color: AppColor.BLUE_TEXT),
-                                ),
-                              ],
-                            ),
-                          ),
+                          provider.selectedStatus == 0
+                              ? GestureDetector(
+                                  onTap: () {
+                                    _onQrCreate(state, index);
+                                  },
+                                  child: Container(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(10, 8, 10, 8),
+                                    decoration: BoxDecoration(
+                                      color:
+                                          AppColor.BLUE_TEXT.withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Image.asset(
+                                          'assets/images/ic-tb-qr-blue.png',
+                                          width: 15,
+                                          height: 15,
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          'QR thanh toán',
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              color: AppColor.BLUE_TEXT),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              : const SizedBox.shrink(),
                         ],
                       ),
                     ),

@@ -18,6 +18,7 @@ import '../events/invoice_events.dart';
 class PopupFilterWidget extends StatefulWidget {
   final InvoiceBloc bloc;
   final DateTime invoiceMonth;
+  final bool isMonthSelect;
   final int status;
   final BankAccountDTO? bank;
   final int bankType;
@@ -27,6 +28,7 @@ class PopupFilterWidget extends StatefulWidget {
       required this.bank,
       required this.status,
       required this.invoiceMonth,
+      required this.isMonthSelect,
       required this.bankType});
 
   @override
@@ -48,6 +50,7 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
     status = widget.status;
     bankSelect = widget.bank;
     selectBank = widget.bankType;
+    selectTime = widget.isMonthSelect ? 1 : 9;
     selectDate = widget.invoiceMonth;
   }
 
@@ -59,10 +62,10 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
     provider.selectBankAccount(selectBank != 0 ? bankSelect : null);
 
     if (selectTime == 1) {
-      provider.selectMonth(selectDate);
+      provider.selectMonth(selectDate, true);
       datetime = DateFormat('yyyy-MM').format(selectDate!);
     } else {
-      provider.selectMonth(null);
+      provider.selectMonth(null, false);
     }
     Navigator.of(context).pop();
     widget.bloc.add(GetInvoiceList(
@@ -559,7 +562,7 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
   }
 
   Widget _buildListBank(List<BankAccountDTO> list) {
-    return list.isNotEmpty
+    return list.isNotEmpty || list != null
         ? Container(
             height: MediaQuery.of(context).size.height * 0.65,
             width: double.infinity,

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../models/bank_account_dto.dart';
 
 class InvoiceProvider extends ChangeNotifier {
-  List<BankAccountDTO>? listBank;
+  List<BankAccountDTO>? listBank = [];
   List<InvoiceStatus> status = [
     const InvoiceStatus(id: 0, name: 'chưa thanh toán'),
     const InvoiceStatus(id: 1, name: 'đã Thanh toán'),
@@ -19,6 +19,7 @@ class InvoiceProvider extends ChangeNotifier {
   int? selectBankType = 0;
   BankAccountDTO? selectBank;
   DateTime? invoiceMonth;
+  bool? isMonthSelect = false;
 
   InvoiceTime? invoiceTime = const InvoiceTime(id: 0, name: 'Tất cả');
 
@@ -26,8 +27,9 @@ class InvoiceProvider extends ChangeNotifier {
       const InvoiceStatus(id: 0, name: 'Chưa thanh toán');
   int? selectedStatus = 0;
 
-  void selectMonth(DateTime? month) {
+  void selectMonth(DateTime? month, bool? monthSelect) {
     invoiceMonth = month;
+    isMonthSelect = monthSelect;
     notifyListeners();
   }
 

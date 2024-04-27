@@ -97,7 +97,7 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
 
           list = [...listLinked, ...listNotLinked];
           Provider.of<InvoiceProvider>(context, listen: false)
-              .setListBank(listLinked);
+              .setListBank(listLinked.isNotEmpty ? listLinked : []);
           for (BankAccountDTO dto in list) {
             int index = list.indexOf(dto);
             dto.position = index * 100;
