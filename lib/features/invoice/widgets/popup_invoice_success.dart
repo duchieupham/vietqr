@@ -9,6 +9,7 @@ import '../../../commons/constants/configurations/route.dart';
 import '../../../commons/utils/currency_utils.dart';
 
 class PopupInvoiceSuccess extends StatelessWidget {
+  final bool isInvoiceDetail;
   final String billNumber;
   final String totalAmount;
   final String timePaid;
@@ -16,6 +17,7 @@ class PopupInvoiceSuccess extends StatelessWidget {
   const PopupInvoiceSuccess(
       {super.key,
       required this.billNumber,
+      required this.isInvoiceDetail,
       required this.totalAmount,
       required this.timePaid});
 
@@ -119,7 +121,11 @@ class PopupInvoiceSuccess extends StatelessWidget {
             right: 0,
             child: GestureDetector(
               onTap: () {
-                Navigator.pushReplacementNamed(context, Routes.DASHBOARD);
+                if (isInvoiceDetail == true) {
+                  Navigator.pushReplacementNamed(context, Routes.DASHBOARD);
+                } else {
+                  Navigator.of(context).pop();
+                }
               },
               child: Container(
                 height: 50,

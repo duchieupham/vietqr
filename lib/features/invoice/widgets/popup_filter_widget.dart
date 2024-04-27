@@ -563,8 +563,8 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
     );
   }
 
-  Widget _buildListBank(List<BankAccountDTO> list) {
-    return list.isNotEmpty || list != null
+  Widget _buildListBank(List<BankAccountDTO> bankList) {
+    return bankList.length != 0
         ? Container(
             height: MediaQuery.of(context).size.height * 0.65,
             width: double.infinity,
@@ -631,7 +631,7 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                           onTap: () {
                             setState(() {
                               selectBank = 1;
-                              bankSelect = list[index];
+                              bankSelect = bankList[index];
                               isBankList = false;
                             });
                           },
@@ -655,7 +655,7 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                                         image: DecorationImage(
                                           image: ImageUtils.instance
                                               .getImageNetWork(
-                                                  list[index].imgId),
+                                                  bankList[index].imgId),
                                         ),
                                       ),
                                     ),
@@ -669,13 +669,13 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                                             MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
-                                            list[index].bankAccount,
+                                            bankList[index].bankAccount,
                                             style: TextStyle(
                                                 fontSize: 15,
                                                 fontWeight: FontWeight.bold),
                                           ),
                                           Text(
-                                            list[index].userBankName,
+                                            bankList[index].userBankName,
                                             style: TextStyle(
                                               fontSize: 13,
                                             ),
@@ -719,7 +719,7 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                       separatorBuilder: (context, index) => MySeparator(
                             color: AppColor.GREY_DADADA,
                           ),
-                      itemCount: list.length),
+                      itemCount: bankList.length),
                 ),
               ],
             ),

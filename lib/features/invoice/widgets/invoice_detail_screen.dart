@@ -56,27 +56,7 @@ class _InvoiceDetailScreenState extends State<_InvoiceDetailScreen> {
     super.initState();
     context.read<InvoiceBloc>().add(GetInvoiceDetail(widget.invoiceId));
 
-    onFcmMessage();
-  }
-
-  void onFcmMessage() async {
-    // await NotificationService().initialNotification();
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      if (message.data.isNotEmpty) {
-        if (message.data['notificationType'] != null &&
-            message.data['notificationType'] ==
-                Stringify.NOTI_TYPE_INVOICE_SUCCESS) {
-          showCupertinoModalPopup(
-            context: context,
-            builder: (context) => PopupInvoiceSuccess(
-              billNumber: message.data['billNumber'],
-              totalAmount: message.data['amount'],
-              timePaid: message.data['timePaid'],
-            ),
-          );
-        }
-      }
-    });
+    // onFcmMessage();
   }
 
   void _onQrCreate() async {
@@ -145,7 +125,8 @@ class _InvoiceDetailScreenState extends State<_InvoiceDetailScreen> {
     }
     int timestamp = _data != null ? _data!.timePaid! : 0;
     DateTime date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
-    String timePaid = _data?.status == 1 ? DateFormat('dd/MM/yyyy HH:mm').format(date) : '-';
+    String timePaid =
+        _data?.status == 1 ? DateFormat('dd/MM/yyyy HH:mm').format(date) : '-';
     return Scaffold(
       backgroundColor: AppColor.WHITE,
       bottomNavigationBar:

@@ -18,6 +18,7 @@ import 'package:vierqr/models/bank_information_dto.dart';
 import 'package:vierqr/services/providers/maintain_charge_provider.dart';
 import 'package:vierqr/services/providers/pin_provider.dart';
 
+import '../../features/invoice/widgets/popup_invoice_success.dart';
 import 'error_widget.dart';
 
 class DialogWidget {
@@ -517,6 +518,24 @@ class DialogWidget {
             ),
           );
         });
+  }
+
+  Future showCuperModelPopUp(
+      {BuildContext? context,
+      String? billNumber,
+      String? totalAmount,
+      bool? isInvoiceDetail,
+      String? timePaid}) async {
+    context ??= NavigationService.navigatorKey.currentContext!;
+    return showCupertinoModalPopup(
+      context: context,
+      builder: (context) => PopupInvoiceSuccess(
+        isInvoiceDetail: isInvoiceDetail!,
+        billNumber: billNumber!,
+        totalAmount: totalAmount!,
+        timePaid: timePaid!,
+      ),
+    );
   }
 
   Future showModelBottomSheet({

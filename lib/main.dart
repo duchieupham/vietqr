@@ -262,6 +262,25 @@ class _VietQRApp extends State<VietQRApp> {
             );
           }
         }
+        if (message.data['notificationType'] != null &&
+            message.data['notificationType'] ==
+                Stringify.NOTI_TYPE_INVOICE_SUCCESS) {
+          // BuildContext? checkContext =
+          //     NavigationService.navigatorKey.currentContext;
+          // ModalRoute? modalRoute = ModalRoute.of(checkContext!);
+          // String? currentRoute = modalRoute?.settings.name;
+          bool? isClose = true;
+
+          // if (currentRoute != null && currentRoute == Routes.INVOICE_DETAIL) {
+          //   isClose = true;
+          // }
+          DialogWidget.instance.showCuperModelPopUp(
+            isInvoiceDetail: isClose,
+            billNumber: message.data['billNumber'],
+            totalAmount: message.data['amount'],
+            timePaid: message.data['timePaid'],
+          );
+        }
       }
       notificationController.sink.add(true);
     });

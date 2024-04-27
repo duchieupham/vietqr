@@ -97,7 +97,7 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
 
           list = [...listLinked, ...listNotLinked];
           Provider.of<InvoiceProvider>(context, listen: false)
-              .setListBank(listLinked.isNotEmpty ? listLinked : []);
+              .setListBank(listLinked);
           for (BankAccountDTO dto in list) {
             int index = list.indexOf(dto);
             dto.position = index * 100;
@@ -110,6 +110,8 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
               dto.setColor(Theme.of(context).cardColor);
             }
           }
+        } else {
+          Provider.of<InvoiceProvider>(context, listen: false).setListBank([]);
         }
 
         emit(state.copyWith(

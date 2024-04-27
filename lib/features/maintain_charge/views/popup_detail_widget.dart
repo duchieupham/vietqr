@@ -21,11 +21,11 @@ class PopupDetailAnnualFee extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     int vat = dto.totalWithVat! - dto.totalAmount!;
-    DateTime now = DateTime.now();
-    DateTime endDate = DateTime(now.year, now.month + dto.duration!, now.day);
 
-    String formattedStartDate = DateFormat('dd/MM/yyyy').format(now);
-    String formattedEndDate = DateFormat('dd/MM/yyyy').format(endDate);
+    String formattedStartDate = DateFormat('dd/MM/yyyy')
+        .format(DateTime.fromMillisecondsSinceEpoch(dto.timeFrom! * 1000));
+    String formattedEndDate = DateFormat('dd/MM/yyyy')
+        .format(DateTime.fromMillisecondsSinceEpoch(dto.timeTo! * 1000));
     String dateRange = '$formattedStartDate - $formattedEndDate';
 
     return Container(
