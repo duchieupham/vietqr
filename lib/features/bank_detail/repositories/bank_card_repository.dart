@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:crypto/crypto.dart';
 import 'package:http/http.dart' as http;
 import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
@@ -411,16 +412,35 @@ class BankCardRepository {
   }
 
   Future<BankNameInformationDTO> searchBankName(BankNameSearchDTO dto) async {
+    String generateCheckSum(
+        String bankCode, String accountType, String accountNumber) {
+      String key = "VietQRAccesskey";
+      String toHash = bankCode + accountType + accountNumber + key;
+      // Tạo hash MD5
+      var bytes = utf8.encode(toHash);
+      var digest = md5.convert(bytes);
+      return digest.toString();
+    }
+
+    String checkSum =
+        generateCheckSum(dto.bankCode, dto.accountType, dto.accountNumber);
+
     BankNameInformationDTO result = const BankNameInformationDTO(
       accountName: '',
       customerName: '',
       customerShortName: '',
     );
     try {
-      final String url =
-          '${EnvConfig.getUrl()}bank/api/account/info/${dto.bankCode}/${dto.accountNumber}/${dto.accountType}/${dto.transferType}';
-      final response = await BaseAPIClient.getAPI(
+      final String url = '${EnvConfig.getUrl()}bank/api/account/info';
+      final response = await BaseAPIClient.postAPI(
         url: url,
+        body: {
+          'bankCode': dto.bankCode,
+          'accountNumber': dto.accountNumber,
+          'accountType': dto.accountType,
+          'transferType': dto.transferType,
+          'checkSum': checkSum,
+        },
         type: AuthenticationType.SYSTEM,
       );
       if (response.statusCode == 200) {
