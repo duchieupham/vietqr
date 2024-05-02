@@ -170,9 +170,10 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
                     ],
                   ),
                   Padding(
-                    padding: EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                    padding: EdgeInsets.only(left: 20, right: 20),
                     child: _buildItem(height),
                   ),
+                  const SizedBox(height: 10),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 40),
                     child: const Text(
@@ -308,15 +309,15 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
   Widget _buildItem(double height) {
     return Container(
       margin: height < 800
-          ? const EdgeInsets.only(left: 20, right: 20, bottom: 6)
-          : const EdgeInsets.only(left: 20, right: 20, bottom: 10),
+          ? const EdgeInsets.only(left: 0, right: 0, bottom: 6)
+          : const EdgeInsets.only(left: 0, right: 0, bottom: 10),
       decoration: BoxDecoration(
-          border: Border.all(color: AppColor.GREY_DADADA, width: 2),
+          // border: Border.all(color: AppColor.GREY_DADADA, width: 2),
           borderRadius: BorderRadius.circular(5),
           color: AppColor.WHITE),
       child: Container(
         padding: EdgeInsets.symmetric(
-            horizontal: 20, vertical: height < 800 ? 6 : 12),
+            horizontal: 15, vertical: height < 800 ? 4 : 8),
         child: Row(
           children: [
             ClipRRect(
@@ -324,31 +325,33 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
               child: widget.imgId.isNotEmpty
                   ? Image(
                       image: ImageUtils.instance.getImageNetWork(widget.imgId),
-                      width: 30,
-                      height: 30,
+                      width: 45,
+                      height: 45,
                       fit: BoxFit.fill,
                     )
                   : Image.asset(
                       'assets/images/ic-avatar.png',
-                      width: 30,
-                      height: 30,
+                      width: 45,
+                      height: 45,
                     ),
             ),
-            const SizedBox(width: 10),
+            const SizedBox(width: 30),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     widget.userName,
                     style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
+                  const SizedBox(height: 2),
                   Text(
                     widget.phone,
-                    style: TextStyle(fontSize: 15, color: AppColor.GREY_TEXT),
+                    style: TextStyle(fontSize: 20, color: AppColor.GREY_TEXT),
                   ),
                 ],
               ),

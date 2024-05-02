@@ -355,62 +355,71 @@ class _LoginState extends State<_Login> {
                                             ),
                                           ),
                                           const SizedBox(height: 50),
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                child: MButtonWidget(
-                                                  title: '',
-                                                  isEnable: true,
-                                                  colorEnableBgr:
-                                                      AppColor.BLUE_E1EFFF,
-                                                  margin: EdgeInsets.zero,
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      Image.asset(
-                                                          'assets/images/ic-card.png'),
-                                                      const SizedBox(width: 8),
-                                                      Text(
-                                                        'VQR ID Card',
-                                                        style: height < 800
-                                                            ? TextStyle(
-                                                                fontSize: 10)
-                                                            : TextStyle(
-                                                                fontSize: 12),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  onTap: onLoginCard,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
                                         ],
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 30, right: 30),
+                                      child: SizedBox(
+                                        width: double.infinity,
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: MButtonWidget(
+                                                height: 50,
+                                                title: '',
+                                                isEnable: true,
+                                                colorEnableBgr:
+                                                    AppColor.BLUE_E1EFFF,
+                                                margin: EdgeInsets.zero,
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Image.asset(
+                                                      'assets/images/ic-card.png',
+                                                      height: 40,
+                                                    ),
+                                                    const SizedBox(width: 8),
+                                                    Text(
+                                                      'VQR ID Card',
+                                                      style: height < 800
+                                                          ? TextStyle(
+                                                              fontSize: 12)
+                                                          : TextStyle(
+                                                              fontSize: 14),
+                                                    ),
+                                                  ],
+                                                ),
+                                                onTap: onLoginCard,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
                             ),
-                            // MButtonWidget(
-                            //   title: 'Tiếp tục',
-                            //   width: 350,
-                            //   height: 50,
-                            //   isEnable: provider.isEnableButton,
-                            //   colorDisableBgr: AppColor.GREY_BUTTON,
-                            //   margin: EdgeInsets.only(bottom: 0),
-                            //   colorEnableText: provider.isEnableButton
-                            //       ? AppColor.WHITE
-                            //       : AppColor.GREY_TEXT,
-                            //   onTap: () {
-                            //     FocusManager.instance.primaryFocus?.unfocus();
-                            //     _bloc.add(CheckExitsPhoneEvent(
-                            //         phone: provider.phone));
-                            //   },
-                            // ),
-                            // SizedBox(height: height < 800 ? 0 : 16),
+                            MButtonWidget(
+                              title: 'Tiếp tục',
+                              width: 350,
+                              height: 50,
+                              isEnable: provider.isEnableButton,
+                              colorDisableBgr: AppColor.GREY_BUTTON,
+                              margin: EdgeInsets.only(bottom: 0),
+                              colorEnableText: provider.isEnableButton
+                                  ? AppColor.WHITE
+                                  : AppColor.GREY_TEXT,
+                              onTap: () {
+                                FocusManager.instance.primaryFocus?.unfocus();
+                                _bloc.add(CheckExitsPhoneEvent(
+                                    phone: provider.phone));
+                              },
+                            ),
+                            SizedBox(height: height < 800 ? 0 : 16),
                           ],
                         ),
                       ),
@@ -554,29 +563,29 @@ class _LoginState extends State<_Login> {
                           ],
                         ),
                       ),
-                    if (provider.isQuickLogin == FlowType.FIRST_LOGIN)
-                      Positioned(
-                        bottom: 20,
-                        left: 0,
-                        right: 0,
-                        child: MButtonWidget(
-                          title: 'Tiếp tục',
-                          width: 350,
-                          height: 50,
-                          isEnable: provider.isEnableButton,
-                          colorDisableBgr: AppColor.GREY_BUTTON,
-                          margin: EdgeInsets.only(bottom: 0),
-                          colorEnableText: provider.isEnableButton
-                              ? AppColor.WHITE
-                              : AppColor.GREY_TEXT,
-                          onTap: () {
-                            FocusManager.instance.primaryFocus?.unfocus();
-                            _bloc.add(
-                                CheckExitsPhoneEvent(phone: provider.phone));
-                          },
-                        ),
-                      ),
-                    SizedBox(height: height < 800 ? 0 : 16),
+                    // if (provider.isQuickLogin == FlowType.FIRST_LOGIN)
+                    //   Positioned(
+                    //     bottom: 20,
+                    //     left: 0,
+                    //     right: 0,
+                    //     child: MButtonWidget(
+                    //       title: 'Tiếp tục',
+                    //       width: 350,
+                    //       height: 50,
+                    //       isEnable: provider.isEnableButton,
+                    //       colorDisableBgr: AppColor.GREY_BUTTON,
+                    //       margin: EdgeInsets.only(bottom: 0),
+                    //       colorEnableText: provider.isEnableButton
+                    //           ? AppColor.WHITE
+                    //           : AppColor.GREY_TEXT,
+                    //       onTap: () {
+                    //         FocusManager.instance.primaryFocus?.unfocus();
+                    //         _bloc.add(
+                    //             CheckExitsPhoneEvent(phone: provider.phone));
+                    //       },
+                    //     ),
+                    //   ),
+                    // SizedBox(height: height < 800 ? 0 : 16),
                     Consumer<AuthProvider>(
                       builder: (context, provider, child) {
                         return Positioned(
