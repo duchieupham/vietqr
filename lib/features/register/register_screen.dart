@@ -22,6 +22,7 @@ import 'package:vierqr/models/account_login_dto.dart';
 import 'package:vierqr/services/providers/register_provider.dart';
 
 import '../../commons/utils/navigator_utils.dart';
+import '../../layouts/register_app_bar.dart';
 import '../../services/providers/pin_provider.dart';
 import '../personal/views/user_edit_view.dart';
 import 'views/verify_otp_screen.dart';
@@ -183,7 +184,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 FocusManager.instance.primaryFocus?.unfocus();
               },
               child: Scaffold(
-                appBar: MAppBar(
+                appBar: RegisterAppBar(
                   title: '',
                   onPressed: () {
                     Provider.of<PinProvider>(context, listen: false).reset();

@@ -66,13 +66,14 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       Provider.of<AuthProvider>(context, listen: false).initThemeDTO();
+      Provider.of<PinProvider>(context, listen: false).reset();
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
-    Provider.of<PinProvider>(context, listen: false).reset();
+    // Provider.of<PinProvider>(context, listen: false).reset();
     return Scaffold(
       body: Container(
         color: AppColor.WHITE,
