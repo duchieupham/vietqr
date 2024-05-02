@@ -355,40 +355,37 @@ class _LoginState extends State<_Login> {
                                             ),
                                           ),
                                           const SizedBox(height: 50),
-                                        ],
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 30, right: 40),
-                                      child: Row(
-                                        children: [
-                                          Expanded(
-                                            child: MButtonWidget(
-                                              title: '',
-                                              isEnable: true,
-                                              colorEnableBgr:
-                                                  AppColor.BLUE_E1EFFF,
-                                              margin: EdgeInsets.zero,
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Image.asset(
-                                                      'assets/images/ic-card.png'),
-                                                  const SizedBox(width: 8),
-                                                  Text(
-                                                    'VQR ID Card',
-                                                    style: height < 800
-                                                        ? TextStyle(
-                                                            fontSize: 10)
-                                                        : TextStyle(
-                                                            fontSize: 12),
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: MButtonWidget(
+                                                  title: '',
+                                                  isEnable: true,
+                                                  colorEnableBgr:
+                                                      AppColor.BLUE_E1EFFF,
+                                                  margin: EdgeInsets.zero,
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Image.asset(
+                                                          'assets/images/ic-card.png'),
+                                                      const SizedBox(width: 8),
+                                                      Text(
+                                                        'VQR ID Card',
+                                                        style: height < 800
+                                                            ? TextStyle(
+                                                                fontSize: 10)
+                                                            : TextStyle(
+                                                                fontSize: 12),
+                                                      ),
+                                                    ],
                                                   ),
-                                                ],
+                                                  onTap: onLoginCard,
+                                                ),
                                               ),
-                                              onTap: onLoginCard,
-                                            ),
+                                            ],
                                           ),
                                         ],
                                       ),
