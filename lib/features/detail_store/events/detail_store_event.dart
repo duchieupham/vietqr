@@ -64,6 +64,21 @@ class GetTerminalStoreEvent extends DetailStoreEvent {
   List<Object?> get props => [];
 }
 
+class AddMemberGroup extends DetailStoreEvent {
+  final String userId;
+  final String terminalId;
+  final String merchantId;
+
+  AddMemberGroup({
+    required this.userId,
+    required this.terminalId,
+    required this.merchantId,
+  });
+
+  @override
+  List<Object?> get props => [userId, terminalId, merchantId];
+}
+
 class RemoveMemberEvent extends DetailStoreEvent {
   final String userId;
 

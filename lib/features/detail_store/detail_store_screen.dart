@@ -45,13 +45,14 @@ extension FlowTabExt on FlowTab {
 
 class DetailStoreScreen extends StatefulWidget {
   static String routeName = '/DetailStoreScreen';
-
+  final String? merchantId;
   final String terminalId;
   final String terminalCode;
   final String terminalName;
 
   const DetailStoreScreen(
       {super.key,
+      this.merchantId,
       required this.terminalId,
       required this.terminalCode,
       required this.terminalName});
@@ -164,6 +165,7 @@ class _DetailStoreScreenState extends State<DetailStoreScreen> {
                         onPageChanged: _onChangedPage,
                         children: [
                           DetailStoreView(
+                            merchantId: widget.merchantId ?? '',
                             storeDTO: detailStoreDTO,
                             callBack: _onChangedPage,
                             updateStore: _updateStore,

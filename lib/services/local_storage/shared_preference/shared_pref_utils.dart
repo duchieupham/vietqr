@@ -15,6 +15,7 @@ import 'package:vierqr/models/user_profile.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
 
 import '../../../features/login/login_screen.dart';
+import '../../../models/app_info_dto.dart';
 import 'secure_storage_service.dart';
 import 'shared_pref_local.dart';
 

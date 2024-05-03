@@ -10,6 +10,7 @@ enum DetailStoreType {
   GET_DETAIL,
   GET_QR,
   GET_MEMBER,
+  ADD_MEMBER,
   REMOVE_MEMBER,
   GET_TERMINAL,
   ERROR

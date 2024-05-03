@@ -310,7 +310,7 @@ class _LoginState extends State<_Login> {
                                     BackgroundAppBarLogin(),
                                     Padding(
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: 40, vertical: 30),
+                                          horizontal: 20, vertical: 30),
                                       child: Column(
                                         children: [
                                           Container(
@@ -360,7 +360,7 @@ class _LoginState extends State<_Login> {
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.only(
-                                          left: 30, right: 30),
+                                          left: 20, right: 20),
                                       child: SizedBox(
                                         width: double.infinity,
                                         child: Row(

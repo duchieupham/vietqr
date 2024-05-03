@@ -30,6 +30,8 @@ class DetailStoreBloc extends Bloc<DetailStoreEvent, DetailStoreState>
     on<GetDetailQREvent>(_getDetailQR);
     on<GetMembersStoreEvent>(_getMembersStore);
     on<GetTerminalStoreEvent>(_getTerminalStore);
+    on<AddMemberGroup>(_addMember);
+
     on<RemoveMemberEvent>(_removeMember);
   }
 
@@ -205,6 +207,40 @@ class DetailStoreBloc extends Bloc<DetailStoreEvent, DetailStoreState>
       LOG.error(e.toString());
       emit(state.copyWith(
           status: BlocStatus.NONE, request: DetailStoreType.NONE));
+    }
+  }
+
+  void _addMember(DetailStoreEvent event, Emitter emit) async {
+    ResponseMessageDTO responseMessageDTO =
+        ResponseMessageDTO(status: '', message: '');
+    try {
+      if (event is AddMemberGroup) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, request: DetailStoreType.NONE));
+        Map<String, dynamic> param = {};
+        param['userId'] = event.userId;
+        param['terminalId'] = event.terminalId;
+        param['merchantId'] = event.merchantId;
+
+        responseMessageDTO = await repository.addMemberGroup(param);
+
+        if (responseMessageDTO.status == Stringify.RESPONSE_STATUS_SUCCESS) {
+          emit(state.copyWith(
+              status: BlocStatus.UNLOADING,
+              request: DetailStoreType.ADD_MEMBER));
+        } else {
+          emit(state.copyWith(
+              status: BlocStatus.UNLOADING,
+              request: DetailStoreType.ERROR,
+              msg: responseMessageDTO.message));
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+          status: BlocStatus.UNLOADING,
+          request: DetailStoreType.ERROR,
+          msg: responseMessageDTO.message));
     }
   }
 

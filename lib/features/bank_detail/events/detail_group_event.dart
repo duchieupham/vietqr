@@ -32,13 +32,15 @@ class RemoveMemberGroup extends DetailGroupEvent {
 }
 
 class AddMemberGroup extends DetailGroupEvent {
-  final Map<String, dynamic> param;
+  final String userId;
+  final String terminalId;
   const AddMemberGroup({
-    required this.param,
+    required this.userId,
+    required this.terminalId,
   });
 
   @override
-  List<Object?> get props => [param];
+  List<Object?> get props => [userId, terminalId];
 }
 
 class AddBankToGroup extends DetailGroupEvent {

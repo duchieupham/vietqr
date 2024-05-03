@@ -181,6 +181,7 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
         final result = await dashBoardRepository.getVersionApp();
         if (result.id.isNotEmpty) {
           result.isCheckApp = event.isCheckVer;
+          await SharePrefUtils.saveLogoVersion(result.logoVersion);
           emit(state.copyWith(
             appInfoDTO: result,
             status: BlocStatus.NONE,

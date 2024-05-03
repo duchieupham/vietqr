@@ -66,8 +66,10 @@ void _addMember(DetailGroupEvent event, Emitter emit) async {
   try {
     if (event is AddMemberGroup) {
       emit(DetailGroupLoadingState());
-      responseMessageDTO =
-          await _detailGroupRepository.addMemberGroup(event.param);
+      Map<String, dynamic> param = {};
+      param['userId'] = event.userId;
+      param['terminalId'] = event.terminalId;
+      responseMessageDTO = await _detailGroupRepository.addMemberGroup(param);
 
       if (responseMessageDTO.status == Stringify.RESPONSE_STATUS_SUCCESS) {
         emit(AddMemberSuccessState());

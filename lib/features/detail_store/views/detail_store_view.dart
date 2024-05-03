@@ -17,17 +17,17 @@ import 'package:vierqr/models/store/member_store_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 import '../../../models/detail_group_dto.dart';
-import '../../bank_detail/blocs/detail_group_bloc.dart';
-import '../../bank_detail/events/detail_group_event.dart';
 import '../../search_user/search_user_screen.dart';
 
 class DetailStoreView extends StatefulWidget {
+  final String merchantId;
   final DetailStoreDTO storeDTO;
   final Function(int) callBack;
   final Function(DetailStoreDTO) updateStore;
 
   const DetailStoreView(
       {super.key,
+      required this.merchantId,
       required this.storeDTO,
       required this.callBack,
       required this.updateStore});
@@ -59,7 +59,7 @@ class _DetailStoreViewState extends State<DetailStoreView>
         .subtract(const Duration(seconds: 1));
   }
 
-  List<AccountMemberDTO> _members = [];
+  List<MemberStoreDTO> _members = [];
 
   @override
   void initState() {
@@ -99,9 +99,15 @@ class _DetailStoreViewState extends State<DetailStoreView>
       margin: EdgeInsets.only(left: 10, right: 10, bottom: 10, top: 40),
       borderRadius: BorderRadius.circular(16),
       widget: SearchUserScreen(
-        listMember: _members,
+        listMember: [],
         onSelected: (dto) async {
-          _members = [..._members, dto];
+          bloc.add(AddMemberGroup(
+              userId: dto.id,
+              terminalId: _storeDTO.terminalId,
+              merchantId: widget.merchantId ?? ''));
+          bloc.add(GetMembersStoreEvent());
+
+          // _members = [..._members, dto];
           setState(() {});
         },
       ),
@@ -129,6 +135,10 @@ class _DetailStoreViewState extends State<DetailStoreView>
             setState(() {});
           }
 
+          if (state.request == DetailStoreType.GET_MEMBER) {
+            _members = state.members;
+          }
+
           if (state.request == DetailStoreType.REMOVE_MEMBER) {
             _loadData();
           }
@@ -144,7 +154,7 @@ class _DetailStoreViewState extends State<DetailStoreView>
                   const SizedBox(height: 24),
                   _buildQRBox(_storeDTO),
                   const SizedBox(height: 24),
-                  _buildMembers(state.members, _storeDTO),
+                  _buildMembers(_members, _storeDTO),
                   const SizedBox(height: 24),
                   _buildFeature(),
                   const SizedBox(height: 24),
