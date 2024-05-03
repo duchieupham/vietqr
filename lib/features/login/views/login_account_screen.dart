@@ -158,6 +158,7 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
                       // const SizedBox(width: 16),
                       Expanded(
                         child: MButtonWidget(
+                          height: 50,
                           title: '',
                           isEnable: true,
                           colorEnableBgr: AppColor.BLUE_E1EFFF,

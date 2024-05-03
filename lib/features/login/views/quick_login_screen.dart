@@ -1,23 +1,16 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/encrypt_utils.dart';
-import 'package:vierqr/commons/utils/navigator_utils.dart';
-import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
-import 'package:vierqr/layouts/pin_code_input.dart';
 import 'package:vierqr/models/account_login_dto.dart';
 import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
-
 import '../../../commons/constants/configurations/numeral.dart';
 import '../../../commons/utils/image_utils.dart';
 import '../../../commons/widgets/pin_widget_register.dart';
-import '../../../models/info_user_dto.dart';
 import '../../../services/providers/pin_provider.dart';
 import 'bgr_app_bar_login.dart';
-import 'forgot_password_screen.dart';
 
 class QuickLoginScreen extends StatefulWidget {
   final String userName;
@@ -66,13 +59,14 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       Provider.of<AuthProvider>(context, listen: false).initThemeDTO();
+      Provider.of<PinProvider>(context, listen: false).reset();
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
-    Provider.of<PinProvider>(context, listen: false).reset();
+    // Provider.of<PinProvider>(context, listen: false).reset();
     return Scaffold(
       body: Container(
         color: AppColor.WHITE,
