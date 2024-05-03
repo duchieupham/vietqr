@@ -384,6 +384,7 @@ class _InfoStoreViewState extends State<InfoStoreView> {
                   await NavigatorUtils.navigatePage(
                       context,
                       DetailStoreScreen(
+                        merchantId: widget.dto.id,
                         terminalId: dto.terminalId ?? '',
                         terminalCode: dto.terminalCode ?? '',
                         terminalName: dto.terminalName ?? '',
