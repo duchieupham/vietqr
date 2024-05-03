@@ -213,9 +213,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                   errorMsg =
                       'Bạn không có quyền thực hiện mở khóa TK ngân hàng này';
                   break;
-                case 'E127':
-                  errorMsg = 'Mã không tồn tại hoặc đã được sử dụng';
-                  break;
+
                 case 'E132':
                   errorMsg = 'Gói phí không tồn tại, vui lòng thử lại';
                   break;
