@@ -31,7 +31,6 @@ class DetailStoreBloc extends Bloc<DetailStoreEvent, DetailStoreState>
     on<GetMembersStoreEvent>(_getMembersStore);
     on<GetTerminalStoreEvent>(_getTerminalStore);
     on<AddMemberGroup>(_addMember);
-
     on<RemoveMemberEvent>(_removeMember);
   }
 

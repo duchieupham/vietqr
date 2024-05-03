@@ -234,6 +234,12 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                 case 'E65':
                   errorMsg = 'Xác thực thất bại. Vui lòng thử lại sau';
                   break;
+                case 'E130':
+                  errorMsg = 'Mã đã được sử dụng';
+                  break;
+                case 'E127':
+                  errorMsg = 'Mã không tồn tại';
+                  break;
                 default:
                   errorMsg = '';
               }

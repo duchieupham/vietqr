@@ -215,6 +215,7 @@ class _PopupBankShareState extends State<PopupBankShare> {
                                     ),
                                     const SizedBox(height: 4),
                                     Container(
+                                      width: double.infinity,
                                       alignment: Alignment.centerLeft,
                                       child: Text(
                                         widget.dto.content,
