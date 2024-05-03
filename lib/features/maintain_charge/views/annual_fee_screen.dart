@@ -255,19 +255,15 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
                 children: [
                   Text(
                     "Dùng ứng dụng Ngân hàng",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    "và Ví điện tử",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    "và Ví điện tử có hỗ trợ mã VietQR",
+                    style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    "có hỗ trợ mã VietQR để thanh toán",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    "gói phí dịch vụ ${widget.duration} tháng",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    "để thanh toán gói phí dịch vụ ${widget.duration} tháng",
+                    style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),

@@ -363,7 +363,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     mainAxisSpacing: 30,
-                    mainAxisExtent: 135,
+                    mainAxisExtent: 155,
                     crossAxisSpacing: 20,
                     childAspectRatio: 0.2,
                   ),
@@ -385,7 +385,7 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               Container(
-                                height: 120,
+                                height: 140,
                                 width: double.infinity,
                                 padding:
                                     const EdgeInsets.fromLTRB(17, 20, 17, 20),
@@ -426,29 +426,31 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
                                       ],
                                     ),
                                     const SizedBox(height: 6),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          formatNumber(value
-                                              .listAnnualFee[index].amount),
-                                          style: TextStyle(
-                                              fontSize: 18,
-                                              color: AppColor.BLUE_TEXT,
-                                              fontWeight: isSelect
-                                                  ? FontWeight.bold
-                                                  : FontWeight.normal),
-                                        ),
-                                        const SizedBox(height: 2),
-                                        Text(
-                                          "VND/THÁNG",
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              color: AppColor.BLACK
-                                                  .withOpacity(0.3)),
-                                        ),
-                                      ],
+                                    Text(
+                                      formatNumber(
+                                          value.listAnnualFee[index].amount),
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          color: AppColor.BLUE_TEXT,
+                                          fontWeight: isSelect
+                                              ? FontWeight.bold
+                                              : FontWeight.normal),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      "VND/THÁNG",
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          color:
+                                              AppColor.BLACK.withOpacity(0.3)),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Text(
+                                      'VAT 8%',
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          color: AppColor.BLUE_TEXT,
+                                          fontWeight: FontWeight.normal),
                                     ),
                                   ],
                                 ),

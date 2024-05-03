@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -42,11 +43,11 @@ class _CustomInAppWebViewState extends State<CustomInAppWebView> {
     super.initState();
   }
 
-  void sendDataToWebView(InAppWebViewController controller) async {
-    String userId = widget.userId;
-    String jsCode = 'receiveDataFromFlutter("$userId");';
-    await controller.evaluateJavascript(
-        source: jsCode, contentWorld: ContentWorld.PAGE);
+  void sendDataToWebView() async {
+    String userId = jsonEncode(widget.userId);
+    String jsCode = 'receiveDataFromFlutter($userId);';
+    await webViewController!
+        .evaluateJavascript(source: jsCode, contentWorld: ContentWorld.PAGE);
   }
 
   @override
@@ -61,6 +62,7 @@ class _CustomInAppWebViewState extends State<CustomInAppWebView> {
                 children: [
                   GestureDetector(
                       onTap: () {
+                        // webViewController!.clearCache();
                         Navigator.pop(context);
                       },
                       child: const Icon(
@@ -99,9 +101,9 @@ class _CustomInAppWebViewState extends State<CustomInAppWebView> {
                         }
                       });
                 },
-                onLoadStart: (controller, url) async {
-                  setState(() {});
-                },
+                // onLoadStart: (controller, url) async {
+                //   setState(() {});
+                // },
                 androidOnPermissionRequest:
                     (controller, request, resources) async {
                   return PermissionRequestResponse(
@@ -133,7 +135,7 @@ class _CustomInAppWebViewState extends State<CustomInAppWebView> {
                   return NavigationActionPolicy.ALLOW;
                 },
                 onLoadStop: (controller, url) async {
-                  sendDataToWebView(controller);
+                  sendDataToWebView();
                   setState(() {});
                 },
                 onProgressChanged: (controller, progress) {
