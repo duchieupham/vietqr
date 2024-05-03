@@ -60,21 +60,23 @@ class RegisterAppBar extends StatelessWidget implements PreferredSizeWidget {
               height: 1.4,
             ),
           ),
-          leading: isLeading
-              ? IconButton(
-                  onPressed: (onPressed == null)
-                      ? () => _handleBack(context)
-                      : () {
-                          onPressed!();
-                        },
-                  padding: const EdgeInsets.only(left: 20),
-                  icon: const Icon(
-                    Icons.arrow_back_ios,
-                    color: Colors.black,
-                    size: 18,
-                  ),
-                )
-              : null,
+          leading: isLeading ? _buildBackButton(context) : null,
+          leadingWidth: 100,
+          // leading: isLeading
+          //     ? IconButton(
+          //         onPressed: (onPressed == null)
+          //             ? () => _handleBack(context)
+          //             : () {
+          //                 onPressed!();
+          //               },
+          //         padding: const EdgeInsets.only(left: 20),
+          //         icon: const Icon(
+          //           Icons.arrow_back_ios,
+          //           color: Colors.black,
+          //           size: 18,
+          //         ),
+          //       )
+          //     : null,
           centerTitle: centerTitle,
           elevation: 0,
           automaticallyImplyLeading: false,
@@ -109,5 +111,34 @@ class RegisterAppBar extends StatelessWidget implements PreferredSizeWidget {
   _handleBack(BuildContext context) {
     FocusManager.instance.primaryFocus?.unfocus();
     Navigator.of(context).pop();
+  }
+
+  Widget _buildBackButton(BuildContext context) {
+    return GestureDetector(
+      onTap: (onPressed == null) ? () => _handleBack(context) : onPressed,
+      child: Container(
+        padding: const EdgeInsets.only(left: 20),
+        width: 100, // Increase width as needed to avoid overflow
+        alignment: Alignment.centerLeft,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: const [
+            Icon(
+              Icons.arrow_back_ios,
+              color: Colors.black,
+              size: 18,
+            ),
+            Text(
+              'Trở về',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
