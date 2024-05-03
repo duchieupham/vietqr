@@ -249,7 +249,7 @@ class CardWidget extends StatelessWidget {
                   MySeparator(
                     color: AppColor.WHITE,
                   ),
-                  e.isOwner == false
+                  e.isOwner == false && e.isValidService == false
                       ? Container(
                           padding: const EdgeInsets.fromLTRB(20, 8, 10, 10),
                           width: double.infinity,

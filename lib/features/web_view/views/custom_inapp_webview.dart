@@ -22,32 +22,22 @@ class _CustomInAppWebViewState extends State<CustomInAppWebView> {
   InAppWebViewController? webViewController;
   final webViewKey = GlobalKey();
 
-  InAppWebViewGroupOptions options = InAppWebViewGroupOptions(
-      crossPlatform: InAppWebViewOptions(
-        useShouldOverrideUrlLoading: true,
-        mediaPlaybackRequiresUserGesture: false,
-        javaScriptCanOpenWindowsAutomatically: true,
-        useShouldInterceptFetchRequest: true,
-        clearCache: true,
-      ),
-      android: AndroidInAppWebViewOptions(
-        useShouldInterceptRequest: true,
-        useHybridComposition: true,
-      ),
-      ios: IOSInAppWebViewOptions(
-        allowsInlineMediaPlayback: true,
-      ));
+  InAppWebViewSettings settings = InAppWebViewSettings(
+    clearCache: true,
+    useOnLoadResource: true,
+    // cacheEnabled: false,
+  );
 
   @override
   void initState() {
     super.initState();
   }
 
-  void sendDataToWebView() async {
+  void sendDataToWebView(InAppWebViewController controller) async {
     String userId = jsonEncode(widget.userId);
     String jsCode = 'receiveDataFromFlutter($userId);';
-    await webViewController!
-        .evaluateJavascript(source: jsCode, contentWorld: ContentWorld.PAGE);
+    await controller.evaluateJavascript(
+        source: jsCode, contentWorld: ContentWorld.PAGE);
   }
 
   @override
@@ -62,7 +52,7 @@ class _CustomInAppWebViewState extends State<CustomInAppWebView> {
                 children: [
                   GestureDetector(
                       onTap: () {
-                        // webViewController!.clearCache();
+                        // webViewController!.dispose();
                         Navigator.pop(context);
                       },
                       child: const Icon(
@@ -86,9 +76,11 @@ class _CustomInAppWebViewState extends State<CustomInAppWebView> {
             Expanded(
               child: InAppWebView(
                 key: webViewKey,
-                initialUrlRequest: URLRequest(url: Uri.parse(widget.url)),
+                initialUrlRequest:
+                    URLRequest(url: WebUri.uri(Uri.parse(widget.url))),
                 initialUserScripts: UnmodifiableListView<UserScript>([]),
-                initialOptions: options,
+                initialSettings: settings,
+                // initialOptions: options,
                 onWebViewCreated: (controller) async {
                   webViewController = controller;
                   controller.addJavaScriptHandler(
@@ -101,15 +93,23 @@ class _CustomInAppWebViewState extends State<CustomInAppWebView> {
                         }
                       });
                 },
-                // onLoadStart: (controller, url) async {
-                //   setState(() {});
-                // },
-                androidOnPermissionRequest:
-                    (controller, request, resources) async {
-                  return PermissionRequestResponse(
-                      resources: resources,
-                      action: PermissionRequestResponseAction.GRANT);
+                onLoadStart: (controller, url) async {
+                  // sendDataToWebView(controller);
+
+                  setState(() {});
                 },
+                onPermissionRequest: (controller, permissionRequest) async {
+                  return PermissionResponse(
+                    action: PermissionResponseAction.GRANT,
+                    resources: permissionRequest.resources,
+                  );
+                },
+                // androidOnPermissionRequest:
+                //     (controller, request, resources) async {
+                //   return PermissionRequestResponse(
+                //       resources: resources,
+                //       action: PermissionRequestResponseAction.GRANT);
+                // },
                 shouldOverrideUrlLoading: (controller, navigationAction) async {
                   var uri = navigationAction.request.url!;
 
@@ -134,8 +134,12 @@ class _CustomInAppWebViewState extends State<CustomInAppWebView> {
 
                   return NavigationActionPolicy.ALLOW;
                 },
+                onLoadResource: (controller, resource) {
+                  sendDataToWebView(controller);
+                  setState(() {});
+                },
                 onLoadStop: (controller, url) async {
-                  sendDataToWebView();
+                  // sendDataToWebView(controller);
                   setState(() {});
                 },
                 onProgressChanged: (controller, progress) {
@@ -158,7 +162,7 @@ class _CustomInAppWebViewState extends State<CustomInAppWebView> {
 
   @override
   void dispose() {
-    webViewController!.clearCache();
+    webViewController!.dispose();
     super.dispose();
   }
 }

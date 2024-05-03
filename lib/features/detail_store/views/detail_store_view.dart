@@ -59,6 +59,8 @@ class _DetailStoreViewState extends State<DetailStoreView>
         .subtract(const Duration(seconds: 1));
   }
 
+  List<AccountMemberDTO> _members = [];
+
   @override
   void initState() {
     super.initState();
@@ -87,7 +89,7 @@ class _DetailStoreViewState extends State<DetailStoreView>
     _loadData();
   }
 
-  void _onInsertMember(List<AccountMemberDTO> listMember) async {
+  void _onInsertMember() async {
     FocusManager.instance.primaryFocus?.unfocus();
 
     setState(() {});
@@ -97,9 +99,9 @@ class _DetailStoreViewState extends State<DetailStoreView>
       margin: EdgeInsets.only(left: 10, right: 10, bottom: 10, top: 40),
       borderRadius: BorderRadius.circular(16),
       widget: SearchUserScreen(
-        listMember: listMember,
+        listMember: _members,
         onSelected: (dto) async {
-          listMember = [...listMember, dto];
+          _members = [..._members, dto];
           setState(() {});
         },
       ),
@@ -521,7 +523,7 @@ class _DetailStoreViewState extends State<DetailStoreView>
                     fontSize: 16,
                   ),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: 8),
                 Container(
                   height: 25,
                   padding: const EdgeInsets.fromLTRB(12, 1, 8, 1),
@@ -541,25 +543,31 @@ class _DetailStoreViewState extends State<DetailStoreView>
               ],
             ),
             GestureDetector(
-              onTap: () {},
+              onTap: () {
+                _onInsertMember();
+              },
               child: Container(
                 height: 25,
-                padding: EdgeInsets.fromLTRB(12, 4, 20, 4),
+                padding: EdgeInsets.fromLTRB(12, 4, 12, 4),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(25),
-                  color: AppColor.BLUE_TEXT.withOpacity(0.35),
-                ),
+                    borderRadius: BorderRadius.circular(25),
+                    color: AppColor.WHITE,
+                    border: Border.all(color: AppColor.BLUE_TEXT, width: 0.8)),
                 child: Row(
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  // mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.asset(
-                      'assets/images/ic-add-member-white.png',
-                      height: 30,
-                      color: AppColor.BLUE_TEXT,
-                    ),
+                    // Image.asset(
+                    //   'assets/images/ic-add-member-white.png',
+                    //   height: 30,
+                    //   color: AppColor.BLUE_TEXT,
+                    // ),
                     Text(
                       'Thêm thành viên',
-                      style: TextStyle(color: AppColor.BLUE_TEXT),
+                      style: TextStyle(
+                          color: AppColor.BLUE_TEXT,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold),
                     )
                   ],
                 ),
