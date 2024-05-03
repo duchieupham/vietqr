@@ -174,7 +174,8 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              widget.onChangePage!();
+                              // widget.onChangePage!();
+                              widget.onChangePageThongKe!();
                             },
                             child: _buildElement(
                               icon: 'assets/images/ic-transaction-blue.png',
@@ -191,7 +192,8 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              widget.onChangePageThongKe!();
+                              // widget.onChangePageThongKe!();
+                              widget.onChangePage!();
                             },
                             child: _buildElement(
                               icon: 'assets/images/ic-statistic-blue.png',

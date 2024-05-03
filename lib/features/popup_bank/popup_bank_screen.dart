@@ -483,6 +483,7 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        height: 40,
         padding: EdgeInsets.symmetric(horizontal: 24, vertical: small ? 0 : 6),
         decoration: BoxDecoration(
           border: Border(

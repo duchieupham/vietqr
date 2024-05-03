@@ -101,13 +101,13 @@ class _VietQRStoreViewState extends State<VietQRStoreView>
             );
           }
 
-          return Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            child: Column(
-              children: [
-                Expanded(
-                  child: RepaintBoundaryWidget(
+          return SingleChildScrollView(
+            child: Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              child: Column(
+                children: [
+                  RepaintBoundaryWidget(
                     globalKey: globalKey,
                     builder: (key) {
                       return Column(
@@ -193,31 +193,32 @@ class _VietQRStoreViewState extends State<VietQRStoreView>
                       );
                     },
                   ),
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: AppColor.WHITE,
-                    borderRadius: BorderRadius.circular(12),
+                  const SizedBox(height: 20),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: AppColor.WHITE,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      children: [
+                        _buildBottomBar(
+                          url: 'assets/images/ic-save-img-blue.png',
+                          title: 'Lưu ảnh vào thư viện',
+                          onTap: () => onSaveImage(state.detailStore),
+                        ),
+                        const Divider(thickness: 1, color: AppColor.GREY_BORDER),
+                        _buildBottomBar(
+                          url: 'assets/images/ic-share-img-blue.png',
+                          title: 'Chia sẻ mã QR',
+                          onTap: () => share(state.detailStore),
+                        ),
+                      ],
+                    ),
                   ),
-                  child: Column(
-                    children: [
-                      _buildBottomBar(
-                        url: 'assets/images/ic-save-img-blue.png',
-                        title: 'Lưu ảnh vào thư viện',
-                        onTap: () => onSaveImage(state.detailStore),
-                      ),
-                      const Divider(thickness: 1, color: AppColor.GREY_BORDER),
-                      _buildBottomBar(
-                        url: 'assets/images/ic-share-img-blue.png',
-                        title: 'Chia sẻ mã QR',
-                        onTap: () => share(state.detailStore),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 24),
-              ],
+                  const SizedBox(height: 24),
+                ],
+              ),
             ),
           );
         },
