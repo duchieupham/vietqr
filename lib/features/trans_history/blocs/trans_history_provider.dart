@@ -219,6 +219,7 @@ class TransProvider with ChangeNotifier {
     DateTime fromDate = DateTime(now.year, now.month, now.day);
     DateTime endDate = fromDate.subtract(const Duration(days: 0));
 
+    // _terminalAccountDTO = terminalList.first;
     _terminalAccountDTO = terminalList.first;
 
     fromDate = fromDate
@@ -231,7 +232,9 @@ class TransProvider with ChangeNotifier {
       bankId: bankId,
       offset: 0,
       value: '',
-      terminalCode: _terminalAccountDTO.terminalCode!,
+      // terminalCode: _terminalAccountDTO.terminalCode!,
+      terminalCode: '',
+
       userId: SharePrefUtils.getProfile().userId,
       status: 0,
       from: TimeUtils.instance.getCurrentDate(endDate),
@@ -489,7 +492,7 @@ class TransProvider with ChangeNotifier {
         param.value = '';
       }
 
-      if (!isOwner && _terminalAccountDTO.terminalId!.isEmpty) {
+      if (!isOwner && _terminalAccountDTO.terminalId == null) {
         param.terminalCode = '';
       }
 

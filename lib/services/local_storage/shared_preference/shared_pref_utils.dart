@@ -414,10 +414,11 @@ class SharePrefUtils {
     await saveProfileToCache(UserProfile());
     await setTokenInfo('');
     AppDataHelper.instance.clearListQRDetailBank();
-    Navigator.of(context).pushReplacement(MaterialPageRoute(
-      builder: (context) => Login(),
-    ));
-    // Navigator.of(context)
-    //     .pushNamedAndRemoveUntil(Routes.LOGIN, (route) => route.isFirst);
+    // Navigator.of(context).pushReplacement(MaterialPageRoute(
+    //   builder: (context) => Login(),
+    // ));
+    // Navigator.of(context).popUntil((route) => route.isFirst);
+    Navigator.of(context)
+        .pushNamedAndRemoveUntil(Routes.LOGIN, (route) => false);
   }
 }
