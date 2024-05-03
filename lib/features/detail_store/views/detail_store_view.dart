@@ -60,6 +60,7 @@ class _DetailStoreViewState extends State<DetailStoreView>
   }
 
   List<MemberStoreDTO> _members = [];
+  List<AccountMemberDTO> addedMembers = [];
 
   @override
   void initState() {
@@ -99,16 +100,15 @@ class _DetailStoreViewState extends State<DetailStoreView>
       margin: EdgeInsets.only(left: 10, right: 10, bottom: 10, top: 40),
       borderRadius: BorderRadius.circular(16),
       widget: SearchUserScreen(
-        listMember: [],
+        listMember: addedMembers,
         onSelected: (dto) async {
+          addedMembers = [...addedMembers, dto];
           bloc.add(AddMemberGroup(
               userId: dto.id,
               terminalId: _storeDTO.terminalId,
               merchantId: widget.merchantId ?? ''));
-          bloc.add(GetMembersStoreEvent());
-
-          // _members = [..._members, dto];
-          setState(() {});
+          // bloc.add(GetMembersStoreEvent());
+          Navigator.of(context).pop();
         },
       ),
     );
@@ -129,17 +129,19 @@ class _DetailStoreViewState extends State<DetailStoreView>
             Navigator.pop(context);
           }
 
+          if (state.request == DetailStoreType.GET_MEMBER) {
+            _members = state.members;
+            setState(() {});
+          }
+
           if (state.request == DetailStoreType.GET_DETAIL) {
             widget.updateStore(state.detailStore);
             _storeDTO = state.detailStore;
             setState(() {});
           }
 
-          if (state.request == DetailStoreType.GET_MEMBER) {
-            _members = state.members;
-          }
-
-          if (state.request == DetailStoreType.REMOVE_MEMBER) {
+          if (state.request == DetailStoreType.REMOVE_MEMBER ||
+              state.request == DetailStoreType.ADD_MEMBER) {
             _loadData();
           }
         },
@@ -552,37 +554,40 @@ class _DetailStoreViewState extends State<DetailStoreView>
                 ),
               ],
             ),
-            GestureDetector(
-              onTap: () {
-                _onInsertMember();
-              },
-              child: Container(
-                height: 25,
-                padding: EdgeInsets.fromLTRB(12, 4, 12, 4),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(25),
-                    color: AppColor.WHITE,
-                    border: Border.all(color: AppColor.BLUE_TEXT, width: 0.8)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  // mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Image.asset(
-                    //   'assets/images/ic-add-member-white.png',
-                    //   height: 30,
-                    //   color: AppColor.BLUE_TEXT,
-                    // ),
-                    Text(
-                      'Thêm thành viên',
-                      style: TextStyle(
-                          color: AppColor.BLUE_TEXT,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold),
-                    )
-                  ],
-                ),
-              ),
-            ),
+            dto.admin
+                ? GestureDetector(
+                    onTap: () {
+                      _onInsertMember();
+                    },
+                    child: Container(
+                      height: 25,
+                      padding: EdgeInsets.fromLTRB(12, 4, 12, 4),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(25),
+                          color: AppColor.WHITE,
+                          border: Border.all(
+                              color: AppColor.BLUE_TEXT, width: 0.8)),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        // mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Image.asset(
+                          //   'assets/images/ic-add-member-white.png',
+                          //   height: 30,
+                          //   color: AppColor.BLUE_TEXT,
+                          // ),
+                          Text(
+                            'Thêm thành viên',
+                            style: TextStyle(
+                                color: AppColor.BLUE_TEXT,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold),
+                          )
+                        ],
+                      ),
+                    ),
+                  )
+                : const SizedBox.shrink(),
           ],
         ),
         ...List.generate(members.length, (index) {
@@ -817,7 +822,11 @@ class _DetailStoreViewState extends State<DetailStoreView>
             ),
             if (isRemove && !dto.isOwner)
               GestureDetector(
-                onTap: () => bloc.add(RemoveMemberEvent(userId: dto.id)),
+                onTap: () {
+                  bloc.add(RemoveMemberEvent(userId: dto.id));
+                  addedMembers.removeWhere((element) => element.id == dto.id);
+                  setState(() {});
+                },
                 child: Padding(
                   padding: const EdgeInsets.only(right: 12),
                   child: Icon(

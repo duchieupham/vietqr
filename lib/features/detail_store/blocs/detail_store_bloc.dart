@@ -216,7 +216,7 @@ class DetailStoreBloc extends Bloc<DetailStoreEvent, DetailStoreState>
     try {
       if (event is AddMemberGroup) {
         emit(state.copyWith(
-            status: BlocStatus.LOADING, request: DetailStoreType.NONE));
+            status: BlocStatus.LOADING_PAGE, request: DetailStoreType.NONE));
         Map<String, dynamic> param = {};
         param['userId'] = event.userId;
         param['terminalId'] = event.terminalId;
