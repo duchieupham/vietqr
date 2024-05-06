@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/features/connect_gg_chat/states/connect_gg_chat_states.dart';
+import 'package:vierqr/features/connect_gg_chat/views/info_gg_chat_widget.dart';
 
 import '../../commons/constants/configurations/app_images.dart';
+import '../../commons/enums/enum_type.dart';
+import '../../commons/widgets/dialog_widget.dart';
 import '../../services/providers/connect_gg_chat_provider.dart';
 import 'blocs/connect_gg_chat_bloc.dart';
 
@@ -29,10 +35,34 @@ class _Screen extends StatefulWidget {
 }
 
 class __ScreenState extends State<_Screen> {
+  late ConnectGgChatBloc _bloc;
+  late ConnectGgChatProvider _provider;
+
+  @override
+  void initState() {
+    super.initState();
+    _bloc = BlocProvider.of(context);
+    _provider = Provider.of<ConnectGgChatProvider>(context, listen: false);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      initData();
+    });
+  }
+
+  initData({bool isRefresh = false}) {
+    if (isRefresh) {}
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ConnectGgChatBloc, ConnectGgChatStates>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state.status == BlocStatus.LOADING) {
+          DialogWidget.instance.openLoadingDialog();
+        }
+        if (state.status == BlocStatus.UNLOADING) {
+          Navigator.pop(context);
+        }
+      },
       builder: (context, state) {
         return Consumer<ConnectGgChatProvider>(
           builder: (context, value, child) {
@@ -84,7 +114,10 @@ class __ScreenState extends State<_Screen> {
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.height,
                       child: Column(
-                        children: [],
+                        children: [
+                          const SizedBox(height: 45),
+                          InfoGgChatWidget(bloc: _bloc),
+                        ],
                       ),
                     ),
                   )

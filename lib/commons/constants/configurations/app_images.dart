@@ -17,4 +17,6 @@ class AppImages {
   static String icLogoVietQr = 'assets/images/logo-viet-qr.png';
   static String icRegisterSuccessful =
       'assets/images/ic-register-successful.png';
+
+  static String icLogoGgChat = 'assets/images/ic-gg-chat-home.png';
 }

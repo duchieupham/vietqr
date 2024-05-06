@@ -386,8 +386,8 @@ class _VietQRApp extends State<VietQRApp> {
                       ConnectTeleStepScreen(),
                   Routes.CONNECT_STEP_LARK_SCREEN: (context) =>
                       ConnectLarkStepScreen(),
-                  Routes.CONNECT_GG_CHAT_SCREEN: (context) =>
-                      ConnectGgChatScreen(),
+                  // Routes.CONNECT_GG_CHAT_SCREEN: (context) =>
+                  //     ConnectGgChatScreen(),
                   Routes.CONNECT_LARK: (context) => ConnectLarkScreen(),
                   Routes.REPORT_SCREEN: (context) => const ReportScreen(),
                   Routes.TRANSACTION_WALLET: (context) =>
@@ -398,6 +398,14 @@ class _VietQRApp extends State<VietQRApp> {
                   //     const ActiveSuccessScreen(),
                 },
                 onGenerateRoute: (settings) {
+                  if (settings.name == Routes.CONNECT_GG_CHAT_SCREEN) {
+                    // Map map = settings.arguments as Map;
+                    return CupertinoPageRoute<bool>(
+                      builder: (context) {
+                        return ConnectGgChatScreen();
+                      },
+                    );
+                  }
                   if (settings.name == Routes.SHOW_QR) {
                     Map map = settings.arguments as Map;
 
