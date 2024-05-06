@@ -12,6 +12,7 @@ import 'package:vierqr/features/connect_gg_chat/views/info_gg_chat_widget.dart';
 import '../../commons/constants/configurations/app_images.dart';
 import '../../commons/enums/enum_type.dart';
 import '../../commons/utils/custom_button_switch.dart';
+import '../../commons/utils/image_utils.dart';
 import '../../commons/widgets/dialog_widget.dart';
 import '../../layouts/m_button_widget.dart';
 import '../../services/providers/connect_gg_chat_provider.dart';
@@ -124,7 +125,7 @@ class __ScreenState extends State<_Screen> {
                               controller: _pageController,
                               children: [
                                 startConnectGgChat(),
-                                listAccountLinked(),
+                                listAccountLinked(value),
                               ],
                             )
                           : InfoGgChatWidget(bloc: _bloc),
@@ -175,62 +176,102 @@ class __ScreenState extends State<_Screen> {
     );
   }
 
-  Widget listAccountLinked() {
-    bool isLinked = false;
+  Widget listAccountLinked(ConnectGgChatProvider provider) {
     final height = MediaQuery.of(context).size.height;
     return Container(
       padding: EdgeInsets.only(left: 40, right: 20),
       width: double.infinity,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(height: 20),
-          Container(
-            height: 50,
-            width: 50,
-            child: Image.asset('assets/images/ic-gg-chat-home.png'),
-          ),
-          SizedBox(height: 30),
-          Container(
-            width: 350,
-            child: Text(
-              'Đầu tiên, chọn tài khoản\nngân hàng mà bạn muốn\nnhận BĐSD qua Google Chat',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 20),
+            Container(
+              height: 50,
+              width: 50,
+              child: Image.asset('assets/images/ic-gg-chat-home.png'),
             ),
-          ),
-          SizedBox(height: 30),
-          Container(
-            width: double.infinity,
-            height: 50,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Tất cả tài khoản đã liên kết',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                ),
-                CustomCupertinoSwitch(
-                  value: isLinked!,
-                  onChanged: (value) {
-                    setState(() {
-                      isLinked = value;
-                    });
-                    print(isLinked);
-                  },
-                ),
-              ],
+            SizedBox(height: 30),
+            Container(
+              width: 350,
+              child: Text(
+                'Đầu tiên, chọn tài khoản\nngân hàng mà bạn muốn\nnhận BĐSD qua Google Chat',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+              ),
             ),
-          ),
-          MySeparator(
-            color: AppColor.GREY_DADADA,
-          ),
-        ],
+            SizedBox(height: 30),
+            Container(
+              width: double.infinity,
+              height: 50,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Tất cả tài khoản đã liên kết',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                  ),
+                  CustomCupertinoSwitch(
+                    value: provider.isAllLinked,
+                    onChanged: (value) {
+                      _provider.changeAllValue(value);
+                    },
+                  ),
+                ],
+              ),
+            ),
+            MySeparator(
+              color: AppColor.GREY_DADADA,
+            ),
+            for (int i = 0; i < provider.linkedStatus.length; i++)
+              _itemBank(i, provider),
+          ],
+        ),
       ),
     );
   }
 
-  Widget buildItems(){
-    return Container();
+  Widget _itemBank(int index, ConnectGgChatProvider provider) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 15),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 75,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(width: 0.5, color: Colors.grey),
+                ),
+                child: Center(child: Text('Logo')), // Placeholder for bank logo
+              ),
+              const SizedBox(width: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('1123355589',
+                      style:
+                          TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                  Text('PHAM DUC HIEU', style: TextStyle(fontSize: 12)),
+                ],
+              ),
+            ],
+          ),
+          CustomCupertinoSwitch(
+            value:  provider.linkedStatus[index],
+            onChanged: (value) {
+              provider.linkedStatus[index] = value;
+              // Kiểm tra nếu tất cả đều được chọn
+            provider.changeAllValue(false);
+      
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   Widget bottomButton() {
