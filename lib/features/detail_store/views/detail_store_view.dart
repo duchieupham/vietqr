@@ -554,42 +554,44 @@ class _DetailStoreViewState extends State<DetailStoreView>
                 ),
               ],
             ),
-            dto.admin
-                ? GestureDetector(
-                    onTap: () {
-                      _onInsertMember();
-                    },
-                    child: Container(
-                      height: 25,
-                      padding: EdgeInsets.fromLTRB(12, 4, 12, 4),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(25),
-                          color: AppColor.WHITE,
-                          border: Border.all(
-                              color: AppColor.BLUE_TEXT, width: 0.8)),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        // mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // Image.asset(
-                          //   'assets/images/ic-add-member-white.png',
-                          //   height: 30,
-                          //   color: AppColor.BLUE_TEXT,
-                          // ),
-                          Text(
-                            'Thêm thành viên',
-                            style: TextStyle(
-                                color: AppColor.BLUE_TEXT,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold),
-                          )
-                        ],
-                      ),
-                    ),
-                  )
-                : const SizedBox.shrink(),
           ],
         ),
+        const SizedBox(height: 10),
+        dto.admin
+            ? GestureDetector(
+                onTap: () {
+                  _onInsertMember();
+                },
+                child: Container(
+                  // height: 25,
+                  // width: 120,
+                  padding: EdgeInsets.fromLTRB(12, 8, 12, 8),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(25),
+                      color: AppColor.WHITE,
+                      border:
+                          Border.all(color: AppColor.BLUE_TEXT, width: 0.8)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    // mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Image.asset(
+                      //   'assets/images/ic-add-member-white.png',
+                      //   height: 30,
+                      //   color: AppColor.BLUE_TEXT,
+                      // ),
+                      Text(
+                        'Thêm thành viên',
+                        style: TextStyle(
+                            color: AppColor.BLUE_TEXT,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold),
+                      )
+                    ],
+                  ),
+                ),
+              )
+            : const SizedBox.shrink(),
         ...List.generate(members.length, (index) {
           MemberStoreDTO member = members[index];
           return _itemMember(member, dto.admin);
