@@ -15,9 +15,11 @@ import 'package:vierqr/features/transaction_detail/widgets/transaction_sucess_wi
 import 'package:vierqr/layouts/bottom_sheet/notify_trans_widget.dart';
 import 'package:vierqr/models/maintain_charge_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
+import 'package:vierqr/services/providers/connect_gg_chat_provider.dart';
 import 'package:vierqr/services/providers/maintain_charge_provider.dart';
 import 'package:vierqr/services/providers/register_provider.dart';
 import 'package:vierqr/services/socket_service/socket_service.dart';
+import 'features/connect_gg_chat/connect_gg_chat_screen.dart';
 import 'features/invoice/widgets/invoice_detail_screen.dart';
 import 'features/invoice/widgets/popup_invoice_success.dart';
 import 'features/maintain_charge/views/active_success_screen.dart';
@@ -342,6 +344,8 @@ class _VietQRApp extends State<VietQRApp> {
             ChangeNotifierProvider(
                 create: (context) => MaintainChargeProvider()),
             ChangeNotifierProvider(create: (context) => InvoiceProvider()),
+            ChangeNotifierProvider(
+                create: (context) => ConnectGgChatProvider()),
             ChangeNotifierProvider(create: (context) => RegisterProvider()),
             ChangeNotifierProvider(create: (context) => UserEditProvider()),
           ],
@@ -382,11 +386,14 @@ class _VietQRApp extends State<VietQRApp> {
                       ConnectTeleStepScreen(),
                   Routes.CONNECT_STEP_LARK_SCREEN: (context) =>
                       ConnectLarkStepScreen(),
+                  Routes.CONNECT_GG_CHAT_SCREEN: (context) =>
+                      ConnectGgChatScreen(),
                   Routes.CONNECT_LARK: (context) => ConnectLarkScreen(),
                   Routes.REPORT_SCREEN: (context) => const ReportScreen(),
                   Routes.TRANSACTION_WALLET: (context) =>
                       const TransWalletScreen(),
                   Routes.INVOICE_SCREEN: (context) => InvoiceScreen(),
+
                   // Routes.ACTIVE_SUCCESS_SCREEN: (context) =>
                   //     const ActiveSuccessScreen(),
                 },
