@@ -17,115 +17,173 @@ class InfoGgChatWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> listWidget = [
+      _itemBank(),
+      MySeparator(
+        color: AppColor.GREY_DADADA,
+      ),
+      _itemBank(),
+      MySeparator(
+        color: AppColor.GREY_DADADA,
+      ),
+      _itemBank(),
+    ];
+
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+      padding: const EdgeInsets.fromLTRB(20, 45, 20, 0),
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Thông tin kết nối',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 26),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Nền tảng kết nối:',
-                  style: TextStyle(fontSize: 15),
-                ),
-                Row(
-                  children: [
-                    Text(
-                      'Google Chat',
-                      style:
-                          TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(width: 8),
-                    Image.asset(
-                      AppImages.icLogoGgChat,
-                      width: 20,
-                      fit: BoxFit.fitWidth,
-                    )
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            MySeparator(
-              color: AppColor.GREY_DADADA,
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Webhook:',
-                  style: TextStyle(fontSize: 15),
-                ),
-                Container(
-                  width: 250,
-                  child: Text(
-                    'https://chat.google.com/xxxxxxxxxxxx',
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.right,
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            GestureDetector(
-              onTap: () {
-                Clipboard.setData(new ClipboardData(text: ''));
-              },
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: Container(
-                  width: 100,
-                  padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
-                  decoration: BoxDecoration(
-                    color: AppColor.BLUE_TEXT.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(35),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.copy,
-                        size: 15,
-                        color: AppColor.BLUE_TEXT,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        'Sao chép',
-                        style:
-                            TextStyle(fontSize: 12, color: AppColor.BLUE_TEXT),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ),
+            _infoConnect(),
             const SizedBox(height: 35),
-            Text(
-              'Tài khoản ngân hàng',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'Danh sách tài khoản ngân hàng được chia sẻ \nthông tin Biến động số dư qua Google Chat.',
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
-            ),
-            const SizedBox(height: 10),
+            _bankList(listWidget),
+            const SizedBox(height: 35),
+            _setting(),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _infoConnect() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Thông tin kết nối',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 26),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Nền tảng kết nối:',
+              style: TextStyle(fontSize: 15),
+            ),
+            Row(
+              children: [
+                Text(
+                  'Google Chat',
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(width: 8),
+                Image.asset(
+                  AppImages.icLogoGgChat,
+                  width: 20,
+                  fit: BoxFit.fitWidth,
+                )
+              ],
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        MySeparator(
+          color: AppColor.GREY_DADADA,
+        ),
+        const SizedBox(height: 16),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Webhook:',
+              style: TextStyle(fontSize: 15),
+            ),
+            Container(
+              width: 250,
+              child: Text(
+                'https://chat.google.com/xxxxxxxxxxxx',
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.right,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        GestureDetector(
+          onTap: () {
+            Clipboard.setData(new ClipboardData(text: ''));
+          },
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: Container(
+              width: 100,
+              padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
+              decoration: BoxDecoration(
+                color: AppColor.BLUE_TEXT.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(35),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.copy,
+                    size: 12,
+                    color: AppColor.BLUE_TEXT,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    'Sao chép',
+                    style: TextStyle(fontSize: 12, color: AppColor.BLUE_TEXT),
+                  )
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _setting() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Cài đặt',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 10),
+        GestureDetector(
+          onTap: () {},
+          child: Container(
+            width: double.infinity,
+            child: Row(
+              children: [
+                Image.asset(
+                  'assets/images/ic-card-blue.png',
+                  width: 40,
+                )
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _bankList(List<Widget> list) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Tài khoản ngân hàng',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 10),
+        Text(
+          'Danh sách tài khoản ngân hàng được chia sẻ \nthông tin Biến động số dư qua Google Chat.',
+          style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
+        ),
+        const SizedBox(height: 10),
+        ...list,
+      ],
     );
   }
 
@@ -143,6 +201,7 @@ class InfoGgChatWidget extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: AppColor.WHITE,
                   borderRadius: BorderRadius.circular(8),
+                  border: Border.all(width: 0.5, color: AppColor.GREY_DADADA),
                   image: DecorationImage(
                     image: ImageUtils.instance.getImageNetWork(''),
                   ),
@@ -150,9 +209,28 @@ class InfoGgChatWidget extends StatelessWidget {
               ),
               const SizedBox(width: 10),
               Column(
-                children: [],
+                children: [
+                  Text(
+                    '1123355589',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'PHAM DUC HIEU',
+                    style:
+                        TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
+                  ),
+                ],
               ),
             ],
+          ),
+          GestureDetector(
+            onTap: () {},
+            child: Icon(
+              Icons.remove_circle_outline,
+              size: 18,
+              color: AppColor.RED_TEXT,
+            ),
           ),
         ],
       ),

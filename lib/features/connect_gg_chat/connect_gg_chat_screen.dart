@@ -73,7 +73,8 @@ class __ScreenState extends State<_Screen> {
             return Scaffold(
               backgroundColor: Colors.white,
               resizeToAvoidBottomInset: true,
-              bottomNavigationBar: bottomButton(),
+              bottomNavigationBar:
+                  hasInfo == false ? bottomButton() : const SizedBox.shrink(),
               body: CustomScrollView(
                 physics: NeverScrollableScrollPhysics(),
                 slivers: [
@@ -126,12 +127,7 @@ class __ScreenState extends State<_Screen> {
                                 listAccountLinked(),
                               ],
                             )
-                          : Column(
-                              children: [
-                                const SizedBox(height: 45),
-                                InfoGgChatWidget(bloc: _bloc),
-                              ],
-                            ),
+                          : InfoGgChatWidget(bloc: _bloc),
                     ),
                   )
                 ],
