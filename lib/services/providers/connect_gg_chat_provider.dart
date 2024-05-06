@@ -8,8 +8,16 @@ class ConnectGgChatProvider extends ChangeNotifier {
 
   void changeAllValue(bool value){
     isAllLinked = value;
-    linkedStatus = List.filled(linkedStatus.length, true);
+    linkedStatus = List.filled(linkedStatus.length, value);
     notifyListeners();
+  }
+
+  void selectValue(bool value, int index){
+    isAllLinked = value;
+
+    linkedStatus[index] = value;
+    notifyListeners();
+
   }
 }
 

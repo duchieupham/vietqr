@@ -41,7 +41,7 @@ class __ScreenState extends State<_Screen> {
   late ConnectGgChatBloc _bloc;
   late ConnectGgChatProvider _provider;
   bool hasInfo = false;
-   PageController _pageController = PageController(initialPage: 0);
+  PageController _pageController = PageController(initialPage: 0);
 
   @override
   void initState() {
@@ -120,15 +120,16 @@ class __ScreenState extends State<_Screen> {
                       width: MediaQuery.of(context).size.width,
                       child: hasInfo == false
                           ? Container(
-                            height: MediaQuery.of(context).size.height,
-                            child: PageView(
+                              height: MediaQuery.of(context).size.height,
+                              child: PageView(
                                 controller: _pageController,
                                 children: [
                                   startConnectGgChat(),
-                                  listAccountLinked(value),
+                                  listAccountLinked(),
+                                  start1ConnectGgChat(),
                                 ],
                               ),
-                          )
+                            )
                           : InfoGgChatWidget(bloc: _bloc),
                     ),
                   )
@@ -177,10 +178,10 @@ class __ScreenState extends State<_Screen> {
     );
   }
 
-  Widget listAccountLinked(ConnectGgChatProvider provider) {
+  Widget start1ConnectGgChat() {
     final height = MediaQuery.of(context).size.height;
     return Container(
-      padding: EdgeInsets.only(left: 40, right: 20),
+      padding: EdgeInsets.only(left: 40),
       width: double.infinity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -193,43 +194,90 @@ class __ScreenState extends State<_Screen> {
           ),
           SizedBox(height: 30),
           Container(
-            width: 350,
+            width: double.infinity,
             child: Text(
-              'Đầu tiên, chọn tài khoản\nngân hàng mà bạn muốn\nnhận BĐSD qua Google Chat',
+              'Tiếp theo, vui lòng\nthực hiện theo hướng dẫn\nvà nhập URL Webhook',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
             ),
           ),
-          SizedBox(height: 30),
+          SizedBox(height: 20),
           Container(
             width: double.infinity,
-            height: 50,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Tất cả tài khoản đã liên kết',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                ),
-                CustomCupertinoSwitch(
-                  value: provider.isAllLinked,
-                  onChanged: (value) {
-                    _provider.changeAllValue(value);
-                  },
-                ),
-              ],
+            child: Text(
+              'Thực hiện kết nối chỉ với một vài thao tác đơn giản.\nAn tâm về vấn đề an toàn thông tin - dữ liệu\ncủa Google Chat mang lại.',
+              style: TextStyle(fontSize: 15),
             ),
           ),
-          MySeparator(
-            color: AppColor.GREY_DADADA,
-          ),
-          for (int i = 0; i < provider.linkedStatus.length; i++)
-            _itemBank(i, provider),
         ],
       ),
     );
   }
 
-  Widget _itemBank(int index, ConnectGgChatProvider provider) {
+  Widget listAccountLinked() {
+    final height = MediaQuery.of(context).size.height;
+    return Consumer<ConnectGgChatProvider>(
+      builder: (context, provider, child) {
+        return Container(
+          padding: EdgeInsets.only(left: 40, right: 20),
+          width: double.infinity,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 20),
+              Container(
+                height: 50,
+                width: 50,
+                child: Image.asset('assets/images/ic-gg-chat-home.png'),
+              ),
+              SizedBox(height: 30),
+              Container(
+                width: 350,
+                child: Text(
+                  'Đầu tiên, chọn tài khoản\nngân hàng mà bạn muốn\nnhận BĐSD qua Google Chat',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+                ),
+              ),
+              SizedBox(height: 30),
+              Container(
+                width: double.infinity,
+                height: 50,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Tất cả tài khoản đã liên kết',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                    ),
+                    CustomCupertinoSwitch(
+                      value: provider.isAllLinked,
+                      onChanged: (value) {
+                        provider.changeAllValue(value);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              MySeparator(
+                color: AppColor.GREY_DADADA,
+              ),
+              Expanded(
+                child: ListView.builder(
+                  padding: const EdgeInsets.only(top: 0),
+                  itemBuilder: (context, index) {
+                    return _itemBank(provider.linkedStatus[index], index);
+                  },
+                  itemCount: provider.linkedStatus.length,
+                ),
+              )
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _itemBank(bool value, int index) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 15),
       child: Row(
@@ -260,11 +308,11 @@ class __ScreenState extends State<_Screen> {
             ],
           ),
           CustomCupertinoSwitch(
-            value:  provider.linkedStatus[index],
+            value: value,
             onChanged: (value) {
-              provider.linkedStatus[index] = value;
+              _provider.selectValue(value, index);
+              // provider.linkedStatus[index] = value;
               // Kiểm tra nếu tất cả đều được chọn
-            provider.changeAllValue(false);
             },
           ),
         ],
