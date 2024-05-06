@@ -79,7 +79,7 @@ class _BackgroundAppBarHomeState extends State<BackgroundAppBarHome> {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.only(left: 25),
+                padding: const EdgeInsets.symmetric(horizontal: 25),
                 height: 56,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
