@@ -38,7 +38,7 @@ class _Screen extends StatefulWidget {
 class __ScreenState extends State<_Screen> {
   late ConnectGgChatBloc _bloc;
   late ConnectGgChatProvider _provider;
-  bool hasInfo = false;
+  bool hasInfo = true;
 
   @override
   void initState() {
@@ -71,7 +71,8 @@ class __ScreenState extends State<_Screen> {
             return Scaffold(
               backgroundColor: Colors.white,
               resizeToAvoidBottomInset: true,
-              bottomNavigationBar: bottomButton(),
+              bottomNavigationBar:
+                  hasInfo == false ? bottomButton() : const SizedBox.shrink(),
               body: CustomScrollView(
                 physics: NeverScrollableScrollPhysics(),
                 slivers: [
@@ -120,12 +121,7 @@ class __ScreenState extends State<_Screen> {
                           ? PageView(
                               children: [startConnectGgChat()],
                             )
-                          : Column(
-                              children: [
-                                const SizedBox(height: 45),
-                                InfoGgChatWidget(bloc: _bloc),
-                              ],
-                            ),
+                          : InfoGgChatWidget(bloc: _bloc),
                     ),
                   )
                 ],
