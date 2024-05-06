@@ -77,7 +77,6 @@ class __ScreenState extends State<_Screen> {
               bottomNavigationBar:
                   hasInfo == false ? bottomButton() : const SizedBox.shrink(),
               body: CustomScrollView(
-                // physics: NeverScrollableScrollPhysics(),
                 slivers: [
                   SliverAppBar(
                     pinned: false,
@@ -119,15 +118,17 @@ class __ScreenState extends State<_Screen> {
                   SliverToBoxAdapter(
                     child: Container(
                       width: MediaQuery.of(context).size.width,
-                      // height: MediaQuery.of(context).size.height,
                       child: hasInfo == false
-                          ? PageView(
-                              controller: _pageController,
-                              children: [
-                                startConnectGgChat(),
-                                listAccountLinked(value),
-                              ],
-                            )
+                          ? Container(
+                            height: MediaQuery.of(context).size.height,
+                            child: PageView(
+                                controller: _pageController,
+                                children: [
+                                  startConnectGgChat(),
+                                  listAccountLinked(value),
+                                ],
+                              ),
+                          )
                           : InfoGgChatWidget(bloc: _bloc),
                     ),
                   )
@@ -181,51 +182,49 @@ class __ScreenState extends State<_Screen> {
     return Container(
       padding: EdgeInsets.only(left: 40, right: 20),
       width: double.infinity,
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 20),
-            Container(
-              height: 50,
-              width: 50,
-              child: Image.asset('assets/images/ic-gg-chat-home.png'),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: 20),
+          Container(
+            height: 50,
+            width: 50,
+            child: Image.asset('assets/images/ic-gg-chat-home.png'),
+          ),
+          SizedBox(height: 30),
+          Container(
+            width: 350,
+            child: Text(
+              'Đầu tiên, chọn tài khoản\nngân hàng mà bạn muốn\nnhận BĐSD qua Google Chat',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
             ),
-            SizedBox(height: 30),
-            Container(
-              width: 350,
-              child: Text(
-                'Đầu tiên, chọn tài khoản\nngân hàng mà bạn muốn\nnhận BĐSD qua Google Chat',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
-              ),
+          ),
+          SizedBox(height: 30),
+          Container(
+            width: double.infinity,
+            height: 50,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Tất cả tài khoản đã liên kết',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                ),
+                CustomCupertinoSwitch(
+                  value: provider.isAllLinked,
+                  onChanged: (value) {
+                    _provider.changeAllValue(value);
+                  },
+                ),
+              ],
             ),
-            SizedBox(height: 30),
-            Container(
-              width: double.infinity,
-              height: 50,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Tất cả tài khoản đã liên kết',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                  ),
-                  CustomCupertinoSwitch(
-                    value: provider.isAllLinked,
-                    onChanged: (value) {
-                      _provider.changeAllValue(value);
-                    },
-                  ),
-                ],
-              ),
-            ),
-            MySeparator(
-              color: AppColor.GREY_DADADA,
-            ),
-            for (int i = 0; i < provider.linkedStatus.length; i++)
-              _itemBank(i, provider),
-          ],
-        ),
+          ),
+          MySeparator(
+            color: AppColor.GREY_DADADA,
+          ),
+          for (int i = 0; i < provider.linkedStatus.length; i++)
+            _itemBank(i, provider),
+        ],
       ),
     );
   }
@@ -266,7 +265,6 @@ class __ScreenState extends State<_Screen> {
               provider.linkedStatus[index] = value;
               // Kiểm tra nếu tất cả đều được chọn
             provider.changeAllValue(false);
-      
             },
           ),
         ],
