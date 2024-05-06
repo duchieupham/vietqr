@@ -41,7 +41,7 @@ class __ScreenState extends State<_Screen> {
   late ConnectGgChatBloc _bloc;
   late ConnectGgChatProvider _provider;
   bool hasInfo = false;
-  PageController _pageController = PageController(initialPage: 0);
+   PageController _pageController = PageController(initialPage: 0);
 
   @override
   void initState() {
@@ -77,7 +77,7 @@ class __ScreenState extends State<_Screen> {
               bottomNavigationBar:
                   hasInfo == false ? bottomButton() : const SizedBox.shrink(),
               body: CustomScrollView(
-                physics: NeverScrollableScrollPhysics(),
+                // physics: NeverScrollableScrollPhysics(),
                 slivers: [
                   SliverAppBar(
                     pinned: false,
@@ -119,7 +119,7 @@ class __ScreenState extends State<_Screen> {
                   SliverToBoxAdapter(
                     child: Container(
                       width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height,
+                      // height: MediaQuery.of(context).size.height,
                       child: hasInfo == false
                           ? PageView(
                               controller: _pageController,

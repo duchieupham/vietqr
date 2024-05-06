@@ -27,11 +27,19 @@ class InfoGgChatWidget extends StatelessWidget {
         color: AppColor.GREY_DADADA,
       ),
       _itemBank(),
+      MySeparator(
+        color: AppColor.GREY_DADADA,
+      ),
+      _itemBank(),
+      MySeparator(
+        color: AppColor.GREY_DADADA,
+      ),
+      _itemBank(),
     ];
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(20, 45, 20, 0),
+      padding: const EdgeInsets.fromLTRB(20, 45, 20, 30),
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -149,16 +157,42 @@ class InfoGgChatWidget extends StatelessWidget {
           'Cài đặt',
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 10),
         GestureDetector(
           onTap: () {},
           child: Container(
             width: double.infinity,
+            padding: const EdgeInsets.only(top: 10, bottom: 10),
             child: Row(
               children: [
                 Image.asset(
                   'assets/images/ic-card-blue.png',
                   width: 40,
+                ),
+                const SizedBox(width: 20),
+                Text(
+                  'Thêm tài khoản ngân hàng',
+                  style: TextStyle(fontSize: 15, color: AppColor.BLUE_TEXT),
+                )
+              ],
+            ),
+          ),
+        ),
+        MySeparator(color: AppColor.GREY_DADADA),
+        GestureDetector(
+          onTap: () {},
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.only(top: 10, bottom: 10),
+            child: Row(
+              children: [
+                Image.asset(
+                  'assets/images/ic-cancel-red.png',
+                  height: 20,
+                ),
+                const SizedBox(width: 20),
+                Text(
+                  'Huỷ kết nối Google Chat',
+                  style: TextStyle(fontSize: 15, color: AppColor.RED_TEXT),
                 )
               ],
             ),
