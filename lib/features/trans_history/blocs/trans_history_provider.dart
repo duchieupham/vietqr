@@ -252,7 +252,7 @@ class TransProvider with ChangeNotifier {
             bankId: bankId,
             offset: offset,
             value: keywordSearch,
-            terminalCode: _terminalAccountDTO.terminalId!,
+            terminalCode: _terminalAccountDTO.terminalId ?? '',
             userId: SharePrefUtils.getProfile().userId,
             status: statusValue.id,
           );
