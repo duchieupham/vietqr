@@ -310,7 +310,7 @@ class _LoginState extends State<_Login> {
                                     BackgroundAppBarLogin(),
                                     Padding(
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: 20, vertical: 30),
+                                          horizontal: 40, vertical: 30),
                                       child: Column(
                                         children: [
                                           Container(
@@ -360,7 +360,7 @@ class _LoginState extends State<_Login> {
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.only(
-                                          left: 20, right: 20),
+                                          left: 40, right: 40),
                                       child: SizedBox(
                                         width: double.infinity,
                                         child: Row(
@@ -403,21 +403,24 @@ class _LoginState extends State<_Login> {
                                 ),
                               ),
                             ),
-                            MButtonWidget(
-                              title: 'Tiếp tục',
-                              width: 350,
-                              height: 50,
-                              isEnable: provider.isEnableButton,
-                              colorDisableBgr: AppColor.GREY_BUTTON,
-                              margin: EdgeInsets.only(bottom: 0),
-                              colorEnableText: provider.isEnableButton
-                                  ? AppColor.WHITE
-                                  : AppColor.GREY_TEXT,
-                              onTap: () {
-                                FocusManager.instance.primaryFocus?.unfocus();
-                                _bloc.add(CheckExitsPhoneEvent(
-                                    phone: provider.phone));
-                              },
+                            Container(
+                              margin: EdgeInsets.symmetric(horizontal: 40),
+                              child: MButtonWidget(
+                                title: 'Tiếp tục',
+                                // width: 350,
+                                height: 50,
+                                isEnable: provider.isEnableButton,
+                                colorDisableBgr: AppColor.GREY_BUTTON,
+                                margin: EdgeInsets.only(bottom: 0),
+                                colorEnableText: provider.isEnableButton
+                                    ? AppColor.WHITE
+                                    : AppColor.GREY_TEXT,
+                                onTap: () {
+                                  FocusManager.instance.primaryFocus?.unfocus();
+                                  _bloc.add(CheckExitsPhoneEvent(
+                                      phone: provider.phone));
+                                },
+                              ),
                             ),
                             SizedBox(height: height < 800 ? 0 : 16),
                           ],
@@ -540,21 +543,24 @@ class _LoginState extends State<_Login> {
                             SizedBox(
                               height: 16,
                             ),
-                            MButtonWidget(
-                              title: 'Tôi là người dùng mới',
-                              isEnable: true,
-                              width: 350,
-                              height: 50,
-                              colorEnableBgr: AppColor.WHITE,
-                              border: Border.all(
-                                width: 1,
-                                color: AppColor.BLUE_TEXT,
+                            Container(
+                              margin: EdgeInsets.symmetric(horizontal: 40),
+                              child: MButtonWidget(
+                                title: 'Tôi là người dùng mới',
+                                isEnable: true,
+                                // width: 350,
+                                height: 50,
+                                colorEnableBgr: AppColor.WHITE,
+                                border: Border.all(
+                                  width: 1,
+                                  color: AppColor.BLUE_TEXT,
+                                ),
+                                margin: EdgeInsets.zero,
+                                colorEnableText: AppColor.BLUE_TEXT,
+                                onTap: () {
+                                  _onRegister(provider);
+                                },
                               ),
-                              margin: EdgeInsets.zero,
-                              colorEnableText: AppColor.BLUE_TEXT,
-                              onTap: () {
-                                _onRegister(provider);
-                              },
                             ),
                             SizedBox(
                               height: 10,
