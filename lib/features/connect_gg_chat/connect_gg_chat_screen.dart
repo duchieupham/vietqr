@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:vierqr/features/connect_gg_chat/states/connect_gg_chat_states.dart';
 
 import '../../commons/constants/configurations/app_images.dart';
+import '../../commons/constants/configurations/theme.dart';
+import '../../layouts/m_button_widget.dart';
 import '../../services/providers/connect_gg_chat_provider.dart';
 import 'blocs/connect_gg_chat_bloc.dart';
 
@@ -39,6 +41,7 @@ class __ScreenState extends State<_Screen> {
             return Scaffold(
               backgroundColor: Colors.white,
               resizeToAvoidBottomInset: true,
+              bottomNavigationBar: bottomButton(),
               body: CustomScrollView(
                 physics: NeverScrollableScrollPhysics(),
                 slivers: [
@@ -84,7 +87,7 @@ class __ScreenState extends State<_Screen> {
                       width: MediaQuery.of(context).size.width,
                       height: MediaQuery.of(context).size.height,
                       child: Column(
-                        children: [],
+                        children: [startConnectGgChat()],
                       ),
                     ),
                   )
@@ -94,6 +97,77 @@ class __ScreenState extends State<_Screen> {
           },
         );
       },
+    );
+  }
+
+  Widget startConnectGgChat() {
+    final height = MediaQuery.of(context).size.height;
+    return Container(
+      padding: EdgeInsets.only(left: 40),
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: 20),
+          Container(
+            height: 100,
+            width: 100,
+            child: Image.asset('assets/images/ic-gg-chat-home.png'),
+          ),
+          SizedBox(height: 30),
+          Container(
+            width: 250,
+            height: 90,
+            child: Text(
+              'Kết nối Google Chat\nđể nhận thông tin\nBiến động số dư',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+            ),
+          ),
+          SizedBox(height: 20),
+          Container(
+            width: double.infinity,
+            child: Text(
+              'Thực hiện kết nối chỉ với một vài thao tác đơn giản.\nAn tâm về vấn đề an toàn thông tin - dữ liệu\ncủa Google Chat mang lại.',
+              style: TextStyle(fontSize: 15),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget bottomButton() {
+    return Container(
+      width: double.infinity,
+      child: MButtonWidget(
+        margin: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+        height: 50,
+        isEnable: true,
+        title: '',
+        onTap: () {},
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Icon(
+              Icons.arrow_forward,
+              color: AppColor.BLUE_TEXT,
+              size: 20,
+            ),
+            Text(
+              'Bắt đầu kết nối',
+              style: TextStyle(fontSize: 15, color: AppColor.WHITE),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 10),
+              child: Icon(
+                Icons.arrow_forward,
+                color: AppColor.WHITE,
+                size: 20,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
