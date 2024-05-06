@@ -70,6 +70,10 @@ class _ServiceSectionState extends State<ServiceSection> {
             () async {
           Navigator.pushNamed(context, Routes.CONNECT_LARK);
         }),
+        _buildItemService(context, 'assets/images/logo-lark-dash.png', 'GGChat',
+            () async {
+          Navigator.pushNamed(context, Routes.CONNECT_LARK);
+        }),
       ],
     );
   }
