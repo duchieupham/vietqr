@@ -178,6 +178,12 @@ class _ServiceSectionState extends State<ServiceSection> {
                 routeName: CustomInAppWebView.routeName);
           },
         ),
+        _buildItemService(
+          context,
+          'assets/images/ic-active-terminal.png',
+          'Kích hoạt GGChat',
+          () {},
+        ),
       ],
     );
   }
