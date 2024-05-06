@@ -70,6 +70,10 @@ class _ServiceSectionState extends State<ServiceSection> {
             () async {
           Navigator.pushNamed(context, Routes.CONNECT_LARK);
         }),
+        _buildItemService(context, 'assets/images/logo-lark-dash.png', 'GGChat',
+            () async {
+          Navigator.pushNamed(context, Routes.CONNECT_LARK);
+        }),
       ],
     );
   }
@@ -177,12 +181,6 @@ class _ServiceSectionState extends State<ServiceSection> {
                 ),
                 routeName: CustomInAppWebView.routeName);
           },
-        ),
-        _buildItemService(
-          context,
-          'assets/images/ic-active-terminal.png',
-          'Kích hoạt GGChat',
-          () {},
         ),
       ],
     );
