@@ -11,6 +11,7 @@ import 'package:vierqr/features/connect_gg_chat/views/info_gg_chat_widget.dart';
 
 import '../../commons/constants/configurations/app_images.dart';
 import '../../commons/enums/enum_type.dart';
+import '../../commons/utils/custom_button_switch.dart';
 import '../../commons/widgets/dialog_widget.dart';
 import '../../layouts/m_button_widget.dart';
 import '../../services/providers/connect_gg_chat_provider.dart';
@@ -38,8 +39,7 @@ class _Screen extends StatefulWidget {
 class __ScreenState extends State<_Screen> {
   late ConnectGgChatBloc _bloc;
   late ConnectGgChatProvider _provider;
-  bool hasInfo = true;
-  final scrollController = ScrollController();
+  bool hasInfo = false;
 
   @override
   void initState() {
@@ -75,7 +75,6 @@ class __ScreenState extends State<_Screen> {
               bottomNavigationBar:
                   hasInfo == false ? bottomButton() : const SizedBox.shrink(),
               body: CustomScrollView(
-                controller: scrollController,
                 // physics: NeverScrollableScrollPhysics(),
                 slivers: [
                   SliverAppBar(
@@ -121,7 +120,11 @@ class __ScreenState extends State<_Screen> {
                       // height: MediaQuery.of(context).size.height,
                       child: hasInfo == false
                           ? PageView(
-                              children: [startConnectGgChat()],
+                              controller: _pageController,
+                              children: [
+                                startConnectGgChat(),
+                                listAccountLinked(),
+                              ],
                             )
                           : InfoGgChatWidget(bloc: _bloc),
                     ),
@@ -171,6 +174,64 @@ class __ScreenState extends State<_Screen> {
     );
   }
 
+  Widget listAccountLinked() {
+    bool isLinked = false;
+    final height = MediaQuery.of(context).size.height;
+    return Container(
+      padding: EdgeInsets.only(left: 40, right: 20),
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: 20),
+          Container(
+            height: 50,
+            width: 50,
+            child: Image.asset('assets/images/ic-gg-chat-home.png'),
+          ),
+          SizedBox(height: 30),
+          Container(
+            width: 350,
+            child: Text(
+              'Đầu tiên, chọn tài khoản\nngân hàng mà bạn muốn\nnhận BĐSD qua Google Chat',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+            ),
+          ),
+          SizedBox(height: 30),
+          Container(
+            width: double.infinity,
+            height: 50,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Tất cả tài khoản đã liên kết',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                ),
+                CustomCupertinoSwitch(
+                  value: isLinked!,
+                  onChanged: (value) {
+                    setState(() {
+                      isLinked = value;
+                    });
+                    print(isLinked);
+                  },
+                ),
+              ],
+            ),
+          ),
+          MySeparator(
+            color: AppColor.GREY_DADADA,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildItems() {
+    return Container();
+  }
+
   Widget bottomButton() {
     return Container(
       width: double.infinity,
@@ -179,7 +240,10 @@ class __ScreenState extends State<_Screen> {
         height: 50,
         isEnable: true,
         title: '',
-        onTap: () {},
+        onTap: () {
+          _pageController.nextPage(
+              duration: Duration(milliseconds: 500), curve: Curves.easeInOut);
+        },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
