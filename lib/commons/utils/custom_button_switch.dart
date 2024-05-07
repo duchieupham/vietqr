@@ -4,7 +4,7 @@ import '../constants/configurations/theme.dart';
 
 class CustomCupertinoSwitch extends StatefulWidget {
   final bool value;
-  final ValueChanged<bool> onChanged;
+  final Function(bool) onChanged;
 
   CustomCupertinoSwitch({required this.value, required this.onChanged});
 
@@ -13,7 +13,7 @@ class CustomCupertinoSwitch extends StatefulWidget {
 }
 
 class _CustomCupertinoSwitchState extends State<CustomCupertinoSwitch> {
-  late bool _value;
+  bool _value = false;
 
   @override
   void initState() {
@@ -25,10 +25,9 @@ class _CustomCupertinoSwitchState extends State<CustomCupertinoSwitch> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        setState(() {
-          _value = !_value;
-          widget.onChanged(_value);
-        });
+        _value = !_value;
+        widget.onChanged(_value);
+        setState(() {});
       },
       child: Container(
         width: 45.0,

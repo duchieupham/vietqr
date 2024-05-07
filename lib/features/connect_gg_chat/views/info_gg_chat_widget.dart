@@ -11,9 +11,11 @@ import '../blocs/connect_gg_chat_bloc.dart';
 import '../states/connect_gg_chat_states.dart';
 
 class InfoGgChatWidget extends StatelessWidget {
+  final VoidCallback onPopup;
   final ConnectGgChatBloc bloc;
   // final ConnectGgChatStates state;
-  const InfoGgChatWidget({super.key, required this.bloc});
+  const InfoGgChatWidget(
+      {super.key, required this.bloc, required this.onPopup});
 
   @override
   Widget build(BuildContext context) {
@@ -158,7 +160,7 @@ class InfoGgChatWidget extends StatelessWidget {
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         GestureDetector(
-          onTap: () {},
+          onTap: onPopup,
           child: Container(
             width: double.infinity,
             padding: const EdgeInsets.only(top: 10, bottom: 10),
