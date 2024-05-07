@@ -164,9 +164,13 @@ class InfoGgChatWidget extends StatelessWidget {
             padding: const EdgeInsets.only(top: 10, bottom: 10),
             child: Row(
               children: [
-                Image.asset(
-                  'assets/images/ic-card-blue.png',
-                  width: 40,
+                SizedBox(
+                  width: 50,
+                  child: Image.asset(
+                    'assets/images/ic-card-blue.png',
+                    width: 40,
+                    height: 35,
+                  ),
                 ),
                 const SizedBox(width: 20),
                 Text(
@@ -182,12 +186,15 @@ class InfoGgChatWidget extends StatelessWidget {
           onTap: () {},
           child: Container(
             width: double.infinity,
-            padding: const EdgeInsets.only(top: 10, bottom: 10),
+            padding: const EdgeInsets.only(top: 18, bottom: 10),
             child: Row(
               children: [
-                Image.asset(
-                  'assets/images/ic-cancel-red.png',
-                  height: 20,
+                SizedBox(
+                  width: 50,
+                  child: Image.asset(
+                    'assets/images/ic-cancel-red.png',
+                    height: 20,
+                  ),
                 ),
                 const SizedBox(width: 20),
                 Text(

@@ -40,8 +40,8 @@ class _Screen extends StatefulWidget {
 class __ScreenState extends State<_Screen> {
   late ConnectGgChatBloc _bloc;
   late ConnectGgChatProvider _provider;
-  bool hasInfo = false;
-   PageController _pageController = PageController(initialPage: 0);
+  bool hasInfo = true;
+  PageController _pageController = PageController(initialPage: 0);
 
   @override
   void initState() {
@@ -261,12 +261,11 @@ class __ScreenState extends State<_Screen> {
             ],
           ),
           CustomCupertinoSwitch(
-            value:  provider.linkedStatus[index],
+            value: provider.linkedStatus[index],
             onChanged: (value) {
               provider.linkedStatus[index] = value;
               // Kiểm tra nếu tất cả đều được chọn
-            provider.changeAllValue(false);
-      
+              provider.changeAllValue(false);
             },
           ),
         ],
