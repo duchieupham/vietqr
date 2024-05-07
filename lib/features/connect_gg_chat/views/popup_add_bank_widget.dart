@@ -137,7 +137,27 @@ class _PopupAddBankWidgetState extends State<PopupAddBankWidget> {
                         },
                         itemCount: provider.listBank.length,
                       ),
-                    )
+                    ),
+                    GestureDetector(
+                      onTap: () {},
+                      child: Container(
+                        width: double.infinity,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: AppColor.BLUE_TEXT,
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Center(
+                          child: Text(
+                            'Hoàn thành',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: AppColor.WHITE,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
                 Positioned(
