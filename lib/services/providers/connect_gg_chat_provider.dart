@@ -1,23 +1,36 @@
 import 'package:flutter/cupertino.dart';
 
+import '../../models/bank_account_dto.dart';
+
 class ConnectGgChatProvider extends ChangeNotifier {
   int pageIndex = 0;
 
   bool isAllLinked = false;
-  List<bool> linkedStatus = List.filled(3, false);
+  List<BankSelection> listBank = [];
 
-  void changeAllValue(bool value){
+  init(List<BankAccountDTO> list) {
+    for (var item in list) {
+      listBank.add(BankSelection(bank: item, value: false));
+    }
+  }
+
+  void changeAllValue(bool value) {
     isAllLinked = value;
-    linkedStatus = List.filled(linkedStatus.length, value);
+    listBank.forEach((element) {
+      element.value = true;
+    });
     notifyListeners();
   }
 
-  void selectValue(bool value, int index){
-    isAllLinked = value;
-
-    linkedStatus[index] = value;
+  void selectValue(bool value, int index) {
+    isAllLinked = false;
+    listBank.elementAt(index).value = value;
     notifyListeners();
-
   }
 }
 
+class BankSelection {
+  BankAccountDTO? bank;
+  bool? value;
+  BankSelection({this.bank, this.value});
+}

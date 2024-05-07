@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
@@ -6,13 +7,16 @@ import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/features/connect_gg_chat/states/connect_gg_chat_states.dart';
 import 'package:vierqr/features/connect_gg_chat/views/info_gg_chat_widget.dart';
 import 'package:vierqr/models/trans/trans_request_dto.dart';
+import 'package:vierqr/features/connect_gg_chat/views/popup_add_bank_widget.dart';
 
 import '../../commons/constants/configurations/app_images.dart';
 import '../../commons/enums/enum_type.dart';
 import '../../commons/utils/custom_button_switch.dart';
 import '../../commons/widgets/dialog_widget.dart';
 import '../../layouts/m_button_widget.dart';
+import '../../models/bank_account_dto.dart';
 import '../../services/providers/connect_gg_chat_provider.dart';
+import '../../services/providers/invoice_provider.dart';
 import 'blocs/connect_gg_chat_bloc.dart';
 
 class ConnectGgChatScreen extends StatelessWidget {
@@ -37,11 +41,12 @@ class _Screen extends StatefulWidget {
 class __ScreenState extends State<_Screen> {
   late ConnectGgChatBloc _bloc;
   late ConnectGgChatProvider _provider;
-  bool hasInfo = false;
+  bool hasInfo = true;
   PageController _pageController = PageController(initialPage: 0);
   int currentPageIndex = 0;
   bool isEnableButton1 = true;
   bool isEnableButton2 = true;
+  List<BankAccountDTO> list = [];
 
   @override
   void initState() {
@@ -53,8 +58,20 @@ class __ScreenState extends State<_Screen> {
     });
   }
 
-  initData({bool isRefresh = false}) {
-    if (isRefresh) {}
+  initData() {
+    list = Provider.of<InvoiceProvider>(context, listen: false).listBank!;
+    if (list.isNotEmpty) {
+      _provider.init(list);
+    }
+  }
+
+  void onPopupAddBank() async {
+    if (list.isNotEmpty) {
+      await showCupertinoModalPopup(
+        context: context,
+        builder: (context) => PopupAddBankWidget(),
+      );
+    }
   }
 
   @override
@@ -144,7 +161,12 @@ class __ScreenState extends State<_Screen> {
                                 ],
                               ),
                             )
-                          : InfoGgChatWidget(bloc: _bloc),
+                          : InfoGgChatWidget(
+                              bloc: _bloc,
+                              onPopup: () {
+                                onPopupAddBank();
+                              },
+                            ),
                     ),
                   )
                 ],
@@ -370,12 +392,13 @@ class __ScreenState extends State<_Screen> {
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                     ),
-                    CustomCupertinoSwitch(
+                    CupertinoSwitch(
+                      activeColor: AppColor.BLUE_TEXT,
                       value: provider.isAllLinked,
                       onChanged: (value) {
                         provider.changeAllValue(value);
                       },
-                    ),
+                    )
                   ],
                 ),
               ),
@@ -386,9 +409,9 @@ class __ScreenState extends State<_Screen> {
                 child: ListView.builder(
                   padding: const EdgeInsets.only(top: 0),
                   itemBuilder: (context, index) {
-                    return _itemBank(provider.linkedStatus[index], index);
+                    return _itemBank(provider.listBank[index], index);
                   },
-                  itemCount: provider.linkedStatus.length,
+                  itemCount: provider.listBank.length,
                 ),
               )
             ],
@@ -398,7 +421,7 @@ class __ScreenState extends State<_Screen> {
     );
   }
 
-  Widget _itemBank(bool value, int index) {
+  Widget _itemBank(BankSelection bankList, int index) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 15),
       child: Row(
@@ -428,14 +451,11 @@ class __ScreenState extends State<_Screen> {
               ),
             ],
           ),
-          CustomCupertinoSwitch(
-            value: value,
-            onChanged: (value) {
-              _provider.selectValue(value, index);
-              // provider.linkedStatus[index] = value;
-              // Kiểm tra nếu tất cả đều được chọn
-            },
-          ),
+          CupertinoSwitch(
+            activeColor: AppColor.BLUE_TEXT,
+            value: bankList.value!,
+            onChanged: (value) {},
+          )
         ],
       ),
     );
