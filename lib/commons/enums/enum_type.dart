@@ -270,6 +270,14 @@ enum BankType {
   GET_BANK_LOCAL,
 }
 
+enum ConnectGgChat {
+  NONE,
+  GET_INFO,
+  CHECK_URL,
+  DELETE_URL,
+  MAKE_CONNECTION,
+}
+
 enum InvoiceType {
   NONE,
   GET_INVOICE_LIST,

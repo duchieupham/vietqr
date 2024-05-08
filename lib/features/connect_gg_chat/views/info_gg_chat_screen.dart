@@ -7,37 +7,38 @@ import '../../../commons/enums/enum_type.dart';
 import '../../../commons/utils/image_utils.dart';
 import '../../../commons/widgets/dialog_widget.dart';
 import '../../../commons/widgets/separator_widget.dart';
+import '../../../models/connect_gg_chat_info_dto.dart';
 import '../blocs/connect_gg_chat_bloc.dart';
 import '../states/connect_gg_chat_states.dart';
 
-class InfoGgChatWidget extends StatelessWidget {
+class InfoGgChatScreen extends StatelessWidget {
   final VoidCallback onPopup;
-  final ConnectGgChatBloc bloc;
+  final VoidCallback onDelete;
+
+  final InfoGgChatDTO dto;
   // final ConnectGgChatStates state;
-  const InfoGgChatWidget(
-      {super.key, required this.bloc, required this.onPopup});
+  const InfoGgChatScreen(
+      {super.key,
+      required this.onPopup,
+      required this.onDelete,
+      required this.dto});
 
   @override
   Widget build(BuildContext context) {
     List<Widget> listWidget = [
-      _itemBank(),
-      MySeparator(
-        color: AppColor.GREY_DADADA,
-      ),
-      _itemBank(),
-      MySeparator(
-        color: AppColor.GREY_DADADA,
-      ),
-      _itemBank(),
-      MySeparator(
-        color: AppColor.GREY_DADADA,
-      ),
-      _itemBank(),
-      MySeparator(
-        color: AppColor.GREY_DADADA,
-      ),
-      _itemBank(),
+      // _itemBank(),
+      // MySeparator(
+      //   color: AppColor.GREY_DADADA,
+      // ),
     ];
+    for (int i = 0; i < dto.banks!.length; i++) {
+      listWidget.add(_itemBank(dto.banks![i]));
+      if (i != dto.banks!.length - 1) {
+        listWidget.add(MySeparator(
+          color: AppColor.GREY_DADADA,
+        ));
+      }
+    }
 
     return Container(
       width: double.infinity,
@@ -104,7 +105,7 @@ class InfoGgChatWidget extends StatelessWidget {
             Container(
               width: 250,
               child: Text(
-                'https://chat.google.com/xxxxxxxxxxxx',
+                dto.webhook ?? '-',
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.right,
                 style: TextStyle(
@@ -116,9 +117,9 @@ class InfoGgChatWidget extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 16),
-        GestureDetector(
+        InkWell(
           onTap: () {
-            Clipboard.setData(new ClipboardData(text: ''));
+            Clipboard.setData(new ClipboardData(text: dto.webhook));
           },
           child: Align(
             alignment: Alignment.centerRight,
@@ -185,7 +186,7 @@ class InfoGgChatWidget extends StatelessWidget {
         ),
         MySeparator(color: AppColor.GREY_DADADA),
         GestureDetector(
-          onTap: () {},
+          onTap: onDelete,
           child: Container(
             width: double.infinity,
             padding: const EdgeInsets.only(top: 18, bottom: 10),
@@ -230,7 +231,7 @@ class InfoGgChatWidget extends StatelessWidget {
     );
   }
 
-  Widget _itemBank() {
+  Widget _itemBank(BankInfoGgChat bank) {
     return Container(
       padding: const EdgeInsets.only(top: 15, bottom: 15),
       child: Row(
@@ -246,20 +247,21 @@ class InfoGgChatWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(width: 0.5, color: AppColor.GREY_DADADA),
                   image: DecorationImage(
-                    image: ImageUtils.instance.getImageNetWork(''),
+                    image: ImageUtils.instance.getImageNetWork(bank.imgId!),
                   ),
                 ),
               ),
               const SizedBox(width: 10),
               Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '1123355589',
+                    bank.bankAccount ?? '-',
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'PHAM DUC HIEU',
+                    bank.userBankName ?? '-',
                     style:
                         TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
                   ),
