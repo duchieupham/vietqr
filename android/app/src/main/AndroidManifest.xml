@@ -54,7 +54,7 @@
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data
-                    android:host="https://vietqr.vn"
+                    android:host="vietqr.vn"
                     android:scheme="https"/>
             </intent-filter>
             <intent-filter>
@@ -62,7 +62,7 @@
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data
-                    android:host="https://vietqrdynamiclink.page.link"
+                    android:host="vietqrdynamiclink.page.link"
                     android:scheme="https"/>
             </intent-filter>
             <intent-filter>

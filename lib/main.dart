@@ -24,6 +24,7 @@ import 'features/invoice/widgets/invoice_detail_screen.dart';
 import 'features/invoice/widgets/popup_invoice_success.dart';
 import 'features/maintain_charge/views/active_success_screen.dart';
 import 'features/maintain_charge/views/annual_fee_screen.dart';
+import 'features/maintain_charge/views/dynamic_active_key_screen.dart';
 import 'models/maintain_charge_create.dart';
 import 'models/qr_generated_dto.dart';
 import 'package:flutter/material.dart';
@@ -393,6 +394,8 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.TRANSACTION_WALLET: (context) =>
                       const TransWalletScreen(),
                   Routes.INVOICE_SCREEN: (context) => InvoiceScreen(),
+                  Routes.DYNAMIC_ACTIVE_KEY_SCREEN: (context) =>
+                      DynamicActiveKeyScreen(),
 
                   // Routes.ACTIVE_SUCCESS_SCREEN: (context) =>
                   //     const ActiveSuccessScreen(),

@@ -54,6 +54,7 @@ import '../../services/providers/pin_provider.dart';
 import '../account/account_screen.dart';
 import '../login/blocs/login_bloc.dart';
 import '../login/events/login_event.dart';
+import '../maintain_charge/views/dynamic_active_key_screen.dart';
 import 'curved_navi_bar/custom_navigation_bar.dart';
 import 'widget/disconnect_widget.dart';
 
@@ -157,8 +158,8 @@ class _DashBoardScreen extends State<DashBoardScreen>
     if (initialLink != null &&
         initialLink.link.path.toString().contains('/service')) {
       print('Initial link: ${initialLink.link}');
-      NavigatorUtils.navigatePage(context, AccountScreen(),
-          routeName: AccountScreen.routeName);
+      NavigatorUtils.navigatePage(context, DynamicActiveKeyScreen(),
+          routeName: Routes.DYNAMIC_ACTIVE_KEY_SCREEN);
     }
 
     // Listen for new dynamic links when the app is running
