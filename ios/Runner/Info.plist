@@ -68,7 +68,7 @@
 		<string>bluetooth-central</string>
 	</array>
 	<key>NFCReaderUsageDescription</key>
-    <string>This app uses the NFC to read the tags.</string>
+	<string>This app uses the NFC to read the tags.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -94,8 +94,8 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>NSContactsUsageDescription</key>
-    <string>Lấy thông tin danh bạ để hiển thị danh bạ dạng VCard. Chia sẻ thông tin liên hệ với mọi người dễ dàng hơn. Dữ liệu danh bạ của bạn sẽ được đồng bộ lên hệ thống của chúng tôi, và chúng tôi cam kết bảo mật thông tin của bạn một cách tuyệt đối.</string>
-    <key>com.apple.developer.nfc.readersession.felica.systemcodes</key>
+	<string>Lấy thông tin danh bạ để hiển thị danh bạ dạng VCard. Chia sẻ thông tin liên hệ với mọi người dễ dàng hơn. Dữ liệu danh bạ của bạn sẽ được đồng bộ lên hệ thống của chúng tôi, và chúng tôi cam kết bảo mật thông tin của bạn một cách tuyệt đối.</string>
+	<key>com.apple.developer.nfc.readersession.felica.systemcodes</key>
 	<array>
 		<string>0003</string>
 		<string>04D1</string>
@@ -107,6 +107,8 @@
 		<string>8FC1</string>
 		<string>FE00</string>
 	</array>
+	<key>FirebaseDeepLinkPasteboardRetrievalEnabled</key>
+	<false/>
 	<key>com.apple.developer.nfc.readersession.iso7816.select-identifiers</key>
 	<array>
 		<string>A0000002310100000000000000000000</string>

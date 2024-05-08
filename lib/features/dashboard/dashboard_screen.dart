@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:isolate';
 
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart'
     as Constants;
 import 'package:float_bubble/float_bubble.dart';
@@ -47,6 +48,7 @@ import 'package:vierqr/splash_screen.dart';
 
 import '../../commons/utils/encrypt_utils.dart';
 import '../../models/account_login_dto.dart';
+import '../../services/firebase_dynamic_link/uni_links_listener_mixins.dart';
 import '../../services/providers/pin_provider.dart';
 import '../login/blocs/login_bloc.dart';
 import '../login/events/login_event.dart';
@@ -71,6 +73,7 @@ class DashBoardScreen extends StatefulWidget {
 
 class _DashBoardScreen extends State<DashBoardScreen>
     with
+        UniLinksListenerMixin,
         WidgetsBindingObserver,
         AutomaticKeepAliveClientMixin,
         SingleTickerProviderStateMixin {
@@ -106,6 +109,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    checkDynamicLink();
     _bloc = BlocProvider.of(context);
     _blocLogin = LoginBloc(context);
     _blocLogin.stream.listen((statLogin) {
@@ -140,6 +144,30 @@ class _DashBoardScreen extends State<DashBoardScreen>
     });
 
     bottomBarStream = _bottomBarController.stream;
+  }
+
+  void checkDynamicLink() async {
+    // Get the initial dynamic link if the app was opened with a link
+    final PendingDynamicLinkData? initialLink =
+        await FirebaseDynamicLinks.instance.getInitialLink();
+    if (initialLink != null &&
+        initialLink.link.toString().contains('https://vietqr.vn/service?')) {
+      print('Initial link: ${initialLink.link}');
+      Navigator.pushNamed(context, Routes.MAINTAIN_CHARGE_SCREEN);
+    }
+
+    // Listen for new dynamic links when the app is running
+    FirebaseDynamicLinks.instance.onLink.listen((dynamicLinkData) {
+      if (dynamicLinkData.link
+          .toString()
+          .contains('https://vietqr.vn/service?')) {
+        print('New dynamic link: ${dynamicLinkData.link}');
+        Navigator.pushNamed(context, Routes.MAINTAIN_CHARGE_SCREEN);
+      }
+    }).onError((error) {
+      // Handle errors here
+      print('Error getting dynamic link: $error');
+    });
   }
 
   void initialServices() {
@@ -687,6 +715,16 @@ class _DashBoardScreen extends State<DashBoardScreen>
 
   @override
   bool get wantKeepAlive => true;
+
+  @override
+  void getInitUri(Uri? uri) {
+    print('object================================= ${uri.toString()}');
+  }
+
+  @override
+  void onUniLink(Uri uri) {
+    print('object================================= ${uri.toString()}');
+  }
 }
 
 class SaveImageData {
