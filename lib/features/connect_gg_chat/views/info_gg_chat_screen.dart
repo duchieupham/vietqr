@@ -12,8 +12,9 @@ import '../blocs/connect_gg_chat_bloc.dart';
 import '../states/connect_gg_chat_states.dart';
 
 class InfoGgChatScreen extends StatelessWidget {
-  final VoidCallback onPopup;
-  final VoidCallback onDelete;
+  final Function() onPopup;
+  final Function() onDelete;
+  final Function(String) onRemoveBank;
 
   final InfoGgChatDTO dto;
   // final ConnectGgChatStates state;
@@ -21,6 +22,7 @@ class InfoGgChatScreen extends StatelessWidget {
       {super.key,
       required this.onPopup,
       required this.onDelete,
+      required this.onRemoveBank,
       required this.dto});
 
   @override
@@ -160,7 +162,7 @@ class InfoGgChatScreen extends StatelessWidget {
           'Cài đặt',
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
-        GestureDetector(
+        InkWell(
           onTap: onPopup,
           child: Container(
             width: double.infinity,
@@ -185,7 +187,7 @@ class InfoGgChatScreen extends StatelessWidget {
           ),
         ),
         MySeparator(color: AppColor.GREY_DADADA),
-        GestureDetector(
+        InkWell(
           onTap: onDelete,
           child: Container(
             width: double.infinity,
@@ -269,8 +271,10 @@ class InfoGgChatScreen extends StatelessWidget {
               ),
             ],
           ),
-          GestureDetector(
-            onTap: () {},
+          InkWell(
+            onTap: () {
+              onRemoveBank(bank.bankId!);
+            },
             child: Icon(
               Icons.remove_circle_outline,
               size: 18,

@@ -19,6 +19,8 @@ class ConnectGgChatBloc extends Bloc<ConnectGgChatEvent, ConnectGgChatStates>
     on<CheckWebhookUrlEvent>(_checkValidUrl);
     on<DeleteWebhookEvent>(_deleteWebhook);
     on<MakeGgChatConnectionEvent>(_makeConnection);
+    on<AddBankGgChatEvent>(_addBanks);
+    on<RemoveGgChatEvent>(_removeBank);
   }
 
   ConnectGgChatRepository _repository = ConnectGgChatRepository();
@@ -42,6 +44,46 @@ class ConnectGgChatBloc extends Bloc<ConnectGgChatEvent, ConnectGgChatStates>
               dto: null,
               hasInfo: false));
         }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(
+          state.copyWith(status: BlocStatus.NONE, request: ConnectGgChat.NONE));
+    }
+  }
+
+  void _addBanks(ConnectGgChatEvent event, Emitter emit) async {
+    try {
+      if (event is AddBankGgChatEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, request: ConnectGgChat.NONE));
+        bool? result =
+            await _repository.addBankGgChat(event.webhookId, event.listBankId!);
+
+        emit(state.copyWith(
+          status: BlocStatus.UNLOADING,
+          request: ConnectGgChat.ADD_BANKS,
+          isAddSuccess: result,
+        ));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(
+          state.copyWith(status: BlocStatus.NONE, request: ConnectGgChat.NONE));
+    }
+  }
+
+  void _removeBank(ConnectGgChatEvent event, Emitter emit) async {
+    try {
+      if (event is RemoveGgChatEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, request: ConnectGgChat.NONE));
+        bool? result =
+            await _repository.removeBank(event.webhookId, event.bankId!);
+        emit(state.copyWith(
+          status: BlocStatus.UNLOADING,
+          request: ConnectGgChat.REMOVE_BANK,
+        ));
       }
     } catch (e) {
       LOG.error(e.toString());

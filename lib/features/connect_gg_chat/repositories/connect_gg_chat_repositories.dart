@@ -29,6 +29,46 @@ class ConnectGgChatRepository {
     return null;
   }
 
+  Future<bool?> addBankGgChat(String? webhookId, List<String> bankIds) async {
+    try {
+      Map<String, dynamic> param = {};
+      param['id'] = webhookId;
+      param['userId'] = userId;
+      param['bankIds'] = bankIds;
+
+      String url = '${EnvConfig.getBaseUrl()}service/google-chat/bank';
+      final response = await BaseAPIClient.postAPI(
+        body: param,
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return false;
+  }
+
+  Future<bool?> removeBank(String? webhookId, String? bankId) async {
+    try {
+      Map<String, dynamic> param = {};
+      param['id'] = webhookId;
+      param['userId'] = userId;
+      param['bankId'] = bankId;
+
+      String url = '${EnvConfig.getBaseUrl()}service/google-chat/bank';
+      final response = await BaseAPIClient.deleteAPI(
+        body: param,
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return false;
+  }
+
   Future<bool?> checkWebhookUrl(String? webhook) async {
     try {
       Map<String, dynamic> param = {};

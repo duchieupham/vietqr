@@ -8,6 +8,8 @@ import 'package:vierqr/features/connect_gg_chat/states/connect_gg_chat_states.da
 import 'package:vierqr/features/connect_gg_chat/views/info_gg_chat_screen.dart';
 import 'package:vierqr/features/connect_gg_chat/views/webhook_gg_chat_screen.dart';
 import 'package:vierqr/features/connect_gg_chat/widgets/popup_add_bank_widget.dart';
+import 'package:vierqr/features/connect_gg_chat/widgets/popup_delete_webhook_widget.dart';
+import 'package:vierqr/features/connect_gg_chat/widgets/popup_guide_widget.dart';
 import 'package:vierqr/models/trans/trans_request_dto.dart';
 
 import '../../commons/constants/configurations/app_images.dart';
@@ -16,6 +18,7 @@ import '../../commons/utils/custom_button_switch.dart';
 import '../../commons/widgets/dialog_widget.dart';
 import '../../layouts/m_button_widget.dart';
 import '../../models/bank_account_dto.dart';
+import '../../models/connect_gg_chat_info_dto.dart';
 import '../../services/providers/connect_gg_chat_provider.dart';
 import '../../services/providers/invoice_provider.dart';
 import 'blocs/connect_gg_chat_bloc.dart';
@@ -49,6 +52,7 @@ class __ScreenState extends State<_Screen> {
 
   int currentPageIndex = 0;
   bool hasInfo = false;
+  bool? isFirst;
 
   List<BankAccountDTO> list = [];
 
@@ -57,6 +61,7 @@ class __ScreenState extends State<_Screen> {
     super.initState();
     _bloc = BlocProvider.of(context);
     _provider = Provider.of<ConnectGgChatProvider>(context, listen: false);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       initData();
     });
@@ -65,12 +70,12 @@ class __ScreenState extends State<_Screen> {
   @override
   void dispose() {
     super.dispose();
-    _provider.setUnFocusNode();
     _pageController.dispose();
     _textEditingController.dispose();
   }
 
   initData() {
+    isFirst = true;
     _textEditingController.clear();
     list = Provider.of<InvoiceProvider>(context, listen: false).listBank!;
     if (list.isNotEmpty) {
@@ -80,17 +85,45 @@ class __ScreenState extends State<_Screen> {
   }
 
   void deleteWebhook(String id) {
-    _bloc.add(DeleteWebhookEvent(id: id));
-    initData();
+    DialogWidget.instance.openDialogIntroduce(
+        ctx: context,
+        child: PopupDeleteWebhookWidget(
+          onDelete: () {
+            Navigator.of(context).pop();
+            _bloc.add(DeleteWebhookEvent(id: id));
+          },
+        ));
   }
 
-  void onPopupAddBank() async {
-    if (list.isNotEmpty) {
-      await showCupertinoModalPopup(
-        context: context,
-        builder: (context) => PopupAddBankWidget(),
-      );
-    }
+  void onRemoveBank(String? bankId, String? webhookId) {
+    _bloc.add(RemoveGgChatEvent(bankId: bankId, webhookId: webhookId));
+  }
+
+  void onPopupAddBank(List<BankInfoGgChat> listBank, String webhookId) async {
+    Set<String?> idsInList = listBank.map((bank) => bank.bankId).toSet();
+    List<BankAccountDTO> filteredList =
+        list.where((account) => !idsInList.contains(account.id)).toList();
+    _provider.init(filteredList);
+    await showCupertinoModalPopup(
+      context: context,
+      builder: (context) => PopupAddBankWidget(
+        onAddBank: () {
+          List<String> listId = _provider.getListId();
+          if (listId.isNotEmpty) {
+            _bloc.add(
+                AddBankGgChatEvent(webhookId: webhookId, listBankId: listId));
+            Navigator.of(context).pop();
+          }
+        },
+      ),
+    );
+  }
+
+  void onOpenGuide() async {
+    await showCupertinoModalPopup(
+      context: context,
+      builder: (context) => PopupGuideWidget(),
+    );
   }
 
   @override
@@ -102,9 +135,11 @@ class __ScreenState extends State<_Screen> {
         }
         if (state.status == BlocStatus.UNLOADING) {
           Navigator.pop(context);
+          // _provider.setUnFocusNode();
         }
         switch (state.request) {
           case ConnectGgChat.GET_INFO:
+            isFirst = false;
             hasInfo = state.hasInfo!;
             break;
           case ConnectGgChat.CHECK_URL:
@@ -126,8 +161,18 @@ class __ScreenState extends State<_Screen> {
                   curve: Curves.easeInOut);
             }
             break;
+          case ConnectGgChat.ADD_BANKS:
+            if (state.isAddSuccess == true) {
+              _bloc.add(GetInfoEvent());
+            }
+            // initData();
+            break;
           case ConnectGgChat.DELETE_URL:
-            hasInfo = state.hasInfo!;
+            isFirst = true;
+            _bloc.add(GetInfoEvent());
+            break;
+          case ConnectGgChat.REMOVE_BANK:
+            _bloc.add(GetInfoEvent());
             break;
           default:
             break;
@@ -143,63 +188,64 @@ class __ScreenState extends State<_Screen> {
                   hasInfo == false && state.status != BlocStatus.LOADING_PAGE
                       ? bottomButton(state)
                       : const SizedBox.shrink(),
-              body: state.status != BlocStatus.LOADING_PAGE
-                  ? CustomScrollView(
-                      physics: hasInfo == false
-                          ? NeverScrollableScrollPhysics()
-                          : AlwaysScrollableScrollPhysics(),
-                      slivers: [
-                        SliverAppBar(
-                          pinned: false,
-                          leadingWidth: 100,
-                          leading: InkWell(
-                            onTap: () {
-                              if (currentPageIndex > 0 && hasInfo == false) {
-                                _pageController.previousPage(
-                                  duration: Duration(milliseconds: 200),
-                                  curve: Curves.easeInOut,
-                                );
-                              } else {
-                                Navigator.of(context).pop();
-                              }
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.only(left: 8),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.keyboard_arrow_left,
-                                    color: Colors.black,
-                                    size: 25,
-                                  ),
-                                  const SizedBox(width: 2),
-                                  Text(
-                                    "Trở về",
-                                    style: TextStyle(
-                                        color: Colors.black, fontSize: 14),
-                                  )
-                                ],
-                              ),
+              body: CustomScrollView(
+                physics: hasInfo == false
+                    ? NeverScrollableScrollPhysics()
+                    : AlwaysScrollableScrollPhysics(),
+                slivers: [
+                  SliverAppBar(
+                    pinned: false,
+                    leadingWidth: 100,
+                    leading: InkWell(
+                      onTap: () {
+                        if (currentPageIndex > 0 && hasInfo == false) {
+                          _pageController.previousPage(
+                            duration: Duration(milliseconds: 200),
+                            curve: Curves.easeInOut,
+                          );
+                        } else {
+                          Navigator.of(context).pop();
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.only(left: 8),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.keyboard_arrow_left,
+                              color: Colors.black,
+                              size: 25,
                             ),
-                          ),
-                          actions: [
-                            Padding(
-                              padding: const EdgeInsets.only(right: 8),
-                              child: Image.asset(
-                                AppImages.icLogoVietQr,
-                                width: 95,
-                                fit: BoxFit.fitWidth,
-                              ),
+                            const SizedBox(width: 2),
+                            Text(
+                              "Trở về",
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 14),
                             )
                           ],
                         ),
-                        SliverToBoxAdapter(
-                          child: Container(
+                      ),
+                    ),
+                    actions: [
+                      Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: Image.asset(
+                          AppImages.icLogoVietQr,
+                          width: 95,
+                          fit: BoxFit.fitWidth,
+                        ),
+                      )
+                    ],
+                  ),
+                  SliverToBoxAdapter(
+                    child: isFirst != true
+                        ? Container(
                             width: MediaQuery.of(context).size.width,
                             child: hasInfo == false
                                 ? WebhookGgChatScreen(
                                     textController: _textEditingController,
                                     controller: _pageController,
+                                    onGuide: onOpenGuide,
                                     onChangeInput: (text) {
                                       provider.validateInput(text);
                                     },
@@ -216,23 +262,32 @@ class __ScreenState extends State<_Screen> {
                                 : InfoGgChatScreen(
                                     dto: state.dto!,
                                     onPopup: () {
-                                      onPopupAddBank();
+                                      onPopupAddBank(
+                                          state.dto!.banks!.isNotEmpty
+                                              ? state.dto!.banks!
+                                              : [],
+                                          state.dto!.id!);
                                     },
                                     onDelete: () {
                                       deleteWebhook(state.dto!.id!);
                                     },
+                                    onRemoveBank: (bankId) {
+                                      if (bankId.isNotEmpty || bankId != null) {
+                                        onRemoveBank(bankId, state.dto!.id);
+                                      }
+                                    },
                                   ),
+                          )
+                        : Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.height,
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ),
                           ),
-                        )
-                      ],
-                    )
-                  : Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height,
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    ),
+                  )
+                ],
+              ),
             );
           },
         );
@@ -296,7 +351,6 @@ class __ScreenState extends State<_Screen> {
             case 3:
               _pageController.jumpToPage(0);
               initData();
-
               break;
             default:
               break;

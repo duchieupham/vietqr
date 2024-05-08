@@ -276,6 +276,8 @@ enum ConnectGgChat {
   CHECK_URL,
   DELETE_URL,
   MAKE_CONNECTION,
+  ADD_BANKS,
+  REMOVE_BANK,
 }
 
 enum InvoiceType {

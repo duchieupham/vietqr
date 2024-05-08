@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -13,7 +12,8 @@ import '../../../models/bank_account_dto.dart';
 import '../../../services/providers/connect_gg_chat_provider.dart';
 
 class PopupAddBankWidget extends StatefulWidget {
-  const PopupAddBankWidget({super.key});
+  final Function() onAddBank;
+  const PopupAddBankWidget({super.key, required this.onAddBank});
 
   @override
   State<PopupAddBankWidget> createState() => _PopupAddBankWidgetState();
@@ -70,19 +70,15 @@ class _PopupAddBankWidgetState extends State<PopupAddBankWidget> {
                         keyboardType: TextInputType.multiline,
                         controller: controller,
                         onChanged: (value) {
-                          setState(() {
-                            searchValue = value;
-                          });
+                          provider.filterBankList(value);
                         },
                         onFieldSubmitted: (value) {
-                          setState(() {
-                            searchValue = value;
-                          });
+                          provider.filterBankList(value);
                         },
                         decoration: InputDecoration(
                             contentPadding:
                                 const EdgeInsets.only(top: 11, bottom: 10),
-                            hintText: 'Nhập mã ở đây',
+                            hintText: 'Tìm kiếm tài khoản ngân hàng',
                             hintStyle: TextStyle(
                                 fontSize: 20,
                                 color: AppColor.BLACK.withOpacity(0.5)),
@@ -100,52 +96,76 @@ class _PopupAddBankWidgetState extends State<PopupAddBankWidget> {
                                 color: AppColor.GREY_TEXT,
                               ),
                               onPressed: () {
+                                provider.filterBankList('');
                                 controller.clear();
                               },
                             )),
                       ),
                     ),
-                    const SizedBox(height: 30),
-                    Container(
-                      width: double.infinity,
-                      height: 50,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Tất cả tài khoản đã liên kết',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15),
-                          ),
-                          CupertinoSwitch(
-                            activeColor: AppColor.BLUE_TEXT,
-                            value: provider.isAllLinked,
-                            onChanged: (value) {
-                              provider.changeAllValue(value);
-                            },
-                          )
-                        ],
+                    if (provider.listBank.isNotEmpty) ...[
+                      const SizedBox(height: 30),
+                      Container(
+                        width: double.infinity,
+                        height: 50,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Tất cả tài khoản đã liên kết',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 15),
+                            ),
+                            CupertinoSwitch(
+                              activeColor: AppColor.BLUE_TEXT,
+                              value: provider.isAllLinked,
+                              onChanged: (value) {
+                                provider.changeAllValue(value);
+                              },
+                            )
+                          ],
+                        ),
                       ),
-                    ),
-                    MySeparator(
-                      color: AppColor.GREY_DADADA,
-                    ),
+                      MySeparator(
+                        color: Color.fromRGBO(218, 218, 218, 1),
+                      ),
+                    ] else
+                      const SizedBox.shrink(),
                     Expanded(
-                      child: ListView.builder(
-                        padding: const EdgeInsets.only(top: 0),
-                        itemBuilder: (context, index) {
-                          return _itemBank(provider.listBank[index], index);
-                        },
-                        itemCount: provider.listBank.length,
-                      ),
+                      child: provider.listBank.isNotEmpty
+                          ? ListView.builder(
+                              padding: const EdgeInsets.only(top: 0),
+                              itemBuilder: (context, index) {
+                                return _itemBank(
+                                    provider.isFilter == true
+                                        ? provider.filterBanks[index]
+                                        : provider.listBank[index],
+                                    index);
+                              },
+                              itemCount: provider.isFilter == true
+                                  ? provider.filterBanks.length
+                                  : provider.listBank.length,
+                            )
+                          : SizedBox(
+                              child: Center(
+                                child: Text(
+                                    'Hiện tất cả các tài khoản ngân hàng đã được thêm.'),
+                              ),
+                            ),
                     ),
-                    GestureDetector(
-                      onTap: () {},
+                    InkWell(
+                      onTap: widget.onAddBank,
                       child: Container(
                         width: double.infinity,
                         height: 50,
                         decoration: BoxDecoration(
-                          color: AppColor.BLUE_TEXT,
+                          color: provider.isFilter == true
+                              ? (provider.filterBanks
+                                      .any((e) => e.value == true)
+                                  ? AppColor.BLUE_TEXT
+                                  : AppColor.GREY_DADADA)
+                              : (provider.listBank.any((e) => e.value == true)
+                                  ? AppColor.BLUE_TEXT
+                                  : AppColor.GREY_DADADA),
                           borderRadius: BorderRadius.circular(5),
                         ),
                         child: Center(

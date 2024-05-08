@@ -11,6 +11,7 @@ class ConnectGgChatStates extends Equatable {
   final bool? hasInfo;
   final bool? isValidUrl;
   final bool? isConnectSuccess;
+  final bool? isAddSuccess;
 
   ConnectGgChatStates({
     this.msg,
@@ -20,6 +21,7 @@ class ConnectGgChatStates extends Equatable {
     this.hasInfo,
     this.isValidUrl,
     this.isConnectSuccess,
+    this.isAddSuccess,
   });
 
   ConnectGgChatStates copyWith({
@@ -30,6 +32,7 @@ class ConnectGgChatStates extends Equatable {
     bool? hasInfo,
     bool? isValidUrl,
     bool? isConnectSuccess,
+    bool? isAddSuccess,
   }) {
     return ConnectGgChatStates(
       status: status ?? this.status,
@@ -39,10 +42,19 @@ class ConnectGgChatStates extends Equatable {
       hasInfo: hasInfo ?? this.hasInfo,
       isValidUrl: isValidUrl ?? this.isValidUrl,
       isConnectSuccess: isConnectSuccess ?? this.isConnectSuccess,
+      isAddSuccess: isAddSuccess ?? this.isAddSuccess,
     );
   }
 
   @override
-  List<Object?> get props =>
-      [msg, status, request, dto, hasInfo, isValidUrl, isConnectSuccess];
+  List<Object?> get props => [
+        msg,
+        status,
+        request,
+        dto,
+        hasInfo,
+        isValidUrl,
+        isConnectSuccess,
+        isAddSuccess
+      ];
 }

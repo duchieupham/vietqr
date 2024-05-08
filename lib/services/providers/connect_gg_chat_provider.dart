@@ -7,12 +7,16 @@ class ConnectGgChatProvider extends ChangeNotifier {
   FocusNode? focusNode = FocusNode();
   bool isAllLinked = false;
   bool isValidWebhook = false;
-  List<BankSelection> listBank = [];
+  bool isFilter = false;
 
-  init(List<BankAccountDTO> list) {
+  List<BankSelection> listBank = [];
+  List<BankSelection> filterBanks = [];
+
+  Future<void> init(List<BankAccountDTO> list) async {
     focusNode?.unfocus();
     isValidWebhook = false;
     isAllLinked = false;
+    isFilter = false;
     listBank = [];
     for (var item in list) {
       listBank.add(BankSelection(bank: item, value: false));
@@ -20,9 +24,27 @@ class ConnectGgChatProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void filterBankList(String? filter) {
+    if (filter!.isNotEmpty) {
+      isFilter = true;
+      filterBanks = listBank
+          .where((e) =>
+              e.bank!.bankAccount
+                  .toLowerCase()
+                  .contains(filter.toLowerCase()) ||
+              e.bank!.userBankName.toLowerCase().contains(filter.toLowerCase()))
+          .toList();
+    } else {
+      isFilter = false;
+    }
+    notifyListeners();
+  }
+
   List<String> getListId() {
     Set<String> bankIdSet = Set<String>();
-    final list = listBank.where((element) => element.value == true).toList();
+    final list = isFilter
+        ? filterBanks.where((element) => element.value == true).toList()
+        : listBank.where((element) => element.value == true).toList();
     for (BankSelection selection in list) {
       if (selection.bank != null) {
         bankIdSet.add(selection.bank!.id);
@@ -39,7 +61,6 @@ class ConnectGgChatProvider extends ChangeNotifier {
 
   void setUnFocusNode() {
     focusNode?.unfocus();
-    notifyListeners();
   }
 
   void validateInput(String value) {
@@ -63,7 +84,12 @@ class ConnectGgChatProvider extends ChangeNotifier {
 
   void selectValue(bool value, int index) {
     isAllLinked = false;
-    listBank.elementAt(index).value = value;
+    if (!isFilter) {
+      listBank.elementAt(index).value = value;
+    } else {
+      filterBanks.elementAt(index).value = value;
+    }
+
     notifyListeners();
   }
 

@@ -9,6 +9,32 @@ class ConnectGgChatEvent extends Equatable {
 
 class GetInfoEvent extends ConnectGgChatEvent {}
 
+class AddBankGgChatEvent extends ConnectGgChatEvent {
+  final String? webhookId;
+  final List<String>? listBankId;
+
+  AddBankGgChatEvent({
+    this.webhookId,
+    this.listBankId,
+  });
+
+  @override
+  List<Object?> get props => [listBankId, webhookId];
+}
+
+class RemoveGgChatEvent extends ConnectGgChatEvent {
+  final String? webhookId;
+  final String? bankId;
+
+  RemoveGgChatEvent({
+    this.webhookId,
+    this.bankId,
+  });
+
+  @override
+  List<Object?> get props => [bankId, webhookId];
+}
+
 class CheckWebhookUrlEvent extends ConnectGgChatEvent {
   final String? url;
 
