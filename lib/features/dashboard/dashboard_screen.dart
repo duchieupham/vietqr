@@ -47,9 +47,11 @@ import 'package:vierqr/services/local_storage/shared_preference/shared_pref_util
 import 'package:vierqr/splash_screen.dart';
 
 import '../../commons/utils/encrypt_utils.dart';
+import '../../commons/utils/navigator_utils.dart';
 import '../../models/account_login_dto.dart';
 import '../../services/firebase_dynamic_link/uni_links_listener_mixins.dart';
 import '../../services/providers/pin_provider.dart';
+import '../account/account_screen.dart';
 import '../login/blocs/login_bloc.dart';
 import '../login/events/login_event.dart';
 import 'curved_navi_bar/custom_navigation_bar.dart';
@@ -110,6 +112,8 @@ class _DashBoardScreen extends State<DashBoardScreen>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     checkDynamicLink();
+    getInitUniLinks();
+    initUniLinks();
     _bloc = BlocProvider.of(context);
     _blocLogin = LoginBloc(context);
     _blocLogin.stream.listen((statLogin) {
@@ -151,18 +155,18 @@ class _DashBoardScreen extends State<DashBoardScreen>
     final PendingDynamicLinkData? initialLink =
         await FirebaseDynamicLinks.instance.getInitialLink();
     if (initialLink != null &&
-        initialLink.link.toString().contains('https://vietqr.vn/service?')) {
+        initialLink.link.path.toString().contains('/service')) {
       print('Initial link: ${initialLink.link}');
-      Navigator.pushNamed(context, Routes.MAINTAIN_CHARGE_SCREEN);
+      NavigatorUtils.navigatePage(context, AccountScreen(),
+          routeName: AccountScreen.routeName);
     }
 
     // Listen for new dynamic links when the app is running
     FirebaseDynamicLinks.instance.onLink.listen((dynamicLinkData) {
-      if (dynamicLinkData.link
-          .toString()
-          .contains('https://vietqr.vn/service?')) {
+      if (dynamicLinkData.link.path.toString().contains('/service')) {
         print('New dynamic link: ${dynamicLinkData.link}');
-        Navigator.pushNamed(context, Routes.MAINTAIN_CHARGE_SCREEN);
+        NavigatorUtils.navigatePage(context, AccountScreen(),
+            routeName: AccountScreen.routeName);
       }
     }).onError((error) {
       // Handle errors here
@@ -723,7 +727,11 @@ class _DashBoardScreen extends State<DashBoardScreen>
 
   @override
   void onUniLink(Uri uri) {
-    print('object================================= ${uri.toString()}');
+    print('object111 ${uri.path.toString()}');
+    if (uri.path == '/service') {
+      NavigatorUtils.navigatePage(context, AccountScreen(),
+          routeName: AccountScreen.routeName);
+    }
   }
 }
 
