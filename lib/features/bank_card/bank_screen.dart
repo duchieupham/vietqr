@@ -138,6 +138,7 @@ class _BankScreenState extends State<_BankScreen>
                     Navigator.of(context).pop();
                     Navigator.pushNamed(context, Routes.MAINTAIN_CHARGE_SCREEN,
                         arguments: {
+                          'activeKey': '',
                           'type': 0,
                           'bankId': bankId,
                           'bankCode': bankCode,
@@ -196,6 +197,7 @@ class _BankScreenState extends State<_BankScreen>
                     Navigator.of(context).pop();
                     Navigator.pushNamed(context, Routes.MAINTAIN_CHARGE_SCREEN,
                         arguments: {
+                          'activeKey': '',
                           'type': 1,
                           'bankId': bankId,
                           'bankCode': bankCode,

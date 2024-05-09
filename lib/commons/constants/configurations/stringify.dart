@@ -61,6 +61,7 @@ enum SharedPreferenceKey {
   TokenInfo,
   TokenFree,
   TokenFCM,
+  DynamicLink,
   Profile,
   ScrollCard,
   BankToken,
@@ -132,6 +133,8 @@ extension SharedPreferenceKeyExtension on SharedPreferenceKey {
         return 'SINGLE_THEME';
       case SharedPreferenceKey.UpdateApp:
         return 'UPDATE_APP_V2';
+      case SharedPreferenceKey.DynamicLink:
+        return 'DYNAMIC_LINKS';
     }
   }
 }

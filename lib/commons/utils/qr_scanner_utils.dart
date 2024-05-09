@@ -20,6 +20,8 @@ import 'package:vierqr/models/viet_qr_scanned_dto.dart';
 import 'package:vierqr/services/aes_convert.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
+import '../constants/configurations/route.dart';
+
 class QRScannerUtils {
   const QRScannerUtils._privateConstructor();
 
@@ -204,38 +206,56 @@ class QRScannerUtils {
           break;
         case TypeContact.Other:
           if (typeQR == TypeQR.QR_LINK) {
-            await DialogWidget.instance.showModelBottomSheet(
-              context: context,
-              padding: EdgeInsets.zero,
-              bgrColor: AppColor.TRANSPARENT,
-              widget: DialogScanURL(
-                code: value ?? '',
-                isShowIconFirst: isShowIconFirst,
-                onTapSave: () async {
-                  final data = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => SaveContactScreen(
-                        code: value,
-                        typeQR: type,
-                      ),
-                      // settings: RouteSettings(name: ContactEditView.routeName),
-                    ),
-                  );
-                  if (data is bool) {
-                    Navigator.of(context).pop();
-                    Fluttertoast.showToast(
-                      msg: 'Lưu thành công',
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.CENTER,
-                      backgroundColor: Theme.of(context).cardColor,
-                      textColor: Theme.of(context).hintColor,
-                      fontSize: 15,
-                    );
-                  }
-                },
-              ),
-            );
+            RegExp regExp =
+                RegExp(r'https://vietqr\.vn/service-active\?key=([A-Z0-9]+)');
+            if (value.isNotEmpty) {
+              if (regExp.hasMatch(value)) {
+                var match = regExp.firstMatch(value);
+                if (match != null && match.groupCount >= 1) {
+                  Navigator.pushNamed(context, Routes.DYNAMIC_ACTIVE_KEY_SCREEN,
+                      arguments: {"activeKey": match.group(1)!});
+                  // NavigatorUtils.navigatePage(
+                  //     context,
+                  //     DynamicActiveKeyScreen(
+                  //       activeKey: match.group(1)!,
+                  //     ),
+                  //     routeName: Routes.DYNAMIC_ACTIVE_KEY_SCREEN);
+                }
+              } else {
+                await DialogWidget.instance.showModelBottomSheet(
+                  context: context,
+                  padding: EdgeInsets.zero,
+                  bgrColor: AppColor.TRANSPARENT,
+                  widget: DialogScanURL(
+                    code: value ?? '',
+                    isShowIconFirst: isShowIconFirst,
+                    onTapSave: () async {
+                      final data = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => SaveContactScreen(
+                            code: value,
+                            typeQR: type,
+                          ),
+                          // settings: RouteSettings(name: ContactEditView.routeName),
+                        ),
+                      );
+                      if (data is bool) {
+                        Navigator.of(context).pop();
+                        Fluttertoast.showToast(
+                          msg: 'Lưu thành công',
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.CENTER,
+                          backgroundColor: Theme.of(context).cardColor,
+                          textColor: Theme.of(context).hintColor,
+                          fontSize: 15,
+                        );
+                      }
+                    },
+                  ),
+                );
+              }
+            }
           } else {
             await DialogWidget.instance.showModelBottomSheet(
               context: context,

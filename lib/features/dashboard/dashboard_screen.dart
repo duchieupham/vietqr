@@ -49,6 +49,7 @@ import 'package:vierqr/splash_screen.dart';
 import '../../commons/utils/encrypt_utils.dart';
 import '../../commons/utils/navigator_utils.dart';
 import '../../models/account_login_dto.dart';
+import '../../services/firebase_dynamic_link/firebase_dynamic_link_service.dart';
 import '../../services/firebase_dynamic_link/uni_links_listener_mixins.dart';
 import '../../services/providers/pin_provider.dart';
 import '../account/account_screen.dart';
@@ -104,6 +105,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
   late AuthProvider _provider;
   late Stream<int> bottomBarStream;
   late IsolateStream _isolateStream;
+  StreamSubscription<Uri>? _linkSubscription;
 
   final TextEditingController _editingController =
       TextEditingController(text: '');
@@ -112,7 +114,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    checkDynamicLink();
+    DynamicLinkService.initDynamicLinks();
     getInitUniLinks();
     initUniLinks();
     _bloc = BlocProvider.of(context);
@@ -149,30 +151,6 @@ class _DashBoardScreen extends State<DashBoardScreen>
     });
 
     bottomBarStream = _bottomBarController.stream;
-  }
-
-  void checkDynamicLink() async {
-    // Get the initial dynamic link if the app was opened with a link
-    final PendingDynamicLinkData? initialLink =
-        await FirebaseDynamicLinks.instance.getInitialLink();
-    if (initialLink != null &&
-        initialLink.link.path.toString().contains('/service')) {
-      print('Initial link: ${initialLink.link}');
-      NavigatorUtils.navigatePage(context, DynamicActiveKeyScreen(),
-          routeName: Routes.DYNAMIC_ACTIVE_KEY_SCREEN);
-    }
-
-    // Listen for new dynamic links when the app is running
-    FirebaseDynamicLinks.instance.onLink.listen((dynamicLinkData) {
-      if (dynamicLinkData.link.path.toString().contains('/service')) {
-        print('New dynamic link: ${dynamicLinkData.link}');
-        NavigatorUtils.navigatePage(context, AccountScreen(),
-            routeName: AccountScreen.routeName);
-      }
-    }).onError((error) {
-      // Handle errors here
-      print('Error getting dynamic link: $error');
-    });
   }
 
   void initialServices() {
@@ -361,6 +339,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
     if (_bottomBarController.hasListener) {
       _bottomBarController.close();
     }
+    _linkSubscription?.cancel();
     _subscription?.cancel();
     _subscription = null;
     _subReloadWallet?.cancel();
@@ -724,15 +703,23 @@ class _DashBoardScreen extends State<DashBoardScreen>
   @override
   void getInitUri(Uri? uri) {
     print('object================================= ${uri.toString()}');
+    if (uri?.path == '/service-active' && uri?.queryParameters['key'] != null) {
+      NavigatorUtils.navigatePage(
+          context,
+          DynamicActiveKeyScreen(
+            activeKey: uri!.queryParameters['key']!,
+          ),
+          routeName: Routes.DYNAMIC_ACTIVE_KEY_SCREEN);
+    }
   }
 
   @override
   void onUniLink(Uri uri) {
     print('object111 ${uri.path.toString()}');
-    if (uri.path == '/service') {
-      NavigatorUtils.navigatePage(context, AccountScreen(),
-          routeName: AccountScreen.routeName);
-    }
+    // if (uri.path == '/service-active') {
+    //   NavigatorUtils.navigatePage(context, DynamicActiveKeyScreen(),
+    //       routeName: Routes.DYNAMIC_ACTIVE_KEY_SCREEN);
+    // }
   }
 }
 
