@@ -13,6 +13,7 @@ import 'package:vierqr/commons/utils/sms_information_utils.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/pin_widget.dart';
 import 'package:vierqr/layouts/box_layout.dart';
+import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_information_dto.dart';
 import 'package:vierqr/services/providers/maintain_charge_provider.dart';
@@ -30,6 +31,141 @@ class DialogWidget {
   static DialogWidget get instance => _instance;
 
   static bool isPopLoading = false;
+
+  // openNotificationMobile() {
+  //   return showCupertinoModalPopup(
+  //       context: NavigationService.navigatorKey.currentContext!,
+  //       builder: (context) {
+  //         bool _doNotShowAgain = false;
+  //         return Material(
+  //           color: AppColor.BLACK.withOpacity(0.8),
+  //           child: Container(
+  //             margin: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+  //             padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+  //             height: MediaQuery.of(context).size.height,
+  //             width: double.infinity,
+  //             child: Column(
+  //               crossAxisAlignment: CrossAxisAlignment.center,
+  //               mainAxisAlignment: MainAxisAlignment.center,
+  //               children: [
+  //                 Container(
+  //                   height: 300,
+  //                   width: double.infinity,
+  //                   child: Image.asset(
+  //                       'assets/images/popup-notification-mobile.png'),
+  //                 ),
+  //                 SizedBox(
+  //                   height: 30,
+  //                 ),
+  //                 Container(
+  //                   height: 50,
+  //                   width: double.infinity,
+  //                   margin: EdgeInsets.symmetric(horizontal: 20),
+  //                   decoration: BoxDecoration(
+  //                     color: AppColor.BLACK.withOpacity(0.3),
+  //                     borderRadius: BorderRadius.circular(20),
+  //                   ),
+  //                   child: CheckboxListTile(
+  //                     title: Text(
+  //                       'Không hiển thị thông tin này ở lần sau',
+  //                       style: TextStyle(
+  //                           color: Colors.white), // Chỉnh màu chữ nếu cần
+  //                     ),
+  //                     value: _doNotShowAgain,
+  //                     onChanged: (bool? value) {
+  //                       // Cập nhật trạng thái của Checkbox
+  //                       //Navigator.of(context).pop(); // Đóng dialog ngay lập tức
+  //                     },
+  //                     controlAffinity: ListTileControlAffinity
+  //                         .leading, // Checkbox ở bên trái
+  //                     activeColor:
+  //                         Colors.white, // Màu của Checkbox khi được chọn
+  //                     checkColor: AppColor
+  //                         .BLUE_TEXT, // Màu của dấu check trong Checkbox
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         );
+  //       });
+  // }
+
+  openNotificationMobile() {
+    return showCupertinoModalPopup(
+        context: NavigationService.navigatorKey.currentContext!,
+        builder: (context) {
+          // Sử dụng StatefulBuilder để cập nhật trạng thái của widget trong builder
+          return StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              bool _doNotShowAgain = false;
+              return Material(
+                color: AppColor.BLACK.withOpacity(0.8),
+                // color: Colors.transparent,
+                child: Container(
+                  height: MediaQuery.of(context).size.height,
+                  width: double.infinity,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        height: 300,
+                        width: double.infinity,
+                        child: Image.asset(
+                            'assets/images/popup-notification-mobile.png'),
+                      ),
+                      SizedBox(height: 30),
+                      Container(
+                        height: 50,
+                        width: double.infinity,
+                        margin: EdgeInsets.symmetric(horizontal: 20),
+                        decoration: BoxDecoration(
+                          color: AppColor.BLACK.withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: CheckboxListTile(
+                          title: Text(
+                            'Không hiển thị thông tin này ở lần sau',
+                            style: TextStyle(
+                                color: AppColor.WHITE), // Chỉnh màu chữ nếu cần
+                          ),
+                          value: _doNotShowAgain,
+                          onChanged: (bool? value) {
+                            // Cập nhật trạng thái của Checkbox
+                            setState(() {
+                              _doNotShowAgain = value!;
+                            });
+                          },
+                          controlAffinity: ListTileControlAffinity
+                              .leading, // Checkbox ở bên trái
+                          activeColor:
+                              AppColor.WHITE, // Màu của Checkbox khi được chọn
+                          checkColor: AppColor
+                              .BLUE_TEXT, // Màu của dấu check trong Checkbox
+                        ),
+                      ),
+                      SizedBox(
+                        height: 50,
+                      ),
+                      MButtonWidget(
+                        height: 50,
+                        width: double.infinity,
+                        isEnable: true,
+                        margin: EdgeInsets.symmetric(horizontal: 80),
+                        title: 'Đóng',
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        });
+  }
 
   openActiveAnnualSuccess() {
     return showCupertinoModalPopup(

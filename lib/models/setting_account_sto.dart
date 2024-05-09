@@ -31,6 +31,7 @@ class SettingAccountDTO {
   final String logoUrl;
   bool keepScreenOn;
   final int qrShowType;
+  final bool notificationMobile;
   final List<MerchantRole> merchantRoles;
 
   SettingAccountDTO({
@@ -49,6 +50,7 @@ class SettingAccountDTO {
     this.logoUrl = '',
     this.keepScreenOn = false,
     this.qrShowType = 0,
+    this.notificationMobile = false,
     this.merchantRoles = const [],
   });
 
@@ -71,6 +73,7 @@ class SettingAccountDTO {
         logoUrl: json["logoUrl"] ?? '',
         keepScreenOn: json["keepScreenOn"] ?? false,
         qrShowType: json["qrShowType"] ?? 0,
+        notificationMobile: json["notificationMobile"] ?? false,
         merchantRoles: List<MerchantRole>.from(
             json["merchantRoles"].map((x) => MerchantRole.fromJson(x))),
       );
@@ -91,6 +94,7 @@ class SettingAccountDTO {
         "logoUrl": logoUrl,
         "keepScreenOn": keepScreenOn,
         "qrShowType": qrShowType,
+        "notificationMobile": notificationMobile,
         "merchantRoles":
             List<dynamic>.from(merchantRoles.map((x) => x.toJson())),
       };

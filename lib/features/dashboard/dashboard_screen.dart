@@ -356,7 +356,9 @@ class _DashBoardScreen extends State<DashBoardScreen>
           String themeVerLocal = SharePrefUtils.getThemeVersion();
           String themeSystem = state.appInfoDTO.themeVersion;
           List<ThemeDTO> listLocal = await UserRepository.instance.getThemes();
-
+          if (!settingAccountDTO.notificationMobile) {
+            DialogWidget.instance.openNotificationMobile();
+          }
           if (themeVerLocal != themeSystem || listLocal.isEmpty) {
             _bloc.add(GetListThemeEvent());
           } else {}
