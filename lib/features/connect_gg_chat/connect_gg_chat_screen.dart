@@ -135,7 +135,6 @@ class __ScreenState extends State<_Screen> {
         }
         if (state.status == BlocStatus.UNLOADING) {
           Navigator.pop(context);
-          // _provider.setUnFocusNode();
         }
         switch (state.request) {
           case ConnectGgChat.GET_INFO:
@@ -250,6 +249,7 @@ class __ScreenState extends State<_Screen> {
                                       provider.validateInput(text);
                                     },
                                     onSubmitInput: (value) {
+                                      _provider.setUnFocusNode();
                                       _bloc.add(
                                           CheckWebhookUrlEvent(url: value));
                                     },
@@ -344,6 +344,7 @@ class __ScreenState extends State<_Screen> {
             case 2:
               if (_textEditingController.text != '' &&
                   _provider.isValidWebhook == true) {
+                _provider.setUnFocusNode();
                 _bloc.add(
                     CheckWebhookUrlEvent(url: _textEditingController.text));
               }
