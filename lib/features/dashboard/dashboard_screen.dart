@@ -722,10 +722,14 @@ class _DashBoardScreen extends State<DashBoardScreen>
   @override
   void onUniLink(Uri uri) {
     print('object111 ${uri.path.toString()}');
-    // if (uri.path == '/service-active') {
-    //   NavigatorUtils.navigatePage(context, DynamicActiveKeyScreen(),
-    //       routeName: Routes.DYNAMIC_ACTIVE_KEY_SCREEN);
-    // }
+    if (uri.path == '/service-active' && uri.queryParameters['key'] != null) {
+      NavigatorUtils.navigatePage(
+          context,
+          DynamicActiveKeyScreen(
+            activeKey: uri.queryParameters['key']!,
+          ),
+          routeName: Routes.DYNAMIC_ACTIVE_KEY_SCREEN);
+    }
   }
 }
 
