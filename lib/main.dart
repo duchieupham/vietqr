@@ -14,6 +14,8 @@ import 'package:vierqr/features/transaction_detail/transaction_detail_screen.dar
 import 'package:vierqr/features/transaction_detail/widgets/transaction_sucess_widget.dart';
 import 'package:vierqr/layouts/bottom_sheet/notify_trans_widget.dart';
 import 'package:vierqr/models/maintain_charge_dto.dart';
+import 'package:vierqr/services/firebase_dynamic_link/firebase_dynamic_link_service.dart';
+import 'package:vierqr/services/firebase_dynamic_link/uni_links_listener_mixins.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/connect_gg_chat_provider.dart';
 import 'package:vierqr/services/providers/maintain_charge_provider.dart';
@@ -24,6 +26,7 @@ import 'features/invoice/widgets/invoice_detail_screen.dart';
 import 'features/invoice/widgets/popup_invoice_success.dart';
 import 'features/maintain_charge/views/active_success_screen.dart';
 import 'features/maintain_charge/views/annual_fee_screen.dart';
+import 'features/maintain_charge/views/dynamic_active_key_screen.dart';
 import 'models/maintain_charge_create.dart';
 import 'models/qr_generated_dto.dart';
 import 'package:flutter/material.dart';
@@ -393,11 +396,25 @@ class _VietQRApp extends State<VietQRApp> {
                   Routes.TRANSACTION_WALLET: (context) =>
                       const TransWalletScreen(),
                   Routes.INVOICE_SCREEN: (context) => InvoiceScreen(),
+                  // Routes.DYNAMIC_ACTIVE_KEY_SCREEN: (context) =>
+                  //     DynamicActiveKeyScreen(),
 
                   // Routes.ACTIVE_SUCCESS_SCREEN: (context) =>
                   //     const ActiveSuccessScreen(),
                 },
                 onGenerateRoute: (settings) {
+                  if (settings.name == Routes.DYNAMIC_ACTIVE_KEY_SCREEN) {
+                    Map<String, dynamic> param =
+                        settings.arguments as Map<String, dynamic>;
+                    String activeKey = param['activeKey'] as String;
+
+                    return CupertinoPageRoute<bool>(
+                      builder: (context) {
+                        return DynamicActiveKeyScreen(activeKey: activeKey);
+                      },
+                    );
+                  }
+
                   if (settings.name == Routes.CONNECT_GG_CHAT_SCREEN) {
                     // Map map = settings.arguments as Map;
                     return CupertinoPageRoute<bool>(
@@ -426,6 +443,8 @@ class _VietQRApp extends State<VietQRApp> {
                         settings.arguments as Map<String, dynamic>;
                     int type = param['type'] as int;
                     String bankId = param['bankId'] as String;
+                    String activeKey = param['activeKey'] as String;
+
                     String bankCode = param['bankCode'] as String;
                     String bankName = param['bankName'] as String;
                     String bankAccount = param['bankAccount'] as String;
@@ -434,6 +453,7 @@ class _VietQRApp extends State<VietQRApp> {
                     return CupertinoPageRoute<bool>(
                       builder: (context) {
                         return MaintainChargeScreen(
+                          activeKey: activeKey,
                           type: type,
                           bankId: bankId,
                           bankCode: bankCode,

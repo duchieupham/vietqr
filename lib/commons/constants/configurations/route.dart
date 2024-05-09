@@ -47,6 +47,7 @@ class Routes {
 
   static const String MAINTAIN_CHARGE_SCREEN = '/maintain_charge_screen';
   static const String CONFIRM_ACTIVE_KEY_SCREEN = '/confirm_active_key_screen';
+  static const String DYNAMIC_ACTIVE_KEY_SCREEN = '/dynamic_active_key_screen';
   static const String ACTIVE_SUCCESS_SCREEN = '/active_success_screen';
   static const String ANNUAL_FEE_SCREEN = '/annual_fee_screen';
   static const String INVOICE_SCREEN = '/invoice_screen';

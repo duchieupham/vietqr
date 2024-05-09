@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:isolate';
 
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart'
     as Constants;
 import 'package:float_bubble/float_bubble.dart';
@@ -46,10 +47,15 @@ import 'package:vierqr/services/local_storage/shared_preference/shared_pref_util
 import 'package:vierqr/splash_screen.dart';
 
 import '../../commons/utils/encrypt_utils.dart';
+import '../../commons/utils/navigator_utils.dart';
 import '../../models/account_login_dto.dart';
+import '../../services/firebase_dynamic_link/firebase_dynamic_link_service.dart';
+import '../../services/firebase_dynamic_link/uni_links_listener_mixins.dart';
 import '../../services/providers/pin_provider.dart';
+import '../account/account_screen.dart';
 import '../login/blocs/login_bloc.dart';
 import '../login/events/login_event.dart';
+import '../maintain_charge/views/dynamic_active_key_screen.dart';
 import 'curved_navi_bar/custom_navigation_bar.dart';
 import 'widget/disconnect_widget.dart';
 
@@ -71,6 +77,7 @@ class DashBoardScreen extends StatefulWidget {
 
 class _DashBoardScreen extends State<DashBoardScreen>
     with
+        UniLinksListenerMixin,
         WidgetsBindingObserver,
         AutomaticKeepAliveClientMixin,
         SingleTickerProviderStateMixin {
@@ -98,6 +105,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
   late AuthProvider _provider;
   late Stream<int> bottomBarStream;
   late IsolateStream _isolateStream;
+  StreamSubscription<Uri>? _linkSubscription;
 
   final TextEditingController _editingController =
       TextEditingController(text: '');
@@ -106,6 +114,9 @@ class _DashBoardScreen extends State<DashBoardScreen>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    DynamicLinkService.initDynamicLinks();
+    getInitUniLinks();
+    initUniLinks();
     _bloc = BlocProvider.of(context);
     _blocLogin = LoginBloc(context);
     _blocLogin.stream.listen((statLogin) {
@@ -328,6 +339,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
     if (_bottomBarController.hasListener) {
       _bottomBarController.close();
     }
+    _linkSubscription?.cancel();
     _subscription?.cancel();
     _subscription = null;
     _subReloadWallet?.cancel();
@@ -689,6 +701,28 @@ class _DashBoardScreen extends State<DashBoardScreen>
 
   @override
   bool get wantKeepAlive => true;
+
+  @override
+  void getInitUri(Uri? uri) {
+    print('object================================= ${uri.toString()}');
+    if (uri?.path == '/service-active' && uri?.queryParameters['key'] != null) {
+      NavigatorUtils.navigatePage(
+          context,
+          DynamicActiveKeyScreen(
+            activeKey: uri!.queryParameters['key']!,
+          ),
+          routeName: Routes.DYNAMIC_ACTIVE_KEY_SCREEN);
+    }
+  }
+
+  @override
+  void onUniLink(Uri uri) {
+    print('object111 ${uri.path.toString()}');
+    // if (uri.path == '/service-active') {
+    //   NavigatorUtils.navigatePage(context, DynamicActiveKeyScreen(),
+    //       routeName: Routes.DYNAMIC_ACTIVE_KEY_SCREEN);
+    // }
+  }
 }
 
 class SaveImageData {

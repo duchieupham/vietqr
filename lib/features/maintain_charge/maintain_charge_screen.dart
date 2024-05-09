@@ -37,6 +37,7 @@ import 'events/maintain_charge_events.dart';
 import 'views/annual_fee_screen.dart';
 
 class MaintainChargeScreen extends StatefulWidget {
+  final String? activeKey;
   final int type;
   final String bankId;
   final String bankCode;
@@ -45,6 +46,7 @@ class MaintainChargeScreen extends StatefulWidget {
   final String userBankName;
   const MaintainChargeScreen({
     super.key,
+    required this.activeKey,
     required this.type,
     required this.bankId,
     required this.bankCode,
@@ -88,11 +90,15 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
     super.initState();
 
     _bloc = MaintainChargeBloc(context);
+
     if (widget.type == 1) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         initData();
         onFcmMessage();
       });
+    } else {
+      keyValue = widget.activeKey ?? '';
+      _controller.text = widget.activeKey ?? '';
     }
   }
 

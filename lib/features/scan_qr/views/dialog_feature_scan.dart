@@ -23,6 +23,9 @@ import 'package:vierqr/models/vietqr_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/sqflite/local_database.dart';
 
+import '../../../commons/constants/configurations/route.dart';
+import '../../maintain_charge/views/dynamic_active_key_screen.dart';
+
 class DialogFeatureWidget extends StatefulWidget {
   final dynamic dto;
   final TypeContact typeQR;
