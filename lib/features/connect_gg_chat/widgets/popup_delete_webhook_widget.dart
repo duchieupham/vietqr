@@ -16,7 +16,7 @@ class PopupDeleteWebhookWidget extends StatelessWidget {
       margin: const EdgeInsets.fromLTRB(45, 0, 45, 0),
       padding: const EdgeInsets.fromLTRB(20, 25, 20, 25),
       // width: MediaQuery.of(context).size.width * 0.35,
-      height: MediaQuery.of(context).size.height * 0.4,
+      height: MediaQuery.of(context).size.height * 0.45,
       decoration: BoxDecoration(
           color: AppColor.WHITE, borderRadius: BorderRadius.circular(20)),
       child: Column(
