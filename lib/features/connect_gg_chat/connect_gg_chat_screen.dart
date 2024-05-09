@@ -321,9 +321,9 @@ class __ScreenState extends State<_Screen> {
 
     return Container(
       width: double.infinity,
-      height: 100 + MediaQuery.of(context).viewInsets.bottom,
+      height: 70 + MediaQuery.of(context).viewInsets.bottom,
       child: MButtonWidget(
-        margin: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+        margin: EdgeInsets.symmetric(horizontal: 40),
         height: 50,
         isEnable: isEnable,
         colorDisableBgr: AppColor.GREY_BUTTON,

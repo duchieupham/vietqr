@@ -45,15 +45,17 @@ class _PopupNotiWidgetState extends State<PopupNotiWidget> {
               width: double.infinity,
               margin: EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
-                color: AppColor.BLACK.withOpacity(0.5),
+                color: AppColor.BLACK.withOpacity(0.3),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: CheckboxListTile(
+                side: const BorderSide(color: Colors.white),
                 checkboxShape: CircleBorder(),
                 title: Text(
                   'Không hiển thị thông tin này ở lần sau',
-                  style:
-                      TextStyle(color: AppColor.WHITE), // Chỉnh màu chữ nếu cần
+                  style: TextStyle(
+                      color: AppColor.WHITE,
+                      fontSize: 13), // Chỉnh màu chữ nếu cần
                 ),
                 value: isClose,
                 onChanged: (value) {

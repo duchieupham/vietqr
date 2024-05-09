@@ -257,38 +257,37 @@ class WebhookGgChatScreen extends StatelessWidget {
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
                 ),
               ),
-              SizedBox(height: 30),
-              InkWell(
-                onTap: onGuide,
-                child: Container(
-                  height: 50,
-                  margin: EdgeInsets.only(right: 40),
-                  decoration: BoxDecoration(
-                    color: AppColor.BLUE_TEXT.withOpacity(0.3),
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 15,
-                        height: 15,
-                        child:
-                            Image.asset('assets/images/ic-guides-ggchat.png'),
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        'Xem hướng dẫn tại đây',
-                        style:
-                            TextStyle(color: AppColor.BLUE_TEXT, fontSize: 15),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(height: 30),
+              SizedBox(height: 20),
+              // InkWell(
+              //   onTap: onGuide,
+              //   child: Container(
+              //     height: 50,
+              //     margin: EdgeInsets.only(right: 40),
+              //     decoration: BoxDecoration(
+              //       color: AppColor.BLUE_TEXT.withOpacity(0.3),
+              //       borderRadius: BorderRadius.circular(5),
+              //     ),
+              //     child: Row(
+              //       mainAxisAlignment: MainAxisAlignment.center,
+              //       children: [
+              //         Container(
+              //           width: 15,
+              //           height: 15,
+              //           child:
+              //               Image.asset('assets/images/ic-guides-ggchat.png'),
+              //         ),
+              //         const SizedBox(
+              //           width: 10,
+              //         ),
+              //         Text(
+              //           'Xem hướng dẫn tại đây',
+              //           style:
+              //               TextStyle(color: AppColor.BLUE_TEXT, fontSize: 15),
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
               Container(
                 height: 20,
                 child: Text(
@@ -319,6 +318,39 @@ class WebhookGgChatScreen extends StatelessWidget {
                     contentPadding: EdgeInsets.symmetric(vertical: 15),
                   ),
                   style: TextStyle(fontSize: 15),
+                ),
+              ),
+              SizedBox(
+                height: 40,
+              ),
+              InkWell(
+                onTap: onGuide,
+                child: Container(
+                  height: 50,
+                  margin: EdgeInsets.only(right: 40),
+                  decoration: BoxDecoration(
+                    color: AppColor.BLUE_TEXT.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 15,
+                        height: 15,
+                        child:
+                            Image.asset('assets/images/ic-guides-ggchat.png'),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        'Xem hướng dẫn tại đây',
+                        style:
+                            TextStyle(color: AppColor.BLUE_TEXT, fontSize: 15),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               Visibility(
