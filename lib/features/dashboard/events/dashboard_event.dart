@@ -10,6 +10,8 @@ class DashBoardEvent extends Equatable {
   List<Object?> get props => [];
 }
 
+class CloseMobileNotificationEvent extends DashBoardEvent {}
+
 class DashBoardEventSearchName extends DashBoardEvent {
   final BankNameSearchDTO dto;
 

@@ -19,6 +19,7 @@ import 'package:vierqr/services/local_storage/shared_preference/shared_pref_util
 
 class DashboardRepository {
   const DashboardRepository();
+  String get userId => SharePrefUtils.getProfile().userId;
 
   //Request permissions
   Future<bool> requestPermissions() async {
@@ -37,6 +38,25 @@ class DashboardRepository {
       LOG.error('Error at requestPermissions - PermissionRepository: $e');
     }
     return result;
+  }
+
+  Future<bool?> setNotificationMobile() async {
+    try {
+      Map<String, dynamic> params = {};
+      params['notificationMobile'] = true;
+      params['userId'] = userId;
+      final String url =
+          '${EnvConfig.getBaseUrl()}accounts/setting/notification-mobile';
+      final response = await BaseAPIClient.postAPI(
+        body: params,
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return false;
   }
 
   //Check permissions

@@ -347,6 +347,7 @@ enum DashBoardType {
   KEEP_BRIGHT,
   COUNT_NOTIFY,
   UPDATE_STATUS_NOTIFY,
+  CLOSE_NOTIFICATION,
 }
 
 enum DashBoardTypePermission {

@@ -41,6 +41,24 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
     on<UpdateKeepBrightEvent>(_updateKeepBright);
     on<GetCountNotifyEvent>(_getCounter);
     on<NotifyUpdateStatusEvent>(_updateNotificationStatus);
+    on<CloseMobileNotificationEvent>(_closeNoti);
+  }
+
+  void _closeNoti(DashBoardEvent event, Emitter emit) async {
+    try {
+      if (event is CloseMobileNotificationEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.NONE, request: DashBoardType.NONE));
+        bool? result = await dashBoardRepository.setNotificationMobile();
+
+        emit(state.copyWith(
+            status: BlocStatus.SUCCESS,
+            request: DashBoardType.CLOSE_NOTIFICATION));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(status: BlocStatus.ERROR));
+    }
   }
 
   Future _getListBankTypes(DashBoardEvent event, Emitter emit) async {

@@ -109,6 +109,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
 
   final TextEditingController _editingController =
       TextEditingController(text: '');
+  bool? isClose = false;
 
   @override
   void initState() {
@@ -369,11 +370,14 @@ class _DashBoardScreen extends State<DashBoardScreen>
           String themeSystem = state.appInfoDTO.themeVersion;
           List<ThemeDTO> listLocal = await UserRepository.instance.getThemes();
           if (!settingAccountDTO.notificationMobile) {
-            DialogWidget.instance.openNotificationMobile();
+            DialogWidget.instance.openNotificationMobile(context);
           }
           if (themeVerLocal != themeSystem || listLocal.isEmpty) {
             _bloc.add(GetListThemeEvent());
           } else {}
+        }
+        if (state.request == DashBoardType.CLOSE_NOTIFICATION) {
+          Navigator.of(context).pop();
         }
 
         if (state.request == DashBoardType.GET_BANK) {
