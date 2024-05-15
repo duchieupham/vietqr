@@ -500,7 +500,7 @@ class _BankScreenState extends State<_BankScreen>
                         ),
                       ),
                       SizedBox(
-                        height: (listAuthenticated.length * 160) -
+                        height: (listAuthenticated.length * 162) -
                             listAuthenticated.length * 12 -
                             (listAuthenticated.length - 1) * 8,
                         width: MediaQuery.of(context).size.width,
@@ -508,7 +508,7 @@ class _BankScreenState extends State<_BankScreen>
                           children: listAuthenticated.map((e) {
                             int index = listAuthenticated.indexOf(e);
                             return Positioned(
-                              top: index * 140,
+                              top: index * 145,
                               left: 0,
                               right: 0,
                               child: CardWidget(

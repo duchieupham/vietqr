@@ -71,7 +71,8 @@ class _ServiceSectionState extends State<ServiceSection> {
           Navigator.pushNamed(context, Routes.CONNECT_LARK);
         }),
         _buildItemService(
-            context, 'assets/images/ic-gg-chat-home.png', 'GGChat', () async {
+            context, 'assets/images/ic-gg-chat-home.png', 'Google Chat',
+            () async {
           Navigator.pushNamed(context, Routes.CONNECT_GG_CHAT_SCREEN);
         }),
       ],

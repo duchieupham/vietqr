@@ -275,7 +275,8 @@ class CardWidget extends StatelessWidget {
                           ),
                         )
                       : InkWell(
-                          onTap: !e.isValidService! ? onActive : null,
+                          // onTap: !e.isValidService! ? onActive : null,
+                          onTap: onActive,
                           child: Container(
                             padding: const EdgeInsets.fromLTRB(20, 5, 10, 10),
                             width: double.infinity,
@@ -285,23 +286,33 @@ class CardWidget extends StatelessWidget {
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Row(
-                                            children: [
-                                              Icon(
-                                                Icons
-                                                    .check_circle_outline_rounded,
-                                                size: 15,
-                                                color: AppColor.WHITE,
-                                              ),
-                                              const SizedBox(width: 5),
-                                              Text(
-                                                "Đã đăng ký dịch vụ VietQR",
+                                          Container(
+                                            width: 80,
+                                            height: 30,
+                                            decoration: BoxDecoration(
+                                                color: AppColor.BLUE_TEXT,
+                                                borderRadius:
+                                                    BorderRadius.circular(30)),
+                                            child: Center(
+                                              child: Text(
+                                                'Gia Hạn',
                                                 style: TextStyle(
                                                     fontSize: 12,
                                                     color: AppColor.WHITE),
-                                              )
-                                            ],
+                                              ),
+                                            ),
                                           ),
+                                          // Row(
+                                          //   children: [
+                                          //     const SizedBox(width: 5),
+                                          //     Text(
+                                          //       "Đã đăng ký dịch vụ VietQR",
+                                          //       style: TextStyle(
+                                          //           fontSize: 12,
+                                          //           color: AppColor.WHITE),
+                                          //     )
+                                          //   ],
+                                          // ),
                                           inclusiveDays <= 7
                                               ? Container(
                                                   padding:
@@ -323,11 +334,23 @@ class CardWidget extends StatelessWidget {
                                                     ),
                                                   ),
                                                 )
-                                              : Text(
-                                                  "Đến ${timestampToDate(e.validFeeTo!)}",
-                                                  style: TextStyle(
-                                                      fontSize: 12,
-                                                      color: AppColor.WHITE),
+                                              : Row(
+                                                  children: [
+                                                    Icon(
+                                                      Icons
+                                                          .check_circle_outline_rounded,
+                                                      size: 15,
+                                                      color: AppColor.WHITE,
+                                                    ),
+                                                    const SizedBox(width: 8),
+                                                    Text(
+                                                      "Đến ${timestampToDate(e.validFeeTo!)}",
+                                                      style: TextStyle(
+                                                          fontSize: 12,
+                                                          color:
+                                                              AppColor.WHITE),
+                                                    ),
+                                                  ],
                                                 ),
                                         ],
                                       )
