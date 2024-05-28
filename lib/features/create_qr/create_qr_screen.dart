@@ -478,7 +478,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                             width: double.infinity,
                                             height: 50,
                                             padding: const EdgeInsets.symmetric(
-                                                horizontal: 15, vertical: 8),
+                                                horizontal: 6, vertical: 8),
                                             decoration: BoxDecoration(
                                                 borderRadius:
                                                     BorderRadius.circular(5),
@@ -490,27 +490,6 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                                 state.listQrBox,
                                                 provider.qrBoxDTO),
                                           ),
-                                        // MTextFieldCustom(
-                                        //   enable: false,
-                                        //   showBorder: true,
-                                        //   isObscureText: false,
-                                        //   maxLines: 1,
-                                        //   fillColor: AppColor.WHITE,
-                                        //   value: provider.qrBoxCode,
-                                        //   textFieldType: TextfieldType.LABEL,
-                                        //   maxLength: 10,
-                                        //   title: 'QR Box',
-                                        //   hintText:
-                                        //       'Chọn QR Box để tạo mã VietQR',
-                                        //   inputType: TextInputType.text,
-                                        //   keyboardAction:
-                                        //       TextInputAction.next,
-                                        //   // onChange: provider.updateQrBoxCode,
-                                        //   onChange: (value) {},
-                                        //   child: _buildDropListQrBox(
-                                        //       state.listQrBox,
-                                        //       provider.qrBoxDTO),
-                                        // ),
                                       ],
                                     ),
                                 ]
@@ -855,13 +834,12 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
         child: DropdownButton2<QRBoxDTO>(
           isExpanded: true,
           onMenuStateChange: _provider.onMenuStateChange,
-          underline: const SizedBox.shrink(),
           items: list.map((item) {
             return DropdownMenuItem<QRBoxDTO>(
               value: item,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
                     alignment: Alignment.centerLeft,
