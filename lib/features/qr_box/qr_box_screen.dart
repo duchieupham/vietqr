@@ -375,11 +375,10 @@ class __ScreenState extends State<_Screen> {
                     provider.filterTerminal(value);
                   },
                   decoration: InputDecoration(
-                      contentPadding:
-                          const EdgeInsets.only(top: 11, bottom: 10),
+                      contentPadding: EdgeInsets.zero,
                       hintText: 'Tìm kiếm cửa hàng',
                       hintStyle: TextStyle(
-                          fontSize: 20, color: AppColor.BLACK.withOpacity(0.5)),
+                          fontSize: 18, color: AppColor.BLACK.withOpacity(0.5)),
                       enabledBorder: InputBorder.none,
                       focusedBorder: InputBorder.none,
                       prefixIcon: const Icon(
@@ -524,8 +523,9 @@ class __ScreenState extends State<_Screen> {
   Widget _activeSuccess() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
+      // mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        const SizedBox(height: 100),
         Image.asset(
           AppImages.icSuccessInBlue,
           width: 200,
@@ -535,7 +535,7 @@ class __ScreenState extends State<_Screen> {
         Text(
           'Kích hoạt QR Box thành công!',
           style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-        )
+        ),
       ],
     );
   }
