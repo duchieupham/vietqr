@@ -662,9 +662,10 @@ class __ScreenState extends State<_Screen> {
                     break;
                   case 3:
                     _bloc.add(ActiveQRBoxEvent(
-                        bankId: value.selectBank!.id,
-                        terminalId: value.selectTerminal!.terminalId,
-                        cert: widget.certificate));
+                      bankId: value.selectBank!.id,
+                      terminalId: value.selectTerminal!.terminalId,
+                      cert: widget.certificate,
+                    ));
                     break;
                   case 4:
                     Navigator.of(context).pop();

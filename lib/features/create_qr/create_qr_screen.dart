@@ -839,7 +839,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
               value: item,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
                     alignment: Alignment.centerLeft,
