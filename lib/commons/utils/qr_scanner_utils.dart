@@ -85,6 +85,7 @@ class QRScannerUtils {
   }
 
   Future<TypeQR> checkScan(String code) async {
+    String prefix = 'CERT-VVB-';
     VietQRScannedDTO vietQRScannedDTO =
         QRScannerUtils.instance.getBankAccountFromQR(code);
     if (vietQRScannedDTO.caiValue.isNotEmpty &&
@@ -96,6 +97,8 @@ class QRScannerUtils {
       return TypeQR.QR_ID;
     } else if (code.trim().contains('http') || code.trim().contains('https')) {
       return TypeQR.QR_LINK;
+    } else if (code.trim().startsWith(prefix)) {
+      return TypeQR.CERTIFICATE;
     } else if (code.trim().contains('VCARD')) {
       return TypeQR.QR_VCARD;
     } else if (code.toUpperCase().trim().contains('VHI') ||
@@ -255,6 +258,11 @@ class QRScannerUtils {
                   ),
                 );
               }
+            }
+          } else if (typeQR == TypeQR.CERTIFICATE) {
+            if (value.isNotEmpty) {
+              Navigator.pushNamed(context, Routes.QR_BOX,
+                  arguments: {"cert": value});
             }
           } else {
             await DialogWidget.instance.showModelBottomSheet(

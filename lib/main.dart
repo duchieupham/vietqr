@@ -352,7 +352,7 @@ class _VietQRApp extends State<VietQRApp> {
             ChangeNotifierProvider(create: (context) => InvoiceProvider()),
             ChangeNotifierProvider(
                 create: (context) => ConnectGgChatProvider()),
-            ChangeNotifierProvider(create: (context) => QrBoxProvider()),
+            ChangeNotifierProvider(create: (context) => QRBoxProvider()),
             ChangeNotifierProvider(create: (context) => RegisterProvider()),
             ChangeNotifierProvider(create: (context) => UserEditProvider()),
           ],
@@ -420,12 +420,18 @@ class _VietQRApp extends State<VietQRApp> {
                   }
 
                   if (settings.name == Routes.QR_BOX) {
-                    // Map<String, dynamic> param =
-                    //     settings.arguments as Map<String, dynamic>;
+                    Map<String, dynamic> param;
+                    String cert = '';
+                    if (settings.arguments != null) {
+                      param = settings.arguments as Map<String, dynamic>;
+                      cert = param['cert'] as String;
+                    }
 
                     return CupertinoPageRoute<bool>(
                       builder: (context) {
-                        return QRBoxScreen();
+                        return QRBoxScreen(
+                          cert: cert,
+                        );
                       },
                     );
                   }

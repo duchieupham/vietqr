@@ -167,6 +167,12 @@ class _ScanQrScreenState extends State<_BodyWidget> {
               'typeQR': TypeQR.QR_LINK,
               'data': state.codeQR,
             });
+          } else if (state.typeQR == TypeQR.CERTIFICATE) {
+            Navigator.of(context).pop({
+              'type': state.typeContact,
+              'typeQR': TypeQR.CERTIFICATE,
+              'data': state.codeQR,
+            });
           } else if (state.typeQR == TypeQR.QR_CMT) {
             if (!mounted) return;
             Navigator.pushReplacementNamed(

@@ -147,6 +147,13 @@ class ScanQrBloc extends Bloc<ScanQrEvent, ScanQrState> {
                   request: ScanType.SCAN,
                   typeContact: TypeContact.Other));
               break;
+            case TypeQR.CERTIFICATE:
+              emit(state.copyWith(
+                  codeQR: event.code,
+                  typeQR: TypeQR.CERTIFICATE,
+                  request: ScanType.SCAN,
+                  typeContact: TypeContact.Other));
+              break;
             case TypeQR.QR_VCARD:
               emit(state.copyWith(
                   codeQR: event.code,
