@@ -5,6 +5,7 @@ class QRCreateDTO {
   final String userId;
   final String orderId;
   final String terminalCode;
+  final String subTerminalCode;
 
   const QRCreateDTO({
     required this.bankId,
@@ -13,6 +14,7 @@ class QRCreateDTO {
     required this.userId,
     required this.orderId,
     required this.terminalCode,
+    required this.subTerminalCode,
   });
 
   factory QRCreateDTO.fromJson(Map<String, dynamic> json) {
@@ -23,6 +25,7 @@ class QRCreateDTO {
       userId: json['userId'] ?? '',
       orderId: json['orderId'] ?? '',
       terminalCode: json['terminalCode'] ?? '',
+      subTerminalCode: json['subTerminalCode'] ?? '',
     );
   }
 
@@ -34,6 +37,8 @@ class QRCreateDTO {
     data['userId'] = userId;
     data['orderId'] = orderId;
     data['terminalCode'] = terminalCode;
+    data['subTerminalCode'] = subTerminalCode;
+
     return data;
   }
 }

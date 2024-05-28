@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:vierqr/models/store/detail_store_dto.dart';
 import 'package:vierqr/models/terminal_qr_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
@@ -874,7 +875,8 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                           Text(
                             item.subRawTerminalCode,
                             style: const TextStyle(
-                                fontSize: 14, fontWeight: FontWeight.w500),
+                              fontSize: 15,
+                            ),
                           ),
                           const Spacer(),
                           if (item.subTerminalCode.isEmpty)
@@ -887,7 +889,8 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                     Text(
                       item.subTerminalAddress,
                       style: const TextStyle(
-                          fontSize: 11, color: AppColor.grey979797),
+                        fontSize: 12,
+                      ),
                     ),
                     const Divider()
                   ]
@@ -961,9 +964,8 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
       userId: SharePrefUtils.getProfile().userId,
       orderId: _provider.orderCode,
       // terminalCode: _provider.branchCode,
-      terminalCode: _provider.branchCode.isEmpty
-          ? _provider.qrBoxCode
-          : _provider.branchCode,
+      terminalCode: _provider.branchCode,
+      subTerminalCode: _provider.qrBoxCode,
     );
 
     _bloc.add(QREventGenerate(dto: dto));
