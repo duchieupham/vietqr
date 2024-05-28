@@ -80,6 +80,8 @@ class CreateQRProvider with ChangeNotifier, BaseManager {
   }
 
   void updateExtra() {
+    branchCode = '';
+    qrBoxCode = '';
     isExtra = !isExtra;
     notifyListeners();
   }
