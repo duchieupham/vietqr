@@ -84,7 +84,7 @@ class BankCardRepository {
       // String url =
       //     '${EnvConfig.getBaseUrl()}tid/tid-box/$bankId?userId=$userId';
       String url =
-          'https://dev.vietqr.org/vqr/api/tid/tid-box/$bankId?userId=$userId';
+          '${EnvConfig.getBaseUrl()}tid/tid-box/$bankId?userId=$userId';
       final response =
           await BaseAPIClient.getAPI(url: url, type: AuthenticationType.SYSTEM);
       if (response.statusCode == 200) {
