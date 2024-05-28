@@ -289,35 +289,44 @@ class __ScreenState extends State<_Screen> {
                 ],
               ),
             ),
-            const SizedBox(height: 10),
-            value.listMerchant.isNotEmpty
-                ? Expanded(
-                    child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: ListView.separated(
-                        itemBuilder: (context, index) {
-                          bool isSelect =
-                              value.selectMerchant == value.listMerchant[index];
-                          return ItemMerchantWidget(
-                              onSelect: (dto) {
-                                value.merchantSelect(dto);
-                              },
-                              dto: value.listMerchant[index],
-                              isSelect: isSelect);
-                        },
-                        separatorBuilder: (context, index) => const MySeparator(
-                              color: AppColor.GREY_DADADA,
-                            ),
-                        itemCount: value.listMerchant.length),
-                  ))
-                : Expanded(
-                    child: Container(
-                    padding: const EdgeInsets.only(left: 30, top: 10),
-                    child: Text(
-                      'Có vẻ bạn chưa thêm\ndoanh nghiệp nào!',
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  )),
+            const SizedBox(height: 20),
+            if (state.status == BlocStatus.LOADING &&
+                state.request == QR_Box.GET_MERCHANTS)
+              Expanded(
+                  child: Center(
+                child: CircularProgressIndicator(),
+              ))
+            else
+              value.listMerchant.isNotEmpty
+                  ? Expanded(
+                      child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: ListView.separated(
+                          padding: const EdgeInsets.only(top: 0),
+                          itemBuilder: (context, index) {
+                            bool isSelect = value.selectMerchant ==
+                                value.listMerchant[index];
+                            return ItemMerchantWidget(
+                                onSelect: (dto) {
+                                  value.merchantSelect(dto);
+                                },
+                                dto: value.listMerchant[index],
+                                isSelect: isSelect);
+                          },
+                          separatorBuilder: (context, index) =>
+                              const MySeparator(
+                                color: AppColor.GREY_DADADA,
+                              ),
+                          itemCount: value.listMerchant.length),
+                    ))
+                  : Expanded(
+                      child: Container(
+                      padding: const EdgeInsets.only(left: 30, top: 10),
+                      child: Text(
+                        'Có vẻ bạn chưa thêm\ndoanh nghiệp nào!',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    )),
           ],
         );
       },
@@ -393,40 +402,49 @@ class __ScreenState extends State<_Screen> {
               ),
             ],
             const SizedBox(height: 10),
-            provider.listTerminal.isNotEmpty
-                ? Expanded(
-                    child: Container(
-                    padding: EdgeInsets.fromLTRB(20, 0, 20, 50),
-                    child: ListView.separated(
-                        itemBuilder: (context, index) {
-                          bool isSelect = provider.selectTerminal ==
-                              (provider.isFilter
-                                  ? provider.filterTerminals[index]
-                                  : provider.listTerminal[index]);
-                          return ItemTerminalWidget(
-                              onSelect: (dto) {
-                                provider.terminalSelect(dto);
-                              },
-                              dto: provider.isFilter
-                                  ? provider.filterTerminals[index]
-                                  : provider.listTerminal[index],
-                              isSelect: isSelect);
-                        },
-                        separatorBuilder: (context, index) => const MySeparator(
-                              color: AppColor.GREY_DADADA,
-                            ),
-                        itemCount: provider.isFilter
-                            ? provider.filterTerminals.length
-                            : provider.listTerminal.length),
-                  ))
-                : Expanded(
-                    child: Container(
-                    padding: const EdgeInsets.only(left: 30, top: 20),
-                    child: Text(
-                      'Có vẻ bạn chưa thêm\ncửa hàng nào!',
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  )),
+            if (state.status == BlocStatus.LOADING &&
+                state.request == QR_Box.GET_TERMINALS)
+              Expanded(
+                  child: Center(
+                child: CircularProgressIndicator(),
+              ))
+            else
+              provider.listTerminal.isNotEmpty
+                  ? Expanded(
+                      child: Container(
+                      padding: EdgeInsets.fromLTRB(20, 0, 20, 50),
+                      child: ListView.separated(
+                          itemBuilder: (context, index) {
+                            bool isSelect = provider.selectTerminal ==
+                                (provider.isFilter
+                                    ? provider.filterTerminals[index]
+                                    : provider.listTerminal[index]);
+                            return ItemTerminalWidget(
+                                onSelect: (dto) {
+                                  provider.terminalSelect(dto);
+                                },
+                                dto: provider.isFilter
+                                    ? provider.filterTerminals[index]
+                                    : provider.listTerminal[index],
+                                isSelect: isSelect);
+                          },
+                          padding: const EdgeInsets.only(top: 0),
+                          separatorBuilder: (context, index) =>
+                              const MySeparator(
+                                color: AppColor.GREY_DADADA,
+                              ),
+                          itemCount: provider.isFilter
+                              ? provider.filterTerminals.length
+                              : provider.listTerminal.length),
+                    ))
+                  : Expanded(
+                      child: Container(
+                      padding: const EdgeInsets.only(left: 30, top: 20),
+                      child: Text(
+                        'Có vẻ bạn chưa thêm\ncửa hàng nào!',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    )),
           ],
         );
       },
