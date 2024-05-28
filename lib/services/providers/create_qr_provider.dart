@@ -6,6 +6,8 @@ import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/terminal_qr_dto.dart';
 
+import '../../models/qr_box_dto.dart';
+
 class CreateQRProvider with ChangeNotifier, BaseManager {
   @override
   final BuildContext context;
@@ -16,8 +18,10 @@ class CreateQRProvider with ChangeNotifier, BaseManager {
   String content = '';
   String orderCode = '';
   String branchCode = '';
+  String qrBoxCode = '';
 
   bool isExtra = false;
+  bool isQrBox = true;
 
   List<BankTypeDTO> listBank = [];
 
@@ -46,6 +50,7 @@ class CreateQRProvider with ChangeNotifier, BaseManager {
 
   bool enableDropList = false;
   TerminalQRDTO terminalQRDTO = TerminalQRDTO();
+  QRBoxDTO qrBoxDTO = QRBoxDTO();
 
   void onMenuStateChange(bool isOpen) {
     if (enableDropList) {
@@ -64,8 +69,27 @@ class CreateQRProvider with ChangeNotifier, BaseManager {
     notifyListeners();
   }
 
+  void updateQrBoxDTO(QRBoxDTO? value, {bool isFirst = false}) {
+    if (value == null) return;
+    if (value.subTerminalCode.isEmpty && !isFirst) return;
+    qrBoxDTO = value;
+    if (!isFirst) {
+      qrBoxCode = qrBoxDTO.subTerminalCode;
+    }
+    notifyListeners();
+  }
+
   void updateExtra() {
+    branchCode = '';
+    qrBoxCode = '';
     isExtra = !isExtra;
+    notifyListeners();
+  }
+
+  void updateisQrBox() {
+    isQrBox = !isQrBox;
+    branchCode = '';
+    qrBoxCode = '';
     notifyListeners();
   }
 
@@ -88,8 +112,10 @@ class CreateQRProvider with ChangeNotifier, BaseManager {
     money = StringUtils.formatNumber(0);
     content = '';
     branchCode = '';
+    qrBoxCode = '';
     orderCode = '';
     isExtra = false;
+    isQrBox = false;
     notifyListeners();
   }
 
@@ -118,6 +144,11 @@ class CreateQRProvider with ChangeNotifier, BaseManager {
 
   void updateBranchCode(String text) {
     branchCode = text;
+    notifyListeners();
+  }
+
+  void updateQrBoxCode(String text) {
+    qrBoxCode = text;
     notifyListeners();
   }
 

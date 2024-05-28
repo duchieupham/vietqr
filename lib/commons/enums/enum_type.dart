@@ -331,6 +331,7 @@ enum CreateQRType {
   SCAN_NOT_FOUND,
   LIST_BANK,
   LIST_TERMINAL,
+  LIST_QR_BOX,
 }
 
 enum DashBoardType {

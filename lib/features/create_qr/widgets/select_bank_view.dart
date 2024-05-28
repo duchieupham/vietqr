@@ -27,7 +27,8 @@ class SelectBankView extends StatelessWidget {
           onTap: onTap,
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 12),
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
+              border: Border.all(color: AppColor.GREY_DADADA),
               borderRadius: BorderRadius.all(Radius.circular(5)),
               color: AppColor.WHITE,
             ),
@@ -35,8 +36,8 @@ class SelectBankView extends StatelessWidget {
               children: [
                 if (dto.imgId.isNotEmpty)
                   Container(
-                    width: 60,
-                    height: 30,
+                    width: 80,
+                    height: 40,
                     margin: const EdgeInsets.only(left: 4),
                     decoration: BoxDecoration(
                       image: DecorationImage(
@@ -57,19 +58,11 @@ class SelectBankView extends StatelessWidget {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
-                                  fontSize: 16,
+                                  fontSize: 15,
                                   fontWeight: FontWeight.bold,
                                   color: AppColor.BLACK),
                             ),
                           ),
-                          if (isSelect)
-                            Icon(Icons.check, color: AppColor.BLUE_TEXT),
-                          if (isShowIconDrop)
-                            Icon(
-                              Icons.keyboard_arrow_down_outlined,
-                              color: AppColor.BLUE_TEXT,
-                            ),
-                          const SizedBox(width: 8),
                         ],
                       ),
                       Text(
@@ -77,13 +70,18 @@ class SelectBankView extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: AppColor.BLACK),
+                            fontSize: 13, color: AppColor.BLACK),
                       ),
                     ],
                   ),
                 ),
+                if (isSelect) Icon(Icons.check, color: AppColor.BLUE_TEXT),
+                if (isShowIconDrop)
+                  Icon(
+                    Icons.keyboard_arrow_down_outlined,
+                    color: AppColor.BLUE_TEXT,
+                  ),
+                const SizedBox(width: 8),
               ],
             ),
           ),
