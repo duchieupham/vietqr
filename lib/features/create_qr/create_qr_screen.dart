@@ -3,6 +3,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:vierqr/models/terminal_qr_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
+import '../../models/qr_box_dto.dart';
 import 'widgets/calculator_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -141,6 +142,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
         if (state.type == CreateQRType.LOAD_DATA) {
           _bloc.add(QREventGetList());
           _bloc.add(QREventGetTerminals());
+          _bloc.add(QREventGetQrBox());
           _provider.updatePage(state.page);
           if (state.page == 0) {
             _focusMoney.requestFocus();
@@ -150,6 +152,10 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
         if (state.type == CreateQRType.LIST_TERMINAL) {
           _provider.updateTerminalQRDTO(state.listTerminal.first,
               isFirst: true);
+        }
+
+        if (state.type == CreateQRType.LIST_QR_BOX) {
+          _provider.updateQrBoxDTO(state.listQrBox.first, isFirst: true);
         }
 
         if (state.type == CreateQRType.UPLOAD_IMAGE) {
@@ -215,7 +221,10 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
             return GestureDetector(
               onTap: _onEnableList,
               child: Scaffold(
-                appBar: const MAppBar(title: 'Tạo QR giao dịch'),
+                backgroundColor: AppColor.WHITE,
+                appBar: const MAppBar(
+                  title: 'Tạo QR giao dịch',
+                ),
                 body: Stack(
                   children: [
                     Column(
@@ -246,6 +255,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     MTextFieldCustom(
+                                      showBorder: true,
                                       isObscureText: false,
                                       maxLines: 1,
                                       value: provider.money,
@@ -289,6 +299,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                     const SizedBox(height: 30),
                                     MTextFieldCustom(
                                       isObscureText: false,
+                                      showBorder: true,
                                       maxLines: 1,
                                       fillColor: AppColor.WHITE,
                                       value: provider.content,
@@ -380,6 +391,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                       children: [
                                         const SizedBox(height: 24),
                                         MTextFieldCustom(
+                                          showBorder: true,
                                           isObscureText: false,
                                           maxLines: 1,
                                           value: provider.orderCode,
@@ -394,24 +406,92 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                           onChange: provider.updateOrderCode,
                                         ),
                                         const SizedBox(height: 30),
-                                        MTextFieldCustom(
-                                          isObscureText: false,
-                                          maxLines: 1,
-                                          fillColor: AppColor.WHITE,
-                                          value: provider.branchCode,
-                                          textFieldType: TextfieldType.LABEL,
-                                          maxLength: 10,
-                                          title:
-                                              'Mã cửa hàng (${provider.branchCode.length}/10 ký tự)',
-                                          hintText:
-                                              'Nhập hoặc chọn mã cửa hàng',
-                                          inputType: TextInputType.text,
-                                          keyboardAction: TextInputAction.next,
-                                          onChange: provider.updateBranchCode,
-                                          child: _buildDropListTerminal(
-                                              state.listTerminal,
-                                              provider.terminalQRDTO),
-                                        )
+                                        Text(
+                                          'Phân loại giao dịch',
+                                          style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Container(
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: <Widget>[
+                                              Row(
+                                                children: [
+                                                  Radio(
+                                                    activeColor:
+                                                        AppColor.BLUE_TEXT,
+                                                    value: true,
+                                                    groupValue:
+                                                        provider.isQrBox,
+                                                    onChanged: (value) {
+                                                      provider.updateisQrBox();
+                                                    },
+                                                  ),
+                                                  Text('Cửa hàng'),
+                                                ],
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Radio(
+                                                    activeColor:
+                                                        AppColor.BLUE_TEXT,
+                                                    value: false,
+                                                    groupValue:
+                                                        provider.isQrBox,
+                                                    onChanged: (value) {
+                                                      provider.updateisQrBox();
+                                                      print(value);
+                                                    },
+                                                  ),
+                                                  Text('QR Box'),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        const SizedBox(height: 30),
+                                        if (provider.isQrBox)
+                                          MTextFieldCustom(
+                                            showBorder: true,
+                                            isObscureText: false,
+                                            maxLines: 1,
+                                            fillColor: AppColor.WHITE,
+                                            value: provider.branchCode,
+                                            textFieldType: TextfieldType.LABEL,
+                                            maxLength: 10,
+                                            title: 'Mã cửa hàng',
+                                            hintText:
+                                                'Nhập hoặc chọn mã cửa hàng',
+                                            inputType: TextInputType.text,
+                                            keyboardAction:
+                                                TextInputAction.next,
+                                            onChange: provider.updateBranchCode,
+                                            child: _buildDropListTerminal(
+                                                state.listTerminal,
+                                                provider.terminalQRDTO),
+                                          ),
+                                        if (!provider.isQrBox)
+                                          MTextFieldCustom(
+                                            showBorder: true,
+                                            isObscureText: false,
+                                            maxLines: 1,
+                                            fillColor: AppColor.WHITE,
+                                            value: provider.qrBoxCode,
+                                            textFieldType: TextfieldType.LABEL,
+                                            maxLength: 10,
+                                            title: 'QR Box',
+                                            hintText:
+                                                'Chọn QR Box để tạo mã VietQR',
+                                            inputType: TextInputType.text,
+                                            keyboardAction:
+                                                TextInputAction.next,
+                                            onChange: provider.updateQrBoxCode,
+                                            child: _buildDropListQrBox(
+                                                state.listQrBox,
+                                                provider.qrBoxDTO),
+                                          ),
                                       ],
                                     ),
                                 ]
@@ -675,10 +755,9 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                       fillColor: AppColor.WHITE,
                       value: _provider.branchCode,
                       textFieldType: TextfieldType.DEFAULT,
-                      maxLength: 10,
+                      // maxLength: 10,
                       contentPadding: EdgeInsets.zero,
-                      title:
-                          'Mã chi nhánh (${_provider.branchCode.length}/10 ký tự)',
+                      title: 'Mã chi nhánh',
                       hintText: 'Nhập hoặc chọn mã cửa hàng',
                       inputType: TextInputType.text,
                       keyboardAction: TextInputAction.next,
@@ -752,6 +831,98 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
         ),
       );
 
+  Widget _buildDropListQrBox(List<QRBoxDTO> list, QRBoxDTO? dto) =>
+      DropdownButtonHideUnderline(
+        child: DropdownButton2<QRBoxDTO>(
+          isExpanded: true,
+          selectedItemBuilder: (context) {
+            return list
+                .map(
+                  (item) => DropdownMenuItem<QRBoxDTO>(
+                    value: item,
+                    child: MTextFieldCustom(
+                      isObscureText: false,
+                      maxLines: 1,
+                      fillColor: AppColor.WHITE,
+                      value: _provider.qrBoxCode,
+                      textFieldType: TextfieldType.DEFAULT,
+                      // maxLength: 15,
+                      contentPadding: EdgeInsets.zero,
+                      title:
+                          'Mã chi nhánh (${_provider.qrBoxCode.length}/10 ký tự)',
+                      hintText: 'Chọn QR Box để tạo mã VietQR',
+                      inputType: TextInputType.text,
+                      keyboardAction: TextInputAction.next,
+                      onChange: _provider.updateQrBoxCode,
+                    ),
+                  ),
+                )
+                .toList();
+          },
+          onMenuStateChange: _provider.onMenuStateChange,
+          items: list.map((item) {
+            return DropdownMenuItem<QRBoxDTO>(
+              value: item,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      child: Row(
+                        children: [
+                          Text(
+                            item.subRawTerminalCode,
+                            style: const TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.w500),
+                          ),
+                          const Spacer(),
+                          if (item.subTerminalCode.isEmpty)
+                            Icon(Icons.expand_more),
+                        ],
+                      ),
+                    ),
+                  ),
+                  if (item.subTerminalCode.isNotEmpty) ...[
+                    Text(
+                      item.subTerminalAddress,
+                      style: const TextStyle(
+                          fontSize: 11, color: AppColor.grey979797),
+                    ),
+                    const Divider()
+                  ]
+                ],
+              ),
+            );
+          }).toList(),
+          value: _provider.qrBoxDTO,
+          onChanged: _provider.updateQrBoxDTO,
+          buttonStyleData: ButtonStyleData(
+            height: 50,
+            width: MediaQuery.of(context).size.width,
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: AppColor.WHITE,
+            ),
+          ),
+          iconStyleData: const IconStyleData(
+            icon: Icon(Icons.expand_more),
+            iconSize: 24,
+            iconEnabledColor: AppColor.BLACK,
+            iconDisabledColor: Colors.grey,
+          ),
+          dropdownStyleData: DropdownStyleData(
+            width: MediaQuery.of(context).size.width - 40,
+            offset: Offset(0, 50),
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(5)),
+          ),
+          menuItemStyleData: MenuItemStyleData(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+          ),
+        ),
+      );
+
   void _onUpdateMoney() async {
     FocusManager.instance.primaryFocus?.unfocus();
     final data = await NavigatorUtils.navigatePage(context, CalculatorScreen(),
@@ -789,7 +960,10 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
       content: formattedName,
       userId: SharePrefUtils.getProfile().userId,
       orderId: _provider.orderCode,
-      terminalCode: _provider.branchCode,
+      // terminalCode: _provider.branchCode,
+      terminalCode: _provider.branchCode.isEmpty
+          ? _provider.qrBoxCode
+          : _provider.branchCode,
     );
 
     _bloc.add(QREventGenerate(dto: dto));

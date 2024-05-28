@@ -27,6 +27,8 @@ import 'package:vierqr/models/register_authentication_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/models/terminal_qr_dto.dart';
 
+import '../../../models/qr_box_dto.dart';
+
 class BankCardRepository {
   const BankCardRepository();
 
@@ -73,6 +75,29 @@ class BankCardRepository {
       LOG.error(e.toString());
     }
     return listTerminals;
+  }
+
+  Future<List<QRBoxDTO>> getQrBox(String userId, String bankId) async {
+    List<QRBoxDTO> listQrBox = [];
+
+    try {
+      // String url =
+      //     '${EnvConfig.getBaseUrl()}tid/tid-box/$bankId?userId=$userId';
+      String url =
+          'https://dev.vietqr.org/vqr/api/tid/tid-box/$bankId?userId=$userId';
+      final response =
+          await BaseAPIClient.getAPI(url: url, type: AuthenticationType.SYSTEM);
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        if (data != null) {
+          listQrBox =
+              data.map<QRBoxDTO>((json) => QRBoxDTO.fromJson(json)).toList();
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return listQrBox;
   }
 
   Future<List<QRGeneratedDTO>> generateQRList(List<QRCreateDTO> list) async {

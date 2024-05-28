@@ -15,6 +15,7 @@ import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
 import 'package:vierqr/models/notify_trans_dto.dart';
+import 'package:vierqr/models/qr_box_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/models/terminal_qr_dto.dart';
@@ -26,7 +27,11 @@ class CreateQRBloc extends Bloc<CreateQREvent, CreateQRState> with BaseManager {
   final QRGeneratedDTO? qrDTO;
 
   CreateQRBloc(this.context, this.bankAccountDTO, this.qrDTO)
-      : super(const CreateQRState(listBanks: [], listTerminal: [])) {
+      : super(const CreateQRState(
+          listBanks: [],
+          listTerminal: [],
+          listQrBox: [],
+        )) {
     on<QrEventGetBankDetail>(_initData);
     on<QREventGetList>(_getBankAccounts);
     on<QREventGetTerminals>(_getTerminals);
@@ -35,6 +40,7 @@ class CreateQRBloc extends Bloc<CreateQREvent, CreateQRState> with BaseManager {
     on<QREventPaid>(_onPaid);
     on<QrEventScanGetBankType>(_getDataScan);
     on<QREventSetBankAccountDTO>(_setBankAccountDTO);
+    on<QREventGetQrBox>(_getQrBox);
   }
 
   final qrRepository = const QRRepository();
@@ -82,6 +88,30 @@ class CreateQRBloc extends Bloc<CreateQREvent, CreateQRState> with BaseManager {
           type: CreateQRType.ERROR,
         ),
       );
+    }
+  }
+
+  void _getQrBox(CreateQREvent event, Emitter emit) async {
+    try {
+      if (event is QREventGetQrBox) {
+        emit(state.copyWith(status: BlocStatus.NONE));
+        List<QRBoxDTO> list = await bankCardRepository.getQrBox(
+            userId, state.bankAccountDTO?.id ?? '');
+
+        QRBoxDTO qrBoxDTO =
+            QRBoxDTO(subRawTerminalCode: 'Chọn QR Box để tạo mã VietQR');
+        list = [qrBoxDTO, ...list];
+
+        emit(state.copyWith(
+            type: CreateQRType.LIST_QR_BOX,
+            listQrBox: list,
+            status: BlocStatus.NONE));
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+          status: BlocStatus.ERROR,
+          msg: 'Không thể tải danh sách. Vui lòng kiểm tra lại kết nối'));
     }
   }
 
