@@ -474,25 +474,43 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                                 provider.terminalQRDTO),
                                           ),
                                         if (!provider.isQrBox)
-                                          MTextFieldCustom(
-                                            showBorder: true,
-                                            isObscureText: false,
-                                            maxLines: 1,
-                                            fillColor: AppColor.WHITE,
-                                            value: provider.qrBoxCode,
-                                            textFieldType: TextfieldType.LABEL,
-                                            maxLength: 10,
-                                            title: 'QR Box',
-                                            hintText:
-                                                'Chọn QR Box để tạo mã VietQR',
-                                            inputType: TextInputType.text,
-                                            keyboardAction:
-                                                TextInputAction.next,
-                                            onChange: provider.updateQrBoxCode,
+                                          Container(
+                                            width: double.infinity,
+                                            height: 50,
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 15, vertical: 8),
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                                border: Border.all(
+                                                    color: AppColor.GREY_TEXT
+                                                        .withOpacity(0.5),
+                                                    width: 0.5)),
                                             child: _buildDropListQrBox(
                                                 state.listQrBox,
                                                 provider.qrBoxDTO),
                                           ),
+                                        // MTextFieldCustom(
+                                        //   enable: false,
+                                        //   showBorder: true,
+                                        //   isObscureText: false,
+                                        //   maxLines: 1,
+                                        //   fillColor: AppColor.WHITE,
+                                        //   value: provider.qrBoxCode,
+                                        //   textFieldType: TextfieldType.LABEL,
+                                        //   maxLength: 10,
+                                        //   title: 'QR Box',
+                                        //   hintText:
+                                        //       'Chọn QR Box để tạo mã VietQR',
+                                        //   inputType: TextInputType.text,
+                                        //   keyboardAction:
+                                        //       TextInputAction.next,
+                                        //   // onChange: provider.updateQrBoxCode,
+                                        //   onChange: (value) {},
+                                        //   child: _buildDropListQrBox(
+                                        //       state.listQrBox,
+                                        //       provider.qrBoxDTO),
+                                        // ),
                                       ],
                                     ),
                                 ]
@@ -836,52 +854,21 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
       DropdownButtonHideUnderline(
         child: DropdownButton2<QRBoxDTO>(
           isExpanded: true,
-          selectedItemBuilder: (context) {
-            return list
-                .map(
-                  (item) => DropdownMenuItem<QRBoxDTO>(
-                    value: item,
-                    child: MTextFieldCustom(
-                      isObscureText: false,
-                      maxLines: 1,
-                      fillColor: AppColor.WHITE,
-                      value: _provider.qrBoxCode,
-                      textFieldType: TextfieldType.DEFAULT,
-                      // maxLength: 15,
-                      contentPadding: EdgeInsets.zero,
-                      title:
-                          'Mã chi nhánh (${_provider.qrBoxCode.length}/10 ký tự)',
-                      hintText: 'Chọn QR Box để tạo mã VietQR',
-                      inputType: TextInputType.text,
-                      keyboardAction: TextInputAction.next,
-                      onChange: _provider.updateQrBoxCode,
-                    ),
-                  ),
-                )
-                .toList();
-          },
           onMenuStateChange: _provider.onMenuStateChange,
+          underline: const SizedBox.shrink(),
           items: list.map((item) {
             return DropdownMenuItem<QRBoxDTO>(
               value: item,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Expanded(
-                    child: Container(
-                      alignment: Alignment.centerLeft,
-                      child: Row(
-                        children: [
-                          Text(
-                            item.subRawTerminalCode,
-                            style: const TextStyle(
-                              fontSize: 15,
-                            ),
-                          ),
-                          const Spacer(),
-                          if (item.subTerminalCode.isEmpty)
-                            Icon(Icons.expand_more),
-                        ],
+                  Container(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      item.subRawTerminalCode,
+                      style: const TextStyle(
+                        fontSize: 15,
                       ),
                     ),
                   ),
@@ -892,7 +879,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                         fontSize: 12,
                       ),
                     ),
-                    const Divider()
+                    // const Divider()
                   ]
                 ],
               ),

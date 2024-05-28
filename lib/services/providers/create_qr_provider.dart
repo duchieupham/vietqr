@@ -74,7 +74,7 @@ class CreateQRProvider with ChangeNotifier, BaseManager {
     if (value.subTerminalCode.isEmpty && !isFirst) return;
     qrBoxDTO = value;
     if (!isFirst) {
-      qrBoxCode = qrBoxDTO.subTerminalCode;
+      qrBoxCode = value.subTerminalCode;
     }
     notifyListeners();
   }
