@@ -73,7 +73,8 @@ class _ServiceSectionState extends State<ServiceSection> {
         _buildItemService(
             context, 'assets/images/ic-gg-chat-home.png', 'Google Chat',
             () async {
-          Navigator.pushNamed(context, Routes.CONNECT_GG_CHAT_SCREEN);
+          // Navigator.pushNamed(context, Routes.CONNECT_GG_CHAT_SCREEN);
+          Navigator.pushNamed(context, Routes.QR_BOX);
         }),
       ],
     );
@@ -215,7 +216,7 @@ class _ServiceSectionState extends State<ServiceSection> {
     double width = MediaQuery.of(context).size.width;
     return SizedBox(
       width: getDeviceType() == 'phone' ? width / 5 - 7 : 70,
-      child: GestureDetector(
+      child: InkWell(
         onTap: onTap,
         child: Column(
           mainAxisSize: MainAxisSize.min,

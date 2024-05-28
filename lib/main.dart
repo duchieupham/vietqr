@@ -10,6 +10,8 @@ import 'package:vierqr/features/invoice/invoice_screen.dart';
 import 'package:vierqr/features/maintain_charge/blocs/maintain_charge_bloc.dart';
 import 'package:vierqr/features/maintain_charge/maintain_charge_screen.dart';
 import 'package:vierqr/features/maintain_charge/views/confirm_active_key_screen.dart';
+import 'package:vierqr/features/qr_box/qr_box_screen.dart';
+import 'package:vierqr/features/qr_box/states/qr_box_state.dart';
 import 'package:vierqr/features/transaction_detail/transaction_detail_screen.dart';
 import 'package:vierqr/features/transaction_detail/widgets/transaction_sucess_widget.dart';
 import 'package:vierqr/layouts/bottom_sheet/notify_trans_widget.dart';
@@ -19,6 +21,7 @@ import 'package:vierqr/services/firebase_dynamic_link/uni_links_listener_mixins.
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/connect_gg_chat_provider.dart';
 import 'package:vierqr/services/providers/maintain_charge_provider.dart';
+import 'package:vierqr/services/providers/qr_box_provider.dart';
 import 'package:vierqr/services/providers/register_provider.dart';
 import 'package:vierqr/services/socket_service/socket_service.dart';
 import 'features/connect_gg_chat/connect_gg_chat_screen.dart';
@@ -349,6 +352,7 @@ class _VietQRApp extends State<VietQRApp> {
             ChangeNotifierProvider(create: (context) => InvoiceProvider()),
             ChangeNotifierProvider(
                 create: (context) => ConnectGgChatProvider()),
+            ChangeNotifierProvider(create: (context) => QrBoxProvider()),
             ChangeNotifierProvider(create: (context) => RegisterProvider()),
             ChangeNotifierProvider(create: (context) => UserEditProvider()),
           ],
@@ -411,6 +415,17 @@ class _VietQRApp extends State<VietQRApp> {
                     return CupertinoPageRoute<bool>(
                       builder: (context) {
                         return DynamicActiveKeyScreen(activeKey: activeKey);
+                      },
+                    );
+                  }
+
+                  if (settings.name == Routes.QR_BOX) {
+                    // Map<String, dynamic> param =
+                    //     settings.arguments as Map<String, dynamic>;
+
+                    return CupertinoPageRoute<bool>(
+                      builder: (context) {
+                        return QRBoxScreen();
                       },
                     );
                   }

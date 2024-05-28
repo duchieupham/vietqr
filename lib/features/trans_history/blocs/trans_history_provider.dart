@@ -88,6 +88,8 @@ class TransProvider with ChangeNotifier {
 
   int offset = 0;
   bool isCalling = true;
+  bool _isInput = false;
+  bool get isInput => _isInput;
   final merchantRepository = const TransactionRepository();
   final scrollControllerList = ScrollController();
   int _currentPage = 0;
@@ -149,6 +151,7 @@ class TransProvider with ChangeNotifier {
   }
 
   void updateTerminalResponseDTO(TerminalAccountDTO? value) {
+    _isInput = false;
     if (value == null) return;
     _terminalAccountDTO = value;
     if (isOwner) {
@@ -251,8 +254,8 @@ class TransProvider with ChangeNotifier {
             type: valueFilter.id,
             bankId: bankId,
             offset: offset,
-            value: keywordSearch,
-            terminalCode: _terminalAccountDTO.terminalId ?? '',
+            value: codeTerminal,
+            terminalCode: _terminalAccountDTO.terminalCode ?? '',
             userId: SharePrefUtils.getProfile().userId,
             status: statusValue.id,
           );
@@ -445,6 +448,7 @@ class TransProvider with ChangeNotifier {
   }
 
   updateKeyword(String value) {
+    _isInput = true;
     String text = value.trim();
     _keywordSearch = text;
     codeTerminal = text;
