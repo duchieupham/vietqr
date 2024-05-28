@@ -89,6 +89,8 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
         final List<Color> colors = [];
         PaletteGenerator? paletteGenerator;
         BuildContext context = NavigationService.navigatorKey.currentContext!;
+        Provider.of<InvoiceProvider>(context, listen: false)
+            .setListUnAuth(list);
         if (list.isNotEmpty) {
           List<BankAccountDTO> listLinked =
               list.where((e) => e.isAuthenticated).toList();
@@ -96,6 +98,7 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
               list.where((e) => !e.isAuthenticated).toList();
 
           list = [...listLinked, ...listNotLinked];
+
           Provider.of<InvoiceProvider>(context, listen: false)
               .setListBank(listLinked);
           for (BankAccountDTO dto in list) {

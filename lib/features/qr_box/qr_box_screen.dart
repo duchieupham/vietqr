@@ -71,7 +71,7 @@ class __ScreenState extends State<_Screen> {
   }
 
   initData() {
-    list = Provider.of<InvoiceProvider>(context, listen: false).listBank!;
+    list = Provider.of<InvoiceProvider>(context, listen: false).listBankUnAuth!;
     if (list.isNotEmpty) {
       _provider.init(list);
     }
@@ -190,7 +190,7 @@ class __ScreenState extends State<_Screen> {
                       _merchantWidget(state),
                       _terminalWidget(state),
                       _confirmActive(),
-                      _activeSuccess(),
+                      _activeSuccess(state),
                     ],
                   ),
                 ),
@@ -520,23 +520,61 @@ class __ScreenState extends State<_Screen> {
     );
   }
 
-  Widget _activeSuccess() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      // mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const SizedBox(height: 100),
-        Image.asset(
-          AppImages.icSuccessInBlue,
-          width: 200,
-          fit: BoxFit.fitWidth,
-        ),
-        const SizedBox(height: 4),
-        Text(
-          'Kích hoạt QR Box thành công!',
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-        ),
-      ],
+  Widget _activeSuccess(QRBoxState state) {
+    if (state.status == BlocStatus.LOADING && state.request == QR_Box.ACTIVE) {
+      return const SizedBox.shrink();
+    }
+    return Consumer<QRBoxProvider>(
+      builder: (context, value, child) {
+        return Container(
+          padding: const EdgeInsets.only(left: 30, right: 30),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            // mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(height: 35),
+              Image.asset(
+                AppImages.icSuccessInBlue,
+                width: 200,
+                fit: BoxFit.fitWidth,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Kích hoạt QR Box\n${state.active!.boxCode} thành công\nvới STK ${state.active!.bankCode} - ${state.active!.bankAccount}',
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                'QR Box hỗ trợ nhận thông báo Biến động số dư ',
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'cho ngân hàng ',
+                    style:
+                        TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
+                  ),
+                  Text(
+                    'MBBank',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    ' và ',
+                    style:
+                        TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
+                  ),
+                  Text(
+                    'BIDV.',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 

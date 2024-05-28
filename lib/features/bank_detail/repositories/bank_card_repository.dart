@@ -81,8 +81,6 @@ class BankCardRepository {
     List<QRBoxDTO> listQrBox = [];
 
     try {
-      // String url =
-      //     '${EnvConfig.getBaseUrl()}tid/tid-box/$bankId?userId=$userId';
       String url =
           '${EnvConfig.getBaseUrl()}tid/tid-box/$bankId?userId=$userId';
       final response =

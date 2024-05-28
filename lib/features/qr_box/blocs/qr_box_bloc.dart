@@ -25,15 +25,18 @@ class QRBoxBloc extends Bloc<QRBoxEvent, QRBoxState> with BaseManager {
         emit(
             state.copyWith(status: BlocStatus.LOADING, request: QR_Box.ACTIVE));
         final result = await _repository.activeQRBox(
-            cert: event.cert,
-            terminalId: event.terminalId,
-            bankId: event.bankId);
-        if (result!) {
+          cert: event.cert,
+          terminalId: event.terminalId,
+          bankId: event.bankId,
+        );
+        if (result != null) {
           emit(state.copyWith(
-              status: BlocStatus.SUCCESS, request: QR_Box.ACTIVE));
+              status: BlocStatus.SUCCESS,
+              request: QR_Box.ACTIVE,
+              active: result));
         } else {
-          emit(
-              state.copyWith(status: BlocStatus.ERROR, request: QR_Box.ACTIVE));
+          emit(state.copyWith(
+              status: BlocStatus.ERROR, request: QR_Box.ACTIVE, active: null));
         }
       }
     } catch (e) {

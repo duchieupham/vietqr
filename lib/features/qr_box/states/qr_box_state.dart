@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/models/active_qr_box_dto.dart';
 import 'package:vierqr/models/store/merchant_dto.dart';
 import 'package:vierqr/models/terminal_qr_dto.dart';
 
@@ -11,6 +12,7 @@ class QRBoxState extends Equatable {
   final QR_Box request;
   final List<MerchantDTO>? listMerchant;
   final List<TerminalQRDTO>? listTerminal;
+  final ActiveQRBoxDTO? active;
 
   const QRBoxState({
     this.msg,
@@ -18,6 +20,7 @@ class QRBoxState extends Equatable {
     this.request = QR_Box.NONE,
     this.listMerchant,
     this.listTerminal,
+    this.active,
   });
 
   QRBoxState copyWith({
@@ -26,6 +29,7 @@ class QRBoxState extends Equatable {
     String? msg,
     List<MerchantDTO>? listMerchant,
     List<TerminalQRDTO>? listTerminal,
+    ActiveQRBoxDTO? active,
   }) {
     return QRBoxState(
       status: status ?? this.status,
@@ -33,9 +37,11 @@ class QRBoxState extends Equatable {
       msg: msg ?? this.msg,
       listMerchant: listMerchant ?? this.listMerchant,
       listTerminal: listTerminal ?? this.listTerminal,
+      active: active ?? this.active,
     );
   }
 
   @override
-  List<Object?> get props => [msg, status, request, listMerchant, listTerminal];
+  List<Object?> get props =>
+      [msg, status, request, listMerchant, listTerminal, active];
 }

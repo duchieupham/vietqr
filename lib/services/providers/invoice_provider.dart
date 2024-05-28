@@ -4,6 +4,8 @@ import '../../models/bank_account_dto.dart';
 
 class InvoiceProvider extends ChangeNotifier {
   List<BankAccountDTO>? listBank = [];
+  List<BankAccountDTO>? listBankUnAuth = [];
+
   List<InvoiceStatus> status = [
     const InvoiceStatus(id: 0, name: 'chưa thanh toán'),
     const InvoiceStatus(id: 1, name: 'đã Thanh toán'),
@@ -50,6 +52,11 @@ class InvoiceProvider extends ChangeNotifier {
 
   void changeStatus(int type) {
     selectedStatus = type;
+    notifyListeners();
+  }
+
+  void setListUnAuth(List<BankAccountDTO>? list) {
+    listBankUnAuth = list;
     notifyListeners();
   }
 

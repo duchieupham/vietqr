@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/log.dart';
+import 'package:vierqr/models/active_qr_box_dto.dart';
 import 'package:vierqr/models/store/merchant_dto.dart';
 import 'package:vierqr/models/terminal_qr_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
@@ -12,7 +13,7 @@ import '../../../commons/utils/base_api.dart';
 class QRBoxRepository {
   String get userId => SharePrefUtils.getProfile().userId.trim();
 
-  Future<bool?> activeQRBox(
+  Future<ActiveQRBoxDTO?> activeQRBox(
       {required String cert,
       required String terminalId,
       required String bankId}) async {
@@ -29,11 +30,14 @@ class QRBoxRepository {
         url: url,
         type: AuthenticationType.SYSTEM,
       );
-      return response.statusCode == 200;
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        return ActiveQRBoxDTO.fromJson(data);
+      }
     } catch (e) {
       LOG.error(e.toString());
     }
-    return false;
+    return null;
   }
 
   Future<List<MerchantDTO>> getListMerchant(String bankId) async {
