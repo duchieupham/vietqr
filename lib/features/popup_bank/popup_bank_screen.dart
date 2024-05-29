@@ -193,7 +193,7 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
                                         alignment: Alignment.center,
                                         child: Column(
                                           crossAxisAlignment:
-                                              CrossAxisAlignment.center,
+                                              CrossAxisAlignment.start,
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: [

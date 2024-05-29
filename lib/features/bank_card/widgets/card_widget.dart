@@ -181,6 +181,7 @@ class CardWidget extends StatelessWidget {
                               // mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Container(
+                                  width: widthInfoCard * 2 - 2,
                                   height: heightInfoCard - 10,
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -196,7 +197,7 @@ class CardWidget extends StatelessWidget {
                                                 ? AppColor.BLACK
                                                 : AppColor.WHITE,
                                             fontSize: 15,
-                                            fontWeight: FontWeight.w600),
+                                            fontWeight: FontWeight.bold),
                                       ),
                                       Text(
                                         e.userBankName.toUpperCase(),
@@ -223,7 +224,7 @@ class CardWidget extends StatelessWidget {
                               child: GestureDetector(
                                 onTap: onActive,
                                 child: Container(
-                                  padding: const EdgeInsets.all(8),
+                                  padding: const EdgeInsets.all(10),
                                   // height: 20,
                                   width: 80,
                                   decoration: BoxDecoration(
@@ -295,7 +296,7 @@ class CardWidget extends StatelessWidget {
                                                     BorderRadius.circular(30)),
                                             child: Center(
                                               child: Text(
-                                                'Gia Hạn',
+                                                'Gia hạn',
                                                 style: TextStyle(
                                                     fontSize: 12,
                                                     color: AppColor.WHITE),

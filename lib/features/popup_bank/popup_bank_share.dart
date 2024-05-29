@@ -174,7 +174,7 @@ class _PopupBankShareState extends State<PopupBankShare> {
                             Container(
                               width: 300,
                               padding: const EdgeInsets.symmetric(
-                                  vertical: 12, horizontal: 16),
+                                  vertical: 12, horizontal: 20),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(12),
                                 color: AppColor.WHITE,
@@ -196,8 +196,8 @@ class _PopupBankShareState extends State<PopupBankShare> {
                                         style: TextStyle(
                                           color: AppColor.ORANGE_DARK,
                                           fontSize: widget.dto.amount.length > 8
-                                              ? 22
-                                              : 26,
+                                              ? 18
+                                              : 24,
                                           fontWeight: FontWeight.bold,
                                         ),
                                         textAlign: TextAlign.center,

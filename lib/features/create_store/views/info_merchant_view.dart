@@ -75,7 +75,7 @@ class _InfoMerchantViewState extends State<InfoMerchantView> {
                 isEnable: true,
                 colorEnableBgr: AppColor.TRANSPARENT,
                 colorEnableText: AppColor.BLUE_TEXT,
-                margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 16),
                 border: Border.all(color: AppColor.BLUE_TEXT),
                 onTap: widget.onAddMerchant.call,
               ),

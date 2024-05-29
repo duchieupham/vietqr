@@ -403,7 +403,7 @@ class _BankScreenState extends State<_BankScreen>
                   children: [
                     if (extendAnnualFeeList.isNotEmpty) ...[
                       const SizedBox(
-                        height: 10,
+                        height: 0,
                       ),
                       Container(
                         height: (extendAnnualFeeList.length *
@@ -490,7 +490,7 @@ class _BankScreenState extends State<_BankScreen>
                       const SizedBox(height: 20),
                     ],
                     if (listAuthenticated.isNotEmpty) ...[
-                      // const SizedBox(height: 12),
+                      const SizedBox(height: 12),
                       Text(
                         'Tài khoản liên kết',
                         textAlign: TextAlign.start,

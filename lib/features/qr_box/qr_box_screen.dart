@@ -230,7 +230,7 @@ class __ScreenState extends State<_Screen> {
             if (provider.listAuthBank.isNotEmpty)
               Expanded(
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  padding: EdgeInsets.symmetric(horizontal: 30),
                   child: ListView.separated(
                     separatorBuilder: (context, index) => const MySeparator(
                       color: AppColor.GREY_DADADA,
@@ -300,7 +300,7 @@ class __ScreenState extends State<_Screen> {
               value.listMerchant.isNotEmpty
                   ? Expanded(
                       child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      padding: EdgeInsets.symmetric(horizontal: 30),
                       child: ListView.separated(
                           padding: const EdgeInsets.only(top: 0),
                           itemBuilder: (context, index) {
@@ -375,10 +375,10 @@ class __ScreenState extends State<_Screen> {
                     provider.filterTerminal(value);
                   },
                   decoration: InputDecoration(
-                      contentPadding: EdgeInsets.zero,
+                      contentPadding: EdgeInsets.symmetric(vertical: 16),
                       hintText: 'Tìm kiếm cửa hàng',
                       hintStyle: TextStyle(
-                          fontSize: 18, color: AppColor.BLACK.withOpacity(0.5)),
+                          fontSize: 15, color: AppColor.BLACK.withOpacity(0.5)),
                       enabledBorder: InputBorder.none,
                       focusedBorder: InputBorder.none,
                       prefixIcon: const Icon(
@@ -411,7 +411,7 @@ class __ScreenState extends State<_Screen> {
               provider.listTerminal.isNotEmpty
                   ? Expanded(
                       child: Container(
-                      padding: EdgeInsets.fromLTRB(20, 0, 20, 50),
+                      padding: EdgeInsets.fromLTRB(30, 0, 30, 50),
                       child: ListView.separated(
                           itemBuilder: (context, index) {
                             bool isSelect = provider.selectTerminal ==

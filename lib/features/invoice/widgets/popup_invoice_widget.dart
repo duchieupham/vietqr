@@ -109,7 +109,7 @@ class PopupQrCreate extends StatelessWidget {
                 ),
                 child: Center(
                   child: Container(
-                    width: 300,
+                    width: 280,
                     height: 300,
                     padding: const EdgeInsets.fromLTRB(30, 20, 30, 10),
                     decoration: BoxDecoration(
@@ -181,7 +181,7 @@ class PopupQrCreate extends StatelessWidget {
                         child: Container(
                           height: 40,
                           width: MediaQuery.of(context).size.width * 0.38,
-                          padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                          padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                           decoration: BoxDecoration(
                               color: AppColor.WHITE,
                               borderRadius: BorderRadius.circular(5),
@@ -194,7 +194,7 @@ class PopupQrCreate extends StatelessWidget {
                                 width: 25,
                                 // height: 14,
                               ),
-                              const SizedBox(width: 4),
+                              const SizedBox(width: 0),
                               DefaultTextStyle(
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
@@ -215,7 +215,7 @@ class PopupQrCreate extends StatelessWidget {
                         child: Container(
                           height: 40,
                           width: MediaQuery.of(context).size.width * 0.38,
-                          padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                          padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                           decoration: BoxDecoration(
                               color: AppColor.WHITE,
                               borderRadius: BorderRadius.circular(5),
@@ -228,7 +228,7 @@ class PopupQrCreate extends StatelessWidget {
                                 width: 25,
                                 // height: 14,
                               ),
-                              const SizedBox(width: 4),
+                              const SizedBox(width: 0),
                               DefaultTextStyle(
                                 textAlign: TextAlign.center,
                                 style: TextStyle(

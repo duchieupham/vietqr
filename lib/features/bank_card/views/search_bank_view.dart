@@ -156,55 +156,60 @@ class _SearchBankViewState extends State<SearchBankView> {
                         ),
             ),
             const Padding(padding: EdgeInsets.only(top: 20)),
-            BoxLayout(
-              width: width - 40,
-              borderRadius: 50,
-              alignment: Alignment.center,
-              bgColor: Theme.of(context).cardColor,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.search_rounded,
-                    size: 15,
-                    color: Theme.of(context).hintColor,
-                  ),
-                  Expanded(
-                    child: Form(
-                      key: _formKey,
-                      child: TextFieldWidget(
-                        width: width,
-                        hintText: 'Nhập để tìm kiếm',
-                        controller: searchController,
-                        keyboardAction: TextInputAction.done,
-                        autoFocus: false,
-                        onChange: (value) {
-                          search();
-                        },
-                        inputType: TextInputType.text,
-                        isObscureText: false,
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20),
+              child: BoxLayout(
+                width: width - 40,
+                height: 50,
+                borderRadius: 50,
+                alignment: Alignment.center,
+                bgColor: Theme.of(context).cardColor,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.search_rounded,
+                      size: 15,
+                      color: Theme.of(context).hintColor,
+                    ),
+                    Expanded(
+                      child: Form(
+                        key: _formKey,
+                        child: TextFieldWidget(
+                          width: width,
+                          hintText: 'Nhập để tìm kiếm',
+                          controller: searchController,
+                          keyboardAction: TextInputAction.done,
+                          autoFocus: false,
+                          onChange: (value) {
+                            search();
+                          },
+                          inputType: TextInputType.text,
+                          isObscureText: false,
+                        ),
                       ),
                     ),
-                  ),
-                  ValueListenableBuilder(
-                    valueListenable: _searchClearProvider,
-                    builder: (_, provider, child) {
-                      return Visibility(
-                        visible: provider == true,
-                        child: InkWell(
-                          onTap: () {
-                            reset(context: context);
-                          },
-                          child: Icon(
-                            Icons.close_rounded,
-                            size: 15,
-                            color: Theme.of(context).hintColor,
+                    ValueListenableBuilder(
+                      valueListenable: _searchClearProvider,
+                      builder: (_, provider, child) {
+                        return Visibility(
+                          visible: provider == true,
+                          child: InkWell(
+                            onTap: () {
+                              reset(context: context);
+                            },
+                            child: Icon(
+                              Icons.close_rounded,
+                              size: 15,
+                              color: Theme.of(context).hintColor,
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                  ),
-                ],
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
             const Padding(padding: EdgeInsets.only(bottom: 10)),
@@ -221,7 +226,7 @@ class _SearchBankViewState extends State<SearchBankView> {
       _searchClearProvider.updateClearSearch(false);
     }
     //
-    if (searchController.text.length >= 2) {
+    if (searchController.text.length >= 1) {
       List<BankAccountDTO> resultBanks = [];
       if (banks.isNotEmpty) {
         for (int i = 0; i < banks.length; i++) {
