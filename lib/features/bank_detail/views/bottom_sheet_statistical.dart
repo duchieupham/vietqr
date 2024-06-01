@@ -9,6 +9,7 @@ import 'package:vierqr/features/bank_detail/views/dialog_pick_date.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/terminal_response_dto.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/providers/statistical_provider.dart';
 
 class BottomSheetStatistical extends StatefulWidget {
@@ -423,7 +424,7 @@ class _BottomSheetStatisticalState extends State<BottomSheetStatistical> {
   void _onPickMonth(StatisticProvider provider) async {
     final result = await showDialog(
       barrierDismissible: false,
-      context: NavigationService.navigatorKey.currentContext!,
+      context: NavigationService.context!,
       builder: (BuildContext context) {
         return Material(
           color: AppColor.TRANSPARENT,

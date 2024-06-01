@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart'
     as Constants;
 import 'package:vierqr/commons/helper/app_data_helper.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
-import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/info_user_dto.dart';
 import 'package:vierqr/models/introduce_dto.dart';
@@ -14,15 +15,20 @@ import 'package:vierqr/models/theme_dto.dart';
 import 'package:vierqr/models/user_profile.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
 
-import '../../../features/login/login_screen.dart';
-import '../../../models/app_info_dto.dart';
+import '../../../navigator/app_navigator.dart';
 import 'secure_storage_service.dart';
 import 'shared_pref_local.dart';
+
+late SharedPreferences sharedPrefs;
 
 class SharePrefUtils {
   static String tokenInfo = '';
 
   String get userId => getProfile().userId;
+
+  static init() async {
+    sharedPrefs = await SharedPreferences.getInstance();
+  }
 
   /// Access Token
   static Future<String> getTokenInfo() async {
@@ -409,7 +415,7 @@ class SharePrefUtils {
   }
 
   static Future<void> resetServices() async {
-    BuildContext context = NavigationService.navigatorKey.currentContext!;
+    BuildContext context = NavigationService.context!;
     Provider.of<UserEditProvider>(context, listen: false).reset();
     Provider.of<AuthProvider>(context, listen: false).reset();
     await saveProfileToCache(UserProfile());
@@ -421,5 +427,29 @@ class SharePrefUtils {
     // Navigator.of(context).popUntil((route) => route.isFirst);
     Navigator.of(context)
         .pushNamedAndRemoveUntil(Routes.LOGIN, (route) => false);
+  }
+
+  static onClearCache() async {
+    PackageInfo data = await PackageInfo.fromPlatform();
+    print('Version------- ${getVersionApp()}');
+    if (getVersionApp() != data.version) {
+      await sharedPrefs
+          .remove(Constants.SharedPreferenceKey.ThemeVersion.sharedValue);
+      await sharedPrefs
+          .remove(Constants.SharedPreferenceKey.LogoVersion.sharedValue);
+      await sharedPrefs
+          .remove(Constants.SharedPreferenceKey.LogoApp.sharedValue);
+      await sharedPrefs
+          .remove(Constants.SharedPreferenceKey.BannerApp.sharedValue);
+      await sharedPrefs
+          .remove(Constants.SharedPreferenceKey.BannerEvent.sharedValue);
+      await sharedPrefs.remove(Constants.SharedPreferenceKey.Banks.sharedValue);
+      await sharedPrefs
+          .remove(Constants.SharedPreferenceKey.Themes.sharedValue);
+      await sharedPrefs
+          .remove(Constants.SharedPreferenceKey.SingleTheme.sharedValue);
+      // await sharedPrefs.remove(Constants.SharedPreferenceKey.Profile.sharedValue);
+      saveVersionApp(data.version);
+    }
   }
 }

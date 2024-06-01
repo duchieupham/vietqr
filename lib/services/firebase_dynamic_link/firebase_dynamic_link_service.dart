@@ -7,6 +7,7 @@ import '../../commons/utils/navigator_utils.dart';
 import '../../features/account/account_screen.dart';
 import '../../features/maintain_charge/views/dynamic_active_key_screen.dart';
 import '../../main.dart';
+import '../../navigator/app_navigator.dart';
 
 class DynamicLinkService {
   // FirebaseDynamicLinks dynamicLinks = FirebaseDynamicLinks.instance;
@@ -16,7 +17,7 @@ class DynamicLinkService {
           dynamicLinkData.link.queryParameters['key'] != null) {
         print('New dynamic link: ${dynamicLinkData.link}');
         NavigatorUtils.navigatePage(
-            NavigationService.navigatorKey.currentContext!,
+            NavigationService.context!,
             DynamicActiveKeyScreen(
               activeKey: dynamicLinkData.link.queryParameters['key']!,
             ),
@@ -50,7 +51,7 @@ class DynamicLinkService {
       print('New dynamic link: ${deepLink.queryParameters['key']}');
 
       NavigatorUtils.navigatePage(
-          NavigationService.navigatorKey.currentContext!,
+          NavigationService.context!,
           DynamicActiveKeyScreen(activeKey: deepLink.queryParameters['key']!),
           routeName: Routes.DYNAMIC_ACTIVE_KEY_SCREEN);
     }

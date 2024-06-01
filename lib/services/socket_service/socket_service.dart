@@ -10,6 +10,8 @@ import 'package:vierqr/models/notify_trans_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
+import '../../navigator/app_navigator.dart';
+
 class SocketService {
   SocketService._privateConstructor();
 
@@ -23,7 +25,7 @@ class SocketService {
 
   String get userId => SharePrefUtils().userId;
 
-  BuildContext get context => NavigationService.navigatorKey.currentContext!;
+  BuildContext get context => NavigationService.context!;
 
   static int _port = 8443;
 

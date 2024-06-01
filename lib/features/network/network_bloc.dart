@@ -1,35 +1,82 @@
+import 'dart:io';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
-import 'package:vierqr/main.dart';
 
 import 'network_event.dart';
-import 'network_helper.dart';
 import 'network_state.dart';
 
 class NetworkBloc extends Bloc<NetworkEvent, NetworkState> {
-  NetworkBloc._() : super(NetworkNone()) {
+  final Connectivity connectivity;
+
+  NetworkBloc({required this.connectivity})
+      : super(NetworkNone(isInternet: false)) {
     on<NetworkObserve>(_observe);
     on<NetworkNotify>(_notifyStatus);
   }
 
-  static final NetworkBloc _instance = NetworkBloc._();
-
-  factory NetworkBloc() => _instance;
-
-  bool get mounted =>
-      NavigationService.navigatorKey.currentContext?.mounted ?? false;
+  @override
+  Future<void> close() {
+    return super.close();
+  }
 
   void _observe(event, emit) {
-    NetworkHelper.observeNetwork();
+    connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
   }
 
   void _notifyStatus(NetworkNotify event, emit) async {
     if (event.result == TypeInternet.DISCONNECT) {
-      emit(NetworkFailure());
+      emit(NetworkFailure(state: state, isInternet: event.isInternet));
     } else if (event.result == TypeInternet.CONNECT) {
-      emit(NetworkSuccess());
+      //sau khi có kết nối => hiện thông báo => sau 3 giây chuyển status thành none để tắt
+      emit(NetworkSuccess(state: state, isInternet: event.isInternet));
+      await Future.delayed(Duration(seconds: 3)).then((v) {
+        this.add(NetworkNotify(
+          result: TypeInternet.NONE,
+          isInternet: true,
+        ));
+      });
     } else {
-      emit(NetworkNone());
+      emit(NetworkNone(isInternet: event.isInternet));
+    }
+  }
+
+  Future<void> _updateConnectionStatus(ConnectivityResult result) async {
+    if (result == ConnectivityResult.none) {
+      final result2 = await connectivity.checkConnectivity();
+      if (result2 == ConnectivityResult.none) {
+        this.add(NetworkNotify(
+          result: TypeInternet.DISCONNECT,
+          isInternet: true,
+        ));
+      } else {
+        checkConnection();
+      }
+    } else {
+      checkConnection();
+    }
+  }
+
+  Future checkConnection() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        this.add(NetworkNotify(
+          result: TypeInternet.CONNECT,
+          isInternet: false,
+        ));
+      } else {
+        this.add(NetworkNotify(
+          result: TypeInternet.DISCONNECT,
+          isInternet: true,
+        ));
+      }
+    } on SocketException catch (_) {
+      this.add(NetworkNotify(
+        result: TypeInternet.DISCONNECT,
+        isInternet: true,
+      ));
     }
   }
 }

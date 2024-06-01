@@ -29,9 +29,9 @@
 //   //   required String role,
 //   // }) async {
 //   //   final RelativeRect position =
-//   //       _buttonMenuCardPosition(NavigationService.navigatorKey.currentContext!);
+//   //       _buttonMenuCardPosition(NavigationService.context!);
 //   //   await showMenu(
-//   //     context: NavigationService.navigatorKey.currentContext!,
+//   //     context: NavigationService.context!,
 //   //     position: position,
 //   //     items: (isDelete)
 //   //         ? [
@@ -82,7 +82,7 @@
 //   //                       'Bạn có muốn xoá ${bankAccountDTO.bankAccount} ra khỏi danh sách không?',
 //   //                   confirmFunction: () async {
 //   //                     final BankManageBloc bankManageBloc = BlocProvider.of(
-//   //                         NavigationService.navigatorKey.currentContext!);
+//   //                         NavigationService.context!);
 //   //                     bankManageBloc.add(
 //   //                       BankManageEventRemoveDTO(
 //   //                         userId: UserInformationHelper.instance.getUserId(),

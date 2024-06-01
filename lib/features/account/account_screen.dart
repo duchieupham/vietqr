@@ -3,6 +3,7 @@ import 'package:vierqr/main.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/models/user_profile.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'views/vietqr_id_card_view.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -714,7 +715,7 @@ class _SettingWidget extends StatelessWidget {
   void _onCheckAppVersion() {
     showDialog(
       barrierDismissible: false,
-      context: NavigationService.navigatorKey.currentContext!,
+      context: NavigationService.context!,
       builder: (BuildContext context) {
         return DialogUpdateView(
           onCheckUpdate: () {

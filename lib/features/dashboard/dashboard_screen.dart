@@ -1,9 +1,6 @@
 import 'dart:async';
 import 'dart:isolate';
 
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
-import 'package:vierqr/commons/constants/configurations/stringify.dart'
-    as Constants;
 import 'package:float_bubble/float_bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,8 +10,11 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
+import 'package:vierqr/commons/constants/configurations/stringify.dart'
+as Constants;
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
@@ -22,13 +22,13 @@ import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/bank_card/bank_screen.dart';
 import 'package:vierqr/features/contact/contact_screen.dart';
+import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/blocs/isolate_stream.dart';
 import 'package:vierqr/features/dashboard/curved_navi_bar/curved_nav_bar_model.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
 import 'package:vierqr/features/dashboard/widget/background_app_bar_home.dart';
-import 'package:vierqr/features/dashboard/widget/floating_button.dart';
 import 'package:vierqr/features/dashboard/widget/maintain_widget.dart';
 import 'package:vierqr/features/home/home.dart';
 import 'package:vierqr/features/home/widget/dialog_update.dart';
@@ -40,9 +40,9 @@ import 'package:vierqr/features/store/store_screen.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/contact_dto.dart';
-import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/models/theme_dto.dart';
 import 'package:vierqr/models/user_repository.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/splash_screen.dart';
 
@@ -52,8 +52,6 @@ import '../../models/account_login_dto.dart';
 import '../../services/firebase_dynamic_link/firebase_dynamic_link_service.dart';
 import '../../services/firebase_dynamic_link/uni_links_listener_mixins.dart';
 import '../../services/providers/pin_provider.dart';
-import '../account/account_screen.dart';
-import '../login/blocs/login_bloc.dart';
 import '../login/events/login_event.dart';
 import '../maintain_charge/views/dynamic_active_key_screen.dart';
 import 'curved_navi_bar/custom_navigation_bar.dart';
@@ -264,7 +262,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
     if (isUpdateVersion && !isCheckApp) {
       showDialog(
         barrierDismissible: false,
-        context: NavigationService.navigatorKey.currentContext!,
+        context: NavigationService.context!,
         builder: (BuildContext context) {
           return DialogUpdateView(
             isHideClose: true,
@@ -560,6 +558,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
                 left: 20,
                 right: 20,
                 child: BlocBuilder<NetworkBloc, NetworkState>(
+                  bloc: getIt.get<NetworkBloc>(),
                   builder: (context, state) {
                     if (state is NetworkFailure) {
                       return DisconnectWidget(type: TypeInternet.DISCONNECT);

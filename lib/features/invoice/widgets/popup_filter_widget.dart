@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/features/invoice/blocs/invoice_bloc.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/providers/invoice_provider.dart';
 
 import '../../../commons/utils/image_utils.dart';
@@ -92,7 +93,7 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
   void _onPickMonth(InvoiceProvider provider) async {
     DateTime? result = await showDialog(
       barrierDismissible: false,
-      context: NavigationService.navigatorKey.currentContext!,
+      context: NavigationService.context!,
       builder: (BuildContext context) {
         return Material(
           color: AppColor.TRANSPARENT,

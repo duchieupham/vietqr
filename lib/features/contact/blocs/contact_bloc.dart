@@ -22,6 +22,7 @@ import 'package:vierqr/models/contact_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/models/viet_qr_scanned_dto.dart';
 import 'package:vierqr/models/vietqr_dto.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 
 class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
   @override
@@ -71,7 +72,7 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
     try {
       if (event is ContactEventGetList) {
         PaletteGenerator? paletteGenerator;
-        BuildContext context = NavigationService.navigatorKey.currentContext!;
+        BuildContext context = NavigationService.context!;
         emit(state.copyWith(
             status: BlocStatus.NONE,
             isLoading: event.isLoading,
@@ -125,7 +126,7 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
     try {
       if (event is GetListContactLoadMore) {
         PaletteGenerator? paletteGenerator;
-        BuildContext context = NavigationService.navigatorKey.currentContext!;
+        BuildContext context = NavigationService.context!;
         emit(state.copyWith(
             status: BlocStatus.NONE,
             isLoading: event.isLoading,
@@ -684,7 +685,7 @@ class ContactBloc extends Bloc<ContactEvent, ContactState> with BaseManager {
     try {
       if (event is SearchContactEvent) {
         PaletteGenerator? paletteGenerator;
-        BuildContext context = NavigationService.navigatorKey.currentContext!;
+        BuildContext context = NavigationService.context!;
         emit(state.copyWith(status: BlocStatus.NONE, type: ContactType.NONE));
         int type = event.type ?? 8;
         int offset = event.offset ?? 0;

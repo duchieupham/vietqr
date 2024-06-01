@@ -21,6 +21,7 @@ import 'package:vierqr/services/providers/pin_provider.dart';
 
 import '../../features/dashboard/widget/popup_noti_widget.dart';
 import '../../features/invoice/widgets/popup_invoice_success.dart';
+import '../../navigator/app_navigator.dart';
 import 'error_widget.dart';
 
 class DialogWidget {
@@ -35,7 +36,7 @@ class DialogWidget {
 
   // openNotificationMobile() {
   //   return showCupertinoModalPopup(
-  //       context: NavigationService.navigatorKey.currentContext!,
+  //       context: NavigationService.context!,
   //       builder: (context) {
   //         bool _doNotShowAgain = false;
   //         return Material(
@@ -95,7 +96,7 @@ class DialogWidget {
   openNotificationMobile(
     BuildContext? context,
   ) {
-    context ??= NavigationService.navigatorKey.currentContext;
+    context ??= NavigationService.context;
     return showDialog(
         context: context!,
         builder: (context) {
@@ -106,7 +107,7 @@ class DialogWidget {
   openActiveAnnualSuccess() {
     return showCupertinoModalPopup(
       // barrierDismissible: false,
-      context: NavigationService.navigatorKey.currentContext!,
+      context: NavigationService.context!,
       builder: (context) {
         return Material(
           color: AppColor.TRANSPARENT,
@@ -175,7 +176,7 @@ class DialogWidget {
     focusNode.requestFocus();
     return showDialog(
       barrierDismissible: false,
-      context: NavigationService.navigatorKey.currentContext!,
+      context: NavigationService.context!,
       builder: (context) {
         return Material(
           color: AppColor.TRANSPARENT,
@@ -212,7 +213,7 @@ class DialogWidget {
     focusNode.requestFocus();
     return showDialog(
       barrierDismissible: false,
-      context: NavigationService.navigatorKey.currentContext!,
+      context: NavigationService.context!,
       builder: (BuildContext context) {
         return Material(
           color: AppColor.TRANSPARENT,
@@ -355,7 +356,7 @@ class DialogWidget {
     double? marginRight,
   }) {
     return showDialog(
-        context: NavigationService.navigatorKey.currentContext!,
+        context: NavigationService.context!,
         barrierColor: AppColor.TRANSPARENT,
         barrierDismissible: true,
         builder: (BuildContext context) {
@@ -403,7 +404,7 @@ class DialogWidget {
   }) {
     return showDialog(
         barrierDismissible: false,
-        context: NavigationService.navigatorKey.currentContext!,
+        context: NavigationService.context!,
         builder: (BuildContext context) {
           return Material(
             color: AppColor.TRANSPARENT,
@@ -487,7 +488,7 @@ class DialogWidget {
     VoidCallback? onClose,
     Widget child,
   ) {
-    BuildContext context = NavigationService.navigatorKey.currentContext!;
+    BuildContext context = NavigationService.context!;
     final double width = MediaQuery.of(context).size.width;
     return showDialog(
         barrierDismissible: false,
@@ -520,7 +521,7 @@ class DialogWidget {
     bool? isDissmiss,
     Color? color,
   }) async {
-    context ??= NavigationService.navigatorKey.currentContext!;
+    context ??= NavigationService.context!;
     final double width = MediaQuery.of(context).size.width;
     final double height = MediaQuery.of(context).size.height;
     return await showModalBottomSheet(
@@ -559,7 +560,7 @@ class DialogWidget {
     EdgeInsetsGeometry? padding,
     bool isDismissible = true,
   }) async {
-    context ??= NavigationService.navigatorKey.currentContext!;
+    context ??= NavigationService.context!;
     return await showModalBottomSheet(
         isScrollControlled: true,
         isDismissible: isDismissible,
@@ -598,7 +599,7 @@ class DialogWidget {
       String? totalAmount,
       bool? isInvoiceDetail,
       String? timePaid}) async {
-    context ??= NavigationService.navigatorKey.currentContext!;
+    context ??= NavigationService.context!;
     return showCupertinoModalPopup(
       context: context,
       builder: (context) => PopupInvoiceSuccess(
@@ -623,7 +624,7 @@ class DialogWidget {
     double sigmaX = 5.0,
     double sigmaY = 5.0,
   }) async {
-    context ??= NavigationService.navigatorKey.currentContext!;
+    context ??= NavigationService.context!;
     return showModalBottomSheet(
       isScrollControlled: true,
       enableDrag: false,
@@ -657,12 +658,12 @@ class DialogWidget {
 
   Future openDateTimePickerDialog(
       String title, Function(DateTime) onChanged) async {
-    double width = MediaQuery.of(NavigationService.navigatorKey.currentContext!)
+    double width = MediaQuery.of(NavigationService.context!)
         .size
         .width;
     return await showModalBottomSheet(
         isScrollControlled: true,
-        context: NavigationService.navigatorKey.currentContext!,
+        context: NavigationService.context!,
         backgroundColor: AppColor.TRANSPARENT,
         builder: (context) {
           return BackdropFilter(
@@ -724,7 +725,7 @@ class DialogWidget {
       isPopLoading = true;
       return await showDialog(
           barrierDismissible: false,
-          context: NavigationService.navigatorKey.currentContext!,
+          context: NavigationService.context!,
           builder: (BuildContext context) {
             return Material(
               color: AppColor.TRANSPARENT,
@@ -803,7 +804,7 @@ class DialogWidget {
   }) {
     return showDialog(
         barrierDismissible: false,
-        context: NavigationService.navigatorKey.currentContext!,
+        context: NavigationService.context!,
         builder: (BuildContext context) {
           return Material(
             color: AppColor.TRANSPARENT,
@@ -950,7 +951,7 @@ class DialogWidget {
   }) {
     return showDialog(
         barrierDismissible: false,
-        context: NavigationService.navigatorKey.currentContext!,
+        context: NavigationService.context!,
         builder: (BuildContext context) {
           return Material(
             color: AppColor.TRANSPARENT,
@@ -1099,7 +1100,7 @@ class DialogWidget {
   }) {
     return showDialog(
         barrierDismissible: false,
-        context: NavigationService.navigatorKey.currentContext!,
+        context: NavigationService.context!,
         builder: (BuildContext context) {
           return Material(
             color: AppColor.TRANSPARENT,
@@ -1254,7 +1255,7 @@ class DialogWidget {
       EdgeInsets? padding,
       double? widthPopup,
       double radius = 15}) {
-    final BuildContext context = NavigationService.navigatorKey.currentContext!;
+    final BuildContext context = NavigationService.context!;
     final double width = MediaQuery.of(context).size.width;
     final double height = MediaQuery.of(context).size.height;
     return showDialog(
@@ -1289,7 +1290,7 @@ class DialogWidget {
     final ScrollController scrollController = ScrollController();
     return showDialog(
       barrierDismissible: false,
-      context: NavigationService.navigatorKey.currentContext!,
+      context: NavigationService.context!,
       builder: (BuildContext context) {
         return Material(
           color: AppColor.TRANSPARENT,
@@ -1419,7 +1420,7 @@ class DialogWidget {
             : AppColor.RED_TEXT;
     return showDialog(
       barrierDismissible: false,
-      context: NavigationService.navigatorKey.currentContext!,
+      context: NavigationService.context!,
       builder: (BuildContext context) {
         return Material(
           color: AppColor.TRANSPARENT,
@@ -1609,7 +1610,7 @@ class DialogWidget {
       {required Widget child, BuildContext? ctx}) async {
     return await showDialog(
       barrierDismissible: false,
-      context: ctx ?? NavigationService.navigatorKey.currentContext!,
+      context: ctx ?? NavigationService.context!,
       builder: (BuildContext context) {
         return Material(
           color: AppColor.TRANSPARENT,
@@ -1622,7 +1623,7 @@ class DialogWidget {
   Future<dynamic> openDialogLoginWeb({required Widget child}) async {
     return await showDialog(
       barrierDismissible: false,
-      context: NavigationService.navigatorKey.currentContext!,
+      context: NavigationService.context!,
       builder: (BuildContext context) {
         return Material(
           color: AppColor.TRANSPARENT,

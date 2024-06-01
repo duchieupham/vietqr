@@ -1,9 +1,31 @@
-abstract class NetworkState {}
+import 'package:equatable/equatable.dart';
 
-class NetworkInitial extends NetworkState {}
+abstract class NetworkState extends Equatable {
+  final bool isInternet;
 
-class NetworkNone extends NetworkState {}
+  NetworkState({required this.isInternet});
 
-class NetworkSuccess extends NetworkState {}
+  @override
+  List<Object?> get props => [isInternet];
+}
 
-class NetworkFailure extends NetworkState {}
+class NetworkInitial extends NetworkState {
+  NetworkInitial({required NetworkState state})
+      : super(
+          isInternet: state.isInternet,
+        );
+}
+
+class NetworkNone extends NetworkState {
+  NetworkNone({required super.isInternet});
+}
+
+class NetworkSuccess extends NetworkState {
+  NetworkSuccess({required NetworkState state, required super.isInternet})
+      : super();
+}
+
+class NetworkFailure extends NetworkState {
+  NetworkFailure({required NetworkState state, required super.isInternet})
+      : super();
+}

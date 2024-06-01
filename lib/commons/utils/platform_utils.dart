@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:vierqr/main.dart';
 
+import '../../navigator/app_navigator.dart';
+
 class PlatformUtils {
   const PlatformUtils._privateConsrtructor();
 
@@ -49,20 +51,20 @@ class PlatformUtils {
 
   //check iOS Platform
   bool isIOsApp() {
-    BuildContext context = NavigationService.navigatorKey.currentContext!;
+    BuildContext context = NavigationService.context!;
     final platform = Theme.of(context).platform;
     return (!isWeb() && platform == TargetPlatform.iOS);
   }
 
   //check android Platform
   bool isAndroidApp() {
-    BuildContext context = NavigationService.navigatorKey.currentContext!;
+    BuildContext context = NavigationService.context!;
     final platform = Theme.of(context).platform;
     return (!isWeb() && platform == TargetPlatform.android);
   }
 
   bool isPhysicalDevice() {
-    final BuildContext context = NavigationService.navigatorKey.currentContext!;
+    final BuildContext context = NavigationService.context!;
     final platform = Theme.of(context).platform;
     bool result = false;
     if (platform == TargetPlatform.android) {

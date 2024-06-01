@@ -43,6 +43,7 @@ import 'package:vierqr/models/account_login_dto.dart';
 import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/info_user_dto.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/register_provider.dart';
 import 'package:vierqr/splash_screen.dart';
@@ -164,7 +165,7 @@ class _LoginState extends State<_Login> {
                 if (!state.appInfoDTO.isCheckApp)
                   showDialog(
                     barrierDismissible: false,
-                    context: NavigationService.navigatorKey.currentContext!,
+                    context: NavigationService.context!,
                     builder: (BuildContext context) {
                       return DialogUpdateView(
                         isHideClose: true,
@@ -708,7 +709,7 @@ class _LoginState extends State<_Login> {
   //             FocusManager.instance.primaryFocus?.unfocus();
   //             showDialog(
   //               barrierDismissible: false,
-  //               context: NavigationService.navigatorKey.currentContext!,
+  //               context: NavigationService.context!,
   //               builder: (BuildContext context) {
   //                 return DialogUpdateView(
   //                   onCheckUpdate: () {

@@ -27,6 +27,7 @@ import 'package:vierqr/models/bank_account_remove_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/confirm_otp_bank_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class PopupBankScreen extends StatelessWidget {
@@ -449,7 +450,7 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
   void onShowDialogUnLinked(String requestId, BankAccountDTO dto) {
     showDialog(
       barrierDismissible: false,
-      context: NavigationService.navigatorKey.currentContext!,
+      context: NavigationService.context!,
       builder: (BuildContext context) {
         return DialogOTPView(
           phone: dto.phoneAuthenticated,

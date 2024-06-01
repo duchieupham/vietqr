@@ -7,6 +7,8 @@ import 'package:vierqr/main.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
+import '../../navigator/app_navigator.dart';
+
 class ConfirmPassProvider extends ChangeNotifier {
   MobileRechargeRepository mobileRechargeRepository =
       const MobileRechargeRepository();
@@ -58,7 +60,7 @@ class ConfirmPassProvider extends ChangeNotifier {
         await mobileRechargeRepository.requestPayment(data);
 
     if (responseMessageDTO.status == 'SUCCESS') {
-      Navigator.pop(NavigationService.navigatorKey.currentContext!);
+      Navigator.pop(NavigationService.context!);
       onConfirmSuccess(responseMessageDTO.message);
       updateErrorPass(false);
     }
@@ -68,7 +70,7 @@ class ConfirmPassProvider extends ChangeNotifier {
 
   _handleError(ResponseMessageDTO responseMessageDTO) {
     if (responseMessageDTO.status == 'FAILED') {
-      Navigator.pop(NavigationService.navigatorKey.currentContext!);
+      Navigator.pop(NavigationService.context!);
       if (responseMessageDTO.message == 'E55') {
         updateErrorPass(true);
       } else {
@@ -79,7 +81,7 @@ class ConfirmPassProvider extends ChangeNotifier {
       }
     }
     if (responseMessageDTO.message == '') {
-      Navigator.pop(NavigationService.navigatorKey.currentContext!);
+      Navigator.pop(NavigationService.context!);
       DialogWidget.instance.openMsgDialog(
           title: 'Nạp tiền thất bại',
           msg: ErrorUtils.instance.getErrorMessage(responseMessageDTO.message));
