@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
-import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
+import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:wakelock/wakelock.dart';
 
 class VietQr extends StatefulWidget {
@@ -64,10 +63,10 @@ class _VietQrState extends State<VietQr> {
     bool isSmallWidget = height < 800;
 
     if (!widget.isVietQR) {
-      return QrImage(
+      return QrImageView(
         data: widget.qrCode ?? '',
-        size: widget.size,
         version: QrVersions.auto,
+        size: widget.size,
         embeddedImage: widget.isEmbeddedImage
             ? null
             : const AssetImage('assets/images/ic-viet-qr-small.png'),
@@ -126,7 +125,7 @@ class _VietQrState extends State<VietQr> {
                 if (height > 750) const SizedBox(height: 4),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: QrImage(
+                  child: QrImageView(
                     size: height < 750 ? height / 3.5 : null,
                     data: widget.qrGeneratedDTO!.qrCode,
                     version: QrVersions.auto,

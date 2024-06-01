@@ -31,7 +31,11 @@ class CalButtonWidget extends StatelessWidget {
         alignment: Alignment.center,
         decoration: BoxDecoration(
           // ignore: deprecated_member_use
-          color: (color != null) ? color : Theme.of(context).buttonColor,
+          color: (color != null)
+              ? color
+              : Theme.of(context).buttonTheme.getFillColor(MaterialButton(
+                    onPressed: () {},
+                  )),
           borderRadius: BorderRadius.circular(10),
         ),
         child: (icon != null)

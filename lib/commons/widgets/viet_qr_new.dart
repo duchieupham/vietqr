@@ -78,7 +78,7 @@ class _VietQrState extends State<VietQrNew> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Container(
-            child: QrImage(
+            child: QrImageView(
               data: widget.qrGeneratedDTO?.qrCode ?? widget.qrCode ?? '',
               size: widget.width ?? 250,
               version: QrVersions.auto,
