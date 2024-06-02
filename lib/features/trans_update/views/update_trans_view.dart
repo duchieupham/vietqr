@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
@@ -32,7 +33,7 @@ class UpdateTransView extends StatefulWidget {
 
 class _UpdateTransViewState extends State<UpdateTransView> {
   final bankCardRepository = BankCardRepository();
-  final transRepository = TransactionRepository();
+  final transRepository = getIt.get<TransactionRepository>();
 
   final controller = TextEditingController();
 

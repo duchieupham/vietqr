@@ -1,8 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
-import 'package:vierqr/commons/mixin/base_manager.dart';
 import 'package:vierqr/commons/utils/error_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/transaction_detail/events/transaction_event.dart';
@@ -12,14 +10,12 @@ import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/models/transaction_receive_dto.dart';
 
-class TransactionBloc extends Bloc<TransactionEvent, TransactionState>
-    with BaseManager {
-  @override
-  final BuildContext context;
-
+class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
   final String transactionId;
+  final TransactionRepository transactionRepository;
 
-  TransactionBloc(this.context, this.transactionId)
+  TransactionBloc(
+      {required this.transactionId, required this.transactionRepository})
       : super(const TransactionState(list: [], listImage: [])) {
     on<TransactionEventGetDetail>(_getDetail);
     on<TransactionEventGetImage>(_loadImage);
@@ -139,7 +135,7 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState>
 //   }
 }
 
-const TransactionRepository transactionRepository = TransactionRepository();
+// const TransactionRepository transactionRepository = TransactionRepository();
 
 //
 // void _fetchTransactionsBranch(TransactionEvent event, Emitter emit) async {

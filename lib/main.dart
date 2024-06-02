@@ -15,6 +15,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
+import 'package:vierqr/commons/enums/env_type.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/pref_utils.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
@@ -97,8 +98,11 @@ void main() async {
 
   await HivePrefs.instance.init();
 
+  AppConfig appConfig = getIt.get<AppConfig>();
+  await appConfig.setEnvConfig(EnvType.PROD);
+
   if (kIsWeb) {
-    await Firebase.initializeApp(options: EnvConfig.getFirebaseConfig());
+    await Firebase.initializeApp(options: appConfig.getFirebaseConfig);
   } else {
     await Firebase.initializeApp();
   }
@@ -106,7 +110,7 @@ void main() async {
   await UserRepository.instance.getBanks();
   await UserRepository.instance.getIntroContact();
   await UserRepository.instance.getThemes();
-  LOG.verbose('Config Environment: ${EnvConfig.getEnv()}');
+  LOG.verbose('Config Environment: ${appConfig.getEnv}');
   runApp(VietQRApp());
 }
 

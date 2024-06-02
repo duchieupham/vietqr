@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
@@ -90,7 +91,7 @@ class TransProvider with ChangeNotifier {
   bool isCalling = true;
   bool _isInput = false;
   bool get isInput => _isInput;
-  final merchantRepository = const TransactionRepository();
+  final merchantRepository = getIt.get<TransactionRepository>();
   final scrollControllerList = ScrollController();
   int _currentPage = 0;
 

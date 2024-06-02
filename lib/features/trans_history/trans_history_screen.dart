@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
-import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
@@ -12,9 +12,10 @@ import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/trans_history/blocs/trans_history_bloc.dart';
 import 'package:vierqr/features/trans_history/blocs/trans_history_provider.dart';
 import 'package:vierqr/features/trans_history/views/bottom_sheet_filter.dart';
+import 'package:vierqr/features/transaction_detail/repositories/transaction_repository.dart';
 import 'package:vierqr/features/transaction_detail/transaction_detail_screen.dart';
-import 'package:vierqr/models/trans_dto.dart';
 import 'package:vierqr/models/terminal_response_dto.dart';
+import 'package:vierqr/models/trans_dto.dart';
 import 'package:vierqr/models/transaction_input_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
@@ -24,6 +25,7 @@ import 'states/trans_history_state.dart';
 class TransHistoryScreen extends StatelessWidget {
   final String bankId;
   final String bankUserId;
+
   // final TerminalDto terminalDto;
   final List<TerminalAccountDTO> terminalAccountList;
 
@@ -38,8 +40,8 @@ class TransHistoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) =>
-          TransHistoryBloc(context, bankId, terminalAccountList),
+      create: (context) => TransHistoryBloc(context,
+          getIt.get<TransactionRepository>(), bankId, terminalAccountList),
       child: ChangeNotifierProvider<TransProvider>(
         create: (context) =>
             TransProvider(bankUserId == SharePrefUtils.getProfile().userId, [

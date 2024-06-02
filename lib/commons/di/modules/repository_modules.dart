@@ -1,21 +1,15 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:vierqr/commons/base/di_module.dart';
+import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
-import 'package:vierqr/features/network/network_bloc.dart';
-import 'package:vierqr/features/transaction_detail/blocs/transaction_bloc.dart';
 import 'package:vierqr/features/transaction_detail/repositories/transaction_repository.dart';
 
-class BlocModule extends DIModule {
+class RepositoryModule extends DIModule {
   @override
   Future<void> provides() async {
     getIt
       ..registerLazySingleton(
-        () => NetworkBloc(connectivity: Connectivity()),
-      )
-      ..registerFactoryParam(
-        (param1, param2) => TransactionBloc(
-          transactionId: param1 as String,
-          transactionRepository: getIt.get<TransactionRepository>(),
+        () => TransactionRepository(
+          getIt.get<AppConfig>(),
         ),
       );
     // ..registerFactory(

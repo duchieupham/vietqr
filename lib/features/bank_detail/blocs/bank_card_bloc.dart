@@ -2,6 +2,7 @@
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/check_utils.dart';
 import 'package:vierqr/commons/utils/error_utils.dart';
@@ -9,7 +10,7 @@ import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/bank_detail/events/bank_card_event.dart';
 import 'package:vierqr/features/bank_detail/repositories/bank_card_repository.dart';
 import 'package:vierqr/features/bank_detail/states/bank_card_state.dart';
-import 'package:vierqr/features/transaction_detail/blocs/transaction_bloc.dart';
+import 'package:vierqr/features/transaction_detail/repositories/transaction_repository.dart';
 import 'package:vierqr/models/account_bank_detail_dto.dart';
 import 'package:vierqr/models/merchant_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
@@ -307,9 +308,9 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
       if (event is GetMyListGroupEvent) {
         emit(state.copyWith(request: BankDetailType.NONE));
 
-        final List<TerminalAccountDTO>? terminaAccountlDto =
-            await transactionRepository.getMyListGroupTrans(
-                event.userID, bankId, event.offset);
+        final List<TerminalAccountDTO>? terminaAccountlDto = await getIt
+            .get<TransactionRepository>()
+            .getMyListGroupTrans(event.userID, bankId, event.offset);
         emit(state.copyWith(
           status: BlocStatus.NONE,
           terminalAccountDto: terminaAccountlDto,

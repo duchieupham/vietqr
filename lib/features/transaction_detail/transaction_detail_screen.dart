@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
@@ -39,14 +40,23 @@ class TransactionDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<TransactionBloc>(
-      create: (BuildContext context) => TransactionBloc(context, transactionId),
-      child: _BodyWidget(),
-    );
+    // return BlocProvider<TransactionBloc>(
+    //   create: (BuildContext context) => TransactionBloc(
+    //     transactionId: transactionId,
+    //     transactionRepository: getIt.get<TransactionRepository>(),
+    //   ),
+    //   child: _BodyWidget(),
+    // );
+
+    return _BodyWidget(transactionId);
   }
 }
 
 class _BodyWidget extends StatefulWidget {
+  _BodyWidget(this.transactionId);
+
+  final String transactionId;
+
   @override
   State<_BodyWidget> createState() => _BodyWidgetState();
 }
@@ -64,7 +74,8 @@ class _BodyWidgetState extends State<_BodyWidget> {
   @override
   void initState() {
     super.initState();
-    _bloc = BlocProvider.of(context);
+    // _bloc = BlocProvider.of(context);
+    _bloc = getIt.get<TransactionBloc>(param1: widget.transactionId);
     authProvider = Provider.of<AuthProvider>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       initData(context);
@@ -106,6 +117,7 @@ class _BodyWidgetState extends State<_BodyWidget> {
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
     return BlocConsumer<TransactionBloc, TransactionState>(
+      bloc: _bloc,
       listener: (context, state) async {
         if (state.status == BlocStatus.LOADING) {
           DialogWidget.instance.openLoadingDialog();

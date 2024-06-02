@@ -5,9 +5,9 @@ import 'package:vierqr/commons/mixin/base_manager.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/trans_history/events/trans_history_event.dart';
 import 'package:vierqr/features/trans_history/states/trans_history_state.dart';
-import 'package:vierqr/features/transaction_detail/blocs/transaction_bloc.dart';
-import 'package:vierqr/models/trans_dto.dart';
+import 'package:vierqr/features/transaction_detail/repositories/transaction_repository.dart';
 import 'package:vierqr/models/terminal_response_dto.dart';
+import 'package:vierqr/models/trans_dto.dart';
 
 class TransHistoryBloc extends Bloc<TransHistoryEvent, TransHistoryState>
     with BaseManager {
@@ -15,10 +15,14 @@ class TransHistoryBloc extends Bloc<TransHistoryEvent, TransHistoryState>
   final BuildContext context;
 
   final String bankId;
+
   // final TerminalDto terminalDto;
   final List<TerminalAccountDTO> terminalAccountList;
 
-  TransHistoryBloc(this.context, this.bankId, this.terminalAccountList)
+  final TransactionRepository transactionRepository;
+
+  TransHistoryBloc(this.context, this.transactionRepository, this.bankId,
+      this.terminalAccountList)
       : super(TransHistoryState(
             list: [],
             // terminalDto: terminalDto,
