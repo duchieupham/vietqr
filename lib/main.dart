@@ -171,9 +171,6 @@ class _VietQRApp extends State<VietQRApp> {
           BlocProvider<DashBoardBloc>(
             create: (BuildContext context) => DashBoardBloc(context),
           ),
-          // BlocProvider(
-          //   create: (context) => NetworkBloc()..add(NetworkObserve()),
-          // ),
         ],
         child: MultiProvider(
           providers: [
