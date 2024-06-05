@@ -3,10 +3,17 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
+import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/create_order_merchant/create_oder.dart';
 import 'package:vierqr/features/create_order_merchant/respository/order_merchant_repository.dart';
+import 'package:vierqr/features/customer_va/repositories/customer_va_repository.dart';
+import 'package:vierqr/features/customer_va/widgets/customer_va_invoice_success_widget.dart';
 import 'package:vierqr/features/merchant/tab_merchant/order_detail_view.dart';
+import 'package:vierqr/models/customer_va_invoice_success_dto.dart';
 import 'package:vierqr/models/invoice_dto.dart';
+import 'package:vierqr/models/vietqr_va_request_dto.dart';
+
+import '../../customer_va/views/invoice_va_vietqr_view.dart';
 
 class TabOrderMerchant extends StatefulWidget {
   final String customerId;
@@ -19,6 +26,8 @@ class TabOrderMerchant extends StatefulWidget {
 
 class _TabOrderMerchantState extends State<TabOrderMerchant> {
   final orderRepository = OrderMerchantRepository();
+  final CustomerVaRepository customerVaRepository =
+      const CustomerVaRepository();
   ScrollController controller = ScrollController();
 
   List<InvoiceDTO> list = [];
@@ -106,25 +115,75 @@ class _TabOrderMerchantState extends State<TabOrderMerchant> {
                     'Dịch vụ',
                     des1: 'Tạo hoá đơn thanh toán',
                     des2:
-                        'Hoá đơn có thể thanh toán từ các kênh giao dịch của BIDV.',
+                        'Hoá đơn được thanh toán từ các kênh giao dịch của ngân hàng BIDV.',
                     path: 'assets/images/ic-invoice-blue.png',
                     onTap: onCreateOrder,
                   ),
-                const SizedBox(height: 16),
+                if (list.isNotEmpty) ...[
+                  const SizedBox(height: 30),
+                  UnconstrainedBox(
+                    alignment: Alignment.centerLeft,
+                    child: InkWell(
+                      onTap: () async {
+                        await _onRefresh();
+                      },
+                      child: Container(
+                        width: 150,
+                        height: 35,
+                        decoration: BoxDecoration(
+                          color: AppColor.WHITE,
+                          borderRadius: BorderRadius.circular(5),
+                          border: Border.all(
+                            color: AppColor.BLUE_TEXT,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.refresh_rounded,
+                              size: 13,
+                              color: AppColor.BLUE_TEXT,
+                            ),
+                            const Padding(padding: EdgeInsets.only(left: 5)),
+                            Text(
+                              'Tải lại danh sách',
+                              style: const TextStyle(
+                                  color: AppColor.BLUE_TEXT, fontSize: 13),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
                 if (listUnpaid.isNotEmpty) ...[
-                  Text('Chưa thanh toán', style: TextStyle(fontSize: 20)),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Hoá đơn chưa thanh toán',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 15),
                   ...List.generate(listUnpaid.length, (index) {
-                    InvoiceDTO dto = list[index];
+                    InvoiceDTO dto = listUnpaid[index];
                     return _buildItem(dto);
                   })
                 ],
                 if (listPayment.isNotEmpty) ...[
-                  const SizedBox(height: 16),
-                  Text('Đã thanh toán', style: TextStyle(fontSize: 20)),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 30),
+                  Text(
+                    'Hoá đơn đã thanh toán',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 15),
                   ...List.generate(listPayment.length, (index) {
-                    InvoiceDTO dto = list[index];
+                    InvoiceDTO dto = listPayment[index];
                     return _buildItem(dto, textColor: AppColor.GREEN);
                   })
                 ],
@@ -143,7 +202,8 @@ class _TabOrderMerchantState extends State<TabOrderMerchant> {
           visible: isLoading,
           child: Positioned.fill(
             child: Container(
-              color: AppColor.GREY_BG,
+              height: 100,
+              color: AppColor.WHITE,
               child: Center(child: CircularProgressIndicator()),
             ),
           ),
@@ -166,57 +226,138 @@ class _TabOrderMerchantState extends State<TabOrderMerchant> {
     return GestureDetector(
       onTap: () => _onDetailOrder(dto.billId ?? ''),
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+        padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
         margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
           color: Colors.white,
+          border: Border.all(
+            color: Color(0XFFDADADA),
+          ),
         ),
-        child: Row(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            //
+            SizedBox(
+              child: Row(
                 children: [
-                  Text(
-                    dto.name ?? '',
-                    maxLines: 2,
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                  Expanded(
+                    child: Text(
+                      dto.name ?? '',
+                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '${CurrencyUtils.instance.getCurrencyFormatted('${dto.amount ?? 0}')} VND',
-                    maxLines: 1,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: textColor ?? AppColor.ORANGE_DARK,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                  SizedBox(
+                    width: 20,
                   ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Text(
-                        'Ngày tạo: ',
-                        style:
-                            TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
-                      ),
-                      Text(
-                        dto.getTimeCreate,
-                        style:
-                            TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
-                      ),
-                    ],
+                  Icon(
+                    Icons.arrow_forward_rounded,
+                    color: AppColor.BLUE_TEXT,
+                    size: 15,
                   ),
                 ],
               ),
             ),
-            Image.asset('assets/images/ic-navigate-next-blue.png', width: 36)
+            SizedBox(
+              height: 3,
+            ),
+            Text(
+              dto.getTimeCreate,
+              style: const TextStyle(
+                fontSize: 12,
+                color: Color(0XFF666A72),
+              ),
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            Divider(
+              color: Color(0XFFDADADA),
+              height: 1,
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            SizedBox(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      CurrencyUtils.instance.getCurrencyFormatted(
+                            dto.amount.toString(),
+                          ) +
+                          ' VND',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: (dto.status == 0)
+                            ? AppColor.ORANGE_DARK
+                            : AppColor.GREEN,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  if (dto.status == 0)
+                    Container(
+                      width: 120,
+                      height: 30,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
+                        color: AppColor.BLUE_TEXT.withOpacity(0.3),
+                      ),
+                      child: InkWell(
+                        onTap: () {
+                          VietQRVaRequestDTO requestVietQRDTO =
+                              VietQRVaRequestDTO(
+                                  billId: dto.billId ?? '',
+                                  userBankName: dto.userBankName ?? '',
+                                  amount: dto.amount.toString(),
+                                  description: dto.billId ?? '');
+                          // _generateVietQRVa(requestVietQRDTO);
+                          DialogWidget.instance.showModelBottomSheet(
+                            widget: InvoiceVaVietQRView(
+                              vietQRVaRequestDTO: requestVietQRDTO,
+                              invoiceDTO: dto,
+                            ),
+                            height: MediaQuery.of(context).size.height * 0.9,
+                          );
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.qr_code_rounded,
+                              color: AppColor.BLUE_TEXT,
+                              size: 13,
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              'QR thanh toán',
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: AppColor.BLUE_TEXT,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -233,33 +374,36 @@ class _TabOrderMerchantState extends State<TabOrderMerchant> {
       onTap: onTap,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(title,
-              style:
-                  const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 12),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            height: 80,
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
               color: AppColor.WHITE,
+              border: Border.all(
+                color: Color(0XFFDADADA),
+              ),
             ),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Image.asset(path, width: 30, color: colorIcon),
-                const SizedBox(width: 12),
+                Image.asset(path, width: 40, color: colorIcon),
+                const SizedBox(width: 10),
                 Expanded(
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(des1,
                           style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w500)),
-                      const SizedBox(height: 2),
+                              fontSize: 15, fontWeight: FontWeight.w500)),
+                      const SizedBox(height: 3),
                       Text(des2,
                           maxLines: 2,
                           style: TextStyle(
-                              fontSize: 12, color: AppColor.GREY_TEXT)),
+                              fontSize: 13, color: AppColor.GREY_TEXT)),
                     ],
                   ),
                 ),

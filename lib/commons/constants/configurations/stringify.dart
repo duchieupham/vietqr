@@ -34,6 +34,7 @@ class Stringify {
   static const String NOTI_TYPE_MOBILE_RECHARGE = "N11";
   static const String NOTI_TYPE_ANNUAL_FEE_SUCCESS = "N13";
   static const String NOTI_TYPE_INVOICE_SUCCESS = "N15";
+  static const String NOTI_TYPE_INVOICE_PAYMENT_SUCCESS = "N14";
 
   //
   static final String urlStore = PlatformUtils.instance.isAndroidApp()

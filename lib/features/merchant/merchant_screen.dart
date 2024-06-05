@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
+import 'package:vierqr/features/customer_va/widgets/customer_va_header_widget.dart';
 import 'package:vierqr/features/merchant/merchant.dart';
 import 'package:vierqr/features/merchant/tab_merchant/tab_info_merchant.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
@@ -42,7 +43,8 @@ class _MerchantScreenState extends State<MerchantScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MAppBar(title: 'Đại lý'),
+      appBar: CustomerVaHeaderWidget(),
+      backgroundColor: AppColor.WHITE,
       body: BlocProvider<MerchantBloc>(
         create: (context) => bloc,
         child: BlocConsumer<MerchantBloc, MerchantState>(
@@ -62,6 +64,9 @@ class _MerchantScreenState extends State<MerchantScreen> {
           builder: (context, state) {
             return Column(
               children: [
+                const SizedBox(
+                  height: 10,
+                ),
                 Center(
                   child: Container(
                     padding:

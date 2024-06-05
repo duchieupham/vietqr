@@ -20,6 +20,9 @@ class InvoiceDTO {
   final int? status;
   final String? name;
   final int? type;
+  final String? userBankName;
+  final String? bankAccount;
+  final String? customerId;
   final List<Item>? items;
 
   String get getTimeCreate => (timeCreated != null)
@@ -37,6 +40,9 @@ class InvoiceDTO {
     this.status,
     this.name,
     this.type,
+    this.userBankName,
+    this.bankAccount,
+    this.customerId,
     this.items,
   });
 
@@ -48,6 +54,9 @@ class InvoiceDTO {
         status: json["status"],
         name: json["name"],
         type: json["type"],
+        userBankName: json["userBankName"],
+        bankAccount: json["bankAccount"],
+        customerId: json["customerId"],
         items: json["items"] == null
             ? []
             : List<Item>.from(json["items"]!.map((x) => Item.fromJson(x))),
@@ -61,6 +70,9 @@ class InvoiceDTO {
         "status": status,
         "name": name,
         "type": type,
+        "userBankName": userBankName,
+        "bankAccount": bankAccount,
+        "customerId": customerId,
         "items": items == null
             ? []
             : List<dynamic>.from(items!.map((x) => x.toJson())),

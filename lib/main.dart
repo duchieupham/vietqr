@@ -5,6 +5,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:vierqr/commons/utils/encrypt_utils.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/features/invoice/invoice_screen.dart';
 import 'package:vierqr/features/maintain_charge/blocs/maintain_charge_bloc.dart';
@@ -23,6 +24,20 @@ import 'package:vierqr/services/providers/connect_gg_chat_provider.dart';
 import 'package:vierqr/services/providers/maintain_charge_provider.dart';
 import 'package:vierqr/services/providers/qr_box_provider.dart';
 import 'package:vierqr/services/providers/register_provider.dart';
+import 'package:vierqr/features/customer_va/views/customer_va_confirm_otp_view.dart';
+import 'package:vierqr/features/customer_va/views/customer_va_insert_bank_auth_view.dart';
+import 'package:vierqr/features/customer_va/views/customer_va_insert_bank_info_view.dart';
+import 'package:vierqr/features/customer_va/views/customer_va_insert_merchant_view.dart';
+import 'package:vierqr/features/customer_va/views/customer_va_list_view.dart';
+import 'package:vierqr/features/customer_va/views/customer_va_splash_view.dart';
+import 'package:vierqr/features/customer_va/views/customer_va_success_view.dart';
+import 'package:vierqr/features/customer_va/widgets/customer_va_invoice_success_widget.dart';
+import 'package:vierqr/features/transaction_detail/transaction_detail_screen.dart';
+import 'package:vierqr/features/transaction_detail/widgets/transaction_sucess_widget.dart';
+import 'package:vierqr/layouts/bottom_sheet/notify_trans_widget.dart';
+import 'package:vierqr/models/customer_va_invoice_success_dto.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
+import 'package:vierqr/services/providers/customer_va/customer_va_insert_provider.dart';
 import 'package:vierqr/services/socket_service/socket_service.dart';
 import 'features/connect_gg_chat/connect_gg_chat_screen.dart';
 import 'features/invoice/widgets/invoice_detail_screen.dart';
@@ -289,6 +304,47 @@ class _VietQRApp extends State<VietQRApp> {
             timePaid: message.data['timePaid'],
           );
         }
+        //NOTI_TYPE_INVOICE_PAYMENT_SUCCESS
+        if (message.data['notificationType'] != null &&
+            message.data['notificationType'] ==
+                Stringify.NOTI_TYPE_INVOICE_PAYMENT_SUCCESS) {
+          DialogWidget.instance.showModelBottomSheet(
+            height: 500,
+            borderRadius: BorderRadius.circular(10),
+            margin: const EdgeInsets.symmetric(
+              horizontal: 10,
+              vertical: 10,
+            ),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20,
+            ),
+            widget: CustomerVaInvoiceSuccessWidget(
+              dto: CustomerVaInvoiceSuccessDTO.fromJson(message.data),
+            ),
+          );
+        }
+
+        ///
+        //   //process success transcation
+        //   if (message.data['notificationType'] != null &&
+        //       message.data['notificationType'] ==
+        //           Stringify.NOTI_TYPE_UPDATE_TRANSACTION) {
+        //     Map<String, dynamic> param = {};
+        //     param['userId'] = SharePrefUtils.getProfile().userId;
+        //     param['amount'] = message.data['amount'];
+        //     param['type'] = 0;
+        //     param['transactionId'] = message.data['transactionReceiveId'];
+        //     MediaHelper.instance.playAudio(param);
+        //     DialogWidget.instance.showModelBottomSheet(
+        //       isDismissible: true,
+        //       margin: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
+        //       height: 750,
+        //       borderRadius: BorderRadius.circular(16),
+        //       widget: NotifyTransWidget(
+        //         dto: NotifyTransDTO.fromJson(message.data),
+        //       ),
+        //     );
+        //   }
       }
       notificationController.sink.add(true);
     });
@@ -355,6 +411,8 @@ class _VietQRApp extends State<VietQRApp> {
             ChangeNotifierProvider(create: (context) => QRBoxProvider()),
             ChangeNotifierProvider(create: (context) => RegisterProvider()),
             ChangeNotifierProvider(create: (context) => UserEditProvider()),
+            ChangeNotifierProvider(
+                create: (context) => CustomerVaInsertProvider()),
           ],
           child: Consumer<AuthProvider>(
             builder: (context, authProvider, child) {
@@ -405,6 +463,19 @@ class _VietQRApp extends State<VietQRApp> {
 
                   // Routes.ACTIVE_SUCCESS_SCREEN: (context) =>
                   //     const ActiveSuccessScreen(),
+                  Routes.INSERT_CUSTOMER_VA_MERCHANT: (context) =>
+                      CustomerVAInsertMerchantView(),
+                  Routes.INSERT_CUSTOMER_VA_BANK_INFO: (context) =>
+                      CustomerVaInsertBankInfoView(),
+                  Routes.INSERT_CUSTOMER_VA_BANK_AUTH: (context) =>
+                      CustomerVaInsertBankAuthView(),
+                  Routes.CUSTOMER_VA_CONFIRM_OTP: (context) =>
+                      CustomerVaConfirmOtpView(),
+                  Routes.CUSTOMER_VA_SUCCESS: (context) =>
+                      CustomerVaSuccessView(),
+                  Routes.CUSTOMER_VA_SPLASH: (context) =>
+                      CustomerVaSplashView(),
+                  Routes.CUSTOMER_VA_LIST: (context) => CustomerVaListView(),
                 },
                 onGenerateRoute: (settings) {
                   if (settings.name == Routes.DYNAMIC_ACTIVE_KEY_SCREEN) {
