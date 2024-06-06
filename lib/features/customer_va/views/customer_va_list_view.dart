@@ -4,6 +4,7 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
+import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/features/customer_va/repositories/customer_va_repository.dart';
 import 'package:vierqr/features/customer_va/widgets/customer_va_header_widget.dart';
 import 'package:vierqr/features/merchant/create_merchant_screen.dart';
@@ -35,6 +36,7 @@ class _CustomerVaListView extends State<CustomerVaListView> {
     return Scaffold(
       backgroundColor: AppColor.WHITE,
       appBar: CustomerVaHeaderWidget(),
+      bottomNavigationBar: _bottom(),
       body: Column(
         children: [
           const SizedBox(
@@ -62,7 +64,9 @@ class _CustomerVaListView extends State<CustomerVaListView> {
                       //
                     ],
                   )
-                : ListView.builder(
+                : ListView.separated(
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: 10),
                     shrinkWrap: true,
                     itemCount: _customerVas.length,
                     itemBuilder: (context, index) {
@@ -70,37 +74,28 @@ class _CustomerVaListView extends State<CustomerVaListView> {
                     },
                   ),
           ),
-          const SizedBox(
-            height: 10,
-          ),
-          ButtonWidget(
-            text: 'Thêm mới doanh nghiệp',
-            margin: const EdgeInsets.symmetric(horizontal: 20),
-            textColor: AppColor.WHITE,
-            bgColor: AppColor.BLUE_TEXT,
-            borderRadius: 5,
-            function: () {
-              Navigator.pushReplacementNamed(
-                  context, Routes.INSERT_CUSTOMER_VA_MERCHANT);
-            },
-          ),
-          const SizedBox(
-            height: 20,
-          ),
         ],
       ),
+    );
+  }
+
+  Widget _bottom() {
+    return ButtonWidget(
+      text: 'Thêm mới doanh nghiệp',
+      margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
+      textColor: AppColor.WHITE,
+      bgColor: AppColor.BLUE_TEXT,
+      borderRadius: 5,
+      function: () {
+        Navigator.pushReplacementNamed(
+            context, Routes.INSERT_CUSTOMER_VA_MERCHANT);
+      },
     );
   }
 
   Widget _buildCustomerVaItem(CustomerVAItemDTO dto) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
-      padding: const EdgeInsets.only(
-        left: 20,
-        right: 20,
-        top: 20,
-        bottom: 0,
-      ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5),
         border: Border.all(
@@ -121,69 +116,76 @@ class _CustomerVaListView extends State<CustomerVaListView> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
+            Container(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  SizedBox(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Doanh nghiệp / Tổ chức',
+                          style: const TextStyle(
+                            fontSize: 12,
+                          ),
+                        ),
+                        const Spacer(),
+                        Icon(
+                          Icons.arrow_forward_rounded,
+                          color: AppColor.BLUE_TEXT,
+                          size: 15,
+                        ),
+                      ],
+                    ),
+                  ),
                   Text(
-                    'Doanh nghiệp / Tổ chức',
+                    dto.merchantName,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    'Tài khoản liên kết',
                     style: const TextStyle(
                       fontSize: 12,
                     ),
                   ),
-                  const Spacer(),
-                  Icon(
-                    Icons.arrow_forward_rounded,
-                    color: AppColor.BLUE_TEXT,
-                    size: 15,
+                  Text(
+                    'BIDV - ' + dto.bankAccount,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
                   ),
                 ],
               ),
             ),
-            Text(
-              dto.merchantName,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            Text(
-              'Tài khoản liên kết',
-              style: const TextStyle(
-                fontSize: 12,
-              ),
-            ),
-            Text(
-              'BIDV - ' + dto.bankAccount,
-              style: const TextStyle(
-                fontSize: 15,
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
             if (dto.unpaidInvoiceAmount != 0) ...[
-              Divider(
-                color: Color(0XFFDADADA),
-                height: 1,
-              ),
-              SizedBox(
+              const MySeparator(color: AppColor.GREY_DADADA),
+              Container(
+                padding: const EdgeInsets.only(left: 10, right: 20),
                 height: 50,
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Image.asset(
-                      'assets/images/ic-invoice-black.png',
+                      'assets/images/ic-invoice-black-v2.png',
                       width: 30,
                       height: 30,
                     ),
                     const SizedBox(
                       width: 5,
                     ),
-                    Text('01 hoá đơn chưa TT'),
+                    Text('01 hoá đơn chưa thanh toán'),
                     const Spacer(),
                     Text(
                       CurrencyUtils.instance.getCurrencyFormatted(

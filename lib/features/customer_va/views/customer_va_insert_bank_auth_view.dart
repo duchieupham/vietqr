@@ -41,272 +41,262 @@ class _CustomerVaInsertBankAuthView
     return Scaffold(
       backgroundColor: AppColor.WHITE,
       appBar: CustomerVaHeaderWidget(),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+      bottomNavigationBar: _bottom(),
+      body: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        child: ListView(
+          shrinkWrap: true,
+          children: [
+            const SizedBox(
+              height: 30,
+            ),
+            Row(
               children: [
-                const SizedBox(
-                  height: 30,
-                ),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Container(
-                    decoration: BoxDecoration(
+                Container(
+                  width: 150,
+                  height: 50,
+                  decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
                       border: Border.all(color: Color(0XFFDADADA), width: 1),
-                    ),
-                    child: CachedNetworkImage(
-                      imageUrl: Provider.of<CustomerVaInsertProvider>(context,
-                              listen: false)
-                          .bidvLogoUrl,
-                      height: 50,
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Text(
-                  'Tiếp theo, vui lòng cung cấp\nthông tin xác thực tài khoản',
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                Text(
-                  'CCCD/MST*',
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                MTextFieldCustom(
-                  isObscureText: false,
-                  maxLines: 1,
-                  showBorder: false,
-                  fillColor: AppColor.TRANSPARENT,
-                  value: _nationalId,
-                  autoFocus: true,
-                  textFieldType: TextfieldType.DEFAULT,
-                  title: '',
-                  hintText: '',
-                  inputType: TextInputType.text,
-                  keyboardAction: TextInputAction.next,
-                  maxLength: 20,
-                  onChange: (value) {
-                    _nationalId = value;
-                    setState(() {});
-                    Provider.of<CustomerVaInsertProvider>(context,
-                            listen: false)
-                        .updateNationalId(value);
-                  },
-                  decoration: InputDecoration(
-                    hintText: 'Nhập căn cước công dân / mã số thuế*',
-                    hintStyle: TextStyle(
-                      fontSize: 14,
-                      color: AppColor.GREY_TEXT,
-                    ),
-                    counterText: '',
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: AppColor.BLUE_TEXT),
-                    ),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: AppColor.BLUE_TEXT),
-                    ),
-                    border: UnderlineInputBorder(
-                      borderSide: BorderSide(color: AppColor.BLUE_TEXT),
-                    ),
-                  ),
-                  inputFormatter: [
-                    LengthLimitingTextInputFormatter(50),
-                  ],
-                ),
-                Consumer<CustomerVaInsertProvider>(
-                  builder: (context, provider, child) {
-                    return (provider.nationalIdErr)
-                        ? Container(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            child: Text(
-                              'Căn cước công dân / Mã số thuế không hợp lệ.',
-                              style: TextStyle(
-                                color: AppColor.RED_CALENDAR,
-                                fontSize: 13,
-                              ),
-                            ),
-                          )
-                        : const SizedBox();
-                  },
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  'Lưu ý:',
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(
-                  height: 5,
-                ),
-                Text(
-                  '- Đối với tài khoản ngân hàng cá nhân, vui lòng cung cấp CCCD/CMND.',
-                  style: const TextStyle(
-                    fontSize: 12,
-                  ),
-                ),
-                Text(
-                  '- Đối với tài khoản doanh nghiệp, vui lòng cung cấp mã số thuế.',
-                  style: const TextStyle(
-                    fontSize: 12,
-                  ),
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                Text(
-                  'Số điện thoại xác thực*',
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                MTextFieldCustom(
-                  isObscureText: false,
-                  maxLines: 1,
-                  showBorder: false,
-                  fillColor: AppColor.TRANSPARENT,
-                  value: _phoneAuthenticated,
-                  autoFocus: false,
-                  textFieldType: TextfieldType.DEFAULT,
-                  title: '',
-                  hintText: '',
-                  inputType: TextInputType.text,
-                  keyboardAction: TextInputAction.next,
-                  maxLength: 20,
-                  onChange: (value) {
-                    _phoneAuthenticated = value;
-                    setState(() {});
-                    Provider.of<CustomerVaInsertProvider>(context,
-                            listen: false)
-                        .updatePhoneAuthenticated(value);
-                  },
-                  decoration: InputDecoration(
-                    hintText: 'Nhập số điện thoại xác thực*',
-                    hintStyle: TextStyle(
-                      fontSize: 14,
-                      color: AppColor.GREY_TEXT,
-                    ),
-                    counterText: '',
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: AppColor.BLUE_TEXT),
-                    ),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: AppColor.BLUE_TEXT),
-                    ),
-                    border: UnderlineInputBorder(
-                      borderSide: BorderSide(color: AppColor.BLUE_TEXT),
-                    ),
-                  ),
-                  inputFormatter: [
-                    LengthLimitingTextInputFormatter(50),
-                  ],
-                ),
-                Consumer<CustomerVaInsertProvider>(
-                  builder: (context, provider, child) {
-                    return (provider.phoneAuthenticatedErr)
-                        ? Container(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            child: Text(
-                              'Số điện thoại xác thực không hợp lệ.',
-                              style: TextStyle(
-                                color: AppColor.RED_CALENDAR,
-                                fontSize: 13,
-                              ),
-                            ),
-                          )
-                        : const SizedBox();
-                  },
+                      image: DecorationImage(
+                          fit: BoxFit.fitHeight,
+                          image: NetworkImage(
+                            Provider.of<CustomerVaInsertProvider>(context,
+                                    listen: false)
+                                .bidvLogoUrl,
+                            scale: 1.0,
+                          ))),
                 ),
               ],
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(
-              top: 10,
-              bottom: 20,
-              left: 20,
-              right: 20,
+            const SizedBox(
+              height: 20,
             ),
-            child: Consumer<CustomerVaInsertProvider>(
+            Text(
+              'Tiếp theo, vui lòng cung cấp\nthông tin xác thực tài khoản',
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(
+              height: 30,
+            ),
+            Text(
+              'CCCD/MST*',
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            MTextFieldCustom(
+              isObscureText: false,
+              maxLines: 1,
+              showBorder: false,
+              fillColor: AppColor.TRANSPARENT,
+              value: _nationalId,
+              autoFocus: true,
+              textFieldType: TextfieldType.DEFAULT,
+              title: '',
+              hintText: '',
+              inputType: TextInputType.text,
+              keyboardAction: TextInputAction.next,
+              maxLength: 20,
+              onChange: (value) {
+                _nationalId = value;
+                setState(() {});
+                Provider.of<CustomerVaInsertProvider>(context, listen: false)
+                    .updateNationalId(value);
+              },
+              decoration: InputDecoration(
+                hintText: 'Nhập căn cước công dân / mã số thuế*',
+                hintStyle: TextStyle(
+                  fontSize: 14,
+                  color: AppColor.GREY_TEXT,
+                ),
+                counterText: '',
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: AppColor.BLUE_TEXT),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: AppColor.BLUE_TEXT),
+                ),
+                border: UnderlineInputBorder(
+                  borderSide: BorderSide(color: AppColor.BLUE_TEXT),
+                ),
+              ),
+              inputFormatter: [
+                LengthLimitingTextInputFormatter(50),
+              ],
+            ),
+            Consumer<CustomerVaInsertProvider>(
               builder: (context, provider, child) {
-                bool isValidButton = (!provider.nationalIdErr &&
-                    provider.nationalId.toString().trim().isNotEmpty &&
-                    !provider.phoneAuthenticatedErr &&
-                    provider.phoneAuthenticated.toString().trim().isNotEmpty);
-                return ButtonWidget(
-                  text: 'Tiếp tục',
-                  textColor: (!isValidButton) ? AppColor.BLACK : AppColor.WHITE,
-                  bgColor: (!isValidButton)
-                      ? AppColor.GREY_VIEW
-                      : AppColor.BLUE_TEXT,
-                  borderRadius: 5,
-                  function: () async {
-                    if (isValidButton) {
-                      FocusManager.instance.primaryFocus!.unfocus();
-                      await showGeneralDialog(
-                          context: context,
-                          barrierDismissible: true,
-                          barrierLabel: MaterialLocalizations.of(context)
-                              .modalBarrierDismissLabel,
-                          barrierColor: Colors.black45,
-                          transitionDuration: const Duration(milliseconds: 200),
-                          pageBuilder: (BuildContext buildContext,
-                              Animation animation,
-                              Animation secondaryAnimation) {
-                            return CustomerVaPolicyView(
-                              onTap: () async {
-                                if (provider.aggreePolicy) {
-                                  Navigator.pop(context);
-                                  CustomerVaRequestDTO dto =
-                                      CustomerVaRequestDTO(
-                                    merchantName:
-                                        provider.merchantName.toString().trim(),
-                                    bankAccount:
-                                        provider.bankAccount.toString().trim(),
-                                    bankCode: 'BIDV',
-                                    userBankName:
-                                        provider.userBankName.toString().trim(),
-                                    nationalId:
-                                        provider.nationalId.toString().trim(),
-                                    phoneAuthenticated: provider
-                                        .phoneAuthenticated
-                                        .toString()
-                                        .trim(),
-                                  );
-                                  await _requestCustomerVaOTP(dto);
-                                }
-                              },
-                              isAgreeWithPolicy: provider.aggreePolicy,
-                              onSelectPolicy: provider.updateAgreePolicy,
-                              bankAccount: provider.bankAccount,
-                              bankCode: 'BIDV',
-                            );
-                          }).then((value) => provider.updateAgreePolicy(false));
-                    }
-                  },
-                );
+                return (provider.nationalIdErr)
+                    ? Container(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: Text(
+                          'Căn cước công dân / Mã số thuế không hợp lệ.',
+                          style: TextStyle(
+                            color: AppColor.RED_CALENDAR,
+                            fontSize: 13,
+                          ),
+                        ),
+                      )
+                    : const SizedBox();
               },
             ),
-          ),
-        ],
+            const SizedBox(
+              height: 10,
+            ),
+            Text(
+              'Lưu ý:',
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(
+              height: 5,
+            ),
+            Text(
+              '- Đối với tài khoản ngân hàng cá nhân, vui lòng cung cấp CCCD/CMND.',
+              style: const TextStyle(
+                fontSize: 12,
+              ),
+            ),
+            Text(
+              '- Đối với tài khoản doanh nghiệp, vui lòng cung cấp mã số thuế.',
+              style: const TextStyle(
+                fontSize: 12,
+              ),
+            ),
+            const SizedBox(
+              height: 30,
+            ),
+            Text(
+              'Số điện thoại xác thực*',
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            MTextFieldCustom(
+              isObscureText: false,
+              maxLines: 1,
+              showBorder: false,
+              fillColor: AppColor.TRANSPARENT,
+              value: _phoneAuthenticated,
+              autoFocus: false,
+              textFieldType: TextfieldType.DEFAULT,
+              title: '',
+              hintText: '',
+              inputType: TextInputType.text,
+              keyboardAction: TextInputAction.next,
+              maxLength: 20,
+              onChange: (value) {
+                _phoneAuthenticated = value;
+                setState(() {});
+                Provider.of<CustomerVaInsertProvider>(context, listen: false)
+                    .updatePhoneAuthenticated(value);
+              },
+              decoration: InputDecoration(
+                hintText: 'Nhập số điện thoại xác thực*',
+                hintStyle: TextStyle(
+                  fontSize: 14,
+                  color: AppColor.GREY_TEXT,
+                ),
+                counterText: '',
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: AppColor.BLUE_TEXT),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: AppColor.BLUE_TEXT),
+                ),
+                border: UnderlineInputBorder(
+                  borderSide: BorderSide(color: AppColor.BLUE_TEXT),
+                ),
+              ),
+              inputFormatter: [
+                LengthLimitingTextInputFormatter(50),
+              ],
+            ),
+            Consumer<CustomerVaInsertProvider>(
+              builder: (context, provider, child) {
+                return (provider.phoneAuthenticatedErr)
+                    ? Container(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: Text(
+                          'Số điện thoại xác thực không hợp lệ.',
+                          style: TextStyle(
+                            color: AppColor.RED_CALENDAR,
+                            fontSize: 13,
+                          ),
+                        ),
+                      )
+                    : const SizedBox();
+              },
+            ),
+          ],
+        ),
       ),
+    );
+  }
+
+  Widget _bottom() {
+    return Consumer<CustomerVaInsertProvider>(
+      builder: (context, provider, child) {
+        bool isValidButton = (!provider.nationalIdErr &&
+            provider.nationalId.toString().trim().isNotEmpty &&
+            !provider.phoneAuthenticatedErr &&
+            provider.phoneAuthenticated.toString().trim().isNotEmpty);
+        return ButtonWidget(
+          margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
+          text: 'Tiếp tục',
+          textColor: (!isValidButton) ? AppColor.BLACK : AppColor.WHITE,
+          bgColor: (!isValidButton) ? AppColor.GREY_VIEW : AppColor.BLUE_TEXT,
+          borderRadius: 5,
+          function: () async {
+            if (isValidButton) {
+              FocusManager.instance.primaryFocus!.unfocus();
+              await showGeneralDialog(
+                  context: context,
+                  barrierDismissible: true,
+                  barrierLabel: MaterialLocalizations.of(context)
+                      .modalBarrierDismissLabel,
+                  barrierColor: Colors.black45,
+                  transitionDuration: const Duration(milliseconds: 200),
+                  pageBuilder: (BuildContext buildContext, Animation animation,
+                      Animation secondaryAnimation) {
+                    return CustomerVaPolicyView(
+                      onTap: () async {
+                        if (provider.aggreePolicy) {
+                          Navigator.pop(context);
+                          CustomerVaRequestDTO dto = CustomerVaRequestDTO(
+                            merchantName:
+                                provider.merchantName.toString().trim(),
+                            bankAccount: provider.bankAccount.toString().trim(),
+                            bankCode: 'BIDV',
+                            userBankName:
+                                provider.userBankName.toString().trim(),
+                            nationalId: provider.nationalId.toString().trim(),
+                            phoneAuthenticated:
+                                provider.phoneAuthenticated.toString().trim(),
+                          );
+                          await _requestCustomerVaOTP(dto);
+                        }
+                      },
+                      isAgreeWithPolicy: provider.aggreePolicy,
+                      onSelectPolicy: provider.updateAgreePolicy,
+                      bankAccount: provider.bankAccount,
+                      bankCode: 'BIDV',
+                    );
+                  }).then((value) => provider.updateAgreePolicy(false));
+            }
+          },
+        );
+      },
     );
   }
 

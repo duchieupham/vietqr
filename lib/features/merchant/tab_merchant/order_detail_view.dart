@@ -80,215 +80,161 @@ class _OrderDetailViewState extends State<OrderDetailView> {
     return Scaffold(
       appBar: CustomerVaHeaderWidget(),
       backgroundColor: AppColor.WHITE,
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              Expanded(
-                child: RefreshIndicator(
-                  onRefresh: _onRefresh,
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        UnconstrainedBox(
-                          alignment: Alignment.centerLeft,
-                          child: InkWell(
-                            onTap: () async {
-                              dto = InvoiceDTO();
-                              setState(() {});
-                              await _onRefresh();
-                            },
-                            child: Container(
-                              width: 150,
-                              height: 35,
-                              decoration: BoxDecoration(
-                                color: AppColor.WHITE,
-                                borderRadius: BorderRadius.circular(5),
-                                border: Border.all(
-                                  color: AppColor.BLUE_TEXT,
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.refresh_rounded,
-                                    size: 13,
-                                    color: AppColor.BLUE_TEXT,
-                                  ),
-                                  const Padding(
-                                      padding: EdgeInsets.only(left: 5)),
-                                  Text(
-                                    'Tải lại',
-                                    style: const TextStyle(
-                                        color: AppColor.BLUE_TEXT,
-                                        fontSize: 13),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+      bottomNavigationBar: _bottom(),
+      body: Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        child: isLoading
+            ? Center(child: CircularProgressIndicator())
+            : RefreshIndicator(
+                onRefresh: _onRefresh,
+                child: ListView(
+                  shrinkWrap: true,
+                  physics: AlwaysScrollableScrollPhysics(),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  children: [
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      dto.name ?? '',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    ...[
+                      const SizedBox(height: 10),
+                      _buildItem(
+                        'Số tiền',
+                        '${CurrencyUtils.instance.getCurrencyFormatted('${dto.amount ?? 0}')} VND',
+                        textColor: dto.status == 0
+                            ? AppColor.ORANGE_DARK
+                            : AppColor.GREEN,
+                        textSized: 20,
+                      ),
+                      _buildItem('Trạng thái:', dto.getStatus,
+                          textColor: dto.status == 0
+                              ? AppColor.ORANGE_DARK
+                              : AppColor.GREEN),
+                      _buildItem('Mã hoá đơn', dto.billId ?? ''),
+                      _buildItem('Ngày tạo', dto.getTimeCreate,
+                          isUnBorder: true),
+                    ],
+                    if (dto.items != null && dto.items!.isNotEmpty) ...[
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      Text(
+                        'Danh mục hàng hoá, dịch vụ',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Text(
-                          dto.name ?? '',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                      ),
+                      const SizedBox(height: 15),
+                      ...List.generate(
+                        dto.items!.length,
+                        (index) {
+                          Item item = dto.items![index];
+                          return _buildItemCategory(item, index,
+                              isSuccess: dto.status == 1);
+                        },
+                      ),
+                    ],
+                    // if (dto.status == 0)
+
+                    const SizedBox(height: 16),
+                  ],
+                ),
+              ),
+      ),
+    );
+  }
+
+  Widget _bottom() {
+    return dto.status == 0
+        ? Container(
+            margin: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: AppColor.BLUE_TEXT,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: InkWell(
+                      onTap: () {
+                        print(dto.toJson());
+                        VietQRVaRequestDTO requestVietQRDTO =
+                            VietQRVaRequestDTO(
+                                billId: dto.billId ?? '',
+                                userBankName: dto.userBankName ?? '',
+                                amount: dto.amount.toString(),
+                                description: dto.billId ?? '');
+                        // _generateVietQRVa(requestVietQRDTO);
+                        DialogWidget.instance.showModelBottomSheet(
+                          widget: InvoiceVaVietQRView(
+                            vietQRVaRequestDTO: requestVietQRDTO,
+                            invoiceDTO: dto,
                           ),
-                        ),
-                        ...[
-                          const SizedBox(height: 10),
-                          _buildItem(
-                            'Số tiền',
-                            '${CurrencyUtils.instance.getCurrencyFormatted('${dto.amount ?? 0}')} VND',
-                            textColor: dto.status == 0
-                                ? AppColor.ORANGE_DARK
-                                : AppColor.GREEN,
-                            textSized: 20,
+                          height: MediaQuery.of(context).size.height * 0.9,
+                        );
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.qr_code_rounded,
+                            size: 15,
+                            color: AppColor.WHITE,
                           ),
-                          _buildItem('Trạng thái:', dto.getStatus,
-                              textColor: dto.status == 0
-                                  ? AppColor.ORANGE_DARK
-                                  : AppColor.GREEN),
-                          _buildItem('Mã hoá đơn', dto.billId ?? ''),
-                          _buildItem('Ngày tạo', dto.getTimeCreate,
-                              isUnBorder: true),
-                        ],
-                        if (dto.items != null && dto.items!.isNotEmpty) ...[
-                          const SizedBox(
-                            height: 30,
-                          ),
+                          const SizedBox(width: 5),
                           Text(
-                            'Danh mục hàng hoá, dịch vụ',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            'QR thanh toán',
+                            style: TextStyle(color: AppColor.WHITE),
                           ),
-                          const SizedBox(height: 15),
-                          ...List.generate(
-                            dto.items!.length,
-                            (index) {
-                              Item item = dto.items![index];
-                              return _buildItemCategory(item, index,
-                                  isSuccess: dto.status == 1);
-                            },
-                          ),
-                        ]
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Container(
+                  height: 40,
+                  width: 100,
+                  decoration: BoxDecoration(
+                    color: AppColor.RED_EC1010.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: InkWell(
+                    onTap: _removeOrder,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/images/ic-remove-account.png',
+                          width: 30,
+                          color: AppColor.RED_EC1010,
+                        ),
+                        const SizedBox(width: 5),
+                        Text(
+                          'Huỷ TT',
+                          style: TextStyle(color: AppColor.RED_EC1010),
+                        ),
                       ],
                     ),
                   ),
                 ),
-              ),
-              if (dto.status == 0)
-                SizedBox(
-                  child: Row(
-                    children: [
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      Expanded(
-                        child: Container(
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: AppColor.BLUE_TEXT,
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: InkWell(
-                            onTap: () {
-                              print(dto.toJson());
-                              VietQRVaRequestDTO requestVietQRDTO =
-                                  VietQRVaRequestDTO(
-                                      billId: dto.billId ?? '',
-                                      userBankName: dto.userBankName ?? '',
-                                      amount: dto.amount.toString(),
-                                      description: dto.billId ?? '');
-                              // _generateVietQRVa(requestVietQRDTO);
-                              DialogWidget.instance.showModelBottomSheet(
-                                widget: InvoiceVaVietQRView(
-                                  vietQRVaRequestDTO: requestVietQRDTO,
-                                  invoiceDTO: dto,
-                                ),
-                                height:
-                                    MediaQuery.of(context).size.height * 0.9,
-                              );
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.qr_code_rounded,
-                                  size: 15,
-                                  color: AppColor.WHITE,
-                                ),
-                                const SizedBox(width: 5),
-                                Text(
-                                  'QR thanh toán',
-                                  style: TextStyle(color: AppColor.WHITE),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Container(
-                        height: 40,
-                        width: 100,
-                        decoration: BoxDecoration(
-                          color: AppColor.RED_EC1010.withOpacity(0.3),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: InkWell(
-                          onTap: _removeOrder,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                'assets/images/ic-remove-account.png',
-                                width: 30,
-                                color: AppColor.RED_EC1010,
-                              ),
-                              const SizedBox(width: 5),
-                              Text(
-                                'Huỷ TT',
-                                style: TextStyle(color: AppColor.RED_EC1010),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                    ],
-                  ),
-                ),
-              const SizedBox(height: 16),
-            ],
-          ),
-          Visibility(
-            visible: isLoading,
-            child: Positioned.fill(
-              child: Container(
-                color: Colors.white,
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              ),
+              ],
             ),
           )
-        ],
-      ),
-    );
+        : const SizedBox.shrink();
   }
 
   Widget _buildItemCategory(Item dto, int index, {bool isSuccess = false}) {

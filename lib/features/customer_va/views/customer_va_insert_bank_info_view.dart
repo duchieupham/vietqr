@@ -15,6 +15,8 @@ import 'package:vierqr/layouts/m_text_form_field.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/services/providers/customer_va/customer_va_insert_provider.dart';
 
+import '../../../commons/utils/image_utils.dart';
+
 class CustomerVaInsertBankInfoView extends StatefulWidget {
   const CustomerVaInsertBankInfoView({super.key});
 
@@ -39,228 +41,223 @@ class _CustomerVaInsertBankInfoView
     return Scaffold(
       backgroundColor: AppColor.WHITE,
       appBar: CustomerVaHeaderWidget(),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+      bottomNavigationBar: _bottom(),
+      body: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        child: ListView(
+          shrinkWrap: false,
+          children: [
+            const SizedBox(
+              height: 30,
+            ),
+            Row(
               children: [
-                const SizedBox(
-                  height: 30,
-                ),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Container(
-                    decoration: BoxDecoration(
+                Container(
+                  width: 150,
+                  height: 50,
+                  decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
                       border: Border.all(color: Color(0XFFDADADA), width: 1),
-                    ),
-                    child: CachedNetworkImage(
-                      imageUrl: Provider.of<CustomerVaInsertProvider>(context,
-                              listen: false)
-                          .bidvLogoUrl,
-                      height: 50,
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                Text(
-                  'Tiếp theo, nhập thông tin\ntài khoản BIDV của bạn',
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                Text(
-                  'Số tài khoản*',
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                MTextFieldCustom(
-                  isObscureText: false,
-                  maxLines: 1,
-                  showBorder: false,
-                  fillColor: AppColor.TRANSPARENT,
-                  value: _bankAccount,
-                  autoFocus: true,
-                  textFieldType: TextfieldType.DEFAULT,
-                  title: '',
-                  hintText: '',
-                  inputType: TextInputType.text,
-                  keyboardAction: TextInputAction.next,
-                  maxLength: 20,
-                  onChange: (value) {
-                    _bankAccount = value;
-                    setState(() {});
-                    Provider.of<CustomerVaInsertProvider>(context,
-                            listen: false)
-                        .updateBankAccount(value);
-                  },
-                  decoration: InputDecoration(
-                    hintText: 'Nhập số tài khoản ở đây*',
-                    hintStyle: TextStyle(
-                      fontSize: 14,
-                      color: AppColor.GREY_TEXT,
-                    ),
-                    counterText: '',
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: AppColor.BLUE_TEXT),
-                    ),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: AppColor.BLUE_TEXT),
-                    ),
-                    border: UnderlineInputBorder(
-                      borderSide: BorderSide(color: AppColor.BLUE_TEXT),
-                    ),
-                  ),
-                  inputFormatter: [
-                    LengthLimitingTextInputFormatter(50),
-                  ],
-                ),
-                Consumer<CustomerVaInsertProvider>(
-                  builder: (context, provider, child) {
-                    return (provider.bankAccountErr)
-                        ? Container(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            child: Text(
-                              'Số tài khoản không đúng định dạng.',
-                              style: TextStyle(
-                                color: AppColor.RED_CALENDAR,
-                                fontSize: 13,
-                              ),
-                            ),
-                          )
-                        : const SizedBox();
-                  },
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                Text(
-                  'Tên chủ tài khoản*',
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                MTextFieldCustom(
-                  isObscureText: false,
-                  maxLines: 1,
-                  showBorder: false,
-                  fillColor: AppColor.TRANSPARENT,
-                  value: _userBankName,
-                  autoFocus: true,
-                  textFieldType: TextfieldType.DEFAULT,
-                  title: '',
-                  hintText: '',
-                  inputType: TextInputType.text,
-                  keyboardAction: TextInputAction.next,
-                  maxLength: 20,
-                  onChange: (value) {
-                    _userBankName = value;
-                    setState(() {});
-                    Provider.of<CustomerVaInsertProvider>(context,
-                            listen: false)
-                        .updateUserBankName(value);
-                  },
-                  decoration: InputDecoration(
-                    hintText: 'Nhập tên chủ tài khoản ở đây*',
-                    hintStyle: TextStyle(
-                      fontSize: 14,
-                      color: AppColor.GREY_TEXT,
-                    ),
-                    counterText: '',
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: AppColor.BLUE_TEXT),
-                    ),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: AppColor.BLUE_TEXT),
-                    ),
-                    border: UnderlineInputBorder(
-                      borderSide: BorderSide(color: AppColor.BLUE_TEXT),
-                    ),
-                  ),
-                  inputFormatter: [
-                    LengthLimitingTextInputFormatter(50),
-                  ],
-                ),
-                Consumer<CustomerVaInsertProvider>(
-                  builder: (context, provider, child) {
-                    return (provider.userBankNameErr)
-                        ? Container(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            child: Text(
-                              'Tên chủ tài khoản không đúng định dạng',
-                              style: TextStyle(
-                                color: AppColor.RED_CALENDAR,
-                                fontSize: 13,
-                              ),
-                            ),
-                          )
-                        : const SizedBox();
-                  },
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  'Lưu ý:',
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(
-                  height: 5,
-                ),
-                Text(
-                  '- Tên chủ tài khoản không dấu tiếng Việt.\n- Không chứa ký tự đặc biệt.',
-                  style: const TextStyle(
-                    fontSize: 12,
-                  ),
+                      image: DecorationImage(
+                          fit: BoxFit.fitHeight,
+                          image: NetworkImage(
+                            Provider.of<CustomerVaInsertProvider>(context,
+                                    listen: false)
+                                .bidvLogoUrl,
+                            scale: 1.0,
+                          ))),
                 ),
               ],
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(
-              top: 10,
-              bottom: 20,
-              left: 20,
-              right: 20,
+            const SizedBox(
+              height: 20,
             ),
-            child: Consumer<CustomerVaInsertProvider>(
+            Text(
+              'Tiếp theo, nhập thông tin\ntài khoản BIDV của bạn',
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(
+              height: 30,
+            ),
+            Text(
+              'Số tài khoản*',
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            MTextFieldCustom(
+              isObscureText: false,
+              maxLines: 1,
+              showBorder: false,
+              fillColor: AppColor.TRANSPARENT,
+              value: _bankAccount,
+              autoFocus: true,
+              textFieldType: TextfieldType.DEFAULT,
+              title: '',
+              hintText: '',
+              inputType: TextInputType.text,
+              keyboardAction: TextInputAction.next,
+              maxLength: 20,
+              onChange: (value) {
+                _bankAccount = value;
+                setState(() {});
+                Provider.of<CustomerVaInsertProvider>(context, listen: false)
+                    .updateBankAccount(value);
+              },
+              decoration: InputDecoration(
+                hintText: 'Nhập số tài khoản ở đây*',
+                hintStyle: TextStyle(
+                  fontSize: 14,
+                  color: AppColor.GREY_TEXT,
+                ),
+                counterText: '',
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: AppColor.BLUE_TEXT),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: AppColor.BLUE_TEXT),
+                ),
+                border: UnderlineInputBorder(
+                  borderSide: BorderSide(color: AppColor.BLUE_TEXT),
+                ),
+              ),
+              inputFormatter: [
+                LengthLimitingTextInputFormatter(50),
+              ],
+            ),
+            Consumer<CustomerVaInsertProvider>(
               builder: (context, provider, child) {
-                bool isValidButton = (!provider.bankAccountErr &&
-                    provider.bankAccount.toString().trim().isNotEmpty &&
-                    !provider.userBankNameErr &&
-                    provider.userBankName.toString().trim().isNotEmpty);
-                return ButtonWidget(
-                  text: 'Tiếp tục',
-                  textColor: (!isValidButton) ? AppColor.BLACK : AppColor.WHITE,
-                  bgColor: (!isValidButton)
-                      ? AppColor.GREY_VIEW
-                      : AppColor.BLUE_TEXT,
-                  borderRadius: 5,
-                  function: () async {
-                    if (isValidButton) {
-                      await _checkExistedLinkedBankAccountVa(
-                          provider.bankAccount);
-                    }
-                  },
-                );
+                return (provider.bankAccountErr)
+                    ? Container(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: Text(
+                          'Số tài khoản không đúng định dạng.',
+                          style: TextStyle(
+                            color: AppColor.RED_CALENDAR,
+                            fontSize: 13,
+                          ),
+                        ),
+                      )
+                    : const SizedBox();
               },
             ),
-          ),
-        ],
+            const SizedBox(
+              height: 30,
+            ),
+            Text(
+              'Tên chủ tài khoản*',
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            MTextFieldCustom(
+              isObscureText: false,
+              maxLines: 1,
+              showBorder: false,
+              fillColor: AppColor.TRANSPARENT,
+              value: _userBankName,
+              autoFocus: true,
+              textFieldType: TextfieldType.DEFAULT,
+              title: '',
+              hintText: '',
+              inputType: TextInputType.text,
+              keyboardAction: TextInputAction.next,
+              maxLength: 20,
+              onChange: (value) {
+                _userBankName = value;
+                setState(() {});
+                Provider.of<CustomerVaInsertProvider>(context, listen: false)
+                    .updateUserBankName(value);
+              },
+              decoration: InputDecoration(
+                hintText: 'Nhập tên chủ tài khoản ở đây*',
+                hintStyle: TextStyle(
+                  fontSize: 14,
+                  color: AppColor.GREY_TEXT,
+                ),
+                counterText: '',
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: AppColor.BLUE_TEXT),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: AppColor.BLUE_TEXT),
+                ),
+                border: UnderlineInputBorder(
+                  borderSide: BorderSide(color: AppColor.BLUE_TEXT),
+                ),
+              ),
+              inputFormatter: [
+                LengthLimitingTextInputFormatter(50),
+              ],
+            ),
+            Consumer<CustomerVaInsertProvider>(
+              builder: (context, provider, child) {
+                return (provider.userBankNameErr)
+                    ? Container(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: Text(
+                          'Tên chủ tài khoản không đúng định dạng',
+                          style: TextStyle(
+                            color: AppColor.RED_CALENDAR,
+                            fontSize: 13,
+                          ),
+                        ),
+                      )
+                    : const SizedBox();
+              },
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Text(
+              'Lưu ý:',
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(
+              height: 5,
+            ),
+            Text(
+              '- Tên chủ tài khoản không dấu tiếng Việt.\n- Không chứa ký tự đặc biệt.',
+              style: const TextStyle(
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ),
       ),
+    );
+  }
+
+  Widget _bottom() {
+    return Consumer<CustomerVaInsertProvider>(
+      builder: (context, provider, child) {
+        bool isValidButton = (!provider.bankAccountErr &&
+            provider.bankAccount.toString().trim().isNotEmpty &&
+            !provider.userBankNameErr &&
+            provider.userBankName.toString().trim().isNotEmpty);
+        return ButtonWidget(
+          margin: EdgeInsets.symmetric(horizontal: 30, vertical: 30),
+          text: 'Tiếp tục',
+          textColor: (!isValidButton) ? AppColor.BLACK : AppColor.WHITE,
+          bgColor: (!isValidButton) ? AppColor.GREY_VIEW : AppColor.BLUE_TEXT,
+          borderRadius: 5,
+          function: () async {
+            if (isValidButton) {
+              await _checkExistedLinkedBankAccountVa(provider.bankAccount);
+            }
+          },
+        );
+      },
     );
   }
 

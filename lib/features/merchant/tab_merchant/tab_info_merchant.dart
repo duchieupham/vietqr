@@ -123,15 +123,12 @@ class _TabInfoMerchantState extends State<TabInfoMerchant> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        RefreshIndicator(
-          onRefresh: _onRefresh,
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+    return RefreshIndicator(
+      onRefresh: _onRefresh,
+      child: !isLoading
+          ? ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              physics: const AlwaysScrollableScrollPhysics(),
               children: [
                 ...[
                   const SizedBox(
@@ -156,16 +153,7 @@ class _TabInfoMerchantState extends State<TabInfoMerchant> {
                       isUnBorder: true),
                   const SizedBox(height: 50),
                 ],
-                if (listUnpaid.isEmpty)
-                  _buildItemFeature(
-                    '',
-                    des1: 'Tạo hoá đơn thanh toán',
-                    des2:
-                        'Hoá đơn được thanh toán từ các kênh giao dịch của ngân hàng BIDV.',
-                    path: 'assets/images/ic-invoice-blue.png',
-                    onTap: onCreateOrder,
-                  ),
-                const SizedBox(height: 10),
+
                 _buildItemFeature(
                   '',
                   des1: 'Huỷ đăng ký dịch vụ',
@@ -174,20 +162,23 @@ class _TabInfoMerchantState extends State<TabInfoMerchant> {
                   colorIcon: AppColor.RED_EC1010,
                   onTap: onUnRegister,
                 ),
+                // Visibility(
+                //   visible: isLoading,
+                //   child: Positioned.fill(
+                //     child: Container(
+                //       color: AppColor.GREY_BG,
+                //       child: Center(child: CircularProgressIndicator()),
+                //     ),
+                //   ),
+                // )
               ],
+            )
+          : Positioned.fill(
+              child: Container(
+                color: AppColor.WHITE,
+                child: Center(child: CircularProgressIndicator()),
+              ),
             ),
-          ),
-        ),
-        Visibility(
-          visible: isLoading,
-          child: Positioned.fill(
-            child: Container(
-              color: AppColor.GREY_BG,
-              child: Center(child: CircularProgressIndicator()),
-            ),
-          ),
-        )
-      ],
     );
   }
 

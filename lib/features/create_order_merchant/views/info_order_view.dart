@@ -148,9 +148,10 @@ class _InfoOrderViewState extends State<InfoOrderView> {
             ),
           ),
           MButtonWidget(
+            height: 50,
             title: 'Xác nhận',
             isEnable: true,
-            margin: EdgeInsets.zero,
+            margin: const EdgeInsets.symmetric(vertical: 10),
             onTap: _onCreateOrder,
           )
         ],

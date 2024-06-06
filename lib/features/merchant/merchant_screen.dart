@@ -8,6 +8,8 @@ import 'package:vierqr/features/merchant/merchant.dart';
 import 'package:vierqr/features/merchant/tab_merchant/tab_info_merchant.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 
+import '../../commons/utils/navigator_utils.dart';
+import '../create_order_merchant/create_oder.dart';
 import 'tab_merchant/tab_order_merchant.dart';
 
 class MerchantScreen extends StatefulWidget {
@@ -27,7 +29,7 @@ class MerchantScreen extends StatefulWidget {
 class _MerchantScreenState extends State<MerchantScreen> {
   final List<MerchantTab> listTab = [
     MerchantTab('Thông tin', 0),
-    MerchantTab('Hoá đơn', 1),
+    MerchantTab('Danh sách hóa đơn', 1),
   ];
 
   int tabSelect = 0;
@@ -45,6 +47,7 @@ class _MerchantScreenState extends State<MerchantScreen> {
     return Scaffold(
       appBar: CustomerVaHeaderWidget(),
       backgroundColor: AppColor.WHITE,
+      floatingActionButton: _createInvoiceButton(),
       body: BlocProvider<MerchantBloc>(
         create: (context) => bloc,
         child: BlocConsumer<MerchantBloc, MerchantState>(
@@ -63,30 +66,52 @@ class _MerchantScreenState extends State<MerchantScreen> {
           },
           builder: (context, state) {
             return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(
                   height: 10,
                 ),
-                Center(
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: AppColor.BLUE_TEXT),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: List.generate(
-                        listTab.length,
-                        (index) {
-                          MerchantTab tab = listTab[index];
-                          return _buildItemTab(tab, tabSelect == tab.type);
-                        },
-                      ),
+                Container(
+                  width: double.infinity,
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+                  // width: double.infinity,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: List.generate(
+                      listTab.length,
+                      (index) {
+                        MerchantTab tab = listTab[index];
+                        return Row(
+                          children: [
+                            _buildItemTab(tab, tabSelect == tab.type),
+                            const SizedBox(width: 8)
+                          ],
+                        );
+                      },
                     ),
                   ),
                 ),
+                // Center(
+                //   child: Container(
+                //     padding:
+                //         const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+                //     decoration: BoxDecoration(
+                //       borderRadius: BorderRadius.circular(8),
+                //       border: Border.all(color: AppColor.BLUE_TEXT),
+                //     ),
+                //     child: Row(
+                //       mainAxisSize: MainAxisSize.min,
+                //       children: List.generate(
+                //         listTab.length,
+                //         (index) {
+                //           MerchantTab tab = listTab[index];
+                //           return _buildItemTab(tab, tabSelect == tab.type);
+                //         },
+                //       ),
+                //     ),
+                //   ),
+                // ),
                 Expanded(child: _buildBody()),
               ],
             );
@@ -94,6 +119,59 @@ class _MerchantScreenState extends State<MerchantScreen> {
         ),
       ),
     );
+  }
+
+  Widget _createInvoiceButton() {
+    return InkWell(
+        onTap: () {},
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+          width: 150,
+          height: 50,
+          margin: const EdgeInsets.only(bottom: 10, right: 5),
+          child: FloatingActionButton(
+            backgroundColor: Colors.transparent,
+            elevation: 4,
+            onPressed: () {
+              NavigatorUtils.navigatePage(
+                  context, CreateOrderScreen(customerId: widget.customerId),
+                  routeName: CreateOrderScreen.routeName);
+            },
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(50),
+              // side: BorderSide(color: Colors.red),
+            ),
+            child: Container(
+              width: 150,
+              height: 50,
+              decoration: BoxDecoration(
+                color: AppColor.BLUE_TEXT,
+                borderRadius: BorderRadius.circular(50),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.add_sharp,
+                    color: AppColor.WHITE,
+                    size: 15,
+                  ),
+                  const SizedBox(width: 2),
+                  Text(
+                    'Tạo hóa đơn',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: AppColor.WHITE,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        ));
   }
 
   Widget _buildBody() {
@@ -107,22 +185,25 @@ class _MerchantScreenState extends State<MerchantScreen> {
   }
 
   Widget _buildItemTab(MerchantTab tab, bool select) {
-    return GestureDetector(
-      onTap: () => setState(() {
-        tabSelect = tab.type;
-      }),
+    return InkWell(
+      onTap: () {
+        setState(() {
+          tabSelect = tab.type;
+        });
+      },
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 6),
-        width: 100,
-        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          color:
-              select ? AppColor.BLUE_TEXT.withOpacity(0.3) : Colors.transparent,
-        ),
-        child: Text(
-          tab.name,
-          style: TextStyle(color: AppColor.BLUE_TEXT),
+            color:
+                select ? AppColor.BLUE_TEXT.withOpacity(0.2) : AppColor.WHITE,
+            border: Border.all(
+              color: select ? AppColor.WHITE : AppColor.GREY_DADADA,
+            ),
+            borderRadius: BorderRadius.circular(50)),
+        child: Center(
+          child: Text(tab.name,
+              style: TextStyle(
+                  color: select ? AppColor.BLUE_TEXT : AppColor.BLACK)),
         ),
       ),
     );

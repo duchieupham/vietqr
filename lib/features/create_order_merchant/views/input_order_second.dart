@@ -108,8 +108,8 @@ class _InputNameStoreViewState extends State<InputOrderSecondView> {
             right: 0,
             left: 0,
             child: Container(
-              height: 80,
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              height: 90,
+              padding: const EdgeInsets.symmetric(horizontal: 30),
               decoration: BoxDecoration(
                 color: AppColor.WHITE,
                 border: Border(
@@ -121,9 +121,9 @@ class _InputNameStoreViewState extends State<InputOrderSecondView> {
                 children: [
                   Expanded(
                     child: SizedBox(
-                      height: 40,
+                      // height: 40,
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text('Thành tiền:'),

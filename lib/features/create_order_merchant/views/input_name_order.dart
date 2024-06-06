@@ -86,8 +86,9 @@ class _InputNameStoreViewState extends State<InputNameOrderView> {
             const SizedBox(height: 16),
             const Spacer(),
             MButtonWidget(
+              height: 50,
               title: 'Tiếp tục',
-              margin: EdgeInsets.zero,
+              margin: const EdgeInsets.symmetric(vertical: 10),
               isEnable: true,
               onTap: () => widget.callBack.call(_value),
             )
