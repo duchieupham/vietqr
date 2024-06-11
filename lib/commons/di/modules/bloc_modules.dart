@@ -2,6 +2,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:vierqr/commons/base/di_module.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
+import 'package:vierqr/features/connect_gg_chat/blocs/connect_gg_chat_bloc.dart';
 import 'package:vierqr/features/login/blocs/login_bloc.dart';
 import 'package:vierqr/features/network/network_bloc.dart';
 import 'package:vierqr/features/transaction_detail/blocs/transaction_bloc.dart';
@@ -13,6 +14,9 @@ class BlocModule extends DIModule {
     getIt
       ..registerLazySingleton(
         () => NetworkBloc(connectivity: Connectivity()),
+      )
+      ..registerLazySingleton(
+        () => ConnectGgChatBloc(),
       )
       ..registerFactoryParam(
         (param1, param2) => TransactionBloc(

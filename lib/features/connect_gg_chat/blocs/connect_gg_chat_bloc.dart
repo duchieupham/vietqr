@@ -9,12 +9,8 @@ import '../events/connect_gg_chat_evens.dart';
 import '../repositories/connect_gg_chat_repositories.dart';
 import '../states/connect_gg_chat_states.dart';
 
-class ConnectGgChatBloc extends Bloc<ConnectGgChatEvent, ConnectGgChatStates>
-    with BaseManager {
-  @override
-  final BuildContext context;
-
-  ConnectGgChatBloc(this.context) : super(ConnectGgChatStates()) {
+class ConnectGgChatBloc extends Bloc<ConnectGgChatEvent, ConnectGgChatStates> {
+  ConnectGgChatBloc() : super(ConnectGgChatStates()) {
     on<GetInfoEvent>(_getInfo);
     on<CheckWebhookUrlEvent>(_checkValidUrl);
     on<DeleteWebhookEvent>(_deleteWebhook);

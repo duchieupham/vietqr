@@ -91,7 +91,7 @@ Future<File> getImageFile(String file) async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Injection.inject(env: EnvType.STG);
+  await Injection.inject(env: EnvType.PROD);
 
   await SharePrefUtils.init();
   await SharePrefUtils.onClearCache();
@@ -133,7 +133,8 @@ class _VietQRApp extends State<VietQRApp> {
   void initState() {
     super.initState();
     print('User: $userId');
-    _mainScreen = (userId.isNotEmpty) ? const DashBoardScreen() : const LoginScreen();
+    _mainScreen =
+        (userId.isNotEmpty) ? const DashBoardScreen() : const LoginScreen();
     // _mainScreen = const DashBoardScreen();
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
