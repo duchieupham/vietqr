@@ -161,12 +161,12 @@ class _InvoiceVaVietQRView extends State<InvoiceVaVietQRView> {
                   padding: EdgeInsets.all(20),
                   child: Column(
                     children: [
-                      QrImage(
+                      QrImageView(
                         data: _qr,
                         version: QrVersions.auto,
                         embeddedImage: const AssetImage(
                             'assets/images/ic-viet-qr-small.png'),
-                        embeddedImageStyle: QrEmbeddedImageStyle(
+                        embeddedImageStyle: const QrEmbeddedImageStyle(
                           size: Size(
                             30,
                             30,

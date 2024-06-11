@@ -12,6 +12,13 @@ import 'package:vierqr/features/connect_telegram/connect_telegram_screen.dart';
 import 'package:vierqr/features/connect_telegram/widget/connect_screen.dart';
 import 'package:vierqr/features/contact/contact_screen.dart';
 import 'package:vierqr/features/create_qr_un_authen/show_qr.dart';
+import 'package:vierqr/features/customer_va/views/customer_va_confirm_otp_view.dart';
+import 'package:vierqr/features/customer_va/views/customer_va_insert_bank_auth_view.dart';
+import 'package:vierqr/features/customer_va/views/customer_va_insert_bank_info_view.dart';
+import 'package:vierqr/features/customer_va/views/customer_va_insert_merchant_view.dart';
+import 'package:vierqr/features/customer_va/views/customer_va_list_view.dart';
+import 'package:vierqr/features/customer_va/views/customer_va_splash_view.dart';
+import 'package:vierqr/features/customer_va/views/customer_va_success_view.dart';
 import 'package:vierqr/features/dashboard/dashboard_screen.dart';
 import 'package:vierqr/features/generate_qr/views/qr_share_view.dart';
 import 'package:vierqr/features/introduce/views/introduce_screen.dart';
@@ -95,7 +102,21 @@ class NavigationService {
         return _buildRoute(settings, const TransWalletScreen());
       case Routes.INVOICE_SCREEN:
         return _buildRoute(settings, const InvoiceScreen());
-      //
+      case Routes.INSERT_CUSTOMER_VA_MERCHANT:
+        return _buildRoute(settings, const CustomerVAInsertMerchantView());
+      case Routes.INSERT_CUSTOMER_VA_BANK_INFO:
+        return _buildRoute(settings, const CustomerVaInsertBankInfoView());
+      case Routes.INSERT_CUSTOMER_VA_BANK_AUTH:
+        return _buildRoute(settings, const CustomerVaInsertBankAuthView());
+      case Routes.CUSTOMER_VA_CONFIRM_OTP:
+        return _buildRoute(settings, const CustomerVaConfirmOtpView());
+      case Routes.CUSTOMER_VA_SUCCESS:
+        return _buildRoute(settings, const CustomerVaSuccessView());
+      case Routes.CUSTOMER_VA_SPLASH:
+        return _buildRoute(settings, const CustomerVaSplashView());
+      case Routes.CUSTOMER_VA_LIST:
+        return _buildRoute(settings, CustomerVaListView());
+
       case Routes.DYNAMIC_ACTIVE_KEY_SCREEN:
         Map<String, dynamic> param = settings.arguments as Map<String, dynamic>;
         String activeKey = param['activeKey'] as String;
