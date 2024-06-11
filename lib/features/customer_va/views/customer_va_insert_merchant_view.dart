@@ -19,12 +19,19 @@ class CustomerVAInsertMerchantView extends StatefulWidget {
 class _CustomerVAInsertMerchantView
     extends State<CustomerVAInsertMerchantView> {
   String _value = '';
-
+  late CustomerVaInsertProvider _provider;
   @override
   void initState() {
     super.initState();
     //initital / reset service
-    Provider.of<CustomerVaInsertProvider>(context, listen: false).doInit();
+    _provider = Provider.of<CustomerVaInsertProvider>(context, listen: false);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      initData();
+    });
+  }
+
+  void initData() {
+    _provider.doInit();
   }
 
   @override

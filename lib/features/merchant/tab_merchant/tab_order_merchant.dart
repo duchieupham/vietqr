@@ -101,7 +101,10 @@ class _TabOrderMerchantState extends State<TabOrderMerchant> {
   void _loadMore() async {
     final maxScroll = controller.position.maxScrollExtent;
     if (controller.offset >= maxScroll && !controller.position.outOfRange) {
-      _onGetListOrder(loadMore: true);
+      isLoadMore = true;
+      updateState();
+
+      _onGetListOrder();
     }
   }
 
@@ -129,8 +132,6 @@ class _TabOrderMerchantState extends State<TabOrderMerchant> {
           const SizedBox(height: 20),
           Container(
             width: double.infinity,
-
-            // width: double.infinity,
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: List.generate(
@@ -161,11 +162,13 @@ class _TabOrderMerchantState extends State<TabOrderMerchant> {
               return _buildItem(dto, textColor: AppColor.GREEN);
             })
           ],
-          if (isLoadMore)
+          if (isLoadMore) ...[
+            const SizedBox(height: 20),
             Center(
               child: SizedBox(
                   width: 25, height: 25, child: CircularProgressIndicator()),
             )
+          ]
         ],
       ),
     );
