@@ -175,7 +175,7 @@ class BottomSheetDetailBankBDSD extends StatelessWidget {
                         children: [
                           Expanded(
                             child: Center(
-                              child: QrImage(
+                              child: QrImageView(
                                 data: dto.qrCode,
                                 size: 230,
                                 version: QrVersions.auto,

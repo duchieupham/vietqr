@@ -8,6 +8,8 @@ import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/features/transaction_detail/transaction_detail_screen.dart';
 import 'package:vierqr/main.dart';
 
+import '../../navigator/app_navigator.dart';
+
 class NotificationService {
   final FlutterLocalNotificationsPlugin notificationsPlugin =
       FlutterLocalNotificationsPlugin();
@@ -47,7 +49,7 @@ class NotificationService {
         Map<String, dynamic> data = json.decode(details.payload!);
         if (data['transactionReceiveId'] != null) {
           NavigatorUtils.navigatePage(
-              NavigationService.navigatorKey.currentContext!,
+              NavigationService.context!,
               TransactionDetailScreen(
                   transactionId: data['transactionReceiveId']),
               routeName: TransactionDetailScreen.routeName);

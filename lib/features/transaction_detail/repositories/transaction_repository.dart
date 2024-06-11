@@ -7,17 +7,19 @@ import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/models/business_detail_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/qr_recreate_dto.dart';
-import 'package:vierqr/models/trans/trans_request_dto.dart';
-import 'package:vierqr/models/trans_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/models/terminal_response_dto.dart';
+import 'package:vierqr/models/trans/trans_request_dto.dart';
+import 'package:vierqr/models/trans_dto.dart';
 import 'package:vierqr/models/transaction_branch_input_dto.dart';
 import 'package:vierqr/models/transaction_input_dto.dart';
 import 'package:vierqr/models/transaction_receive_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class TransactionRepository {
-  const TransactionRepository();
+  const TransactionRepository(this.appConfig);
+
+  final AppConfig appConfig;
 
   String get userId => SharePrefUtils().userId;
 
@@ -25,7 +27,7 @@ class TransactionRepository {
     List<TransDTO> result = [];
     try {
       final String url =
-          '${EnvConfig.getBaseUrl()}transactions?bankId=${dto.bankId}&status=${dto.status}&offset=${dto.offset}&from=${dto.from}&to=${dto.to}';
+          '${appConfig.getBaseUrl}transactions?bankId=${dto.bankId}&status=${dto.status}&offset=${dto.offset}&from=${dto.from}&to=${dto.to}';
 
       final response = await BaseAPIClient.getAPI(
         url: url,
@@ -53,7 +55,7 @@ class TransactionRepository {
       String userId = SharePrefUtils.getProfile().userId;
 
       final String url =
-          '${EnvConfig.getBaseUrl()}terminal/transactions?terminalCode=${dto.terminalCode}&userId=$userId&bankId=${dto.bankId}&type=${dto.type}&offset=${dto.offset}&value=${dto.value}&from=${dto.from}&to=${dto.to}';
+          '${appConfig.getBaseUrl}terminal/transactions?terminalCode=${dto.terminalCode}&userId=$userId&bankId=${dto.bankId}&type=${dto.type}&offset=${dto.offset}&value=${dto.value}&from=${dto.from}&to=${dto.to}';
 
       final response = await BaseAPIClient.getAPI(
         url: url,
@@ -73,7 +75,7 @@ class TransactionRepository {
     List<TransDTO> result = [];
     try {
       final String url =
-          '${EnvConfig.getBaseUrl()}transactions/list?bankId=${dto.bankId}&type=${dto.type}&offset=${dto.offset}&value=${dto.value}&from=${dto.from}&to=${dto.to}';
+          '${appConfig.getBaseUrl}transactions/list?bankId=${dto.bankId}&type=${dto.type}&offset=${dto.offset}&value=${dto.value}&from=${dto.from}&to=${dto.to}';
 
       final response = await BaseAPIClient.getAPI(
         url: url,
@@ -114,7 +116,7 @@ class TransactionRepository {
       bankShortName: '',
     );
     try {
-      final String url = '${EnvConfig.getBaseUrl()}transaction/$id';
+      final String url = '${appConfig.getBaseUrl}transaction/$id';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -133,7 +135,7 @@ class TransactionRepository {
     List<dynamic> list = [];
     try {
       final String url =
-          '${EnvConfig.getBaseUrl()}transaction/image/$transactionId';
+          '${appConfig.getBaseUrl}transaction/image/$transactionId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -161,7 +163,7 @@ class TransactionRepository {
       imgId: '',
     );
     try {
-      final String url = '${EnvConfig.getBaseUrl()}qr/re-generate';
+      final String url = '${appConfig.getBaseUrl}qr/re-generate';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: dto.toJson(),
@@ -182,7 +184,7 @@ class TransactionRepository {
       TransactionBranchInputDTO dto) async {
     List<BusinessTransactionDTO> result = [];
     try {
-      final String url = '${EnvConfig.getBaseUrl()}transaction-branch';
+      final String url = '${appConfig.getBaseUrl}transaction-branch';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: dto.toJson(),
@@ -205,7 +207,7 @@ class TransactionRepository {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}transactions/note';
+      final String url = '${appConfig.getBaseUrl}transactions/note';
       final response = await BaseAPIClient.postAPI(
           url: url, type: AuthenticationType.SYSTEM, body: param);
       if (response.statusCode == 200 || response.statusCode == 400) {
@@ -226,7 +228,7 @@ class TransactionRepository {
   //   TerminalDto result = TerminalDto(terminals: []);
   //   try {
   //     final String url =
-  //         '${EnvConfig.getBaseUrl()}terminal/bank?userId=$userId&bankId=$type&offset=$offset';
+  //         '${appConfig.getBaseUrl}terminal/bank?userId=$userId&bankId=$type&offset=$offset';
   //     final response = await BaseAPIClient.getAPI(
   //       url: url,
   //       type: AuthenticationType.SYSTEM,
@@ -250,7 +252,7 @@ class TransactionRepository {
     List<TerminalAccountDTO> result = [];
     try {
       final String url =
-          '${EnvConfig.getBaseUrl()}account-bank/terminal?bankId=$type&userId=$userId';
+          '${appConfig.getBaseUrl}account-bank/terminal?bankId=$type&userId=$userId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -277,7 +279,7 @@ class TransactionRepository {
         const ResponseMessageDTO(status: '', message: '');
 
     try {
-      String url = '${EnvConfig.getBaseUrl()}transaction/map-terminal';
+      String url = '${appConfig.getBaseUrl}transaction/map-terminal';
       final response = await BaseAPIClient.postAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -304,7 +306,7 @@ class TransactionRepository {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}transaction-request';
+      final String url = '${appConfig.getBaseUrl}transaction-request';
 
       final response = await BaseAPIClient.postAPI(
           url: url,

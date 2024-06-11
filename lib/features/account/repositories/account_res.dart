@@ -4,20 +4,21 @@ import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
 import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
-import 'package:vierqr/models/user_profile.dart';
 import 'package:vierqr/models/card_dto.dart';
 import 'package:vierqr/models/introduce_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/models/setting_account_sto.dart';
 import 'package:vierqr/models/theme_dto.dart';
+import 'package:vierqr/models/user_profile.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/socket_service/socket_service.dart';
 
 class AccountRepository {
-  const AccountRepository();
+  AccountRepository();
 
   Future<IntroduceDTO> getPointAccount(String userId) async {
     try {

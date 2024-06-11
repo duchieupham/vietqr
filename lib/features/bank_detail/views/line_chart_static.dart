@@ -8,8 +8,10 @@ import 'package:vierqr/models/statistical_dto.dart';
 
 class StatisticalLineChart extends StatelessWidget {
   final List<ResponseStatisticDTO> listData;
+
   const StatisticalLineChart({Key? key, required this.listData})
       : super(key: key);
+
   LineChartData get sampleData1 => LineChartData(
       gridData: griData,
       titlesData: titlesData,
@@ -19,6 +21,7 @@ class StatisticalLineChart extends StatelessWidget {
       maxY: maxExchangeValueAmount,
       minX: 0,
       minY: 0);
+
   double get maxExchangeValueAmount {
     ResponseStatisticDTO statisticDTOIn = listData.reduce(
         (curr, next) => curr.totalCashIn > next.totalCashIn ? curr : next);
@@ -214,6 +217,7 @@ class StatisticalLineChart extends StatelessWidget {
       reservedSize: 32,
       interval: 1,
       getTitlesWidget: _bottomTitleWidget);
+
   FlBorderData get borderData => FlBorderData(
       show: true,
       border: const Border(
@@ -231,13 +235,14 @@ class StatisticalLineChart extends StatelessWidget {
       dotData: FlDotData(show: false),
       belowBarData: BarAreaData(show: false),
       spots: getListFlSpot1());
+
   List<FlSpot> getListFlSpot1() {
     List<FlSpot> flSpots = [];
     for (var element in listData) {
       int index = listData.indexOf(element);
       flSpots.add(
-        FlSpot(getMonth(element.date),
-            convertAmount(listData[index].totalCashIn)),
+        FlSpot(
+            getMonth(element.date), convertAmount(listData[index].totalCashIn)),
       );
     }
     return flSpots;
@@ -250,9 +255,12 @@ class StatisticalLineChart extends StatelessWidget {
   }
 
   FlGridData get griData => FlGridData(show: true);
+
   @override
   Widget build(BuildContext context) {
     return LineChart(
-        swapAnimationDuration: const Duration(milliseconds: 250), sampleData1);
+      duration: const Duration(milliseconds: 250),
+      sampleData1,
+    );
   }
 }

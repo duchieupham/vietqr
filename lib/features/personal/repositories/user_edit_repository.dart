@@ -14,6 +14,7 @@ import 'package:vierqr/models/user_profile.dart';
 import 'package:vierqr/models/info_user_dto.dart';
 import 'package:vierqr/models/password_update_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
 import 'package:http/http.dart' as http;
@@ -174,7 +175,7 @@ class UserEditRepository {
   }
 
   Future<void> _resetServices() async {
-    BuildContext context = NavigationService.navigatorKey.currentContext!;
+    BuildContext context = NavigationService.context!;
     Provider.of<UserEditProvider>(context, listen: false).reset();
     await SharePrefUtils.saveProfileToCache(UserProfile());
     await SharePrefUtils.setTokenInfo('');

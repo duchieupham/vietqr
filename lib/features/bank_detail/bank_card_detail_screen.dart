@@ -23,6 +23,7 @@ import 'package:vierqr/models/confirm_otp_bank_dto.dart';
 import 'package:vierqr/models/qr_bank_detail.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/terminal_response_dto.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 import '../../services/providers/account_bank_detail_provider.dart';
@@ -387,7 +388,7 @@ class _BankCardDetailState extends State<BankCardDetailState> {
       String requestId, String bankAccount, AccountBankDetailDTO? dto) {
     showDialog(
       barrierDismissible: false,
-      context: NavigationService.navigatorKey.currentContext!,
+      context: NavigationService.context!,
       builder: (BuildContext context) {
         return DialogOTPView(
           phone: dto?.phoneAuthenticated ?? '',

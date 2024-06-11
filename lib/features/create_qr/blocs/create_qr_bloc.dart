@@ -19,6 +19,7 @@ import 'package:vierqr/models/qr_box_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/models/terminal_qr_dto.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 
 class CreateQRBloc extends Bloc<CreateQREvent, CreateQRState> with BaseManager {
   @override
@@ -146,7 +147,7 @@ class CreateQRBloc extends Bloc<CreateQREvent, CreateQRState> with BaseManager {
         List<BankAccountDTO> list =
             await bankCardRepository.getListBankAccount(userId);
         PaletteGenerator? paletteGenerator;
-        BuildContext context = NavigationService.navigatorKey.currentContext!;
+        BuildContext context = NavigationService.context!;
         if (list.isNotEmpty) {
           List<BankAccountDTO> listLinked =
               list.where((e) => e.isAuthenticated).toList();

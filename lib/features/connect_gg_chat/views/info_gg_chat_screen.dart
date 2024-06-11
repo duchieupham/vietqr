@@ -121,7 +121,7 @@ class InfoGgChatScreen extends StatelessWidget {
         const SizedBox(height: 16),
         InkWell(
           onTap: () {
-            Clipboard.setData(new ClipboardData(text: dto.webhook));
+            Clipboard.setData(new ClipboardData(text: dto.webhook ?? ''));
           },
           child: Align(
             alignment: Alignment.centerRight,

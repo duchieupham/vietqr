@@ -1,5 +1,6 @@
 import 'dart:convert';
-import 'package:vierqr/main.dart';
+
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 import 'i_shared_local.dart';
 

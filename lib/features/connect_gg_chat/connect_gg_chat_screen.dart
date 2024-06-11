@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/features/connect_gg_chat/states/connect_gg_chat_states.dart';
 import 'package:vierqr/features/connect_gg_chat/views/info_gg_chat_screen.dart';
@@ -29,10 +30,7 @@ class ConnectGgChatScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<ConnectGgChatBloc>(
-      create: (context) => ConnectGgChatBloc(context),
-      child: _Screen(),
-    );
+    return _Screen();
   }
 }
 
@@ -44,9 +42,9 @@ class _Screen extends StatefulWidget {
 }
 
 class __ScreenState extends State<_Screen> {
-  late ConnectGgChatBloc _bloc;
+  // late ConnectGgChatBloc _bloc;
   late ConnectGgChatProvider _provider;
-
+  final _bloc = getIt.get<ConnectGgChatBloc>();
   PageController _pageController = PageController(initialPage: 0);
   TextEditingController _textEditingController = TextEditingController();
 
@@ -59,7 +57,7 @@ class __ScreenState extends State<_Screen> {
   @override
   void initState() {
     super.initState();
-    _bloc = BlocProvider.of(context);
+    // _bloc = getIt.get<ConnectGgChatBloc>();
     _provider = Provider.of<ConnectGgChatProvider>(context, listen: false);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -129,6 +127,7 @@ class __ScreenState extends State<_Screen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ConnectGgChatBloc, ConnectGgChatStates>(
+      bloc: _bloc,
       listener: (context, state) {
         if (state.status == BlocStatus.LOADING) {
           DialogWidget.instance.openLoadingDialog();

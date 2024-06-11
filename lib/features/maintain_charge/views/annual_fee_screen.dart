@@ -293,7 +293,7 @@ class _QrAnnualFeeScreenState extends State<QrAnnualFeeScreen> {
                           width: 240,
                           height: 240,
                           // color: AppColor.GREY_DADADA,
-                          child: QrImage(
+                          child: QrImageView(
                             data: widget.qr ?? '',
                             size: 220,
                             version: QrVersions.auto,

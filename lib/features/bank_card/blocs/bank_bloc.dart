@@ -13,6 +13,7 @@ import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/models/bank_account_terminal.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 
 import '../../../services/providers/invoice_provider.dart';
 
@@ -88,7 +89,7 @@ class BankBloc extends Bloc<BankEvent, BankState> with BaseManager {
 
         final List<Color> colors = [];
         PaletteGenerator? paletteGenerator;
-        BuildContext context = NavigationService.navigatorKey.currentContext!;
+        BuildContext context = NavigationService.context!;
         Provider.of<InvoiceProvider>(context, listen: false)
             .setListUnAuth(list);
         if (list.isNotEmpty) {

@@ -14,6 +14,7 @@ import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/card_dto.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class VietQRIDCardView extends StatefulWidget {
@@ -84,7 +85,7 @@ class _VietQRIDCardViewState extends State<VietQRIDCardView> {
 
       await showDialog(
         barrierDismissible: false,
-        context: NavigationService.navigatorKey.currentContext!,
+        context: NavigationService.context!,
         builder: (BuildContext context) {
           return DialogNFC(
             msg: errorDialog,

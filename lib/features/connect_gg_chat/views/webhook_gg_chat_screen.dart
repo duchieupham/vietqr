@@ -4,6 +4,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 
 import '../../../commons/constants/configurations/theme.dart';
 import '../../../commons/enums/enum_type.dart';
@@ -33,50 +34,42 @@ class WebhookGgChatScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ConnectGgChatBloc, ConnectGgChatStates>(
-      builder: (context, state) {
-        return Container(
-          height: MediaQuery.of(context).size.height,
-          child: PageView(
-            controller: controller,
-            physics: NeverScrollableScrollPhysics(),
-            onPageChanged: onPageChanged,
-            children: [
-              startConnectGgChat(),
-              listAccountLinked(),
-              inputWebhook(),
-              finishConnectGgChat(),
-            ],
-          ),
-        );
-      },
+    return Container(
+      height: MediaQuery.of(context).size.height,
+      child: PageView(
+        controller: controller,
+        physics: NeverScrollableScrollPhysics(),
+        onPageChanged: onPageChanged,
+        children: [
+          startConnectGgChat(),
+          listAccountLinked(),
+          inputWebhook(),
+          finishConnectGgChat(),
+        ],
+      ),
     );
   }
 
   Widget startConnectGgChat() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 30),
+      padding: const EdgeInsets.only(left: 40),
       width: double.infinity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 20),
-          Container(
+          const SizedBox(height: 20),
+          SizedBox(
             height: 100,
             width: 100,
             child: Image.asset('assets/images/ic-gg-chat-home.png'),
           ),
-          SizedBox(height: 30),
-          Container(
-            width: 250,
-            height: 90,
-            child: Text(
-              'Kết nối Google Chat\nđể nhận thông tin\nBiến động số dư',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
-            ),
+          const SizedBox(height: 30),
+          const Text(
+            'Kết nối Google Chat\nđể nhận thông tin\nBiến động số dư',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
           ),
-          SizedBox(height: 20),
-          Container(
+          const SizedBox(height: 20),
+          const SizedBox(
             width: double.infinity,
             child: Text(
               'Thực hiện kết nối chỉ với một vài thao tác đơn giản.\nAn tâm về vấn đề an toàn thông tin - dữ liệu\ncủa Google Chat mang lại.',
@@ -90,28 +83,24 @@ class WebhookGgChatScreen extends StatelessWidget {
 
   Widget finishConnectGgChat() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 30),
+      padding: const EdgeInsets.only(left: 40),
       width: double.infinity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 20),
-          Container(
+          const SizedBox(height: 20),
+          SizedBox(
             height: 100,
             width: 100,
             child: Image.asset('assets/images/ic-gg-chat-home.png'),
           ),
-          SizedBox(height: 30),
-          Container(
-            width: 250,
-            height: 60,
-            child: Text(
-              'Kết nối Google Chat\nthành công!',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
-            ),
+          const SizedBox(height: 30),
+          const Text(
+            'Kết nối Google Chat\nthành công!',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
           ),
-          SizedBox(height: 20),
-          Container(
+          const SizedBox(height: 20),
+          const SizedBox(
             width: double.infinity,
             child: Text(
               'Cảm ơn quý khách đã sử dụng dịch vụ \nVietQR VN của chúng tôi.',
@@ -127,33 +116,30 @@ class WebhookGgChatScreen extends StatelessWidget {
     return Consumer<ConnectGgChatProvider>(
       builder: (context, provider, child) {
         return Container(
-          padding: EdgeInsets.symmetric(horizontal: 30),
+          padding: const EdgeInsets.only(left: 40, right: 20),
           width: double.infinity,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Container(
                 height: 50,
                 width: 50,
                 child: Image.asset('assets/images/ic-gg-chat-home.png'),
               ),
-              SizedBox(height: 30),
-              Container(
-                width: 350,
-                child: Text(
-                  'Đầu tiên, chọn tài khoản\nngân hàng mà bạn muốn\nnhận BĐSD qua Google Chat',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
-                ),
+              const SizedBox(height: 30),
+              const Text(
+                'Đầu tiên, chọn tài khoản\nngân hàng mà bạn muốn\nnhận BĐSD qua Google Chat',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
               ),
-              SizedBox(height: 30),
-              Container(
+              const SizedBox(height: 30),
+              SizedBox(
                 width: double.infinity,
                 height: 50,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
+                    const Text(
                       'Tất cả tài khoản đã liên kết',
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
@@ -168,7 +154,7 @@ class WebhookGgChatScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              MySeparator(
+              const MySeparator(
                 color: AppColor.GREY_DADADA,
               ),
               SizedBox(

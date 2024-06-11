@@ -16,6 +16,7 @@ import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/bluetooth_printer_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/create_qr_provider.dart';
 import 'package:vierqr/services/providers/water_mark_provider.dart';
@@ -293,7 +294,7 @@ class _CreateQRSuccessState extends State<CreateQRSuccess> {
   void dialogExits() async {
     await showDialog(
       barrierDismissible: true,
-      context: NavigationService.navigatorKey.currentContext!,
+      context: NavigationService.context!,
       builder: (BuildContext context) {
         return const DialogExitsView();
       },

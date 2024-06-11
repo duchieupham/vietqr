@@ -17,6 +17,7 @@ import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/home/widget/dialog_update.dart';
 import 'package:vierqr/features/web_view/views/custom_inapp_webview.dart';
 import 'package:vierqr/main.dart';
+import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class ServiceSection extends StatefulWidget {
@@ -212,7 +213,7 @@ class _ServiceSectionState extends State<ServiceSection> {
           () async {
             showDialog(
               barrierDismissible: false,
-              context: NavigationService.navigatorKey.currentContext!,
+              context: NavigationService.context!,
               builder: (BuildContext context) {
                 return DialogUpdateView(
                   onCheckUpdate: () {

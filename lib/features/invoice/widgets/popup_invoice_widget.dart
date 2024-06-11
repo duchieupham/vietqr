@@ -123,7 +123,7 @@ class PopupQrCreate extends StatelessWidget {
                           width: 240,
                           height: 240,
                           // color: AppColor.GREY_DADADA,
-                          child: QrImage(
+                          child: QrImageView(
                             data: qr ?? '',
                             size: 220,
                             version: QrVersions.auto,

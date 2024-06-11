@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
 import 'package:vierqr/commons/utils/encrypt_utils.dart';
+import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
+import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/account_login_dto.dart';
-import 'package:vierqr/models/app_info_dto.dart';
-import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
+
 import '../../../commons/constants/configurations/numeral.dart';
-import '../../../commons/utils/image_utils.dart';
 import '../../../commons/widgets/pin_widget_register.dart';
 import '../../../services/providers/pin_provider.dart';
 import 'bgr_app_bar_login.dart';
@@ -20,7 +21,6 @@ class QuickLoginScreen extends StatefulWidget {
   final GestureTapCallback? onQuickLogin;
   final TextEditingController pinController;
   final FocusNode passFocus;
-  final AppInfoDTO appInfoDTO;
   final String imgId;
 
   QuickLoginScreen({
@@ -31,7 +31,6 @@ class QuickLoginScreen extends StatefulWidget {
     required this.onQuickLogin,
     required this.pinController,
     required this.passFocus,
-    required this.appInfoDTO,
     required this.isFocus,
     required this.imgId,
   });
@@ -77,7 +76,7 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
                 children: [
                   Stack(
                     children: [
-                      BackgroundAppBarLogin(child: const SizedBox()),
+                      const BackgroundAppBarLogin(child: SizedBox()),
                       Container(
                         padding:
                             const EdgeInsets.only(top: 50, left: 0, right: 0),
@@ -105,8 +104,9 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
                                       width: 96,
                                       height: 40,
                                       margin: const EdgeInsets.only(right: 20),
-                                      child: Image.asset(
-                                        "assets/images/logo_vietgr_payment.png",
+                                      child: const XImage(
+                                        imagePath:
+                                            ImageConstant.logoVietQRPayment,
                                         width: 160,
                                         fit: BoxFit.fitWidth,
                                       ),
@@ -164,13 +164,13 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
                     ],
                   ),
                   Padding(
-                    padding: EdgeInsets.only(left: 20, right: 20),
+                    padding: const EdgeInsets.only(left: 20, right: 20),
                     child: _buildItem(height),
                   ),
                   const SizedBox(height: 10),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 40),
-                    child: const Text(
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 40),
+                    child: Text(
                       'Vui lòng nhập mật khẩu để đăng nhập',
                       textAlign: TextAlign.start,
                       style: TextStyle(
@@ -188,7 +188,7 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
                     },
                     child: Container(
                       width: MediaQuery.of(context).size.width,
-                      margin: EdgeInsets.symmetric(horizontal: 40),
+                      margin: const EdgeInsets.symmetric(horizontal: 40),
                       height: 40,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
@@ -226,44 +226,8 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 40, right: 40),
-                    // child: Row(
-                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //   children: [
-                    //     GestureDetector(
-                    //       onTap: widget.onQuickLogin,
-                    //       child: const Text(
-                    //         'Đổi số điện thoại',
-                    //         style: TextStyle(
-                    //             fontSize: 14,
-                    //             fontWeight: FontWeight.w500,
-                    //             color: AppColor.BLUE_TEXT),
-                    //       ),
-                    //     ),
-                    //     GestureDetector(
-                    //       onTap: () {
-                    //         FocusManager.instance.primaryFocus?.unfocus();
-                    //         NavigatorUtils.navigatePage(
-                    //           context,
-                    //           ForgotPasswordScreen(
-                    //             userName: widget.userName,
-                    //             phone: widget.phone,
-                    //             appInfoDTO: widget.appInfoDTO,
-                    //           ),
-                    //           routeName: ForgotPasswordScreen.routeName,
-                    //         );
-                    //       },
-                    //       child: const Text(
-                    //         'Quên mật khẩu?',
-                    //         style: TextStyle(
-                    //             fontSize: 14,
-                    //             fontWeight: FontWeight.w500,
-                    //             color: AppColor.BLUE_TEXT),
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
+                  const Padding(
+                    padding: EdgeInsets.only(left: 40, right: 40),
                   ),
                 ],
               ),
@@ -272,7 +236,7 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
               title: 'Đăng nhập',
               width: 350,
               height: 50,
-              margin: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+              margin: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
               colorDisableBgr: AppColor.GREY_BUTTON,
               isEnable: widget.pinController.text.length >= 6,
               colorEnableText: widget.pinController.text.length >= 6
@@ -317,14 +281,14 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
             ClipRRect(
               borderRadius: BorderRadius.circular(100),
               child: widget.imgId.isNotEmpty
-                  ? Image(
-                      image: ImageUtils.instance.getImageNetWork(widget.imgId),
+                  ? XImage(
+                      imagePath: widget.imgId,
                       width: 45,
                       height: 45,
                       fit: BoxFit.fill,
                     )
-                  : Image.asset(
-                      'assets/images/ic-avatar.png',
+                  : const XImage(
+                      imagePath: ImageConstant.icAvatar,
                       width: 45,
                       height: 45,
                     ),
@@ -337,7 +301,7 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
                 children: [
                   Text(
                     widget.userName,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
@@ -345,7 +309,8 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
                   const SizedBox(height: 2),
                   Text(
                     widget.phone,
-                    style: TextStyle(fontSize: 20, color: AppColor.GREY_TEXT),
+                    style: const TextStyle(
+                        fontSize: 20, color: AppColor.GREY_TEXT),
                   ),
                 ],
               ),

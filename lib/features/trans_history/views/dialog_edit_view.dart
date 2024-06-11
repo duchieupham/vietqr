@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
 import 'package:vierqr/commons/utils/error_utils.dart';
 import 'package:vierqr/commons/widgets/textfield_custom.dart';
@@ -19,7 +20,7 @@ class DialogEditView extends StatefulWidget {
 
 class _DialogEditViewState extends State<DialogEditView> {
   final controller = TextEditingController();
-  final transactionRepository = TransactionRepository();
+  final transactionRepository = getIt.get<TransactionRepository>();
 
   String error = '';
 

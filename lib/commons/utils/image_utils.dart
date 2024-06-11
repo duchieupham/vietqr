@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class ImageUtils {
@@ -16,7 +17,7 @@ class ImageUtils {
   //
   NetworkImage getImageNetWork(String imageId) {
     return NetworkImage(
-      '${EnvConfig.getBaseUrl()}images/$imageId',
+      '${getIt.get<AppConfig>().getBaseUrl}images/$imageId',
       headers: {"Authorization": 'Bearer $token'},
       scale: 1.0,
     );
@@ -24,7 +25,7 @@ class ImageUtils {
 
   CachedNetworkImageProvider getImageNetworkCache(String imageId) {
     return CachedNetworkImageProvider(
-      '${EnvConfig.getBaseUrl()}images/$imageId',
+      '${getIt.get<AppConfig>().getBaseUrl}images/$imageId',
       headers: {"Authorization": 'Bearer $token'},
       cacheKey: const Uuid().v4(),
     );

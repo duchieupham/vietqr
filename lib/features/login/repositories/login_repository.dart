@@ -1,22 +1,25 @@
 import 'dart:convert';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
-import 'package:vierqr/models/user_profile.dart';
 import 'package:vierqr/models/account_login_dto.dart';
 import 'package:vierqr/models/code_login_dto.dart';
 import 'package:vierqr/models/info_user_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
+import 'package:vierqr/models/user_profile.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
-import 'package:device_info_plus/device_info_plus.dart';
-import 'package:vierqr/services/socket_service/socket_service.dart';
+
+import '../../../data/remotes/auth_api.dart';
+import '../../../services/socket_service/socket_service.dart';
 
 class LoginRepository {
   static final codeLoginController = BehaviorSubject<CodeLoginDTO>();
@@ -25,9 +28,11 @@ class LoginRepository {
 
   Future<bool> login(AccountLoginDTO dto) async {
     bool result = false;
+
+    final authApi = getIt.get<AuthApi>();
+
     try {
       DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-      String url = '${EnvConfig.getBaseUrl()}accounts';
       String fcmToken = await FirebaseMessaging.instance.getToken() ?? '';
       String platform = '';
       String device = '';
@@ -56,24 +61,23 @@ class LoginRepository {
         fcmToken: fcmToken,
         sharingCode: sharingCode,
       );
-      final response = await BaseAPIClient.postAPI(
-        url: url,
-        body: loginDTO.toJson(),
-        type: AuthenticationType.NONE,
-      );
-      if (response.statusCode == 200) {
-        String token = response.body;
-        Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
-        UserProfile userProfile = UserProfile.fromJson(decodedToken);
 
-        await SharePrefUtils.setTokenInfo(token);
-        await SharePrefUtils.saveProfileToCache(userProfile);
-        await SharePrefUtils.saveTokenFree('');
-        await SharePrefUtils.saveTokenFCM(fcmToken);
-        await SharePrefUtils.savePhone(dto.phoneNo);
-        SocketService.instance.init();
-        result = true;
-      }
+      final res = await authApi.login(
+        AuthenticationType.NONE,
+        loginDTO.toJson(),
+      );
+
+      String token = res;
+      Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+      UserProfile userProfile = UserProfile.fromJson(decodedToken);
+
+      await SharePrefUtils.setTokenInfo(token);
+      await SharePrefUtils.saveProfileToCache(userProfile);
+      await SharePrefUtils.saveTokenFree('');
+      await SharePrefUtils.saveTokenFCM(fcmToken);
+      await SharePrefUtils.savePhone(dto.phoneNo);
+      SocketService.instance.init();
+      result = true;
     } catch (e) {
       LOG.error(e.toString());
     }

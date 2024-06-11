@@ -79,7 +79,7 @@ class _VietQrState extends State<WidgetQr> {
     final width = MediaQuery.of(context).size.width;
 
     if (!widget.isVietQR) {
-      return QrImage(
+      return QrImageView(
         data: widget.qrCode ?? '',
         size: widget.size,
         version: QrVersions.auto,

@@ -13,7 +13,7 @@ import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/services/providers/water_mark_provider.dart';
 
 class QRShareView extends StatefulWidget {
-  QRShareView({super.key});
+  const QRShareView({super.key});
 
   @override
   State<QRShareView> createState() => _QRShareViewState();

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/layouts/m_button_widget.dart';
-import 'package:vierqr/models/app_info_dto.dart';
-import 'package:vierqr/models/info_user_dto.dart';
+import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
+import 'package:vierqr/layouts/image/x_image.dart';
+import 'package:vierqr/layouts/m_button_widget.dart';
+import 'package:vierqr/models/info_user_dto.dart';
 
-import '../../../commons/utils/image_utils.dart';
 import 'bgr_app_bar_login.dart';
 
 class LoginAccountScreen extends StatefulWidget {
@@ -18,7 +18,6 @@ class LoginAccountScreen extends StatefulWidget {
   final List<InfoUserDTO> list;
   final Widget child;
   final Widget buttonNext;
-  final AppInfoDTO appInfoDTO;
 
   const LoginAccountScreen({
     super.key,
@@ -30,7 +29,6 @@ class LoginAccountScreen extends StatefulWidget {
     required this.list,
     required this.child,
     required this.buttonNext,
-    required this.appInfoDTO,
   });
 
   @override
@@ -57,7 +55,7 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
           SizedBox(
             height: height * 0.3,
             width: width,
-            child: Stack(
+            child: const Stack(
               children: [
                 BackgroundAppBarLogin(),
                 Positioned(
@@ -98,7 +96,7 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
                         borderRadius: BorderRadius.circular(16),
                         color: Colors.transparent,
                         border: Border.all(color: AppColor.BLUE_TEXT)),
-                    child: Text(
+                    child: const Text(
                       'Đăng nhập bằng tài khoản khác',
                       style: TextStyle(fontSize: 15, color: AppColor.BLUE_TEXT),
                     ),
@@ -114,8 +112,8 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
                             height: 0.5,
                             color: AppColor.BLACK.withOpacity(0.6)),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8.0),
                         child: Text(
                           'Hoặc',
                           style: TextStyle(fontWeight: FontWeight.w300),
@@ -163,20 +161,20 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
                           isEnable: true,
                           colorEnableBgr: AppColor.BLUE_E1EFFF,
                           margin: EdgeInsets.zero,
+                          onTap: widget.onLoginCard,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Image.asset('assets/images/ic-card.png'),
+                              const XImage(imagePath: ImageConstant.icCard),
                               const SizedBox(width: 8),
                               Text(
                                 'VQR ID Card',
                                 style: height < 800
-                                    ? TextStyle(fontSize: 10)
-                                    : TextStyle(fontSize: 12),
+                                    ? const TextStyle(fontSize: 10)
+                                    : const TextStyle(fontSize: 12),
                               ),
                             ],
                           ),
-                          onTap: widget.onLoginCard,
                         ),
                       ),
                     ],
@@ -234,14 +232,14 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
             ClipRRect(
               borderRadius: BorderRadius.circular(100),
               child: dto.imgId?.isNotEmpty ?? false
-                  ? Image(
-                      image: ImageUtils.instance.getImageNetWork(dto.imgId!),
+                  ? XImage(
+                      imagePath: dto.imgId!,
                       width: 40,
                       height: 40,
                       fit: BoxFit.fill,
                     )
-                  : Image.asset(
-                      'assets/images/ic-avatar.png',
+                  : const XImage(
+                      imagePath: ImageConstant.icAvatar,
                       width: 40,
                       height: 40,
                     ),
@@ -253,7 +251,7 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
                 children: [
                   Text(
                     dto.fullName.trim(),
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
                     ),
@@ -261,7 +259,8 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
                   const SizedBox(height: 2),
                   Text(
                     dto.phoneNo ?? '',
-                    style: TextStyle(fontSize: 15, color: AppColor.GREY_TEXT),
+                    style: const TextStyle(
+                        fontSize: 15, color: AppColor.GREY_TEXT),
                   ),
                 ],
               ),
@@ -270,8 +269,8 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
               onTap: () {
                 widget.onRemoveAccount!(index);
               },
-              child: Image.asset(
-                'assets/images/ic-next-user.png',
+              child: const XImage(
+                imagePath: ImageConstant.icNextUser,
                 width: 30,
                 height: 30,
               ),

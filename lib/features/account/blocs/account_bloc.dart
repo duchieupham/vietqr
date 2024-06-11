@@ -100,4 +100,4 @@ void _updateVoiceSetting(AccountEvent event, Emitter emit) async {
   }
 }
 
-AccountRepository accRepository = const AccountRepository();
+AccountRepository accRepository = AccountRepository();
