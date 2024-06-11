@@ -87,15 +87,15 @@ class NavigationService {
       case Routes.MOBILE_RECHARGE:
         return _buildRoute(settings, MobileRechargeScreen());
       case Routes.REGISTER_NEW_BANK:
-        return _buildRoute(settings, RegisterNewBank());
+        return _buildRoute(settings, const RegisterNewBank());
       case Routes.CONNECT_TELEGRAM:
-        return _buildRoute(settings, ConnectTelegramScreen());
+        return _buildRoute(settings, const ConnectTelegramScreen());
       case Routes.CONNECT_STEP_TELE_SCREEN:
         return _buildRoute(settings, ConnectTeleStepScreen());
       case Routes.CONNECT_STEP_LARK_SCREEN:
         return _buildRoute(settings, ConnectLarkStepScreen());
       case Routes.CONNECT_LARK:
-        return _buildRoute(settings, ConnectLarkScreen());
+        return _buildRoute(settings, const ConnectLarkScreen());
       case Routes.REPORT_SCREEN:
         return _buildRoute(settings, const ReportScreen());
       case Routes.TRANSACTION_WALLET:

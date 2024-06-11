@@ -119,10 +119,10 @@ class _TabOrderMerchantState extends State<TabOrderMerchant> {
       child: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16),
         controller: controller,
-        physics: AlwaysScrollableScrollPhysics(),
+        physics: const AlwaysScrollableScrollPhysics(),
         // crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
+          const Text(
             'Danh sách hoá đơn',
             style: TextStyle(
               fontSize: 20,
@@ -130,7 +130,7 @@ class _TabOrderMerchantState extends State<TabOrderMerchant> {
             ),
           ),
           const SizedBox(height: 20),
-          Container(
+          SizedBox(
             width: double.infinity,
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -164,7 +164,7 @@ class _TabOrderMerchantState extends State<TabOrderMerchant> {
           ],
           if (isLoadMore) ...[
             const SizedBox(height: 20),
-            Center(
+            const Center(
               child: SizedBox(
                   width: 25, height: 25, child: CircularProgressIndicator()),
             )
@@ -215,7 +215,7 @@ class _TabOrderMerchantState extends State<TabOrderMerchant> {
     return InkWell(
       onTap: () => _onDetailOrder(dto.billId ?? ''),
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         // margin: const EdgeInsets.only(bottom: 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -236,10 +236,10 @@ class _TabOrderMerchantState extends State<TabOrderMerchant> {
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 20,
                   ),
-                  Icon(
+                  const Icon(
                     Icons.arrow_forward_rounded,
                     color: AppColor.BLUE_TEXT,
                     size: 15,
@@ -247,7 +247,7 @@ class _TabOrderMerchantState extends State<TabOrderMerchant> {
                 ],
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 15,
             ),
             SizedBox(
@@ -255,10 +255,9 @@ class _TabOrderMerchantState extends State<TabOrderMerchant> {
                 children: [
                   Expanded(
                     child: Text(
-                      CurrencyUtils.instance.getCurrencyFormatted(
-                            dto.amount.toString(),
-                          ) +
-                          ' VND',
+                      '${CurrencyUtils.instance.getCurrencyFormatted(
+                        dto.amount.toString(),
+                      )} VND',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
@@ -321,12 +320,12 @@ class _TabOrderMerchantState extends State<TabOrderMerchant> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(des1,
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 15, fontWeight: FontWeight.w500)),
                       const SizedBox(height: 3),
                       Text(des2,
                           maxLines: 2,
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 13, color: AppColor.GREY_TEXT)),
                     ],
                   ),

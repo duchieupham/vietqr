@@ -134,9 +134,9 @@ class _TabInfoMerchantState extends State<TabInfoMerchant> {
                   const SizedBox(
                     height: 30,
                   ),
-                  Text(
+                  const Text(
                     'Thông tin doanh nghiệp / tổ chức\nđã đăng ký dịch vụ thu hộ\nqua tài khoản định danh.',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
@@ -176,7 +176,7 @@ class _TabInfoMerchantState extends State<TabInfoMerchant> {
           : Positioned.fill(
               child: Container(
                 color: AppColor.WHITE,
-                child: Center(child: CircularProgressIndicator()),
+                child: const Center(child: CircularProgressIndicator()),
               ),
             ),
     );
@@ -196,12 +196,12 @@ class _TabInfoMerchantState extends State<TabInfoMerchant> {
         children: [
           Container(
             height: 80,
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
               color: AppColor.WHITE,
               border: Border.all(
-                color: Color(0XFFDADADA),
+                color: const Color(0XFFDADADA),
               ),
             ),
             child: Row(
@@ -215,12 +215,12 @@ class _TabInfoMerchantState extends State<TabInfoMerchant> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(des1,
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 15, fontWeight: FontWeight.w500)),
                       const SizedBox(height: 3),
                       Text(des2,
                           maxLines: 2,
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 13, color: AppColor.GREY_TEXT)),
                     ],
                   ),
@@ -235,11 +235,11 @@ class _TabInfoMerchantState extends State<TabInfoMerchant> {
 
   Widget _buildItem(String title, String content, {bool isUnBorder = false}) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 15),
+      padding: const EdgeInsets.symmetric(vertical: 15),
       decoration: BoxDecoration(
         border: isUnBorder
             ? null
-            : Border(
+            : const Border(
                 bottom: BorderSide(color: Color(0XFFDADADA), width: 1),
               ),
       ),
