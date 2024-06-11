@@ -91,7 +91,7 @@ Future<File> getImageFile(String file) async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Injection.inject();
+  await Injection.inject(env: EnvType.STG);
 
   await SharePrefUtils.init();
   await SharePrefUtils.onClearCache();
@@ -99,7 +99,6 @@ void main() async {
   await HivePrefs.instance.init();
 
   AppConfig appConfig = getIt.get<AppConfig>();
-  await appConfig.setEnvConfig(EnvType.PROD);
 
   if (kIsWeb) {
     await Firebase.initializeApp(options: appConfig.getFirebaseConfig);
@@ -126,7 +125,7 @@ class VietQRApp extends StatefulWidget {
 }
 
 class _VietQRApp extends State<VietQRApp> {
-  static Widget _mainScreen = const Login();
+  static Widget _mainScreen = LoginScreen();
 
   String get userId => SharePrefUtils.getProfile().userId.trim();
 
@@ -134,7 +133,7 @@ class _VietQRApp extends State<VietQRApp> {
   void initState() {
     super.initState();
     print('User: $userId');
-    _mainScreen = (userId.isNotEmpty) ? const DashBoardScreen() : const Login();
+    _mainScreen = (userId.isNotEmpty) ? const DashBoardScreen() : const LoginScreen();
     // _mainScreen = const DashBoardScreen();
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(

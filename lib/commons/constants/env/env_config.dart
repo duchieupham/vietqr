@@ -46,9 +46,12 @@ class AppConfig {
   EnvType get getEnv => _env;
 
   setEnvConfig(EnvType env) async {
+    _env = env;
+  }
+
+  loadEnvConfig() async {
     try {
-      await dotenv.load(fileName: "assets/environment/.env_${env.toValue}");
-      _env = env;
+      await dotenv.load(fileName: "assets/environment/.env_${_env.toValue}");
 
       //
       _bankUrl = dotenv.env['BANK_URL'];
@@ -73,9 +76,11 @@ class AppConfig {
 
   String get getUrl => _url ?? '';
 
+  bool get isProduct => _env == EnvType.PROD;
+
   FirebaseOptions get getFirebaseConfig =>
       _firebaseWebOptions ??
-      FirebaseOptions(
+      const FirebaseOptions(
         apiKey: '',
         appId: '',
         messagingSenderId: '',

@@ -54,7 +54,7 @@ class NavigationService {
       case Routes.APP:
         return _buildRoute(settings, const VietQRApp());
       case Routes.LOGIN:
-        return _buildRoute(settings, const Login());
+        return _buildRoute(settings, const LoginScreen());
       case Routes.DASHBOARD:
         return _buildRoute(settings, const DashBoardScreen());
       case Routes.USER_EDIT:

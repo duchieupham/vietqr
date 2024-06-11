@@ -128,6 +128,9 @@ dependencies:
   firebase_dynamic_links: ^5.4.8
   uni_links: ^0.5.1
   flutter_dotenv: ^5.1.0
+  dio: ^5.4.3+1
+  retrofit: ^4.1.0
+  pretty_dio_logger: ^1.3.1
 #  screen_brightness: ^0.2.2+1
 #  audioplayers: ^4.1.0
 dependency_overrides:
@@ -140,6 +143,10 @@ dev_dependencies:
     sdk: flutter
   build_runner: ^2.3.2
   hive_generator:
+
+  flutter_lints: ^4.0.0
+  build_runner_core: ^7.2.3
+  retrofit_generator: ^8.1.0
 
   flutter_launcher_icons: ^0.13.1
 
@@ -190,10 +197,10 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  fonts:
-    - family: TimesNewRoman
-      fonts:
-        - asset: assets/fonts/font-times-new-roman.ttf
+#  fonts:
+#    - family: TimesNewRoman
+#      fonts:
+#        - asset: assets/fonts/font-times-new-roman.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro

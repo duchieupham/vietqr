@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
-import 'package:vierqr/features/login/views/bgr_app_bar_login.dart';
+import 'package:vierqr/features/login/widgets/bgr_app_bar_login.dart';
 import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 
