@@ -39,6 +39,7 @@ import 'package:vierqr/services/local_storage/shared_preference/shared_pref_util
 import 'package:vierqr/services/providers/invoice_provider.dart';
 
 import '../../commons/constants/configurations/app_images.dart';
+import '../../commons/di/injection/injection.dart';
 import '../../services/providers/maintain_charge_provider.dart';
 import 'widgets/card_widget.dart';
 
@@ -305,7 +306,7 @@ class _BankScreenState extends State<_BankScreen>
     List<BankTypeDTO> list = args[1];
 
     for (var message in list) {
-      String url = '${EnvConfig.getBaseUrl()}images/${message.imageId}';
+      String url = '${getIt.get<AppConfig>().getBaseUrl}images/${message.imageId}';
       final response = await http.get(Uri.parse(url));
       final bytes = response.bodyBytes;
       sendPort

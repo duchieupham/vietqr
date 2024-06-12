@@ -1,9 +1,11 @@
 import 'dart:convert';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
@@ -13,12 +15,12 @@ import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/fcm_token_update_dto.dart';
 import 'package:vierqr/models/introduce_dto.dart';
 import 'package:vierqr/models/national_scanner_dto.dart';
-import 'package:http/http.dart' as http;
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class DashboardRepository {
   const DashboardRepository();
+
   String get userId => SharePrefUtils.getProfile().userId;
 
   //Request permissions
@@ -46,7 +48,7 @@ class DashboardRepository {
       params['notificationMobile'] = true;
       params['userId'] = userId;
       final String url =
-          '${EnvConfig.getBaseUrl()}accounts/setting/notification-mobile';
+          '${getIt.get<AppConfig>().getBaseUrl}accounts/setting/notification-mobile';
       final response = await BaseAPIClient.postAPI(
         body: params,
         url: url,
@@ -74,7 +76,8 @@ class DashboardRepository {
   Future<BankTypeDTO> getBankTypeByCaiValue(String caiValue) async {
     BankTypeDTO result = BankTypeDTO();
     try {
-      final String url = '${EnvConfig.getBaseUrl()}bank-type/cai/$caiValue';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}bank-type/cai/$caiValue';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -125,7 +128,7 @@ class DashboardRepository {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getUrl()}api/report';
+      final String url = '${getIt.get<AppConfig>().getUrl}api/report';
 
       final List<http.MultipartFile> files = [];
       if (list != null) {
@@ -156,7 +159,8 @@ class DashboardRepository {
 
   Future<IntroduceDTO> getPointAccount(String userId) async {
     try {
-      final String url = '${EnvConfig.getBaseUrl()}account-wallet/$userId';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}account-wallet/$userId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -175,7 +179,7 @@ class DashboardRepository {
 
   Future<AppInfoDTO> getVersionApp() async {
     try {
-      final String url = '${EnvConfig.getBaseUrl()}system-setting';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}system-setting';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -199,7 +203,7 @@ class DashboardRepository {
   Future<int> checkValidToken() async {
     int result = 0;
     try {
-      String url = '${EnvConfig.getBaseUrl()}token';
+      String url = '${getIt.get<AppConfig>().getBaseUrl}token';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -230,7 +234,8 @@ class DashboardRepository {
       if (oldToken.trim() != newToken.trim()) {
         FcmTokenUpdateDTO dto = FcmTokenUpdateDTO(
             userId: userId, oldToken: oldToken, newToken: newToken);
-        final String url = '${EnvConfig.getBaseUrl()}fcm-token/update';
+        final String url =
+            '${getIt.get<AppConfig>().getBaseUrl}fcm-token/update';
         final response = await BaseAPIClient.postAPI(
           url: url,
           body: dto.toJson(),

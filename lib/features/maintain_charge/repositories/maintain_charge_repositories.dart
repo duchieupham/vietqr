@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/models/maintain_charge_create.dart';
-import 'package:http/http.dart' as http;
 
 import '../../../commons/constants/env/env_config.dart';
 import '../../../commons/enums/authentication_type.dart';
@@ -31,7 +31,7 @@ class MaintainChargeRepositories {
         'password': password,
       };
       final String url =
-          '${EnvConfig.getBaseUrl()}qr-active-bank/request-active';
+          '${getIt.get<AppConfig>().getBaseUrl}qr-active-bank/request-active';
       final String token = await SharePrefUtils.getTokenInfo();
       final response = await BaseAPIClient.postAPI(
         url: url,
@@ -85,7 +85,7 @@ class MaintainChargeRepositories {
         'feeId': feeId,
       };
       final String url =
-          '${EnvConfig.getBaseUrl()}qr-active-bank/confirm-active';
+          '${getIt.get<AppConfig>().getBaseUrl}qr-active-bank/confirm-active';
       final String token = await SharePrefUtils.getTokenInfo();
       final response = await BaseAPIClient.postAPI(
         url: url,
@@ -123,7 +123,7 @@ class MaintainChargeRepositories {
     List<AnnualFeeDTO>? result = [];
     try {
       final String url =
-          '${EnvConfig.getBaseUrl()}key-active-bank/annual-fee?bankId=$bankId';
+          '${getIt.get<AppConfig>().getBaseUrl}key-active-bank/annual-fee?bankId=$bankId';
       final String token = await SharePrefUtils.getTokenInfo();
       final response = await BaseAPIClient.getAPI(
         url: url,
@@ -149,7 +149,8 @@ class MaintainChargeRepositories {
   Future<MaintainChargeStatus?> chargeMaintainace(
       MaintainChargeCreate dto) async {
     try {
-      final String url = '${EnvConfig.getBaseUrl()}request-active-key';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}request-active-key';
       final String token = await SharePrefUtils.getTokenInfo();
       final response = await BaseAPIClient.postAPI(
         url: url,
@@ -184,7 +185,8 @@ class MaintainChargeRepositories {
 
   Future<bool?> confirmMaintainCharge(ConfirmMaintainCharge dto) async {
     try {
-      final String url = '${EnvConfig.getBaseUrl()}confirm-active-key';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}confirm-active-key';
       final String token = await SharePrefUtils.getTokenInfo();
       final response = await BaseAPIClient.postAPI(
         url: url,

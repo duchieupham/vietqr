@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
@@ -27,7 +28,7 @@ class DetailStoreRepository {
 
     try {
       String url =
-          '${EnvConfig.getBaseUrl()}transactions/sub-terminal/$terminalCode'
+          '${getIt.get<AppConfig>().getBaseUrl}transactions/sub-terminal/$terminalCode'
           '?userId=$userId&subTerminalCode=$subTerminalCode&page=$page&size=20'
           '&value=$value&fromDate=$fromDate&toDate=$toDate&type=$type';
       final response = await BaseAPIClient.getAPI(
@@ -52,7 +53,7 @@ class DetailStoreRepository {
 
     try {
       String url =
-          '${EnvConfig.getBaseUrl()}terminal/detail-qr/$terminalId?userId=$userId';
+          '${getIt.get<AppConfig>().getBaseUrl}terminal/detail-qr/$terminalId?userId=$userId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -76,7 +77,7 @@ class DetailStoreRepository {
 
     try {
       String url =
-          '${EnvConfig.getBaseUrl()}terminal/sub-detail/$terminalId?fromDate=$fromDate&toDate=$toDate';
+          '${getIt.get<AppConfig>().getBaseUrl}terminal/sub-detail/$terminalId?fromDate=$fromDate&toDate=$toDate';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -97,7 +98,7 @@ class DetailStoreRepository {
   Future<ResponseMessageDTO> addMemberGroup(Map<String, dynamic> param) async {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}terminal-member';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}terminal-member';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: param,
@@ -120,7 +121,7 @@ class DetailStoreRepository {
     List<MemberStoreDTO> result = [];
     try {
       String url =
-          '${EnvConfig.getBaseUrl()}terminal/member-detail/$terminalId?userId=$userId';
+          '${getIt.get<AppConfig>().getBaseUrl}terminal/member-detail/$terminalId?userId=$userId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -144,7 +145,7 @@ class DetailStoreRepository {
     List<SubTerminal> result = [];
     try {
       String url =
-          '${EnvConfig.getBaseUrl()}terminal/list-sub-terminal/$terminalId';
+          '${getIt.get<AppConfig>().getBaseUrl}terminal/list-sub-terminal/$terminalId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -167,7 +168,8 @@ class DetailStoreRepository {
   Future<ResponseMessageDTO> removeMember(Map<String, dynamic> param) async {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}terminal-member/remove';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}terminal-member/remove';
       final response = await BaseAPIClient.deleteAPI(
         url: url,
         body: param,

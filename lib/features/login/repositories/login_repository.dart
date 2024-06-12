@@ -88,7 +88,7 @@ class LoginRepository {
     bool result = false;
     try {
       DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-      String url = '${EnvConfig.getBaseUrl()}accounts/login';
+      String url = '${getIt.get<AppConfig>().getBaseUrl}accounts/login';
       String fcmToken = await FirebaseMessaging.instance.getToken() ?? '';
       String platform = '';
       String device = '';
@@ -146,7 +146,7 @@ class LoginRepository {
 
   Future checkExistPhone(String phone) async {
     try {
-      String url = '${EnvConfig.getBaseUrl()}accounts/search/$phone';
+      String url = '${getIt.get<AppConfig>().getBaseUrl}accounts/search/$phone';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.NONE,
@@ -170,7 +170,7 @@ class LoginRepository {
 
   Future getFreeToken() async {
     try {
-      String url = '${EnvConfig.getBaseUrl()}token_generate';
+      String url = '${getIt.get<AppConfig>().getBaseUrl}token_generate';
 
       Map<String, String>? result = {};
       result['Authorization'] = 'Basic ${StringUtils.instance.authBase64()}';
@@ -195,7 +195,7 @@ class LoginRepository {
   Future<ResponseMessageDTO> forgotPass(body) async {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
     try {
-      String url = '${EnvConfig.getBaseUrl()}accounts/password/reset';
+      String url = '${getIt.get<AppConfig>().getBaseUrl}accounts/password/reset';
       final response = await BaseAPIClient.postAPI(
         url: url,
         type: AuthenticationType.NONE,

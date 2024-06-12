@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
@@ -13,7 +14,8 @@ class NotificationRepository {
   Future<int> getCounter(String userId) async {
     int result = 0;
     try {
-      final String url = '${EnvConfig.getBaseUrl()}notification/count/$userId';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}notification/count/$userId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -32,7 +34,7 @@ class NotificationRepository {
       NotificationInputDTO dto) async {
     List<NotificationDTO> result = [];
     try {
-      final String url = '${EnvConfig.getBaseUrl()}notifications';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}notifications';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: dto.toJson(),
@@ -54,7 +56,8 @@ class NotificationRepository {
     bool result = false;
     try {
       Map<String, dynamic> data = {'userId': userId};
-      final String url = '${EnvConfig.getBaseUrl()}notification/status';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}notification/status';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: data,

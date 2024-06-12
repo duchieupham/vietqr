@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
@@ -15,7 +16,7 @@ class BankTextFormRepository {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}bank-text-form';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}bank-text-form';
       final Map<String, dynamic> data = {};
       data['text'] = text;
       data['bank_id'] = bankId;
@@ -40,7 +41,8 @@ class BankTextFormRepository {
   Future<List<BankTextFormDTO>> getBankTextForms(String bankId) async {
     List<BankTextFormDTO> result = [];
     try {
-      final String url = '${EnvConfig.getBaseUrl()}bank-text-form/$bankId';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}bank-text-form/$bankId';
       final response = await BaseAPIClient.getAPI(url: url);
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
@@ -60,7 +62,7 @@ class BankTextFormRepository {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}bank-text-form';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}bank-text-form';
       final Map<String, dynamic> data = {};
       data['id'] = id;
       final response = await BaseAPIClient.deleteAPI(

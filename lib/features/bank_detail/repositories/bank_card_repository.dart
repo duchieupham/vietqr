@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:crypto/crypto.dart';
 import 'package:http/http.dart' as http;
 import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
@@ -36,7 +37,7 @@ class BankCardRepository {
     List<BankTypeDTO> listBanks = [];
 
     try {
-      String url = '${EnvConfig.getBaseUrl()}bank-type';
+      String url = '${getIt.get<AppConfig>().getBaseUrl}bank-type';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -60,7 +61,7 @@ class BankCardRepository {
 
     try {
       String url =
-          '${EnvConfig.getBaseUrl()}account-bank/terminal?userId=$userId&bankId=$bankId';
+          '${getIt.get<AppConfig>().getBaseUrl}account-bank/terminal?userId=$userId&bankId=$bankId';
       final response =
           await BaseAPIClient.getAPI(url: url, type: AuthenticationType.SYSTEM);
       if (response.statusCode == 200) {
@@ -82,7 +83,7 @@ class BankCardRepository {
 
     try {
       String url =
-          '${EnvConfig.getBaseUrl()}tid/tid-box/$bankId?userId=$userId';
+          '${getIt.get<AppConfig>().getBaseUrl}tid/tid-box/$bankId?userId=$userId';
       final response =
           await BaseAPIClient.getAPI(url: url, type: AuthenticationType.SYSTEM);
       if (response.statusCode == 200) {
@@ -102,7 +103,7 @@ class BankCardRepository {
     List<QRGeneratedDTO> result = [];
     try {
       final QRCreateListDTO qrCreateListDTO = QRCreateListDTO(dtos: list);
-      final String url = '${EnvConfig.getBaseUrl()}qr/generate-list';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}qr/generate-list';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: qrCreateListDTO.toJson(),
@@ -126,7 +127,7 @@ class BankCardRepository {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}account-bank';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}account-bank';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: dto.toJson(),
@@ -151,7 +152,7 @@ class BankCardRepository {
         const ResponseMessageDTO(status: '', message: '');
     try {
       final String url =
-          '${EnvConfig.getBaseUrl()}account-bank/unauthenticated';
+          '${getIt.get<AppConfig>().getBaseUrl}account-bank/unauthenticated';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: dto.toJson(),
@@ -180,7 +181,7 @@ class BankCardRepository {
         const ResponseMessageDTO(status: '', message: '');
     try {
       final String url =
-          '${EnvConfig.getBaseUrl()}account-bank/check-existed?bankAccount='
+          '${getIt.get<AppConfig>().getBaseUrl}account-bank/check-existed?bankAccount='
           '$bankAccount&bankTypeId=$bankTypeId&userId=$userId&type=$type';
       final response = await BaseAPIClient.getAPI(
         url: url,
@@ -203,7 +204,8 @@ class BankCardRepository {
     List<BankAccountDTO> result = [];
 
     try {
-      final String url = '${EnvConfig.getBaseUrl()}account-bank/$userId';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}account-bank/$userId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -228,7 +230,7 @@ class BankCardRepository {
 
     try {
       final String url =
-          '${EnvConfig.getBaseUrl()}terminal/bank-account?terminalId=$terminalId&userId=$userId';
+          '${getIt.get<AppConfig>().getBaseUrl}terminal/bank-account?terminalId=$terminalId&userId=$userId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -251,7 +253,7 @@ class BankCardRepository {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}account-bank';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}account-bank';
       final response = await BaseAPIClient.deleteAPI(
         url: url,
         body: dto.toJson(),
@@ -275,7 +277,7 @@ class BankCardRepository {
         const ResponseMessageDTO(status: '', message: '');
     try {
       final body = {'userId': userId, 'bankId': bankId};
-      final String url = '${EnvConfig.getBaseUrl()}member/remove';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}member/remove';
       final response = await BaseAPIClient.deleteAPI(
         url: url,
         body: body,
@@ -298,7 +300,8 @@ class BankCardRepository {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}account-bank/remove';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}account-bank/remove';
       final response = await BaseAPIClient.deleteAPI(
         url: url,
         body: {'bankId': bankId, 'userId': userId},
@@ -325,7 +328,7 @@ class BankCardRepository {
     try {
       print(dto.toJson());
       final String url =
-          '${EnvConfig.getUrl()}bank/api/account-bank/linked/request_otp';
+          '${getIt.get<AppConfig>().getUrl}bank/api/account-bank/linked/request_otp';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: dto.toJson(),
@@ -349,7 +352,7 @@ class BankCardRepository {
         const ResponseMessageDTO(status: '', message: '');
     try {
       final String url =
-          '${EnvConfig.getUrl()}bank/api/account-bank/linked/confirm_otp';
+          '${getIt.get<AppConfig>().getUrl}bank/api/account-bank/linked/confirm_otp';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: dto.toJson(),
@@ -372,7 +375,7 @@ class BankCardRepository {
     AccountBankDetailDTO result = AccountBankDetailDTO();
     try {
       final String url =
-          '${EnvConfig.getBaseUrl()}account-bank/detail/web/$bankId';
+          '${getIt.get<AppConfig>().getBaseUrl}account-bank/detail/web/$bankId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -391,7 +394,7 @@ class BankCardRepository {
   Future<dynamic> getMerchantInfo(String bankId) async {
     try {
       final String url =
-          '${EnvConfig.getBaseUrl()}customer-va/information?bankId=$bankId';
+          '${getIt.get<AppConfig>().getBaseUrl}customer-va/information?bankId=$bankId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -415,7 +418,7 @@ class BankCardRepository {
         const ResponseMessageDTO(status: '', message: '');
     try {
       final String url =
-          '${EnvConfig.getBaseUrl()}account-bank/register-authentication';
+          '${getIt.get<AppConfig>().getBaseUrl}account-bank/register-authentication';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: dto.toJson(),
@@ -454,7 +457,8 @@ class BankCardRepository {
       customerShortName: '',
     );
     try {
-      final String url = '${EnvConfig.getUrl()}bank/api/account/info';
+      final String url =
+          '${getIt.get<AppConfig>().getUrl}bank/api/account/info';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: {
@@ -480,7 +484,8 @@ class BankCardRepository {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getUrl()}bank/api/unregister_request';
+      final String url =
+          '${getIt.get<AppConfig>().getUrl}bank/api/unregister_request';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: body,
@@ -502,7 +507,8 @@ class BankCardRepository {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getUrl()}bank/api/account-bank/unlinked';
+      final String url =
+          '${getIt.get<AppConfig>().getUrl}bank/api/account-bank/unlinked';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: body,
@@ -524,7 +530,8 @@ class BankCardRepository {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getUrl()}bank/api/unregister_confirm';
+      final String url =
+          '${getIt.get<AppConfig>().getUrl}bank/api/unregister_confirm';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: dto.toJson(),
@@ -546,7 +553,7 @@ class BankCardRepository {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}contacts';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}contacts';
 
       Map<String, dynamic> body = {};
 
@@ -582,7 +589,7 @@ class BankCardRepository {
     ResponseMessageDTO dto = ResponseMessageDTO(status: '', message: '');
 
     try {
-      String url = '${EnvConfig.getBaseUrl()}account-bank-request';
+      String url = '${getIt.get<AppConfig>().getBaseUrl}account-bank-request';
       final response = await BaseAPIClient.postAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -604,7 +611,8 @@ class BankCardRepository {
     List<BankTypeDTO> listBanks = [];
 
     try {
-      String url = '${EnvConfig.getBaseUrl()}bank-type/unauthenticated';
+      String url =
+          '${getIt.get<AppConfig>().getBaseUrl}bank-type/unauthenticated';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -635,7 +643,8 @@ class BankCardRepository {
       imgId: '',
     );
     try {
-      final String url = '${EnvConfig.getBaseUrl()}qr/generate/unauthenticated';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}qr/generate/unauthenticated';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: data,

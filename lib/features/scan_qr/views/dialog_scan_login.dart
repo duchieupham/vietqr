@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
@@ -92,7 +93,7 @@ class DialogScanLogin extends StatelessWidget {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}accounts/push';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}accounts/push';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: body,

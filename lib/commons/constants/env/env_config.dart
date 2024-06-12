@@ -2,35 +2,35 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:vierqr/commons/enums/env_type.dart';
 
-import 'evn.dart';
-import 'prod_evn.dart';
-import 'stg_env.dart';
+// import 'evn.dart';
+// import 'prod_evn.dart';
+// import 'stg_env.dart';
 
-class EnvConfig {
-  static final Env _env = (getEnv() == EnvType.STG) ? StgEnv() : ProdEnv();
-
-  static String getBankUrl() {
-    return _env.getBankUrl();
-  }
-
-  static String getBaseUrl() {
-    return _env.getBaseUrl();
-  }
-
-  static String getUrl() {
-    return _env.getUrl();
-  }
-
-  static FirebaseOptions getFirebaseConfig() {
-    return _env.getFirebaseCongig();
-  }
-
-  static EnvType getEnv() {
-    // const EnvType env = EnvType.STG;
-    const EnvType env = EnvType.PROD;
-    return env;
-  }
-}
+// class EnvConfig {
+//   static final Env _env = (getEnv() == EnvType.STG) ? StgEnv() : ProdEnv();
+//
+//   static String getBankUrl() {
+//     return _env.getBankUrl();
+//   }
+//
+//   static String getBaseUrl() {
+//     return _env.getBaseUrl();
+//   }
+//
+//   static String getUrl() {
+//     return _env.getUrl();
+//   }
+//
+//   static FirebaseOptions getFirebaseConfig() {
+//     return _env.getFirebaseCongig();
+//   }
+//
+//   static EnvType getEnv() {
+//     // const EnvType env = EnvType.STG;
+//     const EnvType env = EnvType.PROD;
+//     return env;
+//   }
+// }
 
 class AppConfig {
   EnvType _env = EnvType.PROD;

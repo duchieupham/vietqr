@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:uuid/uuid.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
@@ -18,7 +19,7 @@ class BankManageRepository {
       String basicAuth =
           'Basic ${base64.encode(utf8.encode('$username:$password'))}';
       final response = await BaseAPIClient.postAPI(
-          url: '${EnvConfig.getBankUrl()}oauth2/v1/token',
+          url: '${getIt.get<AppConfig>().getBaseUrl}oauth2/v1/token',
           body: {'grant_type': 'client_credentials'},
           type: AuthenticationType.CUSTOM,
           header: {
@@ -43,7 +44,7 @@ class BankManageRepository {
       const Uuid uuid = Uuid();
       final response = await BaseAPIClient.getAPI(
         url:
-            '${EnvConfig.getBankUrl()}ms/ewallet/v1.0/get-transaction-history?accountNumber=$accountNumber&accountType=$accountType&fromDate=$fromDate&toDate=$toDate',
+            '${getIt.get<AppConfig>().getBaseUrl}ms/ewallet/v1.0/get-transaction-history?accountNumber=$accountNumber&accountType=$accountType&fromDate=$fromDate&toDate=$toDate',
         header: {
           'Authorization': 'Bearer $bankToken',
           'ClientMessageId': uuid.v1(),

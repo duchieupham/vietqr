@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
@@ -18,7 +19,7 @@ class ShareBDSDRepository {
     List<BusinessAvailDTO> listBusinessAvailDTO = [];
 
     try {
-      String url = '${EnvConfig.getBaseUrl()}business/valid/$userId';
+      String url = '${getIt.get<AppConfig>().getBaseUrl}business/valid/$userId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -40,7 +41,7 @@ class ShareBDSDRepository {
   Future<ResponseMessageDTO> connectBranch(body) async {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}bank-branch';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}bank-branch';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: body,
@@ -62,7 +63,7 @@ class ShareBDSDRepository {
   Future<ResponseMessageDTO> removeMember(Map<String, dynamic> body) async {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}member/remove';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}member/remove';
       final response = await BaseAPIClient.deleteAPI(
         url: url,
         body: body,
@@ -84,7 +85,8 @@ class ShareBDSDRepository {
   Future<ResponseMessageDTO> removeAllMember(Map<String, dynamic> body) async {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}member/remove-all';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}member/remove-all';
       final response = await BaseAPIClient.deleteAPI(
         url: url,
         body: body,
@@ -106,7 +108,8 @@ class ShareBDSDRepository {
   Future<ResponseMessageDTO> addBankLark(body) async {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}service/lark/bank';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}service/lark/bank';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: body,
@@ -128,7 +131,8 @@ class ShareBDSDRepository {
   Future<ResponseMessageDTO> addBankTelegram(body) async {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}service/telegram/bank';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}service/telegram/bank';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: body,
@@ -150,7 +154,8 @@ class ShareBDSDRepository {
   Future<ResponseMessageDTO> removeBankTelegram(body) async {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}service/telegram/bank';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}service/telegram/bank';
       final response = await BaseAPIClient.deleteAPI(
         url: url,
         body: body,
@@ -172,7 +177,8 @@ class ShareBDSDRepository {
   Future<ResponseMessageDTO> removeBankLark(body) async {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}service/lark/bank';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}service/lark/bank';
       final response = await BaseAPIClient.deleteAPI(
         url: url,
         body: body,
@@ -195,7 +201,7 @@ class ShareBDSDRepository {
     List<MemberBranchModel> listMembers = [];
 
     try {
-      String url = '${EnvConfig.getBaseUrl()}member/$bankID';
+      String url = '${getIt.get<AppConfig>().getBaseUrl}member/$bankID';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -224,7 +230,7 @@ class ShareBDSDRepository {
 
     try {
       String url =
-          '${EnvConfig.getBaseUrl()}terminal-member/search?type=$type&value=$value&terminalId=$terminalId';
+          '${getIt.get<AppConfig>().getBaseUrl}terminal-member/search?type=$type&value=$value&terminalId=$terminalId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -253,7 +259,7 @@ class ShareBDSDRepository {
 
     try {
       String url =
-          '${EnvConfig.getBaseUrl()}terminal-member/search?type=$type&value=$value&terminalId=$terminalId';
+          '${getIt.get<AppConfig>().getBaseUrl}terminal-member/search?type=$type&value=$value&terminalId=$terminalId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -276,7 +282,7 @@ class ShareBDSDRepository {
   Future<ResponseMessageDTO> shareBDSD(Map<String, dynamic> param) async {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}member';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}member';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: param,
@@ -299,7 +305,7 @@ class ShareBDSDRepository {
     TerminalDto result = TerminalDto(terminals: []);
     try {
       final String url =
-          '${EnvConfig.getBaseUrl()}terminal?userId=$userId&type=$type&offset=$offset';
+          '${getIt.get<AppConfig>().getBaseUrl}terminal?userId=$userId&type=$type&offset=$offset';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -322,7 +328,7 @@ class ShareBDSDRepository {
     TerminalDto result = TerminalDto(terminals: []);
     try {
       final String url =
-          '${EnvConfig.getBaseUrl()}terminal/bank?userId=$userId&bankId=$type&offset=$offset';
+          '${getIt.get<AppConfig>().getBaseUrl}terminal/bank?userId=$userId&bankId=$type&offset=$offset';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -340,12 +346,12 @@ class ShareBDSDRepository {
     }
   }
 
-    Future<TerminalDto> getMyListGroup1(
+  Future<TerminalDto> getMyListGroup1(
       String userId, String type, int offset) async {
     TerminalDto result = TerminalDto(terminals: []);
     try {
       final String url =
-          '${EnvConfig.getBaseUrl()}account-bank/terminal?userId=$userId&bankId=$type';
+          '${getIt.get<AppConfig>().getBaseUrl}account-bank/terminal?userId=$userId&bankId=$type';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -368,7 +374,7 @@ class ShareBDSDRepository {
     BankTerminalDto result = BankTerminalDto(bankShares: []);
     try {
       final String url =
-          '${EnvConfig.getBaseUrl()}terminal?userId=$userId&type=$type&offset=$offset';
+          '${getIt.get<AppConfig>().getBaseUrl}terminal?userId=$userId&type=$type&offset=$offset';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,

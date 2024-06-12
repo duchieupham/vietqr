@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
@@ -16,7 +17,8 @@ class OrderMerchantRepository {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
 
     try {
-      final String url = '${EnvConfig.getBaseUrl()}customer-va/invoice/create';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}customer-va/invoice/create';
       final response = await BaseAPIClient.postAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -39,7 +41,7 @@ class OrderMerchantRepository {
     List<InvoiceDTO> result = [];
     try {
       final String url =
-          '${EnvConfig.getBaseUrl()}customer-va/invoice/list?customerId=$customerId&offset=$offset';
+          '${getIt.get<AppConfig>().getBaseUrl}customer-va/invoice/list?customerId=$customerId&offset=$offset';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -59,7 +61,7 @@ class OrderMerchantRepository {
     InvoiceDTO result = InvoiceDTO();
     try {
       final String url =
-          '${EnvConfig.getBaseUrl()}customer-va/invoice/detail?billId=$billId';
+          '${getIt.get<AppConfig>().getBaseUrl}customer-va/invoice/detail?billId=$billId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -78,7 +80,7 @@ class OrderMerchantRepository {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
     try {
       final String url =
-          '${EnvConfig.getBaseUrl()}customer-va/invoice/remove?billId=$billId';
+          '${getIt.get<AppConfig>().getBaseUrl}customer-va/invoice/remove?billId=$billId';
       final response = await BaseAPIClient.deleteAPI(
         url: url,
         type: AuthenticationType.SYSTEM,

@@ -1,14 +1,15 @@
 import 'dart:isolate';
 
-import 'package:vierqr/commons/constants/configurations/stringify.dart'
-    as Constants;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:vierqr/commons/constants/configurations/stringify.dart'
+as Constants;
 import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/mixin/base_manager.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
-import 'package:http/http.dart' as http;
 import 'package:vierqr/models/theme_dto.dart';
 import 'package:vierqr/models/user_repository.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
@@ -24,7 +25,8 @@ class IsolateStream with BaseManager {
     List<BankTypeDTO> list = args[1];
 
     for (var message in list) {
-      String url = '${EnvConfig.getBaseUrl()}images/${message.imageId}';
+      String url =
+          '${getIt.get<AppConfig>().getBaseUrl}images/${message.imageId}';
       final response = await http.get(Uri.parse(url));
       final bytes = response.bodyBytes;
       sendPort.send(ReceiverData(data: bytes, index: list.indexOf(message)));

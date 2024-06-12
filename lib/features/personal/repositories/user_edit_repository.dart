@@ -2,22 +2,22 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/encrypt_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
-import 'package:vierqr/main.dart';
-import 'package:vierqr/models/user_profile.dart';
 import 'package:vierqr/models/info_user_dto.dart';
 import 'package:vierqr/models/password_update_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
+import 'package:vierqr/models/user_profile.dart';
 import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
-import 'package:http/http.dart' as http;
 
 class UserEditRepository {
   const UserEditRepository();
@@ -26,7 +26,7 @@ class UserEditRepository {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}user/information';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}user/information';
       final response = await BaseAPIClient.putAPI(
         url: url,
         body: dto.toJson(),
@@ -49,7 +49,8 @@ class UserEditRepository {
   Future<UserProfile> getUserInformation(String userId) async {
     UserProfile dto = UserProfile();
     try {
-      final String url = '${EnvConfig.getBaseUrl()}user/information/$userId';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}user/information/$userId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -68,7 +69,7 @@ class UserEditRepository {
   Future<Map<String, dynamic>> updatePassword(PasswordUpdateDTO dto) async {
     Map<String, dynamic> result = {'check': false, 'msg': ''};
     try {
-      final String url = '${EnvConfig.getBaseUrl()}user/password';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}user/password';
       PasswordUpdateDTO encryptedDTO = PasswordUpdateDTO(
         userId: dto.userId,
         oldPassword:
@@ -110,7 +111,7 @@ class UserEditRepository {
         'userId': userId,
         'imgId': imgId,
       };
-      final String url = '${EnvConfig.getBaseUrl()}user/image';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}user/image';
       final List<http.MultipartFile> files = [];
       if (file != null) {
         final imageFile = await http.MultipartFile.fromPath('image', file.path);
@@ -143,7 +144,8 @@ class UserEditRepository {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}user/deactive/$userId';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}user/deactive/$userId';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: null,

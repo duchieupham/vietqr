@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
@@ -18,7 +19,7 @@ class CreateStoreRepository {
     String result = '';
 
     try {
-      String url = '${EnvConfig.getBaseUrl()}terminal/generate-code';
+      String url = '${getIt.get<AppConfig>().getBaseUrl}terminal/generate-code';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -42,7 +43,7 @@ class CreateStoreRepository {
 
     try {
       final String url =
-          '${EnvConfig.getBaseUrl()}terminal/bank-account?terminalId=$terminalId&userId=$userId';
+          '${getIt.get<AppConfig>().getBaseUrl}terminal/bank-account?terminalId=$terminalId&userId=$userId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -64,7 +65,7 @@ class CreateStoreRepository {
   Future<ResponseMessageDTO> createStore(Map<String, dynamic> param) async {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}terminal';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}terminal';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: param,
@@ -86,7 +87,7 @@ class CreateStoreRepository {
   Future<ResponseMessageDTO> createMerchant(Map<String, dynamic> param) async {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}merchant';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}merchant';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: param,
@@ -109,7 +110,7 @@ class CreateStoreRepository {
     List<MerchantDTO> result = [];
     try {
       final String url =
-          '${EnvConfig.getBaseUrl()}merchant/$userId?offset=$offset';
+          '${getIt.get<AppConfig>().getBaseUrl}merchant/$userId?offset=$offset';
       final response =
           await BaseAPIClient.getAPI(url: url, type: AuthenticationType.SYSTEM);
 
