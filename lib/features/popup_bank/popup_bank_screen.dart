@@ -461,13 +461,24 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
             otpController.value = otpController.value.copyWith(text: value);
           },
           onTap: () {
-            ConfirmOTPBankDTO confirmDTO = ConfirmOTPBankDTO(
-              requestId: requestId,
-              otpValue: otpController.text,
-              applicationType: 'MOBILE',
-              bankAccount: dto.bankAccount,
-            );
-            bloc.add(PopupBankEventUnConfirmOTP(confirmDTO));
+            if (dto.bankCode.contains('BIDV')) {
+              ConfirmOTPBankDTO confirmDTO = ConfirmOTPBankDTO(
+                requestId: requestId,
+                otpValue: otpController.text,
+                applicationType: 'MOBILE',
+                bankAccount: dto.bankAccount,
+              );
+              bloc.add(
+                  PopupBankEventUnConfirmOTP(confirmDTO, dto.unlinkedType));
+            } else {
+              ConfirmOTPUnlinkTypeBankDTO confirmDTO =
+                  ConfirmOTPUnlinkTypeBankDTO(
+                      ewalletToken: '',
+                      bankAccount: dto.bankAccount,
+                      bankCode: dto.bankCode);
+              bloc.add(
+                  PopupBankEventUnConfirmOTP(confirmDTO, dto.unlinkedType));
+            }
           },
         );
       },

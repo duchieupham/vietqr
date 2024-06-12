@@ -91,7 +91,7 @@ class ResendRequestOTPEvent extends AddBankEvent {
 }
 
 class BankCardEventConfirmOTP extends AddBankEvent {
-  final ConfirmOTPBankDTO dto;
+  final dynamic dto;
 
   const BankCardEventConfirmOTP({required this.dto});
 

@@ -30,6 +30,7 @@ import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/confirm_otp_bank_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/register_authentication_dto.dart';
+import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 import 'views/bank_input_widget.dart';
@@ -252,6 +253,10 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
               if (bankId.trim().isNotEmpty) {
                 final dto = RegisterAuthenticationDTO(
                   bankId: bankId,
+                  bankCode: _addBankProvider.bankTypeDTO!.bankCode,
+                  merchantId: state.responseDataOTP!.merchantId,
+                  merchantName: state.responseDataOTP!.merchantName,
+                  vaNumber: state.ewalletToken!,
                   nationalId: cmtController.text,
                   phoneAuthenticated: phoneController.text,
                   bankAccountName: nameController.text,
@@ -274,11 +279,15 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                   userId: userId,
                   userBankName: formattedName,
                   bankAccount: bankAccountController.text,
+                  bankCode: _addBankProvider.bankTypeDTO!.bankCode,
                   type: _addBankProvider.type,
                   branchId: '',
                   nationalId: cmtController.text,
                   phoneAuthenticated: phoneController.text,
-                  ewalletToken: state.ewalletToken ?? '',
+                  ewalletToken: '',
+                  merchantId: state.responseDataOTP!.merchantId,
+                  merchantName: state.responseDataOTP!.merchantName,
+                  vaNumber: state.ewalletToken!,
                 );
                 _bloc.add(BankCardEventInsert(dto: dto));
               }
@@ -389,6 +398,7 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                                         );
                                       } else if (provider.step == 2) {
                                         return ConfirmOTPView(
+                                          dto: provider.bankTypeDTO!,
                                           phone: phoneController.text,
                                           otpController: otpController,
                                           onChangeOTP: (value) {},
@@ -509,7 +519,8 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                         Consumer<AddBankProvider>(
                           builder: (context, provider, child) {
                             return (provider.bankTypeDTO?.status == 1)
-                                ? _buildButton(provider, state.requestId ?? '')
+                                ? _buildButton(provider, state.requestId ?? '',
+                                    state.responseDataOTP)
                                 : MButtonWidget(
                                     title: 'Lưu tài khoản',
                                     isEnable: provider.isEnableButton,
@@ -545,7 +556,8 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
     );
   }
 
-  Widget _buildButton(AddBankProvider provider, String requestId) {
+  Widget _buildButton(
+      AddBankProvider provider, String requestId, DataObject? data) {
     final buttonStepFirst = _BuildButton(
       onTapSave: () {
         FocusManager.instance.primaryFocus?.unfocus();
@@ -620,15 +632,26 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
       colorEnableText:
           provider.isValidForm() ? AppColor.WHITE : AppColor.GREY_TEXT,
       onTap: () async {
-        FocusManager.instance.primaryFocus?.unfocus();
-        ConfirmOTPBankDTO confirmDTO = ConfirmOTPBankDTO(
-          requestId: requestId,
-          otpValue: otpController.text,
-          applicationType: 'MOBILE',
-          bankAccount: bankAccountController.text,
-          bankCode: provider.bankTypeDTO?.bankCode ?? '',
-        );
-        _bloc.add(BankCardEventConfirmOTP(dto: confirmDTO));
+        if (provider.bankTypeDTO!.bankCode.contains('BIDV')) {
+          ConfirmOTPBidvDTO otpBidvDTO = ConfirmOTPBidvDTO(
+              bankCode: provider.bankTypeDTO!.bankCode,
+              bankAccount: provider.bankTypeDTO!.bankAccount,
+              merchantId: data!.merchantId,
+              merchantName: data.merchantName,
+              confirmId: data.confirmId,
+              otpNumber: otpController.text);
+          _bloc.add(BankCardEventConfirmOTP(dto: otpBidvDTO));
+        } else {
+          FocusManager.instance.primaryFocus?.unfocus();
+          ConfirmOTPBankDTO confirmDTO = ConfirmOTPBankDTO(
+            requestId: requestId,
+            otpValue: otpController.text,
+            applicationType: 'MOBILE',
+            bankAccount: bankAccountController.text,
+            bankCode: provider.bankTypeDTO?.bankCode ?? '',
+          );
+          _bloc.add(BankCardEventConfirmOTP(dto: confirmDTO));
+        }
       },
     );
 

@@ -123,12 +123,14 @@ class BankCardEventUnRequestOTP extends BankCardEvent {
 }
 
 class BankCardEventUnConfirmOTP extends BankCardEvent {
-  final ConfirmOTPBankDTO dto;
+  final int unlinkType;
+  final dynamic dto;
 
-  const BankCardEventUnConfirmOTP({required this.dto});
+  const BankCardEventUnConfirmOTP(
+      {required this.dto, required this.unlinkType});
 
   @override
-  List<Object?> get props => [dto];
+  List<Object?> get props => [dto, unlinkType];
 }
 
 class BankCardEventUnLink extends BankCardEvent {

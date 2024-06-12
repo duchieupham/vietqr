@@ -82,27 +82,31 @@ class _TabInfoMerchantState extends State<TabInfoMerchant> {
   void onUnRegister() async {
     try {
       DialogWidget.instance.openLoadingDialog();
-      ResponseMessageDTO result = await merchantRepository.unRegisterMerchant(
-          merchantDTO?.merchantId ?? '', SharePrefUtils.getProfile().userId);
-      if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
-        Navigator.pop(context);
+      await merchantRepository
+          .unRegisterMerchant(
+              merchantDTO?.merchantId ?? '', SharePrefUtils.getProfile().userId)
+          .then(
+        (value) async {
+          if (value.status == Stringify.RESPONSE_STATUS_SUCCESS) {
+            Navigator.pop(context);
+            Navigator.pop(context);
+            // Navigator.pop(context);
 
-        if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
-          Navigator.pop(context, true);
-          Fluttertoast.showToast(
-            msg: 'Huỷ thành công',
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
-            backgroundColor: Theme.of(context).cardColor,
-            textColor: Theme.of(context).hintColor,
-            fontSize: 15,
-          );
-        }
-      } else {
-        Navigator.pop(context);
-        await DialogWidget.instance
-            .openMsgDialog(title: 'Thông báo', msg: 'Lỗi không xác định.');
-      }
+            Fluttertoast.showToast(
+              msg: 'Huỷ thành công',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              backgroundColor: Theme.of(context).cardColor,
+              textColor: Theme.of(context).hintColor,
+              fontSize: 15,
+            );
+          } else {
+            Navigator.pop(context);
+            await DialogWidget.instance
+                .openMsgDialog(title: 'Thông báo', msg: 'Lỗi không xác định.');
+          }
+        },
+      );
     } catch (e) {
       LOG.error(e.toString());
       Navigator.pop(context);

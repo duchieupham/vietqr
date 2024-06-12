@@ -926,7 +926,8 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
         StringUtils.instance.removeDiacritic(_provider.content);
 
     QRCreateDTO dto = QRCreateDTO(
-      bankId: bankAccountDTO?.id ?? '',
+      bankCode: bankAccountDTO!.bankCode,
+      bankId: bankAccountDTO.id ?? '',
       amount: money,
       content: formattedName,
       userId: SharePrefUtils.getProfile().userId,

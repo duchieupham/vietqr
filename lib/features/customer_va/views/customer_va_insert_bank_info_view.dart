@@ -40,7 +40,7 @@ class _CustomerVaInsertBankInfoView
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.WHITE,
-      appBar: CustomerVaHeaderWidget(),
+      appBar: const CustomerVaHeaderWidget(),
       bottomNavigationBar: _bottom(),
       body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -59,7 +59,8 @@ class _CustomerVaInsertBankInfoView
                   height: 50,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: Color(0XFFDADADA), width: 1),
+                      border:
+                          Border.all(color: const Color(0XFFDADADA), width: 1),
                       image: DecorationImage(
                           fit: BoxFit.fitHeight,
                           image: NetworkImage(
@@ -74,9 +75,9 @@ class _CustomerVaInsertBankInfoView
             const SizedBox(
               height: 20,
             ),
-            Text(
+            const Text(
               'Tiếp theo, nhập thông tin\ntài khoản BIDV của bạn',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
@@ -84,9 +85,9 @@ class _CustomerVaInsertBankInfoView
             const SizedBox(
               height: 30,
             ),
-            Text(
+            const Text(
               'Số tài khoản*',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
               ),
@@ -110,7 +111,7 @@ class _CustomerVaInsertBankInfoView
                 Provider.of<CustomerVaInsertProvider>(context, listen: false)
                     .updateBankAccount(value);
               },
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Nhập số tài khoản ở đây*',
                 hintStyle: TextStyle(
                   fontSize: 14,
@@ -136,7 +137,7 @@ class _CustomerVaInsertBankInfoView
                 return (provider.bankAccountErr)
                     ? Container(
                         padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: Text(
+                        child: const Text(
                           'Số tài khoản không đúng định dạng.',
                           style: TextStyle(
                             color: AppColor.RED_CALENDAR,
@@ -150,9 +151,9 @@ class _CustomerVaInsertBankInfoView
             const SizedBox(
               height: 30,
             ),
-            Text(
+            const Text(
               'Tên chủ tài khoản*',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
               ),
@@ -176,7 +177,7 @@ class _CustomerVaInsertBankInfoView
                 Provider.of<CustomerVaInsertProvider>(context, listen: false)
                     .updateUserBankName(value);
               },
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Nhập tên chủ tài khoản ở đây*',
                 hintStyle: TextStyle(
                   fontSize: 14,
@@ -202,7 +203,7 @@ class _CustomerVaInsertBankInfoView
                 return (provider.userBankNameErr)
                     ? Container(
                         padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: Text(
+                        child: const Text(
                           'Tên chủ tài khoản không đúng định dạng',
                           style: TextStyle(
                             color: AppColor.RED_CALENDAR,
@@ -216,9 +217,9 @@ class _CustomerVaInsertBankInfoView
             const SizedBox(
               height: 10,
             ),
-            Text(
+            const Text(
               'Lưu ý:',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
               ),
@@ -226,9 +227,9 @@ class _CustomerVaInsertBankInfoView
             const SizedBox(
               height: 5,
             ),
-            Text(
+            const Text(
               '- Tên chủ tài khoản không dấu tiếng Việt.\n- Không chứa ký tự đặc biệt.',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
               ),
             ),
@@ -246,7 +247,7 @@ class _CustomerVaInsertBankInfoView
             !provider.userBankNameErr &&
             provider.userBankName.toString().trim().isNotEmpty);
         return ButtonWidget(
-          margin: EdgeInsets.symmetric(horizontal: 30, vertical: 30),
+          margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
           text: 'Tiếp tục',
           textColor: (!isValidButton) ? AppColor.BLACK : AppColor.WHITE,
           bgColor: (!isValidButton) ? AppColor.GREY_VIEW : AppColor.BLUE_TEXT,
@@ -266,21 +267,25 @@ class _CustomerVaInsertBankInfoView
     //default BIDV
     String bankCode = 'BIDV';
     DialogWidget.instance.openLoadingDialog();
-    ResponseMessageDTO result = await customerVaRepository
-        .checkExistedBankAccountVa(bankAccount, bankCode);
-    String status = result.status;
-    String msg = '';
-    if (status == 'CHECK' || status == 'CHECKED') {
-      msg = CheckUtils.instance.getCheckMessage(result.message);
-    } else if (status == 'FAILED') {
-      msg = ErrorUtils.instance.getErrorMessage(result.message);
-    }
-    Navigator.pop(context);
-    if (status == 'SUCCESS') {
-      Navigator.pushNamed(context, Routes.INSERT_CUSTOMER_VA_BANK_AUTH);
-    } else {
-      DialogWidget.instance
-          .openMsgDialog(title: 'Không thể đăng ký dịch vụ', msg: msg);
-    }
+    await customerVaRepository
+        .checkExistedBankAccountVa(bankAccount, bankCode)
+        .then(
+      (value) {
+        String status = value.status;
+        String msg = '';
+        if (status == 'CHECK' || status == 'CHECKED') {
+          msg = CheckUtils.instance.getCheckMessage(value.message);
+        } else if (status == 'FAILED') {
+          msg = ErrorUtils.instance.getErrorMessage(value.message);
+        }
+        Navigator.pop(context);
+        if (status == 'SUCCESS') {
+          Navigator.pushNamed(context, Routes.INSERT_CUSTOMER_VA_BANK_AUTH);
+        } else {
+          DialogWidget.instance
+              .openMsgDialog(title: 'Không thể đăng ký dịch vụ', msg: msg);
+        }
+      },
+    );
   }
 }

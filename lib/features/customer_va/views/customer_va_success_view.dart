@@ -12,7 +12,7 @@ class CustomerVaSuccessView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.WHITE,
-      appBar: CustomerVaHeaderWidget(),
+      appBar: const CustomerVaHeaderWidget(),
       body: Column(
         children: [
           Expanded(
@@ -31,9 +31,9 @@ class CustomerVaSuccessView extends StatelessWidget {
                         width: 100,
                       ),
                     ),
-                    Text(
+                    const Text(
                       'Đăng ký thu hộ qua\ntài khoản định danh\nthành công!',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 25,
                         fontWeight: FontWeight.bold,
                       ),
@@ -44,7 +44,7 @@ class CustomerVaSuccessView extends StatelessWidget {
                     SizedBox(
                       child: Row(
                         children: [
-                          Text('Doanh nghiệp'),
+                          const Text('Doanh nghiệp'),
                           const Spacer(),
                           Text(
                             provider.merchantName,
@@ -54,8 +54,8 @@ class CustomerVaSuccessView extends StatelessWidget {
                         ],
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 20),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 20),
                       child: Divider(
                         color: AppColor.GREY_TOP_TAB_BAR,
                         height: 1,
@@ -64,7 +64,7 @@ class CustomerVaSuccessView extends StatelessWidget {
                     SizedBox(
                       child: Row(
                         children: [
-                          Text('Mã doanh nghiệp'),
+                          const Text('Mã doanh nghiệp'),
                           const Spacer(),
                           Text(
                             provider.merchantId,
@@ -74,8 +74,8 @@ class CustomerVaSuccessView extends StatelessWidget {
                         ],
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 20),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 20),
                       child: Divider(
                         color: AppColor.GREY_TOP_TAB_BAR,
                         height: 1,
@@ -84,18 +84,18 @@ class CustomerVaSuccessView extends StatelessWidget {
                     SizedBox(
                       child: Row(
                         children: [
-                          Text('TK ngân hàng'),
+                          const Text('TK ngân hàng'),
                           const Spacer(),
                           Text(
-                            'BIDV - ' + provider.bankAccount,
+                            'BIDV - ${provider.bankAccount}',
                             style: const TextStyle(),
                             textAlign: TextAlign.right,
                           ),
                         ],
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 20),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 20),
                       child: Divider(
                         color: AppColor.GREY_TOP_TAB_BAR,
                         height: 1,
@@ -104,7 +104,7 @@ class CustomerVaSuccessView extends StatelessWidget {
                     SizedBox(
                       child: Row(
                         children: [
-                          Text('CCCD/MST'),
+                          const Text('CCCD/MST'),
                           const Spacer(),
                           Text(
                             provider.nationalId,
@@ -114,8 +114,8 @@ class CustomerVaSuccessView extends StatelessWidget {
                         ],
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 20),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 20),
                       child: Divider(
                         color: AppColor.GREY_TOP_TAB_BAR,
                         height: 1,
@@ -124,7 +124,7 @@ class CustomerVaSuccessView extends StatelessWidget {
                     SizedBox(
                       child: Row(
                         children: [
-                          Text('SĐT xác thực'),
+                          const Text('SĐT xác thực'),
                           const Spacer(),
                           Text(
                             provider.phoneAuthenticated,

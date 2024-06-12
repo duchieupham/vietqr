@@ -7,6 +7,7 @@ import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
+import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/features/customer_va/repositories/customer_va_repository.dart';
 import 'package:vierqr/features/popup_bank/popup_bank_share.dart';
 import 'package:vierqr/layouts/dashedline/horizontal_dashed_line.dart';
@@ -69,17 +70,17 @@ class _InvoiceVaVietQRView extends State<InvoiceVaVietQRView> {
                 child: RichText(
                   text: TextSpan(
                     children: [
-                      TextSpan(
+                      const TextSpan(
                         text: 'Quét mã VietQR để\n',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.w500,
                           color: AppColor.BLACK,
                         ),
                       ),
-                      TextSpan(
+                      const TextSpan(
                         text: 'thanh toán ',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.w500,
                           color: AppColor.BLACK,
@@ -95,17 +96,17 @@ class _InvoiceVaVietQRView extends State<InvoiceVaVietQRView> {
                           color: AppColor.ORANGE_DARK,
                         ),
                       ),
-                      TextSpan(
+                      const TextSpan(
                         text: ' VND',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.w500,
                           color: AppColor.ORANGE_DARK,
                         ),
                       ),
-                      TextSpan(
+                      const TextSpan(
                         text: '\ncho hoá đơn ',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.w500,
                           color: AppColor.BLACK,
@@ -130,7 +131,7 @@ class _InvoiceVaVietQRView extends State<InvoiceVaVietQRView> {
                 onTap: () {
                   Navigator.pop(context);
                 },
-                child: Icon(
+                child: const Icon(
                   Icons.close_rounded,
                   color: AppColor.BLACK,
                 ),
@@ -145,7 +146,7 @@ class _InvoiceVaVietQRView extends State<InvoiceVaVietQRView> {
             ? Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  image: DecorationImage(
+                  image: const DecorationImage(
                     image: AssetImage(
                       'assets/images/bg-qr-vqr.png',
                     ),
@@ -158,7 +159,7 @@ class _InvoiceVaVietQRView extends State<InvoiceVaVietQRView> {
                     borderRadius: BorderRadius.circular(20),
                     color: AppColor.WHITE,
                   ),
-                  padding: EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(20),
                   child: Column(
                     children: [
                       QrImageView(
@@ -176,7 +177,7 @@ class _InvoiceVaVietQRView extends State<InvoiceVaVietQRView> {
                       SizedBox(
                         child: Row(
                           children: [
-                            Container(
+                            SizedBox(
                               width: 80,
                               height: 35,
                               // margin: const EdgeInsets.only(right: 20),
@@ -185,7 +186,7 @@ class _InvoiceVaVietQRView extends State<InvoiceVaVietQRView> {
                               ),
                             ),
                             const Spacer(),
-                            Container(
+                            SizedBox(
                               width: 80,
                               height: 35,
                               child: Image.asset(
@@ -205,7 +206,7 @@ class _InvoiceVaVietQRView extends State<InvoiceVaVietQRView> {
                     child: SizedBox(
                       width: width,
                       height: width,
-                      child: Center(
+                      child: const Center(
                         child: SizedBox(
                           width: 50,
                           height: 50,
@@ -229,12 +230,12 @@ class _InvoiceVaVietQRView extends State<InvoiceVaVietQRView> {
           ),
         ),
         Container(
-            width: 100,
-            margin: const EdgeInsets.symmetric(vertical: 5),
-            child: Divider(
-              height: 1,
-              color: Color(0XFF666A72),
-            )),
+          width: 100,
+          margin: const EdgeInsets.symmetric(vertical: 5),
+          child: const MySeparator(
+            color: AppColor.GREY_DADADA,
+          ),
+        ),
         Text(
           widget.invoiceDTO.bankAccount.toString(),
           style: TextStyle(
@@ -248,7 +249,7 @@ class _InvoiceVaVietQRView extends State<InvoiceVaVietQRView> {
           child: Row(
             children: [
               ButtonWidget(
-                width: width / 2 - 5 - 20,
+                width: width / 2 - 5 - 25,
                 height: 40,
                 borderRadius: 5,
                 text: 'Lưu ảnh QR',
@@ -272,7 +273,7 @@ class _InvoiceVaVietQRView extends State<InvoiceVaVietQRView> {
               ),
               const Spacer(),
               ButtonWidget(
-                width: width / 2 - 5 - 20,
+                width: width / 2 - 5 - 25,
                 height: 40,
                 borderRadius: 5,
                 text: 'Chia sẻ QR',
@@ -305,7 +306,7 @@ class _InvoiceVaVietQRView extends State<InvoiceVaVietQRView> {
   }
 
   void _initialService() async {
-    AssetImage image = AssetImage('assets/images/logo-bidv.png');
+    AssetImage image = const AssetImage('assets/images/logo-bidv.png');
     paletteGenerator = await PaletteGenerator.fromImageProvider(image);
     if (paletteGenerator != null && paletteGenerator!.dominantColor != null) {
       _color = paletteGenerator!.dominantColor!.color;

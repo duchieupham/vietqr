@@ -64,7 +64,7 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
   bool get small => MediaQuery.of(context).size.width < 400;
 
   bool get isMerchant =>
-      widget.dto.bankCode == 'BIDV' &&
+      widget.dto.bankCode != 'BIDV' &&
       widget.dto.authenticated &&
       widget.dto.userId == SharePrefUtils.getProfile().userId;
 
@@ -379,8 +379,8 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
       if (userId == widget.dto.userId) {
         return Center(
           child: Container(
-            width: 170,
-            margin: EdgeInsets.only(top: 20),
+            // width: 170,
+            margin: const EdgeInsets.only(top: 20),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -396,7 +396,7 @@ class _InfoDetailBankAccountState extends State<InfoDetailBankAccount> {
                 const SizedBox(
                   width: 8,
                 ),
-                Text(
+                const Text(
                   'Tài khoản đã liên kết',
                   style: TextStyle(color: AppColor.BLUE_TEXT),
                 )

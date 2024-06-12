@@ -22,17 +22,17 @@ class CustomerVaHeaderWidget extends StatelessWidget
       padding: const EdgeInsets.only(left: 20),
       child: AppBar(
         systemOverlayStyle: const SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
+          statusBarColor: Colors.white,
           statusBarIconBrightness: Brightness.dark,
           // For Android (dark icons)
           statusBarBrightness: Brightness.light, // For iOS (dark icons)
         ),
         leadingWidth: 120,
-        leading: Container(
+        leading: SizedBox(
           width: 120,
           child: InkWell(
             onTap: () => _handleBack(context),
-            child: Row(
+            child: const Row(
               children: [
                 Icon(
                   Icons.arrow_back_ios,

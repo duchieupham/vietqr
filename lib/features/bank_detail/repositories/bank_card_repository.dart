@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:crypto/crypto.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
@@ -344,18 +345,29 @@ class BankCardRepository {
   }
 
   //confirm OTP
-  Future<ResponseMessageDTO> confirmOTP(ConfirmOTPBankDTO dto) async {
+  Future<ResponseMessageDTO> confirmOTP(dynamic dto) async {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
+      Response? response;
       final String url =
           '${EnvConfig.getUrl()}bank/api/account-bank/linked/confirm_otp';
-      final response = await BaseAPIClient.postAPI(
-        url: url,
-        body: dto.toJson(),
-        type: AuthenticationType.SYSTEM,
-      );
-      if (response.statusCode == 200 || response.statusCode == 400) {
+      if (dto is ConfirmOTPBidvDTO) {
+        response = await BaseAPIClient.postAPI(
+          url: url,
+          body: dto.toJson(),
+          type: AuthenticationType.SYSTEM,
+        );
+      }
+      if (dto is ConfirmOTPBankDTO) {
+        response = await BaseAPIClient.postAPI(
+          url: url,
+          body: dto.toJson(),
+          type: AuthenticationType.SYSTEM,
+        );
+      }
+      if (response != null &&
+          (response.statusCode == 200 || response.statusCode == 400)) {
         var data = jsonDecode(response.body);
         result = ResponseMessageDTO.fromJson(data);
       } else {
@@ -520,17 +532,34 @@ class BankCardRepository {
     return result;
   }
 
-  Future<ResponseMessageDTO> unConfirmOTP(ConfirmOTPBankDTO dto) async {
+  Future<ResponseMessageDTO> unConfirmOTP(dynamic dto,
+      {required int unlinkType}) async {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getUrl()}bank/api/unregister_confirm';
-      final response = await BaseAPIClient.postAPI(
-        url: url,
-        body: dto.toJson(),
-        type: AuthenticationType.SYSTEM,
-      );
-      if (response.statusCode == 200 || response.statusCode == 400) {
+      final String url = unlinkType == 0
+          ? '${EnvConfig.getUrl()}bank/api/unregister_confirm'
+          : '${EnvConfig.getUrl()}bank/api/account-bank/unlinked';
+      Response? response;
+      if (unlinkType == 1) {
+        // param[''] =
+      }
+      if (dto is ConfirmOTPBankDTO) {
+        response = await BaseAPIClient.postAPI(
+          url: url,
+          body: dto.toJson(),
+          type: AuthenticationType.SYSTEM,
+        );
+      }
+      if (dto is ConfirmOTPUnlinkTypeBankDTO) {
+        response = await BaseAPIClient.postAPI(
+          url: url,
+          body: dto.toJson(),
+          type: AuthenticationType.SYSTEM,
+        );
+      }
+      if (response != null &&
+          (response.statusCode == 200 || response.statusCode == 400)) {
         var data = jsonDecode(response.body);
         result = ResponseMessageDTO.fromJson(data);
       } else {

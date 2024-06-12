@@ -40,7 +40,7 @@ class _CustomerVaInsertBankAuthView
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.WHITE,
-      appBar: CustomerVaHeaderWidget(),
+      appBar: const CustomerVaHeaderWidget(),
       bottomNavigationBar: _bottom(),
       body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -59,7 +59,8 @@ class _CustomerVaInsertBankAuthView
                   height: 50,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: Color(0XFFDADADA), width: 1),
+                      border:
+                          Border.all(color: const Color(0XFFDADADA), width: 1),
                       image: DecorationImage(
                           fit: BoxFit.fitHeight,
                           image: NetworkImage(
@@ -74,9 +75,9 @@ class _CustomerVaInsertBankAuthView
             const SizedBox(
               height: 20,
             ),
-            Text(
+            const Text(
               'Tiếp theo, vui lòng cung cấp\nthông tin xác thực tài khoản',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
@@ -84,9 +85,9 @@ class _CustomerVaInsertBankAuthView
             const SizedBox(
               height: 30,
             ),
-            Text(
+            const Text(
               'CCCD/MST*',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
               ),
@@ -110,7 +111,7 @@ class _CustomerVaInsertBankAuthView
                 Provider.of<CustomerVaInsertProvider>(context, listen: false)
                     .updateNationalId(value);
               },
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Nhập căn cước công dân / mã số thuế*',
                 hintStyle: TextStyle(
                   fontSize: 14,
@@ -136,7 +137,7 @@ class _CustomerVaInsertBankAuthView
                 return (provider.nationalIdErr)
                     ? Container(
                         padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: Text(
+                        child: const Text(
                           'Căn cước công dân / Mã số thuế không hợp lệ.',
                           style: TextStyle(
                             color: AppColor.RED_CALENDAR,
@@ -150,9 +151,9 @@ class _CustomerVaInsertBankAuthView
             const SizedBox(
               height: 10,
             ),
-            Text(
+            const Text(
               'Lưu ý:',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
               ),
@@ -160,24 +161,24 @@ class _CustomerVaInsertBankAuthView
             const SizedBox(
               height: 5,
             ),
-            Text(
+            const Text(
               '- Đối với tài khoản ngân hàng cá nhân, vui lòng cung cấp CCCD/CMND.',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
               ),
             ),
-            Text(
+            const Text(
               '- Đối với tài khoản doanh nghiệp, vui lòng cung cấp mã số thuế.',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
               ),
             ),
             const SizedBox(
               height: 30,
             ),
-            Text(
+            const Text(
               'Số điện thoại xác thực*',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
               ),
@@ -201,7 +202,7 @@ class _CustomerVaInsertBankAuthView
                 Provider.of<CustomerVaInsertProvider>(context, listen: false)
                     .updatePhoneAuthenticated(value);
               },
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Nhập số điện thoại xác thực*',
                 hintStyle: TextStyle(
                   fontSize: 14,
@@ -227,7 +228,7 @@ class _CustomerVaInsertBankAuthView
                 return (provider.phoneAuthenticatedErr)
                     ? Container(
                         padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: Text(
+                        child: const Text(
                           'Số điện thoại xác thực không hợp lệ.',
                           style: TextStyle(
                             color: AppColor.RED_CALENDAR,
@@ -302,32 +303,35 @@ class _CustomerVaInsertBankAuthView
 
   Future<void> _requestCustomerVaOTP(CustomerVaRequestDTO dto) async {
     DialogWidget.instance.openLoadingDialog();
-    dynamic result = await customerVaRepository.requestCustomerVaOTP(dto);
-    String msg = ErrorUtils.instance.getErrorMessage('E05');
-    if (result is ResponseObjectDTO) {
-      //save data response
-      Provider.of<CustomerVaInsertProvider>(context, listen: false)
-          .updateMerchantIdAndConfirmId(
-        result.data.merchantId,
-        result.data.confirmId,
-      );
-      //
-      Navigator.pop(context);
-      Navigator.pushNamed(context, Routes.CUSTOMER_VA_CONFIRM_OTP);
-    } else if (result is ResponseMessageDTO) {
-      if (result.status == 'FAILED') {
-        msg = ErrorUtils.instance.getErrorMessage(result.message);
-      } else {
-        msg =
-            'Lỗi liên kết tài khoản (${result.message}). Vui lòng thử lại sau';
-      }
-      Navigator.pop(context);
-      DialogWidget.instance
-          .openMsgDialog(title: 'Không thể đăng ký dịch vụ', msg: msg);
-    } else {
-      Navigator.pop(context);
-      DialogWidget.instance
-          .openMsgDialog(title: 'Không thể đăng ký dịch vụ', msg: msg);
-    }
+    await customerVaRepository.requestCustomerVaOTP(dto).then(
+      (value) {
+        String msg = ErrorUtils.instance.getErrorMessage('E05');
+        if (value is ResponseObjectDTO) {
+          //save data response
+          Provider.of<CustomerVaInsertProvider>(context, listen: false)
+              .updateMerchantIdAndConfirmId(
+            value.data.merchantId,
+            value.data.confirmId,
+          );
+          //
+          Navigator.pop(context);
+          Navigator.pushNamed(context, Routes.CUSTOMER_VA_CONFIRM_OTP);
+        } else if (value is ResponseMessageDTO) {
+          if (value.status == 'FAILED') {
+            msg = ErrorUtils.instance.getErrorMessage(value.message);
+          } else {
+            msg =
+                'Lỗi liên kết tài khoản (${value.message}). Vui lòng thử lại sau';
+          }
+          Navigator.pop(context);
+          DialogWidget.instance
+              .openMsgDialog(title: 'Không thể đăng ký dịch vụ', msg: msg);
+        } else {
+          Navigator.pop(context);
+          DialogWidget.instance
+              .openMsgDialog(title: 'Không thể đăng ký dịch vụ', msg: msg);
+        }
+      },
+    );
   }
 }

@@ -537,6 +537,8 @@ extension LinkBankTypeExt on int {
       case 1:
         return LinkBankType.LINK;
       case 0:
+        return LinkBankType.NOT_LINK;
+
       default:
         return LinkBankType.NOT_LINK;
     }

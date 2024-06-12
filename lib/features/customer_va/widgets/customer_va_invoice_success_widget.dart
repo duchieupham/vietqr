@@ -24,7 +24,7 @@ class CustomerVaInvoiceSuccessWidget extends StatelessWidget {
         ),
         Text(
           'Thanh toán hoá đơn\n${dto.billId} thành công!',
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 25,
             fontWeight: FontWeight.bold,
           ),
@@ -32,12 +32,12 @@ class CustomerVaInvoiceSuccessWidget extends StatelessWidget {
         const SizedBox(height: 3),
         RichText(
           text: TextSpan(
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 25,
               color: AppColor.BLACK,
             ),
             children: [
-              TextSpan(
+              const TextSpan(
                 text: 'Số tiền ',
                 style: TextStyle(
                   fontSize: 25,
@@ -48,7 +48,7 @@ class CustomerVaInvoiceSuccessWidget extends StatelessWidget {
               TextSpan(
                 text:
                     '${CurrencyUtils.instance.getCurrencyFormatted(dto.amount.toString())} VND',
-                style: TextStyle(
+                style: const TextStyle(
                   color: AppColor.GREEN,
                   fontSize: 25,
                   fontWeight: FontWeight.bold,

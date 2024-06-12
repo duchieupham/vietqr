@@ -38,9 +38,9 @@ class _CustomerVAInsertMerchantView
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.WHITE,
-      appBar: CustomerVaHeaderWidget(),
+      appBar: const CustomerVaHeaderWidget(),
       bottomNavigationBar: _bottom(),
-      body: Container(
+      body: SizedBox(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
         child: ListView(
@@ -50,9 +50,9 @@ class _CustomerVAInsertMerchantView
             const SizedBox(
               height: 50,
             ),
-            Text(
+            const Text(
               'Đầu tiên, vui lòng cung cấp tên\ndoanh nghiệp / tổ chức của bạn',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
@@ -79,7 +79,7 @@ class _CustomerVAInsertMerchantView
                 Provider.of<CustomerVaInsertProvider>(context, listen: false)
                     .updateMerchantName(value);
               },
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Nhập tên doanh nghiệp / tổ chức ở đây*',
                 hintStyle: TextStyle(
                   fontSize: 14,
@@ -105,7 +105,7 @@ class _CustomerVAInsertMerchantView
                 return (provider.merchantNameErr)
                     ? Container(
                         padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: Text(
+                        child: const Text(
                           'Tên doanh nghiệp / tổ chức không đúng định dạng.',
                           style: TextStyle(
                             color: AppColor.RED_CALENDAR,
@@ -119,9 +119,9 @@ class _CustomerVAInsertMerchantView
             const SizedBox(
               height: 10,
             ),
-            Text(
+            const Text(
               'Lưu ý:',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
               ),
@@ -129,15 +129,15 @@ class _CustomerVAInsertMerchantView
             const SizedBox(
               height: 5,
             ),
-            Text(
+            const Text(
               '- Tên doanh nghiệp từ 4 - 20 ký tự, không chứa khoảng trắng.',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
               ),
             ),
-            Text(
+            const Text(
               '- Không chứa dấu Tiếng Việt, và ký tự đặc biệt.',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
               ),
             ),

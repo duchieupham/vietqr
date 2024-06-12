@@ -70,10 +70,10 @@ class _CustomerVaConfirmOtpView extends State<CustomerVaConfirmOtpView>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.WHITE,
-      appBar: CustomerVaHeaderWidget(),
+      appBar: const CustomerVaHeaderWidget(),
       body: Column(
         children: [
-          Divider(
+          const Divider(
             color: AppColor.GREY_VIEW,
             height: 1,
           ),
@@ -84,9 +84,9 @@ class _CustomerVaConfirmOtpView extends State<CustomerVaConfirmOtpView>
                   ? Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
+                        const Text(
                           'Mã OTP hết hiệu lực',
-                          style: const TextStyle(fontSize: 15),
+                          style: TextStyle(fontSize: 15),
                         ),
                         const SizedBox(
                           width: 50,
@@ -147,9 +147,9 @@ class _CustomerVaConfirmOtpView extends State<CustomerVaConfirmOtpView>
                   : Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
+                        const Text(
                           'Mã OTP có hiệu lực trong vòng',
-                          style: const TextStyle(fontSize: 15),
+                          style: TextStyle(fontSize: 15),
                         ),
                         CountDown(
                           animation: StepTween(
@@ -161,7 +161,7 @@ class _CustomerVaConfirmOtpView extends State<CustomerVaConfirmOtpView>
                     ),
             ),
           ),
-          Divider(
+          const Divider(
             color: AppColor.GREY_VIEW,
             height: 1,
           ),
@@ -177,7 +177,8 @@ class _CustomerVaConfirmOtpView extends State<CustomerVaConfirmOtpView>
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: Color(0XFFDADADA), width: 1),
+                      border:
+                          Border.all(color: const Color(0XFFDADADA), width: 1),
                     ),
                     child: CachedNetworkImage(
                       imageUrl: Provider.of<CustomerVaInsertProvider>(context,
@@ -220,7 +221,7 @@ class _CustomerVaConfirmOtpView extends State<CustomerVaConfirmOtpView>
                             listen: false)
                         .updateOtp(value);
                   },
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     hintText: 'Nhập mã OTP ở đây*',
                     hintStyle: TextStyle(
                       fontSize: 14,
@@ -291,32 +292,35 @@ class _CustomerVaConfirmOtpView extends State<CustomerVaConfirmOtpView>
   //
   Future<void> _requestCustomerVaOTP(CustomerVaRequestDTO dto) async {
     DialogWidget.instance.openLoadingDialog();
-    dynamic result = await customerVaRepository.requestCustomerVaOTP(dto);
-    String msg = ErrorUtils.instance.getErrorMessage('E05');
-    if (result is ResponseObjectDTO) {
-      //save data response
-      Provider.of<CustomerVaInsertProvider>(context, listen: false)
-          .updateMerchantIdAndConfirmId(
-        result.data.merchantId,
-        result.data.confirmId,
-      );
-      //
-      Navigator.pop(context);
-    } else if (result is ResponseMessageDTO) {
-      if (result.status == 'FAILED') {
-        msg = ErrorUtils.instance.getErrorMessage(result.message);
-      } else {
-        msg =
-            'Lỗi liên kết tài khoản (${result.message}). Vui lòng thử lại sau';
-      }
-      Navigator.pop(context);
-      DialogWidget.instance
-          .openMsgDialog(title: 'Không thể đăng ký dịch vụ', msg: msg);
-    } else {
-      Navigator.pop(context);
-      DialogWidget.instance
-          .openMsgDialog(title: 'Không thể đăng ký dịch vụ', msg: msg);
-    }
+    await customerVaRepository.requestCustomerVaOTP(dto).then(
+      (value) {
+        String msg = ErrorUtils.instance.getErrorMessage('E05');
+        if (value is ResponseObjectDTO) {
+          //save data response
+          Provider.of<CustomerVaInsertProvider>(context, listen: false)
+              .updateMerchantIdAndConfirmId(
+            value.data.merchantId,
+            value.data.confirmId,
+          );
+          //
+          Navigator.pop(context);
+        } else if (value is ResponseMessageDTO) {
+          if (value.status == 'FAILED') {
+            msg = ErrorUtils.instance.getErrorMessage(value.message);
+          } else {
+            msg =
+                'Lỗi liên kết tài khoản (${value.message}). Vui lòng thử lại sau';
+          }
+          Navigator.pop(context);
+          DialogWidget.instance
+              .openMsgDialog(title: 'Không thể đăng ký dịch vụ', msg: msg);
+        } else {
+          Navigator.pop(context);
+          DialogWidget.instance
+              .openMsgDialog(title: 'Không thể đăng ký dịch vụ', msg: msg);
+        }
+      },
+    );
   }
 
   //
@@ -325,47 +329,55 @@ class _CustomerVaConfirmOtpView extends State<CustomerVaConfirmOtpView>
     //
 
     DialogWidget.instance.openLoadingDialog();
-    ResponseMessageDTO result =
-        await customerVaRepository.confirmCustomerVaOTP(dto);
-    String status = result.status;
-    String msg = '';
-    if (status == 'SUCCESS') {
-      CustomerVaInsertDTO insertDTO = CustomerVaInsertDTO(
-        merchantId: dto.merchantId,
-        merchantName: dto.merchantName,
-        bankId: '',
-        userId: SharePrefUtils.getProfile().userId,
-        bankAccount: bankAccount,
-        userBankName: userBankName,
-        nationalId: nationalId,
-        phoneAuthenticated: phoneAuthenticated,
-        vaNumber: result.message,
-      );
-      //insert
-      ResponseMessageDTO resultInsert =
-          await customerVaRepository.insertCustomerVa(insertDTO);
-      String statusInsert = resultInsert.status;
-      String msgInsert = '';
-      if (statusInsert == 'SUCCESS') {
-        Navigator.pop(context);
-        //navigator success insert customer va screen
-        Navigator.pushReplacementNamed(context, Routes.CUSTOMER_VA_SUCCESS);
-      } else {
-        if (resultInsert.status == 'FAILED') {
-          msgInsert = ErrorUtils.instance.getErrorMessage(result.message);
+
+    await customerVaRepository.confirmCustomerVaOTP(dto).then(
+      (value) async {
+        String status = value.status;
+        String msg = '';
+        if (status == 'SUCCESS') {
+          CustomerVaInsertDTO insertDTO = CustomerVaInsertDTO(
+            merchantId: dto.merchantId,
+            merchantName: dto.merchantName,
+            bankId: '',
+            userId: SharePrefUtils.getProfile().userId,
+            bankAccount: bankAccount,
+            userBankName: userBankName,
+            nationalId: nationalId,
+            phoneAuthenticated: phoneAuthenticated,
+            vaNumber: value.message,
+          );
+          //insert
+
+          await customerVaRepository.insertCustomerVa(insertDTO).then(
+            (x) {
+              String statusInsert = x.status;
+              String msgInsert = '';
+              if (statusInsert == 'SUCCESS') {
+                Navigator.pop(context);
+                //navigator success insert customer va screen
+                Navigator.pushReplacementNamed(
+                    context, Routes.CUSTOMER_VA_SUCCESS);
+              } else {
+                if (x.status == 'FAILED') {
+                  msgInsert =
+                      ErrorUtils.instance.getErrorMessage(value.message);
+                } else {
+                  msgInsert =
+                      'Lỗi liên kết tài khoản (${value.message}). Vui lòng thử lại sau';
+                }
+                Navigator.pop(context);
+                DialogWidget.instance
+                    .openMsgDialog(title: 'Không thể xác thực', msg: msgInsert);
+              }
+            },
+          );
         } else {
-          msgInsert =
-              'Lỗi liên kết tài khoản (${result.message}). Vui lòng thử lại sau';
+          msg = ErrorUtils.instance.getErrorMessage(value.message);
+          Navigator.pop(context);
+          DialogWidget.instance
+              .openMsgDialog(title: 'Không thể xác thực', msg: msg);
         }
-        Navigator.pop(context);
-        DialogWidget.instance
-            .openMsgDialog(title: 'Không thể xác thực', msg: msgInsert);
-      }
-    } else {
-      msg = ErrorUtils.instance.getErrorMessage(result.message);
-      Navigator.pop(context);
-      DialogWidget.instance
-          .openMsgDialog(title: 'Không thể xác thực', msg: msg);
-    }
+      },
+    );
   }
 }

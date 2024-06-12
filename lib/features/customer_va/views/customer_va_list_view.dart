@@ -13,7 +13,7 @@ import 'package:vierqr/models/customer_va_item_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class CustomerVaListView extends StatefulWidget {
-  CustomerVaListView({super.key});
+  const CustomerVaListView({super.key});
 
   @override
   State<StatefulWidget> createState() => _CustomerVaListView();
@@ -35,8 +35,9 @@ class _CustomerVaListView extends State<CustomerVaListView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.WHITE,
-      appBar: CustomerVaHeaderWidget(),
-      bottomNavigationBar: _bottom(),
+      appBar: const CustomerVaHeaderWidget(),
+      bottomNavigationBar:
+          _customerVas.isNotEmpty ? _bottom() : const SizedBox.shrink(),
       body: Column(
         children: [
           const SizedBox(
@@ -45,9 +46,9 @@ class _CustomerVaListView extends State<CustomerVaListView> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             alignment: Alignment.centerLeft,
-            child: Text(
+            child: const Text(
               'Quản lý thu hộ\nqua tài khoản định danh',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 25,
                 fontWeight: FontWeight.bold,
               ),
@@ -58,11 +59,8 @@ class _CustomerVaListView extends State<CustomerVaListView> {
           ),
           Expanded(
             child: (_customerVas.isEmpty)
-                ? ListView(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    children: [
-                      //
-                    ],
+                ? const Center(
+                    child: Text('Không có doanh nghiệp / Tổ chức'),
                   )
                 : ListView.separated(
                     separatorBuilder: (context, index) =>
@@ -99,18 +97,23 @@ class _CustomerVaListView extends State<CustomerVaListView> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5),
         border: Border.all(
-          color: Color(0xFFDADADA),
+          color: const Color(0xFFDADADA),
         ),
       ),
       child: InkWell(
-        onTap: () {
-          NavigatorUtils.navigatePage(
-              context,
-              MerchantScreen(
-                customerId: dto.customerId,
-                bankId: dto.id,
-              ),
-              routeName: CreateMerchantScreen.routeName);
+        onTap: () async {
+          await NavigatorUtils.navigatePage(
+                  context,
+                  MerchantScreen(
+                    customerId: dto.customerId,
+                    bankId: dto.id,
+                  ),
+                  routeName: CreateMerchantScreen.routeName)
+              .then(
+            (value) {
+              _getCustomerVas();
+            },
+          );
         },
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -121,17 +124,17 @@ class _CustomerVaListView extends State<CustomerVaListView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
                           'Doanh nghiệp / Tổ chức',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 12,
                           ),
                         ),
-                        const Spacer(),
+                        Spacer(),
                         Icon(
                           Icons.arrow_forward_rounded,
                           color: AppColor.BLUE_TEXT,
@@ -150,14 +153,14 @@ class _CustomerVaListView extends State<CustomerVaListView> {
                   const SizedBox(
                     height: 10,
                   ),
-                  Text(
+                  const Text(
                     'Tài khoản liên kết',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
                     ),
                   ),
                   Text(
-                    'BIDV - ' + dto.bankAccount,
+                    'BIDV - ${dto.bankAccount}',
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 15,
@@ -185,7 +188,7 @@ class _CustomerVaListView extends State<CustomerVaListView> {
                     const SizedBox(
                       width: 5,
                     ),
-                    Text('01 hoá đơn chưa thanh toán'),
+                    const Text('01 hoá đơn chưa thanh toán'),
                     const Spacer(),
                     Text(
                       CurrencyUtils.instance.getCurrencyFormatted(
@@ -198,7 +201,7 @@ class _CustomerVaListView extends State<CustomerVaListView> {
                     const SizedBox(
                       width: 2,
                     ),
-                    Text('VND'),
+                    const Text('VND'),
                   ],
                 ),
               ),
