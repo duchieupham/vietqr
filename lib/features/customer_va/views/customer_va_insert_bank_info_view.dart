@@ -26,6 +26,8 @@ class CustomerVaInsertBankInfoView extends StatefulWidget {
 
 class _CustomerVaInsertBankInfoView
     extends State<CustomerVaInsertBankInfoView> {
+  final focusAccount = FocusNode();
+
   final CustomerVaRepository customerVaRepository =
       const CustomerVaRepository();
   String _bankAccount = '';
@@ -34,6 +36,15 @@ class _CustomerVaInsertBankInfoView
   @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // initData(context);
+      focusAccount.addListener(() {
+        if (!focusAccount.hasFocus) {
+          // _onSearch();
+        }
+      });
+    });
   }
 
   @override
@@ -94,6 +105,7 @@ class _CustomerVaInsertBankInfoView
             ),
             MTextFieldCustom(
               isObscureText: false,
+              focusNode: focusAccount,
               maxLines: 1,
               showBorder: false,
               fillColor: AppColor.TRANSPARENT,
