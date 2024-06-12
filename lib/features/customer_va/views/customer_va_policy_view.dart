@@ -190,55 +190,27 @@ class CustomerVaPolicyView extends StatelessWidget {
                                 ),
                                 children: [
                                   const TextSpan(
-                                    text: 'Kính gửi Quý Khách hàng!\n\n',
-                                  ),
-                                  //
+                                      text: 'Tôi đã đọc và đồng ý để'),
                                   const TextSpan(
-                                    text: 'BIDV và BLUECOM (',
-                                  ),
-                                  TextSpan(
-                                    text: 'VIETQR VN',
-                                    style: TextStyle(
-                                      fontSize: height < 800 ? 12 : 14,
-                                      fontWeight: FontWeight.w400,
-                                      color: AppColor.BLUE_TEXT,
-                                      height: 1.4,
-                                      decoration: TextDecoration.underline,
-                                    ),
-                                  ),
-                                  const TextSpan(
-                                    text: ') ',
-                                  ),
-                                  const TextSpan(
-                                    text: 'xin gửi đến Quý Khách ',
-                                  ),
-                                  //
+                                      text: ' BIDV ',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold)),
                                   const TextSpan(
                                     text:
-                                        'điều khoản và điều kiện sử dụng dịch vụ thu hộ qua tài khoản định danh, trên tài khoản số “',
+                                        'cung cấp thông tin báo “Có” giao dịch trên Tài khoản Định danh của tôi cho',
                                   ),
-                                  TextSpan(
-                                    text: bankAccount,
-                                    style: TextStyle(
-                                      fontSize: height < 800 ? 12 : 14,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColor.BLACK,
-                                      height: 1.4,
-                                    ),
-                                  ),
+                                  const TextSpan(
+                                      text:
+                                          ' Công ty cổ phần Bluecom Việt Nam ',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold)),
                                   const TextSpan(
                                     text:
-                                        '” của Quý Khách, được mở tại ngân hàng BIDV.\n',
-                                  ),
-                                  const TextSpan(
-                                    text:
-                                        'Căn cứ theo hợp đồng Hợp tác số ... ký ngày ...\n',
-                                  ),
-                                  const TextSpan(
-                                    text: 'Chi tiết tại đường link: ',
+                                        'và đồng ý với điều kiện và điều khoản sử dụng Dịch vụ.\n\n',
                                   ),
                                   TextSpan(
-                                    text: 'https://vietqr.vn/bidv-dkdv\n\n',
+                                    text:
+                                        'https://bidv.com.vn/uudai/DKDKDV_VIETQR_BLUECOM_160524.pdf',
                                     style: TextStyle(
                                       fontSize: height < 800 ? 12 : 14,
                                       fontWeight: FontWeight.w400,
@@ -250,18 +222,10 @@ class CustomerVaPolicyView extends StatelessWidget {
                                       ..onTap = () async {
                                         // ignore: deprecated_member_use
                                         await launch(
-                                          'https://vietqr.vn/mbbank-dkdv',
+                                          'https://bidv.com.vn/uudai/DKDKDV_VIETQR_BLUECOM_160524.pdf',
                                           forceSafariVC: false,
                                         );
                                       },
-                                  ),
-                                  const TextSpan(
-                                    text:
-                                        'Quý Khách vui lòng xác nhận đã đọc, hiểu và đồng ý sử dụng dịch vụ bằng cách nhập mã OTP do Ngân hàng TMCP Đầu tư và Phát triển Việt Nam gửi đến số điện thoại của Quý Khách.\n\n',
-                                  ),
-                                  const TextSpan(
-                                    text:
-                                        'Xin cảm ơn Quý khách đã sử dụng dịch vụ của chúng tôi.',
                                   ),
                                 ],
                               ),
