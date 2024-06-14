@@ -4,9 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:vierqr/commons/constants/configurations/stringify.dart'
-as Constants;
-import 'package:vierqr/commons/constants/env/env_config.dart';
-import 'package:vierqr/commons/di/injection/injection.dart';
+    as Constants;
 import 'package:vierqr/commons/mixin/base_manager.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
@@ -14,19 +12,22 @@ import 'package:vierqr/models/theme_dto.dart';
 import 'package:vierqr/models/user_repository.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
+import '../../../commons/constants/env/env_config.dart';
+
 class IsolateStream with BaseManager {
   @override
   final BuildContext context;
 
-  IsolateStream(this.context);
+  final AppConfig appConfig;
 
-  static void saveImageTask(List<dynamic> args) async {
+  IsolateStream(this.context, this.appConfig);
+
+  void saveImageTask(List<dynamic> args) async {
     SendPort sendPort = args[0];
     List<BankTypeDTO> list = args[1];
 
     for (var message in list) {
-      String url =
-          '${getIt.get<AppConfig>().getBaseUrl}images/${message.imageId}';
+      String url = '${appConfig.getBaseUrl}images/${message.imageId}';
       final response = await http.get(Uri.parse(url));
       final bytes = response.bodyBytes;
       sendPort.send(ReceiverData(data: bytes, index: list.indexOf(message)));

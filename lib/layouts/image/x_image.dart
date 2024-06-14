@@ -122,6 +122,9 @@ class XImage extends StatelessWidget {
       width: width,
       height: height,
       fit: fit ?? BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) {
+        return const SizedBox.shrink();
+      },
     );
   }
 

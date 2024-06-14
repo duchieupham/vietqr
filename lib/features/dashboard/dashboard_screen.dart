@@ -11,9 +11,10 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart'
-as Constants;
+    as Constants;
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/events.dart';
@@ -125,7 +126,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
       }
     });
     _provider = Provider.of<AuthProvider>(context, listen: false);
-    _isolateStream = IsolateStream(context);
+    _isolateStream = IsolateStream(context, getIt.get<AppConfig>());
     _pageController =
         PageController(initialPage: _provider.pageSelected, keepPage: true);
 
@@ -486,7 +487,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
           // floatingActionButton: MyFloatingButton(),
           body: Stack(
             children: [
-              BackgroundAppBarHome(),
+              const BackgroundAppBarHome(),
               Container(
                 padding: const EdgeInsets.only(top: kToolbarHeight * 2),
                 child: Listener(

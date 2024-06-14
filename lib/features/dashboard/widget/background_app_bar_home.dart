@@ -1,13 +1,11 @@
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
-import 'package:vierqr/commons/constants/configurations/app_images.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
@@ -16,11 +14,9 @@ import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
-import 'package:vierqr/features/dashboard/widget/maintain_widget.dart';
 import 'package:vierqr/features/notification/notification_screen.dart';
+import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
-
-import '../../maintain_charge/maintain_charge_screen.dart';
 
 class BackgroundAppBarHome extends StatefulWidget {
   const BackgroundAppBarHome({super.key});
@@ -54,8 +50,8 @@ class _BackgroundAppBarHomeState extends State<BackgroundAppBarHome> {
               image: file.path.isNotEmpty
                   ? DecorationImage(
                       image: FileImage(file), fit: BoxFit.fitWidth)
-                  : DecorationImage(
-                      image: AssetImage('assets/images/bgr-header.png'),
+                  : const DecorationImage(
+                      image: AssetImage(ImageConstant.bgrHeader),
                       fit: BoxFit.fitWidth)),
           child: Stack(
             children: [
@@ -96,10 +92,12 @@ class _BackgroundAppBarHomeState extends State<BackgroundAppBarHome> {
                             height: 56,
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10)),
-                            child: CachedNetworkImage(
-                                imageUrl: page.settingDTO.logoUrl))
-                        : Image.file(
-                            page.logoApp,
+                            child: XImage(
+                              imagePath: page.settingDTO.logoUrl,
+                            ),
+                          )
+                        : XImage(
+                            imagePath: page.logoApp.path,
                             width: 96,
                             height: 56,
                             fit: BoxFit.contain,

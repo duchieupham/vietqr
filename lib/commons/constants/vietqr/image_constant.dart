@@ -5,4 +5,5 @@ class ImageConstant {
   static const String icCloseBanner = 'assets/images/ic-close-banner.png';
   static const String icAvatar = 'assets/images/ic-avatar.png';
   static const String icNextUser = 'assets/images/ic-next-user.png';
+  static const String bgrHeader = 'assets/images/bgr-header.png';
 }
