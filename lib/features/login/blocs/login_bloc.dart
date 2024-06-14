@@ -13,6 +13,7 @@ import 'package:vierqr/features/login/states/login_state.dart';
 import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/info_user_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
+import 'package:vierqr/services/providers/register_provider.dart';
 
 import '../../dashboard/blocs/auth_provider.dart';
 
@@ -86,27 +87,34 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> with BaseManager {
       if (event is CheckExitsPhoneEvent) {
         emit(state.copyWith(
             status: BlocStatus.LOADING, request: LoginType.NONE));
-        final data = await loginRepository.checkExistPhone(event.phone);
-        if (data is InfoUserDTO) {
-          emit(
-            state.copyWith(
-                request: LoginType.CHECK_EXIST,
-                status: BlocStatus.UNLOADING,
-                infoUserDTO: data),
-          );
-        } else if (data is ResponseMessageDTO) {
-          if (data.status == Stringify.RESPONSE_STATUS_CHECK) {
-            String message = CheckUtils.instance.getCheckMessage(data.message);
-            emit(
-              state.copyWith(
-                msg: message,
-                request: LoginType.REGISTER,
-                status: BlocStatus.UNLOADING,
-                phone: event.phone,
-              ),
-            );
-          }
-        }
+        await loginRepository.checkExistPhone(event.phone).then(
+          (value) {
+            if (value is InfoUserDTO) {
+              Provider.of<RegisterProvider>(context, listen: false)
+                  .updatePhone(event.phone);
+
+              emit(
+                state.copyWith(
+                    request: LoginType.CHECK_EXIST,
+                    status: BlocStatus.UNLOADING,
+                    infoUserDTO: value),
+              );
+            } else if (value is ResponseMessageDTO) {
+              if (value.status == Stringify.RESPONSE_STATUS_CHECK) {
+                String message =
+                    CheckUtils.instance.getCheckMessage(value.message);
+                emit(
+                  state.copyWith(
+                    msg: message,
+                    request: LoginType.REGISTER,
+                    status: BlocStatus.UNLOADING,
+                    phone: event.phone,
+                  ),
+                );
+              }
+            }
+          },
+        );
       }
     } catch (e) {
       emit(state.copyWith(request: LoginType.ERROR));

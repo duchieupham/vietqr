@@ -27,6 +27,7 @@ class CustomerVaInsertBankInfoView extends StatefulWidget {
 class _CustomerVaInsertBankInfoView
     extends State<CustomerVaInsertBankInfoView> {
   final focusAccount = FocusNode();
+  final bankAccountController = TextEditingController();
 
   final CustomerVaRepository customerVaRepository =
       const CustomerVaRepository();
@@ -45,6 +46,35 @@ class _CustomerVaInsertBankInfoView
         }
       });
     });
+  }
+
+  void _onSearch() {
+    // bool isEdit = _addBankProvider.isEdit;
+    // if (bankAccountController.text.isNotEmpty &&
+    //     bankAccountController.text.length > 5 &&
+    //     isEdit) {
+    //   String transferType = '';
+    //   String caiValue = '';
+    //   String bankCode = '';
+    //   BankTypeDTO? bankTypeDTO = _addBankProvider.bankTypeDTO;
+    //   if (bankTypeDTO != null) {
+    //     caiValue = bankTypeDTO.caiValue;
+    //     bankCode = bankTypeDTO.bankCode;
+    //   }
+
+    //   if (bankCode == 'MB') {
+    //     transferType = 'INHOUSE';
+    //   } else {
+    //     transferType = 'NAPAS';
+    //   }
+    //   BankNameSearchDTO bankNameSearchDTO = BankNameSearchDTO(
+    //     accountNumber: bankAccountController.text,
+    //     accountType: 'ACCOUNT',
+    //     transferType: transferType,
+    //     bankCode: caiValue,
+    //   );
+    //   _bloc.add(BankCardEventSearchName(dto: bankNameSearchDTO));
+    // }
   }
 
   @override

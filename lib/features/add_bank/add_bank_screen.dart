@@ -158,10 +158,10 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
 
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      canPop: true,
+      onPopInvoked: (didPop) {
         _hideKeyboardBack(context);
-        return false;
       },
       child: GestureDetector(
         onTap: () {

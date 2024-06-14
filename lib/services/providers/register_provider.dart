@@ -151,7 +151,8 @@ class RegisterProvider with ChangeNotifier {
   }
 
   bool isEnableButtonPassword() {
-    if (phoneNoController.text.isNotEmpty && passwordController.text.isNotEmpty) {
+    if (phoneNoController.text.isNotEmpty &&
+        passwordController.text.isNotEmpty) {
       var isValid =
           StringUtils.instance.isValidatePhone(phoneNoController.value.text) ??
               true;
