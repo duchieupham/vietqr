@@ -5,6 +5,7 @@ import 'package:vierqr/models/bank_card_request_otp.dart';
 import 'package:vierqr/models/bank_name_search_dto.dart';
 import 'package:vierqr/models/confirm_otp_bank_dto.dart';
 import 'package:vierqr/models/register_authentication_dto.dart';
+import 'package:vierqr/models/response_message_dto.dart';
 
 class AddBankEvent extends Equatable {
   const AddBankEvent();

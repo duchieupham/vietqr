@@ -126,7 +126,7 @@ class VietQRApp extends StatefulWidget {
 }
 
 class _VietQRApp extends State<VietQRApp> {
-  static Widget _mainScreen = LoginScreen();
+  static Widget _mainScreen = const LoginScreen();
 
   String get userId => SharePrefUtils.getProfile().userId.trim();
 
