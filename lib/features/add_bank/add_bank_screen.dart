@@ -158,10 +158,10 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
 
-    return PopScope(
-      canPop: true,
-      onPopInvoked: (didPop) {
+    return WillPopScope(
+      onWillPop: () async {
         _hideKeyboardBack(context);
+        return false;
       },
       child: GestureDetector(
         onTap: () {
@@ -254,8 +254,12 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                 final dto = RegisterAuthenticationDTO(
                   bankId: bankId,
                   bankCode: _addBankProvider.bankTypeDTO!.bankCode,
-                  merchantId: state.responseDataOTP!.merchantId,
-                  merchantName: state.responseDataOTP!.merchantName,
+                  merchantId: state.responseDataOTP != null
+                      ? state.responseDataOTP!.merchantId
+                      : '',
+                  merchantName: state.responseDataOTP != null
+                      ? state.responseDataOTP!.merchantName
+                      : '',
                   vaNumber: state.ewalletToken!,
                   nationalId: cmtController.text,
                   phoneAuthenticated: phoneController.text,
@@ -285,8 +289,12 @@ class _AddBankScreenStateState extends State<_AddBankScreenState> {
                   nationalId: cmtController.text,
                   phoneAuthenticated: phoneController.text,
                   ewalletToken: '',
-                  merchantId: state.responseDataOTP!.merchantId,
-                  merchantName: state.responseDataOTP!.merchantName,
+                  merchantId: state.responseDataOTP != null
+                      ? state.responseDataOTP!.merchantId
+                      : '',
+                  merchantName: state.responseDataOTP != null
+                      ? state.responseDataOTP!.merchantName
+                      : '',
                   vaNumber: state.ewalletToken!,
                 );
                 _bloc.add(BankCardEventInsert(dto: dto));
