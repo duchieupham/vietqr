@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
@@ -47,10 +48,7 @@ class BankScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<BankBloc>(
-      create: (BuildContext context) => BankBloc(context),
-      child: const _BankScreen(),
-    );
+    return const _BankScreen();
   }
 }
 
@@ -67,15 +65,11 @@ class _BankScreenState extends State<_BankScreen>
   final scrollController = ScrollController();
   final carouselController = CarouselController();
 
-  late BankBloc _bloc;
+  late final BankBloc _bloc = getIt.get<BankBloc>();
 
   String userId = SharePrefUtils.getProfile().userId;
 
   StreamSubscription? _subscription;
-
-  initialServices(BuildContext context) {
-    _bloc = BlocProvider.of(context);
-  }
 
   initData({bool isRefresh = false}) {
     if (isRefresh) {
@@ -88,7 +82,7 @@ class _BankScreenState extends State<_BankScreen>
   @override
   void initState() {
     super.initState();
-    initialServices(context);
+
     handleMessageOnBackground();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -122,7 +116,7 @@ class _BankScreenState extends State<_BankScreen>
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                DefaultTextStyle(
+                const DefaultTextStyle(
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 20,
@@ -160,7 +154,7 @@ class _BankScreenState extends State<_BankScreen>
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Column(
+                        const Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             DefaultTextStyle(
@@ -171,7 +165,7 @@ class _BankScreenState extends State<_BankScreen>
                               ),
                               child: Text("Kích hoạt bằng mã"),
                             ),
-                            const SizedBox(height: 3),
+                            SizedBox(height: 3),
                             DefaultTextStyle(
                               style: TextStyle(
                                 color: Colors.black,
@@ -219,7 +213,7 @@ class _BankScreenState extends State<_BankScreen>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Column(
+                        const Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             DefaultTextStyle(
@@ -230,7 +224,7 @@ class _BankScreenState extends State<_BankScreen>
                               ),
                               child: Text("Quét mã VietQR"),
                             ),
-                            const SizedBox(height: 3),
+                            SizedBox(height: 3),
                             DefaultTextStyle(
                               style: TextStyle(
                                 color: Colors.black,
@@ -259,7 +253,7 @@ class _BankScreenState extends State<_BankScreen>
                 onTap: () {
                   Navigator.of(context).pop();
                 },
-                child: Icon(
+                child: const Icon(
                   Icons.close,
                   color: Colors.black,
                   size: 20,
@@ -359,6 +353,7 @@ class _BankScreenState extends State<_BankScreen>
   Widget build(BuildContext context) {
     super.build(context);
     return BlocConsumer<BankBloc, BankState>(
+      bloc: _bloc,
       listener: (context, state) async {
         if (state.request == BankType.GET_BANK) {
           _saveImageTaskStreamReceiver(state.listBankTypeDTO);
@@ -376,7 +371,7 @@ class _BankScreenState extends State<_BankScreen>
       builder: (context, state) {
         List<BankAccountDTO> extendAnnualFeeList = [];
         DateTime now = DateTime.now();
-        DateTime sevenDaysFromNow = now.add(Duration(days: 7));
+        DateTime sevenDaysFromNow = now.add(const Duration(days: 7));
         int sevenDaysFromNowTimestamp =
             sevenDaysFromNow.millisecondsSinceEpoch ~/ 1000;
         extendAnnualFeeList = state.listBanks

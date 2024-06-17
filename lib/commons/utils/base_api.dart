@@ -141,8 +141,12 @@ class BaseAPIClient {
 
     switch (type) {
       case AuthenticationType.SYSTEM:
+        //hết hạn cmnr
+        // result['Authorization'] =
+        //     'Bearer eyJhbGciOiJIUzUxMiJ9.eyJhdXRob3JpdGllcyI6WyJST0xFX1VTRVIiXSwidXNlciI6IllXUnRhVzR0ZG5GeUxXRmpkR2wyWlMxclpYa3RNak15Tmc9PSIsImlhdCI6MTcxODU5NDQ4MywiZXhwIjoxNzE4NTk0NTQyfQ.PWoIDbBLI6wmh_iaFEuDcs8uVxYqBB7B_1QlPWDJffnLIXjtWA2tpruyE0z1L4kjwTLjcsQ5ClFCFG1NITiB5w';
         result['Authorization'] =
             'Bearer ${(tokenFree.isNotEmpty) ? tokenFree : token}';
+
         result['Content-Type'] = 'application/json';
         result['Accept'] = '*/*';
         break;

@@ -338,6 +338,8 @@ enum DashBoardType {
   GET_BANK,
   GET_BANK_LOCAL,
   NONE,
+  LOGIN,
+  LOGIN_ERROR,
   ERROR,
   POINT,
   TOKEN,
