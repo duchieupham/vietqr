@@ -196,6 +196,7 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
             state.copyWith(
               dto: event.dto,
               requestId: responseMessageDTO.message,
+              responseDataOTP: responseMessageDTO.data,
               status: BlocStatus.UNLOADING,
               request: AddBankType.REQUEST_BANK,
             ),
@@ -243,6 +244,7 @@ class AddBankBloc extends Bloc<AddBankEvent, AddBankState> with BaseManager {
             state.copyWith(
               dto: event.dto,
               requestId: responseMessageDTO.message,
+              responseDataOTP: responseMessageDTO.data,
               status: BlocStatus.UNLOADING,
               request: AddBankType.RESENT_REQUEST_BANK,
             ),

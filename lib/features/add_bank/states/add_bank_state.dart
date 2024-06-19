@@ -2,6 +2,7 @@ import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/models/bank_card_request_otp.dart';
 import 'package:vierqr/models/bank_name_information_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
+import 'package:vierqr/models/response_message_dto.dart';
 
 class AddBankState {
   final String? titleMsg;
@@ -22,6 +23,7 @@ class AddBankState {
   final String? barCode;
   final TypeQR? typeQR;
   final String? ewalletToken;
+  final DataObject? responseDataOTP;
 
   AddBankState({
     this.titleMsg,
@@ -42,6 +44,7 @@ class AddBankState {
     this.requestId,
     this.barCode,
     this.ewalletToken,
+    this.responseDataOTP,
   });
 
   AddBankState copyWith({
@@ -63,6 +66,7 @@ class AddBankState {
     String? barCode,
     TypeQR? typeQR,
     String? ewalletToken,
+    DataObject? responseDataOTP,
   }) {
     return AddBankState(
       status: status ?? this.status,
@@ -83,6 +87,7 @@ class AddBankState {
       requestId: requestId ?? this.requestId,
       barCode: barCode ?? this.barCode,
       ewalletToken: ewalletToken ?? this.ewalletToken,
+      responseDataOTP: responseDataOTP ?? this.responseDataOTP,
     );
   }
 
@@ -107,7 +112,8 @@ class AddBankState {
           requestId == other.requestId &&
           barCode == other.barCode &&
           ewalletToken == other.ewalletToken &&
-          errorName == other.errorName;
+          errorName == other.errorName &&
+          responseDataOTP == other.responseDataOTP;
 
   @override
   int get hashCode =>

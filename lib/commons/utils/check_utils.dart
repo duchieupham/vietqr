@@ -31,6 +31,10 @@ class CheckUtils {
       case CheckType.C06:
         result = 'TK ngân hàng này đã được thêm trước đó';
         break;
+      case CheckType.C12:
+        result =
+            'Số tài khoản này đã đăng ký dịch vụ thu hộ trước đó. Vui lòng kiểm tra lại thông tin.';
+        break;
       default:
         result = message;
     }

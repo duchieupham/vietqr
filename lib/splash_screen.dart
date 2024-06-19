@@ -73,7 +73,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 bottom: 80,
                 child: Center(
                   child: AnimatedOpacity(
-                    duration: Duration(milliseconds: 2500),
+                    duration: const Duration(milliseconds: 2500),
                     opacity: widget.isFromLogin
                         ? 1.0
                         : _showLogo

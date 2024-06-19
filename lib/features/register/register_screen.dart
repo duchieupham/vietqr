@@ -351,7 +351,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         return MButtonWidget(
             title: 'Tiếp tục',
             isEnable: provider.isEnableButtonPhone(),
-            margin: EdgeInsets.only(bottom: 36),
+            margin: const EdgeInsets.only(bottom: 36),
             colorDisableBgr: AppColor.GREY_BUTTON,
             width: 350,
             height: 50,
@@ -366,7 +366,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         return MButtonWidget(
           title: 'Tiếp tục',
           isEnable: provider.isEnableButtonPassword(),
-          margin: EdgeInsets.only(bottom: 36),
+          margin: const EdgeInsets.only(bottom: 36),
           colorDisableBgr: AppColor.GREY_BUTTON,
           width: 350,
           height: 50,

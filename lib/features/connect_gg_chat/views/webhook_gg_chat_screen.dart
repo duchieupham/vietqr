@@ -197,14 +197,19 @@ class WebhookGgChatScreen extends StatelessWidget {
                 // Placeholder for bank logo
               ),
               const SizedBox(width: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(dto.bank!.bankAccount,
-                      style:
-                          TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                  Text(dto.bank!.userBankName, style: TextStyle(fontSize: 12)),
-                ],
+              Container(
+                width: 170,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(dto.bank!.bankAccount,
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.bold)),
+                    Text(dto.bank!.userBankName,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: 12)),
+                  ],
+                ),
               ),
             ],
           ),
@@ -224,7 +229,7 @@ class WebhookGgChatScreen extends StatelessWidget {
     return Consumer<ConnectGgChatProvider>(
       builder: (context, value, child) {
         return Container(
-          padding: EdgeInsets.only(left: 40),
+          padding: EdgeInsets.symmetric(horizontal: 30),
           width: double.infinity,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -239,7 +244,7 @@ class WebhookGgChatScreen extends StatelessWidget {
               Container(
                 width: double.infinity,
                 child: Text(
-                  'Tiếp theo, vui lòng\nthực hiện theo hướng dẫn\nvà nhập URL Webhook',
+                  'Tiếp theo, vui lòng thực hiện theo hướng dẫn và nhập URL Webhook',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
                 ),
               ),
@@ -275,6 +280,7 @@ class WebhookGgChatScreen extends StatelessWidget {
               //   ),
               // ),
               Container(
+                width: double.infinity,
                 height: 20,
                 child: Text(
                   'Webhook Google Chat',
@@ -282,7 +288,7 @@ class WebhookGgChatScreen extends StatelessWidget {
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(right: 40),
+                // margin: EdgeInsets.only(right: 40),
                 height: 50,
                 width: double.infinity,
                 decoration: BoxDecoration(
@@ -313,7 +319,7 @@ class WebhookGgChatScreen extends StatelessWidget {
                 onTap: onGuide,
                 child: Container(
                   height: 50,
-                  margin: EdgeInsets.only(right: 40),
+                  // margin: EdgeInsets.only(right: 40),
                   decoration: BoxDecoration(
                     color: AppColor.BLUE_TEXT.withOpacity(0.3),
                     borderRadius: BorderRadius.circular(5),

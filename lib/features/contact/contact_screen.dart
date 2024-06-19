@@ -342,7 +342,7 @@ class _ContactStateState extends State<_ContactState>
                     Consumer<AuthProvider>(
                       builder: (context, dashProvider, child) {
                         return Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 0, 20, 4),
+                          padding: const EdgeInsets.fromLTRB(20, 20, 20, 4),
                           child: Row(
                             children: [
                               Text(
@@ -398,38 +398,41 @@ class _ContactStateState extends State<_ContactState>
                       },
                     ),
                     SizedBox(
-                      height: 35,
-                      child: ListView(
-                        scrollDirection: Axis.horizontal,
-                        padding: const EdgeInsets.only(left: 20),
-                        children: List.generate(provider.listCategories.length,
-                            (index) {
-                          final model = provider.listCategories[index];
-                          return GestureDetector(
-                            onTap: () {
-                              if (scrollController.hasClients)
-                                scrollController.jumpTo(0.0);
-                              searchController.clear();
-                              provider.updateCategory(value: model);
-                              provider.updateOffset(0);
-                              if (model.type != CategoryType.suggest.value) {
-                                _bloc
-                                    .add(ContactEventGetList(type: model.type));
-                              } else {
-                                _bloc.add(ContactEventGetListPending());
-                              }
+                      height: 40,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          // padding: const EdgeInsets.only(left: 20),
+                          children: List.generate(
+                              provider.listCategories.length, (index) {
+                            final model = provider.listCategories[index];
+                            return GestureDetector(
+                              onTap: () {
+                                if (scrollController.hasClients)
+                                  scrollController.jumpTo(0.0);
+                                searchController.clear();
+                                provider.updateCategory(value: model);
+                                provider.updateOffset(0);
+                                if (model.type != CategoryType.suggest.value) {
+                                  _bloc.add(
+                                      ContactEventGetList(type: model.type));
+                                } else {
+                                  _bloc.add(ContactEventGetListPending());
+                                }
 
-                              if (model.type == CategoryType.vcard.value) {
-                                _onCheckSyncContact();
-                              }
-                            },
-                            child: _buildCategory(
-                                title: model.title,
-                                url: model.url,
-                                isSelect: provider.category == model,
-                                type: model.type),
-                          );
-                        }).toList(),
+                                if (model.type == CategoryType.vcard.value) {
+                                  _onCheckSyncContact();
+                                }
+                              },
+                              child: _buildCategory(
+                                  title: model.title,
+                                  url: model.url,
+                                  isSelect: provider.category == model,
+                                  type: model.type),
+                            );
+                          }).toList(),
+                        ),
                       ),
                     ),
                     if (state.isLoading)

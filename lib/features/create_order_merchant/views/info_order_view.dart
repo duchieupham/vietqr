@@ -100,17 +100,16 @@ class _InfoOrderViewState extends State<InfoOrderView> {
           Expanded(
             child: SingleChildScrollView(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Thông tin hoá đơn của bạn\nđã chính xác chứ?',
-                    textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 10),
                   ...[
                     _buildItem('Hoá đơn', widget.name),
                     _buildItem('Số tiền:', '${total(widget.list)} VND',
@@ -124,6 +123,9 @@ class _InfoOrderViewState extends State<InfoOrderView> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
+                        const SizedBox(
+                          height: 30,
+                        ),
                         Text(
                           'Danh mục hàng hoá, dịch vụ',
                           style: TextStyle(
@@ -131,7 +133,7 @@ class _InfoOrderViewState extends State<InfoOrderView> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 15),
                         ...List.generate(
                           widget.list.length,
                           (index) {
@@ -146,9 +148,10 @@ class _InfoOrderViewState extends State<InfoOrderView> {
             ),
           ),
           MButtonWidget(
+            height: 50,
             title: 'Xác nhận',
             isEnable: true,
-            margin: EdgeInsets.zero,
+            margin: const EdgeInsets.symmetric(vertical: 10),
             onTap: _onCreateOrder,
           )
         ],
@@ -158,57 +161,80 @@ class _InfoOrderViewState extends State<InfoOrderView> {
 
   Widget _buildItemCategory(OrderData dto, int index) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-      margin: EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 0),
+      margin: EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-        border: Border.all(color: AppColor.GREY_TEXT.withOpacity(0.3)),
-        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Color(0XFFFFFFFF), width: 1),
+        borderRadius: BorderRadius.circular(5),
       ),
       child: Column(
         children: [
-          Row(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    dto.name,
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+          SizedBox(
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    (index + 1).toString() + '. ' + dto.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                  Text(
-                    dto.des,
-                    style: TextStyle(fontSize: 14),
-                  ),
-                ],
-              ),
-              const Spacer(),
-              Container(
-                width: 25,
-                height: 25,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: AppColor.ORANGE_DARK.withOpacity(0.2)),
-                child: Text(
-                  dto.quantity,
-                  style: TextStyle(color: AppColor.ORANGE_DARK),
                 ),
-              ),
-            ],
+                const SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  CurrencyUtils.instance.getCurrencyFormatted(dto.price),
+                ),
+                const SizedBox(
+                  width: 5,
+                ),
+                Text('VND'),
+              ],
+            ),
           ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Text(
-                'Đơn giá:${CurrencyUtils.instance.getCurrencyFormatted(dto.price)} VND',
-                style: TextStyle(color: AppColor.GREY_TEXT),
-              ),
-              const Spacer(),
-              Text(
-                ' ${CurrencyUtils.instance.getCurrencyFormatted(dto.amount)} VND',
-                style: TextStyle(color: AppColor.ORANGE_DARK),
-              ),
-            ],
+          const SizedBox(
+            height: 10,
+          ),
+          Divider(
+            color: Color(0xFFDADADA),
+            height: 1,
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          SizedBox(
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'x ${dto.quantity} = ',
+                    textAlign: TextAlign.right,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: AppColor.GREY_TEXT,
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  CurrencyUtils.instance.getCurrencyFormatted(dto.amount),
+                  style: TextStyle(
+                    color: AppColor.ORANGE_DARK,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(
+                  width: 5,
+                ),
+                Text('VND'),
+              ],
+            ),
           ),
         ],
       ),
@@ -218,25 +244,38 @@ class _InfoOrderViewState extends State<InfoOrderView> {
   Widget _buildItem(String title, String content,
       {bool isUnBorder = false, Color? textColor}) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 18),
+      padding: EdgeInsets.symmetric(vertical: 15),
       decoration: BoxDecoration(
         border: isUnBorder
             ? null
             : Border(
-                bottom: BorderSide(
-                    color: AppColor.grey979797.withOpacity(0.3), width: 2),
+                bottom: BorderSide(color: Color(0XFFDADADA), width: 1),
               ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(title, maxLines: 1),
-          const SizedBox(height: 4),
           Text(
-            content,
-            overflow: TextOverflow.ellipsis,
-            maxLines: 2,
-            style: TextStyle(fontSize: 18, color: textColor),
+            title,
+            maxLines: 1,
+            style: const TextStyle(fontSize: 13),
+          ),
+          const SizedBox(
+            width: 20,
+          ),
+          Expanded(
+            child: Text(
+              content,
+              textAlign: TextAlign.right,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: textColor,
+              ),
+            ),
           ),
         ],
       ),

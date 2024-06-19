@@ -63,7 +63,7 @@ enum TypeSelect {
   MEMBER,
 }
 
-enum CheckType { C01, C02, C03, C04, C06 }
+enum CheckType { C01, C02, C03, C04, C06, C12 }
 
 enum TypeOTP {
   SUCCESS,
@@ -338,6 +338,8 @@ enum DashBoardType {
   GET_BANK,
   GET_BANK_LOCAL,
   NONE,
+  LOGIN,
+  LOGIN_ERROR,
   ERROR,
   POINT,
   TOKEN,
@@ -537,6 +539,8 @@ extension LinkBankTypeExt on int {
       case 1:
         return LinkBankType.LINK;
       case 0:
+        return LinkBankType.NOT_LINK;
+
       default:
         return LinkBankType.NOT_LINK;
     }

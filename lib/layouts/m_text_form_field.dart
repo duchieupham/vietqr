@@ -138,6 +138,7 @@ class _TextFieldWidgetState extends State<MTextFieldCustom> {
       focusNode: widget.focusNode,
       keyboardType: widget.inputType,
       style: widget.styles,
+      onFieldSubmitted: widget.onSubmitted,
       maxLines: (widget.maxLines == null) ? 1 : widget.maxLines,
       textInputAction: widget.keyboardAction,
       decoration: widget.decoration ??

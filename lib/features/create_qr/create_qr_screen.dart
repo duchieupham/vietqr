@@ -134,6 +134,7 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
 
         if (state.type == CreateQRType.CREATE_QR) {
           _provider.updatePage(1);
+          _provider.updateQrBoxDTO(state.listQrBox.first, isFirst: true);
           File? file = _provider.imageFile;
           if (file != null) {
             _bloc.add(QREventUploadImage(dto: state.dto, file: file));
@@ -556,8 +557,11 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                                       isEnable: true,
                                       margin: EdgeInsets.zero,
                                       colorEnableText: AppColor.WHITE,
-                                      onTap: () =>
-                                          _onCreateQR(state.bankAccountDTO),
+                                      // onTap: () =>
+                                      //     _onCreateQR(state.bankAccountDTO),
+                                      onTap: () {
+                                        _onCreateQR(state.bankAccountDTO);
+                                      },
                                     ),
                                   ),
                                 ],
@@ -857,7 +861,6 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
                         fontSize: 12,
                       ),
                     ),
-                    // const Divider()
                   ]
                 ],
               ),
@@ -923,7 +926,8 @@ class _CreateQRScreenState extends State<_CreateQRScreen> {
         StringUtils.instance.removeDiacritic(_provider.content);
 
     QRCreateDTO dto = QRCreateDTO(
-      bankId: bankAccountDTO?.id ?? '',
+      bankCode: bankAccountDTO!.bankCode,
+      bankId: bankAccountDTO.id ?? '',
       amount: money,
       content: formattedName,
       userId: SharePrefUtils.getProfile().userId,

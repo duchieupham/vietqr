@@ -40,7 +40,7 @@ class Routes {
   static const String REPORT_SCREEN = '/report_screen';
   static const String RECHARGE_SUCCESS = '/recharge_success';
   static const String CONNECT_TELEGRAM = '/connect_telegram';
-  static const String OPEN_BANK_MB = '/open_bank_mb';
+  static const String OPPriEN_BANK_MB = '/open_bank_mb';
   static const String CONNECT_LARK = '/connect_lark';
   static const String CONNECT_STEP_TELE_SCREEN = '/connect_step_tele_screen';
   static const String CONNECT_STEP_LARK_SCREEN = '/connect_step_lark_screen';
@@ -58,4 +58,16 @@ class Routes {
   // static const String SETTING_BDSD = '/setting_bdsd';
   static const String TRANSACTION_WALLET = '/transaction_wallet';
   static const String SHOW_QR = '/show_qr';
+
+  // customer VA - BIDV
+  static const String INSERT_CUSTOMER_VA_MERCHANT =
+      'customer_va/insert/merchant';
+  static const String INSERT_CUSTOMER_VA_BANK_INFO =
+      'customer_va/insert/bank_info';
+  static const String INSERT_CUSTOMER_VA_BANK_AUTH =
+      'customer_va/insert/bank_auth';
+  static const String CUSTOMER_VA_CONFIRM_OTP = 'customer_va/confirm_otp';
+  static const String CUSTOMER_VA_SUCCESS = 'customer_va/success';
+  static const String CUSTOMER_VA_SPLASH = 'customer_va/splash';
+  static const String CUSTOMER_VA_LIST = 'customer_va/list';
 }

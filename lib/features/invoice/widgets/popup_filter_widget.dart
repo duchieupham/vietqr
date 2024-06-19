@@ -663,6 +663,8 @@ class _PopupFilterWidgetState extends State<PopupFilterWidget> {
                                     const SizedBox(width: 10),
                                     SizedBox(
                                       height: 40,
+                                      width: MediaQuery.of(context).size.width -
+                                          220,
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,

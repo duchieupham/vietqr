@@ -30,14 +30,15 @@ import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/firebase_service/fcm_service.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/services/providers/connect_gg_chat_provider.dart';
+import 'package:vierqr/services/providers/customer_va/customer_va_insert_provider.dart';
+import 'package:vierqr/services/providers/invoice_provider.dart';
 import 'package:vierqr/services/providers/maintain_charge_provider.dart';
 import 'package:vierqr/services/providers/pin_provider.dart';
 import 'package:vierqr/services/providers/qr_box_provider.dart';
 import 'package:vierqr/services/providers/register_provider.dart';
 import 'package:vierqr/services/providers/user_edit_provider.dart';
-import 'package:vierqr/services/socket_service/socket_service.dart';
 
-import 'services/providers/invoice_provider.dart';
+import 'services/socket_service/socket_service.dart';
 
 //Share Preferences
 List<CameraDescription> cameras = [];
@@ -125,7 +126,7 @@ class VietQRApp extends StatefulWidget {
 }
 
 class _VietQRApp extends State<VietQRApp> {
-  static Widget _mainScreen = LoginScreen();
+  static Widget _mainScreen = const LoginScreen();
 
   String get userId => SharePrefUtils.getProfile().userId.trim();
 
@@ -184,6 +185,8 @@ class _VietQRApp extends State<VietQRApp> {
             ChangeNotifierProvider(create: (context) => QRBoxProvider()),
             ChangeNotifierProvider(create: (context) => RegisterProvider()),
             ChangeNotifierProvider(create: (context) => UserEditProvider()),
+            ChangeNotifierProvider(
+                create: (context) => CustomerVaInsertProvider()),
           ],
           child: Consumer<AuthProvider>(
             builder: (context, authProvider, child) {
@@ -193,7 +196,7 @@ class _VietQRApp extends State<VietQRApp> {
                 builder: (context, child) {
                   return MediaQuery(
                     data: MediaQuery.of(context).copyWith(
-                      textScaleFactor: 1.0,
+                      textScaler: const TextScaler.linear(1.0),
                     ),
                     child: child ?? Container(),
                   );

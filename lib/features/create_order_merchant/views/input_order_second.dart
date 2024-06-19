@@ -59,7 +59,7 @@ class _InputNameStoreViewState extends State<InputOrderSecondView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Tiếp theo, vui lòng nhập các danh mục hàng hoá, dịch vụ của hoá đơn.',
+                  'Tiếp theo, vui lòng nhập\ncác danh mục hàng hoá, dịch vụ\ncủa hoá đơn.',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -74,24 +74,25 @@ class _InputNameStoreViewState extends State<InputOrderSecondView> {
                       return _buildItemCategory(dto, index);
                     },
                   ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 10),
                 GestureDetector(
                   onTap: _onAddCategory,
                   child: Container(
                     padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
                     decoration: BoxDecoration(
-                      border: Border.all(
-                          color: AppColor.GREY_TEXT.withOpacity(0.3)),
-                      borderRadius: BorderRadius.circular(8),
+                      // border: Border.all(
+                      //     color: AppColor.GREY_TEXT.withOpacity(0.3)),
+                      borderRadius: BorderRadius.circular(5),
+                      color: AppColor.BLUE_TEXT.withOpacity(0.3),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Image.asset('assets/images/ic-invoice-blue.png',
                             width: 30),
-                        const SizedBox(width: 20),
+                        const SizedBox(width: 10),
                         Text(
-                          'Thêm danh mục mới',
+                          'Thêm mới danh mục',
                           style: TextStyle(color: AppColor.BLUE_TEXT),
                         ),
                       ],
@@ -107,47 +108,55 @@ class _InputNameStoreViewState extends State<InputOrderSecondView> {
             right: 0,
             left: 0,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              height: 90,
+              padding: const EdgeInsets.symmetric(horizontal: 30),
               decoration: BoxDecoration(
-                color: AppColor.GREY_BG,
+                color: AppColor.WHITE,
                 border: Border(
-                  top: BorderSide(color: AppColor.GREY_TEXT.withOpacity(0.3)),
+                  top: BorderSide(color: Color(0xFFDADADA), width: 1),
                 ),
               ),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Thành tiền:'),
-                        RichText(
-                          text: TextSpan(
-                            style: TextStyle(color: AppColor.BLACK),
-                            children: [
-                              TextSpan(
-                                text: total(),
-                                style: TextStyle(
-                                    color: AppColor.ORANGE_DARK,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16),
-                              ),
-                              TextSpan(
-                                text: ' VND',
-                                style: TextStyle(
-                                    color: AppColor.ORANGE_DARK, fontSize: 16),
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
+                    child: SizedBox(
+                      // height: 40,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Thành tiền:'),
+                          RichText(
+                            text: TextSpan(
+                              style: TextStyle(color: AppColor.BLACK),
+                              children: [
+                                TextSpan(
+                                  text: total(),
+                                  style: TextStyle(
+                                      color: AppColor.ORANGE_DARK,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20),
+                                ),
+                                TextSpan(
+                                  text: ' VND',
+                                  style: TextStyle(
+                                      color: AppColor.BLACK, fontSize: 20),
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   ),
                   MButtonWidget(
                     title: 'Tiếp tục',
+                    height: 40,
                     isEnable: list.isNotEmpty,
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    margin: EdgeInsets.symmetric(vertical: 20),
+                    colorDisableBgr: AppColor.GREY_VIEW,
+                    padding: EdgeInsets.symmetric(horizontal: 40),
+                    margin: const EdgeInsets.all(0),
                     onTap: () => widget.callBack.call(list),
                   ),
                 ],
@@ -183,65 +192,121 @@ class _InputNameStoreViewState extends State<InputOrderSecondView> {
     return Stack(
       children: [
         Container(
+          width: MediaQuery.of(context).size.width,
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-          margin: EdgeInsets.only(bottom: 12),
+          margin: EdgeInsets.only(bottom: 15),
           decoration: BoxDecoration(
-            border: Border.all(color: AppColor.GREY_TEXT.withOpacity(0.3)),
+            border: Border.all(
+              color: Color(0xFFDADADA),
+              width: 1,
+            ),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        dto.name,
-                        style: TextStyle(
-                            fontSize: 15, fontWeight: FontWeight.w500),
-                      ),
-                      Text(
-                        dto.des,
-                        style: TextStyle(fontSize: 14),
-                      ),
-                    ],
-                  ),
-                  const Spacer(),
-                  Container(
-                    width: 25,
-                    height: 25,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: AppColor.ORANGE_DARK.withOpacity(0.2)),
-                    child: Text(
-                      dto.quantity,
-                      style: TextStyle(color: AppColor.ORANGE_DARK),
-                    ),
-                  ),
-                ],
+              Text(
+                'Danh mục:',
+                style: TextStyle(
+                  fontSize: 13,
+                ),
               ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Text(
-                    'Đơn giá:${CurrencyUtils.instance.getCurrencyFormatted(dto.price)} VND',
-                    style: TextStyle(color: AppColor.GREY_TEXT),
-                  ),
-                  const Spacer(),
-                  Text(
-                    ' ${CurrencyUtils.instance.getCurrencyFormatted(dto.amount)} VND',
-                    style: TextStyle(color: AppColor.ORANGE_DARK),
-                  ),
-                ],
+              Text(
+                dto.name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              Text(
+                dto.des,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 15),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Divider(
+                color: Color(0XFFDADADA),
+              ),
+              SizedBox(
+                height: 35,
+                child: Row(
+                  children: [
+                    Text('Đơn giá:'),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    Expanded(
+                      child: Text(
+                        CurrencyUtils.instance.getCurrencyFormatted(dto.price),
+                        textAlign: TextAlign.right,
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    Text('VND')
+                  ],
+                ),
+              ),
+              Divider(
+                color: Color(0XFFDADADA),
+              ),
+              SizedBox(
+                height: 35,
+                child: Row(
+                  children: [
+                    Text('Số lượng:'),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    Expanded(
+                      child: Text(
+                        dto.quantity,
+                        textAlign: TextAlign.right,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Divider(
+                color: Color(0XFFDADADA),
+              ),
+              SizedBox(
+                height: 35,
+                child: Row(
+                  children: [
+                    Text('Thành tiền:'),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    Expanded(
+                      child: Text(
+                        CurrencyUtils.instance.getCurrencyFormatted(dto.amount),
+                        textAlign: TextAlign.right,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w500,
+                          color: AppColor.ORANGE_DARK,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    Text('VND')
+                  ],
+                ),
               ),
             ],
           ),
         ),
         Positioned(
-          top: -10,
-          right: -10,
+          top: 0,
+          right: 0,
           child: GestureDetector(
             onTap: () {
               setState(() {
@@ -250,7 +315,7 @@ class _InputNameStoreViewState extends State<InputOrderSecondView> {
             },
             child: Image.asset(
               'assets/images/ic-remove-account.png',
-              width: 36,
+              width: 50,
               color: AppColor.RED_EC1010,
             ),
           ),

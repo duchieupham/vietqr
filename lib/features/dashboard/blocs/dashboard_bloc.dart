@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/base_manager.dart';
@@ -9,9 +10,11 @@ import 'package:vierqr/commons/utils/error_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/account/blocs/account_bloc.dart';
 import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
+import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/dashboard/repostiroties/dashboard_repository.dart';
 import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
+import 'package:vierqr/features/login/blocs/login_bloc.dart';
 import 'package:vierqr/features/notification/blocs/notification_bloc.dart';
 import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
@@ -28,6 +31,8 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
       : super(DashBoardState(
             themes: [], listBanks: [], appInfoDTO: AppInfoDTO())) {
     on<TokenEventCheckValid>(_checkValidToken);
+    on<DashBoardLoginEvent>(_login);
+
     on<TokenFcmUpdateEvent>(_updateFcmToken);
     on<GetUserInformation>(_getUserInformation);
     on<GetUserSettingEvent>(_getUserSetting);
@@ -42,6 +47,33 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
     on<GetCountNotifyEvent>(_getCounter);
     on<NotifyUpdateStatusEvent>(_updateNotificationStatus);
     on<CloseMobileNotificationEvent>(_closeNoti);
+  }
+
+  void _login(DashBoardEvent event, Emitter emit) async {
+    try {
+      if (event is DashBoardLoginEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, request: DashBoardType.NONE));
+        // AccountLoginDTO? dto = AccountLoginDTO(
+        //     phoneNo: event.dto.phoneNo,
+        //     password:
+        //         '6e4dad94ef3553f91d367214c3184d4e1c9082a661523194305e848de16265f9');
+        await loginRepository.login(event.dto).then(
+          (value) {
+            if (value) {
+              emit(state.copyWith(
+                  request: DashBoardType.LOGIN, status: BlocStatus.UNLOADING));
+            } else {
+              emit(state.copyWith(
+                  request: DashBoardType.LOGIN_ERROR,
+                  msg: 'Sai mật khẩu. Vui lòng kiểm tra lại mật khẩu của bạn'));
+            }
+          },
+        );
+      }
+    } catch (e) {
+      emit(state.copyWith(request: DashBoardType.ERROR));
+    }
   }
 
   void _closeNoti(DashBoardEvent event, Emitter emit) async {

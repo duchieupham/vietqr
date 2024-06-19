@@ -82,27 +82,31 @@ class _TabInfoMerchantState extends State<TabInfoMerchant> {
   void onUnRegister() async {
     try {
       DialogWidget.instance.openLoadingDialog();
-      ResponseMessageDTO result = await merchantRepository.unRegisterMerchant(
-          merchantDTO?.merchantId ?? '', SharePrefUtils.getProfile().userId);
-      if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
-        Navigator.pop(context);
+      await merchantRepository
+          .unRegisterMerchant(
+              merchantDTO?.merchantId ?? '', SharePrefUtils.getProfile().userId)
+          .then(
+        (value) async {
+          if (value.status == Stringify.RESPONSE_STATUS_SUCCESS) {
+            Navigator.pop(context);
+            Navigator.pop(context);
+            // Navigator.pop(context);
 
-        if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
-          Navigator.pop(context, true);
-          Fluttertoast.showToast(
-            msg: 'Huỷ thành công',
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
-            backgroundColor: Theme.of(context).cardColor,
-            textColor: Theme.of(context).hintColor,
-            fontSize: 15,
-          );
-        }
-      } else {
-        Navigator.pop(context);
-        await DialogWidget.instance
-            .openMsgDialog(title: 'Thông báo', msg: 'Lỗi không xác định.');
-      }
+            Fluttertoast.showToast(
+              msg: 'Huỷ thành công',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              backgroundColor: Theme.of(context).cardColor,
+              textColor: Theme.of(context).hintColor,
+              fontSize: 15,
+            );
+          } else {
+            Navigator.pop(context);
+            await DialogWidget.instance
+                .openMsgDialog(title: 'Thông báo', msg: 'Lỗi không xác định.');
+          }
+        },
+      );
     } catch (e) {
       LOG.error(e.toString());
       Navigator.pop(context);
@@ -123,59 +127,62 @@ class _TabInfoMerchantState extends State<TabInfoMerchant> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        RefreshIndicator(
-          onRefresh: _onRefresh,
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+    return RefreshIndicator(
+      onRefresh: _onRefresh,
+      child: !isLoading
+          ? ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              physics: const AlwaysScrollableScrollPhysics(),
               children: [
                 ...[
-                  _buildItem('Đại lý:', merchantDTO?.merchantName ?? ''),
-                  _buildItem('Mã đại lý:', merchantDTO?.merchantId ?? ''),
-                  _buildItem(
-                      'Tài khoản ngân hàng:', merchantDTO?.accountBank ?? ''),
-                  _buildItem('CCCD/MST:', merchantDTO?.nationalId ?? ''),
-                  _buildItem('Số điện thoại xác thực:',
-                      merchantDTO?.phoneAuthenticated ?? '',
-                      isUnBorder: true),
-                  const SizedBox(height: 24),
-                ],
-                if (listUnpaid.isEmpty)
-                  _buildItemFeature(
-                    'Dịch vụ',
-                    des1: 'Tạo hoá đơn thanh toán',
-                    des2:
-                        'Hoá đơn có thể thanh toán từ các kênh giao dịch của BIDV.',
-                    path: 'assets/images/ic-invoice-blue.png',
-                    onTap: onCreateOrder,
+                  const SizedBox(
+                    height: 30,
                   ),
-                const SizedBox(height: 16),
+                  const Text(
+                    'Thông tin doanh nghiệp / tổ chức\nđã đăng ký dịch vụ thu hộ\nqua tài khoản định danh.',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  _buildItem('Doanh nghiệp:', merchantDTO?.merchantName ?? ''),
+                  _buildItem('Mã doanh nghiệp:', merchantDTO?.merchantId ?? ''),
+                  _buildItem('TK liên kết:', merchantDTO?.accountBank ?? ''),
+                  _buildItem('CCCD/MST:', merchantDTO?.nationalId ?? ''),
+                  _buildItem(
+                      'SĐT xác thực:', merchantDTO?.phoneAuthenticated ?? '',
+                      isUnBorder: true),
+                  const SizedBox(height: 50),
+                ],
+
                 _buildItemFeature(
-                  'Cài đặt',
-                  des1: 'Huỷ đăng ký đại lý',
-                  des2: 'Ngừng sử dụng dịch vụ đại lý và quản lý hoá đơn.',
+                  '',
+                  des1: 'Huỷ đăng ký dịch vụ',
+                  des2: 'Ngừng sử dụng dịch vụ thu hộ qua tài khoản định danh.',
                   path: 'assets/images/ic-remove-account.png',
                   colorIcon: AppColor.RED_EC1010,
                   onTap: onUnRegister,
                 ),
+                // Visibility(
+                //   visible: isLoading,
+                //   child: Positioned.fill(
+                //     child: Container(
+                //       color: AppColor.GREY_BG,
+                //       child: Center(child: CircularProgressIndicator()),
+                //     ),
+                //   ),
+                // )
               ],
+            )
+          : Positioned.fill(
+              child: Container(
+                color: AppColor.WHITE,
+                child: const Center(child: CircularProgressIndicator()),
+              ),
             ),
-          ),
-        ),
-        Visibility(
-          visible: isLoading,
-          child: Positioned.fill(
-            child: Container(
-              color: AppColor.GREY_BG,
-              child: Center(child: CircularProgressIndicator()),
-            ),
-          ),
-        )
-      ],
     );
   }
 
@@ -189,33 +196,36 @@ class _TabInfoMerchantState extends State<TabInfoMerchant> {
       onTap: onTap,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(title,
-              style:
-                  const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 12),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            height: 80,
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
               color: AppColor.WHITE,
+              border: Border.all(
+                color: const Color(0XFFDADADA),
+              ),
             ),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Image.asset(path, width: 30, color: colorIcon),
-                const SizedBox(width: 12),
+                Image.asset(path, width: 40, color: colorIcon),
+                const SizedBox(width: 10),
                 Expanded(
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(des1,
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w500)),
-                      const SizedBox(height: 2),
+                          style: const TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.w500)),
+                      const SizedBox(height: 3),
                       Text(des2,
                           maxLines: 2,
-                          style: TextStyle(
-                              fontSize: 12, color: AppColor.GREY_TEXT)),
+                          style: const TextStyle(
+                              fontSize: 13, color: AppColor.GREY_TEXT)),
                     ],
                   ),
                 ),
@@ -229,25 +239,37 @@ class _TabInfoMerchantState extends State<TabInfoMerchant> {
 
   Widget _buildItem(String title, String content, {bool isUnBorder = false}) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 18),
+      padding: const EdgeInsets.symmetric(vertical: 15),
       decoration: BoxDecoration(
         border: isUnBorder
             ? null
-            : Border(
-                bottom: BorderSide(
-                    color: AppColor.grey979797.withOpacity(0.3), width: 2),
+            : const Border(
+                bottom: BorderSide(color: Color(0XFFDADADA), width: 1),
               ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(title, maxLines: 1),
-          const SizedBox(height: 4),
           Text(
-            content,
-            overflow: TextOverflow.ellipsis,
-            maxLines: 2,
-            style: TextStyle(fontSize: 18),
+            title,
+            maxLines: 1,
+            style: const TextStyle(fontSize: 13),
+          ),
+          const SizedBox(
+            width: 20,
+          ),
+          Expanded(
+            child: Text(
+              content,
+              textAlign: TextAlign.right,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ),
         ],
       ),

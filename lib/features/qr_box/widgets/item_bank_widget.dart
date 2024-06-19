@@ -47,14 +47,24 @@ class ItemBankWidget extends StatelessWidget {
                   // Placeholder for bank logo
                 ),
                 const SizedBox(width: 20),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(dto.bankAccount,
-                        style: TextStyle(
-                            fontSize: 15, fontWeight: FontWeight.bold)),
-                    Text(dto.userBankName, style: TextStyle(fontSize: 12)),
-                  ],
+                Container(
+                  width: MediaQuery.of(context).size.width - 175,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(dto.bankAccount,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.bold)),
+                      Text(
+                        dto.userBankName,
+                        style: TextStyle(fontSize: 12),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

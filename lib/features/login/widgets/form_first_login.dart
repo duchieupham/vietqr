@@ -1,7 +1,8 @@
 part of '../login_screen.dart';
 
 class FormFirstLogin extends StatefulWidget {
-  const FormFirstLogin({super.key, required this.bloc, required this.onLoginCard});
+  const FormFirstLogin(
+      {super.key, required this.bloc, required this.onLoginCard});
 
   final LoginBloc bloc;
   final Function() onLoginCard;
@@ -87,8 +88,7 @@ class _FormFirstLoginState extends State<FormFirstLogin> {
                                   value ?? '',
                                   textAlign: TextAlign.left,
                                   style: const TextStyle(
-                                      color: AppColor.RED_TEXT,
-                                      fontSize: 13),
+                                      color: AppColor.RED_TEXT, fontSize: 13),
                                 ),
                               ),
                             );
@@ -113,8 +113,7 @@ class _FormFirstLoginState extends State<FormFirstLogin> {
                               margin: EdgeInsets.zero,
                               onTap: widget.onLoginCard,
                               child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   const XImage(
                                     imagePath: ImageConstant.icCard,
@@ -152,10 +151,11 @@ class _FormFirstLoginState extends State<FormFirstLogin> {
                     colorDisableBgr: AppColor.GREY_BUTTON,
                     margin: const EdgeInsets.only(bottom: 0),
                     colorEnableText:
-                    value ? AppColor.WHITE : AppColor.GREY_TEXT,
+                        value ? AppColor.WHITE : AppColor.GREY_TEXT,
                     onTap: () {
                       FocusManager.instance.primaryFocus?.unfocus();
-                      widget.bloc.add(CheckExitsPhoneEvent(phone: getPhone));
+                      String phone = getPhone.replaceAll(' ', '');
+                      widget.bloc.add(CheckExitsPhoneEvent(phone: phone));
                     },
                   );
                 }),
@@ -165,34 +165,25 @@ class _FormFirstLoginState extends State<FormFirstLogin> {
       ),
     );
   }
+
   onChangePhoneNumber(String? value) {
-    if (value?.isNotEmpty ?? false) {
-      setIsEnableButton(false);
-    } else {
-      String phone = value!.replaceAll(" ", "");
+    setIsEnableButton(isValidatePhoneNumber(value!));
+  }
 
-      if (phone.length == 9) {
-        if (phone[0] != '0') {
-          phone = '0$phone';
-        }
-      }
-      String? error = StringUtils.instance.validatePhone(phone);
-
-      if (errorPhone.value != error) {
-        errorPhone.value = error;
-      }
-
-      if (error != null || value.isEmpty) {
-        setIsEnableButton(false);
-      } else {
-        setIsEnableButton(true);
-      }
+  bool isValidatePhoneNumber(String phoneNumber) {
+    String phone = phoneNumber.replaceAll(' ', '');
+    const pattern = r'(^(?:[+0]9)?[0-9]{10,11}$)';
+    final regExp = RegExp(pattern);
+    if (phone.isEmpty) {
+      return false;
+    } else if (!(phone.startsWith('0') && regExp.hasMatch(phone))) {
+      return false;
     }
+
+    return true;
   }
 
   setIsEnableButton(bool value) {
-    if (isEnableButton.value != value) {
-      isEnableButton.value = value;
-    }
+    isEnableButton.value = value;
   }
 }

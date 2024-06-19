@@ -44,7 +44,7 @@ class _BackgroundAppBarHomeState extends State<BackgroundAppBarHome> {
         return Container(
           height: 240,
           width: width,
-          padding: EdgeInsets.only(top: paddingTop + 12),
+          padding: EdgeInsets.only(top: paddingTop + 4),
           alignment: Alignment.topCenter,
           decoration: BoxDecoration(
               image: file.path.isNotEmpty

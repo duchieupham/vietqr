@@ -22,6 +22,7 @@ import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/bank_card/bank_screen.dart';
+import 'package:vierqr/features/bank_card/events/bank_event.dart';
 import 'package:vierqr/features/contact/contact_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
@@ -33,7 +34,6 @@ import 'package:vierqr/features/dashboard/widget/background_app_bar_home.dart';
 import 'package:vierqr/features/dashboard/widget/maintain_widget.dart';
 import 'package:vierqr/features/home/home.dart';
 import 'package:vierqr/features/home/widget/dialog_update.dart';
-import 'package:vierqr/features/login/blocs/login_bloc.dart';
 import 'package:vierqr/features/network/network_bloc.dart';
 import 'package:vierqr/features/network/network_state.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
@@ -53,7 +53,7 @@ import '../../models/account_login_dto.dart';
 import '../../services/firebase_dynamic_link/firebase_dynamic_link_service.dart';
 import '../../services/firebase_dynamic_link/uni_links_listener_mixins.dart';
 import '../../services/providers/pin_provider.dart';
-import '../login/events/login_event.dart';
+import '../bank_card/blocs/bank_bloc.dart';
 import '../maintain_charge/views/dynamic_active_key_screen.dart';
 import 'curved_navi_bar/custom_navigation_bar.dart';
 import 'widget/disconnect_widget.dart';
@@ -99,8 +99,10 @@ class _DashBoardScreen extends State<DashBoardScreen>
   final _bottomBarController = StreamController<int>.broadcast();
 
   //blocs
+  // late final BankBloc = getIt.get<BankBloc>(param1: context);
+  late final BankBloc _bankBloc = getIt.get<BankBloc>();
+
   late DashBoardBloc _bloc;
-  late LoginBloc _blocLogin;
   late AuthProvider _provider;
   late Stream<int> bottomBarStream;
   late IsolateStream _isolateStream;
@@ -118,13 +120,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
     getInitUniLinks();
     initUniLinks();
     _bloc = BlocProvider.of(context);
-    _blocLogin = LoginBloc(context);
-    _blocLogin.stream.listen((statLogin) {
-      if (statLogin.request == LoginType.LOGIN) {
-        initialServices();
-        Navigator.of(context).pop();
-      }
-    });
+
     _provider = Provider.of<AuthProvider>(context, listen: false);
     _isolateStream = IsolateStream(context, getIt.get<AppConfig>());
     _pageController =
@@ -153,7 +149,13 @@ class _DashBoardScreen extends State<DashBoardScreen>
     bottomBarStream = _bottomBarController.stream;
   }
 
-  void initialServices() {
+  void initialServices({bool isLogin = false}) {
+    if (isLogin) {
+      // context.read<BankBloc>().add(BankCardEventGetList());
+      // context.read<BankBloc>().add(LoadDataBankEvent());
+      _bankBloc.add(BankCardEventGetList());
+      _bankBloc.add(LoadDataBankEvent());
+    }
     _bloc.add(GetBanksEvent());
     _bloc.add(GetUserInformation());
     _bloc.add(GetUserSettingEvent());
@@ -378,6 +380,14 @@ class _DashBoardScreen extends State<DashBoardScreen>
         if (state.request == DashBoardType.CLOSE_NOTIFICATION) {
           Navigator.of(context).pop();
         }
+        if (state.request == DashBoardType.LOGIN) {
+          _provider.checkStateLogin(false);
+          initialServices(isLogin: true);
+        }
+        if (state.request == DashBoardType.LOGIN_ERROR) {
+          _provider.checkStateLogin(true);
+          _bloc.add(TokenEventLogout());
+        }
 
         if (state.request == DashBoardType.GET_BANK) {
           _isolateStream.saveBankReceiver(state.listBanks);
@@ -427,8 +437,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
               );
             } else if (state.typeToken == TokenType.Expired) {
               String phone = SharePrefUtils.getPhone();
-              Provider.of<AuthProvider>(context, listen: false)
-                  .checkStateLogin(false);
+              _provider.checkStateLogin(false);
               await DialogWidget.instance.openConfirmPassDialog(
                 editingController: _editingController,
                 title: "Phiên đăng nhập hết hạn\nNhập mật khẩu để đăng nhập",
@@ -447,8 +456,8 @@ class _DashBoardScreen extends State<DashBoardScreen>
                     phoneNo: phone,
                     password: EncryptUtils.instance.encrypted(phone, pin),
                   );
-                  _blocLogin.add(LoginEventByPhone(dto: dto));
-                  if (!mounted) return;
+                  _bloc.add(DashBoardLoginEvent(dto: dto));
+                  // if (!mounted) return;
                 },
               );
               // context.read<LoginBloc>().add(event)

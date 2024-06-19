@@ -3,13 +3,14 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/layouts/pin_code_input.dart';
+import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/services/providers/countdown_provider.dart';
 
 class ConfirmOTPView extends StatefulWidget {
   final String phone;
 
   // final String requestId;
-  // final BankCardRequestOTP dto;
+  final BankTypeDTO dto;
   final TextEditingController otpController;
   final ValueChanged<String>? onChangeOTP;
   final Function() onResend;
@@ -18,6 +19,7 @@ class ConfirmOTPView extends StatefulWidget {
       {super.key,
       required this.phone,
       required this.otpController,
+      required this.dto,
       this.onChangeOTP,
       required this.onResend});
 
@@ -44,9 +46,10 @@ class _ConfirmOTPViewState extends State<ConfirmOTPView> {
           textAlign: TextAlign.center,
           text: TextSpan(
             children: [
-              const TextSpan(
-                text: 'Nhập mã OTP từ MB gửi về số điện thoại ',
-                style: TextStyle(
+              TextSpan(
+                text:
+                    'Nhập mã OTP từ ${widget.dto.bankCode} gửi về số điện thoại ',
+                style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.normal,
                   color: AppColor.BLACK,
@@ -71,7 +74,7 @@ class _ConfirmOTPViewState extends State<ConfirmOTPView> {
             autoFocus: true,
             controller: widget.otpController,
             onChanged: widget.onChangeOTP,
-            length: 8,
+            length: widget.dto.bankCode.contains('BIDV') ? 6 : 8,
             textStyle: Styles.copyStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,

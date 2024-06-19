@@ -1,5 +1,6 @@
 class QRCreateDTO {
   final String bankId;
+  final String bankCode;
   final String amount;
   final String content;
   final String userId;
@@ -11,6 +12,7 @@ class QRCreateDTO {
     required this.bankId,
     required this.amount,
     required this.content,
+    required this.bankCode,
     required this.userId,
     required this.orderId,
     required this.terminalCode,
@@ -23,6 +25,7 @@ class QRCreateDTO {
       amount: json['amount'] ?? '',
       content: json['content'] ?? '',
       userId: json['userId'] ?? '',
+      bankCode: json['bankCode'] ?? '',
       orderId: json['orderId'] ?? '',
       terminalCode: json['terminalCode'] ?? '',
       subTerminalCode: json['subTerminalCode'] ?? '',
@@ -34,10 +37,12 @@ class QRCreateDTO {
     data['bankId'] = bankId;
     data['amount'] = amount;
     data['content'] = content;
+    data['bankCode'] = bankCode;
     data['userId'] = userId;
     data['orderId'] = orderId;
     data['terminalCode'] = terminalCode;
     data['subTerminalCode'] = subTerminalCode;
+    // data['bankCode'] = 'BIDV';
 
     return data;
   }

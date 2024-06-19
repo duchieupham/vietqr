@@ -24,13 +24,18 @@ class ResponseMessageDTO {
 class DataObject {
   final String merchantId;
   final String confirmId;
+  final String merchantName;
 
-  DataObject({required this.merchantId, required this.confirmId});
+  DataObject(
+      {required this.merchantId,
+      required this.confirmId,
+      required this.merchantName});
 
   factory DataObject.fromJson(Map<String, dynamic> json) {
     return DataObject(
       merchantId: json['merchantId'] ?? '',
       confirmId: json['confirmId'] ?? '',
+      merchantName: json['merchantName'] ?? '',
     );
   }
 }

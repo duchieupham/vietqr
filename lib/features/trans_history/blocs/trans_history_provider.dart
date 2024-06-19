@@ -256,7 +256,12 @@ class TransProvider with ChangeNotifier {
             bankId: bankId,
             offset: offset,
             value: codeTerminal,
-            terminalCode: _terminalAccountDTO.terminalCode ?? '',
+            terminalCode: _terminalAccountDTO.terminalCode == null
+                ? (_terminalAccountDTO.terminalCode!
+                        .contains('Tất cả (mặc định)')
+                    ? ''
+                    : _terminalAccountDTO.terminalCode!)
+                : '',
             userId: SharePrefUtils.getProfile().userId,
             status: statusValue.id,
           );
