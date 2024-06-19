@@ -9,7 +9,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
@@ -132,7 +131,6 @@ class _VietQRApp extends State<VietQRApp> {
   @override
   void initState() {
     super.initState();
-    print('User: $userId');
     _mainScreen =
         (userId.isNotEmpty) ? const DashBoardScreen() : const LoginScreen();
     // _mainScreen = const DashBoardScreen();

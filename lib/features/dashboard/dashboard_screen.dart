@@ -18,6 +18,7 @@ import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/commons/helper/dialog_helper.dart';
 import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
@@ -34,7 +35,6 @@ import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
 import 'package:vierqr/features/dashboard/widget/background_app_bar_home.dart';
 import 'package:vierqr/features/dashboard/widget/maintain_widget.dart';
 import 'package:vierqr/features/home/home.dart';
-import 'package:vierqr/features/home/widget/dialog_update.dart';
 import 'package:vierqr/features/network/network_bloc.dart';
 import 'package:vierqr/features/network/network_state.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
@@ -44,7 +44,6 @@ import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/contact_dto.dart';
 import 'package:vierqr/models/theme_dto.dart';
 import 'package:vierqr/models/user_repository.dart';
-import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:vierqr/splash_screen.dart';
 
@@ -80,7 +79,8 @@ class _DashBoardScreen extends State<DashBoardScreen>
         UniLinksListenerMixin,
         WidgetsBindingObserver,
         AutomaticKeepAliveClientMixin,
-        SingleTickerProviderStateMixin {
+        SingleTickerProviderStateMixin,
+        DialogHelper {
   //page controller
   late PageController _pageController;
 
@@ -90,6 +90,39 @@ class _DashBoardScreen extends State<DashBoardScreen>
     const HomeScreen(key: PageStorageKey('HOME_PAGE')),
     const ContactScreen(key: PageStorageKey('CONTACT_PAGE')),
     const StoreScreen(key: PageStorageKey('STORE_PAGE')),
+  ];
+
+  final List<CurvedNavigationBarItem> _listNavigation = [
+    CurvedNavigationBarItem(
+      label: 'Tài khoản',
+      urlSelect: ImageConstant.icBtmListBankBlue,
+      urlUnselect: ImageConstant.icBtmListBankGrey,
+      index: PageType.ACCOUNT.pageIndex,
+    ),
+    CurvedNavigationBarItem(
+      label: 'Trang chủ',
+      urlSelect: ImageConstant.icBtmDashboardBlue,
+      urlUnselect: ImageConstant.icBtmDashboardGrey,
+      index: PageType.HOME.pageIndex,
+    ),
+    CurvedNavigationBarItem(
+      label: 'Quét QR',
+      urlSelect: ImageConstant.icMenuSlideHomeBlue,
+      urlUnselect: ImageConstant.icMenuSlideHomeBlue,
+      index: PageType.SCAN_QR.pageIndex,
+    ),
+    CurvedNavigationBarItem(
+      label: 'Ví QR',
+      urlSelect: ImageConstant.icBtmQrWalletBlue,
+      urlUnselect: ImageConstant.icBtmQrWalletGrey,
+      index: PageType.CARD_QR.pageIndex,
+    ),
+    CurvedNavigationBarItem(
+      label: 'Cửa hàng',
+      urlSelect: ImageConstant.icStoreBottomBarBlue,
+      urlUnselect: ImageConstant.icStoreBottomBarGrey,
+      index: PageType.STORE.pageIndex,
+    ),
   ];
 
   StreamSubscription? _subscription;
@@ -129,6 +162,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
     Future.delayed(const Duration(seconds: 1), requestNotificationPermission);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      //thực hiện một số thao tác khi frame hình được vẽ xong
       _bloc.add(const TokenEventCheckValid());
       listenNewNotification();
       onUpdateApp();
@@ -149,6 +183,198 @@ class _DashBoardScreen extends State<DashBoardScreen>
     bottomBarStream = _bottomBarController.stream;
   }
 
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    if (_bottomBarController.hasListener) {
+      _bottomBarController.close();
+    }
+    _linkSubscription?.cancel();
+    _subscription?.cancel();
+    _subscription = null;
+    _subReloadWallet?.cancel();
+    _subReloadWallet = null;
+    _subSyncContact?.cancel();
+    _subSyncContact = null;
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      if (!PlatformUtils.instance.isWeb()) {}
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return BlocListener<DashBoardBloc, DashBoardState>(
+      listener: onListening,
+      child: Consumer<AuthProvider>(builder: (context, provider, _) {
+        if (!provider.isRenderUI) {
+          return SplashScreen(isFromLogin: widget.isFromLogin);
+        }
+        return Scaffold(
+          // floatingActionButton: MyFloatingButton(),
+          body: Stack(
+            children: [
+              const BackgroundAppBarHome(),
+              Container(
+                padding: const EdgeInsets.only(top: kToolbarHeight * 2),
+                child: Listener(
+                  onPointerMove: (moveEvent) {
+                    if (moveEvent.delta.dx < 0) {
+                      if (provider.moveEvent != TypeMoveEvent.RIGHT_TO_LEFT) {
+                        provider.updateMoveEvent(TypeMoveEvent.RIGHT_TO_LEFT);
+                      }
+                    } else {
+                      if (provider.moveEvent != TypeMoveEvent.LEFT_TO_RIGHT) {
+                        provider.updateMoveEvent(TypeMoveEvent.LEFT_TO_RIGHT);
+                      }
+                    }
+                  },
+                  child: PageView(
+                    key: const PageStorageKey('PAGE_VIEW'),
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    controller: _pageController,
+                    onPageChanged: (index) async {
+                      // if (index != PageType.STORE.pageIndex) {
+                      provider.updateIndex(index);
+                      sendDataFromBottomBar(index);
+                      // }
+                    },
+                    children: _listScreens,
+                  ),
+                ),
+              ),
+              renderUpdateDialog(provider),
+              renderNetworkDialog(),
+            ],
+          ),
+          bottomNavigationBar: Consumer<AuthProvider>(
+            builder: (context, page, _) {
+              return CurvedNavigationBar(
+                backgroundColor: AppColor.TRANSPARENT,
+                buttonBackgroundColor: AppColor.TRANSPARENT,
+                animationDuration: const Duration(milliseconds: 300),
+                indexPage: page.pageSelected,
+                indexPaint: 0,
+                iconPadding: 0.0,
+                onTap: onTapPage,
+                items: _listNavigation,
+                stream: bottomBarStream,
+              );
+            },
+          ),
+        );
+      }),
+    );
+  }
+
+  /// poppup bên dưới hiển thị khi có bản cập nhật mới
+  Positioned renderUpdateDialog(AuthProvider provider) {
+    return Positioned(
+      child: FloatBubble(
+        show: provider.isUpdateVersion,
+        initialAlignment: Alignment.bottomRight,
+        child: SizedBox(
+          width: 100,
+          height: 105,
+          child: Stack(
+            children: [
+              GestureDetector(
+                onTap: () async {
+                  Uri uri = Uri.parse(Stringify.urlStore);
+                  if (!await launchUrl(uri,
+                      mode: LaunchMode.externalApplication)) {}
+                },
+                child: Image.asset(
+                  ImageConstant.bannerUpdate,
+                  width: 100,
+                  height: 100,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Positioned(
+                right: 0,
+                top: 0,
+                child: GestureDetector(
+                  onTap: provider.onClose,
+                  child: Image.asset(
+                    ImageConstant.icCloseBanner,
+                    width: 24,
+                    height: 24,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  ///dialog bên dưới sẽ hiện khi mất kết nối hoặc đã kết nối trở lại
+  Positioned renderNetworkDialog() {
+    return Positioned(
+      bottom: 24,
+      left: 20,
+      right: 20,
+      child: BlocBuilder<NetworkBloc, NetworkState>(
+        bloc: getIt.get<NetworkBloc>(),
+        builder: (context, state) {
+          if (state is NetworkFailure) {
+            return const DisconnectWidget(type: TypeInternet.DISCONNECT);
+          } else if (state is NetworkSuccess) {
+            return const DisconnectWidget(type: TypeInternet.CONNECT);
+          } else {
+            return const SizedBox.shrink();
+          }
+        },
+      ),
+    );
+  }
+
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  void getInitUri(Uri? uri) {
+    if (uri?.path == '/service-active' && uri?.queryParameters['key'] != null) {
+      NavigatorUtils.navigatePage(
+          context,
+          DynamicActiveKeyScreen(
+            activeKey: uri!.queryParameters['key']!,
+          ),
+          routeName: Routes.DYNAMIC_ACTIVE_KEY_SCREEN);
+    }
+  }
+
+  @override
+  void onUniLink(Uri uri) {
+    if (uri.path == '/service-active' && uri.queryParameters['key'] != null) {
+      NavigatorUtils.navigatePage(
+          context,
+          DynamicActiveKeyScreen(
+            activeKey: uri.queryParameters['key']!,
+          ),
+          routeName: Routes.DYNAMIC_ACTIVE_KEY_SCREEN);
+    }
+  }
+}
+
+class SaveImageData {
+  SaveImageData({required this.progress, this.index, this.isDone = false});
+
+  Uint8List progress;
+  int? index;
+  bool isDone;
+}
+
+/// phần xử lý dữ liệu của DashBoard
+extension _DashBoardExtensionFunction on _DashBoardScreen {
   void initialServices({bool isLogin = false}) {
     if (isLogin) {
       _bankBloc.add(BankCardEventGetList());
@@ -175,7 +401,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
     _bottomBarController.add(data);
   }
 
-  static void heavyTask(List<dynamic> args) async {
+  void heavyTask(List<dynamic> args) async {
     SendPort sendPort = args[0];
     List<ContactDTO> list = args[1];
 
@@ -255,36 +481,34 @@ class _DashBoardScreen extends State<DashBoardScreen>
     });
   }
 
+  /// description: kiểm tra bản cập nhật app
   void onUpdateApp() async {
     bool isUpdateVersion = _provider.isUpdateVersion;
     AppInfoDTO? appInfoDTO = _provider.appInfoDTO;
     bool isCheckApp = appInfoDTO.isCheckApp;
 
     if (isUpdateVersion && !isCheckApp) {
-      showDialog(
-        barrierDismissible: false,
-        context: NavigationService.context!,
-        builder: (BuildContext context) {
-          return DialogUpdateView(
-            isHideClose: true,
-            onCheckUpdate: () {
-              _bloc.add(GetVersionAppEventDashboard(isCheckVer: true));
-            },
-          );
-        },
+      showDialogUpdateApp(
+        context,
+        isHideClose: true,
       );
+      // showDialog(
+      //   barrierDismissible: false,
+      //   context: context,
+      //   builder: (BuildContext context) {
+      //     return DialogUpdateView(
+      //       isHideClose: true,
+      //       onCheckUpdate: () {
+      //         _bloc.add(GetVersionAppEventDashboard(isCheckVer: true));
+      //       },
+      //     );
+      //   },
+      // );
     }
   }
 
   void _updateFcmToken(bool isFromLogin) {
     if (!isFromLogin) _bloc.add(const TokenFcmUpdateEvent());
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      if (!PlatformUtils.instance.isWeb()) {}
-    }
   }
 
   void _onHandleAppSystem(AppInfoDTO dto, AuthProvider authProvider) async {
@@ -333,274 +557,139 @@ class _DashBoardScreen extends State<DashBoardScreen>
     }
   }
 
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    if (_bottomBarController.hasListener) {
-      _bottomBarController.close();
+  onListening(BuildContext context, DashBoardState state) async {
+    if (state.status == BlocStatus.LOADING) {
+      DialogWidget.instance.openLoadingDialog();
     }
-    _linkSubscription?.cancel();
-    _subscription?.cancel();
-    _subscription = null;
-    _subReloadWallet?.cancel();
-    _subReloadWallet = null;
-    _subSyncContact?.cancel();
-    _subSyncContact = null;
-    super.dispose();
-  }
 
-  @override
-  Widget build(BuildContext context) {
-    super.build(context);
-    return BlocListener<DashBoardBloc, DashBoardState>(
-      listener: (context, state) async {
-        if (state.status == BlocStatus.LOADING) {
-          DialogWidget.instance.openLoadingDialog();
-        }
+    if (state.status == BlocStatus.UNLOADING) {
+      Navigator.pop(context);
+    }
 
-        if (state.status == BlocStatus.UNLOADING) {
-          Navigator.pop(context);
-        }
+    if (state.request == DashBoardType.GET_USER_SETTING) {
+      final settingAccountDTO = SharePrefUtils.getAccountSetting();
+      _provider.updateSettingDTO(settingAccountDTO);
+      String themeVerLocal = SharePrefUtils.getThemeVersion();
+      String themeSystem = state.appInfoDTO.themeVersion;
+      List<ThemeDTO> listLocal = await UserRepository.instance.getThemes();
+      if (!settingAccountDTO.notificationMobile) {
+        DialogWidget.instance.openNotificationMobile(context);
+      }
+      if (themeVerLocal != themeSystem || listLocal.isEmpty) {
+        _bloc.add(GetListThemeEvent());
+      } else {}
+    }
+    if (state.request == DashBoardType.CLOSE_NOTIFICATION) {
+      Navigator.of(context).pop();
+    }
+    if (state.request == DashBoardType.LOGIN) {
+      _provider.checkStateLogin(false);
+      initialServices(isLogin: true);
+    }
+    if (state.request == DashBoardType.LOGIN_ERROR) {
+      _provider.checkStateLogin(true);
+      _bloc.add(TokenEventLogout());
+    }
 
-        if (state.request == DashBoardType.GET_USER_SETTING) {
-          final settingAccountDTO = SharePrefUtils.getAccountSetting();
-          _provider.updateSettingDTO(settingAccountDTO);
-          String themeVerLocal = SharePrefUtils.getThemeVersion();
-          String themeSystem = state.appInfoDTO.themeVersion;
-          List<ThemeDTO> listLocal = await UserRepository.instance.getThemes();
-          if (!settingAccountDTO.notificationMobile) {
-            DialogWidget.instance.openNotificationMobile(context);
-          }
-          if (themeVerLocal != themeSystem || listLocal.isEmpty) {
-            _bloc.add(GetListThemeEvent());
-          } else {}
-        }
-        if (state.request == DashBoardType.CLOSE_NOTIFICATION) {
-          Navigator.of(context).pop();
-        }
-        if (state.request == DashBoardType.LOGIN) {
+    if (state.request == DashBoardType.GET_BANK) {
+      _isolateStream.saveBankReceiver(state.listBanks);
+    }
+
+    if (state.request == DashBoardType.APP_VERSION) {
+      initialServices();
+      _provider.updateAppInfoDTO(state.appInfoDTO);
+      _onHandleAppSystem(state.appInfoDTO, _provider);
+    }
+
+    if (state.request == DashBoardType.THEMES) {
+      List<ThemeDTO> list = [...state.themes];
+      list.sort((a, b) => a.type.compareTo(b.type));
+      _provider.updateThemes(list);
+
+      await UserRepository.instance.clearThemes();
+      List<ThemeDTO> datas = await _isolateStream.saveThemeReceiver(list);
+      _provider.updateThemes(datas);
+      await SharePrefUtils.saveThemeVersion(state.appInfoDTO.themeVersion);
+    }
+
+    if (state.request == DashBoardType.KEEP_BRIGHT) {
+      _provider.updateKeepBright(state.keepValue);
+    }
+
+    if (state.request == DashBoardType.POINT) {
+      _provider.updateIntroduceDTO(state.introduceDTO);
+    }
+
+    //check lỗi hệ thống
+    if (state.request == DashBoardType.TOKEN) {
+      if (state.typeToken == TokenType.Valid) {
+        _bloc.add(GetVersionAppEventDashboard());
+        _updateFcmToken(widget.isFromLogin);
+      } else {
+        _provider.updateRenderUI();
+        if (state.typeToken == TokenType.MainSystem) {
+          await DialogWidget.instance.showFullModalBottomContent(
+            isDissmiss: false,
+            widget: MaintainWidget(
+              onRetry: () {
+                _bloc.add(const TokenEventCheckValid());
+                Navigator.pop(context);
+              },
+            ),
+          );
+        } else if (state.typeToken == TokenType.Expired) {
+          String phone = SharePrefUtils.getPhone();
           _provider.checkStateLogin(false);
-          initialServices(isLogin: true);
-        }
-        if (state.request == DashBoardType.LOGIN_ERROR) {
-          _provider.checkStateLogin(true);
-          _bloc.add(TokenEventLogout());
-        }
-
-        if (state.request == DashBoardType.GET_BANK) {
-          _isolateStream.saveBankReceiver(state.listBanks);
-        }
-
-        if (state.request == DashBoardType.APP_VERSION) {
-          initialServices();
-          _provider.updateAppInfoDTO(state.appInfoDTO);
-          _onHandleAppSystem(state.appInfoDTO, _provider);
-        }
-
-        if (state.request == DashBoardType.THEMES) {
-          List<ThemeDTO> list = [...state.themes];
-          list.sort((a, b) => a.type.compareTo(b.type));
-          _provider.updateThemes(list);
-
-          await UserRepository.instance.clearThemes();
-          List<ThemeDTO> datas = await _isolateStream.saveThemeReceiver(list);
-          _provider.updateThemes(datas);
-          await SharePrefUtils.saveThemeVersion(state.appInfoDTO.themeVersion);
-        }
-
-        if (state.request == DashBoardType.KEEP_BRIGHT) {
-          _provider.updateKeepBright(state.keepValue);
-        }
-
-        if (state.request == DashBoardType.POINT) {
-          _provider.updateIntroduceDTO(state.introduceDTO);
-        }
-
-        //check lỗi hệ thống
-        if (state.request == DashBoardType.TOKEN) {
-          if (state.typeToken == TokenType.Valid) {
-            _bloc.add(GetVersionAppEventDashboard());
-            _updateFcmToken(widget.isFromLogin);
-          } else {
-            _provider.updateRenderUI();
-            if (state.typeToken == TokenType.MainSystem) {
-              await DialogWidget.instance.showFullModalBottomContent(
-                isDissmiss: false,
-                widget: MaintainWidget(
-                  onRetry: () {
-                    _bloc.add(const TokenEventCheckValid());
-                    Navigator.pop(context);
-                  },
-                ),
-              );
-            } else if (state.typeToken == TokenType.Expired) {
-              String phone = SharePrefUtils.getPhone();
-              _provider.checkStateLogin(false);
-              await DialogWidget.instance.openConfirmPassDialog(
-                editingController: _editingController,
-                title: "Phiên đăng nhập hết hạn\nNhập mật khẩu để đăng nhập",
-                onClose: () {
-                  Provider.of<PinProvider>(context, listen: false).reset();
-                  DialogWidget.instance.openMsgDialog(
-                    title: 'Phiên đăng nhập hết hạn',
-                    msg: 'Vui lòng đăng nhập lại ứng dụng',
-                    function: () => _bloc.add(TokenEventLogout()),
-                  );
-                },
-                onDone: (pin) {
-                  Provider.of<PinProvider>(context, listen: false).reset();
-                  _editingController.text = '';
-                  AccountLoginDTO dto = AccountLoginDTO(
-                    phoneNo: phone,
-                    password: EncryptUtils.instance.encrypted(phone, pin),
-                  );
-                  _bloc.add(DashBoardLoginEvent(dto: dto));
-                  // if (!mounted) return;
-                },
-              );
-              // context.read<LoginBloc>().add(event)
-            } else if (state.typeToken == TokenType.Logout) {
-              await SharePrefUtils.resetServices();
-            } else if (state.typeToken == TokenType.Logout_failed) {
-              await DialogWidget.instance.openMsgDialog(
-                title: 'Không thể đăng xuất',
-                msg: 'Vui lòng thử lại sau.',
-              );
-            }
-          }
-        }
-
-        if (state.request == DashBoardType.ERROR) {
-          _provider.updateRenderUI();
-          await DialogWidget.instance
-              .openMsgDialog(title: 'Thông báo', msg: state.msg ?? '');
-        }
-        if (state.request == DashBoardType.UPDATE_THEME_ERROR) {
-          await DialogWidget.instance
-              .openMsgDialog(title: 'Thông báo', msg: state.msg ?? '');
-        }
-
-        if (state.status != BlocStatus.NONE ||
-            state.request != DashBoardType.NONE ||
-            state.typeQR != TypeQR.NONE ||
-            state.typePermission == DashBoardTypePermission.None) {
-          _bloc.add(UpdateEventDashboard());
-        }
-      },
-      child: Consumer<AuthProvider>(builder: (context, provider, _) {
-        if (!provider.isRenderUI) {
-          return SplashScreen(isFromLogin: widget.isFromLogin);
-        }
-        return Scaffold(
-          // floatingActionButton: MyFloatingButton(),
-          body: Stack(
-            children: [
-              const BackgroundAppBarHome(),
-              Container(
-                padding: const EdgeInsets.only(top: kToolbarHeight * 2),
-                child: Listener(
-                  onPointerMove: (moveEvent) {
-                    if (moveEvent.delta.dx < 0) {
-                      if (provider.moveEvent != TypeMoveEvent.RIGHT_TO_LEFT) {
-                        provider.updateMoveEvent(TypeMoveEvent.RIGHT_TO_LEFT);
-                      }
-                    } else {
-                      if (provider.moveEvent != TypeMoveEvent.LEFT_TO_RIGHT) {
-                        provider.updateMoveEvent(TypeMoveEvent.LEFT_TO_RIGHT);
-                      }
-                    }
-                  },
-                  child: PageView(
-                    key: const PageStorageKey('PAGE_VIEW'),
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    controller: _pageController,
-                    onPageChanged: (index) async {
-                      // if (index != PageType.STORE.pageIndex) {
-                      provider.updateIndex(index);
-                      sendDataFromBottomBar(index);
-                      // }
-                    },
-                    children: _listScreens,
-                  ),
-                ),
-              ),
-              Positioned(
-                child: FloatBubble(
-                  show: provider.isUpdateVersion,
-                  initialAlignment: Alignment.bottomRight,
-                  child: SizedBox(
-                    width: 100,
-                    height: 105,
-                    child: Stack(
-                      children: [
-                        GestureDetector(
-                          onTap: () async {
-                            Uri uri = Uri.parse(Stringify.urlStore);
-                            if (!await launchUrl(uri,
-                                mode: LaunchMode.externalApplication)) {}
-                          },
-                          child: Image.asset(
-                            ImageConstant.bannerUpdate,
-                            width: 100,
-                            height: 100,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        Positioned(
-                          right: 0,
-                          top: 0,
-                          child: GestureDetector(
-                            onTap: provider.onClose,
-                            child: Image.asset(
-                              ImageConstant.icCloseBanner,
-                              width: 24,
-                              height: 24,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: 24,
-                left: 20,
-                right: 20,
-                child: BlocBuilder<NetworkBloc, NetworkState>(
-                  bloc: getIt.get<NetworkBloc>(),
-                  builder: (context, state) {
-                    if (state is NetworkFailure) {
-                      return const DisconnectWidget(type: TypeInternet.DISCONNECT);
-                    } else if (state is NetworkSuccess) {
-                      return const DisconnectWidget(type: TypeInternet.CONNECT);
-                    } else {
-                      return const SizedBox.shrink();
-                    }
-                  },
-                ),
-              ),
-            ],
-          ),
-          bottomNavigationBar: Consumer<AuthProvider>(
-            builder: (context, page, _) {
-              return CurvedNavigationBar(
-                backgroundColor: AppColor.TRANSPARENT,
-                buttonBackgroundColor: AppColor.TRANSPARENT,
-                animationDuration: const Duration(milliseconds: 300),
-                indexPage: page.pageSelected,
-                indexPaint: 0,
-                iconPadding: 0.0,
-                onTap: onTapPage,
-                items: _listNavigation,
-                stream: bottomBarStream,
+          await DialogWidget.instance.openConfirmPassDialog(
+            editingController: _editingController,
+            title: "Phiên đăng nhập hết hạn\nNhập mật khẩu để đăng nhập",
+            onClose: () {
+              Provider.of<PinProvider>(context, listen: false).reset();
+              DialogWidget.instance.openMsgDialog(
+                title: 'Phiên đăng nhập hết hạn',
+                msg: 'Vui lòng đăng nhập lại ứng dụng',
+                function: () => _bloc.add(TokenEventLogout()),
               );
             },
-          ),
-        );
-      }),
-    );
+            onDone: (pin) {
+              Provider.of<PinProvider>(context, listen: false).reset();
+              _editingController.text = '';
+              AccountLoginDTO dto = AccountLoginDTO(
+                phoneNo: phone,
+                password: EncryptUtils.instance.encrypted(phone, pin),
+              );
+              _bloc.add(DashBoardLoginEvent(dto: dto));
+              // if (!mounted) return;
+            },
+          );
+          // context.read<LoginBloc>().add(event)
+        } else if (state.typeToken == TokenType.Logout) {
+          await SharePrefUtils.resetServices();
+        } else if (state.typeToken == TokenType.Logout_failed) {
+          await DialogWidget.instance.openMsgDialog(
+            title: 'Không thể đăng xuất',
+            msg: 'Vui lòng thử lại sau.',
+          );
+        }
+      }
+    }
+
+    if (state.request == DashBoardType.ERROR) {
+      _provider.updateRenderUI();
+      await DialogWidget.instance
+          .openMsgDialog(title: 'Thông báo', msg: state.msg ?? '');
+    }
+    if (state.request == DashBoardType.UPDATE_THEME_ERROR) {
+      await DialogWidget.instance
+          .openMsgDialog(title: 'Thông báo', msg: state.msg ?? '');
+    }
+
+    if (state.status != BlocStatus.NONE ||
+        state.request != DashBoardType.NONE ||
+        state.typeQR != TypeQR.NONE ||
+        state.typePermission == DashBoardTypePermission.None) {
+      _bloc.add(UpdateEventDashboard());
+    }
   }
 
   void onTapPage(int index) async {
@@ -645,72 +734,4 @@ class _DashBoardScreen extends State<DashBoardScreen>
       }
     }
   }
-
-  final List<CurvedNavigationBarItem> _listNavigation = [
-    CurvedNavigationBarItem(
-      label: 'Tài khoản',
-      urlSelect: ImageConstant.icBtmListBankBlue,
-      urlUnselect: ImageConstant.icBtmListBankGrey,
-      index: PageType.ACCOUNT.pageIndex,
-    ),
-    CurvedNavigationBarItem(
-      label: 'Trang chủ',
-      urlSelect: ImageConstant.icBtmDashboardBlue,
-      urlUnselect: ImageConstant.icBtmDashboardGrey,
-      index: PageType.HOME.pageIndex,
-    ),
-    CurvedNavigationBarItem(
-      label: 'Quét QR',
-      urlSelect: ImageConstant.icMenuSlideHomeBlue,
-      urlUnselect: ImageConstant.icMenuSlideHomeBlue,
-      index: PageType.SCAN_QR.pageIndex,
-    ),
-    CurvedNavigationBarItem(
-      label: 'Ví QR',
-      urlSelect: ImageConstant.icBtmQrWalletBlue,
-      urlUnselect: ImageConstant.icBtmQrWalletGrey,
-      index: PageType.CARD_QR.pageIndex,
-    ),
-    CurvedNavigationBarItem(
-      label: 'Cửa hàng',
-      urlSelect: ImageConstant.icStoreBottomBarBlue,
-      urlUnselect: ImageConstant.icStoreBottomBarGrey,
-      index: PageType.STORE.pageIndex,
-    ),
-  ];
-
-  @override
-  bool get wantKeepAlive => true;
-
-  @override
-  void getInitUri(Uri? uri) {
-    if (uri?.path == '/service-active' && uri?.queryParameters['key'] != null) {
-      NavigatorUtils.navigatePage(
-          context,
-          DynamicActiveKeyScreen(
-            activeKey: uri!.queryParameters['key']!,
-          ),
-          routeName: Routes.DYNAMIC_ACTIVE_KEY_SCREEN);
-    }
-  }
-
-  @override
-  void onUniLink(Uri uri) {
-    if (uri.path == '/service-active' && uri.queryParameters['key'] != null) {
-      NavigatorUtils.navigatePage(
-          context,
-          DynamicActiveKeyScreen(
-            activeKey: uri.queryParameters['key']!,
-          ),
-          routeName: Routes.DYNAMIC_ACTIVE_KEY_SCREEN);
-    }
-  }
-}
-
-class SaveImageData {
-  SaveImageData({required this.progress, this.index, this.isDone = false});
-
-  Uint8List progress;
-  int? index;
-  bool isDone;
 }

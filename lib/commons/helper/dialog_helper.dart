@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../features/dashboard/blocs/dashboard_bloc.dart';
+import '../../features/dashboard/events/dashboard_event.dart';
+import '../../features/home/widget/dialog_update.dart';
 
 mixin DialogHelper {
   static final _allPopups = <Key, BuildContext>{};
@@ -61,6 +66,38 @@ mixin DialogHelper {
       if (onDialogClosed != null) {
         onDialogClosed();
       }
+      dismissPopup(key: keyDialog, willPop: false);
+    });
+  }
+
+  Future<void> showDialogUpdateApp(
+    BuildContext context, {
+    Key? key,
+    Function()? onCheckUpdate,
+    bool isHideClose = false,
+  }) async {
+    Key keyDialog = key ?? _keyForPopup();
+    _allPopups[keyDialog] = context;
+
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return DialogUpdateView(
+          key: keyDialog,
+          isHideClose: isHideClose,
+          onCheckUpdate: () {
+            if (onCheckUpdate != null) {
+              onCheckUpdate();
+            } else {
+              context
+                  .read<DashBoardBloc>()
+                  .add(GetVersionAppEventDashboard(isCheckVer: true));
+            }
+          },
+        );
+      },
+    ).then((value) {
       dismissPopup(key: keyDialog, willPop: false);
     });
   }

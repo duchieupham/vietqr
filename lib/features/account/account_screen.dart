@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:vierqr/commons/helper/dialog_helper.dart';
 import 'package:vierqr/main.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -619,7 +620,7 @@ class _SupportWidget extends StatelessWidget {
   }
 }
 
-class _SettingWidget extends StatelessWidget {
+class _SettingWidget extends StatelessWidget with DialogHelper {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -680,7 +681,7 @@ class _SettingWidget extends StatelessWidget {
                 ),
                 const Divider(),
                 _buildItem(
-                  onTap: _onCheckAppVersion,
+                  onTap: () => _onCheckAppVersion(context),
                   urlImage: 'assets/images/ic-gear.png',
                   title: 'Kiểm tra phiên bản app',
                 ),
@@ -712,20 +713,21 @@ class _SettingWidget extends StatelessWidget {
     );
   }
 
-  void _onCheckAppVersion() {
-    showDialog(
-      barrierDismissible: false,
-      context: NavigationService.context!,
-      builder: (BuildContext context) {
-        return DialogUpdateView(
-          onCheckUpdate: () {
-            context
-                .read<DashBoardBloc>()
-                .add(GetVersionAppEventDashboard(isCheckVer: true));
-          },
-        );
-      },
-    );
+  void _onCheckAppVersion(BuildContext context) {
+    showDialogUpdateApp(context);
+    // showDialog(
+    //   barrierDismissible: false,
+    //   context: NavigationService.context!,
+    //   builder: (BuildContext context) {
+    //     return DialogUpdateView(
+    //       onCheckUpdate: () {
+    //         context
+    //             .read<DashBoardBloc>()
+    //             .add(GetVersionAppEventDashboard(isCheckVer: true));
+    //       },
+    //     );
+    //   },
+    // );
   }
 
   void _onPrint(BuildContext context) async {

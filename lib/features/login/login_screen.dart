@@ -20,12 +20,12 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/commons/helper/dialog_helper.dart';
 import 'package:vierqr/commons/utils/encrypt_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/phone_widget.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/dashboard/dashboard_screen.dart';
-import 'package:vierqr/features/home/widget/dialog_update.dart';
 import 'package:vierqr/features/home/widget/nfc_adr_widget.dart';
 import 'package:vierqr/features/login/blocs/login_bloc.dart';
 import 'package:vierqr/features/login/events/login_event.dart';
@@ -45,7 +45,6 @@ import 'package:vierqr/services/local_storage/shared_preference/shared_pref_util
 import 'package:vierqr/services/providers/register_provider.dart';
 import 'package:vierqr/splash_screen.dart';
 
-import '../../commons/utils/string_utils.dart';
 import 'widgets/bgr_app_bar_login.dart';
 
 part 'widgets/form_first_login.dart';
@@ -63,7 +62,7 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends State<LoginScreen> with DialogHelper {
   final passController = TextEditingController();
   final PageController pageController = PageController();
 
@@ -142,7 +141,8 @@ class _LoginScreenState extends State<LoginScreen> {
     }
     return BlocConsumer<LoginBloc, LoginState>(
       bloc: _bloc,
-      listener: (context, state) => onListener(context, state, isLogoutEnterHome),
+      listener: (context, state) =>
+          onListener(context, state, isLogoutEnterHome),
       builder: (context, state) {
         return GestureDetector(
           onTap: () {
@@ -377,8 +377,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
-extension _LoginScreenFunction on _LoginScreenState{
-  onListener(BuildContext context, LoginState state, bool isLogoutEnterHome) async {
+extension _LoginScreenFunction on _LoginScreenState {
+  onListener(
+      BuildContext context, LoginState state, bool isLogoutEnterHome) async {
     if (state.status == BlocStatus.LOADING) {
       DialogWidget.instance.openLoadingDialog();
     }
@@ -395,19 +396,27 @@ extension _LoginScreenFunction on _LoginScreenState{
       _onHandleAppSystem(state.appInfoDTO);
 
       if (_authProvider.isUpdateVersion) {
-        if (!state.appInfoDTO.isCheckApp)
-          showDialog(
-            barrierDismissible: false,
-            context: context,
-            builder: (BuildContext context) {
-              return DialogUpdateView(
-                isHideClose: true,
-                onCheckUpdate: () {
-                  _bloc.add(GetFreeToken(isCheckVer: true));
-                },
-              );
+        if (!state.appInfoDTO.isCheckApp) {
+          showDialogUpdateApp(
+            context,
+            isHideClose: true,
+            onCheckUpdate: () {
+              _bloc.add(GetFreeToken(isCheckVer: true));
             },
           );
+          // showDialog(
+          //   barrierDismissible: false,
+          //   context: context,
+          //   builder: (BuildContext context) {
+          //     return DialogUpdateView(
+          //       isHideClose: true,
+          //       onCheckUpdate: () {
+          //         _bloc.add(GetFreeToken(isCheckVer: true));
+          //       },
+          //     );
+          //   },
+          // );
+        }
       }
     }
 
@@ -504,15 +513,14 @@ extension _LoginScreenFunction on _LoginScreenState{
       if (data is Map) {
         AccountLoginDTO dto = AccountLoginDTO(
           phoneNo: data['phone'],
-          password: EncryptUtils.instance
-              .encrypted(data['phone'], data['password']),
+          password:
+              EncryptUtils.instance.encrypted(data['phone'], data['password']),
         );
         if (!mounted) return;
         _bloc.add(LoginEventByPhone(dto: dto, isToast: true));
       }
 
-      if (state.request != LoginType.NONE ||
-          state.status != BlocStatus.NONE) {
+      if (state.request != LoginType.NONE || state.status != BlocStatus.NONE) {
         _bloc.add(UpdateEvent());
       }
     }
@@ -614,7 +622,7 @@ extension _LoginScreenFunction on _LoginScreenState{
     if (event.isKeyPressed(LogicalKeyboardKey.enter)) {
       Future.delayed(
         const Duration(seconds: 2),
-            () {
+        () {
           AccountLoginDTO dto = AccountLoginDTO(
             phoneNo: '',
             password: '',
@@ -635,7 +643,7 @@ extension _LoginScreenFunction on _LoginScreenState{
   void onLoginCard() async {
     if (Platform.isAndroid) {
       final data =
-      await DialogWidget.instance.openDialogIntroduce(child: NFCDialog());
+          await DialogWidget.instance.openDialogIntroduce(child: NFCDialog());
       if (data != null && data is NfcTag) {
         Future.delayed(const Duration(milliseconds: 500), () {
           String cardNumber = readTagToKey(data, '');
@@ -667,7 +675,7 @@ extension _LoginScreenFunction on _LoginScreenState{
     if (listCheck.isNotEmpty) {
       if (listCheck.length >= 3) {
         listCheck.removeWhere(
-                (element) => element.phoneNo!.trim() == infoUserDTO.value!.phoneNo);
+            (element) => element.phoneNo!.trim() == infoUserDTO.value!.phoneNo);
 
         if (listCheck.length < 3) {
           listCheck.add(infoUserDTO.value!);
@@ -679,7 +687,7 @@ extension _LoginScreenFunction on _LoginScreenState{
         }
       } else {
         listCheck.removeWhere(
-                (element) => element.phoneNo!.trim() == infoUserDTO.value!.phoneNo);
+            (element) => element.phoneNo!.trim() == infoUserDTO.value!.phoneNo);
 
         listCheck.add(infoUserDTO.value!);
       }
