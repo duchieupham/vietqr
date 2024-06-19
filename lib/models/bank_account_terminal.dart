@@ -34,4 +34,6 @@ class BankAccountTerminal {
       userId: json['userId'] ?? '',
     );
   }
+
+  String get getBankCodeAndName => '$bankCode - $bankAccount';
 }

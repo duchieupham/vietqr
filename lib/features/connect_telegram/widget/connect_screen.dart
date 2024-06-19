@@ -18,11 +18,13 @@ import 'package:vierqr/services/local_storage/shared_preference/shared_pref_util
 import 'package:vierqr/services/providers/connect_telegram_provider.dart';
 
 class ConnectTeleStepScreen extends StatelessWidget {
+  const ConnectTeleStepScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
         create: (context) => ConnectTelegramProvider(),
-        child: _ConnectTeleStepScreen());
+        child: const _ConnectTeleStepScreen());
   }
 }
 
@@ -99,11 +101,11 @@ class _ConnectTeleStepScreenState extends State<_ConnectTeleStepScreen> {
                     Expanded(
                         child: PageView(
                       controller: pageController,
-                      physics: NeverScrollableScrollPhysics(),
-                      children: [
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: const [
                         ChooseBankPage(),
-                        const AddVietQrPage(),
-                        const SettingTelegramPage(),
+                        AddVietQrPage(),
+                        SettingTelegramPage(),
                       ],
                     )),
                     _buildButton(),

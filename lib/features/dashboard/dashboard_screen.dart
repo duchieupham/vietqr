@@ -15,6 +15,7 @@ import 'package:vierqr/commons/constants/configurations/stringify.dart'
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/events.dart';
@@ -63,10 +64,10 @@ class DashBoardScreen extends StatefulWidget {
   final bool isLogoutEnterHome;
 
   const DashBoardScreen({
-    Key? key,
+    super.key,
     this.isFromLogin = false,
     this.isLogoutEnterHome = false,
-  }) : super(key: key);
+  });
 
   static String routeName = '/dashboard_screen';
 
@@ -88,7 +89,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
     const BankScreen(key: PageStorageKey('QR_GENERATOR_PAGE')),
     const HomeScreen(key: PageStorageKey('HOME_PAGE')),
     const ContactScreen(key: PageStorageKey('CONTACT_PAGE')),
-    const StoreScreen(key: const PageStorageKey('STORE_PAGE')),
+    const StoreScreen(key: PageStorageKey('STORE_PAGE')),
   ];
 
   StreamSubscription? _subscription;
@@ -99,7 +100,6 @@ class _DashBoardScreen extends State<DashBoardScreen>
   final _bottomBarController = StreamController<int>.broadcast();
 
   //blocs
-  // late final BankBloc = getIt.get<BankBloc>(param1: context);
   late final BankBloc _bankBloc = getIt.get<BankBloc>();
 
   late DashBoardBloc _bloc;
@@ -151,8 +151,6 @@ class _DashBoardScreen extends State<DashBoardScreen>
 
   void initialServices({bool isLogin = false}) {
     if (isLogin) {
-      // context.read<BankBloc>().add(BankCardEventGetList());
-      // context.read<BankBloc>().add(LoadDataBankEvent());
       _bankBloc.add(BankCardEventGetList());
       _bankBloc.add(LoadDataBankEvent());
     }
@@ -430,7 +428,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
                 isDissmiss: false,
                 widget: MaintainWidget(
                   onRetry: () {
-                    _bloc.add(TokenEventCheckValid());
+                    _bloc.add(const TokenEventCheckValid());
                     Navigator.pop(context);
                   },
                 ),
@@ -490,8 +488,9 @@ class _DashBoardScreen extends State<DashBoardScreen>
         }
       },
       child: Consumer<AuthProvider>(builder: (context, provider, _) {
-        if (!provider.isRenderUI)
+        if (!provider.isRenderUI) {
           return SplashScreen(isFromLogin: widget.isFromLogin);
+        }
         return Scaffold(
           // floatingActionButton: MyFloatingButton(),
           body: Stack(
@@ -502,11 +501,13 @@ class _DashBoardScreen extends State<DashBoardScreen>
                 child: Listener(
                   onPointerMove: (moveEvent) {
                     if (moveEvent.delta.dx < 0) {
-                      if (provider.moveEvent != TypeMoveEvent.RIGHT_TO_LEFT)
+                      if (provider.moveEvent != TypeMoveEvent.RIGHT_TO_LEFT) {
                         provider.updateMoveEvent(TypeMoveEvent.RIGHT_TO_LEFT);
+                      }
                     } else {
-                      if (provider.moveEvent != TypeMoveEvent.LEFT_TO_RIGHT)
+                      if (provider.moveEvent != TypeMoveEvent.LEFT_TO_RIGHT) {
                         provider.updateMoveEvent(TypeMoveEvent.LEFT_TO_RIGHT);
+                      }
                     }
                   },
                   child: PageView(
@@ -539,7 +540,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
                                 mode: LaunchMode.externalApplication)) {}
                           },
                           child: Image.asset(
-                            'assets/images/banner-update.png',
+                            ImageConstant.bannerUpdate,
                             width: 100,
                             height: 100,
                             fit: BoxFit.cover,
@@ -551,7 +552,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
                           child: GestureDetector(
                             onTap: provider.onClose,
                             child: Image.asset(
-                              'assets/images/ic-close-banner.png',
+                              ImageConstant.icCloseBanner,
                               width: 24,
                               height: 24,
                               fit: BoxFit.cover,
@@ -571,9 +572,9 @@ class _DashBoardScreen extends State<DashBoardScreen>
                   bloc: getIt.get<NetworkBloc>(),
                   builder: (context, state) {
                     if (state is NetworkFailure) {
-                      return DisconnectWidget(type: TypeInternet.DISCONNECT);
+                      return const DisconnectWidget(type: TypeInternet.DISCONNECT);
                     } else if (state is NetworkSuccess) {
-                      return DisconnectWidget(type: TypeInternet.CONNECT);
+                      return const DisconnectWidget(type: TypeInternet.CONNECT);
                     } else {
                       return const SizedBox.shrink();
                     }
@@ -645,71 +646,37 @@ class _DashBoardScreen extends State<DashBoardScreen>
     }
   }
 
-  List<CurvedNavigationBarItem> _listNavigation = [
+  final List<CurvedNavigationBarItem> _listNavigation = [
     CurvedNavigationBarItem(
       label: 'Tài khoản',
-      urlSelect: 'assets/images/ic-btm-list-bank-blue.png',
-      urlUnselect: 'assets/images/ic-btm-list-bank-grey.png',
+      urlSelect: ImageConstant.icBtmListBankBlue,
+      urlUnselect: ImageConstant.icBtmListBankGrey,
       index: PageType.ACCOUNT.pageIndex,
     ),
     CurvedNavigationBarItem(
       label: 'Trang chủ',
-      urlSelect: 'assets/images/ic-btm-dashboard-blue.png',
-      urlUnselect: 'assets/images/ic-btm-dashboard-grey.png',
+      urlSelect: ImageConstant.icBtmDashboardBlue,
+      urlUnselect: ImageConstant.icBtmDashboardGrey,
       index: PageType.HOME.pageIndex,
     ),
     CurvedNavigationBarItem(
       label: 'Quét QR',
-      urlSelect: 'assets/images/ic-menu-slide-home-blue.png',
-      urlUnselect: 'assets/images/ic-menu-slide-home-blue.png',
+      urlSelect: ImageConstant.icMenuSlideHomeBlue,
+      urlUnselect: ImageConstant.icMenuSlideHomeBlue,
       index: PageType.SCAN_QR.pageIndex,
     ),
     CurvedNavigationBarItem(
       label: 'Ví QR',
-      urlSelect: 'assets/images/ic-btm-qr-wallet-blue.png',
-      urlUnselect: 'assets/images/ic-btm-qr-wallet-grey.png',
+      urlSelect: ImageConstant.icBtmQrWalletBlue,
+      urlUnselect: ImageConstant.icBtmQrWalletGrey,
       index: PageType.CARD_QR.pageIndex,
     ),
     CurvedNavigationBarItem(
       label: 'Cửa hàng',
-      urlSelect: 'assets/images/ic-store-bottom-bar-blue.png',
-      urlUnselect: 'assets/images/ic-store-bottom-bar-grey.png',
+      urlSelect: ImageConstant.icStoreBottomBarBlue,
+      urlUnselect: ImageConstant.icStoreBottomBarGrey,
       index: PageType.STORE.pageIndex,
     ),
-    // CurvedNavigationBarItem(
-    //   label: 'Cửa hàng',
-    //   urlSelect: '',
-    //   urlUnselect: '',
-    //   index: PageType.PERSON.pageIndex,
-    //   child: Consumer<AuthProvider>(builder: (context, provider, _) {
-    //     String imgId = SharePrefUtils.getProfile().imgId;
-    //     return Container(
-    //       width: 28,
-    //       height: 28,
-    //       padding: EdgeInsets.all(1),
-    //       decoration: provider.pageSelected == PageType.PERSON.pageIndex
-    //           ? BoxDecoration(
-    //               border: Border.all(color: AppColor.BLUE_TEXT, width: 1),
-    //               borderRadius: BorderRadius.circular(28),
-    //               color: Colors.white,
-    //             )
-    //           : BoxDecoration(),
-    //       child: Container(
-    //         decoration: BoxDecoration(
-    //           shape: BoxShape.circle,
-    //           image: DecorationImage(
-    //             fit: BoxFit.cover,
-    //             image: provider.avatarUser.path.isEmpty
-    //                 ? (imgId.isNotEmpty
-    //                     ? ImageUtils.instance.getImageNetWork(imgId)
-    //                     : Image.asset('assets/images/ic-avatar.png').image)
-    //                 : Image.file(provider.avatarUser).image,
-    //           ),
-    //         ),
-    //       ),
-    //     );
-    //   }),
-    // ),
   ];
 
   @override
@@ -717,7 +684,6 @@ class _DashBoardScreen extends State<DashBoardScreen>
 
   @override
   void getInitUri(Uri? uri) {
-    print('object================================= ${uri.toString()}');
     if (uri?.path == '/service-active' && uri?.queryParameters['key'] != null) {
       NavigatorUtils.navigatePage(
           context,
@@ -730,7 +696,6 @@ class _DashBoardScreen extends State<DashBoardScreen>
 
   @override
   void onUniLink(Uri uri) {
-    print('object111 ${uri.path.toString()}');
     if (uri.path == '/service-active' && uri.queryParameters['key'] != null) {
       NavigatorUtils.navigatePage(
           context,

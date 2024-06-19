@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 class ConnectTelegramProvider extends ChangeNotifier {
   bool _chooseAllBank = false;
   bool get chooseAllBank => _chooseAllBank;
-  List<String> _titles = [
+  final List<String> _titles = const [
     'Chọn ngân hàng',
     'Thêm VietQR Bot',
     'Thiết lập Telegram'
@@ -13,7 +13,7 @@ class ConnectTelegramProvider extends ChangeNotifier {
   int _curStep = 1;
   int get curStep => _curStep;
 
-  List<String> _bankIds = [];
+  final List<String> _bankIds = [];
   List<String> get bankIds => _bankIds;
 
   String _chatId = '';

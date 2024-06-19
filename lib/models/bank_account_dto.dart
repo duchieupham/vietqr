@@ -109,4 +109,6 @@ class BankAccountDTO {
     data['unlinkedType'] = unlinkedType;
     return data;
   }
+
+  String get getBankCodeAndName => '$bankCode - $bankAccount';
 }

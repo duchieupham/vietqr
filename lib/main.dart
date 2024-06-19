@@ -16,6 +16,7 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/env_type.dart';
+import 'package:vierqr/commons/extensions/string_extension.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/pref_utils.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
@@ -45,7 +46,7 @@ List<CameraDescription> cameras = [];
 
 extension IntExtension on int {
   String toHexString() {
-    return '0x' + toRadixString(16).padLeft(2, '0').toUpperCase();
+    return '0x${toRadixString(16).padLeft(2, '0').toUpperCase()}';
   }
 }
 
@@ -60,8 +61,7 @@ Future<String> downloadAndSaveImage(String imageUrl, String path) async {
     final response = await http.get(Uri.parse(imageUrl));
     final bytes = response.bodyBytes;
 
-    final directory = await getApplicationDocumentsDirectory();
-    final localImagePath = '${directory.path}/$path';
+    final localImagePath =  await path.getFullPathImagePath;
 
     final file = File(localImagePath);
     file.writeAsBytesSync(bytes);
@@ -74,8 +74,7 @@ Future<String> downloadAndSaveImage(String imageUrl, String path) async {
 }
 
 Future<String> saveImageToLocal(Uint8List uint8list, String path) async {
-  final directory = await getApplicationDocumentsDirectory();
-  final localImagePath = '${directory.path}/$path';
+  final localImagePath = await path.getFullPathImagePath;
 
   final file = File(localImagePath);
   file.writeAsBytesSync(uint8list);
@@ -84,9 +83,9 @@ Future<String> saveImageToLocal(Uint8List uint8list, String path) async {
   return localImagePath;
 }
 
-Future<File> getImageFile(String file) async {
-  return File(file);
-}
+// Future<File> getImageFile(String file) async {
+//   return File(file);
+// }
 
 //go into EnvConfig to change env
 void main() async {
@@ -111,7 +110,7 @@ void main() async {
   await UserRepository.instance.getIntroContact();
   await UserRepository.instance.getThemes();
   LOG.verbose('Config Environment: ${appConfig.getEnv}');
-  runApp(VietQRApp());
+  runApp(const VietQRApp());
 }
 
 //true => new transaction

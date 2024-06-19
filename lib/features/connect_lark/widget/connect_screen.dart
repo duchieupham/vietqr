@@ -82,7 +82,7 @@ class _ConnectLarkStepScreenState extends State<_ConnectLarkStepScreen> {
                   Navigator.pop(context);
 
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return ConnectLarkSuccess();
+                    return const ConnectLarkSuccess();
                   }));
                 }
                 if (state is InsertLarkFailedState) {
@@ -100,11 +100,11 @@ class _ConnectLarkStepScreenState extends State<_ConnectLarkStepScreen> {
                     Expanded(
                       child: PageView(
                         controller: pageController,
-                        physics: NeverScrollableScrollPhysics(),
-                        children: [
+                        physics: const NeverScrollableScrollPhysics(),
+                        children: const [
                           ChooseBankPage(),
-                          const CreateWebhookPage(),
-                          const SettingLarkPage(),
+                          CreateWebhookPage(),
+                          SettingLarkPage(),
                         ],
                       ),
                     ),

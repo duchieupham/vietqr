@@ -1,5 +1,6 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/commons/extensions/string_extension.dart';
 import 'package:vierqr/commons/utils/pref_utils.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
@@ -54,7 +55,7 @@ class UserRepository {
       return _banks = [];
     }
     _banks = await SharePrefUtils.getBanks() ?? [];
-    for (var bank in banks) bank.fileBank = await getImageFile(bank.photoPath);
+    for (var bank in banks) bank.fileBank = await bank.photoPath.getImageFile;
 
     _banks.sort((a, b) => a.linkType == LinkBankType.LINK ? -1 : 0);
     return _banks;
@@ -91,7 +92,7 @@ class UserRepository {
     _themes = await SharePrefUtils.getThemes() ?? [];
     if (themes.isEmpty) return [];
 
-    for (var theme in themes) theme.xFile = await getImageFile(theme.photoPath);
+    for (var theme in themes) theme.xFile = await theme.photoPath.getImageFile;
     return _themes;
   }
 

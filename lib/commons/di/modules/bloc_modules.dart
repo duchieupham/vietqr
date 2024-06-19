@@ -35,12 +35,5 @@ class BlocModule extends DIModule {
           param1 as BuildContext,
         ),
       );
-    // ..registerFactory(
-    //   () => EditProfileBloc(
-    //     editProfileInteractor: getIt.get<EditProfileInteractor>(),
-    //     authInteractor: getIt.get<AuthInteractor>(),
-    //     authBloc: getIt.get<AuthBloc>(),
-    //   ),
-    // );
   }
 }
