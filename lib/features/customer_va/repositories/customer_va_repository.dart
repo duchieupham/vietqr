@@ -12,6 +12,8 @@ import 'package:vierqr/models/customer_va_response_otp_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/models/vietqr_va_request_dto.dart';
 
+import '../../../commons/di/injection/injection.dart';
+
 class CustomerVaRepository {
   const CustomerVaRepository();
 
@@ -22,7 +24,7 @@ class CustomerVaRepository {
         const ResponseMessageDTO(status: 'FAILED', message: 'E05');
     try {
       final String url =
-          '${EnvConfig.getBaseUrl()}customer-va/check-existed?bankAccount=$bankAccount&bankCode=$bankCode';
+          '${getIt.get<AppConfig>().getBaseUrl}customer-va/check-existed?bankAccount=$bankAccount&bankCode=$bankCode';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -42,7 +44,7 @@ class CustomerVaRepository {
     List<CustomerVAItemDTO> result = [];
     try {
       final String url =
-          '${EnvConfig.getBaseUrl()}customer-va/list?userId=$userId';
+          '${getIt.get<AppConfig>().getBaseUrl}customer-va/list?userId=$userId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -66,7 +68,7 @@ class CustomerVaRepository {
   Future<dynamic> requestCustomerVaOTP(CustomerVaRequestDTO dto) async {
     dynamic result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
     try {
-      String url = '${EnvConfig.getBaseUrl()}customer-va/request';
+      String url = '${getIt.get<AppConfig>().getBaseUrl}customer-va/request';
       final response = await BaseAPIClient.postAPI(
           url: url, type: AuthenticationType.SYSTEM, body: dto.toJson());
       if (response.statusCode == 200 || response.statusCode == 400) {
@@ -88,7 +90,7 @@ class CustomerVaRepository {
       CustomerVaConfirmDTO dto) async {
     dynamic result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
     try {
-      String url = '${EnvConfig.getBaseUrl()}customer-va/confirm';
+      String url = '${getIt.get<AppConfig>().getBaseUrl}customer-va/confirm';
       final response = await BaseAPIClient.postAPI(
           url: url, type: AuthenticationType.SYSTEM, body: dto.toJson());
       if (response.statusCode == 200 || response.statusCode == 400) {
@@ -110,7 +112,7 @@ class CustomerVaRepository {
         const ResponseMessageDTO(status: 'FAILED', message: 'E05');
     try {
       String url =
-          '${EnvConfig.getBaseUrl()}customer-va/unregister?userId=$userId&merchantId=$merchantId';
+          '${getIt.get<AppConfig>().getBaseUrl}customer-va/unregister?userId=$userId&merchantId=$merchantId';
       final response = await BaseAPIClient.deleteAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -133,7 +135,7 @@ class CustomerVaRepository {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: 'FAILED', message: 'E05');
     try {
-      String url = '${EnvConfig.getBaseUrl()}customer-va/insert';
+      String url = '${getIt.get<AppConfig>().getBaseUrl}customer-va/insert';
       final response = await BaseAPIClient.postAPI(
           url: url, type: AuthenticationType.SYSTEM, body: dto.toJson());
       if (response.statusCode == 200 || response.statusCode == 400) {
@@ -153,7 +155,7 @@ class CustomerVaRepository {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: 'FAILED', message: 'E05');
     try {
-      String url = '${EnvConfig.getBaseUrl()}customer-va/invoice/vietqr';
+      String url = '${getIt.get<AppConfig>().getBaseUrl}customer-va/invoice/vietqr';
       final response = await BaseAPIClient.postAPI(
           url: url, type: AuthenticationType.SYSTEM, body: dto.toJson());
       if (response.statusCode == 200 || response.statusCode == 400) {
