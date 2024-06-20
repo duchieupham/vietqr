@@ -19,6 +19,7 @@ class PopupBankBloc extends Bloc<PopupBankEvent, PopupBankState> {
       : super(PopupBankState(bankAccountDTO: bankAccountDTO)) {
     on<PopupBankEventRemove>(_removeBankAccount);
     on<PopupBankEventUnlink>(_unlinkBankAccount);
+    on<PopupUnLinkBIDVEvent>(_unLinkBidv);
     on<PopupBankEventUnConfirmOTP>(_unConfirmOTP);
     on<PopupBankEventUnRegisterBDSD>(_unRegisterBDSD);
     on<UpdateBankAccountEvent>(_updateBankAccount);
@@ -30,6 +31,46 @@ class PopupBankBloc extends Bloc<PopupBankEvent, PopupBankState> {
           status: BlocStatus.NONE,
           bankAccountDTO: event.dto,
           request: PopupBankType.UPDATE));
+    }
+  }
+
+  void _unLinkBidv(PopupBankEvent event, Emitter emit) async {
+    try {
+      if (event is PopupUnLinkBIDVEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, request: PopupBankType.NONE));
+        final ResponseMessageDTO responseMessageDTO =
+            await bankCardRepository.unLinked(event.request);
+        if (responseMessageDTO.status == Stringify.RESPONSE_STATUS_SUCCESS) {
+          emit(state.copyWith(
+            request: PopupBankType.UNLINK_BIDV,
+            status: BlocStatus.UNLOADING,
+          ));
+        } else if (responseMessageDTO.status ==
+            Stringify.RESPONSE_STATUS_CHECK) {
+          String message =
+              CheckUtils.instance.getCheckMessage(responseMessageDTO.message);
+          emit(state.copyWith(
+              msg: message,
+              request: PopupBankType.ERROR,
+              status: BlocStatus.UNLOADING));
+        } else {
+          String message =
+              ErrorUtils.instance.getErrorMessage(responseMessageDTO.message);
+          emit(state.copyWith(
+            msg: message,
+            status: BlocStatus.UNLOADING,
+            request: PopupBankType.ERROR,
+          ));
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+        msg: 'Không thể huỷ liên kết. Vui lòng kiểm tra lại kết nối',
+        status: BlocStatus.UNLOADING,
+        request: PopupBankType.ERROR,
+      ));
     }
   }
 
@@ -158,8 +199,8 @@ class PopupBankBloc extends Bloc<PopupBankEvent, PopupBankState> {
       if (event is PopupBankEventUnConfirmOTP) {
         emit(state.copyWith(
             status: BlocStatus.LOADING, request: PopupBankType.NONE));
-        final ResponseMessageDTO responseMessageDTO = await bankCardRepository
-            .unConfirmOTP(event.dto, unlinkType: event.unlinkType);
+        final ResponseMessageDTO responseMessageDTO =
+            await bankCardRepository.unConfirmOTP(event.dto);
         if (responseMessageDTO.status == Stringify.RESPONSE_STATUS_SUCCESS) {
           BankAccountDTO dto = state.bankAccountDTO;
           dto.isAuthenticated = false;

@@ -532,18 +532,13 @@ class BankCardRepository {
     return result;
   }
 
-  Future<ResponseMessageDTO> unConfirmOTP(dynamic dto,
-      {required int unlinkType}) async {
+  Future<ResponseMessageDTO> unConfirmOTP(dynamic dto) async {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = unlinkType == 0
-          ? '${EnvConfig.getUrl()}bank/api/unregister_confirm'
-          : '${EnvConfig.getUrl()}bank/api/account-bank/unlinked';
+      final String url = '${EnvConfig.getUrl()}bank/api/unregister_confirm';
       Response? response;
-      if (unlinkType == 1) {
-        // param[''] =
-      }
+
       if (dto is ConfirmOTPBankDTO) {
         response = await BaseAPIClient.postAPI(
           url: url,

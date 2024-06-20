@@ -19,10 +19,18 @@ class PopupBankEventRemove extends PopupBankEvent {
   List<Object?> get props => [dto];
 }
 
+class PopupUnLinkBIDVEvent extends PopupBankEvent {
+  final dynamic request;
+  const PopupUnLinkBIDVEvent(this.request);
+
+  @override
+  List<Object?> get props => [request];
+}
+
 class PopupBankEventUnlink extends PopupBankEvent {
   final String accountNumber;
 
-  PopupBankEventUnlink(this.accountNumber);
+  const PopupBankEventUnlink(this.accountNumber);
 
   @override
   List<Object?> get props => [accountNumber];
@@ -30,19 +38,19 @@ class PopupBankEventUnlink extends PopupBankEvent {
 
 class PopupBankEventUnConfirmOTP extends PopupBankEvent {
   final dynamic dto;
-  final int unlinkType;
 
-  PopupBankEventUnConfirmOTP(this.dto, this.unlinkType);
+
+  const PopupBankEventUnConfirmOTP(this.dto);
 
   @override
-  List<Object?> get props => [dto, unlinkType];
+  List<Object?> get props => [dto];
 }
 
 class PopupBankEventUnRegisterBDSD extends PopupBankEvent {
   final String userId;
   final String bankId;
 
-  PopupBankEventUnRegisterBDSD(this.userId, this.bankId);
+  const PopupBankEventUnRegisterBDSD(this.userId, this.bankId);
 
   @override
   List<Object?> get props => [userId, bankId];
@@ -51,7 +59,7 @@ class PopupBankEventUnRegisterBDSD extends PopupBankEvent {
 class UpdateBankAccountEvent extends PopupBankEvent {
   final BankAccountDTO dto;
 
-  UpdateBankAccountEvent(this.dto);
+  const UpdateBankAccountEvent(this.dto);
 
   @override
   List<Object?> get props => [dto];

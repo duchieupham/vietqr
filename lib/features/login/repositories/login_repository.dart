@@ -33,6 +33,7 @@ class LoginRepository {
 
     try {
       DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+      String url = '${EnvConfig.getBaseUrl()}accounts';
       String fcmToken = await FirebaseMessaging.instance.getToken() ?? '';
       String platform = '';
       String device = '';
@@ -61,23 +62,40 @@ class LoginRepository {
         fcmToken: fcmToken,
         sharingCode: sharingCode,
       );
-
-      final res = await authApi.login(
-        AuthenticationType.NONE,
-        loginDTO.toJson(),
+      final response = await BaseAPIClient.postAPI(
+        url: url,
+        body: loginDTO.toJson(),
+        type: AuthenticationType.NONE,
       );
+      if (response.statusCode == 200) {
+        String token = response.body;
+        Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+        UserProfile userProfile = UserProfile.fromJson(decodedToken);
 
-      String token = res;
-      Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
-      UserProfile userProfile = UserProfile.fromJson(decodedToken);
+        await SharePrefUtils.setTokenInfo(token);
+        await SharePrefUtils.saveProfileToCache(userProfile);
+        await SharePrefUtils.saveTokenFree('');
+        await SharePrefUtils.saveTokenFCM(fcmToken);
+        await SharePrefUtils.savePhone(dto.phoneNo);
+        SocketService.instance.init();
+        result = true;
+      }
+      // final res = await authApi.login(
+      //   AuthenticationType.NONE,
+      //   loginDTO.toJson(),
+      // );
 
-      await SharePrefUtils.setTokenInfo(token);
-      await SharePrefUtils.saveProfileToCache(userProfile);
-      await SharePrefUtils.saveTokenFree('');
-      await SharePrefUtils.saveTokenFCM(fcmToken);
-      await SharePrefUtils.savePhone(dto.phoneNo);
-      SocketService.instance.init();
-      result = true;
+      // String token = res;
+      // Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+      // UserProfile userProfile = UserProfile.fromJson(decodedToken);
+
+      // await SharePrefUtils.setTokenInfo(token);
+      // await SharePrefUtils.saveProfileToCache(userProfile);
+      // await SharePrefUtils.saveTokenFree('');
+      // await SharePrefUtils.saveTokenFCM(fcmToken);
+      // await SharePrefUtils.savePhone(dto.phoneNo);
+      // SocketService.instance.init();
+      // result = true;
     } catch (e) {
       LOG.error(e.toString());
     }

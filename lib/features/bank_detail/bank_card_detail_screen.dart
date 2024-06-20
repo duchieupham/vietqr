@@ -401,24 +401,31 @@ class _BankCardDetailState extends State<BankCardDetailState> {
             otpController.value = otpController.value.copyWith(text: value);
           },
           onTap: () {
-            if (dto!.bankCode.contains('BIDV')) {
-              ConfirmOTPUnlinkTypeBankDTO confirmDTO =
-                  ConfirmOTPUnlinkTypeBankDTO(
-                      ewalletToken: '',
-                      bankAccount: bankAccount,
-                      bankCode: dto.bankCode);
-              bankCardBloc.add(BankCardEventUnConfirmOTP(
-                  dto: confirmDTO, unlinkType: dto.unlinkedType));
-            } else {
-              ConfirmOTPBankDTO confirmDTO = ConfirmOTPBankDTO(
-                requestId: requestId,
-                otpValue: otpController.text,
-                applicationType: 'MOBILE',
-                bankAccount: bankAccount,
-              );
-              bankCardBloc.add(BankCardEventUnConfirmOTP(
-                  dto: confirmDTO, unlinkType: dto.unlinkedType));
-            }
+            ConfirmOTPBankDTO confirmDTO = ConfirmOTPBankDTO(
+              requestId: requestId,
+              otpValue: otpController.text,
+              applicationType: 'MOBILE',
+              bankAccount: bankAccount,
+            );
+            bankCardBloc.add(BankCardEventUnConfirmOTP(dto: confirmDTO));
+            // if (dto!.bankCode.contains('BIDV')) {
+            //   ConfirmOTPUnlinkTypeBankDTO confirmDTO =
+            //       ConfirmOTPUnlinkTypeBankDTO(
+            //           ewalletToken: '',
+            //           bankAccount: bankAccount,
+            //           bankCode: dto.bankCode);
+            //   bankCardBloc.add(BankCardEventUnConfirmOTP(
+            //       dto: confirmDTO, unlinkType: dto.unlinkedType));
+            // } else {
+            //   ConfirmOTPBankDTO confirmDTO = ConfirmOTPBankDTO(
+            //     requestId: requestId,
+            //     otpValue: otpController.text,
+            //     applicationType: 'MOBILE',
+            //     bankAccount: bankAccount,
+            //   );
+            //   bankCardBloc.add(BankCardEventUnConfirmOTP(
+            //       dto: confirmDTO, unlinkType: dto.unlinkedType));
+            // }
           },
         );
       },

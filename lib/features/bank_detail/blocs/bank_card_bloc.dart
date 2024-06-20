@@ -214,8 +214,8 @@ class BankCardBloc extends Bloc<BankCardEvent, BankCardState> {
       if (event is BankCardEventUnConfirmOTP) {
         emit(state.copyWith(
             status: BlocStatus.LOADING, request: BankDetailType.NONE));
-        final ResponseMessageDTO responseMessageDTO = await bankCardRepository
-            .unConfirmOTP(event.dto, unlinkType: event.unlinkType);
+        final ResponseMessageDTO responseMessageDTO =
+            await bankCardRepository.unConfirmOTP(event.dto);
         if (responseMessageDTO.status == Stringify.RESPONSE_STATUS_SUCCESS) {
           emit(state.copyWith(
               request: BankDetailType.OTP, status: BlocStatus.UNLOADING));
