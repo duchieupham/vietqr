@@ -118,7 +118,8 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
 
             if (state.request == PopupBankType.OTP ||
                 state.request == PopupBankType.DELETED ||
-                state.request == PopupBankType.UN_BDSD) {
+                state.request == PopupBankType.UN_BDSD ||
+                state.request == PopupBankType.UNLINK_BIDV) {
               eventBus.fire(GetListBankScreen());
               Navigator.of(context).pop();
             }
@@ -132,7 +133,7 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
               },
               child: Container(
                 height: MediaQuery.of(context).size.height,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   image: DecorationImage(
                     image: AssetImage('assets/images/bg-qr-vqr.png'),
                     fit: BoxFit.fitHeight,
@@ -442,7 +443,16 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
       isSecondBT: true,
       functionConfirm: () {
         Navigator.of(context).pop();
-        bloc.add(PopupBankEventUnlink(dto.bankAccount));
+        if (dto.unlinkedType == 0) {
+          bloc.add(PopupBankEventUnlink(dto.bankAccount));
+        } else {
+          Map<String, dynamic> body = {
+            'ewalletToken': dto.ewalletToken,
+            'bankAccount': dto.bankAccount,
+            'bankCode': dto.bankCode,
+          };
+          bloc.add(PopupUnLinkBIDVEvent(body));
+        }
       },
     );
   }
@@ -472,10 +482,10 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
                   PopupBankEventUnConfirmOTP(confirmDTO, dto.unlinkedType));
             } else {
               ConfirmOTPUnlinkTypeBankDTO confirmDTO =
-                  ConfirmOTPUnlinkTypeBankDTO(
-                      ewalletToken: '',
-                      bankAccount: dto.bankAccount,
-                      bankCode: dto.bankCode);
+              ConfirmOTPUnlinkTypeBankDTO(
+                  ewalletToken: '',
+                  bankAccount: dto.bankAccount,
+                  bankCode: dto.bankCode);
               bloc.add(
                   PopupBankEventUnConfirmOTP(confirmDTO, dto.unlinkedType));
             }

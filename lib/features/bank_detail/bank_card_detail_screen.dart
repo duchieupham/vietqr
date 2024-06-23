@@ -403,10 +403,10 @@ class _BankCardDetailState extends State<BankCardDetailState> {
           onTap: () {
             if (dto!.bankCode.contains('BIDV')) {
               ConfirmOTPUnlinkTypeBankDTO confirmDTO =
-                  ConfirmOTPUnlinkTypeBankDTO(
-                      ewalletToken: '',
-                      bankAccount: bankAccount,
-                      bankCode: dto.bankCode);
+              ConfirmOTPUnlinkTypeBankDTO(
+                  ewalletToken: '',
+                  bankAccount: bankAccount,
+                  bankCode: dto.bankCode);
               bankCardBloc.add(BankCardEventUnConfirmOTP(
                   dto: confirmDTO, unlinkType: dto.unlinkedType));
             } else {

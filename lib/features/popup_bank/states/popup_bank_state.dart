@@ -10,6 +10,7 @@ enum PopupBankType {
   NONE,
   SUCCESS,
   UN_LINK,
+  UNLINK_BIDV,
   DELETED,
   OTP,
   UN_BDSD,
