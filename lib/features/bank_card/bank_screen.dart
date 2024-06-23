@@ -128,7 +128,7 @@ class _BankScreenState extends State<_BankScreen>
     initData();
   }
 
-  static void saveImageTask(List<dynamic> args) async {
+  void saveImageTask(List<dynamic> args) async {
     SendPort sendPort = args[0];
     List<BankTypeDTO> list = args[1];
 

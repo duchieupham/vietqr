@@ -13,11 +13,17 @@ class VietQRInterceptor extends InterceptorsWrapper {
     String token = await SharePrefUtils.getTokenInfo();
     String tokenFree = SharePrefUtils.getTokenFree();
 
+    AuthenticationType type = options.headers['type'];
+    String bearerToken = options.headers['bearerToken'] ?? '';
+
+    if (bearerToken.isNotEmpty) {
+      options.headers['Authorization'] = 'Bearer $bearerToken';
+      options.headers.remove('bearerToken');
+    }
+
     if (token.isNotEmpty) {
       options.headers['Authorization'] = 'Bearer $token';
     }
-
-    AuthenticationType type = options.headers['type'];
 
     switch (type) {
       case AuthenticationType.SYSTEM:
@@ -48,22 +54,24 @@ class VietQRInterceptor extends InterceptorsWrapper {
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
     // debugPrint('>>>>> onResponse: ${response.data.toString()}');
-    switch (response.statusCode) {
+    int? statusCode = response.statusCode ?? 0;
+    if (statusCode >= 200 && statusCode <= 299) {
+      super.onResponse(response, handler);
+      return;
+    }
+
+    switch (statusCode) {
       case 401:
         throw UnauthorisedException(
           requestOptions: response.requestOptions,
           response: response,
         );
-      case 500:
+      default:
         throw DioError(
           requestOptions: response.requestOptions,
           type: DioErrorType.unknown,
           response: response,
         );
-      default:
-        // debugPrint('>>>>> ${response.statusCode}');
-        break;
     }
-    super.onResponse(response, handler);
   }
 }

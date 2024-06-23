@@ -11,6 +11,8 @@ import 'package:vierqr/features/transaction_detail/blocs/transaction_bloc.dart';
 import 'package:vierqr/features/transaction_detail/repositories/transaction_repository.dart';
 import 'package:vierqr/navigator/app_navigator.dart';
 
+import '../../../features/login/repositories/login_repository.dart';
+
 class BlocModule extends DIModule {
   @override
   Future<void> provides() async {
@@ -26,7 +28,10 @@ class BlocModule extends DIModule {
         () => BankBloc(NavigationService.context!),
       )
       ..registerLazySingleton(
-        () => DashBoardBloc(NavigationService.context!),
+        () => DashBoardBloc(
+          NavigationService.context!,
+          getIt.get<LoginRepository>(),
+        ),
       )
       ..registerFactoryParam(
         (param1, param2) => TransactionBloc(
@@ -37,6 +42,7 @@ class BlocModule extends DIModule {
       ..registerFactoryParam(
         (param1, param2) => LoginBloc(
           param1 as BuildContext,
+          getIt.get<LoginRepository>(),
         ),
       );
   }

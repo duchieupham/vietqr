@@ -8,7 +8,6 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
-import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/features/account/account_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
@@ -18,6 +17,8 @@ import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
 import 'package:vierqr/features/notification/notification_screen.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
+
+import '../../../commons/constants/env/env_config.dart';
 
 class BackgroundAppBarHome extends StatefulWidget {
   const BackgroundAppBarHome({super.key});
@@ -91,22 +92,14 @@ class _BackgroundAppBarHomeState extends State<BackgroundAppBarHome> {
                     const SizedBox(width: 12),
                     _getSearchPage(context, page.pageSelected),
                     const Spacer(),
-                    page.logoApp.path.isEmpty
-                        ? Container(
-                            width: 96,
-                            height: 56,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10)),
-                            child: XImage(
-                              imagePath: page.settingDTO.logoUrl,
-                            ),
-                          )
-                        : XImage(
-                            imagePath: page.logoApp.path,
-                            width: 96,
-                            height: 56,
-                            fit: BoxFit.contain,
-                          ),
+                    XImage(
+                      imagePath: page.logoApp.path.isEmpty
+                          ? page.settingDTO.logoUrl
+                          : page.logoApp.path,
+                      width: 96,
+                      height: 56,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ],
                 ),
               ),
@@ -196,21 +189,19 @@ class _BackgroundAppBarHomeState extends State<BackgroundAppBarHome> {
         const AccountScreen(),
         routeName: AccountScreen.routeName,
       ),
-      child: SizedBox(
+      child: XImage(
         width: 40,
         height: 40,
-        child: Container(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            image: DecorationImage(
-              fit: BoxFit.cover,
-              image: provider.avatarUser.path.isEmpty
-                  ? imgId.isNotEmpty
-                      ? ImageUtils.instance.getImageNetWork(imgId)
-                      : Image.asset(ImageConstant.icAvatar).image
-                  : Image.file(provider.avatarUser).image,
-            ),
-          ),
+        borderRadius: BorderRadius.circular(20),
+        imagePath: provider.avatarUser.path.isEmpty
+            ? imgId.isNotEmpty
+                ? '${getIt.get<AppConfig>().getBaseUrl}images/$imgId'
+                : ImageConstant.icAvatar
+            : provider.avatarUser.path,
+        errorWidget: const XImage(
+          imagePath: ImageConstant.icAvatar,
+          width: 40,
+          height: 40,
         ),
       ),
     );
