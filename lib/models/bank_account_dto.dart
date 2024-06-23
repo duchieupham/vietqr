@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 
+import 'bank_type_dto.dart';
+
 class BankAccountDTO {
   final String id;
   final String bankAccount;
@@ -111,4 +113,17 @@ class BankAccountDTO {
   }
 
   String get getBankCodeAndName => '$bankCode - $bankAccount';
+
+  BankTypeDTO get changeToBankTypeDTO => BankTypeDTO(
+    id: bankTypeId,
+    bankCode: bankCode,
+    bankName: bankName,
+    imageId: imgId,
+    bankShortName: bankCode,
+    status: bankTypeStatus,
+    caiValue: caiValue,
+    bankId: id,
+    bankAccount: bankAccount,
+    userBankName: userBankName,
+  );
 }

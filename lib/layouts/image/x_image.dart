@@ -19,6 +19,7 @@ class XImage extends StatelessWidget {
     this.animationController,
     this.width,
     this.height,
+    this.color,
     // this.onLoaded,
   });
 
@@ -29,6 +30,7 @@ class XImage extends StatelessWidget {
   final AnimationController? animationController;
   final double? width;
   final double? height;
+  final Color? color;
 
   // final Function(LottieComposition)? onLoaded;
 
@@ -110,9 +112,10 @@ class XImage extends StatelessWidget {
   Widget _buildAssetImage(BuildContext context) {
     return Image.asset(
       imagePath,
-      fit: fit ?? BoxFit.cover,
+      fit: fit,
       width: width,
       height: height,
+      color: color,
     );
   }
 

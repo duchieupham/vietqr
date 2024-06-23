@@ -133,9 +133,9 @@ class _DashBoardScreen extends State<DashBoardScreen>
   final _bottomBarController = StreamController<int>.broadcast();
 
   //blocs
-  late final BankBloc _bankBloc = getIt.get<BankBloc>();
+  final BankBloc _bankBloc = getIt.get<BankBloc>();
+  final DashBoardBloc _bloc = getIt.get<DashBoardBloc>();
 
-  late DashBoardBloc _bloc;
   late AuthProvider _provider;
   late Stream<int> bottomBarStream;
   late IsolateStream _isolateStream;
@@ -152,7 +152,6 @@ class _DashBoardScreen extends State<DashBoardScreen>
     DynamicLinkService.initDynamicLinks();
     getInitUniLinks();
     initUniLinks();
-    _bloc = BlocProvider.of(context);
 
     _provider = Provider.of<AuthProvider>(context, listen: false);
     _isolateStream = IsolateStream(context, getIt.get<AppConfig>());
@@ -210,6 +209,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
   Widget build(BuildContext context) {
     super.build(context);
     return BlocListener<DashBoardBloc, DashBoardState>(
+      bloc: _bloc,
       listener: onListening,
       child: Consumer<AuthProvider>(builder: (context, provider, _) {
         if (!provider.isRenderUI) {

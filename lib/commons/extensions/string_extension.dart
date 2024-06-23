@@ -11,6 +11,10 @@ extension StringExtension on String {
   }
 
   Future<File> get getImageFile async {
-    return File(this);
+    final file = File(this);
+    if (await file.exists()) {
+      return file;
+    }
+    return File('');
   }
 }

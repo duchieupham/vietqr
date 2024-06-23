@@ -166,9 +166,6 @@ class _VietQRApp extends State<VietQRApp> {
           BlocProvider<UserEditBloc>(
             create: (BuildContext context) => UserEditBloc(),
           ),
-          BlocProvider<DashBoardBloc>(
-            create: (BuildContext context) => DashBoardBloc(context),
-          ),
         ],
         child: MultiProvider(
           providers: [

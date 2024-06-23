@@ -6,6 +6,14 @@ class ImageConstant {
   static const String icAvatar = 'assets/images/ic-avatar.png';
   static const String icNextUser = 'assets/images/ic-next-user.png';
   static const String bgrHeader = 'assets/images/bgr-header.png';
+  static const String popupNotificationMobile = 'assets/images/popup-notification-mobile.png';
+  static const String icAuthenticatedBank = 'assets/images/ic-authenticated-bank.png';
+  static const String icShareBDSD = 'assets/images/ic-share-bdsd.png';
+  static const String icAddBank = 'assets/images/ic-add-bank.png';
+  static const String icCopyQr = 'assets/images/ic-copy-qr.png';
+  static const String icSharedBank = 'assets/images/ic-shared-bank.png';
+  static const String icMoreInList = 'assets/images/ic-more-in-list.png';
+  static const String icLinkedBankInList = 'assets/images/ic-linked-bank-in-list.png';
   //
   static const String icStoreBottomBarBlue = 'assets/images/ic-store-bottom-bar-blue.png';
   static const String icStoreBottomBarGrey = 'assets/images/ic-store-bottom-bar-grey.png';

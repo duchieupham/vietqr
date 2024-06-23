@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
@@ -26,10 +27,10 @@ class BackgroundAppBarHome extends StatefulWidget {
 }
 
 class _BackgroundAppBarHomeState extends State<BackgroundAppBarHome> {
-  bool isSearch = false;
+  final DashBoardBloc _dashBoardBloc = getIt.get<DashBoardBloc>();
 
   void _onNotification() async {
-    context.read<DashBoardBloc>().add(NotifyUpdateStatusEvent());
+    _dashBoardBloc.add(NotifyUpdateStatusEvent());
     NavigatorUtils.navigatePage(context, NotificationScreen(),
         routeName: NotificationScreen.routeName);
   }
@@ -47,12 +48,16 @@ class _BackgroundAppBarHomeState extends State<BackgroundAppBarHome> {
           padding: EdgeInsets.only(top: paddingTop + 4),
           alignment: Alignment.topCenter,
           decoration: BoxDecoration(
-              image: file.path.isNotEmpty
-                  ? DecorationImage(
-                      image: FileImage(file), fit: BoxFit.fitWidth)
-                  : const DecorationImage(
-                      image: AssetImage(ImageConstant.bgrHeader),
-                      fit: BoxFit.fitWidth)),
+            image: file.path.isNotEmpty
+                ? DecorationImage(
+                    image: FileImage(file),
+                    fit: BoxFit.fitWidth,
+                  )
+                : const DecorationImage(
+                    image: AssetImage(ImageConstant.bgrHeader),
+                    fit: BoxFit.fitWidth,
+                  ),
+          ),
           child: Stack(
             children: [
               Align(
@@ -114,9 +119,8 @@ class _BackgroundAppBarHomeState extends State<BackgroundAppBarHome> {
 
   //get title page
   Widget _getSearchPage(BuildContext context, int indexSelected) {
-    Widget titleWidget = const SizedBox();
     if (indexSelected != PageType.SCAN_QR.pageIndex) {
-      titleWidget = GestureDetector(
+      return GestureDetector(
         onTap: () => Navigator.pushNamed(context, Routes.SEARCH_BANK),
         child: Container(
           width: 40,
@@ -125,70 +129,74 @@ class _BackgroundAppBarHomeState extends State<BackgroundAppBarHome> {
             borderRadius: BorderRadius.circular(40),
             color: AppColor.WHITE,
           ),
-          child: Icon(Icons.search, size: 20),
+          child: const Icon(Icons.search, size: 20),
         ),
       );
     }
 
-    return titleWidget;
+    return const SizedBox();
   }
 
   Widget _buildNotification() {
     return BlocBuilder<DashBoardBloc, DashBoardState>(
+        bloc: _dashBoardBloc,
         builder: (context, state) {
-      int lengthNotify = state.countNotify.toString().length;
-      return SizedBox(
-        width: 40,
-        height: 60,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            GestureDetector(
-              onTap: _onNotification,
-              child: Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(40),
-                  color: AppColor.WHITE,
-                ),
-                child: Icon(Icons.notifications_outlined, size: 20),
-              ),
-            ),
-            if (state.countNotify != 0)
-              Positioned(
-                top: 0,
-                right: 0,
-                child: Container(
-                  width: 20,
-                  height: 20,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    color: AppColor.RED_CALENDAR,
-                  ),
-                  child: Text(
-                    state.countNotify.toString(),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: (lengthNotify >= 3) ? 8 : 10,
+          int lengthNotify = state.countNotify.toString().length;
+          return SizedBox(
+            width: 40,
+            height: 60,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                GestureDetector(
+                  onTap: _onNotification,
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(40),
                       color: AppColor.WHITE,
                     ),
+                    child: const Icon(Icons.notifications_outlined, size: 20),
                   ),
                 ),
-              ),
-          ],
-        ),
-      );
-    });
+                if (state.countNotify != 0)
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: Container(
+                      width: 20,
+                      height: 20,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
+                        color: AppColor.RED_CALENDAR,
+                      ),
+                      child: Text(
+                        state.countNotify.toString(),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: (lengthNotify >= 3) ? 8 : 10,
+                          color: AppColor.WHITE,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          );
+        });
   }
 
   _buildAvatar(AuthProvider provider) {
     String imgId = SharePrefUtils.getProfile().imgId;
     return GestureDetector(
-      onTap: () => NavigatorUtils.navigatePage(context, AccountScreen(),
-          routeName: AccountScreen.routeName),
-      child: Container(
+      onTap: () => NavigatorUtils.navigatePage(
+        context,
+        const AccountScreen(),
+        routeName: AccountScreen.routeName,
+      ),
+      child: SizedBox(
         width: 40,
         height: 40,
         child: Container(
@@ -199,7 +207,7 @@ class _BackgroundAppBarHomeState extends State<BackgroundAppBarHome> {
               image: provider.avatarUser.path.isEmpty
                   ? imgId.isNotEmpty
                       ? ImageUtils.instance.getImageNetWork(imgId)
-                      : Image.asset('assets/images/ic-avatar.png').image
+                      : Image.asset(ImageConstant.icAvatar).image
                   : Image.file(provider.avatarUser).image,
             ),
           ),

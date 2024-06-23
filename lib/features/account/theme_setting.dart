@@ -1,15 +1,17 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
+import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/dashboard/widget/custom_switch_view.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:vierqr/models/theme_dto.dart';
-import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 
 import 'states/custom_radio.dart';
 
@@ -23,6 +25,8 @@ class ThemeSettingView extends StatefulWidget {
 }
 
 class _ThemeSettingViewState extends State<ThemeSettingView> {
+  final DashBoardBloc _bloc = getIt.get<DashBoardBloc>();
+
   @override
   void initState() {
     super.initState();
@@ -45,7 +49,7 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             ...[
-              Text(
+              const Text(
                 'Hiển thị',
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
@@ -53,13 +57,13 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
               _buildContainer(
                 child: Row(
                   children: [
-                    Expanded(
+                    const Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text('Giữ màn hình sáng khi hiện QR',
                               style: TextStyle(fontWeight: FontWeight.w500)),
-                          const SizedBox(height: 4),
+                          SizedBox(height: 4),
                           Text(
                               'Hệ thống giữ thiết bị của bạn luôn sáng ở những màn hình có thông tin mã QR.',
                               style: TextStyle(fontSize: 11)),
@@ -73,15 +77,13 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
                         children: <Widget>[
                           Text(
                             provider.settingDTO.keepScreenOn ? 'Bật' : 'Tắt',
-                            style: TextStyle(fontSize: 14),
+                            style: const TextStyle(fontSize: 14),
                           ),
                           const SizedBox(width: 8),
                           CustomSwitch(
                             value: provider.settingDTO.keepScreenOn,
                             onChanged: (value) {
-                              context
-                                  .read<DashBoardBloc>()
-                                  .add(UpdateKeepBrightEvent(value));
+                              _bloc.add(UpdateKeepBrightEvent(value));
                             },
                           )
                         ],
@@ -93,7 +95,7 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
             ],
             const SizedBox(height: 24),
             ...[
-              Text(
+              const Text(
                 'Chủ đề',
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
@@ -139,7 +141,7 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
                                                       fit: BoxFit.cover,
                                                     )
                                                   : Image.asset(
-                                                      'assets/images/bgr-header.png',
+                                                      ImageConstant.bgrHeader,
                                                       width: 90,
                                                       height: 50,
                                                       fit: BoxFit.cover,
@@ -180,7 +182,7 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
                           child: Container(
                             padding: const EdgeInsets.symmetric(
                                 vertical: 16, horizontal: 20),
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.vertical(
                                     bottom: Radius.circular(8))),
@@ -204,7 +206,7 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
                                         ),
                                 ),
                                 const SizedBox(width: 12),
-                                Column(
+                                const Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text('Sự kiện'),
@@ -257,8 +259,6 @@ class _ThemeSettingViewState extends State<ThemeSettingView> {
   onSelect(AuthProvider provider, ThemeDTO e) {
     if (provider.settingDTO.themeType == 0) return;
     provider.updateThemeDTO(e);
-    context
-        .read<DashBoardBloc>()
-        .add(UpdateThemeEvent(e.type, provider.themes));
+    _bloc.add(UpdateThemeEvent(e.type, provider.themes));
   }
 }
