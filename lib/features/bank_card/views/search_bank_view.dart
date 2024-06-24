@@ -108,7 +108,7 @@ class _SearchBankViewState extends State<SearchBankView> {
           children: [
             Expanded(
               child: (banks.isEmpty)
-                  ? Center(
+                  ? const Center(
                       child: Text(
                         'Chưa có tài khoản ngân hàng nào được thêm',
                         style: TextStyle(fontSize: 16),
@@ -280,7 +280,7 @@ class _SearchBankViewState extends State<SearchBankView> {
               width: width,
               height: 150,
               margin: const EdgeInsets.only(bottom: 10),
-              padding: const EdgeInsets.symmetric(vertical: 5),
+              // padding: const EdgeInsets.symmetric(vertical: 5),
               decoration: BoxDecoration(
                 color: dto.bankColor,
                 borderRadius: BorderRadius.circular(10),
@@ -368,9 +368,9 @@ class _SearchBankViewState extends State<SearchBankView> {
                               alignment: Alignment.center,
                               bgColor:
                                   Theme.of(context).cardColor.withOpacity(0.3),
-                              child: Row(
+                              child: const Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
+                                children: [
                                   Icon(
                                     Icons.add_rounded,
                                     color: AppColor.WHITE,

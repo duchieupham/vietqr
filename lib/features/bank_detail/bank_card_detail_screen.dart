@@ -257,7 +257,7 @@ class _BankCardDetailState extends State<BankCardDetailState> {
             },
             builder: (context, state) {
               if (state.status == BlocStatus.LOADING_PAGE) {
-                return Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator());
               }
               return Consumer<AccountBankDetailProvider>(
                 builder: (context, provider, _) {
@@ -306,7 +306,7 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                                         ),
                                       ),
                                     );
-                                  }).toList(),
+                                  }),
                                   if (listTitle.length == 3) const Spacer(),
                                 ],
                               ),
@@ -315,7 +315,7 @@ class _BankCardDetailState extends State<BankCardDetailState> {
                             Expanded(
                               child: PageView(
                                 controller: pageController,
-                                physics: AlwaysScrollableScrollPhysics(),
+                                physics: const AlwaysScrollableScrollPhysics(),
                                 onPageChanged: provider.changeCurrentPage,
                                 children: [
                                   InfoDetailBankAccount(

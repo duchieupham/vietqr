@@ -90,7 +90,7 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
           return Material(
             child: Container(
               height: MediaQuery.of(context).size.height,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage('assets/images/bg-qr-vqr.png'),
                   fit: BoxFit.fitHeight,
@@ -184,7 +184,7 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
                                         ),
                                       ),
                                     ),
-                                    Container(
+                                    SizedBox(
                                       height: 40,
                                       child: VerticalDashedLine(),
                                     ),
@@ -222,7 +222,7 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
                                         ),
                                       ),
                                     ),
-                                    Container(
+                                    SizedBox(
                                       height: 40,
                                       child: VerticalDashedLine(),
                                     ),

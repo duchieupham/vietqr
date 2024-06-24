@@ -25,16 +25,16 @@ class ChooseBankPage extends StatelessWidget {
             List<BankAccountDTO> listBank = state.listBanks
                 .where((dto) => dto.userId == userId && dto.isAuthenticated)
                 .toList();
-            listBank.forEach((dto) {
+            for (var dto in listBank) {
               Provider.of<ConnectLarkProvider>(context, listen: false)
                   .addAll(dto.id);
-            });
+            }
             return Consumer<ConnectLarkProvider>(
                 builder: (context, provider, child) {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     'Danh sách tài khoản nhận BDSD qua Lark',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                   ),
@@ -43,21 +43,21 @@ class ChooseBankPage extends StatelessWidget {
                   ),
                   Container(
                     height: 60,
-                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
                         color: AppColor.WHITE),
                     child: Row(
                       children: [
-                        Text(
+                        const Text(
                           'Tất cả tài khoản đã liên kết',
                           style: TextStyle(fontWeight: FontWeight.w600),
                         ),
                         const Spacer(),
                         Text(
                           provider.chooseAllBank ? 'Bật' : 'Tắt',
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 12, color: AppColor.GREY_TEXT),
                         ),
                         Switch(
@@ -65,9 +65,9 @@ class ChooseBankPage extends StatelessWidget {
                           activeColor: AppColor.BLUE_TEXT,
                           onChanged: (bool value) {
                             if (value) {
-                              listBank.forEach((dto) {
+                              for (var dto in listBank) {
                                 provider.addAllListBank(dto.id);
-                              });
+                              }
                             }
                             provider.updateChooseAllBank(value);
                           },
@@ -75,7 +75,7 @@ class ChooseBankPage extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 8,
                   ),
                   Expanded(child: _buildListBank(provider, listBank)),
@@ -92,7 +92,7 @@ class ChooseBankPage extends StatelessWidget {
         itemBuilder: (context, index) {
           return Container(
             height: 60,
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             alignment: Alignment.center,
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8), color: AppColor.WHITE),
@@ -137,7 +137,8 @@ class ChooseBankPage extends StatelessWidget {
                 const Spacer(),
                 Text(
                   provider.bankIds.contains(listBank[index].id) ? 'Bật' : 'Tắt',
-                  style: TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
+                  style:
+                      const TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
                 ),
                 Switch(
                   value: provider.bankIds.contains(listBank[index].id),
@@ -151,7 +152,7 @@ class ChooseBankPage extends StatelessWidget {
           );
         },
         separatorBuilder: (context, index) {
-          return SizedBox(
+          return const SizedBox(
             height: 8,
           );
         },
