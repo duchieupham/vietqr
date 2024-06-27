@@ -236,16 +236,16 @@ class _InfoStoreViewState extends State<InfoStoreView> {
         children: [
           Row(
             children: [
-              Text(
+              const Text(
                 'Kết quả bán hàng hôm nay',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               const Spacer(),
               Text(
                 stringDate,
-                style: TextStyle(color: AppColor.GREY_TEXT, fontSize: 12),
+                style: const TextStyle(color: AppColor.GREY_TEXT, fontSize: 12),
               ),
-              Image.asset('assets/images/ic-navigate-next-blue.png', width: 32),
+              Image.asset('assets/images/ic-navigate-next-blue.png', width: 26),
             ],
           ),
           const SizedBox(height: 16),

@@ -72,7 +72,8 @@ class _InputCodeStoreViewState extends State<InputCodeStoreView> {
                             ...[
                               IntrinsicHeight(
                                 child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
                                   children: [
                                     Expanded(
                                       child: MTextFieldCustom(
@@ -81,14 +82,14 @@ class _InputCodeStoreViewState extends State<InputCodeStoreView> {
                                         showBorder: true,
                                         enable: false,
                                         value: state.codeStore,
-                                        styles:
-                                            TextStyle(color: AppColor.GREY_TEXT),
+                                        styles: TextStyle(
+                                            color: AppColor.GREY_TEXT),
                                         fillColor: Colors.grey.withOpacity(0.2),
                                         textFieldType: TextfieldType.LABEL,
                                         title: 'Mã cửa hàng *',
                                         autoFocus: true,
                                         hintText: '',
-                                        maxLength: 13,
+                                        maxLength: 10,
                                         inputType: TextInputType.number,
                                         keyboardAction: TextInputAction.next,
                                         onChange: (value) {},
@@ -126,7 +127,7 @@ class _InputCodeStoreViewState extends State<InputCodeStoreView> {
                                         text:
                                             'Dùng để phân biệt loại giao dịch theo cửa hàng.\n'),
                                     TextSpan(
-                                        text: 'Mã cửa hàng tối đa 13 ký tự.\n'),
+                                        text: 'Mã cửa hàng tối đa 10 ký tự.\n'),
                                     TextSpan(
                                         text:
                                             'Mã cửa hàng không chứa tiếng việt và ký tự đặc biệt.\n'),

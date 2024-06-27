@@ -19,6 +19,7 @@ class DialogCodeStore extends StatefulWidget {
 class _DialogCodeStoreState extends State<DialogCodeStore> {
   CreateStoreRepository repository = CreateStoreRepository();
   String _value = '';
+  bool _isButtonEnabled = true;
 
   @override
   void initState() {
@@ -33,6 +34,7 @@ class _DialogCodeStoreState extends State<DialogCodeStore> {
       final result = await repository.getRandomCode();
       setState(() {
         _value = result;
+        _isButtonEnabled = true;
       });
     } catch (e) {
       LOG.error(e.toString());
@@ -89,15 +91,16 @@ class _DialogCodeStoreState extends State<DialogCodeStore> {
                       autoFocus: true,
                       hintText: 'Nhập mã cửa hàng',
                       inputType: TextInputType.text,
-                      maxLength: 13,
+                      maxLength: 10,
                       keyboardAction: TextInputAction.next,
                       inputFormatter: [
                         FilteringTextInputFormatter.deny(
-                            RegExp(r'[!@#$%^&*(),.?":{}|<>]')),
+                            RegExp(r'[^\w\s]', caseSensitive: false)),
                       ],
                       onChange: (value) {
                         setState(() {
                           _value = value;
+                          _isButtonEnabled = value.length == 10;
                         });
                       },
                     ),
@@ -106,7 +109,7 @@ class _DialogCodeStoreState extends State<DialogCodeStore> {
                       text: TextSpan(
                         style: TextStyle(color: AppColor.GREY_TEXT),
                         children: [
-                          TextSpan(text: 'Tối đa 13 ký tự.\n'),
+                          TextSpan(text: 'Tối đa 10 ký tự.\n'),
                           TextSpan(
                               text:
                                   'Không chứa tiếng việt và ký tự đặc biệt.\n'),
@@ -129,7 +132,8 @@ class _DialogCodeStoreState extends State<DialogCodeStore> {
                     MButtonWidget(
                       title: 'Áp dụng',
                       margin: EdgeInsets.zero,
-                      isEnable: true,
+                      colorDisableBgr: AppColor.GREY_BUTTON,
+                      isEnable: _isButtonEnabled,
                       onTap: () => Navigator.pop(context, _value),
                     ),
                   ],

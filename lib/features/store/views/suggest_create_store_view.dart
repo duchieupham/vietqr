@@ -104,7 +104,7 @@ class _SuggestCreateStoreViewState extends State<SuggestCreateStoreView> {
   Widget _itemSuggest(
       {required String title, required String content, required String path}) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
         color: AppColor.WHITE,
@@ -122,13 +122,13 @@ class _SuggestCreateStoreViewState extends State<SuggestCreateStoreView> {
                 Text(
                   title,
                   maxLines: 1,
-                  style: TextStyle(fontWeight: FontWeight.w600),
+                  style: const TextStyle(fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   content,
                   maxLines: 2,
-                  style: TextStyle(fontSize: 12),
+                  style: const TextStyle(fontSize: 12),
                 ),
               ],
             ),

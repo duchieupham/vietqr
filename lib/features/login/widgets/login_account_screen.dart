@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
+import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
@@ -232,17 +233,28 @@ class _LoginAccountScreenState extends State<LoginAccountScreen> {
             ClipRRect(
               borderRadius: BorderRadius.circular(100),
               child: dto.imgId?.isNotEmpty ?? false
-                  ? XImage(
-                      imagePath: dto.imgId!,
+                  ? Image(
+                      image: ImageUtils.instance.getImageNetWork(dto.imgId!),
                       width: 40,
                       height: 40,
                       fit: BoxFit.fill,
                     )
-                  : const XImage(
-                      imagePath: ImageConstant.icAvatar,
+                  : Image.asset(
+                      'assets/images/ic-avatar.png',
                       width: 40,
                       height: 40,
                     ),
+              // ? XImage(
+              //     imagePath: dto.imgId!,
+              //     width: 40,
+              //     height: 40,
+              //     fit: BoxFit.fill,
+              //   )
+              // : const XImage(
+              //     imagePath: ImageConstant.icAvatar,
+              //     width: 40,
+              //     height: 40,
+              //   ),
             ),
             const SizedBox(width: 10),
             Expanded(
