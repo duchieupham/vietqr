@@ -216,36 +216,22 @@ class _DashBoardScreen extends State<DashBoardScreen>
           return SplashScreen(isFromLogin: widget.isFromLogin);
         }
         return Scaffold(
-          // floatingActionButton: MyFloatingButton(),
           body: Stack(
             children: [
               const BackgroundAppBarHome(),
               Container(
                 padding: const EdgeInsets.only(top: kToolbarHeight * 2),
-                child: Listener(
-                  onPointerMove: (moveEvent) {
-                    if (moveEvent.delta.dx < 0) {
-                      if (provider.moveEvent != TypeMoveEvent.RIGHT_TO_LEFT) {
-                        provider.updateMoveEvent(TypeMoveEvent.RIGHT_TO_LEFT);
-                      }
-                    } else {
-                      if (provider.moveEvent != TypeMoveEvent.LEFT_TO_RIGHT) {
-                        provider.updateMoveEvent(TypeMoveEvent.LEFT_TO_RIGHT);
-                      }
-                    }
+                child: PageView(
+                  key: const PageStorageKey('PAGE_VIEW'),
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  controller: _pageController,
+                  onPageChanged: (index) async {
+                    // if (index != PageType.STORE.pageIndex) {
+                    provider.updateIndex(index);
+                    sendDataFromBottomBar(index);
+                    // }
                   },
-                  child: PageView(
-                    key: const PageStorageKey('PAGE_VIEW'),
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    controller: _pageController,
-                    onPageChanged: (index) async {
-                      // if (index != PageType.STORE.pageIndex) {
-                      provider.updateIndex(index);
-                      sendDataFromBottomBar(index);
-                      // }
-                    },
-                    children: _listScreens,
-                  ),
+                  children: _listScreens,
                 ),
               ),
               renderUpdateDialog(provider),

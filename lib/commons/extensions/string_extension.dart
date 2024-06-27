@@ -2,6 +2,9 @@ import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
 
+import '../constants/env/env_config.dart';
+import '../di/injection/injection.dart';
+
 extension StringExtension on String {
   Future<String> get getFullPathImagePath async {
     final directory = await getApplicationDocumentsDirectory();
@@ -16,5 +19,9 @@ extension StringExtension on String {
       return file;
     }
     return File('');
+  }
+
+  String get getPathIMageNetwork {
+    return '${getIt.get<AppConfig>().getBaseUrl}images/$this';
   }
 }

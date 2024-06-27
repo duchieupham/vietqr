@@ -8,6 +8,7 @@ import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/commons/extensions/string_extension.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/features/account/account_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
@@ -17,8 +18,6 @@ import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
 import 'package:vierqr/features/notification/notification_screen.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
-
-import '../../../commons/constants/env/env_config.dart';
 
 class BackgroundAppBarHome extends StatefulWidget {
   const BackgroundAppBarHome({super.key});
@@ -61,6 +60,7 @@ class _BackgroundAppBarHomeState extends State<BackgroundAppBarHome> {
           ),
           child: Stack(
             children: [
+              ///blur chân của tấm hình
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
@@ -80,9 +80,10 @@ class _BackgroundAppBarHomeState extends State<BackgroundAppBarHome> {
                   ),
                 ),
               ),
+
+              ///các tính năng trên thanh appbar
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 25),
-                height: 56,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -135,48 +136,45 @@ class _BackgroundAppBarHomeState extends State<BackgroundAppBarHome> {
         bloc: _dashBoardBloc,
         builder: (context, state) {
           int lengthNotify = state.countNotify.toString().length;
-          return SizedBox(
-            width: 40,
-            height: 60,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                GestureDetector(
-                  onTap: _onNotification,
+          return Stack(
+            alignment: Alignment.center,
+            clipBehavior: Clip.none,
+            children: [
+              GestureDetector(
+                onTap: _onNotification,
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(40),
+                    color: AppColor.WHITE,
+                  ),
+                  child: const Icon(Icons.notifications_outlined, size: 20),
+                ),
+              ),
+              if (state.countNotify != 0)
+                Positioned(
+                  top: -4,
+                  right: -4,
                   child: Container(
-                    width: 40,
-                    height: 40,
+                    width: 20,
+                    height: 20,
+                    alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(40),
-                      color: AppColor.WHITE,
+                      borderRadius: BorderRadius.circular(30),
+                      color: AppColor.RED_CALENDAR,
                     ),
-                    child: const Icon(Icons.notifications_outlined, size: 20),
+                    child: Text(
+                      state.countNotify.toString(),
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: (lengthNotify >= 3) ? 8 : 10,
+                        color: AppColor.WHITE,
+                      ),
+                    ),
                   ),
                 ),
-                if (state.countNotify != 0)
-                  Positioned(
-                    top: 0,
-                    right: 0,
-                    child: Container(
-                      width: 20,
-                      height: 20,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                        color: AppColor.RED_CALENDAR,
-                      ),
-                      child: Text(
-                        state.countNotify.toString(),
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: (lengthNotify >= 3) ? 8 : 10,
-                          color: AppColor.WHITE,
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
+            ],
           );
         });
   }
@@ -195,7 +193,7 @@ class _BackgroundAppBarHomeState extends State<BackgroundAppBarHome> {
         borderRadius: BorderRadius.circular(20),
         imagePath: provider.avatarUser.path.isEmpty
             ? imgId.isNotEmpty
-                ? '${getIt.get<AppConfig>().getBaseUrl}images/$imgId'
+                ? imgId.getPathIMageNetwork
                 : ImageConstant.icAvatar
             : provider.avatarUser.path,
         errorWidget: const XImage(

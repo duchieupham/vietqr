@@ -14,7 +14,6 @@ import 'package:vierqr/models/user_repository.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:flutter/material.dart';
 
-import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/contact_dto.dart';
 import 'package:vierqr/models/setting_account_sto.dart';
@@ -52,10 +51,6 @@ class AuthProvider with ChangeNotifier {
   int _indexSelected = 0;
 
   int get pageSelected => _indexSelected;
-
-  TypeMoveEvent _moveEvent = TypeMoveEvent.NONE;
-
-  get moveEvent => _moveEvent;
 
   List<ContactDTO> listSync = [];
   bool isSync = false;
@@ -220,14 +215,6 @@ class AuthProvider with ChangeNotifier {
 
   void updateListSync(List<ContactDTO> value) {
     listSync = value;
-    notifyListeners();
-  }
-
-  updateMoveEvent(value) {
-    if (_moveEvent == value) {
-      return;
-    }
-    _moveEvent = value;
     notifyListeners();
   }
 
