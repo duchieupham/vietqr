@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
@@ -13,7 +14,7 @@ class MerchantRepository {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
 
     try {
-      String url = '${EnvConfig.getBaseUrl()}customer-va/request';
+      String url = '${getIt.get<AppConfig>().getBaseUrl}customer-va/request';
       final response = await BaseAPIClient.postAPI(
           url: url, type: AuthenticationType.SYSTEM, body: body);
       if (response.statusCode == 200) {
@@ -33,7 +34,7 @@ class MerchantRepository {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
 
     try {
-      String url = '${EnvConfig.getBaseUrl()}customer-va/confirm';
+      String url = '${getIt.get<AppConfig>().getBaseUrl}customer-va/confirm';
       final response = await BaseAPIClient.postAPI(
           url: url, type: AuthenticationType.SYSTEM, body: body);
       if (response.statusCode == 200) {
@@ -55,7 +56,7 @@ class MerchantRepository {
 
     try {
       String url =
-          '${EnvConfig.getBaseUrl()}customer-va/unregister?userId=$userId&merchantId=$merchantId';
+          '${getIt.get<AppConfig>().getBaseUrl}customer-va/unregister?userId=$userId&merchantId=$merchantId';
       final response = await BaseAPIClient.deleteAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -78,7 +79,7 @@ class MerchantRepository {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
 
     try {
-      String url = '${EnvConfig.getBaseUrl()}customer-va/insert';
+      String url = '${getIt.get<AppConfig>().getBaseUrl}customer-va/insert';
       final response = await BaseAPIClient.postAPI(
           url: url, type: AuthenticationType.SYSTEM, body: body);
       if (response.statusCode == 200) {
@@ -97,7 +98,7 @@ class MerchantRepository {
   Future<ResponseMessageDTO> createStore(Map<String, dynamic> param) async {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}terminal';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}terminal';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: param,

@@ -11,7 +11,8 @@ class NavBarItemWidget extends StatelessWidget {
   final String? label;
   final TextStyle? labelStyle;
 
-  NavBarItemWidget({
+  const NavBarItemWidget({
+    super.key,
     required this.onTap,
     required this.position,
     required this.length,

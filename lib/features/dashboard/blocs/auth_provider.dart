@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/extensions/string_extension.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
@@ -13,7 +14,6 @@ import 'package:vierqr/models/user_repository.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:flutter/material.dart';
 
-import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/contact_dto.dart';
 import 'package:vierqr/models/setting_account_sto.dart';
@@ -51,10 +51,6 @@ class AuthProvider with ChangeNotifier {
   int _indexSelected = 0;
 
   int get pageSelected => _indexSelected;
-
-  TypeMoveEvent _moveEvent = TypeMoveEvent.NONE;
-
-  get moveEvent => _moveEvent;
 
   List<ContactDTO> listSync = [];
   bool isSync = false;
@@ -94,7 +90,7 @@ class AuthProvider with ChangeNotifier {
     List<File> listFile = [];
 
     for (var element in themes) {
-      File file = await getImageFile(element.photoPath);
+      File file = await element.photoPath.getImageFile;
       listFile.add(file);
     }
     themesController.add(listFile);
@@ -142,20 +138,20 @@ class AuthProvider with ChangeNotifier {
 
   void updateLogoApp(String file) async {
     if (file.isNotEmpty) {
-      logoApp = await getImageFile(file);
+      logoApp = await file.getImageFile;
     } else {
       String url = SharePrefUtils.getLogoApp();
-      logoApp = await getImageFile(url);
+      logoApp = await url.getImageFile;
     }
     notifyListeners();
   }
 
   void updateBannerApp(String file) async {
     if (file.isNotEmpty) {
-      bannerApp = await getImageFile(file);
+      bannerApp = await file.getImageFile;
     } else {
       String url = SharePrefUtils.getBannerApp();
-      bannerApp = await getImageFile(url);
+      bannerApp = await url.getImageFile;
     }
     notifyListeners();
   }
@@ -163,7 +159,7 @@ class AuthProvider with ChangeNotifier {
   void updateThemeDTO(value) async {
     if (value == null) return;
     themeNotEvent = value;
-    bannerApp = await getImageFile(themeNotEvent.photoPath);
+    bannerApp = await themeNotEvent.photoPath.getImageFile;
     await userRes.saveSingleTheme(themeNotEvent);
     notifyListeners();
   }
@@ -179,7 +175,7 @@ class AuthProvider with ChangeNotifier {
     ThemeDTO? theme = await userRes.getSingleTheme();
     if (theme == null) return;
     themeNotEvent = theme;
-    bannerApp = await getImageFile(themeNotEvent.photoPath);
+    bannerApp = await themeNotEvent.photoPath.getImageFile;
     notifyListeners();
   }
 
@@ -190,7 +186,7 @@ class AuthProvider with ChangeNotifier {
     if (_local == null || settingDTO.themeType != _local.type) {
       await onSaveThemToLocal();
     } else {
-      bannerApp = await getImageFile(themeNotEvent.photoPath);
+      bannerApp = await themeNotEvent.photoPath.getImageFile;
     }
     notifyListeners();
   }
@@ -207,7 +203,7 @@ class AuthProvider with ChangeNotifier {
       themeNotEvent.setType(settingDTO.themeType);
 
       userRes.saveSingleTheme(themeNotEvent);
-      bannerApp = await getImageFile(themeNotEvent.photoPath);
+      bannerApp = await themeNotEvent.photoPath.getImageFile;
     }
     notifyListeners();
   }
@@ -219,14 +215,6 @@ class AuthProvider with ChangeNotifier {
 
   void updateListSync(List<ContactDTO> value) {
     listSync = value;
-    notifyListeners();
-  }
-
-  updateMoveEvent(value) {
-    if (_moveEvent == value) {
-      return;
-    }
-    _moveEvent = value;
     notifyListeners();
   }
 

@@ -1,5 +1,7 @@
 import 'dart:convert';
+
 import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
@@ -12,7 +14,8 @@ class MobileRechargeRepository {
   Future<List<NetworkProviders>> getListNetworkProviders() async {
     List<NetworkProviders> results = [];
     try {
-      final String url = '${EnvConfig.getBaseUrl()}mobile-carrier/type';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}mobile-carrier/type';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -34,7 +37,7 @@ class MobileRechargeRepository {
         const ResponseMessageDTO(status: '', message: '');
     try {
       final String url =
-          '${EnvConfig.getBaseUrl()}transaction-wallet/request-payment';
+          '${getIt.get<AppConfig>().getBaseUrl}transaction-wallet/request-payment';
       final response = await BaseAPIClient.postAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -54,7 +57,8 @@ class MobileRechargeRepository {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}epay/mobile-money';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}epay/mobile-money';
       final response = await BaseAPIClient.postAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -75,7 +79,8 @@ class MobileRechargeRepository {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}mobile-carrier/type/update';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}mobile-carrier/type/update';
       final response = await BaseAPIClient.postAPI(
         url: url,
         type: AuthenticationType.SYSTEM,

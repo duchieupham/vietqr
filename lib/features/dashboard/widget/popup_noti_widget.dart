@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:provider/provider.dart';
+import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 
@@ -16,13 +15,20 @@ class PopupNotiWidget extends StatefulWidget {
 }
 
 class _PopupNotiWidgetState extends State<PopupNotiWidget> {
-  bool? isClose = false;
+  final ValueNotifier<bool> isClose = ValueNotifier(false);
+
+  @override
+  void dispose() {
+    isClose.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Material(
       color: AppColor.BLACK.withOpacity(0.5),
       // color: Colors.transparent,
-      child: Container(
+      child: SizedBox(
         height: MediaQuery.of(context).size.height,
         width: double.infinity,
         child: Column(
@@ -34,56 +40,58 @@ class _PopupNotiWidgetState extends State<PopupNotiWidget> {
               width: double.infinity,
               decoration: BoxDecoration(
                   image: DecorationImage(
-                      image: Image.asset(
-                              'assets/images/popup-notification-mobile.png')
+                      image: Image.asset(ImageConstant.popupNotificationMobile)
                           .image,
                       fit: BoxFit.fitHeight)),
             ),
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
             Container(
               height: 50,
               width: double.infinity,
-              margin: EdgeInsets.symmetric(horizontal: 20),
+              margin: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
                 color: AppColor.BLACK.withOpacity(0.3),
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: CheckboxListTile(
-                side: const BorderSide(color: Colors.white),
-                checkboxShape: CircleBorder(),
-                title: Text(
-                  'Không hiển thị thông tin này ở lần sau',
-                  style: TextStyle(
-                      color: AppColor.WHITE,
-                      fontSize: 13), // Chỉnh màu chữ nếu cần
-                ),
-                value: isClose,
-                onChanged: (value) {
-                  setState(() {
-                    isClose = value;
-                  });
-                },
-                controlAffinity:
-                    ListTileControlAffinity.leading, // Checkbox ở bên trái
-                activeColor:
-                    AppColor.BLUE_TEXT, // Màu của Checkbox khi được chọn
-                checkColor: AppColor.WHITE, // Màu của dấu check trong Checkbox
-              ),
+              child: ValueListenableBuilder<bool>(
+                  valueListenable: isClose,
+                  child: const Text(
+                    'Không hiển thị thông tin này ở lần sau',
+                    style: TextStyle(
+                        color: AppColor.WHITE,
+                        fontSize: 13), // Chỉnh màu chữ nếu cần
+                  ),
+                  builder: (context, value, child) {
+                    return CheckboxListTile(
+                      side: const BorderSide(color: Colors.white),
+                      checkboxShape: const CircleBorder(),
+                      title: child,
+                      value: value,
+                      onChanged: (result) {
+                        isClose.value = result ?? false;
+                      },
+                      controlAffinity: ListTileControlAffinity.leading,
+                      // Checkbox ở bên trái
+                      activeColor: AppColor.BLUE_TEXT,
+                      // Màu của Checkbox khi được chọn
+                      checkColor:
+                          AppColor.WHITE, // Màu của dấu check trong Checkbox
+                    );
+                  }),
             ),
-            SizedBox(
+            const SizedBox(
               height: 50,
             ),
             MButtonWidget(
               height: 50,
               width: double.infinity,
               isEnable: true,
-              margin: EdgeInsets.symmetric(horizontal: 80),
+              margin: const EdgeInsets.symmetric(horizontal: 80),
               title: 'Đóng',
               onTap: () {
-                if (isClose == true) {
-                  // widget.onClose;
-                  context
-                      .read<DashBoardBloc>()
+                if (isClose.value == true) {
+                  getIt
+                      .get<DashBoardBloc>()
                       .add(CloseMobileNotificationEvent());
                 } else {
                   Navigator.of(context).pop();

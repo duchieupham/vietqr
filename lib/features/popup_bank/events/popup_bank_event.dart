@@ -38,9 +38,9 @@ class PopupBankEventUnlink extends PopupBankEvent {
 
 class PopupBankEventUnConfirmOTP extends PopupBankEvent {
   final dynamic dto;
+  final int unlinkType;
 
-
-  const PopupBankEventUnConfirmOTP(this.dto);
+  const PopupBankEventUnConfirmOTP(this.dto, this.unlinkType);
 
   @override
   List<Object?> get props => [dto];

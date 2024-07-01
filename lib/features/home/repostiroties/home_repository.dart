@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:permission_handler/permission_handler.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
@@ -57,7 +58,7 @@ class HomeRepository {
   Future<BankTypeDTO> getBankTypeByCaiValue(String caiValue) async {
     BankTypeDTO result = BankTypeDTO();
     try {
-      final String url = '${EnvConfig.getBaseUrl()}bank-type/cai/$caiValue';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}bank-type/cai/$caiValue';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -105,7 +106,7 @@ class HomeRepository {
       Map<String, dynamic> param) async {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}voice/transaction';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}voice/transaction';
       final response = await BaseAPIClient.postAPI(
         url: url,
         type: AuthenticationType.SYSTEM,

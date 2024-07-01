@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
@@ -14,7 +15,7 @@ class DetailGroupRepository {
     GroupDetailDTO result = GroupDetailDTO(banks: [], members: []);
 
     try {
-      String url = '${EnvConfig.getBaseUrl()}terminal/detail/$id';
+      String url = '${getIt.get<AppConfig>().getBaseUrl}terminal/detail/$id';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -36,7 +37,8 @@ class DetailGroupRepository {
       Map<String, dynamic> param) async {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}terminal-member/remove';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}terminal-member/remove';
       final response = await BaseAPIClient.deleteAPI(
         url: url,
         body: param,
@@ -58,7 +60,7 @@ class DetailGroupRepository {
   Future<ResponseMessageDTO> addMemberGroup(Map<String, dynamic> param) async {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}terminal-member';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}terminal-member';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: param,
@@ -80,7 +82,8 @@ class DetailGroupRepository {
   Future<ResponseMessageDTO> addBankToGroup(Map<String, dynamic> param) async {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}terminal/bank-account';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}terminal/bank-account';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: param,
@@ -103,7 +106,8 @@ class DetailGroupRepository {
       Map<String, dynamic> param) async {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}terminal/bank-account';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}terminal/bank-account';
       final response = await BaseAPIClient.deleteAPI(
         url: url,
         body: param,

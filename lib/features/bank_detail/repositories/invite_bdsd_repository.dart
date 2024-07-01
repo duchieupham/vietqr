@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
@@ -13,7 +14,7 @@ class InviteBDSDRepository {
     String result = '';
 
     try {
-      String url = '${EnvConfig.getBaseUrl()}terminal/generate-code';
+      String url = '${getIt.get<AppConfig>().getBaseUrl}terminal/generate-code';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -34,7 +35,7 @@ class InviteBDSDRepository {
   Future<ResponseMessageDTO> createNewGroup(Map<String, dynamic> param) async {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}terminal';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}terminal';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: param,
@@ -56,7 +57,7 @@ class InviteBDSDRepository {
   Future<ResponseMessageDTO> removeGroup(Map<String, dynamic> param) async {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}terminal/remove';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}terminal/remove';
       final response = await BaseAPIClient.deleteAPI(
         url: url,
         body: param,
@@ -78,7 +79,7 @@ class InviteBDSDRepository {
   Future<ResponseMessageDTO> updateGroup(Map<String, dynamic> param) async {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}terminal/update';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}terminal/update';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: param,

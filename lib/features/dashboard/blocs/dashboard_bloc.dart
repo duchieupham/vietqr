@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/base_manager.dart';
@@ -10,11 +9,9 @@ import 'package:vierqr/commons/utils/error_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/account/blocs/account_bloc.dart';
 import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
-import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/dashboard/repostiroties/dashboard_repository.dart';
 import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
-import 'package:vierqr/features/login/blocs/login_bloc.dart';
 import 'package:vierqr/features/notification/blocs/notification_bloc.dart';
 import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
@@ -22,12 +19,16 @@ import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/models/theme_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
+import '../../login/repositories/login_repository.dart';
+
 class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
     with BaseManager {
   @override
   final BuildContext context;
 
-  DashBoardBloc(this.context)
+  final LoginRepository loginRepository;
+
+  DashBoardBloc(this.context, this.loginRepository)
       : super(DashBoardState(
             themes: [], listBanks: [], appInfoDTO: AppInfoDTO())) {
     on<TokenEventCheckValid>(_checkValidToken);

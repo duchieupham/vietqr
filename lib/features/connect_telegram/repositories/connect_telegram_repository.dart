@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
@@ -14,7 +15,7 @@ class ConnectTelegramRepository {
   Future<ResponseMessageDTO> insertTele(Map<String, dynamic> data) async {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}service/telegram';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}service/telegram';
       final response = await BaseAPIClient.postAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -34,7 +35,7 @@ class ConnectTelegramRepository {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
     try {
       final String url =
-          '${EnvConfig.getBaseUrl()}service/telegram/send-message?chatId=$chatId';
+          '${getIt.get<AppConfig>().getBaseUrl}service/telegram/send-message?chatId=$chatId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -53,7 +54,7 @@ class ConnectTelegramRepository {
     List<InfoTeleDTO> result = [];
     try {
       final String url =
-          '${EnvConfig.getBaseUrl()}service/telegram/information?userId=$userId';
+          '${getIt.get<AppConfig>().getBaseUrl}service/telegram/information?userId=$userId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -74,7 +75,7 @@ class ConnectTelegramRepository {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
     try {
       final String url =
-          '${EnvConfig.getBaseUrl()}service/telegram/remove?id=$chatId';
+          '${getIt.get<AppConfig>().getBaseUrl}service/telegram/remove?id=$chatId';
       final response = await BaseAPIClient.deleteAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -93,7 +94,8 @@ class ConnectTelegramRepository {
   Future<ResponseMessageDTO> removeBankTelegram(body) async {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}service/telegram/bank';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}service/telegram/bank';
       final response = await BaseAPIClient.deleteAPI(
         url: url,
         body: body,
@@ -115,7 +117,8 @@ class ConnectTelegramRepository {
   Future<ResponseMessageDTO> addBankTelegram(body) async {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}service/telegram/bank';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}service/telegram/bank';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: body,

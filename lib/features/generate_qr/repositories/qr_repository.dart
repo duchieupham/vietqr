@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:http/http.dart' as http;
 import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
@@ -11,14 +13,13 @@ import 'package:vierqr/models/qr_create_list_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/qr_recreate_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
-import 'package:http/http.dart' as http;
 
 class QRRepository {
   const QRRepository();
 
   Future generateQR(QRCreateDTO dto) async {
     try {
-      final String url = '${EnvConfig.getBaseUrl()}qr/generate';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}qr/generate';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: dto.toJson(),
@@ -40,7 +41,7 @@ class QRRepository {
     List<QRGeneratedDTO> result = [];
     try {
       final QRCreateListDTO qrCreateListDTO = QRCreateListDTO(dtos: list);
-      final String url = '${EnvConfig.getBaseUrl()}qr/generate-list';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}qr/generate-list';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: qrCreateListDTO.toJson(),
@@ -72,7 +73,7 @@ class QRRepository {
       imgId: '',
     );
     try {
-      final String url = '${EnvConfig.getBaseUrl()}qr/re-generate';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}qr/re-generate';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: dto.toJson(),
@@ -96,7 +97,8 @@ class QRRepository {
       final Map<String, dynamic> data = {
         'transactionId': transactionId ?? '',
       };
-      final String url = '${EnvConfig.getBaseUrl()}transaction/image';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}transaction/image';
       final List<http.MultipartFile> files = [];
       if (file != null) {
         final imageFile = await http.MultipartFile.fromPath('image', file.path);
@@ -123,7 +125,8 @@ class QRRepository {
 
   Future paid(String id) async {
     try {
-      final String url = '${EnvConfig.getBaseUrl()}transaction/check/$id';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}transaction/check/$id';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,

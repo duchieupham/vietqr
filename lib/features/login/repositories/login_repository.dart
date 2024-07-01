@@ -22,14 +22,14 @@ import '../../../data/remotes/auth_api.dart';
 import '../../../services/socket_service/socket_service.dart';
 
 class LoginRepository {
+  final AuthApi authApi;
+
   static final codeLoginController = BehaviorSubject<CodeLoginDTO>();
 
-  const LoginRepository();
+  LoginRepository({required this.authApi});
 
   Future<bool> login(AccountLoginDTO dto) async {
     bool result = false;
-
-    final authApi = getIt.get<AuthApi>();
 
     try {
       DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
@@ -106,7 +106,7 @@ class LoginRepository {
     bool result = false;
     try {
       DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-      String url = '${EnvConfig.getBaseUrl()}accounts/login';
+      String url = '${getIt.get<AppConfig>().getBaseUrl}accounts/login';
       String fcmToken = await FirebaseMessaging.instance.getToken() ?? '';
       String platform = '';
       String device = '';
@@ -164,31 +164,20 @@ class LoginRepository {
 
   Future checkExistPhone(String phone) async {
     try {
-      String url = '${EnvConfig.getBaseUrl()}accounts/search/$phone';
-      final response = await BaseAPIClient.getAPI(
-        url: url,
+      final response = await authApi.checkPhoneExist(
         type: AuthenticationType.NONE,
+        phone: phone,
       );
-      if (response.statusCode == 200) {
-        var data = jsonDecode(response.body);
-        if (data != null) {
-          return InfoUserDTO.fromJson(data);
-        }
-      } else {
-        var data = jsonDecode(response.body);
-        if (data != null) {
-          return ResponseMessageDTO(
-              status: data['status'], message: data['message']);
-        }
-      }
+      return InfoUserDTO.fromJson(response);
     } catch (e) {
       LOG.error(e.toString());
+      rethrow;
     }
   }
 
   Future getFreeToken() async {
     try {
-      String url = '${EnvConfig.getBaseUrl()}token_generate';
+      String url = '${getIt.get<AppConfig>().getBaseUrl}token_generate';
 
       Map<String, String>? result = {};
       result['Authorization'] = 'Basic ${StringUtils.instance.authBase64()}';
@@ -211,9 +200,11 @@ class LoginRepository {
   }
 
   Future<ResponseMessageDTO> forgotPass(body) async {
-    ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
+    ResponseMessageDTO result =
+        const ResponseMessageDTO(status: '', message: '');
     try {
-      String url = '${EnvConfig.getBaseUrl()}accounts/password/reset';
+      String url =
+          '${getIt.get<AppConfig>().getBaseUrl}accounts/password/reset';
       final response = await BaseAPIClient.postAPI(
         url: url,
         type: AuthenticationType.NONE,
@@ -225,11 +216,11 @@ class LoginRepository {
           result = ResponseMessageDTO.fromJson(data);
         }
       } else {
-        result = ResponseMessageDTO(status: 'FAILED', message: 'E05');
+        result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
       }
     } catch (e) {
       LOG.error(e.toString());
-      result = ResponseMessageDTO(status: 'FAILED', message: 'E05');
+      result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
     }
     return result;
   }

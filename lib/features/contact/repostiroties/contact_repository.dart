@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
@@ -15,7 +16,7 @@ class ContactRepository {
     List<ContactDTO> list = [];
     try {
       String url =
-          '${EnvConfig.getBaseUrl()}contact/list?userId=$userId&type=$type&offset=$offset';
+          '${getIt.get<AppConfig>().getBaseUrl}contact/list?userId=$userId&type=$type&offset=$offset';
 
       final response = await BaseAPIClient.getAPI(
         url: url,
@@ -38,7 +39,8 @@ class ContactRepository {
   Future<List<ContactDTO>> getListContactPending(userId) async {
     List<ContactDTO> list = [];
     try {
-      String url = '${EnvConfig.getBaseUrl()}contact/list-pending/$userId';
+      String url =
+          '${getIt.get<AppConfig>().getBaseUrl}contact/list-pending/$userId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -60,7 +62,7 @@ class ContactRepository {
   Future<ContactDetailDTO> getContactDetail(id) async {
     ContactDetailDTO dto = ContactDetailDTO();
     try {
-      String url = '${EnvConfig.getBaseUrl()}contact/$id';
+      String url = '${getIt.get<AppConfig>().getBaseUrl}contact/$id';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -81,7 +83,7 @@ class ContactRepository {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
-      String url = '${EnvConfig.getBaseUrl()}contact/remove/$id';
+      String url = '${getIt.get<AppConfig>().getBaseUrl}contact/remove/$id';
       final response = await BaseAPIClient.deleteAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -108,7 +110,7 @@ class ContactRepository {
       files.add(imageFile);
     }
     try {
-      String url = '${EnvConfig.getBaseUrl()}contact-qr/update';
+      String url = '${getIt.get<AppConfig>().getBaseUrl}contact-qr/update';
       final response = await BaseAPIClient.postMultipartAPI(
         url: url,
         fields: query,
@@ -135,7 +137,7 @@ class ContactRepository {
       files.add(imageFile);
     }
     try {
-      String url = '${EnvConfig.getBaseUrl()}contacts/vcard/update';
+      String url = '${getIt.get<AppConfig>().getBaseUrl}contacts/vcard/update';
       final response = await BaseAPIClient.postMultipartAPI(
         url: url,
         fields: query,
@@ -157,7 +159,7 @@ class ContactRepository {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
-      String url = '${EnvConfig.getBaseUrl()}contact/relation';
+      String url = '${getIt.get<AppConfig>().getBaseUrl}contact/relation';
       final response = await BaseAPIClient.postAPI(
           url: url, body: query, type: AuthenticationType.SYSTEM);
       if (response.statusCode == 200) {
@@ -176,7 +178,7 @@ class ContactRepository {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
-      String url = '${EnvConfig.getBaseUrl()}contact/status';
+      String url = '${getIt.get<AppConfig>().getBaseUrl}contact/status';
       final response = await BaseAPIClient.postAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -197,7 +199,8 @@ class ContactRepository {
   Future<List<ContactDTO>> getListContactRecharge(userId) async {
     List<ContactDTO> list = [];
     try {
-      String url = '${EnvConfig.getBaseUrl()}contact/recharge?userId=$userId';
+      String url =
+          '${getIt.get<AppConfig>().getBaseUrl}contact/recharge?userId=$userId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -219,7 +222,8 @@ class ContactRepository {
   Future<List<ContactDTO>> searchUser(String phoneNo) async {
     List<ContactDTO> list = [];
     try {
-      String url = '${EnvConfig.getBaseUrl()}accounts/list/search/$phoneNo';
+      String url =
+          '${getIt.get<AppConfig>().getBaseUrl}accounts/list/search/$phoneNo';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -257,7 +261,7 @@ class ContactRepository {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
-      String url = '${EnvConfig.getBaseUrl()}contacts/vcard';
+      String url = '${getIt.get<AppConfig>().getBaseUrl}contacts/vcard';
       final response = await BaseAPIClient.postAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -283,7 +287,7 @@ class ContactRepository {
   Future<List<ContactDTO>> searchContact(nickname, userId, type, offset) async {
     List<ContactDTO> list = [];
     try {
-      String url = '${EnvConfig.getBaseUrl()}contacts/search';
+      String url = '${getIt.get<AppConfig>().getBaseUrl}contacts/search';
 
       final response = await BaseAPIClient.postAPI(
         url: url,

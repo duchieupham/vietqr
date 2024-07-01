@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
@@ -14,7 +15,7 @@ class ConnectLarkRepository {
   Future<ResponseMessageDTO> insertLark(Map<String, dynamic> data) async {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}service/lark';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}service/lark';
       final response = await BaseAPIClient.postAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -34,7 +35,7 @@ class ConnectLarkRepository {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
     try {
       final String url =
-          '${EnvConfig.getBaseUrl()}service/lark/send-message?webhook=$webHook';
+          '${getIt.get<AppConfig>().getBaseUrl}service/lark/send-message?webhook=$webHook';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -53,7 +54,7 @@ class ConnectLarkRepository {
     List<InfoLarkDTO> result = [];
     try {
       final String url =
-          '${EnvConfig.getBaseUrl()}service/lark/information?userId=$userId';
+          '${getIt.get<AppConfig>().getBaseUrl}service/lark/information?userId=$userId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -74,7 +75,7 @@ class ConnectLarkRepository {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
     try {
       final String url =
-          '${EnvConfig.getBaseUrl()}service/lark/remove?id=$idConnect';
+          '${getIt.get<AppConfig>().getBaseUrl}service/lark/remove?id=$idConnect';
       final response = await BaseAPIClient.deleteAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -93,7 +94,8 @@ class ConnectLarkRepository {
   Future<ResponseMessageDTO> removeBankLark(body) async {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}service/lark/bank';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}service/lark/bank';
       final response = await BaseAPIClient.deleteAPI(
         url: url,
         body: body,
@@ -115,7 +117,8 @@ class ConnectLarkRepository {
   Future<ResponseMessageDTO> addBankLark(body) async {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}service/lark/bank';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}service/lark/bank';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: body,

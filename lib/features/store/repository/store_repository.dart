@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
@@ -21,7 +22,7 @@ class StoreRepository {
 
     try {
       String url =
-          '${EnvConfig.getBaseUrl()}merchant/statistic?userId=$userId&merchantId=$merchantId'
+          '${getIt.get<AppConfig>().getBaseUrl}merchant/statistic?userId=$userId&merchantId=$merchantId'
           '&fromDate=$fromDate&toDate=$toDate&offset=$offset';
       final response =
           await BaseAPIClient.getAPI(url: url, type: AuthenticationType.SYSTEM);
@@ -44,7 +45,7 @@ class StoreRepository {
     List<MerchantDTO> result = [];
 
     try {
-      String url = '${EnvConfig.getBaseUrl()}merchant-list/$userId';
+      String url = '${getIt.get<AppConfig>().getBaseUrl}merchant-list/$userId';
       final response =
           await BaseAPIClient.getAPI(url: url, type: AuthenticationType.SYSTEM);
       if (response.statusCode == 200) {
@@ -68,7 +69,7 @@ class StoreRepository {
 
     try {
       final String url =
-          '${EnvConfig.getBaseUrl()}merchant/overview?userId=$userId&merchantId=$merchantId&fromDate=$fromDate&toDate=$toDate';
+          '${getIt.get<AppConfig>().getBaseUrl}merchant/overview?userId=$userId&merchantId=$merchantId&fromDate=$fromDate&toDate=$toDate';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -88,7 +89,7 @@ class StoreRepository {
   Future<ResponseMessageDTO> createStore(Map<String, dynamic> param) async {
     ResponseMessageDTO result = ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}terminal';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}terminal';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: param,
