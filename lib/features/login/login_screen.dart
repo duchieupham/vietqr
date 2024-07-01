@@ -33,6 +33,7 @@ import 'package:vierqr/features/login/states/login_state.dart';
 import 'package:vierqr/features/login/widgets/login_account_screen.dart';
 import 'package:vierqr/features/login/widgets/quick_login_screen.dart';
 import 'package:vierqr/features/register/register_screen.dart';
+import 'package:vierqr/features/theme/bloc/theme_bloc.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/main.dart';
@@ -78,6 +79,7 @@ class _LoginScreenState extends State<LoginScreen> with DialogHelper {
 
   late final LoginBloc _bloc = getIt.get<LoginBloc>(param1: context);
   late AuthProvider _authProvider;
+  final ThemeBloc _themeBloc = getIt.get<ThemeBloc>();
   var controller = StreamController<AccountLoginDTO?>.broadcast();
 
   //0: trang login ban đầu
@@ -91,6 +93,7 @@ class _LoginScreenState extends State<LoginScreen> with DialogHelper {
   @override
   void initState() {
     super.initState();
+    getIt.get<ThemeBloc>().add(InitThemeEvent());
 
     if (kDebugMode) {
       passController.text = '';
@@ -722,7 +725,7 @@ extension _LoginScreenFunction on _LoginScreenState {
       String localPath = await downloadAndSaveImage(dto.logoUrl, path);
 
       await SharePrefUtils.saveLogoApp(localPath);
-      _authProvider.updateLogoApp(localPath);
+      _themeBloc.add(UpdateLogoAppEvent(localPath));
     }
 
     if (dto.isEventTheme && !isEvent) {
@@ -737,16 +740,16 @@ extension _LoginScreenFunction on _LoginScreenState {
       String localPath = await downloadAndSaveImage(dto.themeImgUrl, path);
 
       await SharePrefUtils.saveBannerApp(localPath);
-      _authProvider.updateBannerApp(localPath);
+      _themeBloc.add(UpdateBannerAppEvent(localPath));
     } else if (!dto.isEventTheme && themeDTO.type == 0) {
       SharePrefUtils.removeSingleTheme();
       SharePrefUtils.saveBannerApp('');
-      _authProvider.updateBannerApp('');
+      _themeBloc.add(UpdateBannerAppEvent(''));
     }
 
     if (isEvent != dto.isEventTheme) {
       await SharePrefUtils.saveBannerEvent(dto.isEventTheme);
-      _authProvider.updateEventTheme(dto.isEventTheme);
+      _themeBloc.add(UpdateEventThemeEvent(dto.isEventTheme));
     }
   }
 

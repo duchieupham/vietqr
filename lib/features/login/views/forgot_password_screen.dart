@@ -3,21 +3,23 @@ import 'dart:ui';
 import 'package:dudv_base/dudv_base.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/encrypt_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/data/remotes/auth_api.dart';
 import 'package:vierqr/features/login/repositories/login_repository.dart';
+import 'package:vierqr/features/theme/bloc/theme_bloc.dart';
+import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/pin_code_input.dart';
 import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
-import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/services/providers/verify_otp_provider.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -42,6 +44,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
   final pinController = TextEditingController();
   late CountDownOTPNotifier countdownProvider;
   final repassFocus = FocusNode();
+  final ThemeBloc _themeBloc = getIt.get<ThemeBloc>();
 
   @override
   void initState() {
@@ -49,7 +52,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {});
     countdownProvider = CountDownOTPNotifier(120);
-    Provider.of<AuthProvider>(context, listen: false).initThemeDTO();
+    _themeBloc.add(InitThemeEvent());
   }
 
   @override
@@ -74,37 +77,37 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
           return Scaffold(
             body: Column(
               children: [
-                Container(
+                SizedBox(
                   height: 200,
                   child: Stack(
                     children: [
-                      Container(
-                        height: 200,
-                        padding:
-                            const EdgeInsets.only(top: 70, left: 40, right: 40),
-                        width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(
-                          image: widget.appInfoDTO.isEventTheme
-                              ? DecorationImage(
-                                  image: NetworkImage(
-                                      widget.appInfoDTO.themeImgUrl),
-                                  fit: BoxFit.cover)
-                              : Provider.of<AuthProvider>(context,
-                                          listen: false)
-                                      .bannerApp
-                                      .path
-                                      .isNotEmpty
+                      BlocBuilder<ThemeBloc, ThemeState>(
+                        bloc: _themeBloc,
+                        buildWhen: (previous, current) =>
+                            current is UpdateBannerSuccess,
+                        builder: (context, state) {
+                          return Container(
+                            height: 200,
+                            padding: const EdgeInsets.only(
+                                top: 70, left: 40, right: 40),
+                            width: MediaQuery.of(context).size.width,
+                            decoration: BoxDecoration(
+                              image: widget.appInfoDTO.isEventTheme
                                   ? DecorationImage(
-                                      image: FileImage(
-                                          Provider.of<AuthProvider>(context,
-                                                  listen: false)
-                                              .bannerApp),
+                                      image: NetworkImage(
+                                          widget.appInfoDTO.themeImgUrl),
                                       fit: BoxFit.cover)
-                                  : DecorationImage(
-                                      image: AssetImage(
-                                          'assets/images/bgr-header.png'),
-                                      fit: BoxFit.cover),
-                        ),
+                                  : state.bannerApp.path.isNotEmpty
+                                      ? DecorationImage(
+                                          image: FileImage(state.bannerApp),
+                                          fit: BoxFit.cover)
+                                      : const DecorationImage(
+                                          image: AssetImage(
+                                              ImageConstant.bgrHeader),
+                                          fit: BoxFit.cover),
+                            ),
+                          );
+                        },
                       ),
                       Positioned(
                         bottom: 0,
@@ -132,7 +135,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                               children: [
                                 GestureDetector(
                                   onTap: () => Navigator.pop(context),
-                                  child: Icon(
+                                  child: const Icon(
                                     Icons.arrow_back_ios,
                                     size: 20,
                                   ),
@@ -162,11 +165,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                                     ],
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 80,
                                   height: 40,
-                                  child: Image.asset(
-                                    'assets/images/ic-viet-qr.png',
+                                  child: XImage(
+                                    imagePath: ImageConstant.icVietQr,
                                     height: 40,
                                   ),
                                 ),
@@ -191,7 +194,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                   ),
                 ),
                 const SizedBox(height: 12),
-                Text(
+                const Text(
                   'Quên mật khẩu',
                   style: TextStyle(
                     fontSize: 18,
@@ -200,7 +203,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                 ),
                 const SizedBox(height: 30),
                 if (step == 1) ...[
-                  Text(
+                  const Text(
                     'Đặt mật khẩu*',
                     textAlign: TextAlign.center,
                     style: TextStyle(
@@ -211,7 +214,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                   const SizedBox(
                     height: 4,
                   ),
-                  Text(
+                  const Text(
                     'Mật khẩu có độ dài 6 ký tự số, không bao gồm chữ và ký tự đặc biệt',
                     textAlign: TextAlign.center,
                     style: TextStyle(
@@ -246,7 +249,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                     ),
                   ),
                   const SizedBox(height: 40),
-                  Text(
+                  const Text(
                     'Xác nhận lại mật khẩu*',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
@@ -256,7 +259,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                   const SizedBox(
                     height: 4,
                   ),
-                  Text(
+                  const Text(
                     'Nhập lại mật khẩu ở trên để xác nhận',
                     textAlign: TextAlign.center,
                     style: TextStyle(
@@ -291,13 +294,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                     textAlign: TextAlign.center,
                     text: TextSpan(
                       children: [
-                        TextSpan(
+                        const TextSpan(
                           text: 'Nhập mã OTP từ MB gửi về số điện thoại ',
                           style: TextStyle(fontSize: 15, color: AppColor.BLACK),
                         ),
                         TextSpan(
-                          text: '${widget.phone}',
-                          style: TextStyle(
+                          text: widget.phone,
+                          style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w600,
                               color: AppColor.BLACK),
@@ -458,7 +461,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
             children: [
               Row(
                 children: [
-                  Expanded(child: const SizedBox()),
+                  const Expanded(child: SizedBox()),
                   Container(
                     alignment: Alignment.center,
                     height: 30,
@@ -466,7 +469,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                     decoration: BoxDecoration(
                         color: AppColor.BLUE_TEXT,
                         borderRadius: BorderRadius.circular(100)),
-                    child: Text(
+                    child: const Text(
                       '1',
                       style: TextStyle(color: AppColor.WHITE),
                     ),
@@ -482,7 +485,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
               const SizedBox(height: 12),
               Container(
                 alignment: Alignment.center,
-                child: Text(
+                child: const Text(
                   'Xác thực OTP',
                   style: TextStyle(fontSize: 12),
                 ),
@@ -518,13 +521,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                               : AppColor.BLACK_TEXT.withOpacity(0.6)),
                     ),
                   ),
-                  Expanded(child: const SizedBox()),
+                  const Expanded(child: SizedBox()),
                 ],
               ),
               const SizedBox(height: 12),
               Container(
                 alignment: Alignment.center,
-                child: Text(
+                child: const Text(
                   'Nhập mật khẩu mới',
                   style: TextStyle(fontSize: 12),
                 ),

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
 import 'package:vierqr/commons/utils/printer_utils.dart';
 import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/widgets/button_icon_widget.dart';
@@ -14,12 +15,13 @@ import 'package:vierqr/commons/widgets/viet_qr.dart';
 import 'package:vierqr/features/printer/views/printing_view.dart';
 import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/bluetooth_printer_dto.dart';
-import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/services/sqflite/local_database.dart';
 
+import '../../commons/di/injection/injection.dart';
 import '../../models/qr_generated_dto.dart';
 import '../../services/providers/show_qr_provider.dart';
 import '../../services/providers/water_mark_provider.dart';
+import '../theme/bloc/theme_bloc.dart';
 
 class ShowQr extends StatefulWidget {
   final QRGeneratedDTO dto;
@@ -35,6 +37,8 @@ class ShowQr extends StatefulWidget {
 class _ShowQrState extends State<ShowQr> {
   final GlobalKey globalKey = GlobalKey();
   final _waterMarkProvider = WaterMarkProvider(false);
+
+  final ThemeBloc _themeBloc = getIt.get<ThemeBloc>();
 
   onClick(int index) {
     switch (index) {
@@ -123,7 +127,7 @@ class _ShowQrState extends State<ShowQr> {
   @override
   void initState() {
     super.initState();
-    Provider.of<AuthProvider>(context, listen: false).initThemeDTO();
+    _themeBloc.add(InitThemeEvent());
   }
 
   @override
@@ -139,18 +143,12 @@ class _ShowQrState extends State<ShowQr> {
                   ? DecorationImage(
                       image: NetworkImage(widget.appInfo.themeImgUrl),
                       fit: BoxFit.cover)
-                  : Provider.of<AuthProvider>(context, listen: false)
-                          .bannerApp
-                          .path
-                          .isNotEmpty
+                  : _themeBloc.state.bannerApp.path.isNotEmpty
                       ? DecorationImage(
-                          image: FileImage(Provider.of<AuthProvider>(
-                                  context,
-                                  listen: false)
-                              .bannerApp),
+                          image: FileImage(_themeBloc.state.bannerApp),
                           fit: BoxFit.cover)
-                      : DecorationImage(
-                          image: AssetImage('assets/images/bgr-header.png'),
+                      : const DecorationImage(
+                          image: AssetImage(ImageConstant.bgrHeader),
                           fit: BoxFit.cover),
             ),
             child: SafeArea(
@@ -271,7 +269,7 @@ class _ShowQrState extends State<ShowQr> {
                         const SizedBox(
                           height: 4,
                         ),
-                        Text(
+                        const Text(
                           'Trang chủ',
                           style: TextStyle(fontSize: 12),
                         )
@@ -286,7 +284,7 @@ class _ShowQrState extends State<ShowQr> {
                           width: 44,
                           height: 44,
                           borderRadius: 30,
-                          pathIcon: 'assets/images/ic-img-blue.png',
+                          pathIcon: ImageConstant.icImgBlue,
                           title: '',
                           function: () {
                             onClick(1);
@@ -297,7 +295,7 @@ class _ShowQrState extends State<ShowQr> {
                         const SizedBox(
                           height: 4,
                         ),
-                        Text(
+                        const Text(
                           'Lưu ảnh',
                           style: TextStyle(fontSize: 12),
                         )
@@ -312,7 +310,7 @@ class _ShowQrState extends State<ShowQr> {
                           width: 44,
                           height: 44,
                           borderRadius: 30,
-                          pathIcon: 'assets/images/ic-copy-blue.png',
+                          pathIcon: ImageConstant.icCopyBlue,
                           title: '',
                           function: () async {
                             onClick(2);
@@ -323,7 +321,7 @@ class _ShowQrState extends State<ShowQr> {
                         const SizedBox(
                           height: 4,
                         ),
-                        Text(
+                        const Text(
                           'Sao chép',
                           style: TextStyle(fontSize: 12),
                         )
@@ -338,7 +336,7 @@ class _ShowQrState extends State<ShowQr> {
                           width: 44,
                           height: 44,
                           borderRadius: 30,
-                          pathIcon: 'assets/images/ic-share-blue.png',
+                          pathIcon: ImageConstant.icShareBlue,
                           title: '',
                           function: () {
                             onClick(3);
@@ -349,7 +347,7 @@ class _ShowQrState extends State<ShowQr> {
                         const SizedBox(
                           height: 4,
                         ),
-                        Text(
+                        const Text(
                           'Chia sẻ',
                           style: TextStyle(fontSize: 12),
                         )

@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
 import 'package:vierqr/commons/utils/encrypt_utils.dart';
-import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/models/account_login_dto.dart';
@@ -40,6 +39,7 @@ class QuickLoginScreen extends StatefulWidget {
 }
 
 class _QuickLoginScreenState extends State<QuickLoginScreen> {
+  ///TODO: check lại xem có thực sự cần biến này
   bool isButtonLogin = false;
 
   onChangePin(value) {
@@ -57,7 +57,6 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      Provider.of<AuthProvider>(context, listen: false).initThemeDTO();
       Provider.of<PinProvider>(context, listen: false).reset();
     });
   }
@@ -65,7 +64,6 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
-    // Provider.of<PinProvider>(context, listen: false).reset();
     return Scaffold(
       body: Container(
         color: AppColor.WHITE,
@@ -113,49 +111,6 @@ class _QuickLoginScreenState extends State<QuickLoginScreen> {
                                     ),
                                   ],
                                 ),
-                                // Row(
-                                //   children: [
-                                //     Expanded(
-                                //       child: Column(
-                                //         crossAxisAlignment:
-                                //             CrossAxisAlignment.stretch,
-                                //         children: [
-                                //           Text(
-                                //             'Xin chào, ${widget.userName}',
-                                //             style: const TextStyle(
-                                //               fontSize: 14,
-                                //               fontWeight: FontWeight.w500,
-                                //             ),
-                                //           ),
-                                //           const SizedBox(height: 4),
-                                //           Text(
-                                //             StringUtils.instance
-                                //                 .formatPhoneNumberVN(
-                                //                     widget.phone),
-                                //             style: const TextStyle(
-                                //               fontSize: 18,
-                                //               fontWeight: FontWeight.bold,
-                                //             ),
-                                //           ),
-                                //         ],
-                                //       ),
-                                //     ),
-                                //     Consumer<AuthProvider>(
-                                //       builder: (context, page, child) {
-                                //         return SizedBox(
-                                //           width: 80,
-                                //           height: 40,
-                                //           child: page.logoApp.path.isNotEmpty
-                                //               ? Image.file(page.logoApp)
-                                //               : Image.asset(
-                                //                   'assets/images/ic-viet-qr.png',
-                                //                   height: 40,
-                                //                 ),
-                                //         );
-                                //       },
-                                //     ),
-                                //   ],
-                                // ),
                               ],
                             ),
                           ],

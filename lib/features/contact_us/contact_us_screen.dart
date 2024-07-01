@@ -1,13 +1,14 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/features/login/widgets/bgr_app_bar_login.dart';
 import 'package:vierqr/models/app_info_dto.dart';
-import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
+
+import '../../commons/di/injection/injection.dart';
+import '../theme/bloc/theme_bloc.dart';
 
 class ContactUSScreen extends StatefulWidget {
   const ContactUSScreen({super.key, required this.appInfoDTO});
@@ -24,7 +25,7 @@ class _ContactUSScreenState extends State<ContactUSScreen> {
   @override
   void initState() {
     super.initState();
-    Provider.of<AuthProvider>(context, listen: false).initThemeDTO();
+    getIt.get<ThemeBloc>().add(InitThemeEvent());
   }
 
   @override
@@ -38,7 +39,7 @@ class _ContactUSScreenState extends State<ContactUSScreen> {
               width: MediaQuery.of(context).size.width,
               child: Stack(
                 children: [
-                  BackgroundAppBarLogin(),
+                  const BackgroundAppBarLogin(),
                   Positioned(
                     top: 40,
                     child: Align(

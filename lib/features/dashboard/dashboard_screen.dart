@@ -11,7 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart'
-    as Constants;
+as Constants;
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
@@ -39,6 +39,7 @@ import 'package:vierqr/features/network/network_bloc.dart';
 import 'package:vierqr/features/network/network_state.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
 import 'package:vierqr/features/store/store_screen.dart';
+import 'package:vierqr/features/theme/bloc/theme_bloc.dart';
 import 'package:vierqr/main.dart';
 import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/contact_dto.dart';
@@ -135,6 +136,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
   //blocs
   final BankBloc _bankBloc = getIt.get<BankBloc>();
   final DashBoardBloc _bloc = getIt.get<DashBoardBloc>();
+  final ThemeBloc _themeBloc = getIt.get<ThemeBloc>();
 
   late AuthProvider _provider;
   late Stream<int> bottomBarStream;
@@ -142,7 +144,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
   StreamSubscription<Uri>? _linkSubscription;
 
   final TextEditingController _editingController =
-      TextEditingController(text: '');
+  TextEditingController(text: '');
   bool? isClose = false;
 
   @override
@@ -208,53 +210,68 @@ class _DashBoardScreen extends State<DashBoardScreen>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return BlocListener<DashBoardBloc, DashBoardState>(
-      bloc: _bloc,
-      listener: onListening,
-      child: Consumer<AuthProvider>(builder: (context, provider, _) {
-        if (!provider.isRenderUI) {
-          return SplashScreen(isFromLogin: widget.isFromLogin);
+    return BlocListener<ThemeBloc, ThemeState>(
+      bloc: _themeBloc,
+      listener: (context, state) async {
+        if(state is GetThemesSuccess){
+          List<ThemeDTO> list = [...state.themes];
+          list.sort((a, b) => a.type.compareTo(b.type));
+          _themeBloc.add(UpdateAppThemeEvent(list));
+
+          await UserRepository.instance.clearThemes();
+          List<ThemeDTO> themes = await _isolateStream.saveThemeReceiver(list);
+          _themeBloc.add(UpdateAppThemeEvent(themes));
+          await SharePrefUtils.saveThemeVersion(_bloc.state.appInfoDTO.themeVersion);
         }
-        return Scaffold(
-          body: Stack(
-            children: [
-              const BackgroundAppBarHome(),
-              Container(
-                padding: const EdgeInsets.only(top: kToolbarHeight * 2),
-                child: PageView(
-                  key: const PageStorageKey('PAGE_VIEW'),
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  controller: _pageController,
-                  onPageChanged: (index) async {
-                    // if (index != PageType.STORE.pageIndex) {
-                    provider.updateIndex(index);
-                    sendDataFromBottomBar(index);
-                    // }
-                  },
-                  children: _listScreens,
+      },
+      child: BlocListener<DashBoardBloc, DashBoardState>(
+        bloc: _bloc,
+        listener: onListening,
+        child: Consumer<AuthProvider>(builder: (context, provider, _) {
+          if (!provider.isRenderUI) {
+            return SplashScreen(isFromLogin: widget.isFromLogin);
+          }
+          return Scaffold(
+            body: Stack(
+              children: [
+                const BackgroundAppBarHome(),
+                Container(
+                  padding: const EdgeInsets.only(top: kToolbarHeight * 2),
+                  child: PageView(
+                    key: const PageStorageKey('PAGE_VIEW'),
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    controller: _pageController,
+                    onPageChanged: (index) async {
+                      // if (index != PageType.STORE.pageIndex) {
+                      provider.updateIndex(index);
+                      sendDataFromBottomBar(index);
+                      // }
+                    },
+                    children: _listScreens,
+                  ),
                 ),
-              ),
-              renderUpdateDialog(provider),
-              renderNetworkDialog(),
-            ],
-          ),
-          bottomNavigationBar: Consumer<AuthProvider>(
-            builder: (context, page, _) {
-              return CurvedNavigationBar(
-                backgroundColor: AppColor.TRANSPARENT,
-                buttonBackgroundColor: AppColor.TRANSPARENT,
-                animationDuration: const Duration(milliseconds: 300),
-                indexPage: page.pageSelected,
-                indexPaint: 0,
-                iconPadding: 0.0,
-                onTap: onTapPage,
-                items: _listNavigation,
-                stream: bottomBarStream,
-              );
-            },
-          ),
-        );
-      }),
+                renderUpdateDialog(provider),
+                renderNetworkDialog(),
+              ],
+            ),
+            bottomNavigationBar: Consumer<AuthProvider>(
+              builder: (context, page, _) {
+                return CurvedNavigationBar(
+                  backgroundColor: AppColor.TRANSPARENT,
+                  buttonBackgroundColor: AppColor.TRANSPARENT,
+                  animationDuration: const Duration(milliseconds: 300),
+                  indexPage: page.pageSelected,
+                  indexPaint: 0,
+                  iconPadding: 0.0,
+                  onTap: onTapPage,
+                  items: _listNavigation,
+                  stream: bottomBarStream,
+                );
+              },
+            ),
+          );
+        }),
+      ),
     );
   }
 
@@ -363,14 +380,11 @@ class SaveImageData {
 extension _DashBoardExtensionFunction on _DashBoardScreen {
   void initialServices({bool isLogin = false}) {
     if (isLogin) {
-      _bankBloc.add(BankCardEventGetList());
-      _bankBloc.add(LoadDataBankEvent());
+      _bankBloc..add(BankCardEventGetList())..add(LoadDataBankEvent());
     }
-    _bloc.add(GetBanksEvent());
-    _bloc.add(GetUserInformation());
-    _bloc.add(GetUserSettingEvent());
-    _bloc.add(GetPointEvent());
-    _bloc.add(GetCountNotifyEvent());
+    _bloc..add(GetBanksEvent())..add(GetUserInformation())..add(
+        GetUserSettingEvent())..add(GetPointEvent())..add(
+        GetCountNotifyEvent());
   }
 
   void requestNotificationPermission() async {
@@ -430,7 +444,9 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
                   : '',
               website: e.websites.isNotEmpty ? e.websites.first.url : '',
               address: e.addresses.isNotEmpty ? e.addresses.first.address : '',
-              userId: SharePrefUtils.getProfile().userId,
+              userId: SharePrefUtils
+                  .getProfile()
+                  .userId,
               additionalData: e.notes.isNotEmpty ? e.notes.first.note : '',
             );
 
@@ -503,7 +519,9 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
     ThemeDTO themeDTO = await SharePrefUtils.getSingleTheme() ?? ThemeDTO();
 
     if (logoApp.isEmpty) {
-      String path = dto.logoUrl.split('/').last;
+      String path = dto.logoUrl
+          .split('/')
+          .last;
 
       for (var type in Constants.PictureType.values) {
         if (path.contains(type.pictureValue)) {
@@ -515,11 +533,13 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
       String localPath = await downloadAndSaveImage(dto.logoUrl, path);
 
       await SharePrefUtils.saveLogoApp(localPath);
-      authProvider.updateLogoApp(localPath);
+      _themeBloc.add(UpdateLogoAppEvent(localPath));
     }
 
     if (dto.isEventTheme && !isEvent) {
-      String path = dto.themeImgUrl.split('/').last;
+      String path = dto.themeImgUrl
+          .split('/')
+          .last;
       for (var type in Constants.PictureType.values) {
         if (path.contains(type.pictureValue)) {
           path.replaceAll(type.pictureValue, '');
@@ -530,16 +550,16 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
       String localPath = await downloadAndSaveImage(dto.themeImgUrl, path);
 
       await SharePrefUtils.saveBannerApp(localPath);
-      authProvider.updateBannerApp(localPath);
+      _themeBloc.add(UpdateBannerAppEvent(localPath));
     } else if (!dto.isEventTheme && themeDTO.type == 0) {
       await SharePrefUtils.removeSingleTheme();
       await SharePrefUtils.saveBannerApp('');
-      authProvider.updateBannerApp('');
+      _themeBloc.add(UpdateLogoAppEvent(''));
     }
 
     if (isEvent != dto.isEventTheme) {
       await SharePrefUtils.saveBannerEvent(dto.isEventTheme);
-      authProvider.updateEventTheme(dto.isEventTheme);
+      _themeBloc.add(UpdateEventThemeEvent(dto.isEventTheme));
     }
   }
 
@@ -554,7 +574,7 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
 
     if (state.request == DashBoardType.GET_USER_SETTING) {
       final settingAccountDTO = SharePrefUtils.getAccountSetting();
-      _provider.updateSettingDTO(settingAccountDTO);
+      _themeBloc.add(UpdateSettingAppEvent(settingAccountDTO));
       String themeVerLocal = SharePrefUtils.getThemeVersion();
       String themeSystem = state.appInfoDTO.themeVersion;
       List<ThemeDTO> listLocal = await UserRepository.instance.getThemes();
@@ -562,7 +582,7 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
         DialogWidget.instance.openNotificationMobile(context);
       }
       if (themeVerLocal != themeSystem || listLocal.isEmpty) {
-        _bloc.add(GetListThemeEvent());
+        _themeBloc.add(GetListThemeEvent());
       } else {}
     }
     if (state.request == DashBoardType.CLOSE_NOTIFICATION) {
@@ -585,21 +605,6 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
       initialServices();
       _provider.updateAppInfoDTO(state.appInfoDTO);
       _onHandleAppSystem(state.appInfoDTO, _provider);
-    }
-
-    if (state.request == DashBoardType.THEMES) {
-      List<ThemeDTO> list = [...state.themes];
-      list.sort((a, b) => a.type.compareTo(b.type));
-      _provider.updateThemes(list);
-
-      await UserRepository.instance.clearThemes();
-      List<ThemeDTO> datas = await _isolateStream.saveThemeReceiver(list);
-      _provider.updateThemes(datas);
-      await SharePrefUtils.saveThemeVersion(state.appInfoDTO.themeVersion);
-    }
-
-    if (state.request == DashBoardType.KEEP_BRIGHT) {
-      _provider.updateKeepBright(state.keepValue);
     }
 
     if (state.request == DashBoardType.POINT) {

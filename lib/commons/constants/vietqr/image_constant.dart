@@ -33,6 +33,17 @@ class ImageConstant {
   static const String logoTelegramDash = 'assets/images/logo-telegram-dash.png';
   static const String logoLarkDash = 'assets/images/logo-lark-dash.png';
   static const String logoGGChatHome = 'assets/images/ic-gg-chat-home.png';
+  static const String icImgBlue = 'assets/images/ic-img-blue.png';
+  static const String icCopyBlue = 'assets/images/ic-copy-blue.png';
+  static const String icShareBlue = 'assets/images/ic-share-blue.png';
+  static const String icVietQrSmall = 'assets/images/ic-viet-qr-small.png';
+  static const String bgNapasQr = 'assets/images/bg_napas_qr.png';
+  static const String icVietQr = 'assets/images/ic-viet-qr.png';
+  static const String icNapas247 = 'assets/images/ic-napas247.png';
+  static const String bgQrVqr = 'assets/images/bg-qr-vqr.png';
+  static const String icEditPhone = 'assets/images/ic-edit-phone.png';
+  static const String icSaveImgBlue = 'assets/images/ic-save-img-blue.png';
+  static const String icShareImgBlue = 'assets/images/ic-share-img-blue.png';
   //
   static const String icStoreBottomBarBlue = 'assets/images/ic-store-bottom-bar-blue.png';
   static const String icStoreBottomBarGrey = 'assets/images/ic-store-bottom-bar-grey.png';

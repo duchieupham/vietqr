@@ -79,27 +79,6 @@ class GetUserSettingEvent extends DashBoardEvent {}
 
 class GetBanksEvent extends DashBoardEvent {}
 
-class GetListThemeEvent extends DashBoardEvent {}
-
-class UpdateThemeEvent extends DashBoardEvent {
-  final int type;
-  final List<ThemeDTO> themes;
-
-  const UpdateThemeEvent(this.type, this.themes);
-
-  @override
-  List<Object?> get props => [type, themes];
-}
-
-class UpdateKeepBrightEvent extends DashBoardEvent {
-  final bool keepValue;
-
-  UpdateKeepBrightEvent(this.keepValue);
-
-  @override
-  List<Object?> get props => [keepValue];
-}
-
 class GetCountNotifyEvent extends DashBoardEvent {}
 
 class NotifyUpdateStatusEvent extends DashBoardEvent {}

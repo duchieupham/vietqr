@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
-import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
+import 'package:vierqr/features/theme/bloc/theme_bloc.dart';
+import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:wakelock/wakelock.dart';
 
@@ -31,13 +33,13 @@ class VietQr extends StatefulWidget {
 }
 
 class _VietQrState extends State<VietQr> {
+  final _themeBloc = getIt.get<ThemeBloc>();
+
   @override
   void initState() {
     super.initState();
     // Bật chế độ giữ màn hình sáng
-    if (Provider.of<AuthProvider>(context, listen: false)
-        .settingDTO
-        .keepScreenOn) {
+    if (_themeBloc.state.settingDTO.keepScreenOn) {
       Wakelock.enable();
     }
 
@@ -69,10 +71,10 @@ class _VietQrState extends State<VietQr> {
         size: widget.size,
         embeddedImage: widget.isEmbeddedImage
             ? null
-            : const AssetImage('assets/images/ic-viet-qr-small.png'),
+            : const AssetImage(ImageConstant.icVietQrSmall),
         embeddedImageStyle: widget.isEmbeddedImage
             ? null
-            : QrEmbeddedImageStyle(size: const Size(30, 30)),
+            : const QrEmbeddedImageStyle(size: Size(30, 30)),
       );
     }
 
@@ -81,14 +83,14 @@ class _VietQrState extends State<VietQr> {
     return Container(
       width: width,
       margin: height < 750
-          ? EdgeInsets.symmetric(horizontal: 10)
+          ? const EdgeInsets.symmetric(horizontal: 10)
           : const EdgeInsets.symmetric(vertical: 8),
       padding: height < 750
           ? const EdgeInsets.only(bottom: 16, left: 30, right: 30)
           : const EdgeInsets.only(bottom: 20, left: 20, right: 20),
       decoration: const BoxDecoration(
         image: DecorationImage(
-          image: AssetImage('assets/images/bg_napas_qr.png'),
+          image: AssetImage(ImageConstant.bgNapasQr),
           fit: BoxFit.fill,
         ),
       ),
@@ -117,8 +119,8 @@ class _VietQrState extends State<VietQr> {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(top: 16),
-                  child: Image.asset(
-                    'assets/images/ic-viet-qr.png',
+                  child: XImage(
+                    imagePath: ImageConstant.icVietQr,
                     width: height < 750 ? width * 0.13 : width * 0.22,
                   ),
                 ),
@@ -130,9 +132,9 @@ class _VietQrState extends State<VietQr> {
                     data: widget.qrGeneratedDTO!.qrCode,
                     version: QrVersions.auto,
                     embeddedImage:
-                        const AssetImage('assets/images/ic-viet-qr-small.png'),
-                    embeddedImageStyle: QrEmbeddedImageStyle(
-                      size: const Size(30, 30),
+                        const AssetImage(ImageConstant.icVietQrSmall),
+                    embeddedImageStyle: const QrEmbeddedImageStyle(
+                      size: Size(30, 30),
                     ),
                   ),
                 ),
@@ -141,8 +143,8 @@ class _VietQrState extends State<VietQr> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(left: 24),
-                      child: Image.asset(
-                        'assets/images/ic-napas247.png',
+                      child: XImage(
+                        imagePath: ImageConstant.icNapas247,
                         width: height < 800 ? width / 2 * 0.3 : width / 2 * 0.5,
                       ),
                     ),

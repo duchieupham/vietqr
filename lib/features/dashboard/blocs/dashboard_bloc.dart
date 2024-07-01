@@ -2,10 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/base_manager.dart';
-import 'package:vierqr/commons/utils/error_utils.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/account/blocs/account_bloc.dart';
 import 'package:vierqr/features/bank_detail/blocs/bank_card_bloc.dart';
@@ -15,8 +13,6 @@ import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
 import 'package:vierqr/features/notification/blocs/notification_bloc.dart';
 import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
-import 'package:vierqr/models/response_message_dto.dart';
-import 'package:vierqr/models/theme_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 import '../../login/repositories/login_repository.dart';
@@ -29,8 +25,7 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
   final LoginRepository loginRepository;
 
   DashBoardBloc(this.context, this.loginRepository)
-      : super(DashBoardState(
-            themes: [], listBanks: [], appInfoDTO: AppInfoDTO())) {
+      : super(DashBoardState(listBanks: const [], appInfoDTO: AppInfoDTO())) {
     on<TokenEventCheckValid>(_checkValidToken);
     on<DashBoardLoginEvent>(_login);
 
@@ -41,10 +36,7 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
     on<GetPointEvent>(_getPointAccount);
     on<GetVersionAppEventDashboard>(_getVersionApp);
     on<UpdateEventDashboard>(_updateEvent);
-    on<GetListThemeEvent>(_getListTheme);
     on<GetBanksEvent>(_getListBankTypes);
-    on<UpdateThemeEvent>(_updateTheme);
-    on<UpdateKeepBrightEvent>(_updateKeepBright);
     on<GetCountNotifyEvent>(_getCounter);
     on<NotifyUpdateStatusEvent>(_updateNotificationStatus);
     on<CloseMobileNotificationEvent>(_closeNoti);
@@ -308,86 +300,6 @@ class DashBoardBloc extends Bloc<DashBoardEvent, DashBoardState>
       emit(state.copyWith(
           msg: 'Đã có lỗi xảy ra, xin vui lòng thử lại sau',
           status: BlocStatus.ERROR));
-    }
-  }
-
-  void _getListTheme(DashBoardEvent event, Emitter emit) async {
-    try {
-      if (event is GetListThemeEvent) {
-        emit(state.copyWith(
-            status: BlocStatus.NONE, request: DashBoardType.NONE));
-        List<ThemeDTO> result = await accRepository.getListTheme();
-        emit(state.copyWith(
-            status: BlocStatus.NONE,
-            request: DashBoardType.THEMES,
-            themes: result));
-      }
-    } catch (e) {
-      LOG.error(e.toString());
-    }
-  }
-
-  void _updateTheme(DashBoardEvent event, Emitter emit) async {
-    try {
-      if (event is UpdateThemeEvent) {
-        emit(state.copyWith(
-            status: BlocStatus.NONE, request: DashBoardType.NONE));
-        final result = await accRepository.updateTheme(
-          SharePrefUtils.getProfile().userId,
-          event.type,
-        );
-        if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
-          ThemeDTO dto =
-              event.themes.firstWhere((element) => element.type == event.type);
-
-          emit(state.copyWith(
-              status: BlocStatus.NONE,
-              request: DashBoardType.UPDATE_THEME,
-              themeDTO: dto));
-        } else {
-          emit(state.copyWith(
-              msg: ErrorUtils.instance.getErrorMessage(result.message),
-              status: BlocStatus.NONE,
-              request: DashBoardType.UPDATE_THEME_ERROR));
-        }
-      }
-    } catch (e) {
-      LOG.error(e.toString());
-      final dto = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
-      emit(state.copyWith(
-        msg: ErrorUtils.instance.getErrorMessage(dto.message),
-        status: BlocStatus.NONE,
-        request: DashBoardType.UPDATE_THEME_ERROR,
-      ));
-    }
-  }
-
-  void _updateKeepBright(DashBoardEvent event, Emitter emit) async {
-    try {
-      if (event is UpdateKeepBrightEvent) {
-        emit(state.copyWith(
-            status: BlocStatus.NONE, request: DashBoardType.NONE));
-        final result = await accRepository.updateKeepBright(
-          SharePrefUtils.getProfile().userId,
-          event.keepValue,
-        );
-        if (result.status == Stringify.RESPONSE_STATUS_SUCCESS) {
-          emit(state.copyWith(
-              status: BlocStatus.NONE,
-              request: DashBoardType.KEEP_BRIGHT,
-              keepValue: event.keepValue));
-        } else {
-          emit(state.copyWith(
-              msg: ErrorUtils.instance.getErrorMessage(result.message),
-              request: DashBoardType.ERROR));
-        }
-      }
-    } catch (e) {
-      final res = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
-      emit(state.copyWith(
-          msg: ErrorUtils.instance.getErrorMessage(res.message),
-          request: DashBoardType.ERROR));
-      LOG.error(e.toString());
     }
   }
 

@@ -19,7 +19,6 @@ import 'package:vierqr/commons/extensions/string_extension.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/pref_utils.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
-import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/dashboard_screen.dart';
 import 'package:vierqr/features/login/login_screen.dart';
 import 'package:vierqr/features/network/network_bloc.dart';
@@ -90,7 +89,7 @@ Future<String> saveImageToLocal(Uint8List uint8list, String path) async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Injection.inject(env: EnvType.STG);
+  await Injection.inject(env: EnvType.PROD);
 
   await SharePrefUtils.init();
   await SharePrefUtils.onClearCache();

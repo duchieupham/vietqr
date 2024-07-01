@@ -54,6 +54,7 @@ class SettingAccountDTO {
     this.merchantRoles = const [],
   });
 
+  ///TODO: check lại nếu 1 trhif sao nếu 0 thì sao
   bool get isEvent => themeType == 0;
 
   factory SettingAccountDTO.fromJson(Map<String, dynamic> json) =>

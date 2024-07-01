@@ -1,41 +1,38 @@
 import 'dart:io';
-import 'package:vierqr/commons/helper/dialog_helper.dart';
-import 'package:vierqr/main.dart';
+
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:vierqr/models/user_profile.dart';
-import 'package:vierqr/navigator/app_navigator.dart';
-import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
-import 'views/vietqr_id_card_view.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:vierqr/commons/mixin/events.dart';
-import 'package:vierqr/commons/enums/enum_type.dart';
-import 'package:vierqr/commons/utils/file_utils.dart';
-import 'package:vierqr/commons/utils/string_utils.dart';
-import 'package:vierqr/commons/utils/platform_utils.dart';
-import 'package:vierqr/commons/utils/navigator_utils.dart';
-import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:vierqr/commons/helper/app_data_helper.dart';
-import 'package:vierqr/features/account/theme_setting.dart';
-import 'package:vierqr/features/home/widget/dialog_update.dart';
-import 'package:vierqr/features/account/blocs/account_bloc.dart';
-import 'package:vierqr/features/account/views/dialog_my_qr.dart';
-import 'package:vierqr/commons/widgets/ambient_avatar_widget.dart';
-import 'package:vierqr/features/account/events/account_event.dart';
-import 'package:vierqr/features/account/states/account_state.dart';
-import 'package:vierqr/features/contact_us/contact_us_screen.dart';
-import 'package:vierqr/services/providers/user_edit_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
-import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
-import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
-import 'package:vierqr/features/setting_bdsd/setting_bdsd_screen.dart';
+import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/commons/helper/dialog_helper.dart';
+import 'package:vierqr/commons/mixin/events.dart';
+import 'package:vierqr/commons/utils/file_utils.dart';
+import 'package:vierqr/commons/utils/navigator_utils.dart';
+import 'package:vierqr/commons/utils/platform_utils.dart';
+import 'package:vierqr/commons/utils/string_utils.dart';
+import 'package:vierqr/commons/widgets/ambient_avatar_widget.dart';
+import 'package:vierqr/commons/widgets/dialog_widget.dart';
+import 'package:vierqr/features/account/blocs/account_bloc.dart';
+import 'package:vierqr/features/account/events/account_event.dart';
+import 'package:vierqr/features/account/states/account_state.dart';
+import 'package:vierqr/features/account/theme_setting.dart';
+import 'package:vierqr/features/account/views/dialog_my_qr.dart';
 import 'package:vierqr/features/account/widget/my_QR_bottom_sheet.dart';
-import 'package:vierqr/features/printer/views/printer_setting_screen.dart';
+import 'package:vierqr/features/contact_us/contact_us_screen.dart';
+import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/personal/views/introduce_bottom_sheet.dart';
+import 'package:vierqr/features/printer/views/printer_setting_screen.dart';
+import 'package:vierqr/features/setting_bdsd/setting_bdsd_screen.dart';
+import 'package:vierqr/features/theme/bloc/theme_bloc.dart';
+import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
+
+import 'views/vietqr_id_card_view.dart';
 
 class IconData {
   final String url;
@@ -194,27 +191,29 @@ class _AccountScreenState extends State<_AccountScreen>
   }
 
   @override
-  // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
 
   Widget _buildBannerApp(BuildContext context) {
     double paddingTop = MediaQuery.of(context).viewPadding.top;
     double width = MediaQuery.of(context).size.width;
-    return Consumer<AuthProvider>(
-      builder: (context, authProvider, _) {
-        File file = authProvider.bannerApp;
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      bloc: getIt.get<ThemeBloc>(),
+      buildWhen: (previous, current) => current is UpdateBannerSuccess,
+      builder: (context, state) {
+        File file = state.bannerApp;
         return Container(
           height: 230,
           width: width,
           padding: EdgeInsets.only(top: paddingTop + 12),
           alignment: Alignment.topCenter,
           decoration: BoxDecoration(
-              image: file.path.isNotEmpty
-                  ? DecorationImage(
-                      image: FileImage(file), fit: BoxFit.fitWidth)
-                  : DecorationImage(
-                      image: AssetImage('assets/images/bgr-header.png'),
-                      fit: BoxFit.fitWidth)),
+            image: file.path.isNotEmpty
+                ? DecorationImage(
+                    image: FileImage(file), fit: BoxFit.fitWidth)
+                : const DecorationImage(
+                    image: AssetImage(ImageConstant.bgrHeader),
+                    fit: BoxFit.fitWidth),
+          ),
           child: Stack(
             children: [
               Align(

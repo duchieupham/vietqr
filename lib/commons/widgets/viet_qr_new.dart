@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
+import 'package:vierqr/features/theme/bloc/theme_bloc.dart';
+import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
-import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:wakelock/wakelock.dart';
 
 class VietQrNew extends StatefulWidget {
@@ -29,14 +30,13 @@ class VietQrNew extends StatefulWidget {
 
 class _VietQrState extends State<VietQrNew> {
   bool get small => MediaQuery.of(context).size.width < 400;
+  final _themeBloc = getIt.get<ThemeBloc>();
 
   @override
   void initState() {
     super.initState();
     // Bật chế độ giữ màn hình sáng
-    if (Provider.of<AuthProvider>(context, listen: false)
-        .settingDTO
-        .keepScreenOn) {
+    if (_themeBloc.state.settingDTO.keepScreenOn) {
       Wakelock.enable();
     }
 
@@ -77,28 +77,24 @@ class _VietQrState extends State<VietQrNew> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Container(
-            child: QrImageView(
-              data: widget.qrGeneratedDTO?.qrCode ?? widget.qrCode ?? '',
-              size: widget.width ?? 250,
-              version: QrVersions.auto,
-              embeddedImage:
-                  const AssetImage('assets/images/ic-viet-qr-small.png'),
-              embeddedImageStyle: QrEmbeddedImageStyle(
-                size: const Size(30, 30),
-              ),
+          QrImageView(
+            data: widget.qrGeneratedDTO?.qrCode ?? widget.qrCode ?? '',
+            size: widget.width ?? 250,
+            version: QrVersions.auto,
+            embeddedImage: const AssetImage(ImageConstant.icVietQrSmall),
+            embeddedImageStyle: const QrEmbeddedImageStyle(
+              size: Size(30, 30),
             ),
           ),
           Container(
             width: widget.width ?? 250,
             height: 30,
             padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Row(
+            child: const Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Image.asset('assets/images/logo_vietgr_payment.png',
-                    height: 30),
-                Image.asset('assets/images/ic-napas247.png', height: 30),
+                XImage(imagePath: ImageConstant.logoVietQRPayment, height: 30),
+                XImage(imagePath: ImageConstant.icNapas247, height: 30),
               ],
             ),
           ),

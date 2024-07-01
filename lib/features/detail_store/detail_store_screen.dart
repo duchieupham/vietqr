@@ -4,13 +4,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
-import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/detail_store/blocs/detail_store_bloc.dart';
 import 'package:vierqr/features/detail_store/events/detail_store_event.dart';
 import 'package:vierqr/features/detail_store/states/detail_store_state.dart';
+import 'package:vierqr/features/theme/bloc/theme_bloc.dart';
 import 'package:vierqr/models/store/detail_store_dto.dart';
 
 import 'detail_store.dart';
@@ -134,18 +135,19 @@ class _DetailStoreScreenState extends State<DetailStoreScreen> {
       listener: (context, state) {
         if (state.request == DetailStoreType.GET_DETAIL) {
           detailStoreDTO = state.detailStore;
-          if (detailStoreDTO.isHideVietQR)
+          if (detailStoreDTO.isHideVietQR) {
             _tabs.removeAt(FlowTab.STORE.tabIndex);
+          }
           setState(() {});
         }
       },
       builder: (context, state) {
         if (state.status == BlocStatus.LOADING) {
-          return Center(
+          return const Center(
             child: CircularProgressIndicator(),
           );
         }
-        return Container(
+        return SizedBox(
           height: MediaQuery.of(context).size.height,
           child: Stack(
             children: [
@@ -194,18 +196,19 @@ class _DetailStoreScreenState extends State<DetailStoreScreen> {
     double paddingTop = MediaQuery.of(context).viewPadding.top;
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    return Consumer<AuthProvider>(
-      builder: (context, page, child) {
-        File file = page.bannerApp;
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      bloc: getIt.get<ThemeBloc>(),
+      builder: (context, state) {
+        File file = state.bannerApp;
         return Container(
           height: isVietQRStore ? height : 230,
           width: width,
           padding: EdgeInsets.only(top: paddingTop + 12),
           alignment: Alignment.topCenter,
           decoration: isVietQRStore
-              ? BoxDecoration(
+              ? const BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage('assets/images/bg-qr-vqr.png'),
+                    image: AssetImage(ImageConstant.bgQrVqr),
                     fit: BoxFit.fitHeight,
                   ),
                 )
@@ -213,8 +216,8 @@ class _DetailStoreScreenState extends State<DetailStoreScreen> {
                   image: file.path.isNotEmpty
                       ? DecorationImage(
                           image: FileImage(file), fit: BoxFit.fitWidth)
-                      : DecorationImage(
-                          image: AssetImage('assets/images/bgr-header.png'),
+                      : const DecorationImage(
+                          image: AssetImage(ImageConstant.bgrHeader),
                           fit: BoxFit.fitWidth)),
           child: Stack(
             children: [
@@ -269,7 +272,7 @@ class _DetailStoreScreenState extends State<DetailStoreScreen> {
                       height: 40,
                       margin: const EdgeInsets.only(right: 20),
                       child: CachedNetworkImage(
-                        imageUrl: page.settingDTO.logoUrl,
+                        imageUrl: state.settingDTO.logoUrl,
                         height: 40,
                       ),
                     ),
@@ -307,7 +310,7 @@ class _DetailStoreScreenState extends State<DetailStoreScreen> {
     return GestureDetector(
       onTap: () => _onChangedPage(index),
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 4),
+        padding: const EdgeInsets.symmetric(vertical: 4),
         alignment: Alignment.center,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),

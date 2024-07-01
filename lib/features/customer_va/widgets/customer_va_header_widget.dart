@@ -1,9 +1,11 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
+import 'package:vierqr/features/theme/bloc/theme_bloc.dart';
+import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/services/providers/customer_va/customer_va_insert_provider.dart';
 
 class CustomerVaHeaderWidget extends StatelessWidget
@@ -12,9 +14,8 @@ class CustomerVaHeaderWidget extends StatelessWidget
   final Size preferredSize;
 
   const CustomerVaHeaderWidget({
-    Key? key,
-  })  : preferredSize = const Size.fromHeight(60),
-        super(key: key);
+    super.key,
+  }) : preferredSize = const Size.fromHeight(60);
 
   @override
   Widget build(BuildContext context) {
@@ -61,11 +62,14 @@ class CustomerVaHeaderWidget extends StatelessWidget
               width: 80,
               height: 40,
               margin: const EdgeInsets.only(right: 20),
-              child: CachedNetworkImage(
-                imageUrl: Provider.of<AuthProvider>(context, listen: false)
-                    .settingDTO
-                    .logoUrl,
-                height: 40,
+              child: BlocBuilder<ThemeBloc, ThemeState>(
+                bloc: getIt.get<ThemeBloc>(),
+                builder: (context, state) {
+                  return XImage(
+                    imagePath: state.settingDTO.logoUrl,
+                    height: 40,
+                  );
+                },
               ),
             ),
           ),

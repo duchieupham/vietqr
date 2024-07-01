@@ -1,9 +1,10 @@
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/helper/app_data_helper.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
@@ -12,8 +13,9 @@ import 'package:vierqr/commons/utils/share_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/viet_qr_new.dart';
 import 'package:vierqr/features/bank_detail/views/bottom_sheet_input_money.dart';
-import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/popup_bank/popup_bank_share.dart';
+import 'package:vierqr/features/theme/bloc/theme_bloc.dart';
+import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/qr_bank_detail.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:wakelock/wakelock.dart';
@@ -49,14 +51,13 @@ class WidgetQr extends StatefulWidget {
 
 class _VietQrState extends State<WidgetQr> {
   bool get small => MediaQuery.of(context).size.width < 400;
-  late AuthProvider _provider;
+  final _themeBloc = getIt.get<ThemeBloc>();
 
   @override
   void initState() {
     super.initState();
-    _provider = Provider.of<AuthProvider>(context, listen: false);
     // Bật chế độ giữ màn hình sáng
-    if (_provider.settingDTO.keepScreenOn) {
+    if (_themeBloc.state.settingDTO.keepScreenOn) {
       Wakelock.enable();
     }
 
@@ -85,22 +86,21 @@ class _VietQrState extends State<WidgetQr> {
         version: QrVersions.auto,
         embeddedImage: widget.isEmbeddedImage
             ? null
-            : const AssetImage('assets/images/ic-viet-qr-small.png'),
+            : const AssetImage(ImageConstant.icVietQrSmall),
         embeddedImageStyle: widget.isEmbeddedImage
             ? null
-            : QrEmbeddedImageStyle(size: const Size(30, 30)),
+            : const QrEmbeddedImageStyle(size: Size(30, 30)),
       );
     }
 
     if (widget.qrGeneratedDTO.qrCode.isEmpty) return const SizedBox();
-    print('--------------------------$width');
     return Column(
       children: [
         Container(
           width: width,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
               image: DecorationImage(
-                  image: AssetImage('assets/images/bg-qr-vqr.png'),
+                  image: AssetImage(ImageConstant.bgQrVqr),
                   fit: BoxFit.fitHeight),
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(16), topRight: Radius.circular(16))),
@@ -132,7 +132,7 @@ class _VietQrState extends State<WidgetQr> {
                           ),
                         ),
                       ),
-                      Container(
+                      SizedBox(
                         height: 40,
                         child: VerticalDashedLine(),
                       ),
@@ -167,7 +167,7 @@ class _VietQrState extends State<WidgetQr> {
                           ),
                         ),
                       ),
-                      Container(
+                      SizedBox(
                         height: 40,
                         child: VerticalDashedLine(),
                       ),
@@ -176,7 +176,7 @@ class _VietQrState extends State<WidgetQr> {
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child: Image.asset(
-                            'assets/images/ic-copy-blue.png',
+                            ImageConstant.icCopyBlue,
                             width: small ? 32 : 32,
                             height: 32,
                           ),
@@ -208,17 +208,17 @@ class _VietQrState extends State<WidgetQr> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 2),
-                              child: Image.asset(
-                                'assets/images/ic-edit-phone.png',
+                            const Padding(
+                              padding: EdgeInsets.only(bottom: 2),
+                              child: XImage(
+                                imagePath: ImageConstant.icEditPhone,
                                 color: Colors.transparent,
                                 height: 30,
                               ),
                             ),
                             Text(
                               '${CurrencyUtils.instance.getCurrencyFormatted(widget.qrGeneratedDTO.amount)} VND',
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                             GestureDetector(
@@ -234,10 +234,10 @@ class _VietQrState extends State<WidgetQr> {
                                   widget.updateQRGeneratedDTO(result);
                                 }
                               },
-                              child: Padding(
-                                padding: const EdgeInsets.only(bottom: 2),
-                                child: Image.asset(
-                                  'assets/images/ic-edit-phone.png',
+                              child: const Padding(
+                                padding: EdgeInsets.only(bottom: 2),
+                                child: XImage(
+                                  imagePath: ImageConstant.icEditPhone,
                                   height: 30,
                                 ),
                               ),
@@ -245,15 +245,13 @@ class _VietQrState extends State<WidgetQr> {
                           ],
                         ),
                         if (widget.qrGeneratedDTO.content.isNotEmpty)
-                          Container(
-                            child: Text(
-                              widget.qrGeneratedDTO.content,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: AppColor.GREY_TEXT,
-                              ),
+                          Text(
+                            widget.qrGeneratedDTO.content,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: AppColor.GREY_TEXT,
                             ),
                           )
                       ],
@@ -281,7 +279,7 @@ class _VietQrState extends State<WidgetQr> {
                       decoration: BoxDecoration(
                           color: AppColor.WHITE.withOpacity(0.9),
                           borderRadius: BorderRadius.circular(10)),
-                      child: Row(
+                      child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
@@ -289,7 +287,7 @@ class _VietQrState extends State<WidgetQr> {
                             size: 18,
                             color: AppColor.BLUE_TEXT,
                           ),
-                          const SizedBox(width: 4),
+                          SizedBox(width: 4),
                           Text(
                             'Thêm số tiền',
                             maxLines: 1,
@@ -315,23 +313,21 @@ class _VietQrState extends State<WidgetQr> {
                     children: [
                       Text(
                         '+ ${CurrencyUtils.instance.getCurrencyFormatted(widget.qrGeneratedDTO.amount)} VND',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
                           color: AppColor.ORANGE_DARK,
                         ),
                       ),
                       if (widget.qrGeneratedDTO.content.isNotEmpty)
-                        Container(
-                          child: Text(
-                            widget.qrGeneratedDTO.content,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: 12,
-                              height: 1.4,
-                              color: AppColor.GREY_TEXT,
-                            ),
+                        Text(
+                          widget.qrGeneratedDTO.content,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            height: 1.4,
+                            color: AppColor.GREY_TEXT,
                           ),
                         )
                     ],
@@ -345,8 +341,8 @@ class _VietQrState extends State<WidgetQr> {
         Container(
           width: width,
           height: 70,
-          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-          decoration: BoxDecoration(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+          decoration: const BoxDecoration(
             color: AppColor.WHITE,
             borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(16),
@@ -355,8 +351,8 @@ class _VietQrState extends State<WidgetQr> {
           child: Row(
             children: [
               Expanded(
-                child: _buildButtonQR('assets/images/ic-save-img-blue.png',
-                    'Lưu ảnh vào thư viện', () {
+                child: _buildButtonQR(
+                    ImageConstant.icSaveImgBlue, 'Lưu ảnh vào thư viện', () {
                   NavigatorUtils.navigatePage(
                       context,
                       PopupBankShare(
@@ -367,7 +363,7 @@ class _VietQrState extends State<WidgetQr> {
               const SizedBox(width: 12),
               Expanded(
                 child: _buildButtonQR(
-                    'assets/images/ic-share-img-blue.png', 'Chia sẻ mã QR', () {
+                    ImageConstant.icShareImgBlue, 'Chia sẻ mã QR', () {
                   NavigatorUtils.navigatePage(
                       context,
                       PopupBankShare(
@@ -412,10 +408,10 @@ class _VietQrState extends State<WidgetQr> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(icon, height: 30, width: 26, fit: BoxFit.cover),
+            XImage(imagePath: icon, height: 30, width: 26, fit: BoxFit.cover),
             Text(
               title,
-              style: TextStyle(fontSize: 12, color: AppColor.BLUE_TEXT),
+              style: const TextStyle(fontSize: 12, color: AppColor.BLUE_TEXT),
             )
           ],
         ),

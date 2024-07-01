@@ -16,6 +16,7 @@ import 'package:vierqr/commons/widgets/repaint_boundary_widget.dart';
 import 'package:vierqr/commons/widgets/textfield_custom.dart';
 import 'package:vierqr/features/create_qr/create_qr_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
+import 'package:vierqr/features/theme/bloc/theme_bloc.dart';
 import 'package:vierqr/features/trans_update/trans_update_screen.dart';
 import 'package:vierqr/layouts/box_layout.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
@@ -53,7 +54,7 @@ class TransactionDetailScreen extends StatelessWidget {
 }
 
 class _BodyWidget extends StatefulWidget {
-  _BodyWidget(this.transactionId);
+  const _BodyWidget(this.transactionId);
 
   final String transactionId;
 
@@ -63,6 +64,7 @@ class _BodyWidget extends StatefulWidget {
 
 class _BodyWidgetState extends State<_BodyWidget> {
   late TransactionBloc _bloc;
+  final ThemeBloc _themeBloc = getIt.get<ThemeBloc>();
   late AuthProvider authProvider;
 
   final noteController = TextEditingController();
@@ -74,7 +76,6 @@ class _BodyWidgetState extends State<_BodyWidget> {
   @override
   void initState() {
     super.initState();
-    // _bloc = BlocProvider.of(context);
     _bloc = getIt.get<TransactionBloc>(param1: widget.transactionId);
     authProvider = Provider.of<AuthProvider>(context, listen: false);
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -94,7 +95,7 @@ class _BodyWidgetState extends State<_BodyWidget> {
     });
     if (isOwner) return;
 
-    SettingAccountDTO settingDTO = authProvider.settingDTO;
+    SettingAccountDTO settingDTO = _themeBloc.state.settingDTO;
     List<MerchantRole> merchantRoles = [...settingDTO.merchantRoles];
     MerchantRole merchantDTO = merchantRoles.firstWhere(
         (element) => element.bankId == bankDTO.id,
@@ -253,20 +254,20 @@ class _BodyWidgetState extends State<_BodyWidget> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
+                                  const Text(
                                     'Ghi chú',
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 14),
                                   ),
                                   const SizedBox(height: 12),
-                                  Container(
+                                  SizedBox(
                                     width: width - 40,
                                     child: TextFieldCustom(
                                       isObscureText: false,
                                       fillColor: AppColor.WHITE,
                                       title: '',
-                                      contentPadding: EdgeInsets.symmetric(
+                                      contentPadding: const EdgeInsets.symmetric(
                                           vertical: 12, horizontal: 16),
                                       controller: noteController,
                                       hintText: 'Nhập ghi chú tại đây',
@@ -289,7 +290,7 @@ class _BodyWidgetState extends State<_BodyWidget> {
                 ),
               ),
               if (state.status == BlocStatus.LOADING_PAGE)
-                Positioned(
+                const Positioned(
                   child: Center(
                     child: CircularProgressIndicator(),
                   ),
@@ -378,7 +379,7 @@ class _BodyWidgetState extends State<_BodyWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Tệp đính kèm',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
           ),
@@ -394,7 +395,7 @@ class _BodyWidgetState extends State<_BodyWidget> {
               children: [
                 Text(
                   '${state.listImage.length} tệp đính kèm',
-                  style: TextStyle(color: AppColor.GREY_TEXT),
+                  style: const TextStyle(color: AppColor.GREY_TEXT),
                 ),
                 Expanded(
                   child: GestureDetector(
@@ -402,7 +403,7 @@ class _BodyWidgetState extends State<_BodyWidget> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Text(
+                        const Text(
                           'Xem',
                           style: TextStyle(
                             color: AppColor.BLUE_TEXT,
@@ -455,7 +456,7 @@ class _BodyWidgetState extends State<_BodyWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Thông tin giao dịch',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
           ),
@@ -517,7 +518,7 @@ class _BodyWidgetState extends State<_BodyWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Tài khoản nhận',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
           ),
@@ -582,8 +583,8 @@ class _BodyWidgetState extends State<_BodyWidget> {
         children: [
           MButtonWidget(
             title: 'Cập nhật ghi chú',
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            margin: EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            margin: const EdgeInsets.only(bottom: 12),
             colorEnableBgr: AppColor.BLUE_TEXT,
             colorEnableText: AppColor.WHITE,
             isEnable: true,
@@ -601,11 +602,11 @@ class _BodyWidgetState extends State<_BodyWidget> {
               role.isRequestTrans)
             MButtonWidget(
               title: 'Cập nhật cửa hàng',
-              padding: EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               colorEnableBgr: AppColor.BLUE_TEXT,
               colorEnableText: AppColor.WHITE,
               isEnable: true,
-              margin: EdgeInsets.only(bottom: 12),
+              margin: const EdgeInsets.only(bottom: 12),
               onTap: () => onUpdateTerminal(state.dto!),
             ),
         ],

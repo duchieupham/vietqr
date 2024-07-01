@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/app_images.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/notification/views/popup_trans_widget.dart';
+import 'package:vierqr/features/theme/bloc/theme_bloc.dart';
 import 'package:vierqr/features/trans_update/trans_update_screen.dart';
 import 'package:vierqr/features/transaction_detail/transaction_detail_screen.dart';
 import 'package:vierqr/layouts/button/m_button_icon_widget.dart';
@@ -61,7 +63,7 @@ class _TransactionSuccessWidget extends State<NotifyTransWidget> {
     });
     if (isOwner) return;
 
-    SettingAccountDTO settingDTO = authProvider.settingDTO;
+    SettingAccountDTO settingDTO = getIt.get<ThemeBloc>().state.settingDTO;
     List<MerchantRole> merchantRoles = [...settingDTO.merchantRoles];
     MerchantRole merchantDTO = merchantRoles.firstWhere(
         (element) => element.bankId == bankDTO.id,

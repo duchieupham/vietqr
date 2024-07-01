@@ -1,11 +1,17 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
+import 'package:vierqr/layouts/image/x_image.dart';
+
+import '../../theme/bloc/theme_bloc.dart';
 
 class DialogUpdateView extends StatefulWidget {
   final bool isHideClose;
@@ -20,6 +26,7 @@ class DialogUpdateView extends StatefulWidget {
 
 class _DialogUpdateViewState extends State<DialogUpdateView> {
   bool isCheckApp = false;
+  final ThemeBloc _themeBloc = getIt.get<ThemeBloc>();
 
   @override
   Widget build(BuildContext context) {
@@ -40,27 +47,35 @@ class _DialogUpdateViewState extends State<DialogUpdateView> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Consumer<AuthProvider>(builder: (context, provider, child) {
-                return Expanded(
-                  child: provider.userId.isNotEmpty
-                      ? CachedNetworkImage(
-                          imageUrl: provider.settingDTO.logoUrl,
-                          width: 130,
-                          height: 130,
-                        )
-                      : provider.logoApp.path.isNotEmpty
-                          ? Image.file(
-                              provider.logoApp,
+              BlocBuilder<ThemeBloc, ThemeState>(
+                bloc: _themeBloc,
+                buildWhen: (previous, current) =>
+                    current is UpdateSetting || current is UpdateLogoApp,
+                builder: (context, state) {
+                  return Consumer<AuthProvider>(
+                      builder: (context, provider, child) {
+                    return Expanded(
+                      child: provider.userId.isNotEmpty
+                          ? CachedNetworkImage(
+                              imageUrl: state.settingDTO.logoUrl,
                               width: 130,
                               height: 130,
                             )
-                          : Image.asset(
-                              'assets/images/logo_vietgr_payment.png',
-                              width: 130,
-                              height: 130,
-                            ),
-                );
-              }),
+                          : state.logoApp.path.isNotEmpty
+                              ? Image.file(
+                                  state.logoApp,
+                                  width: 130,
+                                  height: 130,
+                                )
+                              : const XImage(
+                                  imagePath: ImageConstant.logoVietQRPayment,
+                                  width: 130,
+                                  height: 130,
+                                ),
+                    );
+                  });
+                },
+              ),
               const Padding(padding: EdgeInsets.only(top: 10)),
               Consumer<AuthProvider>(
                 builder: (context, provider, child) {
@@ -70,14 +85,14 @@ class _DialogUpdateViewState extends State<DialogUpdateView> {
                           horizontal: 6, vertical: 10),
                       child: Column(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 250,
                             child: Text(
                               'Đang kiểm tra',
                               textAlign: TextAlign.center,
                               maxLines: 3,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
+                              style: TextStyle(
                                   fontSize: 14, fontWeight: FontWeight.w500),
                             ),
                           ),

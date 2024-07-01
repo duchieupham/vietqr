@@ -12,6 +12,7 @@ import 'package:vierqr/features/transaction_detail/repositories/transaction_repo
 import 'package:vierqr/navigator/app_navigator.dart';
 
 import '../../../features/login/repositories/login_repository.dart';
+import '../../../features/theme/bloc/theme_bloc.dart';
 
 class BlocModule extends DIModule {
   @override
@@ -19,6 +20,9 @@ class BlocModule extends DIModule {
     getIt
       ..registerLazySingleton(
         () => NetworkBloc(connectivity: Connectivity()),
+      )
+      ..registerLazySingleton(
+        () => ThemeBloc(),
       )
       ..registerLazySingleton(
         () => ConnectGgChatBloc(),

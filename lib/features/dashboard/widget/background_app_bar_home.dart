@@ -16,8 +16,11 @@ import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
 import 'package:vierqr/features/dashboard/states/dashboard_state.dart';
 import 'package:vierqr/features/notification/notification_screen.dart';
+import 'package:vierqr/features/theme/bloc/theme_bloc.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
+
+import '../../../layouts/x_logo_app.dart';
 
 class BackgroundAppBarHome extends StatefulWidget {
   const BackgroundAppBarHome({super.key});
@@ -39,9 +42,10 @@ class _BackgroundAppBarHomeState extends State<BackgroundAppBarHome> {
   Widget build(BuildContext context) {
     double paddingTop = MediaQuery.of(context).viewPadding.top;
     double width = MediaQuery.of(context).size.width;
-    return Consumer<AuthProvider>(
-      builder: (context, page, child) {
-        File file = page.bannerApp;
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      bloc: getIt.get<ThemeBloc>(),
+      builder: (context, state) {
+        File file = state.bannerApp;
         return Container(
           height: 240,
           width: width,
@@ -87,20 +91,13 @@ class _BackgroundAppBarHomeState extends State<BackgroundAppBarHome> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    _buildAvatar(page),
+                    _buildAvatar(),
                     const SizedBox(width: 12),
                     _buildNotification(),
                     const SizedBox(width: 12),
-                    _getSearchPage(context, page.pageSelected),
+                    _getSearchPage(context),
                     const Spacer(),
-                    XImage(
-                      imagePath: page.logoApp.path.isEmpty
-                          ? page.settingDTO.logoUrl
-                          : page.logoApp.path,
-                      width: 96,
-                      height: 56,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+                    const XLogoApp(),
                   ],
                 ),
               ),
@@ -112,23 +109,27 @@ class _BackgroundAppBarHomeState extends State<BackgroundAppBarHome> {
   }
 
   //get title page
-  Widget _getSearchPage(BuildContext context, int indexSelected) {
-    if (indexSelected != PageType.SCAN_QR.pageIndex) {
-      return GestureDetector(
-        onTap: () => Navigator.pushNamed(context, Routes.SEARCH_BANK),
-        child: Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(40),
-            color: AppColor.WHITE,
-          ),
-          child: const Icon(Icons.search, size: 20),
-        ),
-      );
-    }
+  Widget _getSearchPage(BuildContext context) {
+    return Consumer<AuthProvider>(builder: (context, page, child) {
+      int indexSelected = page.pageSelected;
 
-    return const SizedBox();
+      if (indexSelected != PageType.SCAN_QR.pageIndex) {
+        return GestureDetector(
+          onTap: () => Navigator.pushNamed(context, Routes.SEARCH_BANK),
+          child: Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(40),
+              color: AppColor.WHITE,
+            ),
+            child: const Icon(Icons.search, size: 20),
+          ),
+        );
+      }
+
+      return const SizedBox();
+    });
   }
 
   Widget _buildNotification() {
@@ -179,7 +180,7 @@ class _BackgroundAppBarHomeState extends State<BackgroundAppBarHome> {
         });
   }
 
-  _buildAvatar(AuthProvider provider) {
+  _buildAvatar() {
     String imgId = SharePrefUtils.getProfile().imgId;
     return GestureDetector(
       onTap: () => NavigatorUtils.navigatePage(
@@ -187,21 +188,23 @@ class _BackgroundAppBarHomeState extends State<BackgroundAppBarHome> {
         const AccountScreen(),
         routeName: AccountScreen.routeName,
       ),
-      child: XImage(
-        width: 40,
-        height: 40,
-        borderRadius: BorderRadius.circular(20),
-        imagePath: provider.avatarUser.path.isEmpty
-            ? imgId.isNotEmpty
-                ? imgId.getPathIMageNetwork
-                : ImageConstant.icAvatar
-            : provider.avatarUser.path,
-        errorWidget: const XImage(
-          imagePath: ImageConstant.icAvatar,
+      child: Consumer<AuthProvider>(builder: (context, provider, child) {
+        return XImage(
           width: 40,
           height: 40,
-        ),
-      ),
+          borderRadius: BorderRadius.circular(20),
+          imagePath: provider.avatarUser.path.isEmpty
+              ? imgId.isNotEmpty
+                  ? imgId.getPathIMageNetwork
+                  : ImageConstant.icAvatar
+              : provider.avatarUser.path,
+          errorWidget: const XImage(
+            imagePath: ImageConstant.icAvatar,
+            width: 40,
+            height: 40,
+          ),
+        );
+      }),
     );
   }
 }
