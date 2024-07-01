@@ -21,7 +21,7 @@ import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class ServiceSection extends StatefulWidget {
-  const ServiceSection({Key? key}) : super(key: key);
+  const ServiceSection({super.key});
 
   @override
   State<ServiceSection> createState() => _ServiceSectionState();
@@ -46,9 +46,9 @@ class _ServiceSectionState extends State<ServiceSection> {
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
-            color: AppColor.WHITE,
-            borderRadius: BorderRadius.circular(10),
-          ),
+              color: AppColor.WHITE,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: AppColor.GREY_DADADA)),
           height: 120,
           child: InkWell(
             onTap: () {
@@ -286,10 +286,28 @@ class _ServiceSectionState extends State<ServiceSection> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset(
-              pathIcon,
+            Container(
               height: 45,
+              width: 45,
+              decoration: BoxDecoration(
+                  color: AppColor.WHITE,
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColor.BLACK.withOpacity(0.1),
+                      blurRadius: 2,
+                      spreadRadius: 1,
+                      offset: const Offset(0, 2),
+                    )
+                  ],
+                  image: DecorationImage(
+                      image: AssetImage(pathIcon), fit: BoxFit.cover)),
             ),
+            // Image.asset(
+
+            //   pathIcon,
+            //   height: 45,
+            // ),
             const SizedBox(
               height: 8,
             ),

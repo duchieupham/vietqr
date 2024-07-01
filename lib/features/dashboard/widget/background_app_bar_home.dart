@@ -54,7 +54,7 @@ class _BackgroundAppBarHomeState extends State<BackgroundAppBarHome> {
               image: file.path.isNotEmpty
                   ? DecorationImage(
                       image: FileImage(file), fit: BoxFit.fitWidth)
-                  : DecorationImage(
+                  : const DecorationImage(
                       image: AssetImage('assets/images/bgr-header.png'),
                       fit: BoxFit.fitWidth)),
           child: Stack(

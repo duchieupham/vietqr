@@ -230,11 +230,20 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void updateIndex(int index, {bool isHome = false}) {
+  void updateIndex(int index, {bool isHome = false, bool isOnTap = false}) {
     if (isHome) {
       return;
     }
-    _indexSelected = index;
+    if (isOnTap) {
+      _indexSelected = index;
+    } else {
+      if (index > 1) {
+        _indexSelected = index + 1;
+      } else {
+        _indexSelected = index;
+      }
+    }
+
     notifyListeners();
   }
 

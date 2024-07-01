@@ -19,6 +19,7 @@ import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/mixin/events.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
+import 'package:vierqr/commons/widgets/bottom_bar_item.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/bank_card/bank_screen.dart';
 import 'package:vierqr/features/bank_card/events/bank_event.dart';
@@ -35,6 +36,7 @@ import 'package:vierqr/features/home/home.dart';
 import 'package:vierqr/features/home/widget/dialog_update.dart';
 import 'package:vierqr/features/network/network_bloc.dart';
 import 'package:vierqr/features/network/network_state.dart';
+import 'package:vierqr/features/qr_wallet/qr_wallet_screen.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
 import 'package:vierqr/features/store/store_screen.dart';
 import 'package:vierqr/main.dart';
@@ -86,8 +88,10 @@ class _DashBoardScreen extends State<DashBoardScreen>
   final List<Widget> _listScreens = [
     const BankScreen(key: PageStorageKey('QR_GENERATOR_PAGE')),
     const HomeScreen(key: PageStorageKey('HOME_PAGE')),
-    const ContactScreen(key: PageStorageKey('CONTACT_PAGE')),
-    const StoreScreen(key: const PageStorageKey('STORE_PAGE')),
+    // const ContactScreen(key: PageStorageKey('CONTACT_PAGE')),
+    const QrWalletScreen(key: PageStorageKey('QR_WALLET')),
+
+    const StoreScreen(key: PageStorageKey('STORE_PAGE')),
   ];
 
   StreamSubscription? _subscription;
@@ -429,7 +433,7 @@ class _DashBoardScreen extends State<DashBoardScreen>
                 isDissmiss: false,
                 widget: MaintainWidget(
                   onRetry: () {
-                    _bloc.add(TokenEventCheckValid());
+                    _bloc.add(const TokenEventCheckValid());
                     Navigator.pop(context);
                   },
                 ),
@@ -489,23 +493,30 @@ class _DashBoardScreen extends State<DashBoardScreen>
         }
       },
       child: Consumer<AuthProvider>(builder: (context, provider, _) {
-        if (!provider.isRenderUI)
+        if (!provider.isRenderUI) {
           return SplashScreen(isFromLogin: widget.isFromLogin);
+        }
         return Scaffold(
+          backgroundColor: AppColor.WHITE,
+
+          resizeToAvoidBottomInset: false,
           // floatingActionButton: MyFloatingButton(),
           body: Stack(
             children: [
-              const BackgroundAppBarHome(),
+              if (provider.pageSelected != 3) const BackgroundAppBarHome(),
               Container(
-                padding: const EdgeInsets.only(top: kToolbarHeight * 2),
+                padding: EdgeInsets.only(
+                    top: provider.pageSelected == 3 ? 0 : kToolbarHeight * 2),
                 child: Listener(
                   onPointerMove: (moveEvent) {
                     if (moveEvent.delta.dx < 0) {
-                      if (provider.moveEvent != TypeMoveEvent.RIGHT_TO_LEFT)
+                      if (provider.moveEvent != TypeMoveEvent.RIGHT_TO_LEFT) {
                         provider.updateMoveEvent(TypeMoveEvent.RIGHT_TO_LEFT);
+                      }
                     } else {
-                      if (provider.moveEvent != TypeMoveEvent.LEFT_TO_RIGHT)
+                      if (provider.moveEvent != TypeMoveEvent.LEFT_TO_RIGHT) {
                         provider.updateMoveEvent(TypeMoveEvent.LEFT_TO_RIGHT);
+                      }
                     }
                   },
                   child: PageView(
@@ -570,34 +581,89 @@ class _DashBoardScreen extends State<DashBoardScreen>
                   bloc: getIt.get<NetworkBloc>(),
                   builder: (context, state) {
                     if (state is NetworkFailure) {
-                      return DisconnectWidget(type: TypeInternet.DISCONNECT);
+                      return const DisconnectWidget(
+                          type: TypeInternet.DISCONNECT);
                     } else if (state is NetworkSuccess) {
-                      return DisconnectWidget(type: TypeInternet.CONNECT);
+                      return const DisconnectWidget(type: TypeInternet.CONNECT);
                     } else {
                       return const SizedBox.shrink();
                     }
                   },
                 ),
               ),
+              Positioned(
+                  bottom: 0,
+                  right: 0,
+                  left: 0,
+                  child: Consumer<AuthProvider>(
+                    builder: (context, page, _) {
+                      return getBottomBar(
+                        page.pageSelected,
+                        onTap: (index) {
+                          onTapPage(index);
+                          page.updateIndex(index, isOnTap: true);
+                        },
+                      );
+                    },
+                  ))
             ],
           ),
-          bottomNavigationBar: Consumer<AuthProvider>(
-            builder: (context, page, _) {
-              return CurvedNavigationBar(
-                backgroundColor: AppColor.TRANSPARENT,
-                buttonBackgroundColor: AppColor.TRANSPARENT,
-                animationDuration: const Duration(milliseconds: 300),
-                indexPage: page.pageSelected,
-                indexPaint: 0,
-                iconPadding: 0.0,
-                onTap: onTapPage,
-                items: _listNavigation,
-                stream: bottomBarStream,
-              );
-            },
-          ),
+          // bottomNavigationBar: ,
+          // bottomNavigationBar: Consumer<AuthProvider>(
+          //   builder: (context, page, _) {
+          //     return CurvedNavigationBar(
+          //       backgroundColor: AppColor.TRANSPARENT,
+          //       buttonBackgroundColor: AppColor.TRANSPARENT,
+          //       animationDuration: const Duration(milliseconds: 300),
+          //       indexPage: page.pageSelected,
+          //       indexPaint: 0,
+          //       iconPadding: 0.0,
+          //       onTap: onTapPage,
+          //       items: _listNavigation,
+          //       stream: bottomBarStream,
+          //     );
+          //   },
+          // ),
         );
       }),
+    );
+  }
+
+  Widget getBottomBar(int pageSelected, {required Function(int) onTap}) {
+    return Container(
+      height: 70,
+      width: double.infinity,
+      margin: const EdgeInsets.fromLTRB(40, 0, 40, 16),
+      padding: const EdgeInsets.fromLTRB(15, 0, 15, 4),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          gradient: const LinearGradient(
+              colors: [AppColor.BLUE_E1EFFF, AppColor.BLUE_E5F9FF],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight),
+          boxShadow: [
+            BoxShadow(
+                color: AppColor.BLACK.withOpacity(0.1),
+                blurRadius: 2,
+                spreadRadius: 1,
+                offset: const Offset(0, 2))
+          ]),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: List.generate(
+            barItems.length,
+            (index) => BottomBarItem(
+                  barItems[index]["name"],
+                  index,
+                  barItems[index]["active_icon"],
+                  barItems[index]["icon"],
+                  isActive: pageSelected == index,
+                  activeColor: AppColor.BLUE_TEXT,
+                  onTap: () {
+                    onTap(index);
+                  },
+                )),
+      ),
     );
   }
 
@@ -628,7 +694,12 @@ class _DashBoardScreen extends State<DashBoardScreen>
 //navigate to page
   void _animatedToPage(int index) {
     try {
-      _pageController.jumpToPage(index);
+      if (index < 3) {
+        _pageController.jumpToPage(index);
+      } else {
+        _pageController.jumpToPage(index - 1);
+      }
+
       if (index.pageType == PageType.CARD_QR) {
         eventBus.fire(CheckSyncContact());
       }
@@ -643,6 +714,34 @@ class _DashBoardScreen extends State<DashBoardScreen>
       }
     }
   }
+
+  List barItems = [
+    {
+      "icon": "assets/images/ic-btm-list-bank-grey.png",
+      "active_icon": "assets/images/ic-btm-list-bank-blue.png",
+      "name": "Tài khoản",
+    },
+    {
+      "icon": "assets/images/ic-btm-dashboard-grey.png",
+      "active_icon": "assets/images/ic-btm-dashboard-blue.png",
+      "name": "Trang chủ",
+    },
+    {
+      "icon": "assets/images/ic-menu-slide-home-blue.png",
+      "active_icon": "assets/images/ic-menu-slide-home-blue.png",
+      "name": "Quét QR",
+    },
+    {
+      "icon": "assets/images/ic-btm-qr-wallet-grey.png",
+      "active_icon": "assets/images/ic-btm-qr-wallet-blue.png",
+      "name": "Ví QR",
+    },
+    {
+      "icon": "assets/images/ic-store-bottom-bar-grey.png",
+      "active_icon": "assets/images/ic-store-bottom-bar-blue.png",
+      "name": "Cửa hàng",
+    },
+  ];
 
   List<CurvedNavigationBarItem> _listNavigation = [
     CurvedNavigationBarItem(

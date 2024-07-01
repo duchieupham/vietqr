@@ -14,8 +14,7 @@ import '../../scan_qr/widgets/qr_scan_widget.dart';
 class CardWallet extends StatelessWidget {
   final Function startBarcodeScanStream;
 
-  const CardWallet({Key? key, required this.startBarcodeScanStream})
-      : super(key: key);
+  const CardWallet({super.key, required this.startBarcodeScanStream});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +23,15 @@ class CardWallet extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
-          borderRadius: BorderRadius.circular(8)),
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: [
+            BoxShadow(
+              color: AppColor.BLACK.withOpacity(0.1),
+              spreadRadius: 1,
+              blurRadius: 2,
+              offset: const Offset(0, 2),
+            )
+          ]),
       child: ChangeNotifierProvider(
         create: (context) => WalletProvider(),
         child: Column(
@@ -56,7 +63,8 @@ class CardWallet extends StatelessWidget {
               return Consumer<WalletProvider>(
                   builder: (context, provider, child) {
                 return Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  // mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     if (provider.isHide)
                       const Text(
@@ -78,14 +86,11 @@ class CardWallet extends StatelessWidget {
                       onTap: () {
                         provider.updateHideAmount(!provider.isHide);
                       },
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 4),
-                        child: Image.asset(
-                          provider.isHide
-                              ? 'assets/images/ic-hide.png'
-                              : 'assets/images/ic-unhide.png',
-                          height: 15,
-                        ),
+                      child: Image.asset(
+                        provider.isHide
+                            ? 'assets/images/ic-hide.png'
+                            : 'assets/images/ic-unhide.png',
+                        height: 15,
                       ),
                     ),
                     const Spacer(),

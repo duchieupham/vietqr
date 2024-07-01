@@ -386,239 +386,250 @@ class _BankScreenState extends State<_BankScreen>
         List<BankAccountDTO> listUnAuthenticated = state.listBanks
             .where((element) => element.isAuthenticated == false)
             .toList();
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: RefreshIndicator(
-                onRefresh: _refresh,
-                child: ListView(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-                  children: [
-                    if (extendAnnualFeeList.isNotEmpty) ...[
-                      const SizedBox(
-                        height: 0,
-                      ),
-                      Container(
-                        height: (extendAnnualFeeList.length *
-                                (extendAnnualFeeList.length != 1 ? 120 : 135)) -
-                            extendAnnualFeeList.length * 12 -
-                            (extendAnnualFeeList.length - 1) * 8,
-                        child: Stack(
-                          children: [
-                            Container(
-                              height: 90,
-                              width: double.infinity,
-                              padding: const EdgeInsets.fromLTRB(20, 15, 20, 0),
-                              decoration: BoxDecoration(
-                                color: Color(0xFFFFF3DF),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Text(
-                                "Gia hạn dịch vụ phần mềm VietQR",
-                                style: TextStyle(
-                                    fontSize: 15, fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                            Positioned(
-                              right: 0,
-                              left: 0,
-                              bottom: 0,
-                              child: Container(
-                                height: (extendAnnualFeeList.length * 100) -
-                                    extendAnnualFeeList.length * 12 -
-                                    (extendAnnualFeeList.length - 1) * 8,
+        return Container(
+          // color: AppColor.WHITE,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: RefreshIndicator(
+                  onRefresh: _refresh,
+                  child: ListView(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                    children: [
+                      if (extendAnnualFeeList.isNotEmpty) ...[
+                        const SizedBox(
+                          height: 0,
+                        ),
+                        Container(
+                          height: (extendAnnualFeeList.length *
+                                  (extendAnnualFeeList.length != 1
+                                      ? 120
+                                      : 135)) -
+                              extendAnnualFeeList.length * 12 -
+                              (extendAnnualFeeList.length - 1) * 8,
+                          child: Stack(
+                            children: [
+                              Container(
+                                height: 90,
                                 width: double.infinity,
-                                child: Stack(
-                                  children: [
-                                    ...extendAnnualFeeList.map((e) {
-                                      int index =
-                                          extendAnnualFeeList.indexOf(e);
-                                      return Positioned(
-                                        top: index * 65,
-                                        left: 0,
-                                        right: 0,
-                                        child: CardWidget(
-                                          isExtend: true,
-                                          isAuthen: false,
-                                          listBanks: extendAnnualFeeList,
-                                          index: index,
-                                          onLinked: () => onLinked(context,
-                                              extendAnnualFeeList[index]),
-                                          onActive: () {
-                                            Provider.of<MaintainChargeProvider>(
-                                                    context,
-                                                    listen: false)
-                                                .selectedBank(
-                                                    extendAnnualFeeList[index]
-                                                        .bankAccount,
-                                                    extendAnnualFeeList[index]
-                                                        .bankShortName);
-                                            onActiveKey(
-                                              bankId:
-                                                  extendAnnualFeeList[index].id,
-                                              bankCode:
-                                                  extendAnnualFeeList[index]
-                                                      .bankCode,
-                                              bankName:
-                                                  extendAnnualFeeList[index]
-                                                      .bankName,
-                                              bankAccount:
-                                                  extendAnnualFeeList[index]
-                                                      .bankAccount,
-                                              userBankName:
-                                                  extendAnnualFeeList[index]
-                                                      .userBankName,
-                                            );
-                                          },
-                                        ),
-                                      );
-                                    }).toList()
-                                  ],
+                                padding:
+                                    const EdgeInsets.fromLTRB(20, 15, 20, 0),
+                                decoration: BoxDecoration(
+                                  color: Color(0xFFFFF3DF),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Text(
+                                  "Gia hạn dịch vụ phần mềm VietQR",
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
-                            )
-                          ],
+                              Positioned(
+                                right: 0,
+                                left: 0,
+                                bottom: 0,
+                                child: Container(
+                                  height: (extendAnnualFeeList.length * 100) -
+                                      extendAnnualFeeList.length * 12 -
+                                      (extendAnnualFeeList.length - 1) * 8,
+                                  width: double.infinity,
+                                  child: Stack(
+                                    children: [
+                                      ...extendAnnualFeeList.map((e) {
+                                        int index =
+                                            extendAnnualFeeList.indexOf(e);
+                                        return Positioned(
+                                          top: index * 65,
+                                          left: 0,
+                                          right: 0,
+                                          child: CardWidget(
+                                            isExtend: true,
+                                            isAuthen: false,
+                                            listBanks: extendAnnualFeeList,
+                                            index: index,
+                                            onLinked: () => onLinked(context,
+                                                extendAnnualFeeList[index]),
+                                            onActive: () {
+                                              Provider.of<MaintainChargeProvider>(
+                                                      context,
+                                                      listen: false)
+                                                  .selectedBank(
+                                                      extendAnnualFeeList[index]
+                                                          .bankAccount,
+                                                      extendAnnualFeeList[index]
+                                                          .bankShortName);
+                                              onActiveKey(
+                                                bankId:
+                                                    extendAnnualFeeList[index]
+                                                        .id,
+                                                bankCode:
+                                                    extendAnnualFeeList[index]
+                                                        .bankCode,
+                                                bankName:
+                                                    extendAnnualFeeList[index]
+                                                        .bankName,
+                                                bankAccount:
+                                                    extendAnnualFeeList[index]
+                                                        .bankAccount,
+                                                userBankName:
+                                                    extendAnnualFeeList[index]
+                                                        .userBankName,
+                                              );
+                                            },
+                                          ),
+                                        );
+                                      }).toList()
+                                    ],
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 20),
-                    ],
-                    if (listAuthenticated.isNotEmpty) ...[
-                      const SizedBox(height: 12),
-                      Text(
-                        'Tài khoản liên kết',
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
+                        const SizedBox(height: 20),
+                      ],
+                      if (listAuthenticated.isNotEmpty) ...[
+                        const SizedBox(height: 12),
+                        Text(
+                          'Tài khoản liên kết',
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        height: (listAuthenticated.length * 162) -
-                            listAuthenticated.length * 12 -
-                            (listAuthenticated.length - 1) * 8,
-                        width: MediaQuery.of(context).size.width,
-                        child: Stack(
-                          children: listAuthenticated.map((e) {
-                            int index = listAuthenticated.indexOf(e);
-                            return Positioned(
-                              top: index * 145,
-                              left: 0,
-                              right: 0,
-                              child: CardWidget(
-                                isExtend: false,
-                                isAuthen:
-                                    listAuthenticated[index].isAuthenticated,
-                                listBanks: listAuthenticated,
-                                index: index,
-                                onLinked: () =>
-                                    onLinked(context, listAuthenticated[index]),
-                                onActive: () {
-                                  Provider.of<MaintainChargeProvider>(context,
-                                          listen: false)
-                                      .selectedBank(
+                        SizedBox(
+                          height: (listAuthenticated.length * 162) -
+                              listAuthenticated.length * 12 -
+                              (listAuthenticated.length - 1) * 8,
+                          width: MediaQuery.of(context).size.width,
+                          child: Stack(
+                            children: listAuthenticated.map((e) {
+                              int index = listAuthenticated.indexOf(e);
+                              return Positioned(
+                                top: index * 145,
+                                left: 0,
+                                right: 0,
+                                child: CardWidget(
+                                  isExtend: false,
+                                  isAuthen:
+                                      listAuthenticated[index].isAuthenticated,
+                                  listBanks: listAuthenticated,
+                                  index: index,
+                                  onLinked: () => onLinked(
+                                      context, listAuthenticated[index]),
+                                  onActive: () {
+                                    Provider.of<MaintainChargeProvider>(context,
+                                            listen: false)
+                                        .selectedBank(
+                                            listAuthenticated[index]
+                                                .bankAccount,
+                                            listAuthenticated[index]
+                                                .bankShortName);
+                                    onActiveKey(
+                                      bankId: listAuthenticated[index].id,
+                                      bankCode:
+                                          listAuthenticated[index].bankCode,
+                                      bankName:
+                                          listAuthenticated[index].bankName,
+                                      bankAccount:
                                           listAuthenticated[index].bankAccount,
-                                          listAuthenticated[index]
-                                              .bankShortName);
-                                  onActiveKey(
-                                    bankId: listAuthenticated[index].id,
-                                    bankCode: listAuthenticated[index].bankCode,
-                                    bankName: listAuthenticated[index].bankName,
-                                    bankAccount:
-                                        listAuthenticated[index].bankAccount,
-                                    userBankName:
-                                        listAuthenticated[index].userBankName,
-                                  );
-                                },
+                                      userBankName:
+                                          listAuthenticated[index].userBankName,
+                                    );
+                                  },
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                      ],
+                      if (listUnAuthenticated.isNotEmpty) ...[
+                        Text(
+                          'Tài khoản lưu trữ',
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        // const SizedBox(height: 12),
+                        SizedBox(
+                          height: (listUnAuthenticated.length * 126) -
+                              listUnAuthenticated.length * 12 -
+                              (listUnAuthenticated.length - 1) * 8,
+                          width: MediaQuery.of(context).size.width,
+                          child: Stack(
+                            children: listUnAuthenticated.map((e) {
+                              int index = listUnAuthenticated.indexOf(e);
+                              return Positioned(
+                                top: index * 106,
+                                left: 0,
+                                right: 0,
+                                child: CardWidget(
+                                  isExtend: false,
+                                  isAuthen: listUnAuthenticated[index]
+                                      .isAuthenticated,
+                                  listBanks: listUnAuthenticated,
+                                  index: index,
+                                  onLinked: () => onLinked(
+                                      context, listUnAuthenticated[index]),
+                                  onActive: () {
+                                    Provider.of<MaintainChargeProvider>(context,
+                                            listen: false)
+                                        .selectedBank(
+                                            listUnAuthenticated[index]
+                                                .bankAccount,
+                                            listUnAuthenticated[index]
+                                                .bankShortName);
+                                    onActiveKey(
+                                      bankId: listUnAuthenticated[index].id,
+                                      bankCode:
+                                          listUnAuthenticated[index].bankCode,
+                                      bankName:
+                                          listUnAuthenticated[index].bankName,
+                                      bankAccount: listUnAuthenticated[index]
+                                          .bankAccount,
+                                      userBankName: listUnAuthenticated[index]
+                                          .userBankName,
+                                    );
+                                  },
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                      ] else if (state.status == BlocStatus.LOADING)
+                        Container(
+                          height: 120,
+                          child: const Center(
+                            child: SizedBox(
+                              width: 30,
+                              height: 30,
+                              child: CircularProgressIndicator(
+                                color: AppColor.BLUE_TEXT,
                               ),
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                    ],
-                    if (listUnAuthenticated.isNotEmpty) ...[
-                      Text(
-                        'Tài khoản lưu trữ',
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      // const SizedBox(height: 12),
-                      SizedBox(
-                        height: (listUnAuthenticated.length * 126) -
-                            listUnAuthenticated.length * 12 -
-                            (listUnAuthenticated.length - 1) * 8,
-                        width: MediaQuery.of(context).size.width,
-                        child: Stack(
-                          children: listUnAuthenticated.map((e) {
-                            int index = listUnAuthenticated.indexOf(e);
-                            return Positioned(
-                              top: index * 106,
-                              left: 0,
-                              right: 0,
-                              child: CardWidget(
-                                isExtend: false,
-                                isAuthen:
-                                    listUnAuthenticated[index].isAuthenticated,
-                                listBanks: listUnAuthenticated,
-                                index: index,
-                                onLinked: () => onLinked(
-                                    context, listUnAuthenticated[index]),
-                                onActive: () {
-                                  Provider.of<MaintainChargeProvider>(context,
-                                          listen: false)
-                                      .selectedBank(
-                                          listUnAuthenticated[index]
-                                              .bankAccount,
-                                          listUnAuthenticated[index]
-                                              .bankShortName);
-                                  onActiveKey(
-                                    bankId: listUnAuthenticated[index].id,
-                                    bankCode:
-                                        listUnAuthenticated[index].bankCode,
-                                    bankName:
-                                        listUnAuthenticated[index].bankName,
-                                    bankAccount:
-                                        listUnAuthenticated[index].bankAccount,
-                                    userBankName:
-                                        listUnAuthenticated[index].userBankName,
-                                  );
-                                },
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                    ] else if (state.status == BlocStatus.LOADING)
-                      Container(
-                        height: 120,
-                        child: const Center(
-                          child: SizedBox(
-                            width: 30,
-                            height: 30,
-                            child: CircularProgressIndicator(
-                              color: AppColor.BLUE_TEXT,
                             ),
                           ),
                         ),
-                      ),
-                    _buildListBankType(
-                      isEmpty: state.isEmpty,
-                      list: state.listBankTypeDTO,
-                      listBanks: state.listBanks,
-                    )
-                  ],
+                      _buildListBankType(
+                        isEmpty: state.isEmpty,
+                        list: state.listBankTypeDTO,
+                        listBanks: state.listBanks,
+                      )
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 4),
-            _buildListSection(),
-          ],
+              // const SizedBox(height: 4),
+              _buildListSection(),
+            ],
+          ),
         );
       },
     );
@@ -651,8 +662,12 @@ class _BankScreenState extends State<_BankScreen>
   }
 
   Widget _buildListSection() {
-    return Padding(
-      padding: const EdgeInsets.only(left: 16, right: 16, top: 4, bottom: 24),
+    return Container(
+      // color: AppColor.TRANSPARENT,
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 4, bottom: 90),
+      decoration: const BoxDecoration(
+          color: AppColor.WHITE,
+          border: Border(top: BorderSide(color: AppColor.GREY_DADADA))),
       child: IntrinsicHeight(
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -758,6 +773,13 @@ class _BankScreenState extends State<_BankScreen>
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5),
                             color: AppColor.WHITE,
+                            boxShadow: [
+                              BoxShadow(
+                                  color: AppColor.BLACK.withOpacity(0.1),
+                                  spreadRadius: 2,
+                                  blurRadius: 2,
+                                  offset: const Offset(0, 1))
+                            ],
                             image: data.fileBank != null
                                 ? DecorationImage(
                                     image: FileImage(data.fileBank!))
@@ -765,7 +787,7 @@ class _BankScreenState extends State<_BankScreen>
                                     image: ImageUtils.instance
                                         .getImageNetWork(data.imageId)),
                           ),
-                          margin: EdgeInsets.all(4),
+                          margin: const EdgeInsets.all(4),
                         ),
                         Align(
                           alignment: Alignment.topRight,
