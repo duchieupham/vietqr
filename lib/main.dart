@@ -60,7 +60,7 @@ Future<String> downloadAndSaveImage(String imageUrl, String path) async {
     final response = await http.get(Uri.parse(imageUrl));
     final bytes = response.bodyBytes;
 
-    final localImagePath =  await path.getFullPathImagePath;
+    final localImagePath = await path.getFullPathImagePath;
 
     final file = File(localImagePath);
     file.writeAsBytesSync(bytes);
@@ -90,7 +90,7 @@ Future<String> saveImageToLocal(Uint8List uint8list, String path) async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Injection.inject(env: EnvType.STG);
+  await Injection.inject(env: EnvType.PROD);
 
   await SharePrefUtils.init();
   await SharePrefUtils.onClearCache();

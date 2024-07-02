@@ -54,6 +54,9 @@ class Routes {
   static const String INVOICE_SCREEN = '/invoice_screen';
   static const String INVOICE_DETAIL = '/invoice_detail';
   static const String QR_BOX = '/qr_box';
+  static const String QR_CREATE_SCREEN = '/qr_create_screen';
+  static const String QR_SCREEN = '/qr_screen';
+
 
   // static const String SETTING_BDSD = '/setting_bdsd';
   static const String TRANSACTION_WALLET = '/transaction_wallet';

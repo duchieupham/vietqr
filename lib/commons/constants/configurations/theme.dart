@@ -29,11 +29,15 @@ class AppColor {
   static const Color BLUE_E1EFFF = Color(0xFFE1EFFF);
   static const Color BLUE_E5F9FF = Color(0xFFE5F9FF);
 
+  // static const Color BLUE_91FFFF = Color(0xFF91FFFF);
+
   static const Color error700 = Color(0xffD8281E);
   static const Color BLUE_TEXT = Color(0xFF0A7AFF);
   static const Color RED_CALENDAR = Color(0xFFF5233C);
   static const Color TRANSPARENT = Color(0x00000000);
   static const Color GREY_TOP_TAB_BAR = Color(0xFFBEC1C9);
+  static const Color GREY_F0F4FA = Color(0xFFF0F4FA);
+
   static const Color gray = Color(0xffA8A8A8);
   static const Color SUCCESS_STATUS = Color(0xFF06B271);
   static const Color GREEN = Color(0xFF00CA28);
@@ -90,6 +94,63 @@ class AppColor {
         borderRadius: BorderRadius.circular(12),
         color: color ?? Theme.of(context).cardColor);
   }
+}
+
+class GradientColor {
+  // ignore: non_constant_identifier_names
+  LinearGradient viet_qr = const LinearGradient(
+    colors: [
+      AppColor.WHITE,
+      AppColor.GREY_F0F4FA,
+    ],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
+  LinearGradient qr_link = const LinearGradient(
+    colors: [
+      Color(0xFF91E2FF),
+      Color(0xFF91FFFF),
+    ],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
+  LinearGradient vcard = const LinearGradient(
+    colors: [
+      Color(0xFFB4FFEE),
+      Color(0xFFEDFF96),
+    ],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
+  LinearGradient other_qr = const LinearGradient(
+    colors: [
+      Color(0xFFA6C5FF),
+      Color(0xFFC5CDFF),
+    ],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
+  LinearGradient scan_qr = const LinearGradient(
+    colors: [
+      AppColor.BLUE_E1EFFF,
+      AppColor.BLUE_E5F9FF,
+    ],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
+  LinearGradient import_qr = const LinearGradient(
+    colors: [
+      Color(0xFFBAFFBF),
+      Color(0xFFCFF4D2),
+    ],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
+}
+
+class VietQRTheme {
+  static AppColor appColor = AppColor();
+  static GradientColor gradientColor = GradientColor();
 }
 
 //theme data
