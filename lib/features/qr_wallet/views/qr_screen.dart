@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
-import 'package:vierqr/features/qr_wallet/widgets/custom_textfield.dart';
 import 'package:vierqr/features/qr_wallet/views/custom_textfield.dart';
 import 'package:vierqr/features/qr_wallet/widgets/default_appbar_widget.dart';
 import 'package:vierqr/features/qr_wallet/widgets/vcard_widget.dart';
@@ -282,7 +281,7 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
         ),
         const SizedBox(height: 30),
         CustomTextField(
-          // isActive: _isActiveTextField,
+          isActive: _isActiveTextField,
           controller: _controller,
           hintText: 'Nhập tên chủ tài khoản ngân hàng',
           labelText: 'Chủ tài khoản*',

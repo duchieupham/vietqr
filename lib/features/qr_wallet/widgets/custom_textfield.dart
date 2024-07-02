@@ -14,6 +14,7 @@ class CustomTextField extends StatelessWidget {
   final int? maxLines;
   final VoidCallback onClear;
   final ValueChanged<String> onChanged;
+  final bool isActive;
 
   const CustomTextField({
     super.key,
@@ -27,6 +28,7 @@ class CustomTextField extends StatelessWidget {
     this.inputFormatter,
     this.textInputType,
     this.maxLines,
+    this.isActive = false,
   });
 
   @override
