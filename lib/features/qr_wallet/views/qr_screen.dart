@@ -1,7 +1,14 @@
 // ignore_for_file: constant_identifier_names
 
+import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
+import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/enums/textfield_type.dart';
+import 'package:vierqr/features/qr_wallet/views/custom_textfield.dart';
 import 'package:vierqr/features/qr_wallet/widgets/default_appbar_widget.dart';
+import 'package:vierqr/layouts/image/x_image.dart';
+import 'package:vierqr/layouts/m_button_widget.dart';
+import 'package:vierqr/layouts/m_text_form_field.dart';
 
 enum TypeQr {
   VIETQR,
@@ -20,11 +27,35 @@ class QrLinkScreen extends StatefulWidget {
 
 class _QrLinkScreenState extends State<QrLinkScreen> {
   TypeQr? _qrType;
+  final TextEditingController _controller = TextEditingController();
+  String _clipboardContent = '';
+  bool _isButtonEnabled = false;
+  bool _showAdditionalOptions = false;
+  void _toggleAdditionalOptions() {
+    setState(() {
+      _showAdditionalOptions = !_showAdditionalOptions;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
     _qrType = widget.type;
+    _getClipboardContent();
+    _controller.addListener(_updateButtonState);
+  }
+
+  void _getClipboardContent() async {
+    final clipboardContent = await FlutterClipboard.paste();
+    setState(() {
+      _clipboardContent = clipboardContent;
+    });
+  }
+
+  void _updateButtonState() {
+    setState(() {
+      _isButtonEnabled = _controller.text.isNotEmpty;
+    });
   }
 
   @override
@@ -32,6 +63,7 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
+      bottomNavigationBar: _bottomButton(),
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
@@ -41,10 +73,394 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
-              // child: _buildBody(),
+              child: _buildBody(),
             ),
           )
         ],
+      ),
+    );
+  }
+
+  Widget _buildBody() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              _qrType == TypeQr.QR_LINK
+                  ? 'Nhập thông tin\ntạo mã QR Đường dẫn'
+                  : 'Nhập thông tin\ntạo mã QR để lưu trữ',
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
+            Row(
+              children: [
+                InkWell(
+                  onTap: () {},
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    height: 42,
+                    width: 42,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100),
+                      color: AppColor.BLUE_TEXT.withOpacity(0.2),
+                    ),
+                    child: const XImage(
+                        imagePath: 'assets/images/ic-scan-content.png'),
+                  ),
+                ),
+                const SizedBox(width: 4),
+                InkWell(
+                  onTap: () {},
+                  child: Container(
+                    padding: const EdgeInsets.all(13),
+                    height: 42,
+                    width: 42,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100),
+                      color: AppColor.GREEN.withOpacity(0.2),
+                    ),
+                    child: const XImage(
+                      fit: BoxFit.fitWidth,
+                      width: 42,
+                      height: 42,
+                      imagePath: 'assets/images/ic-img-picker.png',
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        const SizedBox(height: 30),
+        Text(
+          _qrType == TypeQr.QR_LINK ? 'URL*' : 'Thông tin mã QR*',
+          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+        ),
+        Container(
+          decoration: const BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                color: AppColor.GREY_DADADA,
+                width: 1.0,
+              ),
+            ),
+          ),
+          child: TextField(
+            controller: _controller,
+            decoration: InputDecoration(
+              hintText: _qrType == TypeQr.QR_LINK
+                  ? 'Nhập thông tin đường dẫn tại đây'
+                  : 'Nhập thông tin mã QR tại đây',
+              hintStyle: const TextStyle(color: AppColor.GREY_TEXT),
+              contentPadding: EdgeInsets.zero,
+              border: InputBorder.none,
+              suffixIcon: _controller.text.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(
+                        Icons.clear,
+                      ),
+                      onPressed: () {
+                        _controller.clear();
+                        _updateButtonState();
+                      },
+                    )
+                  : null,
+            ),
+            onChanged: (text) {
+              _updateButtonState();
+            },
+          ),
+        ),
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              _controller.text = _clipboardContent;
+            });
+          },
+          child: Container(
+            width: 250,
+            margin: const EdgeInsets.only(top: 10),
+            padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                gradient: const LinearGradient(colors: [
+                  AppColor.D8ECF8,
+                  AppColor.FFEAD9,
+                  AppColor.F5C9D1,
+                ], begin: Alignment.bottomLeft, end: Alignment.topRight)),
+            child: Row(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  child: XImage(
+                    imagePath: 'assets/images/ic-suggest.png',
+                    width: 30,
+                  ),
+                ),
+                Expanded(
+                  child: Text(
+                    _clipboardContent,
+                    maxLines: 1,
+                    style: const TextStyle(
+                      color: AppColor.BLACK,
+                      fontSize: 12,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildVCard() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Nhập thông tin\ntạo mã QR VCard',
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
+            Row(
+              children: [
+                InkWell(
+                  onTap: () {},
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    height: 42,
+                    width: 42,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100),
+                      color: AppColor.BLUE_TEXT.withOpacity(0.2),
+                    ),
+                    child: const XImage(
+                        imagePath: 'assets/images/ic-scan-content.png'),
+                  ),
+                ),
+                const SizedBox(width: 4),
+                InkWell(
+                  onTap: () {},
+                  child: Container(
+                    padding: const EdgeInsets.all(13),
+                    height: 42,
+                    width: 42,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100),
+                      color: AppColor.GREEN.withOpacity(0.2),
+                    ),
+                    child: const XImage(
+                      fit: BoxFit.fitWidth,
+                      width: 42,
+                      height: 42,
+                      imagePath: 'assets/images/ic-img-picker.png',
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        const SizedBox(height: 30),
+        CustomTextField(
+          controller: _controller,
+          hintText: 'Nhập số điện thoại',
+          labelText: 'Số điện thoại*',
+          borderColor: Colors.grey,
+          hintTextColor: Colors.grey,
+          onClear: () {
+            _controller.clear();
+            _updateButtonState();
+          },
+          onChanged: (text) {
+            _updateButtonState();
+          },
+        ),
+        const SizedBox(height: 30),
+        CustomTextField(
+          controller: _controller,
+          hintText: 'Nhập tên danh bạ',
+          labelText: 'Tên danh bạ*',
+          borderColor: Colors.grey,
+          hintTextColor: Colors.grey,
+          onClear: () {
+            _controller.clear();
+            _updateButtonState();
+          },
+          onChanged: (text) {
+            _updateButtonState();
+          },
+        ),
+        const SizedBox(height: 30),
+        GestureDetector(
+          onTap: _toggleAdditionalOptions,
+          child: Container(
+            width: 150,
+            height: 30,
+            decoration: BoxDecoration(
+                gradient: VietQRTheme.gradientColor.scan_qr,
+                borderRadius: BorderRadius.circular(20)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  _showAdditionalOptions
+                      ? Icons.keyboard_arrow_up
+                      : Icons.keyboard_arrow_down,
+                  color: AppColor.BLUE_TEXT,
+                  size: 15,
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  _showAdditionalOptions ? 'Đóng tuỳ chọn' : 'Tuỳ chọn thêm',
+                  style: const TextStyle(
+                    color: AppColor.BLUE_TEXT,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        Visibility(
+          visible: _showAdditionalOptions,
+          child: Column(
+            children: [
+              const SizedBox(height: 30),
+              CustomTextField(
+                controller: _controller,
+                hintText: 'Nhập thông tin email',
+                labelText: 'Email',
+                borderColor: Colors.grey,
+                hintTextColor: Colors.grey,
+                onClear: () {
+                  _controller.clear();
+                  _updateButtonState();
+                },
+                onChanged: (text) {
+                  _updateButtonState();
+                },
+              ),
+              const SizedBox(height: 30),
+              CustomTextField(
+                controller: _controller,
+                hintText: 'Nhập thông tin website',
+                labelText: 'Website',
+                borderColor: Colors.grey,
+                hintTextColor: Colors.grey,
+                onClear: () {
+                  _controller.clear();
+                  _updateButtonState();
+                },
+                onChanged: (text) {
+                  _updateButtonState();
+                },
+              ),
+              const SizedBox(height: 30),
+              CustomTextField(
+                controller: _controller,
+                hintText: 'Nhập tên công ty',
+                labelText: 'Tên công ty',
+                borderColor: Colors.grey,
+                hintTextColor: Colors.grey,
+                onClear: () {
+                  _controller.clear();
+                  _updateButtonState();
+                },
+                onChanged: (text) {
+                  _updateButtonState();
+                },
+              ),
+              const SizedBox(height: 30),
+              CustomTextField(
+                controller: _controller,
+                hintText: 'Nhập thông tin địa chỉ',
+                labelText: 'Địa chỉ',
+                borderColor: Colors.grey,
+                hintTextColor: Colors.grey,
+                onClear: () {
+                  _controller.clear();
+                  _updateButtonState();
+                },
+                onChanged: (text) {
+                  _updateButtonState();
+                },
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _bottomButton() {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+      // decoration: BoxDecoration(
+      //   color: Colors.white,
+      //   border: Border(
+      //     top: BorderSide(color: Colors.grey, width: 0.5),
+      //   ),
+      // ),
+      child: GestureDetector(
+        onTap: _isButtonEnabled ? () {} : null,
+        child: Container(
+          width: double.infinity,
+          height: 50,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(25),
+            gradient: _isButtonEnabled
+                ? const LinearGradient(
+                    colors: [
+                      Color(0xFF00C6FF),
+                      Color(0xFF0072FF),
+                    ],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  )
+                : null,
+            color: _isButtonEnabled ? null : Color(0xFFF0F4FA),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Padding(
+                padding: EdgeInsets.only(left: 16.0),
+                child: Icon(
+                  Icons.arrow_forward,
+                  color: AppColor.TRANSPARENT,
+                ),
+              ),
+              Expanded(
+                child: Center(
+                  child: Text(
+                    'Tiếp tục',
+                    style: TextStyle(
+                      color: _isButtonEnabled ? AppColor.WHITE : AppColor.BLACK,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 16.0),
+                child: Icon(
+                  Icons.arrow_forward,
+                  color: _isButtonEnabled ? AppColor.WHITE : AppColor.BLACK,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

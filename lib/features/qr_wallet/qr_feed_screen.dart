@@ -226,7 +226,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 height: 42,
-                width: 290,
+                width: MediaQuery.of(context).size.width * 0.64,
                 alignment: Alignment.centerLeft,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(40),
@@ -241,44 +241,39 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                 ),
               ),
             ),
-            Row(
-              children: [
-                InkWell(
-                  onTap: () {},
-                  child: Container(
-                    padding: const EdgeInsets.all(4),
-                    height: 42,
-                    width: 42,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(100),
-                      color: AppColor.BLUE_TEXT.withOpacity(0.2),
-                    ),
-                    child: const XImage(
-                        imagePath: 'assets/images/ic-scan-content.png'),
-                  ),
+            InkWell(
+              onTap: () {},
+              child: Container(
+                padding: const EdgeInsets.all(4),
+                height: 42,
+                width: 42,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(100),
+                  color: AppColor.BLUE_TEXT.withOpacity(0.2),
                 ),
-                const SizedBox(width: 10),
-                InkWell(
-                  onTap: () {},
-                  child: Container(
-                    padding: const EdgeInsets.all(13),
-                    height: 42,
-                    width: 42,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(100),
-                      color: AppColor.GREEN.withOpacity(0.2),
-                    ),
-                    child: const XImage(
-                      fit: BoxFit.fitWidth,
-                      width: 42,
-                      height: 42,
-                      imagePath: 'assets/images/ic-img-picker.png',
-                      // svgIconColor: ColorFilter.mode(
-                      //     AppColor.RED_TEXT, BlendMode.),
-                    ),
-                  ),
+                child: const XImage(
+                    imagePath: 'assets/images/ic-scan-content.png'),
+              ),
+            ),
+            InkWell(
+              onTap: () {},
+              child: Container(
+                padding: const EdgeInsets.all(13),
+                height: 42,
+                width: 42,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(100),
+                  color: AppColor.GREEN.withOpacity(0.2),
                 ),
-              ],
+                child: const XImage(
+                  fit: BoxFit.fitWidth,
+                  width: 42,
+                  height: 42,
+                  imagePath: 'assets/images/ic-img-picker.png',
+                  // svgIconColor: ColorFilter.mode(
+                  //     AppColor.RED_TEXT, BlendMode.),
+                ),
+              ),
             )
           ],
         ),
