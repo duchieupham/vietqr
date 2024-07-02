@@ -60,6 +60,22 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Widget? widget;
+    switch (_qrType) {
+      case TypeQr.QR_LINK:
+        widget = _buildQr();
+        break;
+      case TypeQr.VIETQR:
+        widget = _buildQr();
+        break;
+      case TypeQr.VCARD:
+        widget = _buildVCard();
+        break;
+      case TypeQr.OTHER:
+        // widget = _buildVCard();
+        break;
+      default:
+    }
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
@@ -73,7 +89,7 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
-              child: _buildBody(),
+              child: widget,
             ),
           )
         ],
@@ -81,7 +97,7 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
     );
   }
 
-  Widget _buildBody() {
+  Widget _buildQr() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
