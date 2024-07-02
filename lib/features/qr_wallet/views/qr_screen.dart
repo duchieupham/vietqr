@@ -4,8 +4,10 @@ import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/enums/textfield_type.dart';
-import 'package:vierqr/features/qr_wallet/views/custom_textfield.dart';
+import 'package:vierqr/commons/utils/string_utils.dart';
+import 'package:vierqr/features/qr_wallet/widgets/custom_textfield.dart';
 import 'package:vierqr/features/qr_wallet/widgets/default_appbar_widget.dart';
+import 'package:vierqr/features/qr_wallet/widgets/vcard_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/layouts/m_text_form_field.dart';
@@ -28,9 +30,18 @@ class QrLinkScreen extends StatefulWidget {
 class _QrLinkScreenState extends State<QrLinkScreen> {
   TypeQr? _qrType;
   final TextEditingController _controller = TextEditingController();
+  final TextEditingController sdtController = TextEditingController();
+  final TextEditingController contactController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController webController = TextEditingController();
+  final TextEditingController ctyController = TextEditingController();
+  final TextEditingController addressController = TextEditingController();
+
   String _clipboardContent = '';
-  bool _isButtonEnabled = false;
+  String phone = '';
+
   bool _showAdditionalOptions = false;
+
   void _toggleAdditionalOptions() {
     setState(() {
       _showAdditionalOptions = !_showAdditionalOptions;
@@ -42,7 +53,19 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
     super.initState();
     _qrType = widget.type;
     _getClipboardContent();
-    _controller.addListener(_updateButtonState);
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) {
+        sdtController.addListener(
+          () {
+            if (phone.isNotEmpty) {
+              sdtController.text = phone;
+              updateState();
+            }
+          },
+        );
+      },
+    );
+    // _controller.addListener(_updateButtonState);
   }
 
   void _getClipboardContent() async {
@@ -52,14 +75,9 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
     });
   }
 
-  void _updateButtonState() {
-    setState(() {
-      _isButtonEnabled = _controller.text.isNotEmpty;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    bool _isButtonEnabled = false;
     Widget? widget;
     switch (_qrType) {
       case TypeQr.QR_LINK:
@@ -69,7 +87,58 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
         widget = _buildQr();
         break;
       case TypeQr.VCARD:
-        widget = _buildVCard();
+        if (sdtController.text.isNotEmpty &&
+            contactController.text.isNotEmpty) {
+          _isButtonEnabled = true;
+        } else {
+          _isButtonEnabled = false;
+        }
+        widget = VcardWidget(
+          sdtController: sdtController,
+          addressController: addressController,
+          webController: webController,
+          contactController: contactController,
+          ctyController: ctyController,
+          emailController: emailController,
+          isShow: _showAdditionalOptions,
+          onChangePhone: (value) {
+            String formatText = StringUtils.instance.formatPhoneNumberVN(value);
+            phone = formatText;
+            setState(() {});
+          },
+          onToggle: _toggleAdditionalOptions,
+          onClear: (type) {
+            _controller.clear();
+            switch (type) {
+              case 1:
+                sdtController.clear();
+                setState(() {});
+                break;
+              case 2:
+                contactController.clear();
+                setState(() {});
+                break;
+              case 3:
+                emailController.clear();
+                setState(() {});
+                break;
+              case 4:
+                webController.clear();
+                setState(() {});
+                break;
+              case 5:
+                ctyController.clear();
+                setState(() {});
+                break;
+              case 6:
+                addressController.clear();
+                setState(() {});
+                break;
+              default:
+            }
+            // _updateButtonState();
+          },
+        );
         break;
       case TypeQr.OTHER:
         // widget = _buildVCard();
@@ -79,7 +148,7 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
-      bottomNavigationBar: _bottomButton(),
+      bottomNavigationBar: _bottomButton(_isButtonEnabled),
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
@@ -180,13 +249,13 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
                       ),
                       onPressed: () {
                         _controller.clear();
-                        _updateButtonState();
+                        // _updateButtonState();
                       },
                     )
                   : null,
             ),
             onChanged: (text) {
-              _updateButtonState();
+              // _updateButtonState();
             },
           ),
         ),
@@ -235,190 +304,7 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
     );
   }
 
-  Widget _buildVCard() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              'Nhập thông tin\ntạo mã QR VCard',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-            Row(
-              children: [
-                InkWell(
-                  onTap: () {},
-                  child: Container(
-                    padding: const EdgeInsets.all(4),
-                    height: 42,
-                    width: 42,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(100),
-                      color: AppColor.BLUE_TEXT.withOpacity(0.2),
-                    ),
-                    child: const XImage(
-                        imagePath: 'assets/images/ic-scan-content.png'),
-                  ),
-                ),
-                const SizedBox(width: 4),
-                InkWell(
-                  onTap: () {},
-                  child: Container(
-                    padding: const EdgeInsets.all(13),
-                    height: 42,
-                    width: 42,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(100),
-                      color: AppColor.GREEN.withOpacity(0.2),
-                    ),
-                    child: const XImage(
-                      fit: BoxFit.fitWidth,
-                      width: 42,
-                      height: 42,
-                      imagePath: 'assets/images/ic-img-picker.png',
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-        const SizedBox(height: 30),
-        CustomTextField(
-          controller: _controller,
-          hintText: 'Nhập số điện thoại',
-          labelText: 'Số điện thoại*',
-          borderColor: Colors.grey,
-          hintTextColor: Colors.grey,
-          onClear: () {
-            _controller.clear();
-            _updateButtonState();
-          },
-          onChanged: (text) {
-            _updateButtonState();
-          },
-        ),
-        const SizedBox(height: 30),
-        CustomTextField(
-          controller: _controller,
-          hintText: 'Nhập tên danh bạ',
-          labelText: 'Tên danh bạ*',
-          borderColor: Colors.grey,
-          hintTextColor: Colors.grey,
-          onClear: () {
-            _controller.clear();
-            _updateButtonState();
-          },
-          onChanged: (text) {
-            _updateButtonState();
-          },
-        ),
-        const SizedBox(height: 30),
-        GestureDetector(
-          onTap: _toggleAdditionalOptions,
-          child: Container(
-            width: 150,
-            height: 30,
-            decoration: BoxDecoration(
-                gradient: VietQRTheme.gradientColor.scan_qr,
-                borderRadius: BorderRadius.circular(20)),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  _showAdditionalOptions
-                      ? Icons.keyboard_arrow_up
-                      : Icons.keyboard_arrow_down,
-                  color: AppColor.BLUE_TEXT,
-                  size: 15,
-                ),
-                const SizedBox(width: 10),
-                Text(
-                  _showAdditionalOptions ? 'Đóng tuỳ chọn' : 'Tuỳ chọn thêm',
-                  style: const TextStyle(
-                    color: AppColor.BLUE_TEXT,
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        Visibility(
-          visible: _showAdditionalOptions,
-          child: Column(
-            children: [
-              const SizedBox(height: 30),
-              CustomTextField(
-                controller: _controller,
-                hintText: 'Nhập thông tin email',
-                labelText: 'Email',
-                borderColor: Colors.grey,
-                hintTextColor: Colors.grey,
-                onClear: () {
-                  _controller.clear();
-                  _updateButtonState();
-                },
-                onChanged: (text) {
-                  _updateButtonState();
-                },
-              ),
-              const SizedBox(height: 30),
-              CustomTextField(
-                controller: _controller,
-                hintText: 'Nhập thông tin website',
-                labelText: 'Website',
-                borderColor: Colors.grey,
-                hintTextColor: Colors.grey,
-                onClear: () {
-                  _controller.clear();
-                  _updateButtonState();
-                },
-                onChanged: (text) {
-                  _updateButtonState();
-                },
-              ),
-              const SizedBox(height: 30),
-              CustomTextField(
-                controller: _controller,
-                hintText: 'Nhập tên công ty',
-                labelText: 'Tên công ty',
-                borderColor: Colors.grey,
-                hintTextColor: Colors.grey,
-                onClear: () {
-                  _controller.clear();
-                  _updateButtonState();
-                },
-                onChanged: (text) {
-                  _updateButtonState();
-                },
-              ),
-              const SizedBox(height: 30),
-              CustomTextField(
-                controller: _controller,
-                hintText: 'Nhập thông tin địa chỉ',
-                labelText: 'Địa chỉ',
-                borderColor: Colors.grey,
-                hintTextColor: Colors.grey,
-                onClear: () {
-                  _controller.clear();
-                  _updateButtonState();
-                },
-                onChanged: (text) {
-                  _updateButtonState();
-                },
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _bottomButton() {
+  Widget _bottomButton(bool isEnable) {
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
       // decoration: BoxDecoration(
@@ -428,13 +314,13 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
       //   ),
       // ),
       child: GestureDetector(
-        onTap: _isButtonEnabled ? () {} : null,
+        onTap: isEnable ? () {} : null,
         child: Container(
           width: double.infinity,
           height: 50,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(25),
-            gradient: _isButtonEnabled
+            gradient: isEnable
                 ? const LinearGradient(
                     colors: [
                       Color(0xFF00C6FF),
@@ -444,7 +330,7 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
                     end: Alignment.centerRight,
                   )
                 : null,
-            color: _isButtonEnabled ? null : Color(0xFFF0F4FA),
+            color: isEnable ? null : const Color(0xFFF0F4FA),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -461,7 +347,7 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
                   child: Text(
                     'Tiếp tục',
                     style: TextStyle(
-                      color: _isButtonEnabled ? AppColor.WHITE : AppColor.BLACK,
+                      color: isEnable ? AppColor.WHITE : AppColor.BLACK,
                       fontSize: 16,
                     ),
                   ),
@@ -471,7 +357,7 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
                 padding: const EdgeInsets.only(right: 16.0),
                 child: Icon(
                   Icons.arrow_forward,
-                  color: _isButtonEnabled ? AppColor.WHITE : AppColor.BLACK,
+                  color: isEnable ? AppColor.WHITE : AppColor.BLACK,
                 ),
               ),
             ],
@@ -479,5 +365,9 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
         ),
       ),
     );
+  }
+
+  void updateState() {
+    setState(() {});
   }
 }

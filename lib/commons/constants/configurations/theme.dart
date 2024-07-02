@@ -254,21 +254,28 @@ class DefaultThemeData {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
           borderSide: const BorderSide(
-            color: Colors.transparent,
+            color: AppColor.TRANSPARENT,
             width: 1.0,
           ),
         ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(5),
-          borderSide: const BorderSide(
-            color: Colors.transparent,
+        enabledBorder: const UnderlineInputBorder(
+          // borderRadius: BorderRadius.circular(5),
+          borderSide: BorderSide(
+            color: AppColor.GREY_DADADA,
             width: 1.0,
           ),
         ),
-        disabledBorder: OutlineInputBorder(
+        // border: UnderlineInputBorder(
+        //   borderRadius: BorderRadius.circular(5),
+        //   borderSide: const BorderSide(
+        //     color: AppColor.TRANSPARENT,
+        //     width: 1.0,
+        //   ),
+        // ),
+        disabledBorder: UnderlineInputBorder(
           borderRadius: BorderRadius.circular(5),
           borderSide: const BorderSide(
-            color: Colors.transparent,
+            color: AppColor.TRANSPARENT,
             width: 1.0,
           ),
         ),
