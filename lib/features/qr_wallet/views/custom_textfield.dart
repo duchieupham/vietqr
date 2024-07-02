@@ -8,6 +8,7 @@ class CustomTextField extends StatelessWidget {
   final Color hintTextColor;
   final VoidCallback onClear;
   final ValueChanged<String> onChanged;
+  final bool isActive;
 
   CustomTextField({
     required this.controller,
@@ -17,6 +18,7 @@ class CustomTextField extends StatelessWidget {
     required this.hintTextColor,
     required this.onClear,
     required this.onChanged,
+    required this.isActive,
   });
 
   @override
@@ -30,6 +32,7 @@ class CustomTextField extends StatelessWidget {
         ),
         Container(
           decoration: BoxDecoration(
+            color: isActive ? Colors.transparent : Color(0xFFF0F4FA),
             border: Border(
               bottom: BorderSide(
                 color: borderColor,
@@ -39,12 +42,13 @@ class CustomTextField extends StatelessWidget {
           ),
           child: TextField(
             controller: controller,
+            enabled: isActive,
             decoration: InputDecoration(
               hintText: hintText,
               hintStyle: TextStyle(color: hintTextColor),
               contentPadding: EdgeInsets.zero,
               border: InputBorder.none,
-              suffixIcon: controller.text.isNotEmpty
+              suffixIcon: isActive && controller.text.isNotEmpty
                   ? IconButton(
                       icon: const Icon(
                         Icons.clear,
