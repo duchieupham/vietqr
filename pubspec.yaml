@@ -181,6 +181,7 @@ flutter:
     - assets/sounds/notification_sound.aiff
     - assets/rives/
     - assets/images/
+    - assets/images/bottom_bar/
     - assets/environment/
 
   #   - images/a_dot_burr.jpeg

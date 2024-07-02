@@ -10,8 +10,16 @@ class BottomSection extends StatefulWidget {
 class _BottomSectionState extends State<BottomSection> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 16, right: 16, top: 4, bottom: 24),
+    return Container(
+      decoration: BoxDecoration(color: AppColor.WHITE, boxShadow: [
+        BoxShadow(
+          color: AppColor.BLACK.withOpacity(0.1),
+          spreadRadius: 1,
+          blurRadius: 4,
+          offset: const Offset(0, -2),
+        )
+      ]),
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 4, bottom: 90),
       child: IntrinsicHeight(
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -79,7 +87,8 @@ class _BottomSectionState extends State<BottomSection> {
     );
   }
 
-  Widget _buildSection(BuildContext context, {
+  Widget _buildSection(
+    BuildContext context, {
     required String pathIcon,
     required GestureTapCallback? onTap,
     String title = '',
@@ -90,7 +99,8 @@ class _BottomSectionState extends State<BottomSection> {
       onTap: onTap,
       child: Container(
         padding: EdgeInsets.symmetric(
-            vertical: context.isSmall ? 6 : 8, horizontal: context.isSmall ? 6 : 12),
+            vertical: context.isSmall ? 6 : 8,
+            horizontal: context.isSmall ? 6 : 12),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.horizontal(
             left: Radius.circular(radiusLeft ?? 8),

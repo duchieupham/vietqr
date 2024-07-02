@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/layouts/image/x_image.dart';
 
 class BottomBarItem extends StatelessWidget {
   const BottomBarItem(
@@ -8,6 +8,7 @@ class BottomBarItem extends StatelessWidget {
     this.index,
     this.activeIcon,
     this.icon, {
+    super.key,
     this.onTap,
     this.color = AppColor.GREY_LIGHT,
     this.activeColor = AppColor.BLUE_TEXT,
@@ -32,19 +33,6 @@ class BottomBarItem extends StatelessWidget {
           duration: const Duration(milliseconds: 300),
           curve: Curves.fastOutSlowIn,
           padding: const EdgeInsets.all(7),
-          // decoration: BoxDecoration(
-          //   borderRadius: BorderRadius.circular(32),
-          //   color: bottomBarColor,
-          //   // boxShadow: [
-          //   //   if (isActive)
-          //   //     BoxShadow(
-          //   //       color: shadowColor.withOpacity(0.2),
-          //   //       spreadRadius: 2,
-          //   //       blurRadius: 2,
-          //   //       offset: Offset(0, 0), // changes position of shadow
-          //   //     ),
-          //   // ],
-          // ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -54,11 +42,25 @@ class BottomBarItem extends StatelessWidget {
                       width: 35,
                       height: 35,
                     )
-                  : Image.asset(
-                      isActive ? activeIcon : icon,
-                      color: isActive ? activeColor : color,
+                  : Container(
                       width: 35,
                       height: 35,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),
+                        // color: bottomBarColor,
+
+                        boxShadow: [
+                          if (isActive)
+                            BoxShadow(
+                              color: AppColor.WHITE.withOpacity(0.3),
+                              spreadRadius: 2,
+                              blurRadius: 10,
+                              offset: const Offset(
+                                  0, 0), // changes position of shadow
+                            ),
+                        ],
+                      ),
+                      child: XImage(imagePath: isActive ? activeIcon : icon),
                     ),
               const SizedBox(height: 4),
               Text(
@@ -66,7 +68,7 @@ class BottomBarItem extends StatelessWidget {
                 style: TextStyle(
                     fontSize: 9,
                     fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-                    color: isActive ? AppColor.BLUE_TEXT : AppColor.BLACK),
+                    color: AppColor.WHITE),
               )
             ],
           )),

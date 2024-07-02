@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_multi_formatter/formatters/phone_input_formatter.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
-import 'package:vierqr/features/qr_wallet/widgets/custom_textfield.dart';
+import 'package:vierqr/features/qr_feed/widgets/custom_textfield.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 
 class VcardWidget extends StatelessWidget {

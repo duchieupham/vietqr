@@ -5,8 +5,8 @@ import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
-import 'package:vierqr/features/qr_wallet/views/qr_screen.dart';
-import 'package:vierqr/features/qr_wallet/widgets/default_appbar_widget.dart';
+import 'package:vierqr/features/qr_feed/views/qr_screen.dart';
+import 'package:vierqr/features/qr_feed/widgets/default_appbar_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 
 // ignore: constant_identifier_names

@@ -344,6 +344,11 @@ enum CreateQRType {
   LIST_QR_BOX,
 }
 
+enum QrFeed {
+  NONE,
+  GET_QR_FEED_LIST,
+}
+
 enum DashBoardType {
   GET_BANK,
   GET_BANK_LOCAL,

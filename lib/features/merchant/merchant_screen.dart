@@ -122,56 +122,54 @@ class _MerchantScreenState extends State<MerchantScreen> {
   }
 
   Widget _createInvoiceButton() {
-    return InkWell(
-        onTap: () {},
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeInOut,
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+      width: 150,
+      height: 50,
+      margin: const EdgeInsets.only(bottom: 10, right: 5),
+      child: FloatingActionButton(
+        backgroundColor: Colors.transparent,
+        elevation: 4,
+        onPressed: () {
+          NavigatorUtils.navigatePage(
+              context, CreateOrderScreen(customerId: widget.customerId),
+              routeName: CreateOrderScreen.routeName);
+        },
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(50),
+          // side: BorderSide(color: Colors.red),
+        ),
+        child: Container(
           width: 150,
           height: 50,
-          margin: const EdgeInsets.only(bottom: 10, right: 5),
-          child: FloatingActionButton(
-            backgroundColor: Colors.transparent,
-            elevation: 4,
-            onPressed: () {
-              NavigatorUtils.navigatePage(
-                  context, CreateOrderScreen(customerId: widget.customerId),
-                  routeName: CreateOrderScreen.routeName);
-            },
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(50),
-              // side: BorderSide(color: Colors.red),
-            ),
-            child: Container(
-              width: 150,
-              height: 50,
-              decoration: BoxDecoration(
-                color: AppColor.BLUE_TEXT,
-                borderRadius: BorderRadius.circular(50),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.add_sharp,
-                    color: AppColor.WHITE,
-                    size: 15,
-                  ),
-                  const SizedBox(width: 2),
-                  Text(
-                    'Tạo hóa đơn',
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: AppColor.WHITE,
-                      fontWeight: FontWeight.normal,
-                    ),
-                  )
-                ],
-              ),
-            ),
+          decoration: BoxDecoration(
+            color: AppColor.BLUE_TEXT,
+            borderRadius: BorderRadius.circular(50),
           ),
-        ));
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.add_sharp,
+                color: AppColor.WHITE,
+                size: 15,
+              ),
+              const SizedBox(width: 2),
+              Text(
+                'Tạo hóa đơn',
+                style: TextStyle(
+                  fontSize: 13,
+                  color: AppColor.WHITE,
+                  fontWeight: FontWeight.normal,
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildBody() {

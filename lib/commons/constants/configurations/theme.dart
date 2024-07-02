@@ -28,6 +28,7 @@ class AppColor {
   static const Color RED_FFFF0000 = Color(0xFFFF0000);
   static const Color BLUE_E1EFFF = Color(0xFFE1EFFF);
   static const Color BLUE_E5F9FF = Color(0xFFE5F9FF);
+  static const Color BLUE_BGR = Color(0xFFF0F4FA);
 
   // static const Color BLUE_91FFFF = Color(0xFF91FFFF);
 
@@ -100,7 +101,14 @@ class AppColor {
 }
 
 class GradientColor {
-  // ignore: non_constant_identifier_names
+  LinearGradient bottom_bar = const LinearGradient(
+    colors: [
+      Color(0xFF00B8F5),
+      Color(0xFF0A7AFF),
+    ],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
   LinearGradient viet_qr = const LinearGradient(
     colors: [
       AppColor.WHITE,

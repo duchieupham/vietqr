@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
-import 'package:vierqr/features/qr_wallet/views/custom_textfield.dart';
-import 'package:vierqr/features/qr_wallet/widgets/default_appbar_widget.dart';
-import 'package:vierqr/features/qr_wallet/widgets/vcard_widget.dart';
+import 'package:vierqr/features/qr_feed/views/custom_textfield.dart';
+import 'package:vierqr/features/qr_feed/widgets/default_appbar_widget.dart';
+import 'package:vierqr/features/qr_feed/widgets/vcard_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 
 enum TypeQr {

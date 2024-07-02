@@ -37,7 +37,7 @@ import 'package:vierqr/features/personal/views/national_information_view.dart';
 import 'package:vierqr/features/personal/views/user_edit_view.dart';
 import 'package:vierqr/features/personal/views/user_update_password_view.dart';
 import 'package:vierqr/features/qr_box/qr_box_screen.dart';
-import 'package:vierqr/features/qr_wallet/views/qr_create_screen.dart';
+import 'package:vierqr/features/qr_feed/views/qr_create_screen.dart';
 import 'package:vierqr/features/register_new_bank/register_mb_bank.dart';
 import 'package:vierqr/features/report/report_screen.dart';
 import 'package:vierqr/features/scan_qr/scan_qr_screen.dart';

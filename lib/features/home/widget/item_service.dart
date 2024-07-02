@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 
 class ItemService extends StatelessWidget {
@@ -29,9 +30,21 @@ class ItemService extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            XImage(
-              imagePath: pathIcon,
-              height: 45,
+            Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColor.BLACK.withOpacity(0.1),
+                      spreadRadius: 1,
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    )
+                  ]),
+              child: XImage(
+                imagePath: pathIcon,
+                height: 45,
+              ),
             ),
             const SizedBox(
               height: 8,

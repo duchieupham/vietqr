@@ -32,7 +32,7 @@ class CustomTextField extends StatelessWidget {
         ),
         Container(
           decoration: BoxDecoration(
-            color: isActive ? Colors.transparent : Color(0xFFF0F4FA),
+            color: isActive ? Colors.transparent : const Color(0xFFF0F4FA),
             border: Border(
               bottom: BorderSide(
                 color: borderColor,

@@ -7,6 +7,7 @@ import 'package:vierqr/features/connect_gg_chat/blocs/connect_gg_chat_bloc.dart'
 import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
 import 'package:vierqr/features/login/blocs/login_bloc.dart';
 import 'package:vierqr/features/network/network_bloc.dart';
+import 'package:vierqr/features/qr_feed/blocs/qr_feed_bloc.dart';
 import 'package:vierqr/features/transaction_detail/blocs/transaction_bloc.dart';
 import 'package:vierqr/features/transaction_detail/repositories/transaction_repository.dart';
 import 'package:vierqr/navigator/app_navigator.dart';
@@ -22,6 +23,9 @@ class BlocModule extends DIModule {
       )
       ..registerLazySingleton(
         () => ConnectGgChatBloc(),
+      )
+      ..registerLazySingleton(
+        () => QrFeedBloc(),
       )
       ..registerLazySingleton(
         // (param1, param2) => BankBloc(param1 as BuildContext),

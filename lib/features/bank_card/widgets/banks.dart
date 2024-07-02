@@ -49,6 +49,14 @@ class BanksView extends StatelessWidget {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5),
                             color: AppColor.WHITE,
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColor.BLACK.withOpacity(0.1),
+                                spreadRadius: 1,
+                                blurRadius: 4,
+                                offset: const Offset(0, 1),
+                              )
+                            ],
                             image: data.fileBank != null
                                 ? DecorationImage(
                                     image: FileImage(data.fileBank!))

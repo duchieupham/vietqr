@@ -38,7 +38,7 @@ import 'package:vierqr/features/dashboard/widget/maintain_widget.dart';
 import 'package:vierqr/features/home/home.dart';
 import 'package:vierqr/features/network/network_bloc.dart';
 import 'package:vierqr/features/network/network_state.dart';
-import 'package:vierqr/features/qr_wallet/qr_feed_screen.dart';
+import 'package:vierqr/features/qr_feed/qr_feed_screen.dart';
 import 'package:vierqr/features/scan_qr/widgets/qr_scan_widget.dart';
 import 'package:vierqr/features/store/store_screen.dart';
 import 'package:vierqr/main.dart';
@@ -98,28 +98,28 @@ class _DashBoardScreen extends State<DashBoardScreen>
 
   List barItems = [
     {
-      "icon": "assets/images/ic-btm-list-bank-grey.png",
-      "active_icon": "assets/images/ic-btm-list-bank-blue.png",
+      "icon": "assets/images/bottom_bar/ic-bank-btm.png",
+      "active_icon": "assets/images/bottom_bar/ic-bank-btm-selected.png",
       "name": "Tài khoản",
     },
     {
-      "icon": "assets/images/ic-btm-dashboard-grey.png",
-      "active_icon": "assets/images/ic-btm-dashboard-blue.png",
+      "icon": "assets/images/bottom_bar/ic-home-btm.png",
+      "active_icon": "assets/images/bottom_bar/ic-home-btm-selected.png",
       "name": "Trang chủ",
     },
     {
-      "icon": "assets/images/ic-menu-slide-home-blue.png",
-      "active_icon": "assets/images/ic-menu-slide-home-blue.png",
+      "icon": "assets/images/bottom_bar/ic-scan-qr-btm.png",
+      "active_icon": "assets/images/bottom_bar/ic-scan-qr-btm.png",
       "name": "Quét QR",
     },
     {
-      "icon": "assets/images/ic-btm-qr-wallet-grey.png",
-      "active_icon": "assets/images/ic-btm-qr-wallet-blue.png",
+      "icon": "assets/images/bottom_bar/ic-qr-wallet-btm.png",
+      "active_icon": "assets/images/bottom_bar/ic-qr-wallet-btm-selected.png",
       "name": "Ví QR",
     },
     {
-      "icon": "assets/images/ic-store-bottom-bar-grey.png",
-      "active_icon": "assets/images/ic-store-bottom-bar-blue.png",
+      "icon": "assets/images/bottom_bar/ic-store-btm.png",
+      "active_icon": "assets/images/bottom_bar/ic-store-btm-selected.png",
       "name": "Cửa hàng",
     },
   ];
@@ -315,7 +315,8 @@ class _DashBoardScreen extends State<DashBoardScreen>
                         page.pageSelected,
                         onTap: (index) {
                           onTapPage(index);
-                          page.updateIndex(index, isOnTap: true);
+                          page.updateIndex(index,
+                              isOnTap: true, isHome: index == 2 ? true : false);
                         },
                       );
                     },
@@ -769,24 +770,22 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 16),
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
       decoration: BoxDecoration(
-          color: AppColor.WHITE,
-          borderRadius: BorderRadius.circular(50),
-          // gradient: const LinearGradient(
-          //     colors: [AppColor.BLUE_E1EFFF, AppColor.BLUE_E5F9FF],
-          //     begin: Alignment.centerLeft,
-          //     end: Alignment.centerRight),
-          boxShadow: [
-            BoxShadow(
-                color: AppColor.BLACK.withOpacity(0.1),
-                blurRadius: 4,
-                spreadRadius: 1,
-                offset: const Offset(0, 2)),
-            BoxShadow(
-                color: AppColor.BLACK.withOpacity(0.1),
-                blurRadius: 4,
-                spreadRadius: 1,
-                offset: const Offset(0, -1))
-          ]),
+        color: AppColor.WHITE,
+        borderRadius: BorderRadius.circular(10),
+        gradient: VietQRTheme.gradientColor.bottom_bar,
+        // boxShadow: [
+        //   BoxShadow(
+        //       color: AppColor.BLACK.withOpacity(0.1),
+        //       blurRadius: 4,
+        //       spreadRadius: 1,
+        //       offset: const Offset(0, 2)),
+        //   BoxShadow(
+        //       color: AppColor.BLACK.withOpacity(0.1),
+        //       blurRadius: 4,
+        //       spreadRadius: 1,
+        //       offset: const Offset(0, -1))
+        // ],
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: List.generate(

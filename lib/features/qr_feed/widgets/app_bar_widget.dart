@@ -25,7 +25,7 @@ class CustomSliverAppBarDelegate extends SliverPersistentHeaderDelegate {
       BuildContext context, double shrinkOffset, bool overlapsContent) {
     final progress = shrinkOffset / maxExtent;
     return Material(
-      color: AppColor.TRANSPARENT,
+      color: AppColor.WHITE,
       child: Stack(
         fit: StackFit.expand,
         children: [
@@ -34,7 +34,7 @@ class CustomSliverAppBarDelegate extends SliverPersistentHeaderDelegate {
             left: 0,
             right: 0,
             child: Container(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
               child: widget,
             ),
           ),
