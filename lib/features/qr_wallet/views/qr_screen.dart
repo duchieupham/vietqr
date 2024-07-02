@@ -4,13 +4,10 @@ import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/commons/enums/textfield_type.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/features/qr_wallet/views/custom_textfield.dart';
 import 'package:vierqr/features/qr_wallet/widgets/default_appbar_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
-import 'package:vierqr/layouts/m_button_widget.dart';
-import 'package:vierqr/layouts/m_text_form_field.dart';
 
 enum TypeQr {
   VIETQR,
@@ -205,8 +202,8 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
           controller: _controller,
           hintText: 'Nhập số tài khoản ngân hàng',
           labelText: 'Số tài khoản*',
-          borderColor: Colors.grey,
-          hintTextColor: Colors.grey,
+          borderColor: AppColor.GREY_DADADA,
+          hintTextColor: AppColor.GREY_TEXT,
           onClear: () {
             _controller.clear();
             _updateButtonState();
@@ -221,8 +218,8 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
           controller: _controller,
           hintText: 'Nhập tên chủ tài khoản ngân hàng',
           labelText: 'Chủ tài khoản*',
-          borderColor: Colors.grey,
-          hintTextColor: Colors.grey,
+          borderColor: AppColor.GREY_DADADA,
+          hintTextColor: AppColor.GREY_TEXT,
           onClear: () {
             _controller.clear();
             _updateButtonState();
@@ -583,8 +580,8 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
           controller: _controller,
           hintText: 'Nhập số điện thoại',
           labelText: 'Số điện thoại*',
-          borderColor: Colors.grey,
-          hintTextColor: Colors.grey,
+          borderColor: AppColor.GREY_DADADA,
+          hintTextColor: AppColor.GREY_TEXT,
           onClear: () {
             _controller.clear();
             _updateButtonState();
@@ -599,8 +596,8 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
           controller: _controller,
           hintText: 'Nhập tên danh bạ',
           labelText: 'Tên danh bạ*',
-          borderColor: Colors.grey,
-          hintTextColor: Colors.grey,
+          borderColor: AppColor.GREY_DADADA,
+          hintTextColor: AppColor.GREY_TEXT,
           onClear: () {
             _controller.clear();
             _updateButtonState();
@@ -650,8 +647,8 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
                 controller: _controller,
                 hintText: 'Nhập thông tin email',
                 labelText: 'Email',
-                borderColor: Colors.grey,
-                hintTextColor: Colors.grey,
+                borderColor: AppColor.GREY_DADADA,
+                hintTextColor: AppColor.GREY_TEXT,
                 onClear: () {
                   _controller.clear();
                   _updateButtonState();
@@ -666,8 +663,8 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
                 controller: _controller,
                 hintText: 'Nhập thông tin website',
                 labelText: 'Website',
-                borderColor: Colors.grey,
-                hintTextColor: Colors.grey,
+                borderColor: AppColor.GREY_DADADA,
+                hintTextColor: AppColor.GREY_TEXT,
                 onClear: () {
                   _controller.clear();
                   _updateButtonState();
@@ -682,8 +679,8 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
                 controller: _controller,
                 hintText: 'Nhập tên công ty',
                 labelText: 'Tên công ty',
-                borderColor: Colors.grey,
-                hintTextColor: Colors.grey,
+                borderColor: AppColor.GREY_DADADA,
+                hintTextColor: AppColor.GREY_TEXT,
                 onClear: () {
                   _controller.clear();
                   _updateButtonState();
@@ -698,8 +695,8 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
                 controller: _controller,
                 hintText: 'Nhập thông tin địa chỉ',
                 labelText: 'Địa chỉ',
-                borderColor: Colors.grey,
-                hintTextColor: Colors.grey,
+                borderColor: AppColor.GREY_DADADA,
+                hintTextColor: AppColor.GREY_TEXT,
                 onClear: () {
                   _controller.clear();
                   _updateButtonState();
@@ -741,7 +738,7 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
                     end: Alignment.centerRight,
                   )
                 : null,
-            color: _isButtonEnabled ? null : Color(0xFFF0F4FA),
+            color: _isButtonEnabled ? null : AppColor.GREY_F0F4FA,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
