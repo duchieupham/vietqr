@@ -767,7 +767,7 @@ extension _DashBoardExtensionFunction on _DashBoardScreen {
     return Container(
       height: 70,
       width: double.infinity,
-      margin: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+      margin: const EdgeInsets.fromLTRB(30, 0, 30, 16),
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
       decoration: BoxDecoration(
         color: AppColor.WHITE,

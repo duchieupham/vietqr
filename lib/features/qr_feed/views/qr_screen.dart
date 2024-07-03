@@ -25,8 +25,11 @@ class QrLinkScreen extends StatefulWidget {
   State<QrLinkScreen> createState() => _QrLinkScreenState();
 }
 
-class _QrLinkScreenState extends State<QrLinkScreen> {
+class _QrLinkScreenState extends State<QrLinkScreen>
+    with WidgetsBindingObserver {
   TypeQr? _qrType;
+  final ScrollController _scrollController = ScrollController();
+
   final TextEditingController _controller = TextEditingController();
   final TextEditingController sdtController = TextEditingController();
   final TextEditingController contactController = TextEditingController();
@@ -44,6 +47,8 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
   String contentBank = '';
   TextEditingController _contentController = TextEditingController();
   int _charCount = 0;
+
+  double _keyboardHeight = 0;
 
   void _updateCharCount(String text) {
     setState(() {
@@ -66,8 +71,28 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _qrType = widget.type;
     _getClipboardContent();
+    initData();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _scrollController.dispose();
+
+    super.dispose();
+  }
+
+  @override
+  void didChangeMetrics() {
+    final bottomInset = WidgetsBinding.instance.window.viewInsets.bottom;
+    _keyboardHeight = bottomInset;
+    updateState();
+  }
+
+  void initData() {
     WidgetsBinding.instance.addPostFrameCallback(
       (_) {
         sdtController.addListener(
@@ -80,7 +105,6 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
         );
       },
     );
-    // _controller.addListener(_updateButtonState);
   }
 
   void _getClipboardContent() async {
@@ -166,14 +190,20 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
       bottomNavigationBar: _bottomButton(_isButtonEnabled),
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
+        controller: _scrollController,
         slivers: [
           const DefaultAppbarWidget(),
           SliverToBoxAdapter(
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
-              child: widget,
+              child: Column(
+                children: [
+                  widget!,
+                  // SizedBox(height: _keyboardHeight),
+                ],
+              ),
             ),
           )
         ],

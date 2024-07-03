@@ -8,6 +8,7 @@ import 'package:vierqr/features/qr_feed/states/qr_feed_state.dart';
 class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
   QrFeedBloc() : super(const QrFeedState()) {
     on<GetQrFeedEvent>(_getQrFeed);
+    on<GetMoreQrFeedEvent>(_getMoreQrFeed);
   }
 
   final QrFeedRepository _qrFeedRepository = QrFeedRepository();
@@ -16,15 +17,18 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
     try {
       if (event is GetQrFeedEvent) {
         emit(state.copyWith(
-            status: BlocStatus.LOADING_PAGE, request: QrFeed.GET_QR_FEED_LIST));
+            status: event.isLoading ? BlocStatus.LOADING_PAGE : BlocStatus.NONE,
+            request: QrFeed.GET_QR_FEED_LIST));
 
         final result =
-            await _qrFeedRepository.getQrFeed(type: event.type, size: 5);
+            await _qrFeedRepository.getQrFeed(type: event.type, size: 10);
+        Future.delayed(const Duration(milliseconds: 500));
         if (result.isNotEmpty) {
           emit(state.copyWith(
             status: BlocStatus.SUCCESS,
             request: QrFeed.GET_QR_FEED_LIST,
             listQrFeed: [...result],
+            metadata: _qrFeedRepository.metaDataDTO,
           ));
         } else {
           emit(state.copyWith(
@@ -38,6 +42,38 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
       LOG.error(e.toString());
       emit(state.copyWith(
           status: BlocStatus.ERROR, request: QrFeed.GET_QR_FEED_LIST));
+    }
+  }
+
+  void _getMoreQrFeed(QrFeedEvent event, Emitter emit) async {
+    try {
+      if (event is GetMoreQrFeedEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.LOAD_MORE, request: QrFeed.GET_MORE));
+
+        final result = await _qrFeedRepository.getQrFeed(
+            type: event.type,
+            size: 10,
+            page: _qrFeedRepository.metaDataDTO.page! + 1);
+        Future.delayed(const Duration(milliseconds: 500));
+
+        if (result.isNotEmpty) {
+          emit(state.copyWith(
+            status: BlocStatus.SUCCESS,
+            request: QrFeed.GET_MORE,
+            listQrFeed: [...result],
+            metadata: _qrFeedRepository.metaDataDTO,
+          ));
+        } else {
+          emit(state.copyWith(
+            status: BlocStatus.NONE,
+            request: QrFeed.GET_MORE,
+          ));
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(status: BlocStatus.ERROR, request: QrFeed.GET_MORE));
     }
   }
 }
