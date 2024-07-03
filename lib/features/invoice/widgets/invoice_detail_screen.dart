@@ -316,7 +316,7 @@ class _InvoiceDetailScreenState extends State<_InvoiceDetailScreen> {
                                 'Danh mục hàng hoá, dịch vụ',
                                 style: TextStyle(
                                   color: AppColor.BLACK,
-                                  fontSize: 25,
+                                  fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
