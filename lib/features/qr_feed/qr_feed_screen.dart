@@ -11,15 +11,18 @@ import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/extensions/string_extension.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/features/account/account_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/qr_feed/blocs/qr_feed_bloc.dart';
+import 'package:vierqr/features/qr_feed/events/qr_feed_event.dart';
 import 'package:vierqr/features/qr_feed/states/qr_feed_state.dart';
 import 'package:vierqr/features/qr_feed/widgets/app_bar_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/metadata_dto.dart';
+import 'package:vierqr/models/qr_feed_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 import 'package:rive/rive.dart' as rive;
 
@@ -48,6 +51,8 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
 
   bool isLoadMore = false;
 
+  List<QrFeedDTO> list = [];
+
   @override
   void initState() {
     super.initState();
@@ -74,28 +79,12 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
     );
     WidgetsBinding.instance.addPostFrameCallback(
       (_) {
+        _bloc.add(GetQrFeedEvent(type: tab == TabView.COMMUNITY ? 0 : 1));
         _scrollController.animateTo(_scrollController.position.minScrollExtent,
             duration: const Duration(microseconds: 10), curve: Curves.easeOut);
       },
     );
   }
-
-  List<Widget> test = [
-    _buildQRFeed(),
-    _buildQRFeed(),
-    _buildQRFeed(),
-    _buildQRFeed(),
-    _buildQRFeed(),
-    _buildQRFeed(),
-    _buildQRFeed(),
-    _buildQRFeed(),
-    _buildQRFeed(),
-    _buildQRFeed(),
-    _buildQRFeed(),
-    _buildQRFeed(),
-    _buildQRFeed(),
-    _buildQRFeed(),
-  ];
 
   @override
   void dispose() {
@@ -103,13 +92,20 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
     _scrollController.dispose();
   }
 
-  Future<void> onRefresh() async {}
+  Future<void> onRefresh() async {
+    _bloc.add(GetQrFeedEvent(type: tab == TabView.COMMUNITY ? 0 : 1));
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<QrFeedBloc, QrFeedState>(
       bloc: _bloc,
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state.request == QrFeed.GET_QR_FEED_LIST &&
+            state.status == BlocStatus.SUCCESS) {
+          list = state.listQrFeed!;
+        }
+      },
       builder: (context, state) {
         return SafeArea(
           child: Scaffold(
@@ -169,13 +165,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                       ),
                     );
                   },
-                  onRefresh: () => onRefresh().then(
-                    (value) {
-                      // if (_isRiveInit) {
-                      //   _riveController.dispose();
-                      // }
-                    },
-                  ),
+                  onRefresh: () => onRefresh(),
                 ),
                 SliverToBoxAdapter(
                   child: Container(
@@ -186,7 +176,9 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                     child: Column(
                       children: [
                         if (tab == TabView.COMMUNITY) ...[
-                          ...test,
+                          ...list.map(
+                            (e) => _buildQRFeed(dto: e),
+                          ),
                           if (isLoadMore)
                             const Padding(
                               padding: EdgeInsets.symmetric(vertical: 10),
@@ -451,9 +443,11 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
   }
 }
 
+// ignore: camel_case_types
 class _buildQRFeed extends StatelessWidget {
+  final QrFeedDTO dto;
   const _buildQRFeed({
-    super.key,
+    required this.dto,
   });
 
   @override
