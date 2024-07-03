@@ -40,6 +40,12 @@ class CustomSliverAppBarDelegate extends SliverPersistentHeaderDelegate {
                   spreadRadius: 1,
                   blurRadius: 4,
                   offset: const Offset(0, 3),
+                ),
+                const BoxShadow(
+                  color: AppColor.WHITE,
+                  spreadRadius: 1,
+                  blurRadius: 4,
+                  offset: Offset(0, -1),
                 )
               ]),
               child: widget,

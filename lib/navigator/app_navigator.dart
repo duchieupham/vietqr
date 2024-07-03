@@ -49,6 +49,7 @@ import 'package:vierqr/main.dart';
 import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/maintain_charge_create.dart';
 import 'package:vierqr/models/maintain_charge_dto.dart';
+import 'package:vierqr/models/qr_create_type_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/respone_top_up_dto.dart';
 import 'package:vierqr/splash_screen.dart';
@@ -118,8 +119,7 @@ class NavigationService {
         return _buildRoute(settings, const CustomerVaSplashView());
       case Routes.CUSTOMER_VA_LIST:
         return _buildRoute(settings, const CustomerVaListView());
-      case Routes.QR_STYLE:
-        return _buildRoute(settings, const QrStyle());
+
       case Routes.QR_CREATE_SCREEN:
         return CupertinoPageRoute(
             builder: (context) => const QrCreateScreen(), settings: settings);
@@ -129,6 +129,22 @@ class NavigationService {
       // case Routes.QR_SCREEN:
       //   return CupertinoPageRoute(
       //       builder: (context) => const QrCreateScreen(), settings: settings);
+      case Routes.QR_STYLE:
+        Map<String, dynamic> param;
+        Map<String, dynamic>? json;
+        int? type;
+        if (settings.arguments != null) {
+          param = settings.arguments as Map<String, dynamic>;
+          json = param['json'] as Map<String, dynamic>;
+          type = param['type'] as int;
+        }
+
+        return _buildRoute(
+            settings,
+            QrStyle(
+              type: type!,
+              json: json!,
+            ));
       case Routes.DYNAMIC_ACTIVE_KEY_SCREEN:
         Map<String, dynamic> param = settings.arguments as Map<String, dynamic>;
         String activeKey = param['activeKey'] as String;

@@ -1,7 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
 
 class QrCreateTypeDto {
-  int type;
+  String type;
   //0: QrLink
   //1: QrOther
   //2: QrVard
@@ -15,24 +16,24 @@ class QrCreateTypeDto {
   });
 
   factory QrCreateTypeDto.fromJson(Map<String, dynamic> data) {
-    final type = data['type'] as int;
+    final type = data['type'] as String;
     switch (type) {
-      case 0:
+      case '0':
         return QrCreateTypeDto(
           type: type,
           json: QrLink.fromJson(data['json'] as Map<String, dynamic>),
         );
-      case 1:
+      case '1':
         return QrCreateTypeDto(
           type: type,
           json: QrOther.fromJson(data['json'] as Map<String, dynamic>),
         );
-      case 2:
+      case '2':
         return QrCreateTypeDto(
           type: type,
           json: QrVCard.fromJson(data['json'] as Map<String, dynamic>),
         );
-      case 3:
+      case '3':
         return QrCreateTypeDto(
           type: type,
           json: VietQr.fromJson(data['json'] as Map<String, dynamic>),
@@ -43,9 +44,29 @@ class QrCreateTypeDto {
   }
 
   Map<String, dynamic> toJson() {
+    Map<String, dynamic> data = {};
+    switch (type) {
+      case '0':
+        QrLink dto = json as QrLink;
+        data = dto.toJson();
+        break;
+      case '1':
+        QrOther dto = json as QrOther;
+        data = dto.toJson();
+        break;
+      case '2':
+        QrVCard dto = json as QrVCard;
+        data = dto.toJson();
+        break;
+      case '3':
+        VietQr dto = json as VietQr;
+        data = dto.toJson();
+        break;
+      default:
+    }
     return {
       'type': type,
-      'json': json.toJson(),
+      'json': data,
     };
   }
 }
@@ -56,9 +77,9 @@ class QrLink {
   String qrDescription;
   String value;
   String pin;
-  int isPublic;
-  int style;
-  int theme;
+  String isPublic;
+  String style;
+  String theme;
 
   QrLink({
     required this.userId,
@@ -104,9 +125,9 @@ class QrOther {
   String qrDescription;
   String value;
   String pin;
-  int isPublic;
-  int style;
-  int theme;
+  String isPublic;
+  String style;
+  String theme;
 
   QrOther({
     required this.userId,
@@ -157,9 +178,9 @@ class QrVCard {
   String address;
   String userId;
   String additionalData;
-  int style;
-  int theme;
-  int isPublic;
+  String style;
+  String theme;
+  String isPublic;
 
   QrVCard({
     required this.qrName,
@@ -215,69 +236,68 @@ class QrVCard {
 }
 
 class VietQr {
+  String userId;
   String qrName;
   String qrDescription;
-  String fullname;
-  String phoneNo;
-  String email;
-  String companyName;
-  String website;
-  String address;
-  String userId;
-  String additionalData;
-  int style;
-  int theme;
-  int isPublic;
+  String bankAccount;
+  String bankCode;
+  String userBankName;
+  String amount;
+  String content;
+  String isPublic;
+  String style;
+  String theme;
 
   VietQr({
+    required this.userId,
     required this.qrName,
     required this.qrDescription,
-    required this.fullname,
-    required this.phoneNo,
-    required this.email,
-    required this.companyName,
-    required this.website,
-    required this.address,
-    required this.userId,
-    required this.additionalData,
+    required this.bankAccount,
+    required this.bankCode,
+    required this.userBankName,
+    required this.amount,
+    required this.content,
+    required this.isPublic,
     required this.style,
     required this.theme,
-    required this.isPublic,
   });
 
+  // Factory constructor to create an instance from a map (JSON)
   factory VietQr.fromJson(Map<String, dynamic> json) {
     return VietQr(
+      userId: json['userId'],
       qrName: json['qrName'],
       qrDescription: json['qrDescription'],
-      fullname: json['fullname'],
-      phoneNo: json['phoneNo'],
-      email: json['email'],
-      companyName: json['companyName'],
-      website: json['website'],
-      address: json['address'],
-      userId: json['userId'],
-      additionalData: json['additionalData'],
+      bankAccount: json['bankAccount'],
+      bankCode: json['bankCode'],
+      userBankName: json['userBankName'],
+      amount: json['amount'],
+      content: json['content'],
+      isPublic: json['isPublic'],
       style: json['style'],
       theme: json['theme'],
-      isPublic: json['isPublic'],
     );
   }
 
+  // Method to convert an instance to a map (JSON)
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['qrName'] = this.qrName;
-    data['qrDescription'] = this.qrDescription;
-    data['fullname'] = this.fullname;
-    data['phoneNo'] = this.phoneNo;
-    data['email'] = this.email;
-    data['companyName'] = this.companyName;
-    data['website'] = this.website;
-    data['address'] = this.address;
-    data['userId'] = this.userId;
-    data['additionalData'] = this.additionalData;
-    data['style'] = this.style;
-    data['theme'] = this.theme;
-    data['isPublic'] = this.isPublic;
-    return data;
+    return {
+      'userId': userId,
+      'qrName': qrName,
+      'qrDescription': qrDescription,
+      'bankAccount': bankAccount,
+      'bankCode': bankCode,
+      'userBankName': userBankName,
+      'amount': amount,
+      'content': content,
+      'isPublic': isPublic,
+      'style': style,
+      'theme': theme,
+    };
+  }
+
+  // Method to convert an instance to a JSON string
+  String toJsonString() {
+    return jsonEncode(toJson());
   }
 }

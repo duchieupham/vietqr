@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/metadata_dto.dart';
 import 'package:vierqr/models/qr_feed_dto.dart';
 
@@ -10,6 +11,7 @@ class QrFeedState extends Equatable {
   final QrFeed request;
   final MetaDataDTO? metadata;
   final List<QrFeedDTO>? listQrFeed;
+  final List<BankTypeDTO>? listBanks;
 
   const QrFeedState({
     this.msg,
@@ -17,6 +19,7 @@ class QrFeedState extends Equatable {
     this.request = QrFeed.NONE,
     this.metadata,
     this.listQrFeed,
+    this.listBanks,
   });
 
   QrFeedState copyWith({
@@ -25,6 +28,7 @@ class QrFeedState extends Equatable {
     QrFeed? request,
     MetaDataDTO? metadata,
     List<QrFeedDTO>? listQrFeed,
+    List<BankTypeDTO>? listBanks,
   }) {
     return QrFeedState(
       status: status ?? this.status,
@@ -32,6 +36,7 @@ class QrFeedState extends Equatable {
       request: request ?? this.request,
       metadata: metadata ?? this.metadata,
       listQrFeed: listQrFeed ?? this.listQrFeed,
+      listBanks: listBanks ?? this.listBanks,
     );
   }
 
@@ -42,5 +47,6 @@ class QrFeedState extends Equatable {
         request,
         metadata,
         listQrFeed,
+        listBanks,
       ];
 }

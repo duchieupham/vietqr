@@ -1,44 +1,83 @@
+import 'dart:convert';
+
 class QrFeedDTO {
+  String value;
   String id;
+  String fullName;
+  String imageId;
   String description;
-  bool isPublic;
-  String qrType;
-  DateTime timeCreate;
+  String data;
+  String userId;
   String title;
-  String content;
+  String style;
+  String theme;
+
+  int timeCreated;
+  String qrType;
+  int likeCount;
+  int commentCount;
+  bool hasLiked;
 
   QrFeedDTO({
+    required this.value,
     required this.id,
+    required this.fullName,
+    required this.imageId,
     required this.description,
-    required this.isPublic,
-    required this.qrType,
-    required this.timeCreate,
+    required this.data,
+    required this.userId,
     required this.title,
-    required this.content,
+    required this.timeCreated,
+    required this.qrType,
+    required this.likeCount,
+    required this.commentCount,
+    required this.hasLiked,
+    required this.style,
+    required this.theme,
   });
 
+  // Factory constructor to create an instance from a map (JSON)
   factory QrFeedDTO.fromJson(Map<String, dynamic> json) {
     return QrFeedDTO(
+      value: json['value'],
       id: json['id'],
+      fullName: json['fullName'],
+      imageId: json['imageId'],
       description: json['description'],
-      isPublic: json['isPublic'] == "1",
-      qrType: json['qrType'],
-      timeCreate: DateTime.fromMillisecondsSinceEpoch(
-          int.parse(json['timeCreate']) * 1000),
+      style: json['style'] ?? '',
+      theme: json['theme'] ?? '',
+      data: json['data'],
+      userId: json['userId'],
       title: json['title'],
-      content: json['content'],
+      timeCreated: json['timeCreated'],
+      qrType: json['qrType'],
+      likeCount: json['likeCount'],
+      commentCount: json['commentCount'],
+      hasLiked: json['hasLiked'] == 1,
     );
   }
 
+  // Method to convert an instance to a map (JSON)
   Map<String, dynamic> toJson() {
     return {
+      'value': value,
       'id': id,
+      'fullName': fullName,
+      'imageId': imageId,
       'description': description,
-      'isPublic': isPublic ? "1" : "0",
-      'qrType': qrType,
-      'timeCreate': (timeCreate.millisecondsSinceEpoch / 1000).round(),
+      'data': data,
+      'userId': userId,
       'title': title,
-      'content': content,
+      'timeCreated': timeCreated,
+      'qrType': qrType,
+      'likeCount': likeCount,
+      'commentCount': commentCount,
+      'hasLiked': hasLiked ? 1 : 0,
     };
+  }
+
+  // Method to convert an instance to a JSON string
+  String toJsonString() {
+    return jsonEncode(toJson());
   }
 }

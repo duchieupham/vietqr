@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:vierqr/commons/constants/configurations/app_images.dart';
@@ -82,10 +83,9 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
     );
     WidgetsBinding.instance.addPostFrameCallback(
       (_) {
+        _scrollController.jumpTo(_scrollController.position.minScrollExtent);
         _bloc.add(GetQrFeedEvent(
             isLoading: true, type: tab == TabView.COMMUNITY ? 0 : 1));
-        _scrollController.animateTo(_scrollController.position.minScrollExtent,
-            duration: const Duration(microseconds: 10), curve: Curves.easeOut);
       },
     );
   }
@@ -122,6 +122,11 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
             state.status == BlocStatus.SUCCESS) {
           list = [...list, ...state.listQrFeed!];
           metadata = state.metadata;
+        }
+        if (state.request == QrFeed.CREATE_QR &&
+            state.status == BlocStatus.SUCCESS) {
+          _bloc.add(GetQrFeedEvent(
+              isLoading: true, type: tab == TabView.COMMUNITY ? 0 : 1));
         }
       },
       builder: (context, state) {
@@ -330,9 +335,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
               ),
             ),
             InkWell(
-              onTap: () {
-                Navigator.of(context).pushNamed(Routes.QR_STYLE);
-              },
+              onTap: () {},
               child: Container(
                 padding: const EdgeInsets.all(4),
                 height: 42,
@@ -434,6 +437,19 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
       ),
     );
   }
+
+  final List<List<Color>> _gradients = [
+    [const Color(0xFFE1EFFF), const Color(0xFFE5F9FF)],
+    [const Color(0xFFBAFFBF), const Color(0xFFCFF4D2)],
+    [const Color(0xFFFFC889), const Color(0xFFFFDCA2)],
+    [const Color(0xFFA6C5FF), const Color(0xFFC5CDFF)],
+    [const Color(0xFFCDB3D4), const Color(0xFFF7C1D4)],
+    [const Color(0xFFF5CEC7), const Color(0xFFFFD7BF)],
+    [const Color(0xFFBFF6FF), const Color(0xFFFFDBE7)],
+    [const Color(0xFFF1C9FF), const Color(0xFFFFB5AC)],
+    [const Color(0xFFB4FFEE), const Color(0xFFEDFF96)],
+    [const Color(0xFF91E2FF), const Color(0xFF91FFFF)],
+  ];
 
   bool get _isAppBarExpanded {
     return _scrollController.hasClients &&
@@ -559,6 +575,32 @@ class _buildQRFeed extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String timestampToHour(int timestamp) {
+      // Convert the timestamp to a DateTime object
+      DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
+      DateFormat formatter = DateFormat('HH');
+      return formatter.format(dateTime);
+    }
+
+    String qrType = '';
+    switch (dto.qrType) {
+      case '0':
+        qrType = 'Mã QR link';
+        break;
+      case '1':
+        qrType = 'Mã QR khác';
+
+        break;
+      case '2':
+        qrType = 'Mã QR VCard';
+
+        break;
+      case '3':
+        qrType = 'Mã VietQR';
+
+        break;
+      default:
+    }
     return Container(
       color: AppColor.WHITE,
       width: double.infinity,
@@ -569,7 +611,8 @@ class _buildQRFeed extends StatelessWidget {
         children: [
           XImage(
             borderRadius: BorderRadius.circular(100),
-            imagePath: ImageConstant.icAvatar,
+            imagePath:
+                dto.imageId.isNotEmpty ? dto.imageId : ImageConstant.icAvatar,
             width: 30,
             height: 30,
           ),
@@ -584,13 +627,13 @@ class _buildQRFeed extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Trương Hiệp Hưng',
-                        style: TextStyle(
+                        dto.fullName.isNotEmpty ? dto.fullName : 'Undefined',
+                        style: const TextStyle(
                             fontSize: 12, fontWeight: FontWeight.bold),
                       ),
                       Row(
                         children: [
-                          XImage(
+                          const XImage(
                             imagePath: 'assets/images/ic-global.png',
                             width: 15,
                             height: 15,
@@ -598,8 +641,8 @@ class _buildQRFeed extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            '3 giờ',
-                            style: TextStyle(
+                            '${timestampToHour(dto.timeCreated)} giờ',
+                            style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.normal,
                                 color: AppColor.GREY_TEXT),
@@ -615,7 +658,7 @@ class _buildQRFeed extends StatelessWidget {
                     child: RichText(
                       text: TextSpan(children: [
                         TextSpan(
-                          text: dto.content,
+                          text: dto.data,
                           style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.normal,
@@ -650,12 +693,12 @@ class _buildQRFeed extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         QrImageView(
-                          data: '',
+                          data: dto.value,
                           size: 80,
                           backgroundColor: AppColor.WHITE,
                         ),
                         const SizedBox(width: 8),
-                        const Expanded(
+                        Expanded(
                           child: SizedBox(
                             height: 80,
                             child: Column(
@@ -666,26 +709,26 @@ class _buildQRFeed extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem',
+                                      dto.title,
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontSize: 12,
                                           fontWeight: FontWeight.bold),
                                     ),
                                     Text(
-                                      'https://github.com/vanvixi/flutter-momo-sliver-appbar/blob/main/lib/main.dart',
+                                      dto.description,
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontSize: 12,
                                           fontWeight: FontWeight.normal),
                                     ),
                                   ],
                                 ),
                                 Text(
-                                  'VCard',
-                                  style: TextStyle(
+                                  qrType,
+                                  style: const TextStyle(
                                       fontSize: 10,
                                       color: AppColor.GREY_TEXT,
                                       fontWeight: FontWeight.normal),
@@ -699,21 +742,22 @@ class _buildQRFeed extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const XImage(
-                            imagePath: 'assets/images/ic-heart-red.png',
-                            height: 15,
+                          XImage(
+                            imagePath: dto.hasLiked
+                                ? 'assets/images/ic-heart-red.png'
+                                : 'assets/images/ic-heart-grey.png',
+                            height: 30,
                             fit: BoxFit.fitHeight,
                           ),
-                          const SizedBox(width: 4),
                           Text(
-                            '156',
-                            style: TextStyle(
+                            dto.likeCount.toString(),
+                            style: const TextStyle(
                                 fontSize: 10,
                                 color: AppColor.GREY_TEXT,
                                 fontWeight: FontWeight.normal),
@@ -730,21 +774,21 @@ class _buildQRFeed extends StatelessWidget {
                             height: 15,
                             fit: BoxFit.fitHeight,
                           ),
-                          const SizedBox(width: 4),
+                          const SizedBox(width: 6),
                           Text(
-                            '20',
-                            style: TextStyle(
+                            dto.commentCount.toString(),
+                            style: const TextStyle(
                                 fontSize: 10,
                                 color: AppColor.GREY_TEXT,
                                 fontWeight: FontWeight.normal),
                           ),
                         ],
                       ),
-                      const SizedBox(width: 18),
+                      const SizedBox(width: 10),
                       const XImage(
-                        imagePath: 'assets/images/ic-share.png',
-                        height: 15,
-                        width: 15,
+                        imagePath: 'assets/images/ic-share-grey.png',
+                        height: 30,
+                        width: 30,
                         fit: BoxFit.fitWidth,
                       ),
                     ],

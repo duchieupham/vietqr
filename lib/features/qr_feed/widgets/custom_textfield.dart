@@ -7,8 +7,6 @@ class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
   final String labelText;
-  final Color borderColor;
-  final Color hintTextColor;
   final List<TextInputFormatter>? inputFormatter;
   final TextInputType? textInputType;
   final int? maxLines;
@@ -23,8 +21,6 @@ class CustomTextField extends StatelessWidget {
     required this.controller,
     required this.hintText,
     required this.labelText,
-    required this.borderColor,
-    required this.hintTextColor,
     required this.onClear,
     required this.onChanged,
     this.focusNode,

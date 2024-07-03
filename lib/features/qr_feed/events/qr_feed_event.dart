@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:equatable/equatable.dart';
+import 'package:vierqr/models/qr_create_type_dto.dart';
 
 class QrFeedEvent extends Equatable {
   const QrFeedEvent();
@@ -24,4 +27,16 @@ class GetMoreQrFeedEvent extends QrFeedEvent {
 
   @override
   List<Object?> get props => [type];
+}
+
+class LoadBanksEvent extends QrFeedEvent {}
+
+class CreateQrFeedLink extends QrFeedEvent {
+  final QrCreateTypeDto dto;
+  final File? file;
+
+  const CreateQrFeedLink({required this.dto, this.file});
+
+  @override
+  List<Object?> get props => [dto, file];
 }

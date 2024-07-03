@@ -111,6 +111,7 @@ class BaseAPIClient {
     final String token = await SharePrefUtils.getTokenInfo();
     final request = http.MultipartRequest('POST', uri);
     request.headers['Authorization'] = 'Bearer $token';
+
     if (fields.isNotEmpty) {
       for (String key in fields.keys) {
         request.fields[key] = fields[key];

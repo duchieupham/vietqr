@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 
 import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
@@ -22,22 +24,40 @@ class QrFeedRepository extends BaseRepo {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
-      String url = '${getIt.get<AppConfig>().getBaseUrl}qr-wallet/generate-qr';
+      Response? response;
+      final data = dto.toJson();
+      // String url =
+      //     '${getIt.get<AppConfig>().getBaseUrl}qr-wallet/generate-qr?type=${dto.type}&json=${jsonEncode(data['json'])}';
+      String url = file != null
+          ? '${getIt.get<AppConfig>().getBaseUrl}qr-wallet/generate-qr?type=${dto.type}&json=${jsonEncode(data['json'])}'
+          : '${getIt.get<AppConfig>().getBaseUrl}qr-wallet/generate-qr-without-data?type=${data['type']}';
       final List<http.MultipartFile> files = [];
       if (file != null) {
         final imageFile = await http.MultipartFile.fromPath('file', file.path);
         files.add(imageFile);
-        final response = await BaseAPIClient.postMultipartAPI(
+      } else {
+        // final imageFile = http.MultipartFile.fromBytes('file', []);
+        // files.add(imageFile);
+      }
+
+      if (file != null) {
+        response = await BaseAPIClient.postMultipartAPI(
           url: url,
           fields: dto.toJson(),
           files: files,
         );
-        if (response.statusCode == 200) {
-          var data = jsonDecode(response.body);
-          result = ResponseMessageDTO.fromJson(data);
-        } else {
-          result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
-        }
+      } else {
+        response = await BaseAPIClient.postAPI(
+          url: url,
+          body: data['json'],
+          type: AuthenticationType.SYSTEM,
+        );
+      }
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        result = ResponseMessageDTO.fromJson(data);
+      } else {
+        result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
       }
     } catch (e) {
       LOG.error(e.toString());
@@ -51,7 +71,7 @@ class QrFeedRepository extends BaseRepo {
     List<QrFeedDTO> result = [];
     try {
       String url =
-          '${getIt.get<AppConfig>().getBaseUrl}qr-wallet?page=$page&size=$size&type=$type&value=';
+          '${getIt.get<AppConfig>().getBaseUrl}qr-wallets/public?userId=$userId&page=$page&size=$size&type=$type';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,

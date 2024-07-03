@@ -15,7 +15,9 @@ class VcardWidget extends StatelessWidget {
   final TextEditingController addressController;
   final bool isShow;
   final Function() onToggle;
+  final Function(String) onChange;
   final Function(String) onChangePhone;
+
   final Function(int) onClear;
 
   const VcardWidget({
@@ -29,6 +31,7 @@ class VcardWidget extends StatelessWidget {
     required this.webController,
     required this.ctyController,
     required this.addressController,
+    required this.onChange,
     required this.onChangePhone,
   });
 
@@ -98,24 +101,22 @@ class VcardWidget extends StatelessWidget {
             )
           ],
           maxLines: 10,
-          borderColor: Colors.grey,
-          hintTextColor: Colors.grey,
           onClear: () {
             onClear(1);
           },
-          onChanged: (text) {},
+          onChanged: onChangePhone,
         ),
         const SizedBox(height: 30),
         CustomTextField(
           controller: contactController,
           hintText: 'Nhập tên danh bạ',
           labelText: 'Tên danh bạ*',
-          borderColor: Colors.grey,
-          hintTextColor: Colors.grey,
           onClear: () {
             onClear(2);
           },
-          onChanged: (text) {},
+          onChanged: (text) {
+            onChange(text);
+          },
         ),
         const SizedBox(height: 30),
         GestureDetector(
@@ -155,13 +156,11 @@ class VcardWidget extends StatelessWidget {
                 controller: emailController,
                 hintText: 'Nhập thông tin email',
                 labelText: 'Email',
-                borderColor: Colors.grey,
-                hintTextColor: Colors.grey,
                 onClear: () {
                   onClear(3);
                 },
                 onChanged: (text) {
-                  // _updateButtonState();
+                  onChange(text);
                 },
               ),
               const SizedBox(height: 30),
@@ -169,13 +168,11 @@ class VcardWidget extends StatelessWidget {
                 controller: webController,
                 hintText: 'Nhập thông tin website',
                 labelText: 'Website',
-                borderColor: Colors.grey,
-                hintTextColor: Colors.grey,
                 onClear: () {
                   onClear(4);
                 },
                 onChanged: (text) {
-                  // _updateButtonState();
+                  onChange(text);
                 },
               ),
               const SizedBox(height: 30),
@@ -183,8 +180,6 @@ class VcardWidget extends StatelessWidget {
                 controller: ctyController,
                 hintText: 'Nhập tên công ty',
                 labelText: 'Tên công ty',
-                borderColor: Colors.grey,
-                hintTextColor: Colors.grey,
                 onClear: () {
                   onClear(5);
 
@@ -192,7 +187,7 @@ class VcardWidget extends StatelessWidget {
                   // _updateButtonState();
                 },
                 onChanged: (text) {
-                  // _updateButtonState();
+                  onChange(text);
                 },
               ),
               const SizedBox(height: 30),
@@ -200,13 +195,11 @@ class VcardWidget extends StatelessWidget {
                 controller: addressController,
                 hintText: 'Nhập thông tin địa chỉ',
                 labelText: 'Địa chỉ',
-                borderColor: Colors.grey,
-                hintTextColor: Colors.grey,
                 onClear: () {
                   onClear(6);
                 },
                 onChanged: (text) {
-                  // _updateButtonState();
+                  onChange(text);
                 },
               ),
             ],
