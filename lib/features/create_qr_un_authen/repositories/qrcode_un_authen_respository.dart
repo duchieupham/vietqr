@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
@@ -20,7 +21,8 @@ class QRCodeUnUTRepository {
       imgId: '',
     );
     try {
-      final String url = '${EnvConfig.getBaseUrl()}qr/generate/unauthenticated';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}qr/generate/unauthenticated';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: data,

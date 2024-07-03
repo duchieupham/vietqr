@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
@@ -19,6 +20,8 @@ class XImage extends StatelessWidget {
     this.animationController,
     this.width,
     this.height,
+    this.color,
+    this.errorWidget,
     // this.onLoaded,
   });
 
@@ -29,6 +32,8 @@ class XImage extends StatelessWidget {
   final AnimationController? animationController;
   final double? width;
   final double? height;
+  final Color? color;
+  final Widget? errorWidget;
 
   // final Function(LottieComposition)? onLoaded;
 
@@ -77,7 +82,8 @@ class XImage extends StatelessWidget {
           shimmerBaseColor: Colors.grey.shade300,
           shimmerHighlightColor: Colors.grey.shade100,
         ),
-        errorWidget: (context, url, error) => const SizedBox.shrink(),
+        errorWidget: (context, url, error) =>
+            errorWidget ?? const SizedBox.shrink(),
       );
     }
 
@@ -92,7 +98,8 @@ class XImage extends StatelessWidget {
         shimmerBaseColor: Colors.grey.shade300,
         shimmerHighlightColor: Colors.grey.shade100,
       ),
-      errorWidget: (context, url, error) => const SizedBox.shrink(),
+      errorWidget: (context, url, error) =>
+          errorWidget ?? const SizedBox.shrink(),
     );
   }
 
@@ -110,9 +117,10 @@ class XImage extends StatelessWidget {
   Widget _buildAssetImage(BuildContext context) {
     return Image.asset(
       imagePath,
-      fit: fit ?? BoxFit.cover,
+      fit: fit,
       width: width,
       height: height,
+      color: color,
     );
   }
 
@@ -122,6 +130,9 @@ class XImage extends StatelessWidget {
       width: width,
       height: height,
       fit: fit ?? BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) {
+        return errorWidget ?? const SizedBox.shrink();
+      },
     );
   }
 
@@ -131,7 +142,7 @@ class XImage extends StatelessWidget {
       fit: fit ?? BoxFit.cover,
       width: width,
       height: height,
-      // color: svgIconColor,
+      color: AppColor.GREEN,
       colorFilter: svgIconColor,
     );
   }

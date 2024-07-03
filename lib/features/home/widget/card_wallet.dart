@@ -2,44 +2,49 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/commons/mixin/events.dart';
+import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
 import 'package:vierqr/commons/utils/currency_utils.dart';
+import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
+import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
-import 'package:vierqr/services/providers/wallet_provider.dart';
 
 import '../../scan_qr/widgets/qr_scan_widget.dart';
 
-class CardWallet extends StatelessWidget {
-  final Function startBarcodeScanStream;
+class CardWallet extends StatefulWidget {
+  const CardWallet({super.key});
 
-  const CardWallet({Key? key, required this.startBarcodeScanStream})
-      : super(key: key);
+  @override
+  State<CardWallet> createState() => _CardWalletState();
+}
+
+class _CardWalletState extends State<CardWallet> {
+  final ValueNotifier<bool> isHide = ValueNotifier(false);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: MediaQuery.of(context).size.width,
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
-          borderRadius: BorderRadius.circular(8)),
-      child: ChangeNotifierProvider(
-        create: (context) => WalletProvider(),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildInfoWallet(),
-            const SizedBox(
-              height: 12,
-            ),
-            _buildListAction(context),
-            const SizedBox(
-              height: 4,
-            ),
-          ],
-        ),
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: [
+            BoxShadow(
+              color: AppColor.BLACK.withOpacity(0.1),
+              spreadRadius: 1,
+              blurRadius: 4,
+              offset: const Offset(0, 1),
+            )
+          ]),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildInfoWallet(),
+          const SizedBox(height: 12),
+          _buildListAction(context),
+          const SizedBox(height: 4),
+        ],
       ),
     );
   }
@@ -53,54 +58,56 @@ class CardWallet extends StatelessWidget {
         Expanded(
           child: Consumer<AuthProvider>(
             builder: (context, state, child) {
-              return Consumer<WalletProvider>(
-                  builder: (context, provider, child) {
-                return Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    if (provider.isHide)
-                      const Text(
-                        '********',
-                        style: TextStyle(
-                          fontSize: 16,
-                        ),
-                      )
-                    else
-                      Text(
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  ValueListenableBuilder<bool>(
+                    valueListenable: isHide,
+                    builder: (context, value, child) {
+                      if (value) {
+                        return const Text(
+                          '********',
+                          style: TextStyle(fontSize: 16),
+                        );
+                      }
+                      return Text(
                         '${CurrencyUtils.instance.getCurrencyFormatted(state.introduceDTO?.amount ?? '0')} VQR',
                         style: const TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w600),
-                      ),
-                    const SizedBox(
-                      width: 4,
+                      );
+                    },
+                  ),
+                  const SizedBox(width: 4),
+                  InkWell(
+                    onTap: () {
+                      isHide.value = !isHide.value;
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 4),
+                      child: ValueListenableBuilder<bool>(
+                          valueListenable: isHide,
+                          builder: (context, value, child) {
+                            return XImage(
+                              imagePath: value
+                                  ? ImageConstant.icHide
+                                  : ImageConstant.icUnHide,
+                              height: 15,
+                            );
+                          }),
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        provider.updateHideAmount(!provider.isHide);
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 4),
-                        child: Image.asset(
-                          provider.isHide
-                              ? 'assets/images/ic-hide.png'
-                              : 'assets/images/ic-unhide.png',
-                          height: 15,
-                        ),
-                      ),
-                    ),
-                    const Spacer(),
-                    Text(
-                      state.introduceDTO?.point ?? '0',
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.w600),
-                    ),
-                    Image.asset(
-                      'assets/images/ic_point.png',
-                      height: 18,
-                    )
-                  ],
-                );
-              });
+                  ),
+                  const Spacer(),
+                  Text(
+                    state.introduceDTO?.point ?? '0',
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.w600),
+                  ),
+                  const XImage(
+                    imagePath: ImageConstant.icPoint,
+                    height: 18,
+                  )
+                ],
+              );
             },
           ),
         ),
@@ -113,14 +120,14 @@ class CardWallet extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
-          child: _buildItemAction(
-              'assets/images/ic-bank-account-home.png', 'Tài khoản', () {
+          child: _buildItemAction(ImageConstant.icBankAccountHome, 'Tài khoản',
+              () {
             Navigator.pushNamed(context, Routes.SEARCH_BANK);
           }),
         ),
         Expanded(
           child: _buildItemAction(
-            'assets/images/ic-invoice-home.png',
+            ImageConstant.icInvoiceHome,
             'Hoá đơn',
             () {
               Navigator.of(context).pushNamed(Routes.INVOICE_SCREEN);
@@ -131,8 +138,8 @@ class CardWallet extends StatelessWidget {
           ),
         ),
         Expanded(
-          child: _buildItemAction(
-              'assets/images/ic-scan-qr-home.png', 'Quét QR', () async {
+          child:
+              _buildItemAction(ImageConstant.icScanQrHome, 'Quét QR', () async {
             if (SharePrefUtils.getQrIntro()) {
               startBarcodeScanStream();
             } else {
@@ -146,7 +153,7 @@ class CardWallet extends StatelessWidget {
         ),
         Expanded(
           child: _buildItemAction(
-            'assets/images/ic-application-home.png',
+            ImageConstant.icApplicationHome,
             'Khám phá\nsản phẩm',
             () {
               // Navigator.pushNamed(context, Routes.TRANSACTION_WALLET);
@@ -177,5 +184,13 @@ class CardWallet extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void startBarcodeScanStream() async {
+    final data = await Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
+    if (data is Map<String, dynamic>) {
+      if (!mounted) return;
+      QRScannerUtils.instance.onScanNavi(data, context);
+    }
   }
 }

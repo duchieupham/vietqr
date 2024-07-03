@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:permission_handler/permission_handler.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
@@ -16,7 +17,8 @@ class ScanQrRepository {
   Future<BankTypeDTO> getBankTypeByCaiValue(String caiValue) async {
     BankTypeDTO result = BankTypeDTO();
     try {
-      final String url = '${EnvConfig.getBaseUrl()}bank-type/cai/$caiValue';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}bank-type/cai/$caiValue';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -94,7 +96,8 @@ class ScanQrRepository {
     VietQRDTO dto = VietQRDTO(nickName: '', imgId: '');
 
     try {
-      String url = '${EnvConfig.getBaseUrl()}contact/scan-result/$walletId';
+      String url =
+          '${getIt.get<AppConfig>().getBaseUrl}contact/scan-result/$walletId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,

@@ -28,12 +28,17 @@ class AppColor {
   static const Color RED_FFFF0000 = Color(0xFFFF0000);
   static const Color BLUE_E1EFFF = Color(0xFFE1EFFF);
   static const Color BLUE_E5F9FF = Color(0xFFE5F9FF);
+  static const Color BLUE_BGR = Color(0xFFF0F4FA);
+
+  // static const Color BLUE_91FFFF = Color(0xFF91FFFF);
 
   static const Color error700 = Color(0xffD8281E);
   static const Color BLUE_TEXT = Color(0xFF0A7AFF);
   static const Color RED_CALENDAR = Color(0xFFF5233C);
   static const Color TRANSPARENT = Color(0x00000000);
   static const Color GREY_TOP_TAB_BAR = Color(0xFFBEC1C9);
+  static const Color GREY_F0F4FA = Color(0xFFF0F4FA);
+
   static const Color gray = Color(0xffA8A8A8);
   static const Color SUCCESS_STATUS = Color(0xFF06B271);
   static const Color GREEN = Color(0xFF00CA28);
@@ -79,6 +84,9 @@ class AppColor {
   static const greyF1F2F5 = Color(0xffF1F2F5);
   static const grey989EBE = Color(0xff989EBE);
   static const Color GREY_DADADA = Color(0xFFDADADA);
+  static const Color D8ECF8 = Color(0xFFD8ECF8);
+  static const Color FFEAD9 = Color(0xFFFFEAD9);
+  static const Color F5C9D1 = Color(0xFFF5C9D1);
 
   //THEME NAME
   static const String THEME_LIGHT = 'LIGHT';
@@ -90,6 +98,70 @@ class AppColor {
         borderRadius: BorderRadius.circular(12),
         color: color ?? Theme.of(context).cardColor);
   }
+}
+
+class GradientColor {
+  LinearGradient bottom_bar = const LinearGradient(
+    colors: [
+      Color(0xFF00B8F5),
+      Color(0xFF0A7AFF),
+    ],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
+  LinearGradient viet_qr = const LinearGradient(
+    colors: [
+      AppColor.WHITE,
+      AppColor.GREY_F0F4FA,
+    ],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
+  LinearGradient qr_link = const LinearGradient(
+    colors: [
+      Color(0xFF91E2FF),
+      Color(0xFF91FFFF),
+    ],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
+  LinearGradient vcard = const LinearGradient(
+    colors: [
+      Color(0xFFB4FFEE),
+      Color(0xFFEDFF96),
+    ],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
+  LinearGradient other_qr = const LinearGradient(
+    colors: [
+      Color(0xFFA6C5FF),
+      Color(0xFFC5CDFF),
+    ],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
+  LinearGradient scan_qr = const LinearGradient(
+    colors: [
+      AppColor.BLUE_E1EFFF,
+      AppColor.BLUE_E5F9FF,
+    ],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
+  LinearGradient import_qr = const LinearGradient(
+    colors: [
+      Color(0xFFBAFFBF),
+      Color(0xFFCFF4D2),
+    ],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
+}
+
+class VietQRTheme {
+  static AppColor appColor = AppColor();
+  static GradientColor gradientColor = GradientColor();
 }
 
 //theme data
@@ -190,21 +262,28 @@ class DefaultThemeData {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
           borderSide: const BorderSide(
-            color: Colors.transparent,
+            color: AppColor.TRANSPARENT,
             width: 1.0,
           ),
         ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(5),
-          borderSide: const BorderSide(
-            color: Colors.transparent,
+        enabledBorder: const UnderlineInputBorder(
+          // borderRadius: BorderRadius.circular(5),
+          borderSide: BorderSide(
+            color: AppColor.GREY_DADADA,
             width: 1.0,
           ),
         ),
-        disabledBorder: OutlineInputBorder(
+        // border: UnderlineInputBorder(
+        //   borderRadius: BorderRadius.circular(5),
+        //   borderSide: const BorderSide(
+        //     color: AppColor.TRANSPARENT,
+        //     width: 1.0,
+        //   ),
+        // ),
+        disabledBorder: UnderlineInputBorder(
           borderRadius: BorderRadius.circular(5),
           borderSide: const BorderSide(
-            color: Colors.transparent,
+            color: AppColor.TRANSPARENT,
             width: 1.0,
           ),
         ),

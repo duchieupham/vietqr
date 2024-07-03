@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
-import 'package:vierqr/features/popup_bank/popup_bank_screen.dart';
 import 'package:vierqr/features/bank_detail/bank_card_detail_screen.dart';
+import 'package:vierqr/features/popup_bank/popup_bank_screen.dart';
+import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/bank_account_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
-import '../../../commons/constants/configurations/app_images.dart';
 import '../../../commons/utils/format_date.dart';
 
 class CardWidget extends StatelessWidget {
@@ -93,7 +93,7 @@ class CardWidget extends StatelessWidget {
                   allowSnapshotting: false,
                   builder: (context) =>
                       PopupBankScreen(tag: 'Card_$index', dto: e, index: index),
-                  settings: RouteSettings(name: ''),
+                  settings: const RouteSettings(name: ''),
                 ),
               );
             },
@@ -105,14 +105,14 @@ class CardWidget extends StatelessWidget {
             ? BoxDecoration(
                 borderRadius: BorderRadius.circular(radius),
                 color: isFirst ? Colors.white : Colors.transparent)
-            : BoxDecoration(),
+            : const BoxDecoration(),
         child: Container(
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(radius),
               color: isExtend! ? AppColor.WHITE : e.bankColor,
               boxShadow: [
                 BoxShadow(
-                  offset: Offset(0, -1),
+                  offset: const Offset(0, -1),
                   blurRadius: 2,
                   color: AppColor.BLACK.withOpacity(0.3),
                 )
@@ -128,7 +128,7 @@ class CardWidget extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Container(
+                          SizedBox(
                             width: widthInfoCard,
                             height: heightInfoCard,
                             child: Stack(
@@ -151,20 +151,21 @@ class CardWidget extends StatelessWidget {
                                 if (e.isAuthenticated &&
                                     e.isOwner &&
                                     isExtend == false)
-                                  Positioned(
+                                  const Positioned(
                                     top: 0,
                                     right: 0,
-                                    child: Image.asset(
-                                      'assets/images/ic-authenticated-bank.png',
+                                    child: XImage(
+                                      imagePath:
+                                          ImageConstant.icAuthenticatedBank,
                                       width: 28,
                                     ),
                                   ),
                                 if (!e.isOwner && isExtend == false)
-                                  Positioned(
+                                  const Positioned(
                                     top: 0,
                                     right: 0,
-                                    child: Image.asset(
-                                      'assets/images/ic-shared-bank.png',
+                                    child: XImage(
+                                      imagePath: ImageConstant.icSharedBank,
                                       width: 28,
                                     ),
                                   ),
@@ -172,7 +173,7 @@ class CardWidget extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: 2),
-                          Container(
+                          SizedBox(
                             height: heightInfoCard,
                             // padding: const EdgeInsets.only(right: 0),
                             child: Column(
@@ -180,7 +181,7 @@ class CardWidget extends StatelessWidget {
                               // crossAxisAlignment: CrossAxisAlignment.stretch,
                               // mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                Container(
+                                SizedBox(
                                   width: widthInfoCard * 2 - 2,
                                   height: heightInfoCard - 10,
                                   child: Column(
@@ -231,7 +232,7 @@ class CardWidget extends StatelessWidget {
                                     color: AppColor.BLUE_TEXT,
                                     borderRadius: BorderRadius.circular(50),
                                   ),
-                                  child: Center(
+                                  child: const Center(
                                     child: Text(
                                       "Gia hạn",
                                       style: TextStyle(
@@ -247,14 +248,14 @@ class CardWidget extends StatelessWidget {
                 ),
                 if (isAuthen == true) ...[
                   const SizedBox(height: 30),
-                  MySeparator(
+                  const MySeparator(
                     color: AppColor.WHITE,
                   ),
                   e.isOwner == false && e.isValidService == false
                       ? Container(
                           padding: const EdgeInsets.fromLTRB(20, 8, 10, 10),
                           width: double.infinity,
-                          child: Row(
+                          child: const Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Row(
@@ -264,7 +265,7 @@ class CardWidget extends StatelessWidget {
                                     size: 15,
                                     color: AppColor.WHITE,
                                   ),
-                                  const SizedBox(width: 10),
+                                  SizedBox(width: 10),
                                   Text(
                                     "Chưa đăng ký dịch vụ",
                                     style: TextStyle(
@@ -294,7 +295,7 @@ class CardWidget extends StatelessWidget {
                                                 color: AppColor.BLUE_TEXT,
                                                 borderRadius:
                                                     BorderRadius.circular(30)),
-                                            child: Center(
+                                            child: const Center(
                                               child: Text(
                                                 'Gia hạn',
                                                 style: TextStyle(
@@ -328,7 +329,7 @@ class CardWidget extends StatelessWidget {
                                                   child: Center(
                                                     child: Text(
                                                       "Còn $inclusiveDays ngày hết hạn",
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                           fontSize: 12,
                                                           color:
                                                               AppColor.WHITE),
@@ -337,7 +338,7 @@ class CardWidget extends StatelessWidget {
                                                 )
                                               : Row(
                                                   children: [
-                                                    Icon(
+                                                    const Icon(
                                                       Icons
                                                           .check_circle_outline_rounded,
                                                       size: 15,
@@ -346,7 +347,7 @@ class CardWidget extends StatelessWidget {
                                                     const SizedBox(width: 8),
                                                     Text(
                                                       "Đến ${timestampToDate(e.validFeeTo!)}",
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                           fontSize: 12,
                                                           color:
                                                               AppColor.WHITE),
@@ -373,7 +374,7 @@ class CardWidget extends StatelessWidget {
                                                   borderRadius:
                                                       BorderRadius.circular(
                                                           50)),
-                                              child: Center(
+                                              child: const Center(
                                                 child: Text(
                                                   "Gia hạn dịch vụ VietQR",
                                                   style: TextStyle(
@@ -400,7 +401,7 @@ class CardWidget extends StatelessWidget {
                                               color: AppColor.BLUE_TEXT,
                                               borderRadius:
                                                   BorderRadius.circular(50)),
-                                          child: Center(
+                                          child: const Center(
                                             child: Text(
                                               "Đăng ký dịch vụ VietQR",
                                               style: TextStyle(
@@ -428,18 +429,19 @@ class CardWidget extends StatelessWidget {
                               allowSnapshotting: false,
                               builder: (context) => PopupBankScreen(
                                   tag: 'Card_$index', dto: e, index: index),
-                              settings: RouteSettings(name: ''),
+                              settings: const RouteSettings(name: ''),
                             ),
                           );
                         },
                         child: Container(
                           width: 40,
                           height: 40,
-                          decoration: BoxDecoration(
-                              color: Colors.transparent,
-                              image: DecorationImage(
-                                  image: AssetImage(
-                                      'assets/images/ic-more-in-list.png'))),
+                          decoration: const BoxDecoration(
+                            color: Colors.transparent,
+                            image: DecorationImage(
+                              image: AssetImage(ImageConstant.icMoreInList),
+                            ),
+                          ),
                         ),
                       ),
                     )
@@ -457,10 +459,10 @@ class CardWidget extends StatelessWidget {
                         borderRadius: BorderRadius.circular(16),
                         color: AppColor.BLUE_TEXT,
                       ),
-                      child: Row(
+                      child: const Row(
                         children: [
-                          Image.asset(
-                            'assets/images/ic-linked-bank-in-list.png',
+                          XImage(
+                            imagePath: ImageConstant.icLinkedBankInList,
                             width: 24,
                             height: 24,
                           ),

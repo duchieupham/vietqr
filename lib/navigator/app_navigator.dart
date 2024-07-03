@@ -37,6 +37,8 @@ import 'package:vierqr/features/personal/views/national_information_view.dart';
 import 'package:vierqr/features/personal/views/user_edit_view.dart';
 import 'package:vierqr/features/personal/views/user_update_password_view.dart';
 import 'package:vierqr/features/qr_box/qr_box_screen.dart';
+import 'package:vierqr/features/qr_feed/views/qr_create_screen.dart';
+import 'package:vierqr/features/qr_feed/views/qr_style.dart';
 import 'package:vierqr/features/register_new_bank/register_mb_bank.dart';
 import 'package:vierqr/features/report/report_screen.dart';
 import 'package:vierqr/features/scan_qr/scan_qr_screen.dart';
@@ -47,6 +49,7 @@ import 'package:vierqr/main.dart';
 import 'package:vierqr/models/app_info_dto.dart';
 import 'package:vierqr/models/maintain_charge_create.dart';
 import 'package:vierqr/models/maintain_charge_dto.dart';
+import 'package:vierqr/models/qr_create_type_dto.dart';
 import 'package:vierqr/models/qr_generated_dto.dart';
 import 'package:vierqr/models/respone_top_up_dto.dart';
 import 'package:vierqr/splash_screen.dart';
@@ -91,7 +94,7 @@ class NavigationService {
       case Routes.CONNECT_TELEGRAM:
         return _buildRoute(settings, const ConnectTelegramScreen());
       case Routes.CONNECT_STEP_TELE_SCREEN:
-        return _buildRoute(settings, ConnectTeleStepScreen());
+        return _buildRoute(settings, const ConnectTeleStepScreen());
       case Routes.CONNECT_STEP_LARK_SCREEN:
         return _buildRoute(settings, ConnectLarkStepScreen());
       case Routes.CONNECT_LARK:
@@ -115,8 +118,33 @@ class NavigationService {
       case Routes.CUSTOMER_VA_SPLASH:
         return _buildRoute(settings, const CustomerVaSplashView());
       case Routes.CUSTOMER_VA_LIST:
-        return _buildRoute(settings, CustomerVaListView());
+        return _buildRoute(settings, const CustomerVaListView());
 
+      case Routes.QR_CREATE_SCREEN:
+        return CupertinoPageRoute(
+            builder: (context) => const QrCreateScreen(), settings: settings);
+      // case Routes.QR_STYLE:
+      //   return CupertinoPageRoute(
+      //       builder: (context) => const QrStyle(), settings: settings);
+      // case Routes.QR_SCREEN:
+      //   return CupertinoPageRoute(
+      //       builder: (context) => const QrCreateScreen(), settings: settings);
+      case Routes.QR_STYLE:
+        Map<String, dynamic> param;
+        Map<String, dynamic>? json;
+        int? type;
+        if (settings.arguments != null) {
+          param = settings.arguments as Map<String, dynamic>;
+          json = param['json'] as Map<String, dynamic>;
+          type = param['type'] as int;
+        }
+
+        return _buildRoute(
+            settings,
+            QrStyle(
+              type: type!,
+              json: json!,
+            ));
       case Routes.DYNAMIC_ACTIVE_KEY_SCREEN:
         Map<String, dynamic> param = settings.arguments as Map<String, dynamic>;
         String activeKey = param['activeKey'] as String;

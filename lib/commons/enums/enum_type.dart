@@ -23,14 +23,24 @@ enum PageType { ACCOUNT, HOME, SCAN_QR, CARD_QR, STORE }
 extension PageTypeExt on int {
   PageType get pageType {
     switch (this) {
+      case 0:
+        return PageType.ACCOUNT;
       case 1:
         return PageType.HOME;
-      case -1:
-        return PageType.SCAN_QR;
       case 2:
-        return PageType.CARD_QR;
+        return PageType.SCAN_QR;
       case 3:
+        return PageType.CARD_QR;
+      case 4:
         return PageType.STORE;
+      // case 1:
+      //   return PageType.HOME;
+      // case -1:
+      //   return PageType.SCAN_QR;
+      // case 2:
+      //   return PageType.CARD_QR;
+      // case 3:
+      //   return PageType.STORE;
       default:
         return PageType.ACCOUNT;
     }
@@ -332,6 +342,14 @@ enum CreateQRType {
   LIST_BANK,
   LIST_TERMINAL,
   LIST_QR_BOX,
+}
+
+enum QrFeed {
+  NONE,
+  GET_QR_FEED_LIST,
+  GET_MORE,
+  CREATE_QR,
+  GET_BANKS,
 }
 
 enum DashBoardType {

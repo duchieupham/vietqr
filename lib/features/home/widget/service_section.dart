@@ -2,32 +2,29 @@ import 'dart:io';
 
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/constants/vietqr/image_constant.dart';
+import 'package:vierqr/commons/helper/dialog_helper.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/platform_utils.dart';
 import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/features/account/views/vietqr_id_card_view.dart';
-import 'package:vierqr/features/dashboard/blocs/dashboard_bloc.dart';
-import 'package:vierqr/features/dashboard/events/dashboard_event.dart';
-import 'package:vierqr/features/home/widget/dialog_update.dart';
+import 'package:vierqr/features/home/widget/item_service.dart';
 import 'package:vierqr/features/web_view/views/custom_inapp_webview.dart';
-import 'package:vierqr/main.dart';
-import 'package:vierqr/navigator/app_navigator.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class ServiceSection extends StatefulWidget {
-  const ServiceSection({Key? key}) : super(key: key);
+  const ServiceSection({super.key});
 
   @override
   State<ServiceSection> createState() => _ServiceSectionState();
 }
 
-class _ServiceSectionState extends State<ServiceSection> {
+class _ServiceSectionState extends State<ServiceSection> with DialogHelper {
   bool isCheckApp = false;
 
   @override
@@ -46,9 +43,9 @@ class _ServiceSectionState extends State<ServiceSection> {
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
-            color: AppColor.WHITE,
-            borderRadius: BorderRadius.circular(10),
-          ),
+              color: AppColor.WHITE,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: AppColor.GREY_DADADA)),
           height: 120,
           child: InkWell(
             onTap: () {
@@ -126,21 +123,25 @@ class _ServiceSectionState extends State<ServiceSection> {
     return Wrap(
       runSpacing: 20,
       children: [
-        _buildItemService(
-            context, 'assets/images/logo-telegram-dash.png', 'Telegram',
-            () async {
-          Navigator.pushNamed(context, Routes.CONNECT_TELEGRAM);
-        }),
-        _buildItemService(context, 'assets/images/logo-lark-dash.png', 'Lark',
-            () async {
-          Navigator.pushNamed(context, Routes.CONNECT_LARK);
-        }),
-        _buildItemService(
-            context, 'assets/images/ic-gg-chat-home.png', 'Google Chat',
-            () async {
-          Navigator.pushNamed(context, Routes.CONNECT_GG_CHAT_SCREEN);
-          // Navigator.pushNamed(context, Routes.QR_BOX);
-        }),
+        ItemService(
+            pathIcon: ImageConstant.logoTelegramDash,
+            title: 'Telegram',
+            onTap: () async {
+              Navigator.pushNamed(context, Routes.CONNECT_TELEGRAM);
+            }),
+        ItemService(
+            pathIcon: ImageConstant.logoLarkDash,
+            title: 'Lark',
+            onTap: () async {
+              Navigator.pushNamed(context, Routes.CONNECT_LARK);
+            }),
+        ItemService(
+            pathIcon: ImageConstant.logoGGChatHome,
+            title: 'Google Chat',
+            onTap: () async {
+              Navigator.pushNamed(context, Routes.CONNECT_GG_CHAT_SCREEN);
+              // Navigator.pushNamed(context, Routes.QR_BOX);
+            }),
       ],
     );
   }
@@ -149,56 +150,62 @@ class _ServiceSectionState extends State<ServiceSection> {
     return Wrap(
       runSpacing: 20,
       children: [
-        _buildItemService(
-            context, 'assets/images/logo-bdsd-3D.png', 'Đăng ký\nnhận BĐSD',
-            () {
-          DialogWidget.instance.openMsgDialog(
-            title: 'Tính năng đang bảo trì',
-            msg: 'Vui lòng thử lại sau',
-          );
-        }),
-        _buildItemService(context, 'assets/images/logo-mobile-money-3D.png',
-            'Nạp tiền\nđiện thoại', () {
-          Navigator.pushNamed(context, Routes.MOBILE_RECHARGE);
-        }),
-        _buildItemService(context, 'assets/images/ic-mb.png', 'Mở TK\nMB Bank',
-            () {
-          _launchUrl();
-        }),
-        _buildItemService(
-            context, 'assets/images/logo-login-web-3D.png', 'Đăng nhập\nweb',
-            () {
-          startBarcodeScanStream();
-        }),
-        _buildItemService(
-            context,
-            'assets/images/ic-3D-request-register-bank.png',
-            'Mở TK ngân hàng', () {
-          Navigator.pushNamed(context, Routes.REGISTER_NEW_BANK);
-        }),
-        _buildItemService(
-            context,
-            'assets/images/logo-vietqr-kiot-dashboard.png',
-            'VietQR Kiot\n', () async {
-          if (PlatformUtils.instance.isAndroidApp()) {
-            final intent = AndroidIntent(
-                action: 'action_view',
-                data: Uri.encodeFull(
-                    'https://play.google.com/store/apps/details?id=com.vietqr.kiot&hl=en_US'),
-                package: 'com.vietqr.kiot');
-            intent.launch();
-          } else if (PlatformUtils.instance.isIOsApp()) {
-            await DialogWidget.instance.openMsgDialog(
-              title: 'Thông báo',
-              msg:
-                  'Chúng tôi đang bảo trì VietQR Kiot cho nền tảng iOS. Tính năng này sẽ sớm phụ vụ quý khách.',
-              function: () {
-                Navigator.pop(context);
-              },
-            );
-          }
-        }),
-        // _buildItemService(
+        ItemService(
+            pathIcon: ImageConstant.logoBdsd3D,
+            title: 'Đăng ký\nnhận BĐSD',
+            onTap: () {
+              DialogWidget.instance.openMsgDialog(
+                title: 'Tính năng đang bảo trì',
+                msg: 'Vui lòng thử lại sau',
+              );
+            }),
+        ItemService(
+            pathIcon: ImageConstant.logoMobileMoney3D,
+            title: 'Nạp tiền\nđiện thoại',
+            onTap: () {
+              Navigator.pushNamed(context, Routes.MOBILE_RECHARGE);
+            }),
+        ItemService(
+            pathIcon: ImageConstant.icMB,
+            title: 'Mở TK\nMB Bank',
+            onTap: () {
+              _launchUrl();
+            }),
+        ItemService(
+            pathIcon: ImageConstant.logoLoginWeb3D,
+            title: 'Đăng nhập\nweb',
+            onTap: () {
+              startBarcodeScanStream();
+            }),
+        ItemService(
+            pathIcon: ImageConstant.ic3DRequestRegisterBank,
+            title: 'Mở TK ngân hàng',
+            onTap: () {
+              Navigator.pushNamed(context, Routes.REGISTER_NEW_BANK);
+            }),
+        ItemService(
+            pathIcon: ImageConstant.logoVietqrKiotDashboard,
+            title: 'VietQR Kiot\n',
+            onTap: () async {
+              if (PlatformUtils.instance.isAndroidApp()) {
+                final intent = AndroidIntent(
+                    action: 'action_view',
+                    data: Uri.encodeFull(
+                        'https://play.google.com/store/apps/details?id=com.vietqr.kiot&hl=en_US'),
+                    package: 'com.vietqr.kiot');
+                intent.launch();
+              } else if (PlatformUtils.instance.isIOsApp()) {
+                await DialogWidget.instance.openMsgDialog(
+                  title: 'Thông báo',
+                  msg:
+                      'Chúng tôi đang bảo trì VietQR Kiot cho nền tảng iOS. Tính năng này sẽ sớm phụ vụ quý khách.',
+                  function: () {
+                    Navigator.pop(context);
+                  },
+                );
+              }
+            }),
+        // ItemService(
         //   context,
         //   'assets/images/ic-business-3D.png',
         //   'Doanh nghiệp',
@@ -206,40 +213,25 @@ class _ServiceSectionState extends State<ServiceSection> {
         //     Navigator.pushNamed(context, Routes.BUSINESS);
         //   },
         // ),
-        _buildItemService(
-          context,
-          'assets/images/logo-check-app-version.png',
-          'Kiểm tra phiên bản App',
-          () async {
-            showDialog(
-              barrierDismissible: false,
-              context: NavigationService.context!,
-              builder: (BuildContext context) {
-                return DialogUpdateView(
-                  onCheckUpdate: () {
-                    context
-                        .read<DashBoardBloc>()
-                        .add(GetVersionAppEventDashboard(isCheckVer: true));
-                  },
-                );
-              },
-            );
+        ItemService(
+          pathIcon: ImageConstant.logoCheckAppVersion,
+          title: 'Kiểm tra phiên bản App',
+          onTap: () async {
+            showDialogUpdateApp(context);
           },
         ),
-        _buildItemService(
-          context,
-          'assets/images/shortcut-nfc.png',
-          'VQR-ID Card',
-          () async {
+        ItemService(
+          pathIcon: ImageConstant.shortcutNfc,
+          title: 'VQR-ID Card',
+          onTap: () async {
             NavigatorUtils.navigatePage(context, VietQRIDCardView(),
                 routeName: VietQRIDCardView.routeName);
           },
         ),
-        _buildItemService(
-          context,
-          'assets/images/ic-active-terminal.png',
-          'Kích hoạt máy bán hàng',
-          () async {
+        ItemService(
+          pathIcon: ImageConstant.icActiveTerminal,
+          title: 'Kích hoạt máy bán hàng',
+          onTap: () async {
             NavigatorUtils.navigatePage(
                 context,
                 CustomInAppWebView(
@@ -274,34 +266,6 @@ class _ServiceSectionState extends State<ServiceSection> {
     } catch (e) {
       LOG.error(e.toString());
     }
-  }
-
-  Widget _buildItemService(
-      BuildContext context, String pathIcon, String title, VoidCallback onTap) {
-    double width = MediaQuery.of(context).size.width;
-    return SizedBox(
-      width: getDeviceType() == 'phone' ? width / 5 - 7 : 70,
-      child: InkWell(
-        onTap: onTap,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Image.asset(
-              pathIcon,
-              height: 45,
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 10),
-            )
-          ],
-        ),
-      ),
-    );
   }
 
   String getDeviceType() {

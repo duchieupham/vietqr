@@ -113,7 +113,7 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
             }
 
             if (state.request == PopupBankType.UN_LINK) {
-              onShowDialogUnLinked(state.bankAccountDTO);
+              onShowDialogUnLinked(state.requestId ?? '', state.bankAccountDTO);
             }
 
             if (state.request == PopupBankType.OTP ||
@@ -457,7 +457,7 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
     );
   }
 
-  void onShowDialogUnLinked(BankAccountDTO dto) {
+  void onShowDialogUnLinked(String requestId, BankAccountDTO dto) {
     showDialog(
       barrierDismissible: false,
       context: NavigationService.context!,
@@ -471,12 +471,24 @@ class _PopupBankScreenState extends State<_PopupBankScreen> {
             otpController.value = otpController.value.copyWith(text: value);
           },
           onTap: () {
-            ConfirmOTPUnlinkTypeBankDTO confirmDTO =
-                ConfirmOTPUnlinkTypeBankDTO(
-                    ewalletToken: '',
-                    bankAccount: dto.bankAccount,
-                    bankCode: dto.bankCode);
-            bloc.add(PopupBankEventUnConfirmOTP(confirmDTO));
+            if (dto.bankCode.contains('BIDV')) {
+              ConfirmOTPBankDTO confirmDTO = ConfirmOTPBankDTO(
+                requestId: requestId,
+                otpValue: otpController.text,
+                applicationType: 'MOBILE',
+                bankAccount: dto.bankAccount,
+              );
+              bloc.add(
+                  PopupBankEventUnConfirmOTP(confirmDTO, dto.unlinkedType));
+            } else {
+              ConfirmOTPUnlinkTypeBankDTO confirmDTO =
+              ConfirmOTPUnlinkTypeBankDTO(
+                  ewalletToken: '',
+                  bankAccount: dto.bankAccount,
+                  bankCode: dto.bankCode);
+              bloc.add(
+                  PopupBankEventUnConfirmOTP(confirmDTO, dto.unlinkedType));
+            }
           },
         );
       },

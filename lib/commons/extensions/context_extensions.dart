@@ -29,4 +29,6 @@ extension ContextExtensions on BuildContext {
   EdgeInsets get viewInsets => mediaQuery.viewInsets;
 
   EdgeInsets get viewPadding => mediaQuery.viewPadding;
+
+  bool get isSmall => device.height < 800;
 }

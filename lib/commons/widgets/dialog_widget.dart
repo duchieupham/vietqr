@@ -104,7 +104,7 @@ class DialogWidget {
         });
   }
 
-  openActiveAnnualSuccess() {
+  openDialogSuccess({required String title, required Function() onClose}) {
     return showCupertinoModalPopup(
       // barrierDismissible: false,
       context: NavigationService.context!,
@@ -131,9 +131,9 @@ class DialogWidget {
                       fit: BoxFit.fitHeight,
                     ),
                     Text(
-                      "Kích hoạt dịch vụ \nphần mềm VietQR thành công!",
+                      title,
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 25,
                         fontWeight: FontWeight.bold,
                       ),
@@ -143,6 +143,7 @@ class DialogWidget {
                 InkWell(
                   onTap: () {
                     Navigator.of(context).pop();
+                    onClose();
                   },
                   child: Container(
                     width: double.infinity,
@@ -163,6 +164,10 @@ class DialogWidget {
             ),
           ),
         );
+      },
+    ).then(
+      (value) {
+        onClose;
       },
     );
   }

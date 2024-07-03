@@ -112,9 +112,7 @@ class StringUtils {
     return null;
   }
 
-
-
- // ?????????????
+  // ?????????????
   bool? isValidatePhone(String value) {
     RegExp regExp = RegExp(_phonePattern);
     if (value.isEmpty || value.length > 10 || value.length < 10) {
@@ -123,6 +121,15 @@ class StringUtils {
       return true;
     }
     return false;
+  }
+
+  static String formatCurrency(String money) {
+    if (money.isEmpty) {
+      return '';
+    }
+    var value = money.replaceAll(',', '');
+    var formatter = NumberFormat('#,##0');
+    return formatter.format(int.parse(value));
   }
 
   static String formatMoney(String money) {

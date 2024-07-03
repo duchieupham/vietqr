@@ -1,7 +1,7 @@
 import 'dart:convert';
 
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/features/invoice/repositories/base_repository.dart';
-import 'package:vierqr/models/bank_account_dto.dart';
 
 import '../../../commons/constants/env/env_config.dart';
 import '../../../commons/enums/authentication_type.dart';
@@ -23,10 +23,10 @@ class InvoiceRepository extends BaseRepo {
     List<InvoiceFeeDTO>? result = [];
 
     try {
-      //  final String url = '${EnvConfig.getBaseUrl()}key-active-bank/annual-fee';
+      //  final String url = '${getIt.get<AppConfig>().getBaseUrl}key-active-bank/annual-fee';
       String userId = SharePrefUtils.getProfile().userId.trim();
       final String url =
-          '${EnvConfig.getBaseUrl()}invoice/$userId?filterBy=$filterBy&time=${time ?? ''}&page=$page&size=${size ?? 20}&bankId=$bankId&status=$status';
+          '${getIt.get<AppConfig>().getBaseUrl}invoice/$userId?filterBy=$filterBy&time=${time ?? ''}&page=$page&size=${size ?? 20}&bankId=$bankId&status=$status';
 
       final String token = await SharePrefUtils.getTokenInfo();
       final response = await BaseAPIClient.getAPI(
@@ -55,7 +55,8 @@ class InvoiceRepository extends BaseRepo {
   }) async {
     InvoiceDetailDTO? result;
     try {
-      final String url = '${EnvConfig.getBaseUrl()}invoice-detail/$invoiceId';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}invoice-detail/$invoiceId';
       final String token = await SharePrefUtils.getTokenInfo();
       final response = await BaseAPIClient.getAPI(
         url: url,

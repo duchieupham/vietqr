@@ -22,7 +22,7 @@ class AccountRepository {
 
   Future<IntroduceDTO> getPointAccount(String userId) async {
     try {
-      final String url = '${EnvConfig.getBaseUrl()}account-wallet/$userId';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}account-wallet/$userId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -43,7 +43,7 @@ class AccountRepository {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}accounts/setting/screen';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}accounts/setting/screen';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: {
@@ -74,7 +74,7 @@ class AccountRepository {
         'userId': userId,
         'imgId': imgId,
       };
-      final String url = '${EnvConfig.getBaseUrl()}user/image';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}user/image';
       final List<http.MultipartFile> files = [];
       if (file != null) {
         final imageFile = await http.MultipartFile.fromPath('image', file.path);
@@ -106,7 +106,7 @@ class AccountRepository {
   Future<UserProfile?> getUserInformation(String userId) async {
     UserProfile result = UserProfile();
     try {
-      final String url = '${EnvConfig.getBaseUrl()}user/information/$userId';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}user/information/$userId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -127,7 +127,7 @@ class AccountRepository {
   Future<SettingAccountDTO?> getSettingAccount(String userId) async {
     SettingAccountDTO result = SettingAccountDTO();
     try {
-      final String url = '${EnvConfig.getBaseUrl()}accounts/setting/$userId';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}accounts/setting/$userId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -147,7 +147,7 @@ class AccountRepository {
 
   Future<bool> updateVoiceSetting(Map<String, dynamic> param) async {
     try {
-      final String url = '${EnvConfig.getBaseUrl()}accounts/setting/voice';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}accounts/setting/voice';
       final response = await BaseAPIClient.postAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -166,7 +166,7 @@ class AccountRepository {
   Future<CardDTO> getCardID(String userId) async {
     try {
       final String url =
-          '${EnvConfig.getBaseUrl()}accounts/cardNumber?userId=$userId';
+          '${getIt.get<AppConfig>().getBaseUrl}accounts/cardNumber?userId=$userId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -187,7 +187,7 @@ class AccountRepository {
         const ResponseMessageDTO(status: '', message: '');
 
     try {
-      final String url = '${EnvConfig.getBaseUrl()}accounts/cardNumber';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}accounts/cardNumber';
       final response = await BaseAPIClient.postAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -215,7 +215,7 @@ class AccountRepository {
         const ResponseMessageDTO(status: '', message: '');
 
     try {
-      final String url = '${EnvConfig.getBaseUrl()}accounts/setting/theme';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}accounts/setting/theme';
       final response = await BaseAPIClient.postAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -237,7 +237,7 @@ class AccountRepository {
   Future<bool> logout() async {
     bool result = false;
     try {
-      final String url = '${EnvConfig.getBaseUrl()}accounts/logout';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}accounts/logout';
       // String fcmToken = await FirebaseMessaging.instance.getToken() ?? '';
       final String fcmToken = await SharePrefUtils.getTokenFCM();
       final response = await BaseAPIClient.postAPI(
@@ -257,7 +257,7 @@ class AccountRepository {
 
   Future<List<ThemeDTO>> getListTheme() async {
     try {
-      final String url = '${EnvConfig.getBaseUrl()}theme/list';
+      final String url = '${getIt.get<AppConfig>().getBaseUrl}theme/list';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,

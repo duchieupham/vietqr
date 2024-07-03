@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:vierqr/commons/di/injection/injection.dart';
+
 import '../../../commons/constants/env/env_config.dart';
 import '../../../commons/enums/authentication_type.dart';
 import '../../../commons/utils/base_api.dart';
@@ -9,10 +11,11 @@ import '../../../services/local_storage/shared_preference/shared_pref_utils.dart
 
 class ConnectGgChatRepository {
   String get userId => SharePrefUtils.getProfile().userId;
+
   Future<InfoGgChatDTO?> getInfoGgChat() async {
     try {
       String url =
-          '${EnvConfig.getBaseUrl()}service/google-chat/information?userId=$userId';
+          '${getIt.get<AppConfig>().getBaseUrl}service/google-chat/information?userId=$userId';
       final response = await BaseAPIClient.getAPI(
         url: url,
         type: AuthenticationType.SYSTEM,
@@ -36,7 +39,8 @@ class ConnectGgChatRepository {
       param['userId'] = userId;
       param['bankIds'] = bankIds;
 
-      String url = '${EnvConfig.getBaseUrl()}service/google-chat/bank';
+      String url =
+          '${getIt.get<AppConfig>().getBaseUrl}service/google-chat/bank';
       final response = await BaseAPIClient.postAPI(
         body: param,
         url: url,
@@ -56,7 +60,8 @@ class ConnectGgChatRepository {
       param['userId'] = userId;
       param['bankId'] = bankId;
 
-      String url = '${EnvConfig.getBaseUrl()}service/google-chat/bank';
+      String url =
+          '${getIt.get<AppConfig>().getBaseUrl}service/google-chat/bank';
       final response = await BaseAPIClient.deleteAPI(
         body: param,
         url: url,
@@ -73,7 +78,8 @@ class ConnectGgChatRepository {
     try {
       Map<String, dynamic> param = {};
       param['webhook'] = webhook;
-      String url = '${EnvConfig.getBaseUrl()}service/google-chat/send-message';
+      String url =
+          '${getIt.get<AppConfig>().getBaseUrl}service/google-chat/send-message';
       final response = await BaseAPIClient.postAPI(
         body: param,
         url: url,
@@ -93,7 +99,7 @@ class ConnectGgChatRepository {
       param['userId'] = userId;
       param['bankIds'] = list;
 
-      String url = '${EnvConfig.getBaseUrl()}service/google-chat';
+      String url = '${getIt.get<AppConfig>().getBaseUrl}service/google-chat';
       final response = await BaseAPIClient.postAPI(
         body: param,
         url: url,
@@ -110,7 +116,8 @@ class ConnectGgChatRepository {
     try {
       Map<String, dynamic> param = {};
       param['id'] = id;
-      String url = '${EnvConfig.getBaseUrl()}service/google-chat/remove';
+      String url =
+          '${getIt.get<AppConfig>().getBaseUrl}service/google-chat/remove';
       final response = await BaseAPIClient.deleteAPI(
         body: param,
         url: url,

@@ -9,13 +9,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/env_type.dart';
+import 'package:vierqr/commons/extensions/string_extension.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/commons/utils/pref_utils.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
@@ -60,8 +60,7 @@ Future<String> downloadAndSaveImage(String imageUrl, String path) async {
     final response = await http.get(Uri.parse(imageUrl));
     final bytes = response.bodyBytes;
 
-    final directory = await getApplicationDocumentsDirectory();
-    final localImagePath = '${directory.path}/$path';
+    final localImagePath = await path.getFullPathImagePath;
 
     final file = File(localImagePath);
     file.writeAsBytesSync(bytes);
@@ -74,8 +73,7 @@ Future<String> downloadAndSaveImage(String imageUrl, String path) async {
 }
 
 Future<String> saveImageToLocal(Uint8List uint8list, String path) async {
-  final directory = await getApplicationDocumentsDirectory();
-  final localImagePath = '${directory.path}/$path';
+  final localImagePath = await path.getFullPathImagePath;
 
   final file = File(localImagePath);
   file.writeAsBytesSync(uint8list);
@@ -84,15 +82,15 @@ Future<String> saveImageToLocal(Uint8List uint8list, String path) async {
   return localImagePath;
 }
 
-Future<File> getImageFile(String file) async {
-  return File(file);
-}
+// Future<File> getImageFile(String file) async {
+//   return File(file);
+// }
 
 //go into EnvConfig to change env
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Injection.inject(env: EnvType.PROD);
+  await Injection.inject(env: EnvType.STG);
 
   await SharePrefUtils.init();
   await SharePrefUtils.onClearCache();
@@ -111,7 +109,7 @@ void main() async {
   await UserRepository.instance.getIntroContact();
   await UserRepository.instance.getThemes();
   LOG.verbose('Config Environment: ${appConfig.getEnv}');
-  runApp(VietQRApp());
+  runApp(const VietQRApp());
 }
 
 //true => new transaction
@@ -133,7 +131,6 @@ class _VietQRApp extends State<VietQRApp> {
   @override
   void initState() {
     super.initState();
-    print('User: $userId');
     _mainScreen =
         (userId.isNotEmpty) ? const DashBoardScreen() : const LoginScreen();
     // _mainScreen = const DashBoardScreen();
@@ -168,9 +165,6 @@ class _VietQRApp extends State<VietQRApp> {
         providers: [
           BlocProvider<UserEditBloc>(
             create: (BuildContext context) => UserEditBloc(),
-          ),
-          BlocProvider<DashBoardBloc>(
-            create: (BuildContext context) => DashBoardBloc(context),
           ),
         ],
         child: MultiProvider(

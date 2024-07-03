@@ -110,7 +110,10 @@ class _MaintainChargeScreenState extends State<MaintainChargeScreen> {
             message.data['notificationType'] ==
                 Stringify.NOTI_TYPE_ANNUAL_FEE_SUCCESS) {
           Navigator.pushReplacementNamed(context, Routes.DASHBOARD);
-          DialogWidget.instance.openActiveAnnualSuccess();
+          DialogWidget.instance.openDialogSuccess(
+            title: 'Kích hoạt dịch vụ \nphần mềm VietQR thành công!',
+            onClose: () {},
+          );
         }
       }
     });

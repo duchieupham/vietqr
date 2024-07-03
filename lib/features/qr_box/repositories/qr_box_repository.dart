@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/models/active_qr_box_dto.dart';
@@ -24,7 +25,7 @@ class QRBoxRepository {
       param['bankId'] = bankId;
       param['userId'] = userId;
 
-      String url = '${EnvConfig.getBaseUrl()}tid/active-box';
+      String url = '${getIt.get<AppConfig>().getBaseUrl}tid/active-box';
       final response = await BaseAPIClient.postAPI(
         body: param,
         url: url,
@@ -45,7 +46,7 @@ class QRBoxRepository {
 
     try {
       String url =
-          '${EnvConfig.getBaseUrl()}merchant-form/$userId?bankId=$bankId';
+          '${getIt.get<AppConfig>().getBaseUrl}merchant-form/$userId?bankId=$bankId';
       final response =
           await BaseAPIClient.getAPI(url: url, type: AuthenticationType.SYSTEM);
       if (response.statusCode == 200) {
@@ -69,7 +70,7 @@ class QRBoxRepository {
 
     try {
       String url =
-          '${EnvConfig.getBaseUrl()}terminal/$merchantId?userId=$userId&bankId=$bankId';
+          '${getIt.get<AppConfig>().getBaseUrl}terminal/$merchantId?userId=$userId&bankId=$bankId';
       final response =
           await BaseAPIClient.getAPI(url: url, type: AuthenticationType.SYSTEM);
       if (response.statusCode == 200) {

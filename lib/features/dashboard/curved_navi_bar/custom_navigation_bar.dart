@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
-import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/layouts/image/x_image.dart';
 
 import 'curved_nav_bar_model.dart';
 import 'nav_bar_item.dart';
@@ -229,10 +229,17 @@ class CurvedNavigationBarState extends State<CurvedNavigationBar>
                     position: _pos,
                     length: _length,
                     index: indexOf,
+                    label: item.label,
+                    labelStyle: TextStyle(
+                      fontSize: 12,
+                      color: item.index == _endingIndex
+                          ? AppColor.BLUE_TEXT
+                          : null,
+                    ),
                     child: Center(
                       child: item.child ??
-                          Image.asset(
-                            item.urlUnselect,
+                          XImage(
+                            imagePath: item.urlUnselect,
                             width: 40,
                             height: 40,
                             fit: BoxFit.cover,
@@ -240,13 +247,6 @@ class CurvedNavigationBarState extends State<CurvedNavigationBar>
                                 ? AppColor.BLUE_TEXT
                                 : null,
                           ),
-                    ),
-                    label: item.label,
-                    labelStyle: TextStyle(
-                      fontSize: 12,
-                      color: item.index == _endingIndex
-                          ? AppColor.BLUE_TEXT
-                          : null,
                     ),
                   );
                 }).toList(),

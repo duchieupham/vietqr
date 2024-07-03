@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
@@ -14,7 +15,8 @@ class RegisterRepository {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getBaseUrl()}accounts/register';
+      final String url =
+          '${getIt.get<AppConfig>().getBaseUrl}accounts/register';
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: dto.toJson(),

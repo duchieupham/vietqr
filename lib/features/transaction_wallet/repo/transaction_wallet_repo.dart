@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
@@ -14,7 +15,7 @@ class TransactionWalletRepository {
     List<TransWalletDto> result = [];
     try {
       final String url =
-          '${EnvConfig.getBaseUrl()}transaction-wallet?userId=${param['userId']}&status=${param['status']}&offset=${param['offset']}';
+          '${getIt.get<AppConfig>().getBaseUrl}transaction-wallet?userId=${param['userId']}&status=${param['status']}&offset=${param['offset']}';
 
       final response = await BaseAPIClient.getAPI(
         url: url,

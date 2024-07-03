@@ -57,13 +57,13 @@ class _InfoStoreViewState extends State<InfoStoreView> {
             ],
           ),
           Positioned(
-            bottom: 20,
+            bottom: 90,
             right: 16,
             child: GestureDetector(
               onTap: _onCreateStore,
               child: Container(
                 height: 40,
-                padding: EdgeInsets.symmetric(horizontal: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(30),
                   color: AppColor.BLUE_TEXT,
@@ -75,7 +75,7 @@ class _InfoStoreViewState extends State<InfoStoreView> {
                       height: 26,
                       color: Colors.white,
                     ),
-                    Text(
+                    const Text(
                       'Thêm cửa hàng',
                       style: TextStyle(fontSize: 12, color: AppColor.WHITE),
                     )
@@ -207,7 +207,8 @@ class _InfoStoreViewState extends State<InfoStoreView> {
                   Text(
                     des,
                     maxLines: 2,
-                    style: TextStyle(color: AppColor.GREY_TEXT, fontSize: 10),
+                    style: const TextStyle(
+                        color: AppColor.GREY_TEXT, fontSize: 10),
                   )
               ],
             ),
@@ -229,9 +230,16 @@ class _InfoStoreViewState extends State<InfoStoreView> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(5),
-        color: Colors.white,
-      ),
+          borderRadius: BorderRadius.circular(5),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              blurRadius: 2,
+              spreadRadius: 2,
+              color: AppColor.BLACK.withOpacity(0.1),
+              offset: const Offset(0, 1),
+            )
+          ]),
       child: Column(
         children: [
           Row(
@@ -395,9 +403,23 @@ class _InfoStoreViewState extends State<InfoStoreView> {
                   padding:
                       const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: AppColor.GREY_BORDER, width: 0.5),
-                  ),
+                      color: AppColor.WHITE,
+                      borderRadius: BorderRadius.circular(8),
+                      // border: Border.all(color: AppColor.GREY_BORDER, width: 0.5),
+                      boxShadow: [
+                        BoxShadow(
+                          blurRadius: 1,
+                          spreadRadius: 1,
+                          color: AppColor.BLACK.withOpacity(0.1),
+                          offset: const Offset(0, 1),
+                        ),
+                        BoxShadow(
+                          blurRadius: 1,
+                          spreadRadius: 1,
+                          color: AppColor.BLACK.withOpacity(0.1),
+                          offset: const Offset(0, -1),
+                        ),
+                      ]),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -407,7 +429,7 @@ class _InfoStoreViewState extends State<InfoStoreView> {
                             child: Text(
                               dto.terminalName ?? '',
                               maxLines: 2,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 overflow: TextOverflow.ellipsis,
                               ),

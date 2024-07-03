@@ -21,7 +21,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> with BaseManager {
   @override
   final BuildContext context;
 
-  LoginBloc(this.context) : super(LoginState(appInfoDTO: AppInfoDTO())) {
+  final LoginRepository loginRepository;
+
+  LoginBloc(this.context, this.loginRepository)
+      : super(LoginState(appInfoDTO: AppInfoDTO())) {
     on<LoginEventByPhone>(_login);
     on<LoginEventByNFC>(_loginNFC);
     on<CheckExitsPhoneEvent>(_checkExitsPhone);
@@ -114,7 +117,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> with BaseManager {
               }
             }
           },
-        );
+        ).catchError((onError) {
+          emit(
+            state.copyWith(
+                request: LoginType.CHECK_EXIST, status: BlocStatus.UNLOADING),
+          );
+        });
       }
     } catch (e) {
       emit(state.copyWith(request: LoginType.ERROR));
@@ -155,5 +163,3 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> with BaseManager {
     emit(state.copyWith(status: BlocStatus.NONE, request: LoginType.NONE));
   }
 }
-
-const LoginRepository loginRepository = LoginRepository();

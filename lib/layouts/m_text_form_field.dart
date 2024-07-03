@@ -19,6 +19,9 @@ class MTextFieldCustom extends StatefulWidget {
   final TextfieldType? textFieldType;
   final String? title;
   final String? unTitle;
+  final InputBorder? enableBorder;
+  final InputBorder? focusBorder;
+
   final bool? autoFocus;
   final bool? enable;
   final FocusNode? focusNode;
@@ -26,6 +29,8 @@ class MTextFieldCustom extends StatefulWidget {
   final int? maxLength;
   final TextAlign? textAlign;
   final Function(PointerDownEvent)? onTapOutside;
+  final Function()? onTap;
+
   final bool isShowToast;
   final TextStyle? styles;
   final TextStyle? errorStyle;
@@ -57,6 +62,8 @@ class MTextFieldCustom extends StatefulWidget {
     this.fontSize,
     this.textFieldType,
     this.title,
+    this.enableBorder,
+    this.focusBorder,
     this.unTitle,
     this.styles,
     this.autoFocus,
@@ -82,6 +89,7 @@ class MTextFieldCustom extends StatefulWidget {
     this.contentPadding,
     this.showBorder = false,
     this.decoration,
+    this.onTap,
   }) : super(key: key);
 
   @override
@@ -124,6 +132,7 @@ class _TextFieldWidgetState extends State<MTextFieldCustom> {
   @override
   Widget build(BuildContext context) {
     Widget textFiledTypeLabel = TextFormField(
+      onTap: onTap,
       obscureText: widget.isObscureText,
       controller: _editingController,
       onChanged: widget.onChange,
@@ -150,7 +159,15 @@ class _TextFieldWidgetState extends State<MTextFieldCustom> {
               fontSize: (widget.fontSize != null) ? widget.fontSize : 14,
               color: widget.hintColor ?? AppColor.GREY_TEXT,
             ),
+            enabledBorder: widget.enableBorder,
+            focusedBorder: widget.focusBorder,
             prefixIcon: widget.prefixIcon,
+            suffixIconConstraints: widget.suffixIcon != null
+                ? const BoxConstraints(
+                    maxWidth: 20,
+                    minHeight: 20,
+                  )
+                : null,
             suffixIcon: widget.suffixIcon,
             contentPadding: widget.contentPadding ??
                 const EdgeInsets.symmetric(horizontal: 16),

@@ -5,6 +5,7 @@ import 'package:crypto/crypto.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:vierqr/commons/constants/env/env_config.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/authentication_type.dart';
 import 'package:vierqr/commons/utils/base_api.dart';
 import 'package:vierqr/commons/utils/log.dart';
@@ -532,11 +533,13 @@ class BankCardRepository {
     return result;
   }
 
-  Future<ResponseMessageDTO> unConfirmOTP(dynamic dto) async {
+  Future<ResponseMessageDTO> unConfirmOTP(dynamic dto, {required int unlinkType}) async {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
-      final String url = '${EnvConfig.getUrl()}bank/api/unregister_confirm';
+      final String url = unlinkType == 0
+          ? '${EnvConfig.getUrl()}bank/api/unregister_confirm'
+          : '${EnvConfig.getUrl()}bank/api/account-bank/unlinked';
       Response? response;
 
       if (dto is ConfirmOTPBankDTO) {

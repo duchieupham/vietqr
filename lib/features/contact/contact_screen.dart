@@ -345,9 +345,9 @@ class _ContactStateState extends State<_ContactState>
                           padding: const EdgeInsets.fromLTRB(20, 20, 20, 4),
                           child: Row(
                             children: [
-                              Text(
+                              const Text(
                                 'Ví QR',
-                                style: const TextStyle(
+                                style: TextStyle(
                                     fontSize: 16, fontWeight: FontWeight.w600),
                               ),
                               const Spacer(),
@@ -361,7 +361,7 @@ class _ContactStateState extends State<_ContactState>
                                     ),
                                     child: Container(
                                       alignment: Alignment.centerRight,
-                                      child: Text(
+                                      child: const Text(
                                         'Cập nhật danh bạ',
                                         style: TextStyle(
                                             fontSize: 12,
@@ -409,8 +409,9 @@ class _ContactStateState extends State<_ContactState>
                             final model = provider.listCategories[index];
                             return GestureDetector(
                               onTap: () {
-                                if (scrollController.hasClients)
+                                if (scrollController.hasClients) {
                                   scrollController.jumpTo(0.0);
+                                }
                                 searchController.clear();
                                 provider.updateCategory(value: model);
                                 provider.updateOffset(0);
