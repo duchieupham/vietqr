@@ -575,9 +575,6 @@ class _QrStyleState extends State<QrStyle> {
   }
 
   void _toggleLogo() async {
-    setState(() {
-      _isLogoAdded = !_isLogoAdded;
-    });
     await Permission.mediaLibrary.request();
     await imagePicker.pickImage(source: ImageSource.gallery).then(
       (pickedFile) async {
@@ -585,8 +582,11 @@ class _QrStyleState extends State<QrStyle> {
           File? file = File(pickedFile.path);
           File? compressedFile = FileUtils.instance.compressImage(file);
           filePicker = compressedFile;
-          setState(() {});
+          _isLogoAdded = true;
+        } else {
+          _isLogoAdded = false;
         }
+        setState(() {});
       },
     );
   }

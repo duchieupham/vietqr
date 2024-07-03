@@ -33,6 +33,12 @@ class CustomTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isClear = false;
+    if (controller.text.isNotEmpty) {
+      isClear = true;
+    } else {
+      isClear = false;
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -50,14 +56,16 @@ class CustomTextField extends StatelessWidget {
             focusBorder: const UnderlineInputBorder(
                 borderSide: BorderSide(color: AppColor.BLUE_TEXT)),
             contentPadding: EdgeInsets.zero,
-            suffixIcon: InkWell(
-              onTap: onClear,
-              child: const Icon(
-                Icons.clear,
-                size: 20,
-                color: AppColor.GREY_DADADA,
-              ),
-            ),
+            suffixIcon: isClear
+                ? InkWell(
+                    onTap: onClear,
+                    child: const Icon(
+                      Icons.clear,
+                      size: 20,
+                      color: AppColor.GREY_DADADA,
+                    ),
+                  )
+                : const SizedBox.shrink(),
             keyboardAction: TextInputAction.next,
             onChange: onChanged,
             inputType: textInputType ?? TextInputType.multiline,

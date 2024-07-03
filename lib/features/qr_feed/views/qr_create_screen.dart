@@ -82,9 +82,9 @@ class _QrCreateScreenState extends State<QrCreateScreen> {
           const DefaultAppbarWidget(),
           SliverToBoxAdapter(
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
               width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
+              // height: MediaQuery.of(context).size.height,
               child: _buildBody(),
             ),
           )

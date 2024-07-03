@@ -16,6 +16,7 @@ import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/extensions/string_extension.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
+import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/commons/widgets/shimmer_block.dart';
 import 'package:vierqr/features/account/account_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
@@ -64,25 +65,25 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
   }
 
   void initData() {
-    _scrollController.addListener(
-      () {
-        if (_scrollController.position.pixels ==
-            _scrollController.position.maxScrollExtent) {
-          if (metadata != null) {
-            int total = (metadata!.total! / 5).ceil();
-            if (total > metadata!.page!) {
-              // await getMoreOrders();
-              _bloc.add(
-                  GetMoreQrFeedEvent(type: tab == TabView.COMMUNITY ? 0 : 1));
-            }
-          }
-        }
-
-        updateState();
-      },
-    );
     WidgetsBinding.instance.addPostFrameCallback(
       (_) {
+        _scrollController.addListener(
+          () {
+            if (_scrollController.position.pixels ==
+                _scrollController.position.maxScrollExtent) {
+              if (metadata != null) {
+                int total = (metadata!.total! / 5).ceil();
+                if (total > metadata!.page!) {
+                  // await getMoreOrders();
+                  _bloc.add(GetMoreQrFeedEvent(
+                      type: tab == TabView.COMMUNITY ? 0 : 1));
+                }
+              }
+            }
+
+            updateState();
+          },
+        );
         _scrollController.jumpTo(_scrollController.position.minScrollExtent);
         _bloc.add(GetQrFeedEvent(
             isLoading: true, type: tab == TabView.COMMUNITY ? 0 : 1));
@@ -116,6 +117,13 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
             state.status == BlocStatus.SUCCESS) {
           list = [...state.listQrFeed!];
           metadata = state.metadata;
+          updateState();
+        }
+        if (state.request == QrFeed.GET_QR_FEED_LIST &&
+            state.status == BlocStatus.NONE) {
+          list = [];
+          metadata = state.metadata;
+          updateState();
         }
 
         if (state.request == QrFeed.GET_MORE &&
@@ -202,7 +210,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                           if (state.request == QrFeed.GET_QR_FEED_LIST &&
                               state.status == BlocStatus.LOADING_PAGE)
                             ...listLoading
-                          else
+                          else if (list.isNotEmpty)
                             ...list.map(
                               (e) => _buildQRFeed(dto: e),
                             ),
@@ -221,7 +229,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                           const SizedBox(
                             height: 90,
                           ),
-                        ]
+                        ],
                       ],
                     ),
                   ),
@@ -244,6 +252,8 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
             InkWell(
               onTap: () {
                 tab = TabView.COMMUNITY;
+                _bloc.add(const GetQrFeedEvent(isLoading: true, type: 0));
+
                 updateState();
               },
               child: Container(
@@ -276,6 +286,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
             InkWell(
               onTap: () {
                 tab = TabView.INDIVIDUAL;
+                _bloc.add(const GetQrFeedEvent(isLoading: true, type: 1));
                 updateState();
               },
               child: Container(
@@ -413,7 +424,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
       margin: const EdgeInsets.only(bottom: 80, right: 5),
       child: FloatingActionButton(
         backgroundColor: Colors.transparent,
-        elevation: 4,
+        elevation: 0,
         onPressed: () {
           _scrollToTop();
         },
@@ -425,10 +436,10 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
           width: 50,
           height: 50,
           decoration: BoxDecoration(
-            color: AppColor.GREY_DADADA,
+            color: AppColor.GREY_DADADA.withOpacity(0.4),
             borderRadius: BorderRadius.circular(50),
           ),
-          child: Icon(
+          child: const Icon(
             Icons.arrow_upward_outlined,
             color: AppColor.BLACK,
             size: 15,
@@ -437,19 +448,6 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
       ),
     );
   }
-
-  final List<List<Color>> _gradients = [
-    [const Color(0xFFE1EFFF), const Color(0xFFE5F9FF)],
-    [const Color(0xFFBAFFBF), const Color(0xFFCFF4D2)],
-    [const Color(0xFFFFC889), const Color(0xFFFFDCA2)],
-    [const Color(0xFFA6C5FF), const Color(0xFFC5CDFF)],
-    [const Color(0xFFCDB3D4), const Color(0xFFF7C1D4)],
-    [const Color(0xFFF5CEC7), const Color(0xFFFFD7BF)],
-    [const Color(0xFFBFF6FF), const Color(0xFFFFDBE7)],
-    [const Color(0xFFF1C9FF), const Color(0xFFFFB5AC)],
-    [const Color(0xFFB4FFEE), const Color(0xFFEDFF96)],
-    [const Color(0xFF91E2FF), const Color(0xFF91FFFF)],
-  ];
 
   bool get _isAppBarExpanded {
     return _scrollController.hasClients &&
@@ -575,6 +573,18 @@ class _buildQRFeed extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final List<List<Color>> _gradients = [
+      [const Color(0xFFE1EFFF), const Color(0xFFE5F9FF)],
+      [const Color(0xFFBAFFBF), const Color(0xFFCFF4D2)],
+      [const Color(0xFFFFC889), const Color(0xFFFFDCA2)],
+      [const Color(0xFFA6C5FF), const Color(0xFFC5CDFF)],
+      [const Color(0xFFCDB3D4), const Color(0xFFF7C1D4)],
+      [const Color(0xFFF5CEC7), const Color(0xFFFFD7BF)],
+      [const Color(0xFFBFF6FF), const Color(0xFFFFDBE7)],
+      [const Color(0xFFF1C9FF), const Color(0xFFFFB5AC)],
+      [const Color(0xFFB4FFEE), const Color(0xFFEDFF96)],
+      [const Color(0xFF91E2FF), const Color(0xFF91FFFF)],
+    ];
     String timestampToHour(int timestamp) {
       // Convert the timestamp to a DateTime object
       DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
@@ -589,11 +599,9 @@ class _buildQRFeed extends StatelessWidget {
         break;
       case '1':
         qrType = 'Mã QR khác';
-
         break;
       case '2':
         qrType = 'Mã QR VCard';
-
         break;
       case '3':
         qrType = 'Mã VietQR';
@@ -641,7 +649,8 @@ class _buildQRFeed extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            '${timestampToHour(dto.timeCreated)} giờ',
+                            TimeUtils.instance
+                                .formatTimeNotification(dto.timeCreated),
                             style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.normal,
@@ -658,7 +667,7 @@ class _buildQRFeed extends StatelessWidget {
                     child: RichText(
                       text: TextSpan(children: [
                         TextSpan(
-                          text: dto.data,
+                          text: dto.description,
                           style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.normal,
@@ -687,12 +696,17 @@ class _buildQRFeed extends StatelessWidget {
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
-                      gradient: VietQRTheme.gradientColor.vcard,
+                      gradient: LinearGradient(
+                        colors: _gradients[int.parse(dto.theme) - 1],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ),
                     ),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         QrImageView(
+                          padding: EdgeInsets.zero,
                           data: dto.value,
                           size: 80,
                           backgroundColor: AppColor.WHITE,
@@ -717,7 +731,7 @@ class _buildQRFeed extends StatelessWidget {
                                           fontWeight: FontWeight.bold),
                                     ),
                                     Text(
-                                      dto.description,
+                                      dto.data,
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: const TextStyle(
@@ -766,12 +780,12 @@ class _buildQRFeed extends StatelessWidget {
                       ),
                       const SizedBox(width: 18),
                       Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           const XImage(
                             imagePath: 'assets/images/ic-comment.png',
-                            height: 15,
+                            height: 12.5,
                             fit: BoxFit.fitHeight,
                           ),
                           const SizedBox(width: 6),

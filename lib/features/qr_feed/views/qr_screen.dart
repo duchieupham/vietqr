@@ -233,7 +233,7 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
             child: Container(
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
               width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
+              // height: MediaQuery.of(context).size.height,
               child: Column(
                 children: [
                   widget!,
@@ -643,47 +643,49 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
               ? 'Nhập thông tin đường dẫn tại đây'
               : 'Nhập thông tin mã QR tại đây',
         ),
-        GestureDetector(
-          onTap: () {
-            setState(() {
-              _controller.text = _clipboardContent;
-            });
-          },
-          child: Container(
-            width: 250,
-            margin: const EdgeInsets.only(top: 10),
-            padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                gradient: const LinearGradient(colors: [
-                  AppColor.D8ECF8,
-                  AppColor.FFEAD9,
-                  AppColor.F5C9D1,
-                ], begin: Alignment.bottomLeft, end: Alignment.topRight)),
-            child: Row(
-              children: [
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8),
-                  child: XImage(
-                    imagePath: 'assets/images/ic-suggest.png',
-                    width: 30,
+        _clipboardContent.isNotEmpty
+            ? GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _controller.text = _clipboardContent;
+                  });
+                },
+                child: Container(
+                  width: 250,
+                  margin: const EdgeInsets.only(top: 10),
+                  padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      gradient: const LinearGradient(colors: [
+                        AppColor.D8ECF8,
+                        AppColor.FFEAD9,
+                        AppColor.F5C9D1,
+                      ], begin: Alignment.bottomLeft, end: Alignment.topRight)),
+                  child: Row(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8),
+                        child: XImage(
+                          imagePath: 'assets/images/ic-suggest.png',
+                          width: 30,
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          _clipboardContent,
+                          maxLines: 1,
+                          style: const TextStyle(
+                            color: AppColor.BLACK,
+                            fontSize: 12,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                Expanded(
-                  child: Text(
-                    _clipboardContent,
-                    maxLines: 1,
-                    style: const TextStyle(
-                      color: AppColor.BLACK,
-                      fontSize: 12,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+              )
+            : const SizedBox.shrink(),
       ],
     );
   }
