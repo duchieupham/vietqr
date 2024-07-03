@@ -12,14 +12,10 @@ class VcardWidget extends StatelessWidget {
   final TextEditingController emailController;
   final TextEditingController webController;
   final TextEditingController ctyController;
-
   final TextEditingController addressController;
-
   final bool isShow;
-
   final Function() onToggle;
   final Function(String) onChangePhone;
-
   final Function(int) onClear;
 
   const VcardWidget({

@@ -347,6 +347,7 @@ enum CreateQRType {
 enum QrFeed {
   NONE,
   GET_QR_FEED_LIST,
+  GET_MORE,
 }
 
 enum DashBoardType {

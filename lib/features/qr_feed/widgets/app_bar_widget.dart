@@ -13,11 +13,10 @@ import 'package:vierqr/services/local_storage/shared_preference/shared_pref_util
 class CustomSliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   final double expandedHeight;
   final Widget widget;
-  final bool isExpanded;
+
   const CustomSliverAppBarDelegate({
     required this.expandedHeight,
     required this.widget,
-    required this.isExpanded,
   });
 
   @override
@@ -35,6 +34,14 @@ class CustomSliverAppBarDelegate extends SliverPersistentHeaderDelegate {
             right: 0,
             child: Container(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+              decoration: BoxDecoration(color: AppColor.WHITE, boxShadow: [
+                BoxShadow(
+                  color: AppColor.BLACK.withOpacity(0.1),
+                  spreadRadius: 1,
+                  blurRadius: 4,
+                  offset: const Offset(0, 3),
+                )
+              ]),
               child: widget,
             ),
           ),

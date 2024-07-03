@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -14,6 +15,7 @@ import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/extensions/string_extension.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
+import 'package:vierqr/commons/widgets/shimmer_block.dart';
 import 'package:vierqr/features/account/account_screen.dart';
 import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/qr_feed/blocs/qr_feed_bloc.dart';
@@ -49,8 +51,6 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
 
   double height = 0.0;
 
-  bool isLoadMore = false;
-
   List<QrFeedDTO> list = [];
 
   @override
@@ -70,6 +70,8 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
             int total = (metadata!.total! / 5).ceil();
             if (total > metadata!.page!) {
               // await getMoreOrders();
+              _bloc.add(
+                  GetMoreQrFeedEvent(type: tab == TabView.COMMUNITY ? 0 : 1));
             }
           }
         }
@@ -79,12 +81,19 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
     );
     WidgetsBinding.instance.addPostFrameCallback(
       (_) {
-        _bloc.add(GetQrFeedEvent(type: tab == TabView.COMMUNITY ? 0 : 1));
+        _bloc.add(GetQrFeedEvent(
+            isLoading: true, type: tab == TabView.COMMUNITY ? 0 : 1));
         _scrollController.animateTo(_scrollController.position.minScrollExtent,
             duration: const Duration(microseconds: 10), curve: Curves.easeOut);
       },
     );
   }
+
+  List<Widget> listLoading = [
+    const _buildLoading(),
+    const _buildLoading(),
+    const _buildLoading(),
+  ];
 
   @override
   void dispose() {
@@ -93,7 +102,8 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
   }
 
   Future<void> onRefresh() async {
-    _bloc.add(GetQrFeedEvent(type: tab == TabView.COMMUNITY ? 0 : 1));
+    _bloc.add(GetQrFeedEvent(
+        isLoading: false, type: tab == TabView.COMMUNITY ? 0 : 1));
   }
 
   @override
@@ -103,7 +113,14 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
       listener: (context, state) {
         if (state.request == QrFeed.GET_QR_FEED_LIST &&
             state.status == BlocStatus.SUCCESS) {
-          list = state.listQrFeed!;
+          list = [...state.listQrFeed!];
+          metadata = state.metadata;
+        }
+
+        if (state.request == QrFeed.GET_MORE &&
+            state.status == BlocStatus.SUCCESS) {
+          list = [...list, ...state.listQrFeed!];
+          metadata = state.metadata;
         }
       },
       builder: (context, state) {
@@ -143,9 +160,9 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                 ),
                 SliverPersistentHeader(
                   delegate: CustomSliverAppBarDelegate(
-                      expandedHeight: 112,
-                      widget: _pinnedAppbar(),
-                      isExpanded: _isAppBarExpanded),
+                    expandedHeight: 112,
+                    widget: _pinnedAppbar(),
+                  ),
                   pinned: true,
                   floating: true,
                 ),
@@ -170,28 +187,33 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                 SliverToBoxAdapter(
                   child: Container(
                     color: AppColor.BLUE_BGR,
-                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    // padding: const EdgeInsets.symmetric(vertical: 10),
                     width: MediaQuery.of(context).size.width,
                     // height: MediaQuery.of(context).size.height,
                     child: Column(
                       children: [
                         if (tab == TabView.COMMUNITY) ...[
-                          ...list.map(
-                            (e) => _buildQRFeed(dto: e),
-                          ),
-                          if (isLoadMore)
+                          if (state.request == QrFeed.GET_QR_FEED_LIST &&
+                              state.status == BlocStatus.LOADING_PAGE)
+                            ...listLoading
+                          else
+                            ...list.map(
+                              (e) => _buildQRFeed(dto: e),
+                            ),
+                          if (state.request == QrFeed.GET_MORE &&
+                              state.status == BlocStatus.LOAD_MORE)
                             const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 10),
+                              padding: EdgeInsets.symmetric(vertical: 20),
                               child: SizedBox(
-                                height: 20,
-                                width: 20,
+                                height: 25,
+                                width: 25,
                                 child: Center(
                                   child: CircularProgressIndicator(),
                                 ),
                               ),
                             ),
                           const SizedBox(
-                            height: 80,
+                            height: 90,
                           ),
                         ]
                       ],
@@ -444,6 +466,88 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
 }
 
 // ignore: camel_case_types
+class _buildLoading extends StatelessWidget {
+  const _buildLoading({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: AppColor.WHITE,
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.fromLTRB(20, 10, 20, 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const ShimmerBlock(
+            borderRadius: 100,
+            width: 30,
+            height: 30,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+              child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ShimmerBlock(height: 15, width: 150, borderRadius: 10),
+                  ShimmerBlock(height: 15, width: 20, borderRadius: 10),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Container(
+                margin: const EdgeInsets.only(right: 100),
+                padding: const EdgeInsets.all(10),
+                child: const Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ShimmerBlock(
+                      width: 80,
+                      height: 80,
+                    ),
+                    SizedBox(width: 8),
+                    Expanded(
+                      child: SizedBox(
+                        height: 80,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ShimmerBlock(
+                                    width: double.infinity,
+                                    height: 12,
+                                    borderRadius: 10),
+                                SizedBox(height: 2),
+                                ShimmerBlock(
+                                    width: 100, height: 12, borderRadius: 10),
+                              ],
+                            ),
+                            ShimmerBlock(
+                                width: 50, height: 10, borderRadius: 10),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          )),
+        ],
+      ),
+    );
+  }
+}
+
+// ignore: camel_case_types
 class _buildQRFeed extends StatelessWidget {
   final QrFeedDTO dto;
   const _buildQRFeed({
@@ -455,8 +559,8 @@ class _buildQRFeed extends StatelessWidget {
     return Container(
       color: AppColor.WHITE,
       width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.fromLTRB(20, 10, 20, 8),
+      // margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -508,23 +612,22 @@ class _buildQRFeed extends StatelessWidget {
                     child: RichText(
                       text: TextSpan(children: [
                         TextSpan(
-                          text:
-                              'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum',
+                          text: dto.content,
                           style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.normal,
                             color: AppColor.BLACK,
                           ),
                           children: <TextSpan>[
-                            TextSpan(
-                                text: 'Xem Thêm',
-                                style: const TextStyle(
-                                    color: AppColor.BLUE_TEXT,
-                                    fontSize: 12,
-                                    decoration: TextDecoration.underline,
-                                    decorationColor: AppColor.BLUE_TEXT),
-                                recognizer: TapGestureRecognizer()
-                                  ..onTap = () {})
+                            // TextSpan(
+                            //     text: 'Xem Thêm',
+                            //     style: const TextStyle(
+                            //         color: AppColor.BLUE_TEXT,
+                            //         fontSize: 12,
+                            //         decoration: TextDecoration.underline,
+                            //         decorationColor: AppColor.BLUE_TEXT),
+                            //     recognizer: TapGestureRecognizer()
+                            //       ..onTap = () {})
                           ],
                         ),
                       ]),

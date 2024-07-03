@@ -15,6 +15,8 @@ class CustomTextField extends StatelessWidget {
   final VoidCallback onClear;
   final ValueChanged<String> onChanged;
   final bool isActive;
+  final FocusNode? focusNode;
+  final Function()? onTap;
 
   const CustomTextField({
     super.key,
@@ -25,10 +27,12 @@ class CustomTextField extends StatelessWidget {
     required this.hintTextColor,
     required this.onClear,
     required this.onChanged,
+    this.focusNode,
     this.inputFormatter,
     this.textInputType,
     this.maxLines,
     this.isActive = false,
+    this.onTap,
   });
 
   @override
@@ -41,7 +45,9 @@ class CustomTextField extends StatelessWidget {
           style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
         ),
         MTextFieldCustom(
+            onTap: onTap,
             controller: controller,
+            focusNode: focusNode,
             inputFormatter: inputFormatter,
             hintText: hintText,
             // enableBorder: UnderlineInputBorder(),
