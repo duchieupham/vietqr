@@ -38,6 +38,7 @@ import 'package:vierqr/features/personal/views/user_edit_view.dart';
 import 'package:vierqr/features/personal/views/user_update_password_view.dart';
 import 'package:vierqr/features/qr_box/qr_box_screen.dart';
 import 'package:vierqr/features/qr_feed/views/qr_create_screen.dart';
+import 'package:vierqr/features/qr_feed/views/qr_style.dart';
 import 'package:vierqr/features/register_new_bank/register_mb_bank.dart';
 import 'package:vierqr/features/report/report_screen.dart';
 import 'package:vierqr/features/scan_qr/scan_qr_screen.dart';
@@ -117,12 +118,17 @@ class NavigationService {
         return _buildRoute(settings, const CustomerVaSplashView());
       case Routes.CUSTOMER_VA_LIST:
         return _buildRoute(settings, const CustomerVaListView());
+      case Routes.QR_STYLE:
+        return _buildRoute(settings, const QrStyle());
       case Routes.QR_CREATE_SCREEN:
         return CupertinoPageRoute(
             builder: (context) => const QrCreateScreen(), settings: settings);
-      case Routes.QR_SCREEN:
-        return CupertinoPageRoute(
-            builder: (context) => const QrCreateScreen(), settings: settings);
+      // case Routes.QR_STYLE:
+      //   return CupertinoPageRoute(
+      //       builder: (context) => const QrStyle(), settings: settings);
+      // case Routes.QR_SCREEN:
+      //   return CupertinoPageRoute(
+      //       builder: (context) => const QrCreateScreen(), settings: settings);
       case Routes.DYNAMIC_ACTIVE_KEY_SCREEN:
         Map<String, dynamic> param = settings.arguments as Map<String, dynamic>;
         String activeKey = param['activeKey'] as String;

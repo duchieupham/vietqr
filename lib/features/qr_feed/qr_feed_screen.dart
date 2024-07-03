@@ -19,6 +19,7 @@ import 'package:vierqr/features/dashboard/blocs/auth_provider.dart';
 import 'package:vierqr/features/qr_feed/blocs/qr_feed_bloc.dart';
 import 'package:vierqr/features/qr_feed/events/qr_feed_event.dart';
 import 'package:vierqr/features/qr_feed/states/qr_feed_state.dart';
+import 'package:vierqr/features/qr_feed/views/qr_style.dart';
 import 'package:vierqr/features/qr_feed/widgets/app_bar_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/metadata_dto.dart';
@@ -307,7 +308,9 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
               ),
             ),
             InkWell(
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context).pushNamed(Routes.QR_STYLE);
+              },
               child: Container(
                 padding: const EdgeInsets.all(4),
                 height: 42,
@@ -534,7 +537,7 @@ class _buildQRFeed extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Container(
-                    margin: const EdgeInsets.only(right: 100),
+                    margin: const EdgeInsets.only(right: 30),
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
