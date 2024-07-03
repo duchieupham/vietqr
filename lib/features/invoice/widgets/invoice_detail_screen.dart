@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/features/invoice/blocs/invoice_bloc.dart';
 import 'package:vierqr/features/invoice/events/invoice_events.dart';
@@ -57,6 +59,16 @@ class _InvoiceDetailScreenState extends State<_InvoiceDetailScreen> {
     context.read<InvoiceBloc>().add(GetInvoiceDetail(widget.invoiceId));
 
     // onFcmMessage();
+  }
+
+  void _openUrl(String invoiceId) async {
+    final url =
+        '${EnvConfig.getBaseUrl()}images-invoice/download-files?invoiceId=$invoiceId';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   void _onQrCreate() async {
@@ -204,6 +216,20 @@ class _InvoiceDetailScreenState extends State<_InvoiceDetailScreen> {
                                 ),
                               ),
                             ),
+                            const SizedBox(height: 10),
+                            if (_data?.fileAttachmentId != '')
+                              GestureDetector(
+                                onTap: () => _openUrl(_data!.invoiceId!),
+                                child: const Text(
+                                  'Xem tệp',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    color: AppColor.BLUE_TEXT,
+                                    decoration: TextDecoration.underline,
+                                    decorationColor: AppColor.BLUE_TEXT,
+                                  ),
+                                ),
+                              ),
                             const SizedBox(height: 30),
                             IntrinsicHeight(
                               child: Container(

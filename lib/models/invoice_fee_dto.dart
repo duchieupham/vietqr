@@ -11,6 +11,7 @@ class InvoiceFeeDTO {
   String? bankShortName;
   String? qrCode;
   int? totalAmount;
+  String? fileAttachmentId;
 
   InvoiceFeeDTO({
     this.invoiceId,
@@ -25,6 +26,7 @@ class InvoiceFeeDTO {
     this.bankShortName,
     this.qrCode,
     this.totalAmount,
+    this.fileAttachmentId,
   });
 
   factory InvoiceFeeDTO.fromJson(Map<String, dynamic> json) {
@@ -41,6 +43,7 @@ class InvoiceFeeDTO {
       bankShortName: json['bankShortName'],
       qrCode: json['qrCode'],
       totalAmount: json['totalAmount'],
+      fileAttachmentId: json['fileAttachmentId'],
     );
   }
 
@@ -58,6 +61,7 @@ class InvoiceFeeDTO {
       'bankShortName': bankShortName,
       'qrCode': qrCode,
       'totalAmount': totalAmount,
+      'fileAttachmentId': fileAttachmentId ?? '',
     };
   }
 }

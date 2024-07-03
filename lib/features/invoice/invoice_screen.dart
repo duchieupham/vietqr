@@ -7,8 +7,10 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vierqr/commons/constants/configurations/stringify.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/constants/env/env_config.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/format_price.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
@@ -55,6 +57,7 @@ class __InvoiceState extends State<_Invoice> {
   String? selectBankId;
   MetaDataDTO? metadata;
   ScrollController? scrollController;
+  // bool _isPay = false;
 
   initData({bool isRefresh = false}) {
     if (isRefresh) {}
@@ -72,6 +75,7 @@ class __InvoiceState extends State<_Invoice> {
     super.initState();
     _bloc = BlocProvider.of(context);
     _provider = Provider.of<InvoiceProvider>(context, listen: false);
+    _provider.selectedStatus = 0;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       initData();
     });
@@ -92,6 +96,16 @@ class __InvoiceState extends State<_Invoice> {
         }
       }
     });
+  }
+
+  void _openUrl(String invoiceId) async {
+    final url =
+        '${EnvConfig.getBaseUrl()}images-invoice/download-files?invoiceId=$invoiceId';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   void _onQrCreate(InvoiceStates state, int index) async {
@@ -247,11 +261,89 @@ class __InvoiceState extends State<_Invoice> {
                 'Danh sách hoá đơn',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-              Text(
-                provider.selectedStatus == 0
-                    ? 'chưa thanh toán'
-                    : 'đã thanh toán',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              // const SizedBox(height: 20),
+              // Text(
+              //   provider.selectedStatus == 0
+              //       ? 'chưa thanh toán'
+              //       : 'đã thanh toán',
+              //   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              // ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      provider.changeStatus(0);
+                      _bloc.add(GetInvoiceList(
+                          status: 0,
+                          bankId: selectBankId ?? '',
+                          // time: _provider.invoiceTime,
+                          filterBy: 1,
+                          page: 1));
+                    },
+                    child: Container(
+                      width: 120,
+                      height: 30,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
+                        border: Border.all(
+                            color: provider.selectedStatus == 0
+                                ? AppColor.TRANSPARENT
+                                : AppColor.GREY_DADADA),
+                        color: provider.selectedStatus == 0
+                            ? AppColor.BLUE_TEXT.withOpacity(0.2)
+                            : AppColor.WHITE,
+                        // border: Border.all(color: AppColor.BLUE_TEXT),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Chưa thanh toán',
+                          style: TextStyle(
+                              fontSize: 12,
+                              color: provider.selectedStatus == 0
+                                  ? AppColor.BLUE_TEXT
+                                  : AppColor.BLACK_TEXT),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  InkWell(
+                    onTap: () {
+                      provider.changeStatus(1);
+                      _bloc.add(GetInvoiceList(
+                          status: 1,
+                          bankId: selectBankId ?? '',
+                          // time: _provider.invoiceTime,
+                          filterBy: 1,
+                          page: 1));
+                    },
+                    child: Container(
+                      width: 120,
+                      height: 30,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
+                        border: Border.all(
+                            color: provider.selectedStatus == 1
+                                ? AppColor.TRANSPARENT
+                                : AppColor.GREY_DADADA),
+                        color: provider.selectedStatus == 1
+                            ? AppColor.BLUE_TEXT.withOpacity(0.2)
+                            : AppColor.WHITE,
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Đã thanh toán',
+                          style: TextStyle(
+                              fontSize: 12,
+                              color: provider.selectedStatus == 1
+                                  ? AppColor.BLUE_TEXT
+                                  : AppColor.BLACK_TEXT),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
               provider.invoiceMonth != null
                   ? Text(
@@ -356,6 +448,21 @@ class __InvoiceState extends State<_Invoice> {
                               '${state.listInvoice?[index].bankShortName} - ${state.listInvoice?[index].bankAccount}',
                               style: TextStyle(fontSize: 15),
                             ),
+                            if (state.listInvoice![index].fileAttachmentId !=
+                                '')
+                              GestureDetector(
+                                onTap: () => _openUrl(
+                                    state.listInvoice![index].invoiceId!),
+                                child: const Text(
+                                  'Xem tệp',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    color: AppColor.BLUE_TEXT,
+                                    decoration: TextDecoration.underline,
+                                    decorationColor: AppColor.BLUE_TEXT,
+                                  ),
+                                ),
+                              ),
                           ],
                         ),
                         Image.asset(
@@ -388,7 +495,7 @@ class __InvoiceState extends State<_Invoice> {
                                   },
                                   child: Container(
                                     padding:
-                                        const EdgeInsets.fromLTRB(10, 8, 10, 8),
+                                        const EdgeInsets.fromLTRB(10, 4, 10, 4),
                                     decoration: BoxDecoration(
                                       color:
                                           AppColor.BLUE_TEXT.withOpacity(0.2),
@@ -407,7 +514,7 @@ class __InvoiceState extends State<_Invoice> {
                                         Text(
                                           'QR thanh toán',
                                           style: TextStyle(
-                                              fontSize: 12,
+                                              fontSize: 14,
                                               color: AppColor.BLUE_TEXT),
                                         ),
                                       ],

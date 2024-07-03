@@ -18,27 +18,30 @@ class InvoiceDetailDTO {
   String? qrCode;
   int? totalAmount;
   List<Items>? items;
+  String? fileAttachmentId;
 
-  InvoiceDetailDTO(
-      {this.invoiceId,
-      this.billNumber,
-      this.invoiceNumber,
-      this.invoiceName,
-      this.timeCreated,
-      this.timePaid,
-      this.status,
-      this.vatAmount,
-      this.amount,
-      this.vat,
-      this.bankId,
-      this.bankAccount,
-      this.bankShortName,
-      this.bankCode,
-      this.bankName,
-      this.userBankName,
-      this.qrCode,
-      this.totalAmount,
-      this.items});
+  InvoiceDetailDTO({
+    this.invoiceId,
+    this.billNumber,
+    this.invoiceNumber,
+    this.invoiceName,
+    this.timeCreated,
+    this.timePaid,
+    this.status,
+    this.vatAmount,
+    this.amount,
+    this.vat,
+    this.bankId,
+    this.bankAccount,
+    this.bankShortName,
+    this.bankCode,
+    this.bankName,
+    this.userBankName,
+    this.qrCode,
+    this.totalAmount,
+    this.items,
+    this.fileAttachmentId,
+  });
 
   InvoiceDetailDTO.fromJson(Map<String, dynamic> json) {
     invoiceId = json['invoiceId'];
@@ -59,6 +62,7 @@ class InvoiceDetailDTO {
     userBankName = json['userBankNameForPayment'];
     qrCode = json['qrCode'];
     totalAmount = json['totalAmount'];
+    fileAttachmentId = json['fileAttachmentId'];
     if (json['items'] != null) {
       items = <Items>[];
       json['items'].forEach((v) {
@@ -84,6 +88,7 @@ class InvoiceDetailDTO {
     data['bankShortName'] = this.bankShortName;
     data['qrCode'] = this.qrCode;
     data['totalAmount'] = this.totalAmount;
+    data['fileAttachmentId'] = this.fileAttachmentId;
     if (this.items != null) {
       data['items'] = this.items!.map((v) => v.toJson()).toList();
     }

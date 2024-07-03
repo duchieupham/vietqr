@@ -658,9 +658,7 @@ class DialogWidget {
 
   Future openDateTimePickerDialog(
       String title, Function(DateTime) onChanged) async {
-    double width = MediaQuery.of(NavigationService.context!)
-        .size
-        .width;
+    double width = MediaQuery.of(NavigationService.context!).size.width;
     return await showModalBottomSheet(
         isScrollControlled: true,
         context: NavigationService.context!,
