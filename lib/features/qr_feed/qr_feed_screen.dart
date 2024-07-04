@@ -213,7 +213,9 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                             ...listLoading
                           else if (list.isNotEmpty)
                             ...list.map(
-                              (e) => _buildQRFeed(dto: e),
+                              (e) => _buildQRFeed(
+                                dto: e,
+                              ),
                             ),
                           if (state.request == QrFeed.GET_MORE &&
                               state.status == BlocStatus.LOAD_MORE)
@@ -692,67 +694,74 @@ class _buildQRFeed extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Container(
-                    margin: const EdgeInsets.only(right: 30),
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      gradient: LinearGradient(
-                        colors: _gradients[int.parse(dto.theme) - 1],
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight,
-                      ),
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        QrImageView(
-                          padding: EdgeInsets.zero,
-                          data: dto.value,
-                          size: 80,
-                          backgroundColor: AppColor.WHITE,
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pushNamed(Routes.QR_DETAIL_SCREEN);
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.only(right: 30),
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        gradient: LinearGradient(
+                          colors: _gradients[int.parse(dto.theme) - 1],
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
                         ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: SizedBox(
-                            height: 80,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      dto.title,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      dto.data,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.normal),
-                                    ),
-                                  ],
-                                ),
-                                Text(
-                                  qrType,
-                                  style: const TextStyle(
-                                      fontSize: 10,
-                                      color: AppColor.GREY_TEXT,
-                                      fontWeight: FontWeight.normal),
-                                ),
-                              ],
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          QrImageView(
+                            padding: EdgeInsets.zero,
+                            data: dto.value,
+                            size: 80,
+                            backgroundColor: AppColor.WHITE,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: SizedBox(
+                              height: 80,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        dto.title,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      Text(
+                                        dto.data,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.normal),
+                                      ),
+                                    ],
+                                  ),
+                                  Text(
+                                    qrType,
+                                    style: const TextStyle(
+                                        fontSize: 10,
+                                        color: AppColor.GREY_TEXT,
+                                        fontWeight: FontWeight.normal),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -763,17 +772,24 @@ class _buildQRFeed extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          XImage(
-                            imagePath: dto.hasLiked
-                                ? 'assets/images/ic-heart-red.png'
-                                : 'assets/images/ic-heart-grey.png',
-                            height: 30,
-                            fit: BoxFit.fitHeight,
+                          GestureDetector(
+                            onTap: () {
+                              getIt.get<QrFeedBloc>().add(InteractWithQrEvent(
+                                  qrWalletId: dto.id,
+                                  interactionType: dto.hasLiked ? '0' : '1'));
+                            },
+                            child: XImage(
+                              imagePath: dto.hasLiked
+                                  ? 'assets/images/ic-heart-red.png'
+                                  : 'assets/images/ic-heart-grey.png',
+                              height: 50,
+                              fit: BoxFit.fitHeight,
+                            ),
                           ),
                           Text(
                             dto.likeCount.toString(),
                             style: const TextStyle(
-                                fontSize: 10,
+                                fontSize: 12,
                                 color: AppColor.GREY_TEXT,
                                 fontWeight: FontWeight.normal),
                           ),
@@ -786,14 +802,14 @@ class _buildQRFeed extends StatelessWidget {
                         children: [
                           const XImage(
                             imagePath: 'assets/images/ic-comment.png',
-                            height: 12.5,
+                            height: 17,
                             fit: BoxFit.fitHeight,
                           ),
                           const SizedBox(width: 6),
                           Text(
                             dto.commentCount.toString(),
                             style: const TextStyle(
-                                fontSize: 10,
+                                fontSize: 12,
                                 color: AppColor.GREY_TEXT,
                                 fontWeight: FontWeight.normal),
                           ),
@@ -802,8 +818,7 @@ class _buildQRFeed extends StatelessWidget {
                       const SizedBox(width: 10),
                       const XImage(
                         imagePath: 'assets/images/ic-share-grey.png',
-                        height: 30,
-                        width: 30,
+                        width: 40,
                         fit: BoxFit.fitWidth,
                       ),
                     ],

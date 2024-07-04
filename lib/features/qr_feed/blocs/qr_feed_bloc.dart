@@ -14,6 +14,7 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
     on<CreateQrFeedLink>(_createQr);
     on<LoadBanksEvent>(_getBankTypes);
     on<SearchBankEvent>(_searchBankName);
+    on<InteractWithQrEvent>(_interactWithQr);
   }
 
   final QrFeedRepository _qrFeedRepository = QrFeedRepository();
@@ -73,6 +74,34 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
     } catch (e) {
       LOG.error(e.toString());
       emit(state.copyWith(status: BlocStatus.ERROR, request: QrFeed.GET_BANKS));
+    }
+  }
+
+  void _interactWithQr(QrFeedEvent event, Emitter emit) async {
+    try {
+      if (event is InteractWithQrEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.NONE, request: QrFeed.INTERACT_WITH_QR));
+        final result = await _qrFeedRepository.interactWithQr(
+          qrWalletId: event.qrWalletId,
+          interactionType: event.interactionType,
+        );
+        if (result != null) {
+          emit(state.copyWith(
+            qrFeed: result,
+            status: BlocStatus.SUCCESS,
+            request: QrFeed.INTERACT_WITH_QR,
+          ));
+        } else {
+          emit(state.copyWith(
+            status: BlocStatus.ERROR,
+            request: QrFeed.INTERACT_WITH_QR,
+          ));
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(status: BlocStatus.ERROR, request: QrFeed.CREATE_QR));
     }
   }
 
