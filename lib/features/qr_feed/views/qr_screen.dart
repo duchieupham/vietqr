@@ -561,7 +561,7 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
       context: context,
       padding: EdgeInsets.zero,
       widget: ModelBottomSheetView(
-        tvTitle: 'Chọn ngân hàng',
+        tvTitle: 'Chọn ngân hàng thụ hưởng\nđể tạo mã VietQR',
         ctx: context,
         list: list ?? [],
         isSearch: true,

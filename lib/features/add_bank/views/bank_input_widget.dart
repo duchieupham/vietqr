@@ -141,14 +141,14 @@ class _BodyWidget extends State<ModelBottomSheetView> {
             ),
             child: Row(
               children: [
-                const SizedBox(width: 24),
+                // const SizedBox(width: 24),
                 Expanded(
                   child: Text(
                     widget.tvTitle,
-                    textAlign: TextAlign.center,
+                    textAlign: TextAlign.left,
                     style: widget.titleStyles ??
                         const TextStyle(
-                          fontSize: 16,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                   ),
@@ -165,7 +165,7 @@ class _BodyWidget extends State<ModelBottomSheetView> {
               ],
             ),
           ),
-          const Divider(thickness: 1),
+          // const Divider(thickness: 1),
           if (widget.isSearch)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
