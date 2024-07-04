@@ -12,6 +12,7 @@ class QrFeedState extends Equatable {
   final MetaDataDTO? metadata;
   final List<QrFeedDTO>? listQrFeed;
   final List<BankTypeDTO>? listBanks;
+  final QrFeedDTO? qrFeed;
 
   const QrFeedState({
     this.msg,
@@ -20,6 +21,7 @@ class QrFeedState extends Equatable {
     this.metadata,
     this.listQrFeed,
     this.listBanks,
+    this.qrFeed,
   });
 
   QrFeedState copyWith({
@@ -29,6 +31,7 @@ class QrFeedState extends Equatable {
     MetaDataDTO? metadata,
     List<QrFeedDTO>? listQrFeed,
     List<BankTypeDTO>? listBanks,
+    QrFeedDTO? qrFeed,
   }) {
     return QrFeedState(
       status: status ?? this.status,
@@ -37,6 +40,7 @@ class QrFeedState extends Equatable {
       metadata: metadata ?? this.metadata,
       listQrFeed: listQrFeed ?? this.listQrFeed,
       listBanks: listBanks ?? this.listBanks,
+      qrFeed: qrFeed ?? this.qrFeed,
     );
   }
 
@@ -48,5 +52,6 @@ class QrFeedState extends Equatable {
         metadata,
         listQrFeed,
         listBanks,
+        qrFeed,
       ];
 }

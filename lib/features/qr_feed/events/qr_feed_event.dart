@@ -40,3 +40,13 @@ class CreateQrFeedLink extends QrFeedEvent {
   @override
   List<Object?> get props => [dto, file];
 }
+
+class InteractWithQrEvent extends QrFeedEvent {
+  final String? qrWalletId;
+  final String? interactionType;
+
+  const InteractWithQrEvent({required this.qrWalletId, this.interactionType});
+
+  @override
+  List<Object?> get props => [qrWalletId, interactionType];
+}

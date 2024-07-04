@@ -90,4 +90,32 @@ class QrFeedRepository extends BaseRepo {
     }
     return result;
   }
+
+  Future<QrFeedDTO?> interactWithQr(
+      {String? qrWalletId, String? interactionType}) async {
+    // ResponseMessageDTO result =
+    //     const ResponseMessageDTO(status: '', message: '');
+
+    try {
+      final String url =
+          "https://dev.vietqr.org/vqr/api/qr-interaction/interact";
+      final response = await BaseAPIClient.postAPI(
+        url: url,
+        body: {
+          'qrWalletId': qrWalletId,
+          "userId": userId,
+          'interactionType': interactionType,
+        },
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        return QrFeedDTO.fromJson(data);
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      // result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+    }
+    return null;
+  }
 }
