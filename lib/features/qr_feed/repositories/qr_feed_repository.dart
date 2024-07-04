@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
@@ -20,12 +21,13 @@ class QrFeedRepository extends BaseRepo {
   String get userId => SharePrefUtils.getProfile().userId;
 
   Future<ResponseMessageDTO> createQrLink(
-      {required QrCreateTypeDto dto, File? file}) async {
+      {required QrCreateFeedDTO dto, File? file}) async {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
       Response? response;
       final data = dto.toJson();
+
       // String url =
       //     '${getIt.get<AppConfig>().getBaseUrl}qr-wallet/generate-qr?type=${dto.type}&json=${jsonEncode(data['json'])}';
       String url = file != null

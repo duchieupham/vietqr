@@ -130,20 +130,16 @@ class NavigationService {
       //   return CupertinoPageRoute(
       //       builder: (context) => const QrCreateScreen(), settings: settings);
       case Routes.QR_STYLE:
-        Map<String, dynamic> param;
-        Map<String, dynamic>? json;
-        int? type;
-        if (settings.arguments != null) {
-          param = settings.arguments as Map<String, dynamic>;
-          json = param['json'] as Map<String, dynamic>;
-          type = param['type'] as int;
-        }
+        Map map = settings.arguments as Map;
+
+        QrCreateFeedDTO dto = map['dto'];
+        int type = map['type'];
 
         return _buildRoute(
             settings,
             QrStyle(
-              type: type!,
-              json: json!,
+              type: type,
+              dto: dto,
             ));
       case Routes.DYNAMIC_ACTIVE_KEY_SCREEN:
         Map<String, dynamic> param = settings.arguments as Map<String, dynamic>;

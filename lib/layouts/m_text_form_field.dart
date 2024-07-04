@@ -42,6 +42,7 @@ class MTextFieldCustom extends StatefulWidget {
   final Widget? child;
   final String? value;
   final bool showBorder;
+  final bool expands;
 
   //Border textfield
   final bool isRequired;
@@ -90,6 +91,7 @@ class MTextFieldCustom extends StatefulWidget {
     this.showBorder = false,
     this.decoration,
     this.onTap,
+    this.expands = false,
   }) : super(key: key);
 
   @override
@@ -132,6 +134,7 @@ class _TextFieldWidgetState extends State<MTextFieldCustom> {
   @override
   Widget build(BuildContext context) {
     Widget textFiledTypeLabel = TextFormField(
+      expands: widget.expands,
       onTap: onTap,
       obscureText: widget.isObscureText,
       controller: _editingController,
@@ -171,7 +174,7 @@ class _TextFieldWidgetState extends State<MTextFieldCustom> {
             suffixIcon: widget.suffixIcon,
             contentPadding: widget.contentPadding ??
                 const EdgeInsets.symmetric(horizontal: 16),
-            fillColor: widget.fillColor ?? AppColor.WHITE,
+            fillColor: widget.fillColor ?? AppColor.TRANSPARENT,
             filled: true,
           ),
     );
@@ -225,6 +228,9 @@ class _TextFieldWidgetState extends State<MTextFieldCustom> {
               Container(
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
+                      color: widget.enable == true
+                          ? AppColor.TRANSPARENT
+                          : AppColor.BLUE_BGR,
                       border: widget.showBorder
                           ? Border.all(
                               color: AppColor.GREY_LIGHT.withOpacity(0.5))

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_multi_formatter/formatters/phone_input_formatter.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/utils/input_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/features/qr_feed/widgets/custom_textfield.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
@@ -89,6 +90,7 @@ class VcardWidget extends StatelessWidget {
         ),
         const SizedBox(height: 30),
         CustomTextField(
+          isActive: true,
           controller: sdtController,
           hintText: 'Nhập số điện thoại',
           labelText: 'Số điện thoại*',
@@ -108,6 +110,11 @@ class VcardWidget extends StatelessWidget {
         ),
         const SizedBox(height: 30),
         CustomTextField(
+          textInputType: TextInputType.name,
+          inputFormatter: [
+            FilteringTextInputFormatter.allow(RegExp(r'^[a-zA-ZÀ-ỹẠ-ỵ]+$'))
+          ],
+          isActive: true,
           controller: contactController,
           hintText: 'Nhập tên danh bạ',
           labelText: 'Tên danh bạ*',
@@ -153,6 +160,11 @@ class VcardWidget extends StatelessWidget {
             children: [
               const SizedBox(height: 30),
               CustomTextField(
+                textInputType: TextInputType.emailAddress,
+                inputFormatter: [
+                  EmailInputFormatter(),
+                ],
+                isActive: true,
                 controller: emailController,
                 hintText: 'Nhập thông tin email',
                 labelText: 'Email',
@@ -165,7 +177,13 @@ class VcardWidget extends StatelessWidget {
               ),
               const SizedBox(height: 30),
               CustomTextField(
+                isActive: true,
                 controller: webController,
+                textInputType: TextInputType.url,
+                inputFormatter: [
+                  FilteringTextInputFormatter.allow(
+                      RegExp(r'[a-zA-Z\s0-9:/?&.=_-]'))
+                ],
                 hintText: 'Nhập thông tin website',
                 labelText: 'Website',
                 onClear: () {
@@ -177,12 +195,14 @@ class VcardWidget extends StatelessWidget {
               ),
               const SizedBox(height: 30),
               CustomTextField(
+                isActive: true,
                 controller: ctyController,
+                textInputType: TextInputType.name,
+                inputFormatter: [VietnameseNameInputFormatter()],
                 hintText: 'Nhập tên công ty',
                 labelText: 'Tên công ty',
                 onClear: () {
                   onClear(5);
-
                   // _controller.clear();
                   // _updateButtonState();
                 },
@@ -192,6 +212,9 @@ class VcardWidget extends StatelessWidget {
               ),
               const SizedBox(height: 30),
               CustomTextField(
+                isActive: true,
+                textInputType: TextInputType.streetAddress,
+                inputFormatter: [VietnameseNameInputFormatter()],
                 controller: addressController,
                 hintText: 'Nhập thông tin địa chỉ',
                 labelText: 'Địa chỉ',

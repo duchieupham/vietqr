@@ -13,9 +13,43 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
     on<GetMoreQrFeedEvent>(_getMoreQrFeed);
     on<CreateQrFeedLink>(_createQr);
     on<LoadBanksEvent>(_getBankTypes);
+    on<SearchBankEvent>(_searchBankName);
   }
 
   final QrFeedRepository _qrFeedRepository = QrFeedRepository();
+
+  void _searchBankName(QrFeedEvent event, Emitter emit) async {
+    BankCardRepository bankCardRepository = const BankCardRepository();
+
+    try {
+      if (event is SearchBankEvent) {
+        emit(state.copyWith(
+            status: BlocStatus.LOADING, request: QrFeed.SEARCH_BANK));
+        final dto = await bankCardRepository.searchBankName(event.dto);
+        if (dto.accountName.trim().isNotEmpty) {
+          emit(state.copyWith(
+              status: BlocStatus.SUCCESS,
+              bankDto: dto,
+              request: QrFeed.SEARCH_BANK));
+        } else {
+          emit(
+            state.copyWith(
+              msg: 'Tài khoản ngân hàng không tồn tại.',
+              request: QrFeed.SEARCH_BANK,
+              status: BlocStatus.NONE,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+        msg: 'Tài khoản ngân hàng không tồn tại.',
+        request: QrFeed.SEARCH_BANK,
+        status: BlocStatus.ERROR,
+      ));
+    }
+  }
 
   void _getBankTypes(QrFeedEvent event, Emitter emit) async {
     BankCardRepository bankCardRepository = const BankCardRepository();

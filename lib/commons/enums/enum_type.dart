@@ -350,6 +350,7 @@ enum QrFeed {
   GET_MORE,
   CREATE_QR,
   GET_BANKS,
+  SEARCH_BANK,
 }
 
 enum DashBoardType {

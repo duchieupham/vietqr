@@ -1,5 +1,8 @@
 // ignore_for_file: constant_identifier_names
 
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,10 +10,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/image_utils.dart';
+import 'package:vierqr/commons/utils/input_utils.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
 import 'package:vierqr/commons/utils/string_utils.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
+import 'package:vierqr/features/add_bank/add_bank_screen.dart';
 import 'package:vierqr/features/add_bank/views/bank_input_widget.dart';
 import 'package:vierqr/features/qr_feed/blocs/qr_feed_bloc.dart';
 import 'package:vierqr/features/qr_feed/events/qr_feed_event.dart';
@@ -21,6 +27,7 @@ import 'package:vierqr/features/qr_feed/widgets/custom_textfield.dart';
 import 'package:vierqr/features/qr_feed/widgets/default_appbar_widget.dart';
 import 'package:vierqr/features/qr_feed/widgets/vcard_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
+import 'package:vierqr/models/bank_name_search_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/qr_create_type_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
@@ -42,6 +49,7 @@ class QrLinkScreen extends StatefulWidget {
 
 class _QrLinkScreenState extends State<QrLinkScreen> {
   String get userId => SharePrefUtils.getProfile().userId.trim();
+  Timer? _timer;
 
   TypeQr? _qrType;
   final ScrollController _scrollController = ScrollController();
@@ -59,17 +67,17 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
   final TextEditingController amount = TextEditingController();
   final TextEditingController contentController = TextEditingController();
 
+  final focusAccount = FocusNode();
+
   String _clipboardContent = '';
   String phone = '';
 
   bool _showAdditionalOptions = false;
-  bool _isActiveTextField = false;
   bool _showAdditionalOptional = false;
   String contentBank = '';
 
   int _charCount = 0;
 
-  double _keyboardHeight = 0;
   final QrFeedBloc _bloc = getIt.get<QrFeedBloc>();
   BankTypeDTO? selectedBank;
 
@@ -96,7 +104,7 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
     super.initState();
 
     _qrType = widget.type;
-    _getClipboardContent();
+
     initData();
   }
 
@@ -104,6 +112,7 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
   void dispose() {
     _scrollController.dispose();
     _controller.clear();
+    _timer?.cancel();
     super.dispose();
   }
 
@@ -112,15 +121,70 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
       (_) {
         if (_qrType == TypeQr.VIETQR) {
           _bloc.add(LoadBanksEvent());
+          focusAccount.addListener(() {
+            if (!focusAccount.hasFocus) {
+              _onSearch();
+            }
+          });
+        }
+
+        if (_qrType == TypeQr.OTHER || _qrType == TypeQr.QR_LINK) {
+          _timer = Timer.periodic(
+            const Duration(milliseconds: 500),
+            (timer) {
+              _getClipboardContent();
+            },
+          );
         }
       },
     );
   }
 
+  void _onSearch() {
+    if (stk.text.isNotEmpty && stk.text.length > 5) {
+      String transferType = '';
+      String caiValue = '';
+      String bankCode = '';
+      // BankTypeDTO? bankTypeDTO = _addBankProvider.bankTypeDTO;
+      if (selectedBank != null) {
+        caiValue = selectedBank!.caiValue;
+        bankCode = selectedBank!.bankCode;
+      }
+
+      if (bankCode == 'MB') {
+        transferType = 'INHOUSE';
+      } else {
+        transferType = 'NAPAS';
+      }
+      BankNameSearchDTO bankNameSearchDTO = BankNameSearchDTO(
+        accountNumber: stk.text,
+        accountType: 'ACCOUNT',
+        transferType: transferType,
+        bankCode: caiValue,
+      );
+      _bloc.add(SearchBankEvent(dto: bankNameSearchDTO));
+    }
+  }
+
   void _getClipboardContent() async {
     if (_qrType == TypeQr.OTHER || _qrType == TypeQr.QR_LINK) {
-      final clipboardContent = await FlutterClipboard.paste();
-      _clipboardContent = clipboardContent;
+      // final clipboardContent = await FlutterClipboard.paste();
+      ClipboardData? clipboardContent =
+          await Clipboard.getData(Clipboard.kTextPlain);
+      if (clipboardContent != null &&
+          (clipboardContent.text!.contains('http') ||
+              clipboardContent.text!.contains('https'))) {
+        _clipboardContent = clipboardContent.text!;
+      } else {
+        final regex = RegExp(r'[ ()_\-=\[\];’:"{}<>?,./!@#$%^&*\\]');
+        if (clipboardContent != null) {
+          if (!regex.hasMatch(clipboardContent.text!)) {
+            _clipboardContent = clipboardContent.text!;
+          }
+        }
+      }
+      // if(clipboardContent)
+
       updateState();
     }
   }
@@ -174,6 +238,7 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
             contactController;
             ctyController;
             emailController;
+
             updateState();
           },
           onToggle: _toggleAdditionalOptions,
@@ -231,7 +296,8 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
           const DefaultAppbarWidget(),
           SliverToBoxAdapter(
             child: Container(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+              padding: EdgeInsets.fromLTRB(
+                  20, 20, 20, 0 + MediaQuery.of(context).viewInsets.bottom),
               width: MediaQuery.of(context).size.width,
               // height: MediaQuery.of(context).size.height,
               child: Column(
@@ -250,7 +316,14 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
   Widget _buildVietQr() {
     return BlocConsumer<QrFeedBloc, QrFeedState>(
       bloc: _bloc,
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state.request == QrFeed.SEARCH_BANK &&
+            state.status == BlocStatus.SUCCESS) {
+          userBankName.clear();
+          userBankName.value = userBankName.value
+              .copyWith(text: state.bankDto?.accountName ?? '');
+        }
+      },
       builder: (context, state) {
         return Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -349,7 +422,7 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
                                 ? selectedBank!.bankShortName!
                                 : 'Chọn ngân hàng thụ hưởng',
                             style: const TextStyle(
-                                fontSize: 15, color: AppColor.GREY_TEXT),
+                                fontSize: 15, color: AppColor.BLACK),
                           ),
                         ],
                       ),
@@ -364,9 +437,14 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
             ),
             const SizedBox(height: 30),
             CustomTextField(
-              isActive: _isActiveTextField,
+              focusNode: focusAccount,
+              textInputType: TextInputType.number,
+              inputFormatter: [FilteringTextInputFormatter.digitsOnly],
+              isActive: selectedBank != null,
               controller: stk,
-              hintText: 'Nhập số tài khoản ngân hàng',
+              hintText: selectedBank != null
+                  ? 'Nhập số tài khoản ngân hàng'
+                  : 'Vui lòng chọn ngân hàng',
               labelText: 'Số tài khoản*',
               onClear: () {
                 stk.clear();
@@ -380,9 +458,16 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
             ),
             const SizedBox(height: 30),
             CustomTextField(
-              isActive: _isActiveTextField,
+              textInputType: TextInputType.name,
+              inputFormatter: [
+                FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]')),
+                UpperCaseTextFormatter()
+              ],
+              isActive: selectedBank != null,
               controller: userBankName,
-              hintText: 'Nhập tên chủ tài khoản ngân hàng',
+              hintText: selectedBank != null
+                  ? 'Nhập tên chủ tài khoản ngân hàng'
+                  : 'Vui lòng chọn ngân hàng',
               labelText: 'Chủ tài khoản*',
               onClear: () {
                 userBankName.clear();
@@ -394,38 +479,39 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
               },
             ),
             const SizedBox(height: 30),
-            GestureDetector(
-              onTap: _toggleAdditionalOptional,
-              child: Container(
-                width: 150,
-                height: 30,
-                decoration: BoxDecoration(
-                    gradient: VietQRTheme.gradientColor.scan_qr,
-                    borderRadius: BorderRadius.circular(20)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      _showAdditionalOptional
-                          ? Icons.keyboard_arrow_up
-                          : Icons.keyboard_arrow_down,
-                      color: AppColor.BLUE_TEXT,
-                      size: 15,
-                    ),
-                    const SizedBox(width: 10),
-                    Text(
-                      _showAdditionalOptional
-                          ? 'Đóng tuỳ chọn'
-                          : 'Tuỳ chọn thêm',
-                      style: const TextStyle(
+            if (selectedBank != null)
+              GestureDetector(
+                onTap: _toggleAdditionalOptional,
+                child: Container(
+                  width: 150,
+                  height: 30,
+                  decoration: BoxDecoration(
+                      gradient: VietQRTheme.gradientColor.scan_qr,
+                      borderRadius: BorderRadius.circular(20)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        _showAdditionalOptional
+                            ? Icons.keyboard_arrow_up
+                            : Icons.keyboard_arrow_down,
                         color: AppColor.BLUE_TEXT,
-                        fontSize: 12,
+                        size: 15,
                       ),
-                    ),
-                  ],
+                      const SizedBox(width: 10),
+                      Text(
+                        _showAdditionalOptional
+                            ? 'Đóng tuỳ chọn'
+                            : 'Tuỳ chọn thêm',
+                        style: const TextStyle(
+                          color: AppColor.BLUE_TEXT,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
             Visibility(
               visible: _showAdditionalOptional,
               child: Column(
@@ -516,6 +602,11 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
                       children: [
                         Expanded(
                           child: TextField(
+                            keyboardType: TextInputType.text,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'[a-zA-Z\s]')),
+                            ],
                             controller: contentController,
                             maxLength: 50,
                             decoration: InputDecoration(
@@ -630,7 +721,23 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
         ),
         const SizedBox(height: 30),
         CustomTextField(
+          isActive: true,
+          textInputType: _qrType == TypeQr.QR_LINK
+              ? TextInputType.url
+              : TextInputType.text,
+          inputFormatter: [
+            if (_qrType == TypeQr.QR_LINK)
+              FilteringTextInputFormatter.allow(
+                  RegExp(r'[a-zA-Z\s0-9:/?&.=_-]'))
+            else
+              FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s0-9]')),
+          ],
           onChanged: (value) {
+            if (value.contains('http') || value.contains('https')) {
+              _qrType = TypeQr.QR_LINK;
+            } else {
+              _qrType = TypeQr.OTHER;
+            }
             updateState();
           },
           onClear: () {
@@ -644,11 +751,22 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
               : 'Nhập thông tin mã QR tại đây',
         ),
         _clipboardContent.isNotEmpty
-            ? GestureDetector(
+            ? InkWell(
                 onTap: () {
-                  setState(() {
-                    _controller.text = _clipboardContent;
-                  });
+                  // final RegExp regExp =
+                  //     RegExp(r'[ ()_\-=\[\];’:"{}<>?,./!@#$%^&*\\]');
+                  // String replaceText = _clipboardContent.replaceAll(regExp, '');
+
+                  _controller.text = _clipboardContent;
+                  // const urlPattern = r'^(https?|ftp)://[^\s/$.?#].[^\s]*S';
+                  // final regex = RegExp(urlPattern);
+                  if (_clipboardContent.contains('http') ||
+                      _clipboardContent.contains('https')) {
+                    _qrType = TypeQr.QR_LINK;
+                  } else {
+                    _qrType = TypeQr.OTHER;
+                  }
+                  updateState();
                 },
                 child: Container(
                   width: 250,
@@ -674,6 +792,7 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
                         child: Text(
                           _clipboardContent,
                           maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                             color: AppColor.BLACK,
                             fontSize: 12,
@@ -696,93 +815,147 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
       child: InkWell(
         onTap: isEnable
             ? () {
+                int type = 0;
                 switch (_qrType) {
                   case TypeQr.QR_LINK:
-                    QrLink qrLink = QrLink(
-                      userId: userId,
-                      qrName: '',
-                      qrDescription: '',
-                      value: _controller.text,
-                      pin: '',
-                      isPublic: '',
-                      style: '',
-                      theme: '',
-                    );
-
-                    NavigatorUtils.navigatePage(
-                        context,
-                        QrStyle(
-                          type: 0,
-                          json: qrLink.toJson(),
-                        ),
-                        routeName: Routes.QR_STYLE);
+                    type = 0;
                     break;
                   case TypeQr.OTHER:
-                    QrOther other = QrOther(
-                      userId: userId,
-                      qrName: '',
-                      qrDescription: '',
-                      value: _controller.text,
-                      pin: '',
-                      isPublic: '',
-                      style: '',
-                      theme: '',
-                    );
-
-                    NavigatorUtils.navigatePage(
-                        context,
-                        QrStyle(
-                          type: 1,
-                          json: other.toJson(),
-                        ),
-                        routeName: Routes.QR_STYLE);
+                    type = 1;
                     break;
                   case TypeQr.VCARD:
-                    QrVCard vCard = QrVCard(
-                        qrName: '',
-                        qrDescription: '',
-                        fullname: contactController.text,
-                        phoneNo: sdtController.text,
-                        email: emailController.text,
-                        companyName: ctyController.text,
-                        website: webController.text,
-                        address: addressController.text,
-                        userId: userId,
-                        additionalData: '',
-                        style: '',
-                        theme: '',
-                        isPublic: '');
-                    NavigatorUtils.navigatePage(
-                        context,
-                        QrStyle(
-                          type: 2,
-                          json: vCard.toJson(),
-                        ),
-                        routeName: Routes.QR_STYLE);
+                    type = 2;
                     break;
                   case TypeQr.VIETQR:
-                    VietQr vietQr = VietQr(
-                        userId: userId,
-                        qrName: '',
-                        qrDescription: '',
-                        bankAccount: stk.text,
-                        bankCode: selectedBank!.bankCode,
-                        userBankName: userBankName.text,
-                        amount: amount.text.replaceAll(',', ''),
-                        content: contentController.text,
-                        isPublic: '',
-                        style: '',
-                        theme: '');
-                    NavigatorUtils.navigatePage(
-                        context,
-                        QrStyle(
-                          type: 3,
-                          json: vietQr.toJson(),
-                        ),
-                        routeName: Routes.QR_STYLE);
+                    type = 3;
                     break;
                   default:
                 }
+
+                QrCreateFeedDTO dto = QrCreateFeedDTO(
+                  typeDto: type.toString(),
+                  userIdDTO: userId,
+                  qrNameDTO: '',
+                  qrDescriptionDTO: '',
+                  valueDTO: _controller.text,
+                  pinDTO: '',
+                  fullNameDTO: contactController.text,
+                  phoneNoDTO: sdtController.text,
+                  emailDTO: emailController.text,
+                  companyNameDTO: ctyController.text,
+                  websiteDTO: webController.text,
+                  addressDTO: addressController.text,
+                  additionalDataDTO: '',
+                  bankAccountDTO: selectedBank?.bankAccount,
+                  bankCodeDTO: selectedBank?.bankCode,
+                  userBankNameDTO: selectedBank?.userBankName,
+                  amountDTO: _showAdditionalOptional
+                      ? amount.text.replaceAll(',', '')
+                      : '',
+                  contentDTO: contentController.text,
+                  isPublicDTO: '',
+                  styleDTO: '',
+                  themeDTO: '',
+                );
+                NavigatorUtils.navigatePage(
+                    context,
+                    QrStyle(
+                      type: type,
+                      dto: dto,
+                    ),
+                    routeName: Routes.QR_STYLE);
+                // switch (_qrType) {
+                //   case TypeQr.QR_LINK:
+                //     QrLink qrLink = QrLink(
+                //       userId: userId,
+                //       qrName: '',
+                //       qrDescription: '',
+                //       value: _controller.text,
+                //       pin: '',
+                //       isPublic: '',
+                //       style: '',
+                //       theme: '',
+                //     );
+
+                //     NavigatorUtils.navigatePage(
+                //         context,
+                //         QrStyle(
+                //           type: 0,
+                //           json: qrLink.toJson(),
+                //         ),
+                //         routeName: Routes.QR_STYLE);
+                //     break;
+                //   case TypeQr.OTHER:
+                //     QrOther other = QrOther(
+                //       userId: userId,
+                //       qrName: '',
+                //       qrDescription: '',
+                //       value: _controller.text,
+                //       pin: '',
+                //       isPublic: '',
+                //       style: '',
+                //       theme: '',
+                //     );
+
+                //     NavigatorUtils.navigatePage(
+                //         context,
+                //         QrStyle(
+                //           type: 1,
+                //           json: other.toJson(),
+                //         ),
+                //         routeName: Routes.QR_STYLE);
+                //     break;
+                //   case TypeQr.VCARD:
+                //     QrVCard vCard = QrVCard(
+                //         qrName: '',
+                //         qrDescription: '',
+                //         fullname: contactController.text,
+                //         phoneNo: sdtController.text,
+                //         email: emailController.text,
+                //         companyName: ctyController.text,
+                //         website: webController.text,
+                //         address: addressController.text,
+                //         userId: userId,
+                //         additionalData: '',
+                //         style: '',
+                //         theme: '',
+                //         isPublic: '');
+                //     NavigatorUtils.navigatePage(
+                //         context,
+                //         QrStyle(
+                //           type: 2,
+                //           json: vCard.toJson(),
+                //         ),
+                //         routeName: Routes.QR_STYLE);
+                //     break;
+                //   case TypeQr.VIETQR:
+                //     VietQr vietQr = VietQr(
+                //         userId: userId,
+                //         qrName: '',
+                //         qrDescription: '',
+                //         bankAccount: stk.text,
+                //         bankCode: selectedBank!.bankCode,
+                //         userBankName: userBankName.text,
+                //         amount: _showAdditionalOptional
+                //             ? amount.text.replaceAll(',', '')
+                //             : '',
+                //         content: _showAdditionalOptional
+                //             ? contentController.text.trim()
+                //             : '',
+                //         isPublic: '',
+                //         style: '',
+                //         theme: '');
+                //     NavigatorUtils.navigatePage(
+                //         context,
+                //         QrStyle(
+                //           type: 3,
+                //           json: vietQr.toJson(),
+                //         ),
+                //         routeName: Routes.QR_STYLE);
+                //     break;
+                //   default:
+                // }
+                _timer?.cancel();
               }
             : null,
         child: Container(

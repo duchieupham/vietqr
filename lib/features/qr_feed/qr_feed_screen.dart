@@ -72,7 +72,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
             if (_scrollController.position.pixels ==
                 _scrollController.position.maxScrollExtent) {
               if (metadata != null) {
-                int total = (metadata!.total! / 5).ceil();
+                int total = (metadata!.total! / 10).ceil();
                 if (total > metadata!.page!) {
                   // await getMoreOrders();
                   _bloc.add(GetMoreQrFeedEvent(
@@ -201,9 +201,10 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                 SliverToBoxAdapter(
                   child: Container(
                     color: AppColor.BLUE_BGR,
-                    // padding: const EdgeInsets.symmetric(vertical: 10),
                     width: MediaQuery.of(context).size.width,
-                    // height: MediaQuery.of(context).size.height,
+                    height: (list.isEmpty || list.length < 5)
+                        ? MediaQuery.of(context).size.height
+                        : null,
                     child: Column(
                       children: [
                         if (tab == TabView.COMMUNITY) ...[

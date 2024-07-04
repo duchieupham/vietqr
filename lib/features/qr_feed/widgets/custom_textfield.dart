@@ -13,6 +13,9 @@ class CustomTextField extends StatelessWidget {
   final VoidCallback onClear;
   final ValueChanged<String> onChanged;
   final bool isActive;
+  final bool expands;
+  final double height;
+
   final FocusNode? focusNode;
   final Function()? onTap;
 
@@ -27,8 +30,10 @@ class CustomTextField extends StatelessWidget {
     this.inputFormatter,
     this.textInputType,
     this.maxLines,
-    this.isActive = false,
+    required this.isActive,
     this.onTap,
+    this.expands = false,
+    this.height = 52,
   });
 
   @override
@@ -41,35 +46,42 @@ class CustomTextField extends StatelessWidget {
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
         Text(
           labelText,
           style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
         ),
-        MTextFieldCustom(
-            onTap: onTap,
-            controller: controller,
-            focusNode: focusNode,
-            inputFormatter: inputFormatter,
-            hintText: hintText,
-            // enableBorder: UnderlineInputBorder(),
-            focusBorder: const UnderlineInputBorder(
-                borderSide: BorderSide(color: AppColor.BLUE_TEXT)),
-            contentPadding: EdgeInsets.zero,
-            suffixIcon: isClear
-                ? InkWell(
-                    onTap: onClear,
-                    child: const Icon(
-                      Icons.clear,
-                      size: 20,
-                      color: AppColor.GREY_DADADA,
-                    ),
-                  )
-                : const SizedBox.shrink(),
-            keyboardAction: TextInputAction.next,
-            onChange: onChanged,
-            inputType: textInputType ?? TextInputType.multiline,
-            isObscureText: false)
+        SizedBox(
+          // height: height,
+          child: MTextFieldCustom(
+              expands: expands,
+              maxLines: maxLines,
+              enable: isActive,
+              onTap: onTap,
+              controller: controller,
+              focusNode: focusNode,
+              inputFormatter: inputFormatter,
+              hintText: hintText,
+              // enableBorder: UnderlineInputBorder(),
+              focusBorder: const UnderlineInputBorder(
+                  borderSide: BorderSide(color: AppColor.BLUE_TEXT)),
+              contentPadding: EdgeInsets.zero,
+              suffixIcon: isClear
+                  ? InkWell(
+                      onTap: onClear,
+                      child: const Icon(
+                        Icons.clear,
+                        size: 20,
+                        color: AppColor.GREY_DADADA,
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+              keyboardAction: TextInputAction.next,
+              onChange: onChanged,
+              inputType: textInputType ?? TextInputType.multiline,
+              isObscureText: false),
+        )
       ],
     );
   }

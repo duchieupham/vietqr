@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
@@ -18,12 +19,13 @@ import 'package:vierqr/features/qr_feed/states/qr_feed_state.dart';
 import 'package:vierqr/features/qr_feed/widgets/custom_textfield.dart';
 import 'package:vierqr/features/qr_feed/widgets/default_appbar_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
+import 'package:vierqr/layouts/m_text_form_field.dart';
 import 'package:vierqr/models/qr_create_type_dto.dart';
 
 class QrStyle extends StatefulWidget {
   final int type;
-  final Map<String, dynamic> json;
-  const QrStyle({super.key, required this.type, required this.json});
+  final QrCreateFeedDTO dto;
+  const QrStyle({super.key, required this.type, required this.dto});
 
   @override
   State<QrStyle> createState() => _QrStyleState();
@@ -41,10 +43,40 @@ class _QrStyleState extends State<QrStyle> {
   final QrFeedBloc _bloc = getIt.get<QrFeedBloc>();
   final imagePicker = ImagePicker();
   File? filePicker;
+  double _inputHeight = 52;
+
+  int maxLine = 1;
 
   @override
   void initState() {
     super.initState();
+    _descriptionController.addListener(_checkInputHeight);
+
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) {},
+    );
+  }
+
+  void _checkInputHeight() async {
+    int count = _descriptionController.text.split('\n').length;
+
+    if (count == 0 && _inputHeight == 52.0) {
+      return;
+    }
+    if (count <= 10) {
+      // use a maximum height of 6 rows
+      // height values can be adapted based on the font size
+      var newHeight = count == 0 ? 52.0 : 28.0 + (count * 18.0);
+      setState(() {
+        _inputHeight = newHeight;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _descriptionController.dispose();
+    super.dispose();
   }
 
   @override
@@ -61,15 +93,23 @@ class _QrStyleState extends State<QrStyle> {
       listener: (context, state) {
         if (state.request == QrFeed.CREATE_QR &&
             state.status == BlocStatus.SUCCESS) {
-          DialogWidget.instance.openMsgSuccessDialog(
-            title: 'Tạo mã QR thành công',
-            msg: '',
-            function: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
+          // DialogWidget.instance.openMsgSuccessDialog(
+          //   title: 'Tạo mã QR thành công',
+          //   msg: '',
+          //   function: () {
+          //     Navigator.pop(context);
+          //     Navigator.pop(context);
+          //     Navigator.pop(context);
+          //     Navigator.pop(context);
+          //   },
+          // );
+          Fluttertoast.showToast(
+            msg: 'Tạo mã QR thành công',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Theme.of(context).cardColor,
+            textColor: Theme.of(context).hintColor,
+            fontSize: 15,
           );
         }
       },
@@ -347,17 +387,48 @@ class _QrStyleState extends State<QrStyle> {
                 ),
               ),
               const SizedBox(height: 30),
-              CustomTextField(
-                isActive: true,
-                controller: _descriptionController,
-                hintText: 'Nhập mô tả cho mã QR',
-                labelText: 'Mô tả',
-                onClear: () {
-                  _descriptionController.clear();
-                },
-                onChanged: (text) {
-                  setState(() {});
-                },
+              // CustomTextField(
+              //   height: _inputHeight,
+              //   textInputType: TextInputType.multiline,
+              //   maxLines: maxLine,
+              //   // expands: true,
+              //   isActive: true,
+              //   controller: _descriptionController,
+              //   hintText: 'Nhập mô tả cho mã QR',
+              //   labelText: 'Mô tả',
+              //   onClear: () {
+              //     _descriptionController.clear();
+              //   },
+              //   onChanged: (text) {
+              //     setState(() {});
+              //   },
+              // ),
+              const Text(
+                'Mô tả',
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(
+                height: _inputHeight,
+                child: TextField(
+                  controller: _descriptionController,
+                  textInputAction: TextInputAction.newline,
+                  keyboardType: TextInputType.multiline,
+                  maxLines: null,
+                  decoration: InputDecoration(
+                    focusedBorder: const UnderlineInputBorder(
+                        borderSide: BorderSide(color: AppColor.BLUE_TEXT)),
+                    suffixIcon: InkWell(
+                      onTap: () {
+                        _descriptionController.clear();
+                      },
+                      child: const Icon(
+                        Icons.clear,
+                        size: 20,
+                        color: AppColor.GREY_DADADA,
+                      ),
+                    ),
+                  ),
+                ),
               ),
               const SizedBox(height: 30),
               const Text(
@@ -421,80 +492,105 @@ class _QrStyleState extends State<QrStyle> {
       child: InkWell(
         onTap: isEnable
             ? () {
-                switch (widget.type) {
-                  case 0:
-                    final parse = QrLink.fromJson(widget.json);
-                    QrLink qrLink = QrLink(
-                        userId: parse.userId,
-                        qrName: _titleController.text,
-                        qrDescription: _descriptionController.text,
-                        value: parse.value,
-                        pin: '',
-                        isPublic: _isPersonalSelected ? '0' : '1',
-                        style: '0',
-                        theme: _selectedValue.toString());
-                    QrCreateTypeDto dto = QrCreateTypeDto(
-                        type: widget.type.toString(), json: qrLink);
-                    _bloc.add(CreateQrFeedLink(dto: dto, file: filePicker));
-                    break;
-                  case 1:
-                    final parse = QrOther.fromJson(widget.json);
-                    QrOther other = QrOther(
-                      userId: parse.userId,
-                      qrName: _titleController.text,
-                      qrDescription: _descriptionController.text,
-                      value: parse.value,
-                      pin: '',
-                      isPublic: _isPersonalSelected ? '0' : '1',
-                      style: '0',
-                      theme: _selectedValue.toString(),
-                    );
-                    QrCreateTypeDto dto = QrCreateTypeDto(
-                        type: widget.type.toString(), json: other);
-                    _bloc.add(CreateQrFeedLink(dto: dto, file: filePicker));
+                QrCreateFeedDTO dto = QrCreateFeedDTO(
+                  typeDto: widget.type.toString(),
+                  userIdDTO: widget.dto.userIdDTO,
+                  qrNameDTO: _titleController.text,
+                  qrDescriptionDTO: _descriptionController.text,
+                  valueDTO: widget.dto.valueDTO,
+                  pinDTO: '',
+                  fullNameDTO: widget.dto.fullNameDTO,
+                  phoneNoDTO: widget.dto.phoneNoDTO,
+                  emailDTO: widget.dto.emailDTO,
+                  companyNameDTO: widget.dto.companyNameDTO,
+                  websiteDTO: widget.dto.websiteDTO,
+                  addressDTO: widget.dto.addressDTO,
+                  additionalDataDTO: '',
+                  bankAccountDTO: widget.dto.bankAccountDTO,
+                  bankCodeDTO: widget.dto.bankCodeDTO,
+                  userBankNameDTO: widget.dto.userBankNameDTO,
+                  amountDTO: widget.dto.amountDTO,
+                  contentDTO: widget.dto.contentDTO,
+                  isPublicDTO: _isPersonalSelected ? '0' : '1',
+                  styleDTO: '0',
+                  themeDTO: _selectedValue.toString(),
+                );
+                _bloc.add(CreateQrFeedLink(dto: dto, file: filePicker));
 
-                    break;
-                  case 2:
-                    final parse = QrVCard.fromJson(widget.json);
-                    QrVCard vCard = QrVCard(
-                        qrName: _titleController.text,
-                        qrDescription: _descriptionController.text,
-                        fullname: parse.fullname,
-                        phoneNo: parse.phoneNo,
-                        email: parse.email,
-                        companyName: parse.companyName,
-                        website: parse.website,
-                        address: parse.address,
-                        userId: parse.userId,
-                        additionalData: '',
-                        style: '0',
-                        theme: _selectedValue.toString(),
-                        isPublic: _isPersonalSelected ? '0' : '1');
-                    QrCreateTypeDto dto = QrCreateTypeDto(
-                        type: widget.type.toString(), json: vCard);
-                    _bloc.add(CreateQrFeedLink(dto: dto, file: filePicker));
-                    break;
-                  case 3:
-                    final parse = VietQr.fromJson(widget.json);
-                    VietQr vietQr = VietQr(
-                        userId: parse.userId,
-                        qrName: _titleController.text,
-                        qrDescription: _descriptionController.text,
-                        bankAccount: parse.bankAccount,
-                        bankCode: parse.bankCode,
-                        userBankName: parse.userBankName,
-                        amount: parse.amount,
-                        content: parse.content,
-                        isPublic: _isPersonalSelected ? '0' : '1',
-                        style: '0',
-                        theme: _selectedValue.toString());
-                    QrCreateTypeDto dto = QrCreateTypeDto(
-                        type: widget.type.toString(), json: vietQr);
-                    _bloc.add(CreateQrFeedLink(dto: dto, file: filePicker));
+                // switch (widget.type) {
+                //   case 0:
+                //     final parse = QrLink.fromJson(widget.json);
+                //     QrLink qrLink = QrLink(
+                //         userId: parse.userId,
+                //         qrName: _titleController.text,
+                //         qrDescription: _descriptionController.text,
+                //         value: parse.value,
+                //         pin: '',
+                //         isPublic: _isPersonalSelected ? '0' : '1',
+                //         style: '0',
+                //         theme: _selectedValue.toString());
+                //     QrCreateTypeDto dto = QrCreateTypeDto(
+                //         type: widget.type.toString(), json: qrLink);
+                //     _bloc.add(CreateQrFeedLink(dto: dto, file: filePicker));
+                //     break;
+                //   case 1:
+                //     final parse = QrOther.fromJson(widget.json);
+                //     QrOther other = QrOther(
+                //       userId: parse.userId,
+                //       qrName: _titleController.text,
+                //       qrDescription: _descriptionController.text,
+                //       value: parse.value,
+                //       pin: '',
+                //       isPublic: _isPersonalSelected ? '0' : '1',
+                //       style: '0',
+                //       theme: _selectedValue.toString(),
+                //     );
+                //     QrCreateTypeDto dto = QrCreateTypeDto(
+                //         type: widget.type.toString(), json: other);
+                //     _bloc.add(CreateQrFeedLink(dto: dto, file: filePicker));
 
-                    break;
-                  default:
-                }
+                //     break;
+                //   case 2:
+                //     final parse = QrVCard.fromJson(widget.json);
+                //     QrVCard vCard = QrVCard(
+                //         qrName: _titleController.text,
+                //         qrDescription: _descriptionController.text,
+                //         fullname: parse.fullname,
+                //         phoneNo: parse.phoneNo,
+                //         email: parse.email,
+                //         companyName: parse.companyName,
+                //         website: parse.website,
+                //         address: parse.address,
+                //         userId: parse.userId,
+                //         additionalData: '',
+                //         style: '0',
+                //         theme: _selectedValue.toString(),
+                //         isPublic: _isPersonalSelected ? '0' : '1');
+                //     QrCreateTypeDto dto = QrCreateTypeDto(
+                //         type: widget.type.toString(), json: vCard);
+                //     _bloc.add(CreateQrFeedLink(dto: dto, file: filePicker));
+                //     break;
+                //   case 3:
+                //     final parse = VietQr.fromJson(widget.json);
+                //     VietQr vietQr = VietQr(
+                //         userId: parse.userId,
+                //         qrName: _titleController.text,
+                //         qrDescription: _descriptionController.text,
+                //         bankAccount: parse.bankAccount,
+                //         bankCode: parse.bankCode,
+                //         userBankName: parse.userBankName,
+                //         amount: parse.amount,
+                //         content: parse.content,
+                //         isPublic: _isPersonalSelected ? '0' : '1',
+                //         style: '0',
+                //         theme: _selectedValue.toString());
+                //     QrCreateTypeDto dto = QrCreateTypeDto(
+                //         type: widget.type.toString(), json: vietQr);
+                //     _bloc.add(CreateQrFeedLink(dto: dto, file: filePicker));
+
+                //     break;
+                //   default:
+                // }
               }
             : null,
         child: Container(

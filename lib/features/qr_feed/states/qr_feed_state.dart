@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
+import 'package:vierqr/models/bank_name_information_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/metadata_dto.dart';
 import 'package:vierqr/models/qr_feed_dto.dart';
@@ -12,6 +12,7 @@ class QrFeedState extends Equatable {
   final MetaDataDTO? metadata;
   final List<QrFeedDTO>? listQrFeed;
   final List<BankTypeDTO>? listBanks;
+  final BankNameInformationDTO? bankDto;
 
   const QrFeedState({
     this.msg,
@@ -20,16 +21,17 @@ class QrFeedState extends Equatable {
     this.metadata,
     this.listQrFeed,
     this.listBanks,
+    this.bankDto,
   });
 
-  QrFeedState copyWith({
-    BlocStatus? status,
-    String? msg,
-    QrFeed? request,
-    MetaDataDTO? metadata,
-    List<QrFeedDTO>? listQrFeed,
-    List<BankTypeDTO>? listBanks,
-  }) {
+  QrFeedState copyWith(
+      {BlocStatus? status,
+      String? msg,
+      QrFeed? request,
+      MetaDataDTO? metadata,
+      List<QrFeedDTO>? listQrFeed,
+      List<BankTypeDTO>? listBanks,
+      BankNameInformationDTO? bankDto}) {
     return QrFeedState(
       status: status ?? this.status,
       msg: msg ?? this.msg,
@@ -37,6 +39,7 @@ class QrFeedState extends Equatable {
       metadata: metadata ?? this.metadata,
       listQrFeed: listQrFeed ?? this.listQrFeed,
       listBanks: listBanks ?? this.listBanks,
+      bankDto: bankDto ?? this.bankDto,
     );
   }
 
@@ -48,5 +51,6 @@ class QrFeedState extends Equatable {
         metadata,
         listQrFeed,
         listBanks,
+        bankDto,
       ];
 }
