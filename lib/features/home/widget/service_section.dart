@@ -114,7 +114,10 @@ class _ServiceSectionState extends State<ServiceSection> with DialogHelper {
         const SizedBox(
           height: 10,
         ),
-        _buildSocialNetwork(context)
+        _buildSocialNetwork(context),
+        const SizedBox(
+          height: 100,
+        ),
       ],
     );
   }

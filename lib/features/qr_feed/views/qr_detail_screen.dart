@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:vierqr/commons/constants/configurations/app_images.dart';
+import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
@@ -23,7 +25,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
-          const DefaultAppbarWidget(),
+          _buildAppBar(),
           SliverToBoxAdapter(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -292,7 +294,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
               ],
             ),
           ),
-          SizedBox(width: 8),
+          const SizedBox(width: 4),
           Text(
             TimeUtils.instance.formatTimeNotification(time),
             style: TextStyle(
@@ -309,7 +311,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
     return Container(
       height: 80 + MediaQuery.of(context).viewInsets.bottom,
       padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-      color: AppColor.RED_CALENDAR,
+      color: AppColor.WHITE,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -398,6 +400,221 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildAppBar() {
+    return SliverAppBar(
+      floating: false,
+      pinned: true,
+      leadingWidth: double.infinity,
+      flexibleSpace: FlexibleSpaceBar(
+        background: Container(
+          // height: 40,
+          color: AppColor.WHITE,
+        ),
+      ),
+      leading: Container(
+        padding: const EdgeInsets.only(left: 8),
+        child: Row(
+          children: [
+            InkWell(
+              onTap: () {
+                Navigator.of(context).pop();
+              },
+              child: Icon(
+                Icons.keyboard_arrow_left,
+                color: Colors.black,
+                size: 25,
+              ),
+            ),
+            SizedBox(width: 2),
+            XImage(
+              borderRadius: BorderRadius.circular(100),
+              imagePath: 'assets/images/ic-global.png',
+              width: 30,
+              height: 30,
+            ),
+            SizedBox(width: 10),
+            Text(
+              'Nguyen Hieu Kien',
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: Row(
+              children: [
+                // InkWell(
+                //   onTap: () {
+                //     showModalBottomSheet(
+                //       context: context,
+                //       builder: (BuildContext context) {
+                //         return Container(
+                //           child: Column(
+                //             mainAxisSize: MainAxisSize.min,
+                //             children: <Widget>[
+                //               ListTile(
+                //                 leading: Icon(Icons.update),
+                //                 title: Text('Cập nhật nội dung mã QR'),
+                //                 onTap: () {
+                //                   // Add your code to handle the update action
+                //                   Navigator.pop(context);
+                //                 },
+                //               ),
+                //               ListTile(
+                //                 leading: Icon(Icons.edit),
+                //                 title: Text('Tuỳ chỉnh giao diện mã QR'),
+                //                 onTap: () {
+                //                   // Add your code to handle the customize action
+                //                   Navigator.pop(context);
+                //                 },
+                //               ),
+                //               ListTile(
+                //                 leading: Icon(Icons.delete),
+                //                 title: Text('Xoá QR'),
+                //                 onTap: () {
+                //                   // Add your code to handle the delete action
+                //                   Navigator.pop(context);
+                //                 },
+                //               ),
+                //             ],
+                //           ),
+                //         );
+                //       },
+                //     );
+                //   },
+                //   child: Container(
+                //     padding: const EdgeInsets.all(4),
+                //     height: 40,
+                //     width: 40,
+                //     decoration: BoxDecoration(
+                //       borderRadius: BorderRadius.circular(100),
+                //       gradient: LinearGradient(
+                //         colors: _gradients[0],
+                //         begin: Alignment.centerLeft,
+                //         end: Alignment.centerRight,
+                //       ),
+                //     ),
+                //     child: const Image(
+                //         image: AssetImage('assets/images/ic-effect.png')),
+                //   ),
+                // ),
+                GestureDetector(
+                  onTapDown: (TapDownDetails details) {
+                    showMenu(
+                      context: context,
+                      position: RelativeRect.fromLTRB(
+                        details.globalPosition.dx,
+                        details.globalPosition.dy + 20,
+                        details.globalPosition.dx,
+                        details.globalPosition.dy + 20,
+                      ),
+                      items: <PopupMenuEntry<int>>[
+                        const PopupMenuItem<int>(
+                          value: 0,
+                          child: ListTile(
+                            title: Text(
+                              'Cập nhật nội dung mã QR',
+                              style:
+                                  TextStyle(fontSize: 12, color: Colors.blue),
+                            ),
+                          ),
+                        ),
+                        const PopupMenuItem<int>(
+                          value: 1,
+                          child: ListTile(
+                            title: Text(
+                              'Tuỳ chỉnh giao diện mã QR',
+                              style:
+                                  TextStyle(fontSize: 12, color: Colors.blue),
+                            ),
+                          ),
+                        ),
+                        const PopupMenuItem<int>(
+                          value: 2,
+                          child: ListTile(
+                            title: Text(
+                              'Xoá QR',
+                              style: TextStyle(fontSize: 12, color: Colors.red),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ).then((int? result) {
+                      if (result != null) {
+                        switch (result) {
+                          case 0:
+                            Navigator.of(context)
+                                .pushNamed(Routes.QR_UPDATE_SCREEN);
+                            // Handle "Cập nhật nội dung mã QR"
+                            break;
+                          case 1:
+                            // Handle "Tuỳ chỉnh giao diện mã QR"
+                            break;
+                          case 2:
+                            // Handle "Xoá QR"
+                            break;
+                        }
+                      }
+                    });
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    height: 40,
+                    width: 40,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100),
+                      gradient: LinearGradient(
+                        colors: _gradients[0],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ),
+                    ),
+                    child: const Image(
+                      image: AssetImage('assets/images/ic-effect.png'),
+                    ),
+                  ),
+                ),
+                // InkWell(
+                //   onTap: () {},
+                //   child: Container(
+                //     padding: const EdgeInsets.all(4),
+                //     height: 40,
+                //     width: 40,
+                //     decoration: BoxDecoration(
+                //         borderRadius: BorderRadius.circular(100),
+                //         gradient: LinearGradient(
+                //             colors: _gradients[0],
+                //             begin: Alignment.centerLeft,
+                //             end: Alignment.centerRight)),
+                //     child:
+                //         const XImage(imagePath: 'assets/images/ic-effect.png'),
+                //   ),
+                // ),
+                const SizedBox(width: 10),
+                InkWell(
+                  onTap: () {},
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    height: 40,
+                    width: 40,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),
+                        gradient: LinearGradient(
+                            colors: _gradients[0],
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight)),
+                    child:
+                        const XImage(imagePath: 'assets/images/ic-i-black.png'),
+                  ),
+                ),
+              ],
+            ))
+      ],
     );
   }
 }

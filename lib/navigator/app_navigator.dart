@@ -40,6 +40,7 @@ import 'package:vierqr/features/qr_box/qr_box_screen.dart';
 import 'package:vierqr/features/qr_feed/views/qr_create_screen.dart';
 import 'package:vierqr/features/qr_feed/views/qr_detail_screen.dart';
 import 'package:vierqr/features/qr_feed/views/qr_style.dart';
+import 'package:vierqr/features/qr_feed/views/qr_update_screen.dart';
 import 'package:vierqr/features/register_new_bank/register_mb_bank.dart';
 import 'package:vierqr/features/report/report_screen.dart';
 import 'package:vierqr/features/scan_qr/scan_qr_screen.dart';
@@ -122,6 +123,8 @@ class NavigationService {
         return _buildRoute(settings, const CustomerVaListView());
       case Routes.QR_DETAIL_SCREEN:
         return _buildRoute(settings, const QrDetailScreen());
+      case Routes.QR_UPDATE_SCREEN:
+        return _buildRoute(settings, const QrUpdateScreen());
       case Routes.QR_CREATE_SCREEN:
         return CupertinoPageRoute(
             builder: (context) => const QrCreateScreen(), settings: settings);

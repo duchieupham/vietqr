@@ -622,6 +622,8 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
                                       onPressed: () {
                                         contentController.clear();
                                         updateState();
+                                        _updateCharCount(
+                                            contentController.text);
                                       },
                                     )
                                   : null,
