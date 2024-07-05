@@ -138,8 +138,8 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
             status: event.isLoading ? BlocStatus.LOADING_PAGE : BlocStatus.NONE,
             request: QrFeed.GET_QR_FEED_LIST));
 
-        final result =
-            await _qrFeedRepository.getQrFeed(type: event.type, size: 10);
+        final result = await _qrFeedRepository.getQrFeed(
+            type: event.type, size: event.size ?? 10, page: event.page ?? 1);
         Future.delayed(const Duration(milliseconds: 500));
         if (result.isNotEmpty) {
           emit(state.copyWith(

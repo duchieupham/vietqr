@@ -36,7 +36,6 @@ class QrFeedRepository extends BaseRepo {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
-      print(dto.qrDescriptionDTO);
       // String url =
       //     '${getIt.get<AppConfig>().getBaseUrl}qr-wallet/generate-qr?type=${dto.type}&json=${jsonEncode(data['json'])}';
       String url = '${getIt.get<AppConfig>().getBaseUrl}qr-wallet/generate-qr';
@@ -44,7 +43,7 @@ class QrFeedRepository extends BaseRepo {
       MultipartFile imageFile;
       if (file != null) {
         imageFile = await http.MultipartFile.fromPath('file', file.path);
-        files.add(imageFile);
+        // files.add(imageFile);
       } else {
         imageFile = http.MultipartFile.fromBytes(
             'file', Uint8List.fromList([0]),
@@ -88,7 +87,7 @@ class QrFeedRepository extends BaseRepo {
   }
 
   Future<List<QrFeedDTO>> getQrFeed(
-      {int page = 1, int size = 20, required int type}) async {
+      {required int page, required int size, required int type}) async {
     List<QrFeedDTO> result = [];
     try {
       String url =

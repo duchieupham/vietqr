@@ -16,6 +16,7 @@ import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/extensions/string_extension.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
+import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/commons/widgets/shimmer_block.dart';
 import 'package:vierqr/features/account/account_screen.dart';
@@ -55,6 +56,8 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
   double height = 0.0;
 
   List<QrFeedDTO> list = [];
+
+  QrFeedDTO? qrFeedAction;
 
   @override
   void initState() {
@@ -108,6 +111,27 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
         isLoading: false, type: tab == TabView.COMMUNITY ? 0 : 1));
   }
 
+  void startBarcodeScanStream() async {
+    final data = await Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
+    if (data is Map<String, dynamic>) {
+      if (!mounted) return;
+      QRScannerUtils.instance.onScanNavi(data, context);
+      final type = data['type'];
+      final typeQR = data['typeQR'] as TypeQR;
+      final value = data['data'];
+      final bankTypeDTO = data['bankTypeDTO'];
+      switch (typeQR) {
+        case TypeQR.QR_LINK:
+          break;
+        case TypeQR.QR_BANK:
+          break;
+        default:
+      }
+      print('QrDATA: -------------\n$data');
+      // Navigator.of(context).pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<QrFeedBloc, QrFeedState>(
@@ -130,11 +154,23 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
             state.status == BlocStatus.SUCCESS) {
           list = [...list, ...state.listQrFeed!];
           metadata = state.metadata;
+          updateState();
         }
+
+        if (state.request == QrFeed.INTERACT_WITH_QR &&
+            state.status == BlocStatus.SUCCESS) {
+          qrFeedAction = state.qrFeed;
+          final indexOfQr = list.indexWhere((e) => e.id == state.qrFeed?.id);
+          list[indexOfQr] = state.qrFeed!;
+          updateState();
+        }
+
         if (state.request == QrFeed.CREATE_QR &&
             state.status == BlocStatus.SUCCESS) {
           _bloc.add(GetQrFeedEvent(
-              isLoading: true, type: tab == TabView.COMMUNITY ? 0 : 1));
+            isLoading: true,
+            type: tab == TabView.COMMUNITY ? 0 : 1,
+          ));
         }
       },
       builder: (context, state) {
@@ -202,7 +238,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                   child: Container(
                     color: AppColor.BLUE_BGR,
                     width: MediaQuery.of(context).size.width,
-                    height: (list.isEmpty || list.length < 5)
+                    height: (list.isEmpty || list.length < 4)
                         ? MediaQuery.of(context).size.height
                         : null,
                     child: Column(
@@ -321,35 +357,39 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
         ),
         const SizedBox(height: 15),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.max,
           children: [
-            InkWell(
-              onTap: () {
-                Navigator.of(context).pushNamed(Routes.QR_CREATE_SCREEN).then(
-                      (value) {},
-                    );
-              },
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                height: 42,
-                width: MediaQuery.of(context).size.width * 0.64,
-                alignment: Alignment.centerLeft,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(40),
-                  border: Border.all(color: AppColor.GREY_DADADA),
-                  color: AppColor.GREY_F0F4FA,
-                ),
-                child: Text(
-                  textAlign: TextAlign.center,
-                  'Chào ${SharePrefUtils.getProfile().firstName}, bạn đang nghĩ gì?',
-                  style:
-                      const TextStyle(fontSize: 12, color: AppColor.GREY_TEXT),
+            Expanded(
+              child: InkWell(
+                onTap: () {
+                  Navigator.of(context).pushNamed(Routes.QR_CREATE_SCREEN).then(
+                        (value) {},
+                      );
+                },
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  height: 42,
+                  // width: double.infinity,
+                  alignment: Alignment.centerLeft,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(40),
+                    border: Border.all(color: AppColor.GREY_DADADA),
+                    color: AppColor.GREY_F0F4FA,
+                  ),
+                  child: Text(
+                    textAlign: TextAlign.center,
+                    'Chào ${SharePrefUtils.getProfile().firstName}, bạn đang nghĩ gì?',
+                    style: const TextStyle(
+                        fontSize: 12, color: AppColor.GREY_TEXT),
+                  ),
                 ),
               ),
             ),
+            const SizedBox(width: 10),
             InkWell(
-              onTap: () {},
+              onTap: startBarcodeScanStream,
               child: Container(
                 padding: const EdgeInsets.all(4),
                 height: 42,
@@ -362,26 +402,26 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                     imagePath: 'assets/images/ic-scan-content.png'),
               ),
             ),
-            InkWell(
-              onTap: () {},
-              child: Container(
-                padding: const EdgeInsets.all(13),
-                height: 42,
-                width: 42,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(100),
-                  color: AppColor.GREEN.withOpacity(0.2),
-                ),
-                child: const XImage(
-                  fit: BoxFit.fitWidth,
-                  width: 42,
-                  height: 42,
-                  imagePath: 'assets/images/ic-img-picker.png',
-                  // svgIconColor: ColorFilter.mode(
-                  //     AppColor.RED_TEXT, BlendMode.),
-                ),
-              ),
-            )
+            // InkWell(
+            //   onTap: () {},
+            //   child: Container(
+            //     padding: const EdgeInsets.all(13),
+            //     height: 42,
+            //     width: 42,
+            //     decoration: BoxDecoration(
+            //       borderRadius: BorderRadius.circular(100),
+            //       color: AppColor.GREEN.withOpacity(0.2),
+            //     ),
+            //     child: const XImage(
+            //       fit: BoxFit.fitWidth,
+            //       width: 42,
+            //       height: 42,
+            //       imagePath: 'assets/images/ic-img-picker.png',
+            //       // svgIconColor: ColorFilter.mode(
+            //       //     AppColor.RED_TEXT, BlendMode.),
+            //     ),
+            //   ),
+            // )
           ],
         ),
       ],
@@ -767,10 +807,13 @@ class _buildQRFeed extends StatelessWidget {
                   const SizedBox(height: 8),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+
+                        // mainAxisSize: MainAxisSize.min,
                         children: [
                           GestureDetector(
                             onTap: () {
@@ -782,7 +825,7 @@ class _buildQRFeed extends StatelessWidget {
                               imagePath: dto.hasLiked
                                   ? 'assets/images/ic-heart-red.png'
                                   : 'assets/images/ic-heart-grey.png',
-                              height: 50,
+                              height: 45,
                               fit: BoxFit.fitHeight,
                             ),
                           ),
@@ -798,14 +841,15 @@ class _buildQRFeed extends StatelessWidget {
                       const SizedBox(width: 18),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        // mainAxisSize: MainAxisSize.min,
                         children: [
                           const XImage(
                             imagePath: 'assets/images/ic-comment.png',
                             height: 17,
                             fit: BoxFit.fitHeight,
                           ),
-                          const SizedBox(width: 6),
+                          const SizedBox(width: 10),
                           Text(
                             dto.commentCount.toString(),
                             style: const TextStyle(
@@ -815,7 +859,7 @@ class _buildQRFeed extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(width: 10),
+                      const SizedBox(width: 8),
                       const XImage(
                         imagePath: 'assets/images/ic-share-grey.png',
                         width: 40,

@@ -14,11 +14,14 @@ class QrFeedEvent extends Equatable {
 class GetQrFeedEvent extends QrFeedEvent {
   final int type;
   final bool isLoading;
+  final int? size;
+  final int? page;
 
-  const GetQrFeedEvent({required this.type, required this.isLoading});
+  const GetQrFeedEvent(
+      {required this.type, required this.isLoading, this.size, this.page});
 
   @override
-  List<Object?> get props => [type, isLoading];
+  List<Object?> get props => [type, isLoading, size, page];
 }
 
 class GetMoreQrFeedEvent extends QrFeedEvent {
