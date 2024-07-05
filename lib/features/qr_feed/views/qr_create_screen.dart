@@ -3,7 +3,9 @@ import 'package:flutter/widgets.dart';
 import 'package:vierqr/commons/constants/configurations/app_images.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/navigator_utils.dart';
+import 'package:vierqr/commons/utils/qr_scanner_utils.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/features/qr_feed/views/qr_screen.dart';
 import 'package:vierqr/features/qr_feed/widgets/default_appbar_widget.dart';
@@ -62,13 +64,13 @@ class _QrCreateScreenState extends State<QrCreateScreen> {
         name: 'Quét mã QR',
         separateWidget: const SizedBox.shrink(),
         description: 'Quét mã QR để thêm mới'),
-    QrType(
-        type: 6,
-        icon: 'assets/images/ic-img-picker.png',
-        gradient: VietQRTheme.gradientColor.import_qr,
-        name: 'Tải ảnh QR',
-        separateWidget: const MySeparator(color: AppColor.GREY_DADADA),
-        description: 'Chọn ảnh QR từ thư viện để thêm mới'),
+    // QrType(
+    //     type: 6,
+    //     icon: 'assets/images/ic-img-picker.png',
+    //     gradient: VietQRTheme.gradientColor.import_qr,
+    //     name: 'Tải ảnh QR',
+    //     separateWidget: const MySeparator(color: AppColor.GREY_DADADA),
+    //     description: 'Chọn ảnh QR từ thư viện để thêm mới'),
   ];
 
   @override
@@ -356,10 +358,32 @@ class _QrCreateScreenState extends State<QrCreateScreen> {
             routeName: Routes.QR_SCREEN);
         break;
       case 5:
+        startBarcodeScanStream();
         break;
       case 6:
         break;
       default:
+    }
+  }
+
+  void startBarcodeScanStream() async {
+    final data = await Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
+    if (data is Map<String, dynamic>) {
+      if (!mounted) return;
+      QRScannerUtils.instance.onScanNavi(data, context);
+      final type = data['type'];
+      final typeQR = data['typeQR'] as TypeQR;
+      final value = data['data'];
+      final bankTypeDTO = data['bankTypeDTO'];
+      switch (typeQR) {
+        case TypeQR.QR_LINK:
+          break;
+        case TypeQR.QR_BANK:
+          break;
+        default:
+      }
+      print('QrDATA: -------------\n$data');
+      // Navigator.of(context).pop();
     }
   }
 

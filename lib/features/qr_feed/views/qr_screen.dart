@@ -176,7 +176,8 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
               clipboardContent.text!.contains('https'))) {
         _clipboardContent = clipboardContent.text!;
       } else {
-        final regex = RegExp(r'[ ()_\-=\[\];’:"{}<>?,./!@#$%^&*\\]');
+        final regex = RegExp(r'[ ()_\-=\[\];:"{}<>?,./!@#$%^&*\\]');
+
         if (clipboardContent != null) {
           if (!regex.hasMatch(clipboardContent.text!)) {
             _clipboardContent = clipboardContent.text!;
@@ -698,25 +699,25 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
                         imagePath: 'assets/images/ic-scan-content.png'),
                   ),
                 ),
-                const SizedBox(width: 4),
-                InkWell(
-                  onTap: () {},
-                  child: Container(
-                    padding: const EdgeInsets.all(13),
-                    height: 42,
-                    width: 42,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(100),
-                      color: AppColor.GREEN.withOpacity(0.2),
-                    ),
-                    child: const XImage(
-                      fit: BoxFit.fitWidth,
-                      width: 42,
-                      height: 42,
-                      imagePath: 'assets/images/ic-img-picker.png',
-                    ),
-                  ),
-                ),
+                // const SizedBox(width: 4),
+                // InkWell(
+                //   onTap: () {},
+                //   child: Container(
+                //     padding: const EdgeInsets.all(13),
+                //     height: 42,
+                //     width: 42,
+                //     decoration: BoxDecoration(
+                //       borderRadius: BorderRadius.circular(100),
+                //       color: AppColor.GREEN.withOpacity(0.2),
+                //     ),
+                //     child: const XImage(
+                //       fit: BoxFit.fitWidth,
+                //       width: 42,
+                //       height: 42,
+                //       imagePath: 'assets/images/ic-img-picker.png',
+                //     ),
+                //   ),
+                // ),
               ],
             ),
           ],
@@ -734,6 +735,9 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
             else
               FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s0-9]')),
           ],
+          onSubmitted: (value) {
+            onQrStyle();
+          },
           onChanged: (value) {
             if (value.contains('http') || value.contains('https')) {
               _qrType = TypeQr.QR_LINK;
@@ -815,157 +819,7 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       child: InkWell(
-        onTap: isEnable
-            ? () {
-                int type = 0;
-                switch (_qrType) {
-                  case TypeQr.QR_LINK:
-                    type = 0;
-                    break;
-                  case TypeQr.OTHER:
-                    type = 1;
-                    break;
-                  case TypeQr.VCARD:
-                    type = 2;
-                    break;
-                  case TypeQr.VIETQR:
-                    type = 3;
-                    break;
-                  default:
-                }
-
-                QrCreateFeedDTO dto = QrCreateFeedDTO(
-                  typeDto: type.toString(),
-                  userIdDTO: userId,
-                  qrNameDTO: '',
-                  qrDescriptionDTO: '',
-                  valueDTO: _controller.text,
-                  pinDTO: '',
-                  fullNameDTO: contactController.text,
-                  phoneNoDTO: sdtController.text,
-                  emailDTO: _showAdditionalOptional ? emailController.text : '',
-                  companyNameDTO:
-                      _showAdditionalOptional ? ctyController.text : '',
-                  websiteDTO: _showAdditionalOptional ? webController.text : '',
-                  addressDTO:
-                      _showAdditionalOptional ? addressController.text : '',
-                  additionalDataDTO: '',
-                  bankAccountDTO:
-                      selectedBank != null ? selectedBank?.bankAccount : '',
-                  bankCodeDTO:
-                      selectedBank != null ? selectedBank?.bankCode : '',
-                  userBankNameDTO:
-                      selectedBank != null ? selectedBank?.userBankName : '',
-                  amountDTO: _showAdditionalOptional
-                      ? amount.text.replaceAll(',', '')
-                      : '',
-                  contentDTO:
-                      _showAdditionalOptional ? contentController.text : '',
-                  isPublicDTO: '',
-                  styleDTO: '',
-                  themeDTO: '',
-                );
-                NavigatorUtils.navigatePage(
-                    context,
-                    QrStyle(
-                      type: type,
-                      dto: dto,
-                    ),
-                    routeName: Routes.QR_STYLE);
-                // switch (_qrType) {
-                //   case TypeQr.QR_LINK:
-                //     QrLink qrLink = QrLink(
-                //       userId: userId,
-                //       qrName: '',
-                //       qrDescription: '',
-                //       value: _controller.text,
-                //       pin: '',
-                //       isPublic: '',
-                //       style: '',
-                //       theme: '',
-                //     );
-
-                //     NavigatorUtils.navigatePage(
-                //         context,
-                //         QrStyle(
-                //           type: 0,
-                //           json: qrLink.toJson(),
-                //         ),
-                //         routeName: Routes.QR_STYLE);
-                //     break;
-                //   case TypeQr.OTHER:
-                //     QrOther other = QrOther(
-                //       userId: userId,
-                //       qrName: '',
-                //       qrDescription: '',
-                //       value: _controller.text,
-                //       pin: '',
-                //       isPublic: '',
-                //       style: '',
-                //       theme: '',
-                //     );
-
-                //     NavigatorUtils.navigatePage(
-                //         context,
-                //         QrStyle(
-                //           type: 1,
-                //           json: other.toJson(),
-                //         ),
-                //         routeName: Routes.QR_STYLE);
-                //     break;
-                //   case TypeQr.VCARD:
-                //     QrVCard vCard = QrVCard(
-                //         qrName: '',
-                //         qrDescription: '',
-                //         fullname: contactController.text,
-                //         phoneNo: sdtController.text,
-                //         email: emailController.text,
-                //         companyName: ctyController.text,
-                //         website: webController.text,
-                //         address: addressController.text,
-                //         userId: userId,
-                //         additionalData: '',
-                //         style: '',
-                //         theme: '',
-                //         isPublic: '');
-                //     NavigatorUtils.navigatePage(
-                //         context,
-                //         QrStyle(
-                //           type: 2,
-                //           json: vCard.toJson(),
-                //         ),
-                //         routeName: Routes.QR_STYLE);
-                //     break;
-                //   case TypeQr.VIETQR:
-                //     VietQr vietQr = VietQr(
-                //         userId: userId,
-                //         qrName: '',
-                //         qrDescription: '',
-                //         bankAccount: stk.text,
-                //         bankCode: selectedBank!.bankCode,
-                //         userBankName: userBankName.text,
-                //         amount: _showAdditionalOptional
-                //             ? amount.text.replaceAll(',', '')
-                //             : '',
-                //         content: _showAdditionalOptional
-                //             ? contentController.text.trim()
-                //             : '',
-                //         isPublic: '',
-                //         style: '',
-                //         theme: '');
-                //     NavigatorUtils.navigatePage(
-                //         context,
-                //         QrStyle(
-                //           type: 3,
-                //           json: vietQr.toJson(),
-                //         ),
-                //         routeName: Routes.QR_STYLE);
-                //     break;
-                //   default:
-                // }
-                _timer?.cancel();
-              }
-            : null,
+        onTap: isEnable ? onQrStyle : null,
         child: Container(
           width: double.infinity,
           height: 50,
@@ -1018,6 +872,58 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
         ),
       ),
     );
+  }
+
+  void onQrStyle() {
+    int type = 0;
+    switch (_qrType) {
+      case TypeQr.QR_LINK:
+        type = 0;
+        break;
+      case TypeQr.OTHER:
+        type = 1;
+        break;
+      case TypeQr.VCARD:
+        type = 2;
+        break;
+      case TypeQr.VIETQR:
+        type = 3;
+        break;
+      default:
+    }
+
+    QrCreateFeedDTO dto = QrCreateFeedDTO(
+      typeDto: type.toString(),
+      userIdDTO: userId,
+      qrNameDTO: '',
+      qrDescriptionDTO: '',
+      valueDTO: _controller.text,
+      pinDTO: '',
+      fullNameDTO: contactController.text,
+      phoneNoDTO: sdtController.text,
+      emailDTO: _showAdditionalOptional ? emailController.text : '',
+      companyNameDTO: _showAdditionalOptional ? ctyController.text : '',
+      websiteDTO: _showAdditionalOptional ? webController.text : '',
+      addressDTO: _showAdditionalOptional ? addressController.text : '',
+      additionalDataDTO: '',
+      bankAccountDTO: selectedBank != null ? stk.text : '',
+      bankCodeDTO: selectedBank != null ? selectedBank?.bankCode : '',
+      userBankNameDTO: selectedBank != null ? userBankName.text : '',
+      amountDTO: _showAdditionalOptional ? amount.text.replaceAll(',', '') : '',
+      contentDTO: _showAdditionalOptional ? contentController.text : '',
+      isPublicDTO: '',
+      styleDTO: '',
+      themeDTO: '',
+    );
+    NavigatorUtils.navigatePage(
+        context,
+        QrStyle(
+          type: type,
+          dto: dto,
+        ),
+        routeName: Routes.QR_STYLE);
+
+    _timer?.cancel();
   }
 
   void updateState() {

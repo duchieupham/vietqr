@@ -18,6 +18,7 @@ class CustomTextField extends StatelessWidget {
 
   final FocusNode? focusNode;
   final Function()? onTap;
+  final Function(Object)? onSubmitted;
 
   const CustomTextField({
     super.key,
@@ -34,6 +35,7 @@ class CustomTextField extends StatelessWidget {
     this.onTap,
     this.expands = false,
     this.height = 52,
+    this.onSubmitted,
   });
 
   @override
@@ -55,6 +57,7 @@ class CustomTextField extends StatelessWidget {
         SizedBox(
           // height: height,
           child: MTextFieldCustom(
+              onSubmitted: onSubmitted,
               expands: expands,
               maxLines: maxLines,
               enable: isActive,
