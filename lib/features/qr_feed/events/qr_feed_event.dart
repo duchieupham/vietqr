@@ -24,6 +24,19 @@ class GetQrFeedEvent extends QrFeedEvent {
   List<Object?> get props => [type, isLoading, size, page];
 }
 
+class GetQrFeedDetailEvent extends QrFeedEvent {
+  final String id;
+  final bool isLoading;
+  final int? size;
+  final int? page;
+
+  const GetQrFeedDetailEvent(
+      {required this.id, required this.isLoading, this.size, this.page});
+
+  @override
+  List<Object?> get props => [id, isLoading, size, page];
+}
+
 class GetMoreQrFeedEvent extends QrFeedEvent {
   final int type;
 

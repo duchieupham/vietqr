@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/bank_detail/repositories/bank_card_repository.dart';
+import 'package:vierqr/features/detail_store/events/detail_store_event.dart';
 import 'package:vierqr/features/qr_feed/events/qr_feed_event.dart';
 import 'package:vierqr/features/qr_feed/repositories/qr_feed_repository.dart';
 import 'package:vierqr/features/qr_feed/states/qr_feed_state.dart';
@@ -15,9 +16,45 @@ class QrFeedBloc extends Bloc<QrFeedEvent, QrFeedState> {
     on<LoadBanksEvent>(_getBankTypes);
     on<SearchBankEvent>(_searchBankName);
     on<InteractWithQrEvent>(_interactWithQr);
+    on<GetQrFeedDetailEvent>(_getDetailQrFeed);
   }
 
   final QrFeedRepository _qrFeedRepository = QrFeedRepository();
+
+  void _getDetailQrFeed(QrFeedEvent event, Emitter emit) async {
+    try {
+      if (event is GetQrFeedDetailEvent) {
+        emit(state.copyWith(
+            status: event.isLoading ? BlocStatus.LOADING_PAGE : BlocStatus.NONE,
+            request: QrFeed.GET_DETAIL_QR));
+
+        final result = await _qrFeedRepository.getDetailQrFeed(
+            page: event.page ?? 1,
+            size: event.size ?? 20,
+            qrWalletId: event.id);
+        if (result != null) {
+          emit(state.copyWith(
+            status: event.isLoading ? BlocStatus.SUCCESS : BlocStatus.UNLOADING,
+            request: QrFeed.GET_DETAIL_QR,
+            detailQr: result,
+          ));
+        } else {
+          emit(
+            state.copyWith(
+              request: QrFeed.GET_DETAIL_QR,
+              status: BlocStatus.ERROR,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      emit(state.copyWith(
+        request: QrFeed.GET_DETAIL_QR,
+        status: BlocStatus.ERROR,
+      ));
+    }
+  }
 
   void _searchBankName(QrFeedEvent event, Emitter emit) async {
     BankCardRepository bankCardRepository = const BankCardRepository();

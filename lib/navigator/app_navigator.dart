@@ -121,8 +121,7 @@ class NavigationService {
         return _buildRoute(settings, const CustomerVaSplashView());
       case Routes.CUSTOMER_VA_LIST:
         return _buildRoute(settings, const CustomerVaListView());
-      case Routes.QR_DETAIL_SCREEN:
-        return _buildRoute(settings, const QrDetailScreen());
+
       case Routes.QR_UPDATE_SCREEN:
         return _buildRoute(settings, const QrUpdateScreen());
       case Routes.QR_CREATE_SCREEN:
@@ -134,6 +133,15 @@ class NavigationService {
       // case Routes.QR_SCREEN:
       //   return CupertinoPageRoute(
       //       builder: (context) => const QrCreateScreen(), settings: settings);
+      case Routes.QR_DETAIL_SCREEN:
+        Map map = settings.arguments as Map;
+
+        String id = map['id'];
+        return _buildRoute(
+            settings,
+            QrDetailScreen(
+              id: id,
+            ));
       case Routes.QR_STYLE:
         Map map = settings.arguments as Map;
 

@@ -3,19 +3,39 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:vierqr/commons/constants/configurations/app_images.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
+import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
+import 'package:vierqr/features/qr_feed/blocs/qr_feed_bloc.dart';
+import 'package:vierqr/features/qr_feed/events/qr_feed_event.dart';
 import 'package:vierqr/features/qr_feed/widgets/default_appbar_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 
 class QrDetailScreen extends StatefulWidget {
-  const QrDetailScreen({super.key});
+  final String id;
+  const QrDetailScreen({super.key, required this.id});
 
   @override
   State<QrDetailScreen> createState() => _QrDetailScreenState();
 }
 
 class _QrDetailScreenState extends State<QrDetailScreen> {
+  final QrFeedBloc _bloc = getIt.get<QrFeedBloc>();
+
+  @override
+  void initState() {
+    super.initState();
+    initData();
+  }
+
+  void initData() {
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) {
+        // _bloc.add(GetQrFeedDetailEvent(id: widget.id, isLoading: true));
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

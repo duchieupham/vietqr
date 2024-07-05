@@ -58,6 +58,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
   List<QrFeedDTO> list = [];
 
   QrFeedDTO? qrFeedAction;
+  String selectedQrId = '';
 
   @override
   void initState() {
@@ -172,6 +173,12 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
             type: tab == TabView.COMMUNITY ? 0 : 1,
           ));
         }
+
+        if (state.request == QrFeed.GET_DETAIL_QR &&
+            state.status == BlocStatus.SUCCESS) {
+          Navigator.of(context).pushNamed(Routes.QR_DETAIL_SCREEN,
+              arguments: {'id': selectedQrId});
+        }
       },
       builder: (context, state) {
         return SafeArea(
@@ -250,6 +257,10 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                           else if (list.isNotEmpty)
                             ...list.map(
                               (e) => _buildQRFeed(
+                                onTap: (id) {
+                                  selectedQrId = id;
+                                  updateState();
+                                },
                                 dto: e,
                               ),
                             ),
@@ -610,8 +621,10 @@ class _buildLoading extends StatelessWidget {
 // ignore: camel_case_types
 class _buildQRFeed extends StatelessWidget {
   final QrFeedDTO dto;
+  final Function(String) onTap;
   const _buildQRFeed({
     required this.dto,
+    required this.onTap,
   });
 
   @override
@@ -736,7 +749,11 @@ class _buildQRFeed extends StatelessWidget {
                   const SizedBox(height: 8),
                   GestureDetector(
                     onTap: () {
-                      Navigator.of(context).pushNamed(Routes.QR_DETAIL_SCREEN);
+                      getIt.get<QrFeedBloc>().add(
+                          GetQrFeedDetailEvent(id: dto.id, isLoading: true));
+                      onTap(dto.id);
+                      // Navigator.of(context).pushNamed(Routes.QR_DETAIL_SCREEN,
+                      //     arguments: {'id': dto.id});
                     },
                     child: Container(
                       margin: const EdgeInsets.only(right: 30),

@@ -3,6 +3,7 @@ import 'package:vierqr/commons/enums/enum_type.dart';
 import 'package:vierqr/models/bank_name_information_dto.dart';
 import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/metadata_dto.dart';
+import 'package:vierqr/models/qr_feed_detail_dto.dart';
 import 'package:vierqr/models/qr_feed_dto.dart';
 
 class QrFeedState extends Equatable {
@@ -14,6 +15,9 @@ class QrFeedState extends Equatable {
   final List<BankTypeDTO>? listBanks;
   final BankNameInformationDTO? bankDto;
   final QrFeedDTO? qrFeed;
+  final QrFeedDetailDTO? detailQr;
+  final MetaDataDTO? detailMetadata;
+  // final bool is
 
   const QrFeedState({
     this.msg,
@@ -24,6 +28,8 @@ class QrFeedState extends Equatable {
     this.listBanks,
     this.bankDto,
     this.qrFeed,
+    this.detailQr,
+    this.detailMetadata,
   });
 
   QrFeedState copyWith({
@@ -35,6 +41,8 @@ class QrFeedState extends Equatable {
     List<BankTypeDTO>? listBanks,
     BankNameInformationDTO? bankDto,
     QrFeedDTO? qrFeed,
+    QrFeedDetailDTO? detailQr,
+    MetaDataDTO? detailMetadata,
   }) {
     return QrFeedState(
       status: status ?? this.status,
@@ -45,6 +53,8 @@ class QrFeedState extends Equatable {
       listBanks: listBanks ?? this.listBanks,
       bankDto: bankDto ?? this.bankDto,
       qrFeed: qrFeed ?? this.qrFeed,
+      detailQr: detailQr ?? this.detailQr,
+      detailMetadata: detailMetadata ?? this.detailMetadata,
     );
   }
 
@@ -58,5 +68,7 @@ class QrFeedState extends Equatable {
         listBanks,
         bankDto,
         qrFeed,
+        detailQr,
+        detailMetadata,
       ];
 }

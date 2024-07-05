@@ -14,22 +14,13 @@ import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/invoice/repositories/base_repository.dart';
 import 'package:vierqr/models/metadata_dto.dart';
 import 'package:vierqr/models/qr_create_type_dto.dart';
+import 'package:vierqr/models/qr_feed_detail_dto.dart';
 import 'package:vierqr/models/qr_feed_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class QrFeedRepository extends BaseRepo {
   String get userId => SharePrefUtils.getProfile().userId;
-
-  static void logAPI(
-      {required String url, required int statusCode, required String body}) {
-    String message = 'URL: $url - STATUS CODE: $statusCode\nRESPONSE: $body';
-    if (statusCode >= 200 && statusCode <= 299) {
-      LOG.info(message);
-    } else {
-      LOG.error(message);
-    }
-  }
 
   Future<ResponseMessageDTO> createQrLink(
       {required QrCreateFeedDTO dto, File? file}) async {
@@ -54,25 +45,6 @@ class QrFeedRepository extends BaseRepo {
       final response = await BaseAPIClient.postMultipartAPI(
           url: url, fields: dto.toJson(), files: files);
 
-      // var request = http.MultipartRequest('POST', uri);
-      // request.headers['Authorization'] = 'Bearer $token';
-      // request.fields.addAll(
-      //     dto.toJson().map((key, value) => MapEntry(key, value.toString())));
-
-      // if (file != null) {
-      //   request.files.add(await http.MultipartFile.fromPath('file', file.path));
-      // } else {
-      //   // for (http.MultipartFile multipartFile in files) {
-      //   //   request.files.add(multipartFile);
-      //   // }
-      //   request.files.add(http.MultipartFile.fromBytes(
-      //       'file', Uint8List.fromList([0]),
-      //       filename: ''));
-      // }
-
-      // final http.Response response =
-      //     await http.Response.fromStream(await request.send());
-      // logAPI(url: url, statusCode: response.statusCode, body: response.body);
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         result = ResponseMessageDTO.fromJson(data);
@@ -84,6 +56,32 @@ class QrFeedRepository extends BaseRepo {
       result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
     }
     return result;
+  }
+
+  Future<QrFeedDetailDTO?> getDetailQrFeed(
+      {required int page,
+      required int size,
+      required String qrWalletId}) async {
+    try {
+      String url =
+          '${getIt.get<AppConfig>().getBaseUrl}qr-wallets/public/details?userId=$userId&page=$page&size=$size';
+      final response = await BaseAPIClient.getAPI(
+          url: url,
+          type: AuthenticationType.SYSTEM,
+          queryParameters: {
+            'qrWalletId': qrWalletId,
+          });
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        if (data != null) {
+          metaDataDTO = MetaDataDTO.fromJson(data['comments']['metadata']);
+          return QrFeedDetailDTO.fromJson(data['comments']['data']);
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return null;
   }
 
   Future<List<QrFeedDTO>> getQrFeed(
