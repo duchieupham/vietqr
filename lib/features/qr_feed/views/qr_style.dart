@@ -98,11 +98,12 @@ class _QrStyleState extends State<QrStyle> {
           //   msg: '',
           //   function: () {
           //     Navigator.pop(context);
-          //     Navigator.pop(context);
-          //     Navigator.pop(context);
-          //     Navigator.pop(context);
+
           //   },
           // );
+          Navigator.pop(context);
+          Navigator.pop(context);
+          Navigator.pop(context);
           Fluttertoast.showToast(
             msg: 'Tạo mã QR thành công',
             toastLength: Toast.LENGTH_SHORT,
@@ -415,6 +416,9 @@ class _QrStyleState extends State<QrStyle> {
                   keyboardType: TextInputType.multiline,
                   maxLines: null,
                   decoration: InputDecoration(
+                    hintText: 'Nhập mô tả cho mã QR',
+                    hintStyle: const TextStyle(
+                        color: AppColor.GREY_TEXT, fontSize: 14),
                     focusedBorder: const UnderlineInputBorder(
                         borderSide: BorderSide(color: AppColor.BLUE_TEXT)),
                     suffixIcon: InkWell(

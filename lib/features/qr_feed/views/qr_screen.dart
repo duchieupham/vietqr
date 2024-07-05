@@ -841,18 +841,24 @@ class _QrLinkScreenState extends State<QrLinkScreen> {
                   pinDTO: '',
                   fullNameDTO: contactController.text,
                   phoneNoDTO: sdtController.text,
-                  emailDTO: emailController.text,
-                  companyNameDTO: ctyController.text,
-                  websiteDTO: webController.text,
-                  addressDTO: addressController.text,
+                  emailDTO: _showAdditionalOptional ? emailController.text : '',
+                  companyNameDTO:
+                      _showAdditionalOptional ? ctyController.text : '',
+                  websiteDTO: _showAdditionalOptional ? webController.text : '',
+                  addressDTO:
+                      _showAdditionalOptional ? addressController.text : '',
                   additionalDataDTO: '',
-                  bankAccountDTO: selectedBank?.bankAccount,
-                  bankCodeDTO: selectedBank?.bankCode,
-                  userBankNameDTO: selectedBank?.userBankName,
+                  bankAccountDTO:
+                      selectedBank != null ? selectedBank?.bankAccount : '',
+                  bankCodeDTO:
+                      selectedBank != null ? selectedBank?.bankCode : '',
+                  userBankNameDTO:
+                      selectedBank != null ? selectedBank?.userBankName : '',
                   amountDTO: _showAdditionalOptional
                       ? amount.text.replaceAll(',', '')
                       : '',
-                  contentDTO: contentController.text,
+                  contentDTO:
+                      _showAdditionalOptional ? contentController.text : '',
                   isPublicDTO: '',
                   styleDTO: '',
                   themeDTO: '',

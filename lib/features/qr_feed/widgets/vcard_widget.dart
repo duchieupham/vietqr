@@ -102,7 +102,6 @@ class VcardWidget extends StatelessWidget {
               defaultCountryCode: "VN",
             )
           ],
-          maxLines: 10,
           onClear: () {
             onClear(1);
           },
@@ -112,7 +111,10 @@ class VcardWidget extends StatelessWidget {
         CustomTextField(
           textInputType: TextInputType.name,
           inputFormatter: [
-            FilteringTextInputFormatter.allow(RegExp(r'^[a-zA-ZÀ-ỹẠ-ỵ]+$'))
+            // FilteringTextInputFormatter.deny(
+            //     RegExp(r'[()_\-=\[\];’:"{}<>?,./!@#$%^&*\\]')),
+            // FilteringTextInputFormatter.allow(RegExp(r'^[a-zA-ZÀ-ỹẠ-ỵ ]+$'))
+            VietnameseNameInputFormatter()
           ],
           isActive: true,
           controller: contactController,

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -20,41 +21,59 @@ import 'package:vierqr/services/local_storage/shared_preference/shared_pref_util
 class QrFeedRepository extends BaseRepo {
   String get userId => SharePrefUtils.getProfile().userId;
 
+  static void logAPI(
+      {required String url, required int statusCode, required String body}) {
+    String message = 'URL: $url - STATUS CODE: $statusCode\nRESPONSE: $body';
+    if (statusCode >= 200 && statusCode <= 299) {
+      LOG.info(message);
+    } else {
+      LOG.error(message);
+    }
+  }
+
   Future<ResponseMessageDTO> createQrLink(
       {required QrCreateFeedDTO dto, File? file}) async {
     ResponseMessageDTO result =
         const ResponseMessageDTO(status: '', message: '');
     try {
-      Response? response;
-      final data = dto.toJson();
-
+      print(dto.qrDescriptionDTO);
       // String url =
       //     '${getIt.get<AppConfig>().getBaseUrl}qr-wallet/generate-qr?type=${dto.type}&json=${jsonEncode(data['json'])}';
-      String url = file != null
-          ? '${getIt.get<AppConfig>().getBaseUrl}qr-wallet/generate-qr?type=${dto.type}&json=${jsonEncode(data['json'])}'
-          : '${getIt.get<AppConfig>().getBaseUrl}qr-wallet/generate-qr-without-data?type=${data['type']}';
+      String url = '${getIt.get<AppConfig>().getBaseUrl}qr-wallet/generate-qr';
       final List<http.MultipartFile> files = [];
+      MultipartFile imageFile;
       if (file != null) {
-        final imageFile = await http.MultipartFile.fromPath('file', file.path);
+        imageFile = await http.MultipartFile.fromPath('file', file.path);
         files.add(imageFile);
       } else {
-        // final imageFile = http.MultipartFile.fromBytes('file', []);
-        // files.add(imageFile);
+        imageFile = http.MultipartFile.fromBytes(
+            'file', Uint8List.fromList([0]),
+            filename: '');
       }
+      files.add(imageFile);
 
-      if (file != null) {
-        response = await BaseAPIClient.postMultipartAPI(
-          url: url,
-          fields: dto.toJson(),
-          files: files,
-        );
-      } else {
-        response = await BaseAPIClient.postAPI(
-          url: url,
-          body: data['json'],
-          type: AuthenticationType.SYSTEM,
-        );
-      }
+      final response = await BaseAPIClient.postMultipartAPI(
+          url: url, fields: dto.toJson(), files: files);
+
+      // var request = http.MultipartRequest('POST', uri);
+      // request.headers['Authorization'] = 'Bearer $token';
+      // request.fields.addAll(
+      //     dto.toJson().map((key, value) => MapEntry(key, value.toString())));
+
+      // if (file != null) {
+      //   request.files.add(await http.MultipartFile.fromPath('file', file.path));
+      // } else {
+      //   // for (http.MultipartFile multipartFile in files) {
+      //   //   request.files.add(multipartFile);
+      //   // }
+      //   request.files.add(http.MultipartFile.fromBytes(
+      //       'file', Uint8List.fromList([0]),
+      //       filename: ''));
+      // }
+
+      // final http.Response response =
+      //     await http.Response.fromStream(await request.send());
+      // logAPI(url: url, statusCode: response.statusCode, body: response.body);
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         result = ResponseMessageDTO.fromJson(data);

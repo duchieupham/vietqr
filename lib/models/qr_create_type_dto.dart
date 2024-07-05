@@ -70,4 +70,31 @@ class QrCreateFeedDTO {
       'themeDTO': themeDTO,
     };
   }
+
+  Map<String, dynamic> toJsonWithFile() {
+    return {
+      'typeDto': typeDto,
+      'userIdDTO': userIdDTO,
+      'qrNameDTO': qrNameDTO,
+      'qrDescriptionDTO': qrDescriptionDTO,
+      'valueDTO': valueDTO,
+      'pinDTO': pinDTO,
+      'fullNameDTO': fullNameDTO,
+      'phoneNoDTO': phoneNoDTO,
+      'emailDTO': emailDTO,
+      'companyNameDTO': companyNameDTO,
+      'websiteDTO': websiteDTO,
+      'addressDTO': addressDTO,
+      'additionalDataDTO': additionalDataDTO,
+      'bankAccountDTO': bankAccountDTO,
+      'bankCodeDTO': bankCodeDTO,
+      'userBankNameDTO': userBankNameDTO,
+      'amountDTO': amountDTO,
+      'contentDTO': contentDTO,
+      'isPublicDTO': isPublicDTO,
+      'styleDTO': styleDTO,
+      'themeDTO': themeDTO,
+      'file': '',
+    };
+  }
 }
