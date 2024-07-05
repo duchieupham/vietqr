@@ -55,6 +55,7 @@ class Routes {
   static const String INVOICE_DETAIL = '/invoice_detail';
   static const String QR_BOX = '/qr_box';
   static const String QR_CREATE_SCREEN = '/qr_create_screen';
+  static const String QR_UPDATE_SCREEN = '/qr_update_screen';
   static const String QR_DETAIL_SCREEN = '/qr_detail_screen';
   static const String QR_STYLE = '/qr_style';
   static const String QR_SCREEN = '/qr_screen';
