@@ -5,10 +5,12 @@ import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/utils/time_utils.dart';
+import 'package:vierqr/commons/widgets/dialog_widget.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
 import 'package:vierqr/features/qr_feed/blocs/qr_feed_bloc.dart';
 import 'package:vierqr/features/qr_feed/events/qr_feed_event.dart';
 import 'package:vierqr/features/qr_feed/widgets/default_appbar_widget.dart';
+import 'package:vierqr/features/qr_feed/widgets/pop_up_qr_detail_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
 
 class QrDetailScreen extends StatefulWidget {
@@ -142,7 +144,7 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                             color: AppColor.GREY_F0F4FA,
                           ),
                           child: const XImage(
-                              imagePath: 'assets/images/ic-scan-content.png'),
+                              imagePath: 'assets/images/ic-save-blue.png'),
                         ),
                       ),
                     ),
@@ -617,7 +619,13 @@ class _QrDetailScreenState extends State<QrDetailScreen> {
                 // ),
                 const SizedBox(width: 10),
                 InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    DialogWidget.instance.showModelBottomSheet(
+                      borderRadius: BorderRadius.circular(16),
+                      widget: PopUpQrDetail(),
+                      // height: MediaQuery.of(context).size.height * 0.6,
+                    );
+                  },
                   child: Container(
                     padding: const EdgeInsets.all(4),
                     height: 40,
