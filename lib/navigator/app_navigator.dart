@@ -7,9 +7,10 @@ import 'package:vierqr/features/add_bank/add_bank_screen.dart';
 import 'package:vierqr/features/bank_card/views/search_bank_view.dart';
 import 'package:vierqr/features/connect_gg_chat/connect_gg_chat_screen.dart';
 import 'package:vierqr/features/connect_lark/connect_lark_screen.dart';
-import 'package:vierqr/features/connect_lark/widget/connect_screen.dart';
-import 'package:vierqr/features/connect_telegram/connect_telegram_screen.dart';
-import 'package:vierqr/features/connect_telegram/widget/connect_screen.dart';
+import 'package:vierqr/features/connect_lark_old/connect_lark_screen.dart';
+import 'package:vierqr/features/connect_lark_old/widget/connect_screen.dart';
+import 'package:vierqr/features/connect_telegram_old/connect_telegram_screen.dart';
+import 'package:vierqr/features/connect_telegram_old/widget/connect_screen.dart';
 import 'package:vierqr/features/contact/contact_screen.dart';
 import 'package:vierqr/features/create_qr_un_authen/show_qr.dart';
 import 'package:vierqr/features/customer_va/views/customer_va_confirm_otp_view.dart';
@@ -160,6 +161,10 @@ class NavigationService {
         }
         return _buildRoute(settings, QRBoxScreen(cert: cert));
       case Routes.CONNECT_GG_CHAT_SCREEN:
+        return _buildRoute(settings, const ConnectGgChatScreen());
+      case Routes.CONNECT_LARK_SCREEN:
+        return _buildRoute(settings, const ConnectLarkNewScreen());
+      case Routes.CONNECT_TELE_SCREEN:
         return _buildRoute(settings, const ConnectGgChatScreen());
       case Routes.SHOW_QR:
         Map map = settings.arguments as Map;

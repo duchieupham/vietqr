@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/utils/log.dart';
-import 'package:vierqr/features/connect_telegram/events/connect_telegram_event.dart';
-import 'package:vierqr/features/connect_telegram/repositories/connect_telegram_repository.dart';
-import 'package:vierqr/features/connect_telegram/states/conect_telegram_state.dart';
+import 'package:vierqr/features/connect_telegram_old/events/connect_telegram_event.dart';
+import 'package:vierqr/features/connect_telegram_old/repositories/connect_telegram_repository.dart';
+import 'package:vierqr/features/connect_telegram_old/states/conect_telegram_state.dart';
 
 import '../../../models/info_tele_dto.dart';
 import '../../../models/response_message_dto.dart';

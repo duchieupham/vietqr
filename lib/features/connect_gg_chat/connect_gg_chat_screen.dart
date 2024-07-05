@@ -188,8 +188,8 @@ class __ScreenState extends State<_Screen> {
                       : const SizedBox.shrink(),
               body: CustomScrollView(
                 physics: hasInfo == false
-                    ? NeverScrollableScrollPhysics()
-                    : AlwaysScrollableScrollPhysics(),
+                    ? const NeverScrollableScrollPhysics()
+                    : const AlwaysScrollableScrollPhysics(),
                 slivers: [
                   SliverAppBar(
                     pinned: false,
@@ -198,7 +198,7 @@ class __ScreenState extends State<_Screen> {
                       onTap: () {
                         if (currentPageIndex > 0 && hasInfo == false) {
                           _pageController.previousPage(
-                            duration: Duration(milliseconds: 200),
+                            duration: const Duration(milliseconds: 200),
                             curve: Curves.easeInOut,
                           );
                         } else {
@@ -332,12 +332,12 @@ class __ScreenState extends State<_Screen> {
           switch (currentPageIndex) {
             case 0:
               _pageController.nextPage(
-                  duration: Duration(milliseconds: 200),
+                  duration: const Duration(milliseconds: 200),
                   curve: Curves.easeInOut);
               break;
             case 1:
               _pageController.nextPage(
-                  duration: Duration(milliseconds: 200),
+                  duration: const Duration(milliseconds: 200),
                   curve: Curves.easeInOut);
               break;
             case 2:

@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vierqr/commons/utils/log.dart';
-import 'package:vierqr/features/connect_lark/repositories/connect_lark_repository.dart';
+import 'package:vierqr/features/connect_lark_old/repositories/connect_lark_repository.dart';
 
 import '../../../models/info_tele_dto.dart';
 import '../../../models/response_message_dto.dart';

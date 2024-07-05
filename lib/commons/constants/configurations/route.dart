@@ -45,6 +45,8 @@ class Routes {
   static const String CONNECT_STEP_TELE_SCREEN = '/connect_step_tele_screen';
   static const String CONNECT_STEP_LARK_SCREEN = '/connect_step_lark_screen';
   static const String CONNECT_GG_CHAT_SCREEN = '/connect_gg_chat_screen';
+  static const String CONNECT_TELE_SCREEN = '/connect_tele_screen';
+  static const String CONNECT_LARK_SCREEN = '/connect_lark_screen';
 
   static const String MAINTAIN_CHARGE_SCREEN = '/maintain_charge_screen';
   static const String CONFIRM_ACTIVE_KEY_SCREEN = '/confirm_active_key_screen';

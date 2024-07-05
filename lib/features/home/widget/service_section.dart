@@ -145,6 +145,18 @@ class _ServiceSectionState extends State<ServiceSection> with DialogHelper {
               Navigator.pushNamed(context, Routes.CONNECT_GG_CHAT_SCREEN);
               // Navigator.pushNamed(context, Routes.QR_BOX);
             }),
+        ItemService(
+            pathIcon: ImageConstant.logoTelegramDash,
+            title: 'Telegram',
+            onTap: () async {
+              Navigator.pushNamed(context, Routes.CONNECT_TELE_SCREEN);
+            }),
+        ItemService(
+            pathIcon: ImageConstant.logoLarkDash,
+            title: 'Lark',
+            onTap: () async {
+              Navigator.pushNamed(context, Routes.CONNECT_LARK_SCREEN);
+            }),
       ],
     );
   }

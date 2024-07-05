@@ -9,8 +9,8 @@ import 'package:vierqr/commons/utils/image_utils.dart';
 import 'package:vierqr/commons/widgets/bottom_sheet_add_bankaccount.dart';
 import 'package:vierqr/commons/widgets/button_widget.dart';
 import 'package:vierqr/commons/widgets/dialog_widget.dart';
-import 'package:vierqr/features/connect_telegram/blocs/connect_telegram_bloc.dart';
-import 'package:vierqr/features/connect_telegram/states/conect_telegram_state.dart';
+import 'package:vierqr/features/connect_telegram_old/blocs/connect_telegram_bloc.dart';
+import 'package:vierqr/features/connect_telegram_old/states/conect_telegram_state.dart';
 import 'package:vierqr/layouts/m_app_bar.dart';
 import 'package:vierqr/layouts/m_button_widget.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
@@ -390,8 +390,7 @@ class ConnectTelegramScreen extends StatelessWidget {
                           Navigator.of(context).pop();
                           final Map<String, dynamic> body = {
                             'id': dto.id,
-                            'userId':
-                                SharePrefUtils.getProfile().userId,
+                            'userId': SharePrefUtils.getProfile().userId,
                             'bankId': bank.bankId,
                           };
                           BlocProvider.of<ConnectTelegramBloc>(context)
