@@ -5,6 +5,8 @@ import 'package:vierqr/models/bank_type_dto.dart';
 import 'package:vierqr/models/metadata_dto.dart';
 import 'package:vierqr/models/qr_feed_detail_dto.dart';
 import 'package:vierqr/models/qr_feed_dto.dart';
+import 'package:vierqr/models/qr_feed_folder_dto.dart';
+import 'package:vierqr/models/qr_feed_private_dto.dart';
 
 class QrFeedState extends Equatable {
   final String? msg;
@@ -12,6 +14,9 @@ class QrFeedState extends Equatable {
   final QrFeed request;
   final MetaDataDTO? metadata;
   final List<QrFeedDTO>? listQrFeed;
+  final List<QrFeedPrivateDTO>? listQrFeedPrivate;
+  final List<QrFeedFolderDTO>? listQrFeedFolder;
+
   final List<BankTypeDTO>? listBanks;
   final BankNameInformationDTO? bankDto;
   final QrFeedDTO? qrFeed;
@@ -27,6 +32,8 @@ class QrFeedState extends Equatable {
     this.request = QrFeed.NONE,
     this.metadata,
     this.listQrFeed,
+    this.listQrFeedPrivate,
+    this.listQrFeedFolder,
     this.listBanks,
     this.bankDto,
     this.qrFeed,
@@ -41,6 +48,8 @@ class QrFeedState extends Equatable {
     QrFeed? request,
     MetaDataDTO? metadata,
     List<QrFeedDTO>? listQrFeed,
+    List<QrFeedPrivateDTO>? listQrFeedPrivate,
+    List<QrFeedFolderDTO>? listQrFeedFolder,
     List<BankTypeDTO>? listBanks,
     BankNameInformationDTO? bankDto,
     QrFeedDTO? qrFeed,
@@ -54,6 +63,8 @@ class QrFeedState extends Equatable {
       request: request ?? this.request,
       metadata: metadata ?? this.metadata,
       listQrFeed: listQrFeed ?? this.listQrFeed,
+      listQrFeedPrivate: listQrFeedPrivate ?? this.listQrFeedPrivate,
+      listQrFeedFolder: listQrFeedFolder ?? this.listQrFeedFolder,
       listBanks: listBanks ?? this.listBanks,
       bankDto: bankDto ?? this.bankDto,
       qrFeed: qrFeed ?? this.qrFeed,
@@ -70,6 +81,8 @@ class QrFeedState extends Equatable {
         request,
         metadata,
         listQrFeed,
+        listQrFeedPrivate,
+        listQrFeedFolder,
         listBanks,
         bankDto,
         qrFeed,

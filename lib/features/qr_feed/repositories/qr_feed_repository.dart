@@ -16,6 +16,8 @@ import 'package:vierqr/models/metadata_dto.dart';
 import 'package:vierqr/models/qr_create_type_dto.dart';
 import 'package:vierqr/models/qr_feed_detail_dto.dart';
 import 'package:vierqr/models/qr_feed_dto.dart';
+import 'package:vierqr/models/qr_feed_folder_dto.dart';
+import 'package:vierqr/models/qr_feed_private_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
@@ -128,6 +130,54 @@ class QrFeedRepository extends BaseRepo {
           metaDataDTO = MetaDataDTO.fromJson(data['metadata']);
           result = data['data'].map<QrFeedDTO>((json) {
             return QrFeedDTO.fromJson(json);
+          }).toList();
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return result;
+  }
+
+  Future<List<QrFeedPrivateDTO>> getQrFeedPrivate({required int type}) async {
+    List<QrFeedPrivateDTO> result = [];
+    try {
+      String url =
+          '${getIt.get<AppConfig>().getBaseUrl}qr-wallets/private?userId=$userId&value=&type=$type';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        if (data != null) {
+          result = data.map<QrFeedPrivateDTO>((json) {
+            return QrFeedPrivateDTO.fromJson(json);
+          }).toList();
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return result;
+  }
+
+  Future<List<QrFeedFolderDTO>> getQrFeedFolder() async {
+    List<QrFeedFolderDTO> result = [];
+    try {
+      String url = '${getIt.get<AppConfig>().getBaseUrl}qr-feed/folders';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+        queryParameters: {
+          'userId': userId,
+        },
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        if (data != null) {
+          result = data.map<QrFeedFolderDTO>((json) {
+            return QrFeedFolderDTO.fromJson(json);
           }).toList();
         }
       }

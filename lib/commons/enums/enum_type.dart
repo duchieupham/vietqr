@@ -347,6 +347,8 @@ enum CreateQRType {
 enum QrFeed {
   NONE,
   GET_QR_FEED_LIST,
+  GET_QR_FEED_PRIVATE,
+  GET_QR_FEED_FOLDER,
   GET_MORE,
   GET_DETAIL_QR,
   LOAD_CMT,
