@@ -281,7 +281,7 @@ enum BankType {
   GET_BANK_LOCAL,
 }
 
-enum ConnectGgChat {
+enum ConnectMedia {
   NONE,
   GET_INFO,
   CHECK_URL,

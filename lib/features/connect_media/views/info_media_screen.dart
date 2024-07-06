@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:vierqr/layouts/image/x_image.dart';
 
 import '../../../commons/constants/configurations/app_images.dart';
 import '../../../commons/constants/configurations/theme.dart';
@@ -8,17 +9,17 @@ import '../../../commons/utils/image_utils.dart';
 import '../../../commons/widgets/dialog_widget.dart';
 import '../../../commons/widgets/separator_widget.dart';
 import '../../../models/connect_gg_chat_info_dto.dart';
-import '../blocs/connect_gg_chat_bloc.dart';
-import '../states/connect_gg_chat_states.dart';
+import '../blocs/connect_media_bloc.dart';
+import '../states/connect_media_states.dart';
 
-class InfoGgChatScreen extends StatelessWidget {
+class InfoMediaScreen extends StatelessWidget {
   final Function() onPopup;
   final Function() onDelete;
   final Function(String) onRemoveBank;
 
-  final InfoGgChatDTO dto;
+  final InfoMediaDTO dto;
   // final ConnectGgChatStates state;
-  const InfoGgChatScreen(
+  const InfoMediaScreen(
       {super.key,
       required this.onPopup,
       required this.onDelete,
@@ -36,7 +37,7 @@ class InfoGgChatScreen extends StatelessWidget {
     for (int i = 0; i < dto.banks!.length; i++) {
       listWidget.add(_itemBank(dto.banks![i]));
       if (i != dto.banks!.length - 1) {
-        listWidget.add(MySeparator(
+        listWidget.add(const MySeparator(
           color: AppColor.GREY_DADADA,
         ));
       }
@@ -52,8 +53,40 @@ class InfoGgChatScreen extends StatelessWidget {
             _infoConnect(),
             const SizedBox(height: 35),
             _bankList(listWidget),
-            const SizedBox(height: 35),
-            _setting(),
+            const SizedBox(height: 20),
+            // _setting(),
+            InkWell(
+              onTap: onPopup,
+              child: Container(
+                // width: 250,
+                padding: const EdgeInsets.only(left: 10, right: 15),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    gradient: const LinearGradient(colors: [
+                      AppColor.D8ECF8,
+                      AppColor.FFEAD9,
+                      AppColor.F5C9D1,
+                    ], begin: Alignment.bottomLeft, end: Alignment.topRight)),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    XImage(
+                      imagePath: 'assets/images/ic-suggest.png',
+                      width: 30,
+                    ),
+                    Text(
+                      'Bạn có muốn thêm TK ngân hàng để chia sẻ BĐSD?',
+                      style: TextStyle(
+                        color: AppColor.BLACK,
+                        fontSize: 12,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            _buildInfoSharing(),
           ],
         ),
       ),
@@ -150,6 +183,25 @@ class InfoGgChatScreen extends StatelessWidget {
             ),
           ),
         ),
+      ],
+    );
+  }
+
+  Widget _buildInfoSharing() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 50),
+        const Text(
+          'Thông tin chia sẻ',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        ),
+        const SizedBox(height: 30),
+        const Text(
+          'Cấu hình chia sẻ loại giao dịch',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+        ),
+        const SizedBox(height: 10),
       ],
     );
   }
@@ -259,13 +311,14 @@ class InfoGgChatScreen extends StatelessWidget {
                 children: [
                   Text(
                     bank.bankAccount ?? '-',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 15, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     bank.userBankName ?? '-',
-                    style:
-                        TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
+                    style: const TextStyle(
+                        fontSize: 12, fontWeight: FontWeight.normal),
                   ),
                 ],
               ),
@@ -275,14 +328,42 @@ class InfoGgChatScreen extends StatelessWidget {
             onTap: () {
               onRemoveBank(bank.bankId!);
             },
-            child: Icon(
+            child: const Icon(
               Icons.remove_circle_outline,
-              size: 18,
+              size: 25,
               color: AppColor.RED_TEXT,
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget buildCheckboxRow(
+      String text, bool isChecked, ValueChanged<bool?> onChanged) {
+    return Row(
+      children: [
+        Theme(
+          data: ThemeData(
+            unselectedWidgetColor: AppColor.GREY_DADADA,
+            checkboxTheme: CheckboxThemeData(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(3.0),
+              ),
+            ),
+          ),
+          child: Checkbox(
+            value: isChecked,
+            onChanged: onChanged,
+            checkColor: AppColor.WHITE,
+            activeColor: AppColor.BLUE_TEXT,
+          ),
+        ),
+        Text(
+          text,
+          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
+        ),
+      ],
     );
   }
 }

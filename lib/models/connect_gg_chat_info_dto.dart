@@ -1,14 +1,14 @@
 import 'dart:convert';
 
-class InfoGgChatDTO {
+class InfoMediaDTO {
   String? id;
   String? webhook;
   String? userId;
   List<BankInfoGgChat>? banks;
 
-  InfoGgChatDTO({this.id, this.webhook, this.userId, this.banks});
+  InfoMediaDTO({this.id, this.webhook, this.userId, this.banks});
 
-  factory InfoGgChatDTO.fromJson(Map<String, dynamic> json) => InfoGgChatDTO(
+  factory InfoMediaDTO.fromJson(Map<String, dynamic> json) => InfoMediaDTO(
         id: json['id'],
         webhook: json['webhook'],
         userId: json['userId'],

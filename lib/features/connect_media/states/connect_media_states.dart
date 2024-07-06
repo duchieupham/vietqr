@@ -3,20 +3,20 @@ import 'package:equatable/equatable.dart';
 import '../../../commons/enums/enum_type.dart';
 import '../../../models/connect_gg_chat_info_dto.dart';
 
-class ConnectGgChatStates extends Equatable {
+class ConnectMediaStates extends Equatable {
   final String? msg;
   final BlocStatus status;
-  final ConnectGgChat request;
-  final InfoGgChatDTO? dto;
+  final ConnectMedia request;
+  final InfoMediaDTO? dto;
   final bool? hasInfo;
   final bool? isValidUrl;
   final bool? isConnectSuccess;
   final bool? isAddSuccess;
 
-  ConnectGgChatStates({
+  ConnectMediaStates({
     this.msg,
     this.status = BlocStatus.NONE,
-    this.request = ConnectGgChat.NONE,
+    this.request = ConnectMedia.NONE,
     this.dto,
     this.hasInfo,
     this.isValidUrl,
@@ -24,17 +24,17 @@ class ConnectGgChatStates extends Equatable {
     this.isAddSuccess,
   });
 
-  ConnectGgChatStates copyWith({
+  ConnectMediaStates copyWith({
     BlocStatus? status,
-    ConnectGgChat? request,
+    ConnectMedia? request,
     String? msg,
-    InfoGgChatDTO? dto,
+    InfoMediaDTO? dto,
     bool? hasInfo,
     bool? isValidUrl,
     bool? isConnectSuccess,
     bool? isAddSuccess,
   }) {
-    return ConnectGgChatStates(
+    return ConnectMediaStates(
       status: status ?? this.status,
       request: request ?? this.request,
       msg: msg ?? this.msg,

@@ -5,8 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:vierqr/commons/constants/configurations/route.dart';
 import 'package:vierqr/features/add_bank/add_bank_screen.dart';
 import 'package:vierqr/features/bank_card/views/search_bank_view.dart';
-import 'package:vierqr/features/connect_gg_chat/connect_gg_chat_screen.dart';
-import 'package:vierqr/features/connect_lark/connect_lark_screen.dart';
+import 'package:vierqr/features/connect_media/connect_media_screen.dart';
 import 'package:vierqr/features/connect_lark_old/connect_lark_screen.dart';
 import 'package:vierqr/features/connect_lark_old/widget/connect_screen.dart';
 import 'package:vierqr/features/connect_telegram_old/connect_telegram_screen.dart';
@@ -161,11 +160,17 @@ class NavigationService {
         }
         return _buildRoute(settings, QRBoxScreen(cert: cert));
       case Routes.CONNECT_GG_CHAT_SCREEN:
-        return _buildRoute(settings, const ConnectGgChatScreen());
+        return _buildRoute(
+            settings, const ConnectMediaScreen(type: TypeConnect.GG_CHAT));
       case Routes.CONNECT_LARK_SCREEN:
-        return _buildRoute(settings, const ConnectLarkNewScreen());
+        return _buildRoute(
+            settings,
+            const ConnectMediaScreen(
+              type: TypeConnect.LARK,
+            ));
       case Routes.CONNECT_TELE_SCREEN:
-        return _buildRoute(settings, const ConnectGgChatScreen());
+        return _buildRoute(
+            settings, const ConnectMediaScreen(type: TypeConnect.TELE));
       case Routes.SHOW_QR:
         Map map = settings.arguments as Map;
 

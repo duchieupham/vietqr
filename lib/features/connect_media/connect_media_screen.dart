@@ -5,12 +5,13 @@ import 'package:provider/provider.dart';
 import 'package:vierqr/commons/constants/configurations/theme.dart';
 import 'package:vierqr/commons/di/injection/injection.dart';
 import 'package:vierqr/commons/widgets/separator_widget.dart';
-import 'package:vierqr/features/connect_gg_chat/states/connect_gg_chat_states.dart';
-import 'package:vierqr/features/connect_gg_chat/views/info_gg_chat_screen.dart';
-import 'package:vierqr/features/connect_gg_chat/views/webhook_gg_chat_screen.dart';
-import 'package:vierqr/features/connect_gg_chat/widgets/popup_add_bank_widget.dart';
-import 'package:vierqr/features/connect_gg_chat/widgets/popup_delete_webhook_widget.dart';
-import 'package:vierqr/features/connect_gg_chat/widgets/popup_guide_widget.dart';
+import 'package:vierqr/features/connect_media/states/connect_media_states.dart';
+import 'package:vierqr/features/connect_media/views/info_media_screen.dart';
+import 'package:vierqr/features/connect_media/views/webhook_media_screen.dart';
+import 'package:vierqr/features/connect_media/widgets/popup_add_bank_widget.dart';
+import 'package:vierqr/features/connect_media/widgets/popup_delete_webhook_widget.dart';
+import 'package:vierqr/features/connect_media/widgets/popup_guide_widget.dart';
+import 'package:vierqr/layouts/image/x_image.dart';
 import 'package:vierqr/models/trans/trans_request_dto.dart';
 
 import '../../commons/constants/configurations/app_images.dart';
@@ -22,20 +23,27 @@ import '../../models/bank_account_dto.dart';
 import '../../models/connect_gg_chat_info_dto.dart';
 import '../../services/providers/connect_gg_chat_provider.dart';
 import '../../services/providers/invoice_provider.dart';
-import 'blocs/connect_gg_chat_bloc.dart';
-import 'events/connect_gg_chat_evens.dart';
+import 'blocs/connect_media_bloc.dart';
+import 'events/connect_media_evens.dart';
 
-class ConnectGgChatScreen extends StatelessWidget {
-  const ConnectGgChatScreen({super.key});
+// ignore: constant_identifier_names
+enum TypeConnect { GG_CHAT, TELE, LARK }
+
+class ConnectMediaScreen extends StatelessWidget {
+  final TypeConnect type;
+  const ConnectMediaScreen({super.key, required this.type});
 
   @override
   Widget build(BuildContext context) {
-    return _Screen();
+    return _Screen(
+      type: type,
+    );
   }
 }
 
 class _Screen extends StatefulWidget {
-  const _Screen({super.key});
+  final TypeConnect type;
+  const _Screen({super.key, required this.type});
 
   @override
   State<_Screen> createState() => __ScreenState();
@@ -44,7 +52,7 @@ class _Screen extends StatefulWidget {
 class __ScreenState extends State<_Screen> {
   // late ConnectGgChatBloc _bloc;
   late ConnectGgChatProvider _provider;
-  final _bloc = getIt.get<ConnectGgChatBloc>();
+  final _bloc = getIt.get<ConnectMediaBloc>();
   PageController _pageController = PageController(initialPage: 0);
   TextEditingController _textEditingController = TextEditingController();
 
@@ -60,6 +68,8 @@ class __ScreenState extends State<_Screen> {
   bool isChecked4 = true;
   bool isChecked5 = true;
   bool isChecked6 = true;
+
+  TypeConnect typeConnect = TypeConnect.GG_CHAT;
 
   @override
   void initState() {
@@ -80,13 +90,14 @@ class __ScreenState extends State<_Screen> {
   }
 
   initData() {
+    typeConnect = widget.type;
     isFirst = true;
     _textEditingController.clear();
     list = Provider.of<InvoiceProvider>(context, listen: false).listBank!;
     if (list.isNotEmpty) {
       _provider.init(list);
     }
-    _bloc.add(GetInfoEvent());
+    _bloc.add(GetInfoEvent(type: typeConnect));
   }
 
   void deleteWebhook(String id) {
@@ -95,13 +106,14 @@ class __ScreenState extends State<_Screen> {
         child: PopupDeleteWebhookWidget(
           onDelete: () {
             Navigator.of(context).pop();
-            _bloc.add(DeleteWebhookEvent(id: id));
+            _bloc.add(DeleteWebhookEvent(id: id, type: typeConnect));
           },
         ));
   }
 
   void onRemoveBank(String? bankId, String? webhookId) {
-    _bloc.add(RemoveGgChatEvent(bankId: bankId, webhookId: webhookId));
+    _bloc.add(RemoveMediaEvent(
+        bankId: bankId, webhookId: webhookId, type: typeConnect));
   }
 
   void onPopupAddBank(List<BankInfoGgChat> listBank, String webhookId) async {
@@ -115,8 +127,8 @@ class __ScreenState extends State<_Screen> {
         onAddBank: () {
           List<String> listId = _provider.getListId();
           if (listId.isNotEmpty) {
-            _bloc.add(
-                AddBankGgChatEvent(webhookId: webhookId, listBankId: listId));
+            _bloc.add(AddBankMediaEvent(
+                webhookId: webhookId, listBankId: listId, type: typeConnect));
             Navigator.of(context).pop();
           }
         },
@@ -133,7 +145,7 @@ class __ScreenState extends State<_Screen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<ConnectGgChatBloc, ConnectGgChatStates>(
+    return BlocConsumer<ConnectMediaBloc, ConnectMediaStates>(
       bloc: _bloc,
       listener: (context, state) {
         if (state.status == BlocStatus.LOADING) {
@@ -143,11 +155,11 @@ class __ScreenState extends State<_Screen> {
           Navigator.pop(context);
         }
         switch (state.request) {
-          case ConnectGgChat.GET_INFO:
+          case ConnectMedia.GET_INFO:
             isFirst = false;
             hasInfo = state.hasInfo!;
             break;
-          case ConnectGgChat.CHECK_URL:
+          case ConnectMedia.CHECK_URL:
             _provider.checkValidInput(state.isValidUrl!);
             Navigator.pop(context);
 
@@ -158,25 +170,25 @@ class __ScreenState extends State<_Screen> {
                   curve: Curves.easeInOut);
             }
             break;
-          case ConnectGgChat.MAKE_CONNECTION:
+          case ConnectMedia.MAKE_CONNECTION:
             if (state.isConnectSuccess == true) {
               _pageController.nextPage(
                   duration: const Duration(milliseconds: 200),
                   curve: Curves.easeInOut);
             }
             break;
-          case ConnectGgChat.ADD_BANKS:
+          case ConnectMedia.ADD_BANKS:
             if (state.isAddSuccess == true) {
-              _bloc.add(GetInfoEvent());
+              _bloc.add(GetInfoEvent(type: typeConnect));
             }
             // initData();
             break;
-          case ConnectGgChat.DELETE_URL:
+          case ConnectMedia.DELETE_URL:
             isFirst = true;
-            _bloc.add(GetInfoEvent());
+            _bloc.add(GetInfoEvent(type: typeConnect));
             break;
-          case ConnectGgChat.REMOVE_BANK:
-            _bloc.add(GetInfoEvent());
+          case ConnectMedia.REMOVE_BANK:
+            _bloc.add(GetInfoEvent(type: typeConnect));
             break;
           default:
             break;
@@ -231,14 +243,105 @@ class __ScreenState extends State<_Screen> {
                       ),
                     ),
                     actions: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: Image.asset(
-                          AppImages.icLogoVietQr,
-                          width: 95,
-                          fit: BoxFit.fitWidth,
+                      if (!hasInfo)
+                        Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: Image.asset(
+                            AppImages.icLogoVietQr,
+                            width: 95,
+                            fit: BoxFit.fitWidth,
+                          ),
+                        )
+                      else
+                        GestureDetector(
+                          onTapDown: (TapDownDetails details) {
+                            showMenu(
+                              context: context,
+                              position: RelativeRect.fromLTRB(
+                                details.globalPosition.dx,
+                                details.globalPosition.dy + 20,
+                                details.globalPosition.dx,
+                                details.globalPosition.dy + 20,
+                              ),
+                              items: <PopupMenuEntry<int>>[
+                                const PopupMenuItem<int>(
+                                  value: 0,
+                                  child: ListTile(
+                                    title: Text(
+                                      'Thêm TK ngân hàng',
+                                      style: TextStyle(
+                                          fontSize: 12, color: Colors.blue),
+                                    ),
+                                  ),
+                                ),
+                                const PopupMenuItem<int>(
+                                  value: 1,
+                                  child: ListTile(
+                                    title: Text(
+                                      'Cập nhật Webhook',
+                                      style: TextStyle(
+                                          fontSize: 12, color: Colors.blue),
+                                    ),
+                                  ),
+                                ),
+                                const PopupMenuItem<int>(
+                                  value: 2,
+                                  child: ListTile(
+                                    title: Text(
+                                      'Cập nhật thông tin chia sẻ',
+                                      style: TextStyle(
+                                          fontSize: 12, color: Colors.blue),
+                                    ),
+                                  ),
+                                ),
+                                const PopupMenuItem<int>(
+                                  value: 3,
+                                  child: ListTile(
+                                    title: Text(
+                                      'Huỷ kết nối',
+                                      style: TextStyle(
+                                          fontSize: 12, color: Colors.red),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ).then(
+                              (value) {
+                                switch (value) {
+                                  case 0:
+                                    onPopupAddBank(
+                                        state.dto!.banks!.isNotEmpty
+                                            ? state.dto!.banks!
+                                            : [],
+                                        state.dto!.id!);
+                                    break;
+                                  case 3:
+                                    deleteWebhook(state.dto!.id!);
+                                    break;
+                                  default:
+                                    break;
+                                }
+                              },
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            margin: const EdgeInsets.only(right: 10),
+                            height: 40,
+                            width: 40,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(100),
+                                gradient: const LinearGradient(
+                                    colors: [
+                                      Color(0xFFE1EFFF),
+                                      const Color(0xFFE5F9FF)
+                                    ],
+                                    begin: Alignment.centerLeft,
+                                    end: Alignment.centerRight)),
+                            child: const XImage(
+                                imagePath: 'assets/images/ic-option-black.png'),
+                          ),
                         ),
-                      )
                     ],
                   ),
                   SliverToBoxAdapter(
@@ -246,7 +349,8 @@ class __ScreenState extends State<_Screen> {
                         ? Container(
                             width: MediaQuery.of(context).size.width,
                             child: hasInfo == false
-                                ? WebhookGgChatScreen(
+                                ? WebhookMediaScreen(
+                                    type: typeConnect,
                                     isChecked1: isChecked1,
                                     isChecked2: isChecked2,
                                     isChecked3: isChecked3,
@@ -286,8 +390,8 @@ class __ScreenState extends State<_Screen> {
                                     },
                                     onSubmitInput: (value) {
                                       _provider.setUnFocusNode();
-                                      _bloc.add(
-                                          CheckWebhookUrlEvent(url: value));
+                                      _bloc.add(CheckWebhookUrlEvent(
+                                          url: value, type: typeConnect));
                                     },
                                     onPageChanged: (index) {
                                       setState(() {
@@ -295,7 +399,7 @@ class __ScreenState extends State<_Screen> {
                                       });
                                     },
                                   )
-                                : InfoGgChatScreen(
+                                : InfoMediaScreen(
                                     dto: state.dto!,
                                     onPopup: () {
                                       onPopupAddBank(
@@ -331,7 +435,7 @@ class __ScreenState extends State<_Screen> {
     );
   }
 
-  Widget bottomButton(ConnectGgChatStates state) {
+  Widget bottomButton(ConnectMediaStates state) {
     bool isEnable = true;
     String buttonText = '';
     if (currentPageIndex == 0) {
@@ -383,8 +487,8 @@ class __ScreenState extends State<_Screen> {
               if (_textEditingController.text != '' &&
                   _provider.isValidWebhook == true) {
                 _provider.setUnFocusNode();
-                _bloc.add(
-                    CheckWebhookUrlEvent(url: _textEditingController.text));
+                _bloc.add(CheckWebhookUrlEvent(
+                    url: _textEditingController.text, type: typeConnect));
               }
 
               break;
@@ -401,7 +505,8 @@ class __ScreenState extends State<_Screen> {
               if (isChecked6) notificationContents.add('CONTENT');
 
               if (listId.isNotEmpty) {
-                _bloc.add(MakeGgChatConnectionEvent(
+                _bloc.add(MakeMediaConnectionEvent(
+                    type: typeConnect,
                     webhook: _textEditingController.text,
                     listBankId: listId,
                     notificationTypes: notificationTypes,
