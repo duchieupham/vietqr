@@ -92,12 +92,19 @@ class ConnectGgChatRepository {
     return false;
   }
 
-  Future<bool?> connectWebhook(List<String>? list, String? webhook) async {
+  Future<bool?> connectWebhook(
+    String? webhook,
+      {List<String>? list,
+      List<String>? notificationTypes,
+      List<String>? notificationContents,
+      }) async {
     try {
       Map<String, dynamic> param = {};
       param['webhook'] = webhook;
       param['userId'] = userId;
       param['bankIds'] = list;
+      param['notificationTypes'] = notificationTypes;
+      param['notificationContents'] = notificationContents;
 
       String url = '${getIt.get<AppConfig>().getBaseUrl}service/google-chat';
       final response = await BaseAPIClient.postAPI(

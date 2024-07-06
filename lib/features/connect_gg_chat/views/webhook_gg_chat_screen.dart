@@ -22,6 +22,14 @@ class WebhookGgChatScreen extends StatefulWidget {
   final Function(String) onSubmitInput;
   final Function(String) onChangeInput;
   final Function() onGuide;
+  final bool isChecked1;
+  final bool isChecked2;
+  final bool isChecked3;
+  final bool isChecked4;
+  final bool isChecked5;
+  final bool isChecked6;
+
+  final Function(bool, int) onChecked;
 
   final TextEditingController textController;
   final PageController controller;
@@ -33,6 +41,13 @@ class WebhookGgChatScreen extends StatefulWidget {
     required this.onSubmitInput,
     required this.onChangeInput,
     required this.onGuide,
+    required this.isChecked1,
+    required this.isChecked2,
+    required this.isChecked3,
+    required this.isChecked4,
+    required this.isChecked5,
+    required this.isChecked6,
+    required this.onChecked,
   });
 
   @override
@@ -40,13 +55,6 @@ class WebhookGgChatScreen extends StatefulWidget {
 }
 
 class _WebhookGgChatScreenState extends State<WebhookGgChatScreen> {
-  bool isChecked1 = true;
-  bool isChecked2 = true;
-  bool isChecked3 = true;
-  bool isChecked4 = true;
-  bool isChecked5 = true;
-  bool isChecked6 = true;
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -88,10 +96,12 @@ class _WebhookGgChatScreenState extends State<WebhookGgChatScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              buildCheckboxRow('Giao dịch có đối soát', isChecked1, (value) {
-                setState(() {
-                  isChecked1 = value ?? true;
-                });
+              buildCheckboxRow('Giao dịch có đối soát', widget.isChecked1,
+                  (value) {
+                widget.onChecked(value!, 1);
+                // setState(() {
+                //   isChecked1 = value ?? true;
+                // });
               }),
               InkWell(
                 onTap: () {
@@ -121,16 +131,22 @@ class _WebhookGgChatScreenState extends State<WebhookGgChatScreen> {
             ],
           ),
           const MySeparator(color: AppColor.GREY_DADADA),
-          buildCheckboxRow('Giao dịch nhận tiền đến (+)', isChecked2, (value) {
-            setState(() {
-              isChecked2 = value ?? true;
-            });
+          buildCheckboxRow('Giao dịch nhận tiền đến (+)', widget.isChecked2,
+              (value) {
+            widget.onChecked(value!, 2);
+
+            // setState(() {
+            //   isChecked2 = value ?? true;
+            // });
           }),
           const MySeparator(color: AppColor.GREY_DADADA),
-          buildCheckboxRow('Giao dịch chuyển tiền đi (−)', isChecked3, (value) {
-            setState(() {
-              isChecked3 = value ?? true;
-            });
+          buildCheckboxRow('Giao dịch chuyển tiền đi (−)', widget.isChecked3,
+              (value) {
+            widget.onChecked(value!, 3);
+
+            // setState(() {
+            //   isChecked3 = value ?? true;
+            // });
           }),
           const SizedBox(height: 20),
           const Text(
@@ -138,22 +154,28 @@ class _WebhookGgChatScreenState extends State<WebhookGgChatScreen> {
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
           ),
           const SizedBox(height: 10),
-          buildCheckboxRow('Số tiền', isChecked4, (value) {
-            setState(() {
-              isChecked4 = value ?? true;
-            });
+          buildCheckboxRow('Số tiền', widget.isChecked4, (value) {
+            widget.onChecked(value!, 4);
+
+            // setState(() {
+            //   isChecked4 = value ?? true;
+            // });
           }),
           const MySeparator(color: AppColor.GREY_DADADA),
-          buildCheckboxRow('Nội dung thanh toán', isChecked5, (value) {
-            setState(() {
-              isChecked5 = value ?? true;
-            });
+          buildCheckboxRow('Nội dung thanh toán', widget.isChecked5, (value) {
+            widget.onChecked(value!, 5);
+
+            // setState(() {
+            //   isChecked5 = value ?? true;
+            // });
           }),
           const MySeparator(color: AppColor.GREY_DADADA),
-          buildCheckboxRow('Mã giao dịch', isChecked6, (value) {
-            setState(() {
-              isChecked6 = value ?? true;
-            });
+          buildCheckboxRow('Mã giao dịch', widget.isChecked6, (value) {
+            widget.onChecked(value!, 6);
+
+            // setState(() {
+            //   isChecked6 = value ?? true;
+            // });
           }),
         ],
       ),

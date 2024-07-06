@@ -54,6 +54,13 @@ class __ScreenState extends State<_Screen> {
 
   List<BankAccountDTO> list = [];
 
+  bool isChecked1 = true;
+  bool isChecked2 = true;
+  bool isChecked3 = true;
+  bool isChecked4 = true;
+  bool isChecked5 = true;
+  bool isChecked6 = true;
+
   @override
   void initState() {
     super.initState();
@@ -143,19 +150,18 @@ class __ScreenState extends State<_Screen> {
           case ConnectGgChat.CHECK_URL:
             _provider.checkValidInput(state.isValidUrl!);
             Navigator.pop(context);
+
             if (state.isValidUrl == true) {
               _provider.setUnFocusNode();
-              List<String> listId = _provider.getListId();
-              if (listId.isNotEmpty) {
-                _bloc.add(MakeGgChatConnectionEvent(
-                    webhook: _textEditingController.text, listBankId: listId));
-              }
+              _pageController.nextPage(
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.easeInOut);
             }
             break;
           case ConnectGgChat.MAKE_CONNECTION:
             if (state.isConnectSuccess == true) {
               _pageController.nextPage(
-                  duration: Duration(milliseconds: 200),
+                  duration: const Duration(milliseconds: 200),
                   curve: Curves.easeInOut);
             }
             break;
@@ -241,6 +247,37 @@ class __ScreenState extends State<_Screen> {
                             width: MediaQuery.of(context).size.width,
                             child: hasInfo == false
                                 ? WebhookGgChatScreen(
+                                    isChecked1: isChecked1,
+                                    isChecked2: isChecked2,
+                                    isChecked3: isChecked3,
+                                    isChecked4: isChecked4,
+                                    isChecked5: isChecked5,
+                                    isChecked6: isChecked6,
+                                    onChecked: (value, type) {
+                                      switch (type) {
+                                        case 1:
+                                          isChecked1 = value ?? true;
+                                          break;
+                                        case 2:
+                                          isChecked2 = value ?? true;
+                                          break;
+                                        case 3:
+                                          isChecked3 = value ?? true;
+                                          break;
+                                        case 4:
+                                          isChecked4 = value ?? true;
+                                          break;
+                                        case 5:
+                                          isChecked5 = value ?? true;
+                                          break;
+                                        case 6:
+                                          isChecked6 = value ?? true;
+                                          break;
+                                        default:
+                                          break;
+                                      }
+                                      setState(() {});
+                                    },
                                     textController: _textEditingController,
                                     controller: _pageController,
                                     onGuide: onOpenGuide,
@@ -304,14 +341,16 @@ class __ScreenState extends State<_Screen> {
 
       isEnable = _provider.listBank.any((element) => element.value == true);
     } else if (currentPageIndex == 2) {
-      buttonText = 'Kết nối';
+      buttonText = 'Tiếp tục';
       if (_textEditingController.text == '') {
         isEnable = false;
       } else {
         isEnable = _provider.isValidWebhook;
       }
     } else if (currentPageIndex == 3) {
-      buttonText = 'Hoàn thành';
+      buttonText = 'Tiếp tục';
+    } else if (currentPageIndex == 4) {
+      buttonText = 'Tiếp tục';
     }
 
     Color textColor = isEnable ? AppColor.WHITE : AppColor.BLACK;
@@ -347,8 +386,29 @@ class __ScreenState extends State<_Screen> {
                 _bloc.add(
                     CheckWebhookUrlEvent(url: _textEditingController.text));
               }
+
               break;
             case 3:
+              List<String> listId = _provider.getListId();
+              List<String> notificationTypes = [];
+              List<String> notificationContents = [];
+              if (isChecked1) notificationTypes.add('CREDIT');
+              if (isChecked2) notificationTypes.add('DEBIT');
+              if (isChecked3) notificationTypes.add('RECON');
+
+              if (isChecked4) notificationContents.add('AMOUNT');
+              if (isChecked5) notificationContents.add('REFERENCE_NUMBER');
+              if (isChecked6) notificationContents.add('CONTENT');
+
+              if (listId.isNotEmpty) {
+                _bloc.add(MakeGgChatConnectionEvent(
+                    webhook: _textEditingController.text,
+                    listBankId: listId,
+                    notificationTypes: notificationTypes,
+                    notificationContents: notificationContents));
+              }
+              break;
+            case 4:
               _pageController.jumpToPage(0);
               initData();
               break;

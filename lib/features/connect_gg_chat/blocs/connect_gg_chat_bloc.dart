@@ -93,8 +93,10 @@ class ConnectGgChatBloc extends Bloc<ConnectGgChatEvent, ConnectGgChatStates> {
       if (event is MakeGgChatConnectionEvent) {
         emit(state.copyWith(
             status: BlocStatus.LOADING, request: ConnectGgChat.NONE));
-        bool? result =
-            await _repository.connectWebhook(event.listBankId, event.webhook);
+        bool? result = await _repository.connectWebhook(event.webhook,
+            list: event.listBankId,
+            notificationTypes: event.notificationTypes,
+            notificationContents: event.notificationContents);
         emit(state.copyWith(
             status: BlocStatus.UNLOADING,
             request: ConnectGgChat.MAKE_CONNECTION,
