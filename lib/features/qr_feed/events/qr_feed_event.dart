@@ -24,6 +24,64 @@ class GetQrFeedEvent extends QrFeedEvent {
   List<Object?> get props => [type, isLoading, size, page];
 }
 
+class GetQrFeedPrivateEvent extends QrFeedEvent {
+  final int type;
+
+  const GetQrFeedPrivateEvent({
+    required this.type,
+  });
+
+  @override
+  List<Object?> get props => [type];
+}
+
+class GetQrFeedFolderEvent extends QrFeedEvent {
+  @override
+  List<Object?> get props => [];
+}
+
+class GetQrFeedDetailEvent extends QrFeedEvent {
+  final String id;
+  final bool isLoading;
+  final int? size;
+  final int? page;
+
+  const GetQrFeedDetailEvent(
+      {required this.id, required this.isLoading, this.size, this.page});
+
+  @override
+  List<Object?> get props => [id, isLoading, size, page];
+}
+
+class AddCommendEvent extends QrFeedEvent {
+  final String qrWalletId;
+  final String message;
+
+  const AddCommendEvent({required this.qrWalletId, required this.message});
+
+  @override
+  List<Object?> get props => [qrWalletId, message];
+}
+
+class LoadConmmentEvent extends QrFeedEvent {
+  final String id;
+  final bool isLoading;
+  final bool isLoadMore;
+
+  final int? size;
+  final int? page;
+
+  const LoadConmmentEvent(
+      {required this.id,
+      required this.isLoadMore,
+      required this.isLoading,
+      this.size,
+      this.page});
+
+  @override
+  List<Object?> get props => [id, isLoadMore, isLoading, size, page];
+}
+
 class GetMoreQrFeedEvent extends QrFeedEvent {
   final int type;
 

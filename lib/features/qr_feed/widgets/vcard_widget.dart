@@ -181,7 +181,7 @@ class VcardWidget extends StatelessWidget {
               CustomTextField(
                 isActive: true,
                 controller: webController,
-                textInputType: TextInputType.url,
+                // textInputType: TextInputType.url,
                 inputFormatter: [
                   FilteringTextInputFormatter.allow(
                       RegExp(r'[a-zA-Z\s0-9:/?&.=_-]'))
@@ -199,8 +199,8 @@ class VcardWidget extends StatelessWidget {
               CustomTextField(
                 isActive: true,
                 controller: ctyController,
-                textInputType: TextInputType.name,
-                inputFormatter: [VietnameseNameInputFormatter()],
+                // textInputType: TextInputType.name,
+                // inputFormatter: [VietnameseNameInputFormatter()],
                 hintText: 'Nhập tên công ty',
                 labelText: 'Tên công ty',
                 onClear: () {
@@ -215,8 +215,8 @@ class VcardWidget extends StatelessWidget {
               const SizedBox(height: 30),
               CustomTextField(
                 isActive: true,
-                textInputType: TextInputType.streetAddress,
-                inputFormatter: [VietnameseNameInputFormatter()],
+                // textInputType: TextInputType.streetAddress,
+                // inputFormatter: [VietnameseNameInputFormatter()],
                 controller: addressController,
                 hintText: 'Nhập thông tin địa chỉ',
                 labelText: 'Địa chỉ',

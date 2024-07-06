@@ -14,21 +14,42 @@ import 'package:vierqr/commons/utils/log.dart';
 import 'package:vierqr/features/invoice/repositories/base_repository.dart';
 import 'package:vierqr/models/metadata_dto.dart';
 import 'package:vierqr/models/qr_create_type_dto.dart';
+import 'package:vierqr/models/qr_feed_detail_dto.dart';
 import 'package:vierqr/models/qr_feed_dto.dart';
+import 'package:vierqr/models/qr_feed_folder_dto.dart';
+import 'package:vierqr/models/qr_feed_private_dto.dart';
 import 'package:vierqr/models/response_message_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
 
 class QrFeedRepository extends BaseRepo {
   String get userId => SharePrefUtils.getProfile().userId;
 
-  static void logAPI(
-      {required String url, required int statusCode, required String body}) {
-    String message = 'URL: $url - STATUS CODE: $statusCode\nRESPONSE: $body';
-    if (statusCode >= 200 && statusCode <= 299) {
-      LOG.info(message);
-    } else {
-      LOG.error(message);
+  Future<ResponseMessageDTO> addCommend(
+      {required String qrWalletId, required String message}) async {
+    ResponseMessageDTO result =
+        const ResponseMessageDTO(status: '', message: '');
+    try {
+      Map<String, dynamic> param = {};
+      param['qrWalletId'] = qrWalletId;
+      param['userId'] = userId;
+      param['message'] = message;
+      String url = '${getIt.get<AppConfig>().getBaseUrl}qr-comment/add';
+      final response = await BaseAPIClient.postAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+        body: param,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        result = ResponseMessageDTO.fromJson(data);
+      } else {
+        result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+      result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
     }
+    return result;
   }
 
   Future<ResponseMessageDTO> createQrLink(
@@ -54,25 +75,6 @@ class QrFeedRepository extends BaseRepo {
       final response = await BaseAPIClient.postMultipartAPI(
           url: url, fields: dto.toJson(), files: files);
 
-      // var request = http.MultipartRequest('POST', uri);
-      // request.headers['Authorization'] = 'Bearer $token';
-      // request.fields.addAll(
-      //     dto.toJson().map((key, value) => MapEntry(key, value.toString())));
-
-      // if (file != null) {
-      //   request.files.add(await http.MultipartFile.fromPath('file', file.path));
-      // } else {
-      //   // for (http.MultipartFile multipartFile in files) {
-      //   //   request.files.add(multipartFile);
-      //   // }
-      //   request.files.add(http.MultipartFile.fromBytes(
-      //       'file', Uint8List.fromList([0]),
-      //       filename: ''));
-      // }
-
-      // final http.Response response =
-      //     await http.Response.fromStream(await request.send());
-      // logAPI(url: url, statusCode: response.statusCode, body: response.body);
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         result = ResponseMessageDTO.fromJson(data);
@@ -84,6 +86,32 @@ class QrFeedRepository extends BaseRepo {
       result = const ResponseMessageDTO(status: 'FAILED', message: 'E05');
     }
     return result;
+  }
+
+  Future<QrFeedDetailDTO?> getDetailQrFeed(
+      {required int page,
+      required int size,
+      required String qrWalletId}) async {
+    try {
+      String url =
+          '${getIt.get<AppConfig>().getBaseUrl}qr-wallets/details/$qrWalletId?userId=$userId&page=$page&size=$size';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+        // queryParameters: {
+        //   'qrWalletId': qrWalletId,
+        // },
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        if (data != null) {
+          return QrFeedDetailDTO.fromJson(data);
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return null;
   }
 
   Future<List<QrFeedDTO>> getQrFeed(
@@ -111,14 +139,62 @@ class QrFeedRepository extends BaseRepo {
     return result;
   }
 
+  Future<List<QrFeedPrivateDTO>> getQrFeedPrivate({required int type}) async {
+    List<QrFeedPrivateDTO> result = [];
+    try {
+      String url =
+          '${getIt.get<AppConfig>().getBaseUrl}qr-wallets/private?userId=$userId&value=&type=$type';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        if (data != null) {
+          result = data.map<QrFeedPrivateDTO>((json) {
+            return QrFeedPrivateDTO.fromJson(json);
+          }).toList();
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return result;
+  }
+
+  Future<List<QrFeedFolderDTO>> getQrFeedFolder() async {
+    List<QrFeedFolderDTO> result = [];
+    try {
+      String url = '${getIt.get<AppConfig>().getBaseUrl}qr-feed/folders';
+      final response = await BaseAPIClient.getAPI(
+        url: url,
+        type: AuthenticationType.SYSTEM,
+        queryParameters: {
+          'userId': userId,
+        },
+      );
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        if (data != null) {
+          result = data.map<QrFeedFolderDTO>((json) {
+            return QrFeedFolderDTO.fromJson(json);
+          }).toList();
+        }
+      }
+    } catch (e) {
+      LOG.error(e.toString());
+    }
+    return result;
+  }
+
   Future<QrFeedDTO?> interactWithQr(
       {String? qrWalletId, String? interactionType}) async {
     // ResponseMessageDTO result =
     //     const ResponseMessageDTO(status: '', message: '');
 
     try {
-      final String url =
-          "https://dev.vietqr.org/vqr/api/qr-interaction/interact";
+      String url =
+          "${getIt.get<AppConfig>().getBaseUrl}qr-interaction/interact";
       final response = await BaseAPIClient.postAPI(
         url: url,
         body: {

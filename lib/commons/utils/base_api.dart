@@ -18,10 +18,12 @@ class BaseAPIClient {
     required String url,
     AuthenticationType? type,
     Map<String, String>? header,
+    Map<String, dynamic>? queryParameters,
   }) async {
+    final uri = Uri.parse(url).replace(queryParameters: queryParameters);
     final http.Response result = await http
         .get(
-      Uri.parse(url),
+      uri,
       headers: await _getHeader(type: type, header: header),
     )
         .timeout(_timeout, onTimeout: () {

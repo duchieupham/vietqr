@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-class QrFeedDTO {
+class QrFeedPrivateDTO {
   String value;
   String id;
   String fullName;
@@ -12,14 +12,10 @@ class QrFeedDTO {
   String title;
   String style;
   String theme;
-
   int timeCreated;
   String qrType;
-  int likeCount;
-  int commentCount;
-  bool hasLiked;
 
-  QrFeedDTO({
+  QrFeedPrivateDTO({
     required this.value,
     required this.id,
     required this.fullName,
@@ -30,17 +26,14 @@ class QrFeedDTO {
     required this.title,
     required this.timeCreated,
     required this.qrType,
-    required this.likeCount,
-    required this.commentCount,
-    required this.hasLiked,
     required this.style,
     required this.theme,
     required this.fileAttachmentId,
   });
 
   // Factory constructor to create an instance from a map (JSON)
-  factory QrFeedDTO.fromJson(Map<String, dynamic> json) {
-    return QrFeedDTO(
+  factory QrFeedPrivateDTO.fromJson(Map<String, dynamic> json) {
+    return QrFeedPrivateDTO(
       value: json['value'],
       id: json['id'],
       fullName: json['fullName'],
@@ -53,9 +46,6 @@ class QrFeedDTO {
       title: json['title'],
       timeCreated: json['timeCreated'],
       qrType: json['qrType'],
-      likeCount: json['likeCount'],
-      commentCount: json['commentCount'],
-      hasLiked: json['hasLiked'] == 1,
       fileAttachmentId: json['fileAttachmentId'] ?? '',
     );
   }
@@ -73,9 +63,6 @@ class QrFeedDTO {
       'title': title,
       'timeCreated': timeCreated,
       'qrType': qrType,
-      'likeCount': likeCount,
-      'commentCount': commentCount,
-      'hasLiked': hasLiked ? 1 : 0,
       'fileAttachmentId': fileAttachmentId,
     };
   }
