@@ -165,6 +165,7 @@ class _TextFieldWidgetState extends State<MTextFieldCustom> {
             enabledBorder: widget.enableBorder,
             focusedBorder: widget.focusBorder,
             prefixIcon: widget.prefixIcon,
+            prefixIconConstraints: BoxConstraints(maxWidth: 50),
             suffixIconConstraints: widget.suffixIcon != null
                 ? const BoxConstraints(
                     maxWidth: 20,

@@ -30,6 +30,7 @@ import 'package:vierqr/features/qr_feed/states/qr_feed_state.dart';
 import 'package:vierqr/features/qr_feed/views/qr_style.dart';
 import 'package:vierqr/features/qr_feed/widgets/app_bar_widget.dart';
 import 'package:vierqr/layouts/image/x_image.dart';
+import 'package:vierqr/layouts/m_text_form_field.dart';
 import 'package:vierqr/models/metadata_dto.dart';
 import 'package:vierqr/models/qr_feed_dto.dart';
 import 'package:vierqr/services/local_storage/shared_preference/shared_pref_utils.dart';
@@ -46,8 +47,12 @@ class QrFeedScreen extends StatefulWidget {
 }
 
 class _QrFeedScreenState extends State<QrFeedScreen> {
+  late TextEditingController _searchController;
   late ScrollController _scrollController;
   TabView tab = TabView.COMMUNITY;
+
+  FocusNode focusNode = FocusNode();
+  bool isClear = false;
 
   rive.StateMachineController? _riveController;
   late rive.SMITrigger _action;
@@ -63,11 +68,16 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
   QrFeedDTO? qrFeedAction;
   String selectedQrId = '';
 
+  QRTypeDTO _qrTypeDTO = const QRTypeDTO(
+    type: 9,
+    name: 'Tất cả',
+  );
+
   @override
   void initState() {
     super.initState();
     _scrollController = ScrollController();
-
+    _searchController = TextEditingController();
     initData();
   }
 
@@ -94,6 +104,17 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
         _scrollController.jumpTo(_scrollController.position.minScrollExtent);
         _bloc.add(GetQrFeedEvent(
             isLoading: true, type: tab == TabView.COMMUNITY ? 0 : 1));
+
+        _searchController.addListener(
+          () {
+            if (_searchController.text.isNotEmpty) {
+              isClear = true;
+            } else {
+              isClear = false;
+            }
+            updateState();
+          },
+        );
       },
     );
   }
@@ -108,7 +129,9 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
   @override
   void dispose() {
     super.dispose();
+    tab = TabView.COMMUNITY;
     _scrollController.dispose();
+    _searchController.dispose();
   }
 
   Future<void> onRefresh() async {
@@ -120,7 +143,7 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
     final data = await Navigator.pushNamed(context, Routes.SCAN_QR_VIEW);
     if (data is Map<String, dynamic>) {
       if (!mounted) return;
-      QRScannerUtils.instance.onScanNavi(data, context);
+      // QRScannerUtils.instance.onScanNavi(data, context);
       final type = data['type'];
       final typeQR = data['typeQR'] as TypeQR;
       final value = data['data'];
@@ -221,40 +244,43 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                 ),
                 SliverPersistentHeader(
                   delegate: CustomSliverAppBarDelegate(
-                    expandedHeight: 112,
+                    expandedHeight: tab == TabView.COMMUNITY ? 112 : 162,
                     widget: _pinnedAppbar(),
                   ),
                   pinned: true,
                   floating: true,
                 ),
-                CupertinoSliverRefreshControl(
-                  builder: (context, refreshState, pulledExtent,
-                      refreshTriggerPullDistance, refreshIndicatorExtent) {
-                    return Container(
-                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                      height: 30,
-                      width: 30,
-                      child: rive.RiveAnimation.asset(
-                        'assets/rives/loading_ani',
-                        fit: BoxFit.contain,
-                        antialiasing: false,
-                        animations: const [Stringify.SUCCESS_ANI_INITIAL_STATE],
-                        onInit: _onRiveInit,
-                      ),
-                    );
-                  },
-                  onRefresh: () => onRefresh(),
-                ),
-                SliverToBoxAdapter(
-                  child: Container(
-                    color: AppColor.BLUE_BGR,
-                    width: MediaQuery.of(context).size.width,
-                    height: (list.isEmpty || list.length < 4)
-                        ? MediaQuery.of(context).size.height - 150
-                        : null,
-                    child: Column(
-                      children: [
-                        if (tab == TabView.COMMUNITY) ...[
+                if (tab == TabView.COMMUNITY)
+                  CupertinoSliverRefreshControl(
+                    builder: (context, refreshState, pulledExtent,
+                        refreshTriggerPullDistance, refreshIndicatorExtent) {
+                      return Container(
+                        padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                        height: 30,
+                        width: 30,
+                        child: rive.RiveAnimation.asset(
+                          'assets/rives/loading_ani',
+                          fit: BoxFit.contain,
+                          antialiasing: false,
+                          animations: const [
+                            Stringify.SUCCESS_ANI_INITIAL_STATE
+                          ],
+                          onInit: _onRiveInit,
+                        ),
+                      );
+                    },
+                    onRefresh: () => onRefresh(),
+                  ),
+                if (tab == TabView.COMMUNITY)
+                  SliverToBoxAdapter(
+                    child: Container(
+                      color: AppColor.BLUE_BGR,
+                      width: MediaQuery.of(context).size.width,
+                      height: (list.isEmpty || list.length < 4)
+                          ? MediaQuery.of(context).size.height - 150
+                          : null,
+                      child: Column(
+                        children: [
                           if (state.request == QrFeed.GET_QR_FEED_LIST &&
                               state.status == BlocStatus.LOADING_PAGE)
                             ...listLoading
@@ -284,10 +310,17 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
                             height: 90,
                           ),
                         ],
-                      ],
+                      ),
                     ),
-                  ),
-                )
+                  )
+                else
+                  SliverToBoxAdapter(
+                    child: Container(
+                      color: AppColor.WHITE,
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height,
+                    ),
+                  )
               ],
             ),
           ),
@@ -375,33 +408,69 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
           // mainAxisAlignment: MainAxisAlignment.spaceBetween,
           mainAxisSize: MainAxisSize.max,
           children: [
-            Expanded(
-              child: InkWell(
-                onTap: () {
-                  Navigator.of(context).pushNamed(Routes.QR_CREATE_SCREEN).then(
-                        (value) {},
-                      );
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  height: 42,
-                  // width: double.infinity,
-                  alignment: Alignment.centerLeft,
-                  decoration: const BoxDecoration(
-                    // borderRadius: BorderRadius.circular(40),
-                    border:
-                        Border(bottom: BorderSide(color: AppColor.GREY_DADADA)),
-                    // color: AppColor.GREY_F0F4FA,
-                  ),
-                  child: Text(
-                    textAlign: TextAlign.center,
-                    'Chào ${SharePrefUtils.getProfile().firstName}, bạn đang nghĩ gì?',
-                    style: const TextStyle(
-                        fontSize: 12, color: AppColor.GREY_TEXT),
+            if (tab == TabView.COMMUNITY)
+              Expanded(
+                child: InkWell(
+                  onTap: () {
+                    Navigator.of(context)
+                        .pushNamed(Routes.QR_CREATE_SCREEN)
+                        .then(
+                          (value) {},
+                        );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    height: 42,
+                    // width: double.infinity,
+                    alignment: Alignment.centerLeft,
+                    decoration: const BoxDecoration(
+                      // borderRadius: BorderRadius.circular(40),
+                      border: Border(
+                          bottom: BorderSide(color: AppColor.GREY_DADADA)),
+                      // color: AppColor.GREY_F0F4FA,
+                    ),
+                    child: Text(
+                      textAlign: TextAlign.center,
+                      'Chào ${SharePrefUtils.getProfile().firstName}, bạn đang nghĩ gì?',
+                      style: const TextStyle(
+                          fontSize: 12, color: AppColor.GREY_TEXT),
+                    ),
                   ),
                 ),
               ),
-            ),
+            if (tab == TabView.INDIVIDUAL)
+              Expanded(
+                  child: MTextFieldCustom(
+                      focusNode: focusNode,
+                      controller: _searchController,
+                      prefixIcon: const XImage(
+                        imagePath: 'assets/images/ic-search-grey.png',
+                        width: 30,
+                        height: 30,
+                        fit: BoxFit.cover,
+                      ),
+                      suffixIcon: isClear
+                          ? InkWell(
+                              onTap: () {
+                                _searchController.clear();
+                                updateState();
+                              },
+                              child: const Icon(
+                                Icons.clear,
+                                size: 20,
+                                color: AppColor.GREY_DADADA,
+                              ),
+                            )
+                          : const SizedBox.shrink(),
+                      enable: true,
+                      focusBorder: const UnderlineInputBorder(
+                          borderSide: BorderSide(color: AppColor.BLUE_TEXT)),
+                      contentPadding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                      hintText: 'Tìm kiếm mã QR theo tên',
+                      keyboardAction: TextInputAction.next,
+                      onChange: (value) {},
+                      inputType: TextInputType.text,
+                      isObscureText: false)),
             const SizedBox(width: 20),
             InkWell(
               onTap: startBarcodeScanStream,
@@ -439,6 +508,44 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
             // )
           ],
         ),
+        if (tab == TabView.INDIVIDUAL)
+          Container(
+            padding: const EdgeInsets.only(bottom: 0, top: 15),
+            width: double.infinity,
+            height: 50,
+            child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) {
+                  return InkWell(
+                    onTap: () {
+                      _qrTypeDTO = _qrTypeList[index];
+                      updateState();
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 4),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(50),
+                        color: _qrTypeDTO == _qrTypeList[index]
+                            ? AppColor.BLUE_TEXT.withOpacity(0.2)
+                            : AppColor.WHITE,
+                      ),
+                      child: Center(
+                        child: Text(
+                          _qrTypeList[index].name,
+                          style: TextStyle(
+                              fontSize: 10,
+                              color: _qrTypeDTO == _qrTypeList[index]
+                                  ? AppColor.BLACK
+                                  : AppColor.GREY_TEXT),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+                separatorBuilder: (context, index) => const SizedBox(width: 10),
+                itemCount: _qrTypeList.length),
+          ),
       ],
     );
   }
@@ -506,6 +613,14 @@ class _QrFeedScreenState extends State<QrFeedScreen> {
       ),
     );
   }
+
+  final List<QRTypeDTO> _qrTypeList = const [
+    QRTypeDTO(type: 9, name: 'Tất cả'),
+    QRTypeDTO(type: 0, name: 'QR Link'),
+    QRTypeDTO(type: 2, name: 'VCard'),
+    QRTypeDTO(type: 3, name: 'VietQR'),
+    QRTypeDTO(type: 1, name: 'Khác'),
+  ];
 
   bool get _isAppBarExpanded {
     return _scrollController.hasClients &&
@@ -912,4 +1027,14 @@ class _buildQRFeed extends StatelessWidget {
       ),
     );
   }
+}
+
+class QRTypeDTO {
+  final int type;
+  final String name;
+
+  const QRTypeDTO({
+    this.type = 9,
+    this.name = 'Tất cả',
+  });
 }
