@@ -27,7 +27,7 @@ class ConnectMediaBloc extends Bloc<ConnectMediaEvent, ConnectMediaStates> {
         emit(state.copyWith(
             status: BlocStatus.LOADING_PAGE, request: ConnectMedia.NONE));
 
-        InfoMediaDTO? result = await _repository.getInfoGgChat();
+        InfoMediaDTO? result = await _repository.getInfoMedia(event.type);
         if (result != null) {
           emit(state.copyWith(
               status: BlocStatus.SUCCESS,
@@ -53,8 +53,8 @@ class ConnectMediaBloc extends Bloc<ConnectMediaEvent, ConnectMediaStates> {
       if (event is AddBankMediaEvent) {
         emit(state.copyWith(
             status: BlocStatus.LOADING, request: ConnectMedia.NONE));
-        bool? result =
-            await _repository.addBankGgChat(event.webhookId, event.listBankId!);
+        bool? result = await _repository.addBankMedia(
+            event.webhookId, event.listBankId!, event.type);
 
         emit(state.copyWith(
           status: BlocStatus.UNLOADING,
@@ -73,8 +73,8 @@ class ConnectMediaBloc extends Bloc<ConnectMediaEvent, ConnectMediaStates> {
       if (event is RemoveMediaEvent) {
         emit(state.copyWith(
             status: BlocStatus.LOADING, request: ConnectMedia.NONE));
-        bool? result =
-            await _repository.removeBank(event.webhookId, event.bankId!);
+        bool? result = await _repository.removeBank(
+            event.webhookId, event.bankId!, event.type);
         emit(state.copyWith(
           status: BlocStatus.UNLOADING,
           request: ConnectMedia.REMOVE_BANK,
@@ -92,6 +92,7 @@ class ConnectMediaBloc extends Bloc<ConnectMediaEvent, ConnectMediaStates> {
         emit(state.copyWith(
             status: BlocStatus.LOADING, request: ConnectMedia.NONE));
         bool? result = await _repository.connectWebhook(event.webhook,
+            type: event.type,
             list: event.listBankId,
             notificationTypes: event.notificationTypes,
             notificationContents: event.notificationContents);
@@ -111,7 +112,7 @@ class ConnectMediaBloc extends Bloc<ConnectMediaEvent, ConnectMediaStates> {
       if (event is DeleteWebhookEvent) {
         emit(state.copyWith(
             status: BlocStatus.LOADING_PAGE, request: ConnectMedia.NONE));
-        bool? result = await _repository.deleteWebhook(event.id);
+        bool? result = await _repository.deleteWebhook(event.id, event.type);
         emit(state.copyWith(
             status: BlocStatus.SUCCESS,
             request: ConnectMedia.DELETE_URL,
@@ -128,7 +129,7 @@ class ConnectMediaBloc extends Bloc<ConnectMediaEvent, ConnectMediaStates> {
       if (event is CheckWebhookUrlEvent) {
         emit(state.copyWith(
             status: BlocStatus.LOADING, request: ConnectMedia.NONE));
-        bool? result = await _repository.checkWebhookUrl(event.url);
+        bool? result = await _repository.checkWebhookUrl(event.url, event.type);
         emit(state.copyWith(
             status: BlocStatus.SUCCESS,
             request: ConnectMedia.CHECK_URL,

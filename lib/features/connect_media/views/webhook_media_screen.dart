@@ -308,6 +308,27 @@ class _WebhookMediaScreenState extends State<WebhookMediaScreen> {
   }
 
   Widget listAccountLinked() {
+    String url = '';
+    String title = '';
+
+    switch (widget.type) {
+      case TypeConnect.GG_CHAT:
+        url = 'assets/images/ic-gg-chat-home.png';
+        title = 'Google Chat';
+
+        break;
+      case TypeConnect.LARK:
+        url = 'assets/images/logo-lark.png';
+        title = 'Lark';
+
+        break;
+      case TypeConnect.TELE:
+        url = 'assets/images/logo-telegram.png';
+        title = 'Telegram';
+
+        break;
+      default:
+    }
     return Consumer<ConnectGgChatProvider>(
       builder: (context, provider, child) {
         return Container(
@@ -320,12 +341,13 @@ class _WebhookMediaScreenState extends State<WebhookMediaScreen> {
               Container(
                 height: 50,
                 width: 50,
-                child: Image.asset('assets/images/ic-gg-chat-home.png'),
+                child: Image.asset(url),
               ),
               const SizedBox(height: 30),
-              const Text(
-                'Đầu tiên, chọn tài khoản\nngân hàng mà bạn muốn\nnhận BĐSD qua Google Chat',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              Text(
+                'Đầu tiên, chọn tài khoản\nngân hàng mà bạn muốn\nnhận BĐSD qua $title',
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
               const SizedBox(height: 30),
               SizedBox(
@@ -421,6 +443,19 @@ class _WebhookMediaScreenState extends State<WebhookMediaScreen> {
   }
 
   Widget inputWebhook() {
+    String webhook = '';
+    switch (widget.type) {
+      case TypeConnect.GG_CHAT:
+        webhook = 'Webhook Google Chat';
+        break;
+      case TypeConnect.LARK:
+        webhook = 'Webhook Lark';
+        break;
+      case TypeConnect.TELE:
+        webhook = 'Chat ID';
+        break;
+      default:
+    }
     return Consumer<ConnectGgChatProvider>(
       builder: (context, value, child) {
         return Container(
@@ -484,12 +519,13 @@ class _WebhookMediaScreenState extends State<WebhookMediaScreen> {
               ),
               const SizedBox(height: 20),
 
-              const SizedBox(
+              SizedBox(
                 width: double.infinity,
                 height: 20,
                 child: Text(
-                  'Webhook Google Chat',
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  webhook,
+                  style: const TextStyle(
+                      fontSize: 15, fontWeight: FontWeight.bold),
                 ),
               ),
               Container(

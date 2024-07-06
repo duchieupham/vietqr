@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:vierqr/features/connect_media/connect_media_screen.dart';
 
 import '../../../commons/constants/configurations/theme.dart';
 import '../../../layouts/m_button_widget.dart';
 
 class PopupGuideWidget extends StatefulWidget {
-  const PopupGuideWidget({super.key});
+  final TypeConnect type;
+  const PopupGuideWidget({super.key, required this.type});
 
   @override
   State<PopupGuideWidget> createState() => _PopupGuideWidgetState();
@@ -53,7 +55,7 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                DefaultTextStyle(
+                const DefaultTextStyle(
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 20,
@@ -67,17 +69,24 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
                   child: PageView(
                     controller: _pageController,
                     children: [
-                      guideStep1(),
-                      guideStep2(),
-                      guideStep3(),
-                      guideStep4(),
-                      guideStep5(),
-                      guideStep6(),
+                      if (widget.type == TypeConnect.GG_CHAT) ...[
+                        guideStep1(),
+                        guideStep2(),
+                        guideStep3(),
+                        guideStep4(),
+                        guideStep5(),
+                        guideStep6(),
+                      ] else if (widget.type == TypeConnect.LARK) ...[
+                        guideStep1(),
+                        guideStep2(),
+                        guideStep3(),
+                        guideStep4(),
+                      ]
                     ],
                   ),
                 ),
                 _buildPageIndicator(),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 _buildNavigationButtons(),
               ],
             ),
@@ -102,6 +111,43 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
   }
 
   Widget guideStep1() {
+    if (widget.type == TypeConnect.LARK) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 350,
+            height: 350,
+            child: Image.asset(
+              "assets/images/intro1.png",
+            ),
+          ),
+          SizedBox(
+            height: 50,
+          ),
+          Container(
+            width: double.infinity,
+            height: 20,
+            child: Text(
+              'Trong giao diện group chat của Lark:',
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+            ),
+          ),
+          RichText(
+            text: TextSpan(
+              text: '- Chọn nút "..." > ',
+              style: TextStyle(fontSize: 12, color: AppColor.BLACK),
+              children: const <TextSpan>[
+                TextSpan(
+                    text: '"Setting"',
+                    style:
+                        TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+              ],
+            ),
+          ),
+        ],
+      );
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -138,6 +184,47 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
   }
 
   Widget guideStep2() {
+    if (widget.type == TypeConnect.LARK) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 350,
+            height: 350,
+            child: Image.asset(
+              "assets/images/intro2.png",
+            ),
+          ),
+          SizedBox(
+            height: 50,
+          ),
+          RichText(
+            text: TextSpan(
+              text: '- Chọn mục > ',
+              style: TextStyle(fontSize: 12, color: AppColor.BLACK),
+              children: const <TextSpan>[
+                TextSpan(
+                    text: '"Bot" > "Add Bot"',
+                    style:
+                        TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+              ],
+            ),
+          ),
+          RichText(
+            text: TextSpan(
+              text: '- Thêm',
+              style: TextStyle(fontSize: 12, color: AppColor.BLACK),
+              children: const <TextSpan>[
+                TextSpan(
+                    text: ' "Custom Bot"',
+                    style:
+                        TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+              ],
+            ),
+          ),
+        ],
+      );
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -177,6 +264,39 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
   }
 
   Widget guideStep3() {
+    if (widget.type == TypeConnect.LARK) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 350,
+            height: 350,
+            child: Image.asset(
+              "assets/images/intro3.png",
+            ),
+          ),
+          SizedBox(
+            height: 50,
+          ),
+          Text(
+            '- Đặt tên và mô tả cho Bot.',
+            style: TextStyle(fontSize: 12),
+          ),
+          RichText(
+            text: TextSpan(
+              text: '- Chọn',
+              style: TextStyle(fontSize: 12, color: AppColor.BLACK),
+              children: const <TextSpan>[
+                TextSpan(
+                    text: '"Add"',
+                    style:
+                        TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+              ],
+            ),
+          ),
+        ],
+      );
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -213,6 +333,52 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
   }
 
   Widget guideStep4() {
+    if (widget.type == TypeConnect.LARK) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 350,
+            height: 350,
+            child: Image.asset(
+              "assets/images/intro4.png",
+            ),
+          ),
+          SizedBox(
+            height: 50,
+          ),
+          RichText(
+            text: TextSpan(
+              text: '- Chọn',
+              style: TextStyle(fontSize: 12, color: AppColor.BLACK),
+              children: const <TextSpan>[
+                TextSpan(
+                    text: ' "Coppy" ',
+                    style:
+                        TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                TextSpan(text: 'ở mục', style: TextStyle(fontSize: 12)),
+                TextSpan(
+                    text: ' "Webhook Url" ',
+                    style:
+                        TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+              ],
+            ),
+          ),
+          RichText(
+            text: TextSpan(
+              text: '- Chọn',
+              style: TextStyle(fontSize: 12, color: AppColor.BLACK),
+              children: const <TextSpan>[
+                TextSpan(
+                    text: ' "Finish"',
+                    style:
+                        TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+              ],
+            ),
+          ),
+        ],
+      );
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -321,13 +487,26 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
   }
 
   Widget _buildPageIndicator() {
+    int page = 0;
+    switch (widget.type) {
+      case TypeConnect.GG_CHAT:
+        page = 6;
+        break;
+      case TypeConnect.LARK:
+        page = 4;
+        break;
+      case TypeConnect.TELE:
+        page = 1;
+        break;
+      default:
+    }
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(6, (index) {
+      children: List.generate(page, (index) {
         return Container(
           width: 10,
           height: 10,
-          margin: EdgeInsets.symmetric(horizontal: 5),
+          margin: const EdgeInsets.symmetric(horizontal: 5),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: _currentPage == index ? AppColor.BLUE_TEXT : Colors.grey,
@@ -338,6 +517,19 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
   }
 
   Widget _buildNavigationButtons() {
+    int page = 0;
+    switch (widget.type) {
+      case TypeConnect.GG_CHAT:
+        page = 5;
+        break;
+      case TypeConnect.LARK:
+        page = 3;
+        break;
+      case TypeConnect.TELE:
+        page = 0;
+        break;
+      default:
+    }
     if (_currentPage == 0) {
       return MButtonWidget(
         // margin: EdgeInsets.symmetric(horizontal: 40),
@@ -365,7 +557,7 @@ class _PopupGuideWidgetState extends State<PopupGuideWidget> {
           ],
         ),
       );
-    } else if (_currentPage == 5) {
+    } else if (_currentPage == page) {
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

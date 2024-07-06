@@ -139,7 +139,9 @@ class __ScreenState extends State<_Screen> {
   void onOpenGuide() async {
     await showCupertinoModalPopup(
       context: context,
-      builder: (context) => PopupGuideWidget(),
+      builder: (context) => PopupGuideWidget(
+        type: widget.type,
+      ),
     );
   }
 
